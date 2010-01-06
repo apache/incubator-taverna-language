@@ -1,0 +1,54 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>parent</artifactId>
+		<groupId>net.sf.taverna</groupId>
+		<version>0.1.2009-02-12</version>
+	</parent>
+
+	<groupId>net.sf.taverna.scufl2</groupId>
+	<artifactId>scufl2</artifactId>
+	<version>0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<name>Taverna Scufl 2</name>
+	<description>Taverna SCUFL 2 workflow language</description>
+
+	<dependencies>
+		<!--
+			Common dependencies - keep these to a minimum as we want to reduce
+			scufl2-api's dependencies
+		-->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.4</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<scm>
+		<connection>scm:svn:http://taverna.googlecode.com/svn/unsorted/scufl2/trunk/</connection>
+		<developerConnection>scm:svn:https://taverna.googlecode.com/svn/unsorted/scufl2/trunk/</developerConnection>
+		<url>http://code.google.com/p/taverna/source/browse/#svn/unsorted/scufl2/trunk/</url>
+	</scm>
+
+	<repositories>
+		<repository>
+			<releases />
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>mygrid-repository</id>
+			<name>myGrid Repository</name>
+			<url>http://www.mygrid.org.uk/maven/repository</url>
+		</repository>
+	</repositories>
+	
+	<modules>
+		<module>scufl2-api</module>
+		<module>scufl2-rdf</module>
+	</modules>
+</project>

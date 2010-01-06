@@ -1,0 +1,99 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>net.sf.taverna.scufl2</groupId>
+		<artifactId>scufl2</artifactId>
+		<version>0.1-SNAPSHOT</version>
+	</parent>
+	<groupId>net.sf.taverna.scufl2</groupId>
+	<artifactId>scufl2-rdf</artifactId>
+	<name>Taverna Scufl 2 RDF serialisation</name>
+	<properties>
+		<elmo.version>1.5</elmo.version>
+		<sesame.version>2.2.4</sesame.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.4</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.7.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openrdf.elmo</groupId>
+			<artifactId>elmo-api</artifactId>
+			<version>${elmo.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openrdf.elmo</groupId>
+			<artifactId>elmo-sesame</artifactId>
+			<version>${elmo.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>jcl104-over-slf4j</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.4.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openrdf.elmo</groupId>
+			<artifactId>elmo-dynabean</artifactId>
+			<version>${elmo.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openrdf.sesame</groupId>
+			<artifactId>sesame-repository-sail</artifactId>
+			<version>${sesame.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openrdf.sesame</groupId>
+			<artifactId>sesame-sail-memory</artifactId>
+			<version>${sesame.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openrdf.elmo</groupId>
+			<artifactId>elmo-codegen</artifactId>
+			<version>${elmo.version}</version>
+		</dependency>
+
+
+	</dependencies>
+	<description>Taverna workflow language serialisation as RDF</description>
+	<repositories>
+		<repository>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>aduna-opensource.releases</id>
+			<name>Aduna Open Source - Maven releases</name>
+			<url>http://repo.aduna-software.org/maven2/releases</url>
+		</repository>
+		<repository>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<id>aduna-opensource.snapshots</id>
+			<name>Aduna Open Source - Maven snapshots</name>
+			<url>http://repo.aduna-software.org/maven2/snapshots</url>
+		</repository>
+	</repositories>
+</project>

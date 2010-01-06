@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LoopProcessor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="bla.xsd">
+  <iterationStrategy>iterationStrategy</iterationStrategy>
+  <ProcessorPropertyConfiguration>
+    <property/>
+    <value>value</value>
+  </ProcessorPropertyConfiguration>
+  <from xsi:type="Processor"/>
+  <condition>condition</condition>
+</LoopProcessor>

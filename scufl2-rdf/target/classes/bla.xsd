@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<xsd:element name="Processor" type="Processor"/>
+	<xsd:complexType name="Processor">
+		<xsd:sequence>
+			<xsd:element name="iterationStrategy" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="ProcessorPropertyConfiguration" type="ProcessorPropertyConfiguration" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="from" type="Processor" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="ProcessorPort" type="ProcessorPort"/>
+	<xsd:complexType name="ProcessorPort">
+		<xsd:sequence>
+			<xsd:element name="syntacticType" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="name" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="Processor" type="Processor" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="Activity" type="Activity"/>
+	<xsd:complexType name="Activity">
+		<xsd:sequence>
+			<xsd:element name="name" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="ActivityPropertyConfiguration" type="ActivityPropertyConfiguration" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="Processor" type="Processor" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="InputPPort" type="InputPPort"/>
+	<xsd:complexType name="InputPPort">
+		<xsd:complexContent>
+			<xsd:extension base="ProcessorPort">
+				<xsd:sequence>
+					<xsd:element name="defaultValue" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+					<xsd:element name="depth" type="xsd:int" minOccurs="1" maxOccurs="1"/>
+					<xsd:element name="from" type="OutputPPort" minOccurs="1" maxOccurs="1"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:element name="OutputPPort" type="OutputPPort"/>
+	<xsd:complexType name="OutputPPort">
+		<xsd:complexContent>
+			<xsd:extension base="ProcessorPort">
+				<xsd:sequence/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:element name="ScriptActivity" type="ScriptActivity"/>
+	<xsd:complexType name="ScriptActivity">
+		<xsd:complexContent>
+			<xsd:extension base="Activity">
+				<xsd:sequence>
+					<xsd:element name="language" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+					<xsd:element name="version" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+					<xsd:element name="code" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+					<xsd:element name="codeRef" type="xsd:anyURI" minOccurs="1" maxOccurs="1">
+						<xsd:annotation>
+							<xsd:documentation>CodeRef is used to reference external code, i.e., for scripts that are maintained externally for reusability.
+The type URL is a placeholder for a generic reference into a registry, for instance Biocatalogue</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:element name="WebServiceActivity" type="WebServiceActivity"/>
+	<xsd:complexType name="WebServiceActivity">
+		<xsd:complexContent>
+			<xsd:extension base="Activity">
+				<xsd:sequence>
+					<xsd:element name="WSDLRef" type="xsd:anyURI" minOccurs="1" maxOccurs="1"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:element name="ConfigurableProperty" type="ConfigurableProperty"/>
+	<xsd:complexType name="ConfigurableProperty">
+		<xsd:sequence>
+			<xsd:element name="name" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="description" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="ProcessorPropertyConfiguration" type="ProcessorPropertyConfiguration"/>
+	<xsd:complexType name="ProcessorPropertyConfiguration">
+		<xsd:sequence>
+			<xsd:element name="property" type="ProcessorPropertyConfiguration" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="value" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="LoopProcessor" type="LoopProcessor"/>
+	<xsd:complexType name="LoopProcessor">
+		<xsd:complexContent>
+			<xsd:extension base="Processor">
+				<xsd:sequence>
+					<xsd:element name="condition" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:element name="BranchProcessor" type="BranchProcessor"/>
+	<xsd:complexType name="BranchProcessor">
+		<xsd:complexContent>
+			<xsd:extension base="Processor">
+				<xsd:sequence>
+					<xsd:element name="condition" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:element name="Workflow" type="Workflow"/>
+	<xsd:complexType name="Workflow">
+		<xsd:complexContent>
+			<xsd:extension base="Activity">
+				<xsd:sequence>
+					<xsd:element name="externalWorkflowRef" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+					<xsd:element name="WorkflowPropertyConfiguration" type="WorkflowPropertyConfiguration" minOccurs="0" maxOccurs="unbounded"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:element name="ActivityPort" type="ActivityPort"/>
+	<xsd:complexType name="ActivityPort">
+		<xsd:sequence>
+			<xsd:element name="nativeType" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="ProcessorPort" type="ProcessorPort" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="Activity" type="Activity" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="InputAPort" type="InputAPort"/>
+	<xsd:complexType name="InputAPort">
+		<xsd:complexContent>
+			<xsd:extension base="ActivityPort">
+				<xsd:sequence/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:element name="OutputAPort" type="OutputAPort"/>
+	<xsd:complexType name="OutputAPort">
+		<xsd:complexContent>
+			<xsd:extension base="ActivityPort">
+				<xsd:sequence/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:element name="DataLink" type="DataLink"/>
+	<xsd:complexType name="DataLink">
+		<xsd:sequence/>
+	</xsd:complexType>
+	<xsd:element name="ControlLink" type="ControlLink"/>
+	<xsd:complexType name="ControlLink">
+		<xsd:sequence/>
+	</xsd:complexType>
+	<xsd:element name="ProcessorProperty" type="ProcessorProperty"/>
+	<xsd:complexType name="ProcessorProperty">
+		<xsd:complexContent>
+			<xsd:extension base="ConfigurableProperty">
+				<xsd:sequence/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:element name="ActivityProperty" type="ActivityProperty"/>
+	<xsd:complexType name="ActivityProperty">
+		<xsd:complexContent>
+			<xsd:extension base="ConfigurableProperty">
+				<xsd:sequence/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:element name="EnvironmentProperty" type="EnvironmentProperty"/>
+	<xsd:complexType name="EnvironmentProperty">
+		<xsd:complexContent>
+			<xsd:extension base="ConfigurableProperty">
+				<xsd:sequence/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:element name="ActivityPropertyConfiguration" type="ActivityPropertyConfiguration"/>
+	<xsd:complexType name="ActivityPropertyConfiguration">
+		<xsd:sequence>
+			<xsd:element name="property" type="ActivityPropertyConfiguration" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="value" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="WorkflowPropertyConfiguration" type="WorkflowPropertyConfiguration"/>
+	<xsd:complexType name="WorkflowPropertyConfiguration">
+		<xsd:sequence>
+			<xsd:element name="property" type="EnvironmentProperty" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="value" type="xsd:string" minOccurs="1"
+	maxOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

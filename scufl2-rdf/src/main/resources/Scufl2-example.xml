@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<t2:scufl xmlns:t2="http://taverna.sf.net/2009/xml/scufl2" version="1"
+	producedBy="taverna-2.1-beta-2" name="Scufl2-example1"> 
+	<annotation language="plain"> 
+		Derived from nested-2.t2flow: http://www.myexperiment.org/workflows/909
+	</annotation> 
+	<environment> 
+		<!--  declarations of global dependencies, e.g. on plugins --> 
+	</environment> 
+ 
+	<workflow id="ab03e390-005c-4e91-a284-6c0f451ee64d"
+		name="nested2"> 
+ 
+		<inputPorts> 
+			<port name="I" depth="0" /> 
+		</inputPorts> 
+ 
+		<outputPorts> 
+			<port name="O" /> 
+		</outputPorts> 
+ 
+		<processors> 
+			<processor name="P1"> 
+				<inputPorts> 
+					<port> 
+						<name>X</name> 
+						<depth>0</depth> 
+					</port> 
+				</inputPorts> 
+				<outputPorts> 
+					<port> 
+						<name>Y1</name> 
+						<depth>0</depth> 
+					</port> 
+					<port> 
+						<name>Y2</name> 
+						<depth>0</depth> 
+					</port> 
+				</outputPorts> 
+				<iterationStrategy> 
+					<cross> 
+						<port name="X" depth="0" /> 
+					</cross> 
+ 
+					<!-- 
+						another example for a 3-ports strategy:
+						<cross>
+						<port name="X1" depth="0" />
+						<dot>
+						<port name="X2" depth="0" />
+						<port name="X3" depth="0" />
+						</dot>							  							
+						</cross>
+					--> 
+				</iterationStrategy> 
+			</processor> 
+			<processor> 
+				<name>P4</name> 
+				<inputPorts> 
+					<port> 
+						<name>X2</name> 
+						<depth>0</depth> 
+					</port> 
+					<port> 
+						<name>X1</name> 
+						<depth>0</depth> 
+					</port> 
+				</inputPorts> 
+				<outputPorts> 
+					<port> 
+						<name>Y</name> 
+						<depth>0</depth> 
+					</port> 
+				</outputPorts> 
+				<iterationStrategyStack> 
+					<cross> 
+						<port name="X2" depth="0" /> 
+						<port name="X1" depth="0" /> 
+					</cross> 
+				</iterationStrategyStack> 
+			</processor> 
+ 
+			<processor> 
+				<name>PNested</name> 
+				<inputPorts> 
+					<port> 
+						<name>I</name> 
+						<depth>0</depth> 
+					</port> 
+				</inputPorts> 
+				<outputPorts> 
+					<port> 
+						<name>O</name> 
+						<depth>0</depth> 
+					</port> 
+				</outputPorts> 
+				<iterationStrategy> 
+					<cross> 
+						<port name="I" depth="0" /> 
+					</cross> 
+				</iterationStrategy> 
+			</processor> 
+		</processors> 
+ 
+		<datalinks> 
+			<datalink> 
+				<sink type="processor"> 
+					<processor>P1</processor> 
+					<port>X</port> 
+				</sink> 
+				<source type="dataflow"> 
+					<port>I</port> 
+				</source> 
+			</datalink> 
+			<datalink> 
+				<sink type="processor"> 
+					<processor>P4</processor> 
+					<port>X2</port> 
+				</sink> 
+				<source type="processor"> 
+					<processor>P1</processor> 
+					<port>Y2</port> 
+				</source> 
+			</datalink> 
+			<datalink> 
+				<sink type="processor"> 
+					<processor>P4</processor> 
+					<port>X1</port> 
+				</sink> 
+				<source type="processor"> 
+					<processor>PNested</processor> 
+					<port>O</port> 
+				</source> 
+			</datalink> 
+			<datalink> 
+				<sink type="processor"> 
+					<processor>PNested</processor> 
+					<port>I</port> 
+				</sink> 
+				<source type="processor"> 
+					<processor>P1</processor> 
+					<port>Y1</port> 
+				</source> 
+			</datalink> 
+			<datalink> 
+				<sink type="dataflow"> 
+					<port>O</port> 
+				</sink> 
+				<source type="processor"> 
+					<processor>P4</processor> 
+					<port>Y</port> 
+				</source> 
+			</datalink> 
+		</datalinks> 
+ 
+		<activities> 
+			<activity name="P1bs" type="beanshell-activity"> 
+				<!--   beanshell-specific element --> 
+				<beanshell version="required interpreter version"> 
+					<inputs> 
+						<!--  not sure how mimeTypes are used? --> 
+						<input name="X" type="string" depth="0"
+							allowsLiteralValues="true" mimeTypes="text/plain" /> 
+					</inputs> 
+					<outputs> 
+						<output name="Y1" type="string" depth="0"
+							mimeTypes="text/plain" /> 
+						<output name="Y2" type="string" depth="0"
+							mimeTypes="text/plain" /> 
+					</outputs> 
+					<script>Y1 = "10"; Y2 = "20";</script><!--  code is inline   --> 
+				</beanshell> 
+			</activity> 
+ 
+			<activity name="PNestedAct" type="workflow" ref="PNested" /> 
+			<!--  ref to locally declared workflow --> 
+ 
+			<activity name="P4bs" type="beanshell-activity"> 
+				<beanshell version="required interpreter version"> 
+					<inputs> 
+						<input name="X1" type="string" depth="0"
+							allowsLiteralValues="true" mimeTypes="text/plain" /> 
+						<input name="X2" type="string" depth="0"
+							allowsLiteralValues="true" mimeTypes="text/plain" /> 
+					</inputs> 
+					<outputs> 
+						<output name="Y" type="string" depth="0"
+							mimeTypes="text/plain" /> 
+					</outputs> 
+					<script> 
+						int y = Integer.parseInt(X1) +
+						Integer.parseInt(X2);
+ 
+						Y = y+"";
+					</script> 
+				</beanshell> 
+			</activity> 
+		</activities> 
+ 
+		<bindings> 
+			<binding processor="P1" activity="P1bs"> 
+				<inputMap> 
+					<map from="X" to="X" /> 
+				</inputMap> 
+				<outputMap> 
+					<map from="Y2" to="Y2" /> 
+					<map from="Y1" to="Y1" /> 
+				</outputMap> 
+			</binding> 
+ 
+			<binding processor="PNested" activity="PNestedAct"> 
+				<inputMap> 
+					<map from="I" to="I" /> 
+				</inputMap> 
+				<outputMap> 
+					<map from="O" to="O" /> 
+				</outputMap> 
+			</binding> 
+ 
+			<binding processor="P4" activity="P4bs"> 
+				<inputMap> 
+					<map from="X1" to="X1" /> 
+					<map from="X2" to="X2" /> 
+				</inputMap> 
+				<outputMap> 
+					<map from="Y" to="Y" /> 
+				</outputMap> 
+			</binding> 
+		</bindings> 
+	</workflow> 
+ 
+	<workflow ref="uri://someResolvableReference" /> 
+	<!--  example of declaration of externally referenced sub-workflow that can be imported for use in this workflow  --> 
+ 
+	<workflow id="97e6c544-4acb-4627-aca8-fbcb714ebabc"
+		name="PNested"> 
+		<inputPorts> 
+			<port name="I" depth="0" /> 
+		</inputPorts> 
+		<outputPorts> 
+			<port name="O" /> 
+		</outputPorts> 
+ 
+		<processors> 
+			<processor name="P2"> 
+				<inputPorts> 
+					<port name="X" depth="0" /> 
+				</inputPorts> 
+				<outputPorts> 
+					<port name="Y" depth="0" /> 
+				</outputPorts> 
+				<iterationStrategy> 
+					<cross> 
+						<port name="X" depth="0" /> 
+					</cross> 
+				</iterationStrategy> 
+			</processor> 
+ 
+			<processor name="P3"> 
+				<inputPorts> 
+					<port name="X" depth="0" /> 
+				</inputPorts> 
+				<outputPorts> 
+					<port name="Y" depth="0" /> 
+				</outputPorts> 
+ 
+				<iterationStrategy> 
+					<cross> 
+						<port name="X" depth="0" /> 
+					</cross> 
+				</iterationStrategy> 
+			</processor> 
+ 
+			<processor> 
+				<name>PNested2</name> 
+				<inputPorts> 
+					<port name="I" depth="0" /> 
+				</inputPorts> 
+				<outputPorts> 
+					<port name="O" depth="0" /> 
+				</outputPorts> 
+ 
+				<iterationStrategy> 
+					<cross> 
+						<port name="I" depth="0" /> 
+					</cross> 
+				</iterationStrategy> 
+			</processor> 
+		</processors> 
+ 
+		<datalinks> 
+			<datalink> 
+				<sink type="processor"> 
+					<processor>P2</processor> 
+					<port>X</port> 
+				</sink> 
+				<source type="dataflow"> 
+					<port>I</port> 
+				</source> 
+			</datalink> 
+			<datalink> 
+				<sink type="processor"> 
+					<processor>P3</processor> 
+					<port>X</port> 
+				</sink> 
+				<source type="processor"> 
+					<processor>P2</processor> 
+					<port>Y</port> 
+				</source> 
+			</datalink> 
+			<datalink> 
+				<sink type="processor"> 
+					<processor>PNested2</processor> 
+					<port>I</port> 
+				</sink> 
+				<source type="processor"> 
+					<processor>P3</processor> 
+					<port>Y</port> 
+				</source> 
+			</datalink> 
+			<datalink> 
+				<sink type="dataflow"> 
+					<port>O</port> 
+				</sink> 
+				<source type="processor"> 
+					<processor>PNested2</processor> 
+					<port>O</port> 
+				</source> 
+			</datalink> 
+		</datalinks> 
+		<annotations /> 
+ 
+		<activities> 
+			<activity name="P2bs" type="beanshell-activity"> 
+				<beanshell version="required interpreter version"> 
+					<inputs> 
+						<input name="X" type="string" depth="0"
+							allowsLiteralValues="true" mimeTypes="text/plain" /> 
+					</inputs> 
+					<outputs> 
+						<output name="Y" type="string" depth="0"
+							mimeTypes="text/plain" /> 
+					</outputs> 
+					<script> 
+						Y = Integer.parseInt(X) * 100;
+ 
+						Y = Y+"";
+					</script> 
+				</beanshell> 
+			</activity> 
+ 
+			<activity name="P3bs" type="beanshell-activity"> 
+				<beanshell version="required interpreter version"> 
+					<inputs> 
+						<input name="X" type="string" depth="0"
+							allowsLiteralValues="true" mimeTypes="text/plain" /> 
+					</inputs> 
+					<outputs> 
+						<output name="Y" type="string" depth="0"
+							mimeTypes="text/plain" /> 
+					</outputs> 
+ 
+					<script> 
+						Y = Integer.parseInt(X) - 32;
+ 
+						Y = Y+"";
+					</script> 
+				</beanshell> 
+			</activity> 
+ 
+			<activity name="PNested2Act" type="workflow" ref="PNested2" /> 
+			<!--  ref to locally declared workflow --> 
+		</activities> 
+ 
+		<bindings> 
+			<binding processor="P2" activity="P2bs"> 
+				<inputMap> 
+					<map from="X" to="X" /> 
+				</inputMap> 
+				<outputMap> 
+					<map from="Y" to="Y" /> 
+				</outputMap> 
+			</binding> 
+ 
+			<binding processor="P3" activity="P3bs"> 
+				<inputMap> 
+					<map from="X" to="X" /> 
+				</inputMap> 
+				<outputMap> 
+					<map from="Y" to="Y" /> 
+				</outputMap> 
+			</binding> 
+ 
+			<binding processor="PNested2" activity="PNested2Act"> 
+				<inputMap> 
+					<map from="I" to="I" /> 
+				</inputMap> 
+				<outputMap> 
+					<map from="O" to="O" /> 
+				</outputMap> 
+			</binding> 
+		</bindings> 
+	</workflow> 
+ 
+	<workflow id="85dd9164-10ae-4d2a-8450-5ed905dfb7ac"
+		name="PNested2"> 
+ 
+		<inputPorts> 
+			<port name="I" depth="0" /> 
+		</inputPorts> 
+ 
+		<outputPorts> 
+			<port name="O" /> 
+		</outputPorts> 
+ 
+		<processors> 
+			<processor name="P6"> 
+				<inputPorts> 
+					<port name="X" depth="0" /> 
+				</inputPorts> 
+				<outputPorts> 
+					<port name="Y" depth="0" /> 
+				</outputPorts> 
+ 
+				<iterationStrategy> 
+					<cross> 
+						<port name="X" depth="0" /> 
+					</cross> 
+				</iterationStrategy> 
+			</processor> 
+		</processors> 
+ 
+		<datalinks> 
+			<datalink> 
+				<sink type="processor"> 
+					<processor>P6</processor> 
+					<port>X</port> 
+				</sink> 
+				<source type="dataflow"> 
+					<port>I</port> 
+				</source> 
+			</datalink> 
+			<datalink> 
+				<sink type="dataflow"> 
+					<port>O</port> 
+				</sink> 
+				<source type="processor"> 
+					<processor>P6</processor> 
+					<port>Y</port> 
+				</source> 
+			</datalink> 
+		</datalinks> 
+ 
+		<activities> 
+			<activity name="P6bs" type="beanshell-activity"> 
+				<beanshell version="required interpreter version"> 
+					<inputs> 
+						<!--  not sure how mimeTypes are used? --> 
+						<input name="X" type="string" depth="0"
+							allowsLiteralValues="true" mimeTypes="text/plain" /> 
+					</inputs> 
+					<outputs> 
+						<output name="Y" type="string" depth="0"
+							mimeTypes="text/plain" /> 
+					</outputs> 
+					<script>Y = X</script> 
+				</beanshell> 
+			</activity> 
+		</activities> 
+ 
+		<bindings> 
+			<binding processor="P6" activity="P6bs"> 
+				<inputMap> 
+					<map from="X" to="X" /> 
+				</inputMap> 
+				<outputMap> 
+					<map from="Y" to="Y" /> 
+				</outputMap> 
+			</binding> 
+		</bindings> 
+	</workflow> 
+ 
+</t2:scufl> 
