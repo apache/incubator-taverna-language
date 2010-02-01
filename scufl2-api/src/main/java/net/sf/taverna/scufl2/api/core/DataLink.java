@@ -4,8 +4,16 @@ import net.sf.taverna.scufl2.api.common.WorkflowBean;
 import net.sf.taverna.scufl2.api.port.ReceiverPort;
 import net.sf.taverna.scufl2.api.port.SenderPort;
 
+/**
+ * @author alanrw
+ *
+ */
 public class DataLink implements WorkflowBean {
 
+	/**
+	 * @param senderPort
+	 * @param receiverPort
+	 */
 	public DataLink(SenderPort senderPort, ReceiverPort receiverPort) {
 		this.senderPort = senderPort;
 		this.receiverPort = receiverPort;
@@ -47,18 +55,30 @@ public class DataLink implements WorkflowBean {
 	private ReceiverPort receiverPort;
 	private SenderPort senderPort;
 
+	/**
+	 * @param senderPort
+	 */
 	public void setSenderPort(SenderPort senderPort) {
 		this.senderPort = senderPort;
 	}
 
+	/**
+	 * @param receiverPort
+	 */
 	public void setReceiverPort(ReceiverPort receiverPort) {
 		this.receiverPort = receiverPort;
 	}
 
+	/**
+	 * @return
+	 */
 	public ReceiverPort getReceiverPort() {
 		return receiverPort;
 	}
 
+	/**
+	 * @return
+	 */
 	public SenderPort getSenderPort() {
 		return senderPort;
 	}

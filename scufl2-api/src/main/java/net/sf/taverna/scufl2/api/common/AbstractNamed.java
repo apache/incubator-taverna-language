@@ -1,5 +1,9 @@
 package net.sf.taverna.scufl2.api.common;
 
+/**
+ * @author alanrw
+ *
+ */
 public class AbstractNamed implements Named {
 	
 	public AbstractNamed(String name) {
@@ -33,10 +37,16 @@ public class AbstractNamed implements Named {
 
 	private String name;
 
+	/* (non-Javadoc)
+	 * @see net.sf.taverna.scufl2.api.common.Named#getName()
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/* (non-Javadoc)
+	 * @see net.sf.taverna.scufl2.api.common.Named#setName(java.lang.String)
+	 */
 	public void setName(String name) {
 		if (name == null) {
 			throw new NullPointerException("Name can't be null");
