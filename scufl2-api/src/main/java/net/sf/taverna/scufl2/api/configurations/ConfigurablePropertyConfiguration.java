@@ -4,7 +4,7 @@
 package net.sf.taverna.scufl2.api.configurations;
 
 import net.sf.taverna.scufl2.api.common.Child;
-import net.sf.taverna.scufl2.rdf.common.ConfigurableProperty;
+import net.sf.taverna.scufl2.api.common.ConfigurableProperty;
 
 /**
  * @author alanrw
