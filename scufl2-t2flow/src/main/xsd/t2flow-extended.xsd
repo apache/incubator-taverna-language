@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://taverna.sf.net/2008/xml/t2flow"
+	xmlns:tav="http://taverna.sf.net/2008/xml/t2flow" elementFormDefault="qualified"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:layers="http://taverna.sf.net/2008/xml/t2layers"
+	xmlns:activities="http://taverna.sf.net/2008/xml/t2activities">
+	<xsd:import namespace="http://taverna.sf.net/2008/xml/t2layers"
+		schemaLocation="t2layers.xsd"></xsd:import>
+	<xsd:import namespace="http://taverna.sf.net/2008/xml/t2activities"
+		schemaLocation="t2activities.xsd"></xsd:import>
+
+	<xsd:annotation>
+		<xsd:documentation>
+			Restricting schema of t2flow.xsd that describes the
+			configuration beans for the
+			dispatch stack layers and activities,
+			given the shipped Taverna 2.0/2.1
+			with no additional plugins installed.		</xsd:documentation>
+	</xsd:annotation>
+	<xsd:redefine schemaLocation="t2flow.xsd">
+		<xsd:complexType name="ConfigBean">
+			<xsd:complexContent>
+				<xsd:restriction base="tav:ConfigBean">
+					<xsd:choice>
+						<xsd:element form="unqualified" name="null">
+							<xsd:annotation>
+								<xsd:documentation>
+									null - meaning no configuration
+								</xsd:documentation>
+							</xsd:annotation>
+						</xsd:element>
+
+
+						<xsd:element form="unqualified"
+							name="net.sf.taverna.t2.workflowmodel.processor.dispatch.layers.RetryConfig"
+							type="layers:RetryConfig">
+						</xsd:element>
+						<xsd:element form="unqualified"
+							name="net.sf.taverna.t2.workflowmodel.processor.dispatch.layers.ParallelizeConfig"
+							type="layers:ParallelizeConfig">
+						</xsd:element>
+						<xsd:element form="unqualified"
+							name="net.sf.taverna.t2.workflowmodel.processor.dispatch.layers.LoopConfiguration"
+							type="layers:LoopConfig">
+						</xsd:element>
+
+
+
+						<!--  activity beans -->
+						<xsd:element form="unqualified"
+							name="net.sf.taverna.t2.activities.beanshell.BeanshellActivityConfigurationBean"
+							type="activities:BeanshellConfig">
+						</xsd:element>
+						<xsd:element form="unqualified"
+							name="net.sf.taverna.t2.activities.localworker.LocalworkerActivityConfigurationBean"
+							type="activities:LocalworkerConfig">
+						</xsd:element>
+						<xsd:element form="unqualified"
+							name="net.sf.taverna.t2.activities.stringconstant.StringConstantConfigurationBean"
+							type="activities:StringConstantConfig">
+						</xsd:element>
+						<xsd:element form="unqualified"
+							name="net.sf.taverna.t2.activities.rshell.RshellActivityConfigurationBean"
+							type="activities:RShellConfig">
+						</xsd:element>
+						<xsd:element form="unqualified"
+							name="net.sf.taverna.t2.activities.wsdl.WSDLActivityConfigurationBean"
+							type="activities:WSDLConfig">
+						</xsd:element>
+						<xsd:element form="unqualified"
+							name="net.sf.taverna.t2.activities.wsdl.xmlsplitter.XMLSplitterConfigurationBean"
+							type="activities:XMLSplitterConfig">
+						</xsd:element>
+						<xsd:element form="unqualified" name="MartQuery"
+							type="activities:BioMartConfig">
+						</xsd:element>
+						<xsd:element form="unqualified" name="net.sf.taverna.t2.activities.biomoby.BiomobyActivityConfigurationBean"
+							type="activities:BioMobyConfig"/>
+						<xsd:element form="unqualified" name="net.sf.taverna.t2.activities.biomoby.BiomobyObjectActivityConfigurationBean"
+							type="activities:BioMobyObjectConfig" />
+						<xsd:element form="unqualified" name="net.sf.taverna.t2.activities.biomoby.MobyParseDatatypeActivityConfigurationBean"
+							type="activities:BioMobyParserConfig"/>
+
+						
+						<xsd:element name="dataflow" type="activities:DataflowConfig">
+						</xsd:element>
+					</xsd:choice>
+					<xsd:attribute name="encoding" use="required" type="tav:Encoding" />
+				</xsd:restriction>
+			</xsd:complexContent>
+		</xsd:complexType>
+	</xsd:redefine>
+
+
+	<xsd:simpleType name="Encoding">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="xstream"></xsd:enumeration>
+			<xsd:enumeration value="dataflow"></xsd:enumeration>
+			<xsd:enumeration value="jdomxml"></xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>

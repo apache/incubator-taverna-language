@@ -47,8 +47,20 @@
 		</repository>
 	</repositories>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>log4j</groupId>
+				<artifactId>log4j</artifactId>
+				<version>1.2.14</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<modules>
 		<module>scufl2-api</module>
 		<module>scufl2-rdf</module>
+		<module>scufl2-t2flow</module>
 	</modules>
 </project>

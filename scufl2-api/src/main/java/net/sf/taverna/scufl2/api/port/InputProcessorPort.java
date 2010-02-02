@@ -62,6 +62,12 @@ public class InputProcessorPort extends AbstractGranularDepthPort implements Ite
 	public Processor getParent() {
 		return parent;
 	}
+	
+	@Override
+	public String toString() {
+		return parent.getName() + ":" + getName();
+	}
+
 
 	
 }

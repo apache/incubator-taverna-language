@@ -62,6 +62,11 @@ public class OutputWorkflowPort extends AbstractNamed implements ReceiverPort,
 	public Workflow getParent() {
 		return parent;
 	}
+	
+	@Override
+	public String toString() {
+		return getParent().getName() + "." + getName();
+	}
 
 	
 	

@@ -1,0 +1,16 @@
+<xb:config xmlns:pol="http://openuri.org/easypoLocal"
+	xmlns:xb="http://www.bea.com/2002/09/xbean/config">
+
+	<xb:namespace uri="http://taverna.sf.net/2008/xml/t2flow">
+		<xb:package>net.sf.taverna.scufl2.xml.t2flow</xb:package>
+	</xb:namespace>
+
+	<xb:namespace uri="http://taverna.sf.net/2008/xml/t2layers">
+		<xb:package>net.sf.taverna.scufl2.xml.t2flow.layers</xb:package>
+	</xb:namespace>
+
+	<xb:namespace uri="http://taverna.sf.net/2008/xml/t2activities">
+		<xb:package>net.sf.taverna.scufl2.xml.t2flow.activities</xb:package>
+	</xb:namespace>
+
+</xb:config>

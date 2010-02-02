@@ -85,7 +85,7 @@ public class DataLink implements WorkflowBean {
 	
 	@Override
 	public String toString() {
-		return getSenderPort().getName() + "=>" + getReceiverPort().getName();
+		return getSenderPort() + "=>" + getReceiverPort();
 	}
 
 }

@@ -180,7 +180,17 @@ public class Processor extends AbstractNamed implements Configurable, Child<Work
 		return port;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return super.toString() + "[" +
+		"getInputPorts()=" + getInputPorts() + ", " +
+		"getOutputPorts()=" + getOutputPorts() + ", " +
+		// TODO: Other properties
+		
+		
+		
+		"]";
+	}
 	
 	
 }

@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema elementFormDefault="unqualified"
+	targetNamespace="http://taverna.sf.net/2008/xml/t2activities"
+	xmlns:activities="http://taverna.sf.net/2008/xml/t2activities"
+	xmlns:tav="http://taverna.sf.net/2008/xml/t2flow" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+	<xsd:import namespace="http://taverna.sf.net/2008/xml/t2flow"
+		schemaLocation="t2flow.xsd" />
+
+	<xsd:complexType name="DataflowConfig">
+		<xsd:annotation>
+			<xsd:documentation>Configuration for the nested dataflow activity.
+				The actual nested dataflow is referenced by uuid to identify the
+				dataflow element of the workflow container.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:attribute name="ref" type="tav:uuid"></xsd:attribute>
+	</xsd:complexType>
+
+	<xsd:complexType name="BeanshellConfig">
+		<xsd:annotation>
+			<xsd:documentation>Configuration for the Beanshell activity.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="script" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>A Beanshell script</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="dependencies" type="activities:Dependencies" />
+			<xsd:element name="classLoaderSharing" type="activities:ClassLoaderSharing" />
+			<xsd:element name="localDependencies" type="xsd:string" />
+			<xsd:element name="artifactDependencies" type="activities:Dependencies" />
+			<xsd:element name="inputs" type="activities:ActivityInputPorts" />
+			<xsd:element name="outputs" type="activities:ActivityOutputPorts" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="LocalworkerConfig">
+		<xsd:complexContent>
+			<xsd:extension base="activities:BeanshellConfig">
+				<xsd:sequence>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="StringConstantConfig">
+		<xsd:sequence>
+			<xsd:sequence>
+				<xsd:element name="value" type="xsd:string"></xsd:element>
+			</xsd:sequence>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="RShellConfig">
+		<xsd:sequence>
+			<xsd:element name="rVersion" type="xsd:string" />
+			<xsd:element name="script" type="xsd:string" />
+			<xsd:element name="connectionSettings" />
+			<xsd:element name="inputSymanticTypes" />
+			<xsd:element name="outputSymanticTypes" />
+			<xsd:element name="inputs" />
+			<xsd:element name="outputs" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="WSDLConfig">
+		<xsd:annotation>
+			<xsd:documentation>Configuration for the WSDL activity.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="wsdl" type="xsd:anyURI">
+				<xsd:annotation>
+					<xsd:documentation>Location of WSDL specification as an URL.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="operation" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>Name of operation within the WSDL specification.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="XMLSplitterConfig">
+		<xsd:sequence>
+			<xsd:element name="wrappedTypeXML" />
+			<xsd:element name="inputs" />
+			<xsd:element name="outputs" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="BioMartConfig">
+		<xsd:sequence>
+			<xsd:element name="MartService">
+				<xsd:complexType>
+					<xsd:attribute name="location" type="xsd:anyURI"></xsd:attribute>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="MartDataset" />
+			<xsd:element name="Query" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="BioMobyConfig">
+		<xsd:complexContent>
+			<xsd:extension base="activities:BioMobyObjectConfig">
+			<xsd:sequence>
+				<xsd:element name="category" type="activities:BioMobyCategory">
+			</xsd:element>
+			<xsd:element name="serviceType" type="activities:BioMobyServiceType">
+			</xsd:element>
+			<xsd:element name="secondaries" type="activities:BioMobySecondaries">
+			</xsd:element>
+			</xsd:sequence>
+			
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="BioMobyObjectConfig">
+		<xsd:sequence>
+			<xsd:element name="mobyEndpoint" type="xsd:anyURI" />
+			<xsd:element name="serviceName" />
+			<xsd:element name="authorityName" />
+		
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+	<xsd:complexType name="BioMobyParserConfig">
+		<xsd:sequence>
+			<xsd:element name="datatypeName" />
+			<xsd:element name="registryEndpoint" type="xsd:anyURI" />
+			<xsd:element name="articleNameUsedByService" />
+
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+	<xsd:complexType name="Dependencies">
+		<xsd:sequence>
+			<xsd:element name="net.sf.taverna.raven.repository.BasicArtifact"
+				type="activities:BasicArtifact" maxOccurs="unbounded" minOccurs="0">
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:simpleType name="ClassLoaderSharing">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="workflow"></xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:complexType name="BasicArtifact">
+		<xsd:sequence>
+			<xsd:element name="groupId" type="xsd:string"></xsd:element>
+			<xsd:element name="artifactId" type="xsd:string"></xsd:element>
+			<xsd:element name="version" type="xsd:string"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="ActivityInputPorts">
+		<xsd:sequence>
+			<xsd:element
+				name="net.sf.taverna.t2.workflowmodel.processor.activity.config.ActivityInputPortDefinitionBean"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="ActivityOutputPorts">
+		<xsd:sequence>
+			<xsd:element
+				name="net.sf.taverna.t2.workflowmodel.processor.activity.config.ActivityOutputPortDefinitionBean"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+
+	</xsd:complexType>
+	<xsd:complexType name="BioMobyCategory">
+		<xsd:sequence>
+			<xsd:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="BioMobyServiceType">
+		<xsd:sequence>
+			<xsd:any minOccurs="0" maxOccurs="unbounded"
+				namespace="##any" processContents="lax">
+			</xsd:any>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="BioMobySecondaries">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" maxOccurs="unbounded"
+				name="entry" type="activities:BioMobyEntry">
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="BioMobyEntry">
+		<xsd:sequence>
+			<xsd:element minOccurs="2" maxOccurs="2" name="string"
+				type="xsd:anyType">
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

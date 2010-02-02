@@ -58,4 +58,9 @@ public class OutputProcessorPort extends AbstractGranularDepthPort implements
 	public Processor getParent() {
 		return parent;
 	}
+	
+	@Override
+	public String toString() {
+		return getParent().getName() + "." + getName();
+	}
 }

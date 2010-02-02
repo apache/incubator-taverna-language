@@ -63,6 +63,12 @@ public class InputWorkflowPort extends AbstractDepthPort implements SenderPort,
 	public Workflow getParent() {
 		return parent;
 	}
+	
+	@Override
+	public String toString() {
+		return getParent().getName() + ":" + getName();
+	}
+
 
 	
 }
