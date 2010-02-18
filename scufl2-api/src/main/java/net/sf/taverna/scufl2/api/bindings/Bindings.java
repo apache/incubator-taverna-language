@@ -3,6 +3,9 @@ package net.sf.taverna.scufl2.api.bindings;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+
 import net.sf.taverna.scufl2.api.common.WorkflowBean;
 
 /**
@@ -27,6 +30,8 @@ public class Bindings implements WorkflowBean {
 	 * 
 	 * @return
 	 */
+	@XmlElementWrapper( name="processorBindings",nillable=false,required=true)
+	@XmlElement( name="processorBinding",nillable=false)
 	public Set<ProcessorBinding> getProcessorBindings() {
 		return processorBindings;
 	}

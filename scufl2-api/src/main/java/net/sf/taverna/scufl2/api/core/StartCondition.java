@@ -3,6 +3,8 @@
  */
 package net.sf.taverna.scufl2.api.core;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 import net.sf.taverna.scufl2.api.common.Child;
 
 /**
@@ -13,13 +15,14 @@ import net.sf.taverna.scufl2.api.common.Child;
  * @author alanrw
  *
  */
-public class StartCondition implements Child<Processor> {
+public abstract class StartCondition implements Child<Processor> {
 	
 	private Processor parent;
 
 	/* (non-Javadoc)
 	 * @see net.sf.taverna.scufl2.api.common.Child#getParent()
 	 */
+	@XmlTransient
 	public Processor getParent() {
 		return parent;
 	}

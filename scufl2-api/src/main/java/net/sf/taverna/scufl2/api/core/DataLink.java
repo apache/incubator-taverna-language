@@ -1,14 +1,39 @@
 package net.sf.taverna.scufl2.api.core;
 
+import net.sf.taverna.scufl2.api.common.Child;
+import net.sf.taverna.scufl2.api.common.Configurable;
 import net.sf.taverna.scufl2.api.common.WorkflowBean;
 import net.sf.taverna.scufl2.api.port.ReceiverPort;
 import net.sf.taverna.scufl2.api.port.SenderPort;
+import net.sf.taverna.scufl2.api.reference.Reference;
+
+import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlTransient;
+
 
 /**
  * @author alanrw
  *
  */
-public class DataLink implements WorkflowBean {
+public class DataLink implements WorkflowBean, Child<Workflow> {
+
+	private ReceiverPort receiverPort;
+	
+	private SenderPort senderPort;
+	
+	private Workflow parent;
+	
+	@XmlTransient
+	public Workflow getParent() {
+		return parent;
+	}
+
+	public void setParent(Workflow parent) {
+		this.parent = parent;
+	}
 
 	/**
 	 * @param senderPort
@@ -17,6 +42,10 @@ public class DataLink implements WorkflowBean {
 	public DataLink(SenderPort senderPort, ReceiverPort receiverPort) {
 		this.senderPort = senderPort;
 		this.receiverPort = receiverPort;
+	}
+	
+	public DataLink() {
+		super();
 	}
 
 	@Override
@@ -52,8 +81,6 @@ public class DataLink implements WorkflowBean {
 		return true;
 	}
 
-	private ReceiverPort receiverPort;
-	private SenderPort senderPort;
 
 	/**
 	 * @param senderPort
@@ -69,9 +96,26 @@ public class DataLink implements WorkflowBean {
 		this.receiverPort = receiverPort;
 	}
 
+	public Reference<ReceiverPort> getReceiverPortReference() {
+		return Reference.createReference(receiverPort);
+	}
+
+	public void setReceiverPortReference(Reference<ReceiverPort> receiverPortReference) {
+		receiverPort = receiverPortReference.resolve();
+	}
+	
+	public Reference<SenderPort> getSenderPortReference() {
+		return Reference.createReference(senderPort);
+	}
+
+	public void setSenderPortReference(Reference<SenderPort> senderPortReference) {
+		senderPort = senderPortReference.resolve();
+	}
+	
 	/**
 	 * @return
 	 */
+	@XmlTransient
 	public ReceiverPort getReceiverPort() {
 		return receiverPort;
 	}
@@ -79,6 +123,7 @@ public class DataLink implements WorkflowBean {
 	/**
 	 * @return
 	 */
+	@XmlTransient
 	public SenderPort getSenderPort() {
 		return senderPort;
 	}

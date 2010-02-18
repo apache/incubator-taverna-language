@@ -3,8 +3,15 @@
  */
 package net.sf.taverna.scufl2.api.configurations;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlTransient;
+
 import net.sf.taverna.scufl2.api.common.Child;
 import net.sf.taverna.scufl2.api.common.ConfigurableProperty;
+import net.sf.taverna.scufl2.api.port.InputProcessorPort;
+import net.sf.taverna.scufl2.api.reference.Reference;
 
 /**
  * @author alanrw
@@ -16,6 +23,16 @@ public class ConfigurablePropertyConfiguration implements Child<Configuration> {
 	private Configuration parent;
 	
 	private Object value;
+	
+	public Reference<ConfigurableProperty> getConfiguredPropertyReference() {
+		return Reference.createReference(configuredProperty);
+	}
+
+	public void setConfiguredPropertyReference(Reference<ConfigurableProperty> configuredPropertyReference) {
+		configuredProperty = configuredPropertyReference.resolve();
+	}
+	
+
 
 	/**
 	 * @return
@@ -34,6 +51,7 @@ public class ConfigurablePropertyConfiguration implements Child<Configuration> {
 	/* (non-Javadoc)
 	 * @see net.sf.taverna.scufl2.api.common.Child#getParent()
 	 */
+	@XmlTransient
 	public Configuration getParent() {
 		return parent;
 	}
@@ -48,6 +66,7 @@ public class ConfigurablePropertyConfiguration implements Child<Configuration> {
 	/**
 	 * @return
 	 */
+	@XmlTransient
 	public ConfigurableProperty getConfiguredProperty() {
 		return configuredProperty;
 	}

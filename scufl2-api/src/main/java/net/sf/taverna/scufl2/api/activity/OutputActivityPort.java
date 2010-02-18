@@ -3,6 +3,10 @@
  */
 package net.sf.taverna.scufl2.api.activity;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlTransient;
+
 import net.sf.taverna.scufl2.api.common.Child;
 
 /**
@@ -21,6 +25,7 @@ public class OutputActivityPort implements Child<Activity> {
 	/* (non-Javadoc)
 	 * @see net.sf.taverna.scufl2.api.common.Child#getParent()
 	 */
+	@XmlTransient
 	public Activity getParent() {
 		return parent;
 	}

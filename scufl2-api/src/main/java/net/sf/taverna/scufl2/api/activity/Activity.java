@@ -3,6 +3,10 @@ package net.sf.taverna.scufl2.api.activity;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlType;
+
 import net.sf.taverna.scufl2.api.common.AbstractNamed;
 import net.sf.taverna.scufl2.api.common.Configurable;
 import net.sf.taverna.scufl2.api.common.ConfigurableProperty;
@@ -17,9 +21,33 @@ import net.sf.taverna.scufl2.api.common.ConfigurableProperty;
  * @author alanrw
  * 
  */
+@XmlType (propOrder = {"type", "configurableProperties", "inputPorts", "outputPorts"})
 public class Activity extends AbstractNamed implements Configurable {
 
 	private Set<ConfigurableProperty> configurableProperties = new HashSet<ConfigurableProperty>();
+	
+	private Set<InputActivityPort> inputPorts = new HashSet<InputActivityPort>();
+	private Set<OutputActivityPort> outputPorts = new HashSet<OutputActivityPort>();
+	
+	@XmlElementWrapper( name="inputActivityPorts",nillable=false,required=true)
+	@XmlElement( name="inputActivityPort",nillable=false)
+	public Set<InputActivityPort> getInputPorts() {
+		return inputPorts;
+	}
+
+	public void setInputPorts(Set<InputActivityPort> inputPorts) {
+		this.inputPorts = inputPorts;
+	}
+
+	@XmlElementWrapper( name="outputActivityPorts",nillable=false,required=true)
+	@XmlElement( name="outputActivityPort",nillable=false)
+	public Set<OutputActivityPort> getOutputPorts() {
+		return outputPorts;
+	}
+
+	public void setOutputPorts(Set<OutputActivityPort> outputPorts) {
+		this.outputPorts = outputPorts;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -30,6 +58,8 @@ public class Activity extends AbstractNamed implements Configurable {
 	 * It should be noted that some of the set of ConfigurableProperty may be
 	 * inferred from the ActivityType. This is yet to be decided.
 	 */
+	@XmlElementWrapper( name="configurableProperties",nillable=false,required=true)
+	@XmlElement( name="configurableProperty",nillable=false)
 	public Set<ConfigurableProperty> getConfigurableProperties() {
 		return configurableProperties;
 	}
@@ -52,6 +82,10 @@ public class Activity extends AbstractNamed implements Configurable {
 	public Activity(String name) {
 		super(name);
 	}
+	
+	public Activity() {
+		super();
+	}
 
 	private ActivityType type;
 
@@ -60,6 +94,7 @@ public class Activity extends AbstractNamed implements Configurable {
 	 * 
 	 * @return
 	 */
+	@XmlElement(required=true,nillable=false)
 	public ActivityType getType() {
 		return type;
 	}

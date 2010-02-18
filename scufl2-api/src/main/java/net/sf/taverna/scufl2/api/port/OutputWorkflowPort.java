@@ -3,6 +3,12 @@ package net.sf.taverna.scufl2.api.port;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlTransient;
+
 import net.sf.taverna.scufl2.api.common.AbstractNamed;
 import net.sf.taverna.scufl2.api.common.Child;
 import net.sf.taverna.scufl2.api.common.ConfigurableProperty;
@@ -16,10 +22,11 @@ public class OutputWorkflowPort extends AbstractNamed implements ReceiverPort,
 		WorkflowPort, Child<Workflow> {
 	private Set<ConfigurableProperty> configurableProperties = new HashSet<ConfigurableProperty>();
 
-
 	/* (non-Javadoc)
 	 * @see net.sf.taverna.scufl2.api.common.Configurable#getConfigurableProperties()
 	 */
+	@XmlElementWrapper( name="configurableProperties",nillable=false,required=true)
+	@XmlElement( name="configurableProperty",nillable=false)
 	public Set<ConfigurableProperty> getConfigurableProperties() {
 		return configurableProperties;
 	}
@@ -42,6 +49,10 @@ public class OutputWorkflowPort extends AbstractNamed implements ReceiverPort,
 		super(name);
 		setParent(parent);
 	}
+	
+	public OutputWorkflowPort() {
+		super();
+	}
 
 	/* (non-Javadoc)
 	 * @see net.sf.taverna.scufl2.api.common.Child#setParent(net.sf.taverna.scufl2.api.common.WorkflowBean)
@@ -59,6 +70,7 @@ public class OutputWorkflowPort extends AbstractNamed implements ReceiverPort,
 	/* (non-Javadoc)
 	 * @see net.sf.taverna.scufl2.api.common.Child#getParent()
 	 */
+	@XmlTransient
 	public Workflow getParent() {
 		return parent;
 	}

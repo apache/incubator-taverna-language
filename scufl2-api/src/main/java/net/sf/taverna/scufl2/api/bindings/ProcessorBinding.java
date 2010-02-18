@@ -3,9 +3,15 @@ package net.sf.taverna.scufl2.api.bindings;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+
 import net.sf.taverna.scufl2.api.activity.Activity;
 import net.sf.taverna.scufl2.api.common.WorkflowBean;
 import net.sf.taverna.scufl2.api.core.Processor;
+import net.sf.taverna.scufl2.api.reference.Reference;
 
 /**
  * A ProcessorBinding specifies that when enacting a Workflow, if this
@@ -23,10 +29,30 @@ import net.sf.taverna.scufl2.api.core.Processor;
  * @author alanrw
  * 
  */
+@XmlType (propOrder = {"boundProcessorReference", "boundActivityReference", "inputPortBindings", "outputPortBindings"})
 public class ProcessorBinding implements WorkflowBean {
 
 	private Processor boundProcessor;
 	private Activity boundActivity;
+	
+	@XmlElement(required=true, nillable=false)
+	public Reference<Processor> getBoundProcessorReference() {
+		return Reference.createReference(boundProcessor);
+	}
+
+	public void setBoundProcessorReference(
+			Reference<Processor> boundProcessorReference) {
+		this.boundProcessor = boundProcessorReference.resolve();
+	}
+
+	@XmlElement(required=true, nillable=false)
+	public Reference<Activity> getBoundActivityReference() {
+		return Reference.createReference(boundActivity);
+	}
+
+	public void setBoundActivityReference(Reference<Activity> boundActivityReference) {
+		this.boundActivity = boundActivityReference.resolve();
+	}
 
 	private Set<ProcessorInputPortBinding> inputPortBindings = new HashSet<ProcessorInputPortBinding>();
 	private Set<ProcessorOutputPortBinding> outputPortBindings = new HashSet<ProcessorOutputPortBinding>();
@@ -36,6 +62,8 @@ public class ProcessorBinding implements WorkflowBean {
 	 * 
 	 * @return
 	 */
+	@XmlElementWrapper( name="inputPortBindings",nillable=false,required=true)
+	@XmlElement( name="inputPortBinding",nillable=false)
 	public Set<ProcessorInputPortBinding> getInputPortBindings() {
 		return inputPortBindings;
 	}
@@ -53,6 +81,8 @@ public class ProcessorBinding implements WorkflowBean {
 	 * 
 	 * @return
 	 */
+	@XmlElementWrapper( name="outputPortBindings",nillable=false,required=true)
+	@XmlElement( name="outputPortBinding",nillable=false)
 	public Set<ProcessorOutputPortBinding> getOutputPortBindings() {
 		return outputPortBindings;
 	}
@@ -71,6 +101,7 @@ public class ProcessorBinding implements WorkflowBean {
 	 * 
 	 * @return
 	 */
+	@XmlTransient
 	public Activity getBoundActivity() {
 		return boundActivity;
 	}
@@ -88,6 +119,7 @@ public class ProcessorBinding implements WorkflowBean {
 	 * 
 	 * @return
 	 */
+	@XmlTransient
 	public Processor getBoundProcessor() {
 		return boundProcessor;
 	}

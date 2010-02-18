@@ -14,4 +14,8 @@ public class ProcessorType extends AbstractNamed {
 	public ProcessorType(String name) {
 		super(name);
 	}
+	
+	public ProcessorType() {
+		super();
+	}
 }

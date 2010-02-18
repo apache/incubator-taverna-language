@@ -5,6 +5,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlTransient;
+
 import net.sf.taverna.scufl2.api.common.AbstractNamed;
 import net.sf.taverna.scufl2.api.common.Child;
 import net.sf.taverna.scufl2.api.common.Configurable;
@@ -26,10 +32,11 @@ public class Processor extends AbstractNamed implements Configurable, Child<Work
 	private Set<ConfigurableProperty> configurableProperties = new HashSet<ConfigurableProperty>();
 	private Set<StartCondition> startConditions = new HashSet<StartCondition>();
 	private ToBeDecided dispatchStack;
-
+	
 	/**
 	 * @return
 	 */
+	@XmlElement(required=true,nillable=false)	
 	public ToBeDecided getDispatchStack() {
 		return dispatchStack;
 	}
@@ -44,6 +51,8 @@ public class Processor extends AbstractNamed implements Configurable, Child<Work
 	/**
 	 * @return
 	 */
+	@XmlElementWrapper( name="startConditions",nillable=false,required=true)
+	@XmlElement( name="startCondition",nillable=false)
 	public Set<StartCondition> getStartConditions() {
 		return startConditions;
 	}
@@ -58,6 +67,8 @@ public class Processor extends AbstractNamed implements Configurable, Child<Work
 	/* (non-Javadoc)
 	 * @see net.sf.taverna.scufl2.api.common.Configurable#getConfigurableProperties()
 	 */
+	@XmlElementWrapper( name="configurableProperties",nillable=false,required=true)
+	@XmlElement( name="configurableProperty",nillable=false)
 	public Set<ConfigurableProperty> getConfigurableProperties() {
 		return configurableProperties;
 	}
@@ -78,6 +89,10 @@ public class Processor extends AbstractNamed implements Configurable, Child<Work
 		super(name);
 		setParent(parent);
 	}
+	
+	public Processor() {
+		super();
+	}
 
 	/**
 	 * @param outputPorts
@@ -90,6 +105,8 @@ public class Processor extends AbstractNamed implements Configurable, Child<Work
 	/**
 	 * @return
 	 */
+	@XmlElementWrapper( name="outputProcessorPorts",nillable=false,required=true)
+	@XmlElement( name="outputProcessorPort",nillable=false)
 	public Set<OutputProcessorPort> getOutputPorts() {
 		return outputPorts;
 	}
@@ -104,6 +121,8 @@ public class Processor extends AbstractNamed implements Configurable, Child<Work
 	/**
 	 * @return
 	 */
+	@XmlElementWrapper( name="inputProcessorPorts",nillable=false,required=true)
+	@XmlElement( name="inputProcessorPort",nillable=false)
 	public Set<InputProcessorPort> getInputPorts() {
 		return inputPorts;
 	}
@@ -119,6 +138,7 @@ public class Processor extends AbstractNamed implements Configurable, Child<Work
 	/**
 	 * @return
 	 */
+	@XmlElement(required=true,nillable=false)	
 	public List<IterationStrategy> getIterationStrategyStack() {
 		return iterationStrategyStack;
 	}
@@ -133,6 +153,7 @@ public class Processor extends AbstractNamed implements Configurable, Child<Work
 	/**
 	 * @return
 	 */
+	@XmlElement(required=true,nillable=false)	
 	public ProcessorType getProcessorType() {
 		return processorType;
 	}
@@ -155,6 +176,7 @@ public class Processor extends AbstractNamed implements Configurable, Child<Work
 	/* (non-Javadoc)
 	 * @see net.sf.taverna.scufl2.api.common.Child#getParent()
 	 */
+	@XmlTransient
 	public Workflow getParent() {
 		return parent;
 	}

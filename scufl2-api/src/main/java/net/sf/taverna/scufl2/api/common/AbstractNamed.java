@@ -1,5 +1,7 @@
 package net.sf.taverna.scufl2.api.common;
 
+import javax.xml.bind.annotation.XmlElement;
+
 /**
  * @author alanrw
  *
@@ -8,6 +10,10 @@ public class AbstractNamed implements Named {
 	
 	public AbstractNamed(String name) {
 		setName(name);
+	}
+	
+	public AbstractNamed() {
+		setName("missing");
 	}
 	
 	@Override
@@ -40,6 +46,7 @@ public class AbstractNamed implements Named {
 	/* (non-Javadoc)
 	 * @see net.sf.taverna.scufl2.api.common.Named#getName()
 	 */
+	@XmlElement(required=true,nillable=false)
 	public String getName() {
 		return name;
 	}

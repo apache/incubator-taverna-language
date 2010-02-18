@@ -17,5 +17,4 @@ public interface Configurable extends WorkflowBean {
 	 * @param configurableProperties
 	 */
 	public void setConfigurableProperties(Set<ConfigurableProperty> configurableProperties);
-	
 }

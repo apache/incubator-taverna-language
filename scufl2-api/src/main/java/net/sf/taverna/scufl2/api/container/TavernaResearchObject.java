@@ -5,16 +5,26 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+
 import net.sf.taverna.scufl2.api.activity.Activity;
 import net.sf.taverna.scufl2.api.bindings.Bindings;
+import net.sf.taverna.scufl2.api.common.Configurable;
 import net.sf.taverna.scufl2.api.common.WorkflowBean;
 import net.sf.taverna.scufl2.api.configurations.Configuration;
 import net.sf.taverna.scufl2.api.core.Workflow;
+import net.sf.taverna.scufl2.api.reference.Reference;
 
 /**
  * @author alanrw
  *
  */
+@XmlType (propOrder = {"workflows", "mainWorkflowReference", "activities", "configurations", "bindings"})
 public class TavernaResearchObject implements ResearchObject, WorkflowBean {
 
 	private Set<Bindings> bindings = new HashSet<Bindings>();
@@ -41,6 +51,8 @@ public class TavernaResearchObject implements ResearchObject, WorkflowBean {
 	/**
 	 * @return
 	 */
+	@XmlElementWrapper( name="configurations",nillable=false,required=true)
+	@XmlElement( name="configuration",nillable=false)
 	public Set<Configuration> getConfigurations() {
 		return configurations;
 	}
@@ -55,13 +67,23 @@ public class TavernaResearchObject implements ResearchObject, WorkflowBean {
 	/**
 	 * @return
 	 */
+	@XmlElementWrapper( name="bindings",nillable=false,required=true)
+	@XmlElement( name="binding",nillable=false)
 	public Set<Bindings> getBindings() {
 		return bindings;
 	}
 
+	public Reference<Workflow> getMainWorkflowReference() {
+		return Reference.createReference(mainWorkflow);
+	}
+
+	public void setMainWorkflowReference(Reference<Workflow> mainWorkflowReference) {
+		mainWorkflow = mainWorkflowReference.resolve();
+	}
 	/**
 	 * @return
 	 */
+	@XmlTransient
 	public Workflow getMainWorkflow() {
 		if (mainWorkflow == null) {
 			mainWorkflow = new Workflow();
@@ -86,6 +108,8 @@ public class TavernaResearchObject implements ResearchObject, WorkflowBean {
 	/**
 	 * @return
 	 */
+	@XmlElementWrapper( name="activities",nillable=false,required=true)
+	@XmlElement( name="activity",nillable=false)
 	public Set<Activity> getActivities() {
 		return activities;
 	}

@@ -19,5 +19,9 @@ public class ActivityType extends AbstractNamed {
 	public ActivityType(String name) {
 		super(name);
 	}
+	
+	public ActivityType() {
+		super();
+	}
 
 }

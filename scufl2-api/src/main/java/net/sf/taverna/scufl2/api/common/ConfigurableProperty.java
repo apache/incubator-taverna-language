@@ -1,16 +1,24 @@
 package net.sf.taverna.scufl2.api.common;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlID;
+
 /**
  * @author alanrw
  *
  */
 public class ConfigurableProperty extends AbstractNamed {
-
+	
 	/**
 	 * @param name
 	 */
 	public ConfigurableProperty(String name) {
 		super(name);
+	}
+	
+	public ConfigurableProperty() {
+		super();
 	}
 
 	private String complianceLevel;
@@ -24,6 +32,7 @@ public class ConfigurableProperty extends AbstractNamed {
 	/**
 	 * @return
 	 */
+	@XmlElement(required=true,nillable=false)
 	public String getComplianceLevel() {
 		return complianceLevel;
 	}
@@ -43,6 +52,7 @@ public class ConfigurableProperty extends AbstractNamed {
 	/**
 	 * @return
 	 */
+	@XmlElement(required=true,nillable=false)
 	public Object getMandatoryStatus() {
 		return mandatoryStatus;
 	}

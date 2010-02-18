@@ -6,6 +6,11 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlID;
+
 import net.sf.taverna.scufl2.api.common.AbstractNamed;
 import net.sf.taverna.scufl2.api.common.Configurable;
 import net.sf.taverna.scufl2.api.common.ConfigurableProperty;
@@ -17,7 +22,7 @@ import net.sf.taverna.scufl2.api.port.OutputWorkflowPort;
  *
  */
 public class Workflow extends AbstractNamed implements Configurable {
-
+	
 	/**
 	 * 
 	 */
@@ -42,6 +47,8 @@ public class Workflow extends AbstractNamed implements Configurable {
 	/**
 	 * @return
 	 */
+	@XmlElementWrapper( name="outputWorkflowPorts",nillable=false,required=true)
+	@XmlElement( name="outputWorkflowPort",nillable=false)
 	public Set<OutputWorkflowPort> getOutputPorts() {
 		return outputPorts;
 	}
@@ -89,6 +96,8 @@ public class Workflow extends AbstractNamed implements Configurable {
 	/**
 	 * @return
 	 */
+	@XmlElementWrapper( name="inputWorkflowPorts",nillable=false,required=true)
+	@XmlElement( name="inputWorkflowPort",nillable=false)
 	public Set<InputWorkflowPort> getInputPorts() {
 		return inputPorts;
 	}
@@ -110,6 +119,8 @@ public class Workflow extends AbstractNamed implements Configurable {
 	/**
 	 * @return
 	 */
+	@XmlElementWrapper( name="processors",nillable=false,required=true)
+	@XmlElement( name="processor",nillable=false)
 	public Set<Processor> getProcessors() {
 		return processors;
 	}
@@ -124,6 +135,8 @@ public class Workflow extends AbstractNamed implements Configurable {
 	/**
 	 * @return
 	 */
+	@XmlElementWrapper( name="datalinks",nillable=false,required=true)
+	@XmlElement( name="datalink",nillable=false)
 	public Set<DataLink> getDatalinks() {
 		return datalinks;
 	}
@@ -131,6 +144,8 @@ public class Workflow extends AbstractNamed implements Configurable {
 	/* (non-Javadoc)
 	 * @see net.sf.taverna.scufl2.api.common.Configurable#getConfigurableProperties()
 	 */
+	@XmlElementWrapper( name="configurableProperties",nillable=false,required=true)
+	@XmlElement( name="configurableProperty",nillable=false)
 	public Set<ConfigurableProperty> getConfigurableProperties() {
 		return this.configurableProperties ;
 	}
