@@ -239,11 +239,8 @@ public class T2FlowParser {
 			OutputProcessorPort newPort = new OutputProcessorPort(newProc,
 					origPort.getName());
 			newPort.setDepth(origPort.getDepth().intValue());
-			if (!origPort.getGranularDepth().equals(origPort.getDepth())) {
-				newPort
-						.setGranularDepth(origPort.getGranularDepth()
+			newPort.setGranularDepth(origPort.getGranularDepth()
 								.intValue());
-			}
 			newPorts.add(newPort);
 		}
 		return newPorts;
