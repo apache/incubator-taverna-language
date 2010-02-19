@@ -1,5 +1,7 @@
 package net.sf.taverna.scufl2.api.activity;
 
+import javax.xml.bind.annotation.XmlType;
+
 import net.sf.taverna.scufl2.api.common.AbstractNamed;
 
 public class ActivityType extends AbstractNamed {

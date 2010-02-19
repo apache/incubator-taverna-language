@@ -21,7 +21,7 @@ import net.sf.taverna.scufl2.api.common.ConfigurableProperty;
  * @author alanrw
  * 
  */
-@XmlType (propOrder = {"type", "configurableProperties", "inputPorts", "outputPorts"})
+@XmlType (propOrder = {"type", "inputPorts", "outputPorts", "configurableProperties"})
 public class Activity extends AbstractNamed implements Configurable {
 
 	private Set<ConfigurableProperty> configurableProperties = new HashSet<ConfigurableProperty>();

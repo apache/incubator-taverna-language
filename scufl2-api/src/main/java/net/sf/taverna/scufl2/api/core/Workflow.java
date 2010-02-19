@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlType;
 
 import net.sf.taverna.scufl2.api.common.AbstractNamed;
 import net.sf.taverna.scufl2.api.common.Configurable;
@@ -21,6 +22,7 @@ import net.sf.taverna.scufl2.api.port.OutputWorkflowPort;
  * @author alanrw
  *
  */
+@XmlType(propOrder = {"inputPorts", "outputPorts", "processors", "datalinks", "configurableProperties"})
 public class Workflow extends AbstractNamed implements Configurable {
 	
 	/**
@@ -136,7 +138,7 @@ public class Workflow extends AbstractNamed implements Configurable {
 	 * @return
 	 */
 	@XmlElementWrapper( name="datalinks",nillable=false,required=true)
-	@XmlElement( name="datalink",nillable=false)
+	@XmlElement(name="datalink",nillable=false)
 	public Set<DataLink> getDatalinks() {
 		return datalinks;
 	}

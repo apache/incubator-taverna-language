@@ -11,13 +11,17 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 
 /**
  * @author alanrw
  *
  */
+@XmlRootElement
+@XmlType(propOrder = {"senderPortReference", "receiverPortReference"})
 public class DataLink implements WorkflowBean, Child<Workflow> {
 
 	private ReceiverPort receiverPort;

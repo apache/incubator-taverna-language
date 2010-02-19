@@ -3,11 +3,13 @@ package net.sf.taverna.scufl2.api.common;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * @author alanrw
  *
  */
+@XmlType (propOrder = {"complianceLevel", "defaultValue", "description", "mandatoryStatus"})
 public class ConfigurableProperty extends AbstractNamed {
 	
 	/**

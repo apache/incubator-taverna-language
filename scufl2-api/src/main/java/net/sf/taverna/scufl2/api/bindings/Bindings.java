@@ -5,7 +5,9 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlType;
 
+import net.sf.taverna.scufl2.api.common.AbstractNamed;
 import net.sf.taverna.scufl2.api.common.WorkflowBean;
 
 /**
@@ -21,7 +23,8 @@ import net.sf.taverna.scufl2.api.common.WorkflowBean;
  * @author alanrw
  * 
  */
-public class Bindings implements WorkflowBean {
+@XmlType (propOrder = {"processorBindings"})
+public class Bindings extends AbstractNamed implements WorkflowBean {
 
 	private Set<ProcessorBinding> processorBindings = new HashSet<ProcessorBinding>();
 

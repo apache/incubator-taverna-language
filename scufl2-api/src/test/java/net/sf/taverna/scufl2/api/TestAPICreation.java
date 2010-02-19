@@ -3,8 +3,12 @@ package net.sf.taverna.scufl2.api;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 
+import java.io.FileOutputStream;
 import java.util.Arrays;
 import java.util.Collections;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 
 import net.sf.taverna.scufl2.api.activity.Activity;
 import net.sf.taverna.scufl2.api.activity.ActivityType;
@@ -21,13 +25,15 @@ import org.junit.Test;
 
 public class TestAPICreation {
 
+	private TavernaResearchObject ro;
+
 	@Test
 	public void makeExampleWorkflow() throws Exception {
 
-		ScuflFactory scuflFactory = new ScuflFactory();
-
-		TavernaResearchObject ro = new TavernaResearchObject();
-		Workflow wf1 = ro.getMainWorkflow();
+		ro = new TavernaResearchObject();
+		Workflow wf1 = new Workflow();
+		ro.setWorkflows(Collections.singleton(wf1));
+		ro.setMainWorkflow(wf1);
 		
 		assertEquals("Non-empty input ports", Collections.EMPTY_SET, wf1.getInputPorts());
 		
@@ -76,8 +82,15 @@ public class TestAPICreation {
 		Activity activity = new Activity("act0");
 		ro.getActivities().add(activity);
 		activity.setType(new ActivityType("http://taverna.sf.net/2009/2.1/activity/beanshell"));
-
-
 	}
-
+	
+	@Test
+	public void marshal() throws Exception {
+		makeExampleWorkflow();
+		JAXBContext jc = JAXBContext.newInstance(TavernaResearchObject.class );
+		Marshaller marshaller = jc.createMarshaller();
+		marshaller.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, 
+	              Boolean.TRUE );
+	    marshaller.marshal( ro, new FileOutputStream("foo.xml") );
+	}
 }

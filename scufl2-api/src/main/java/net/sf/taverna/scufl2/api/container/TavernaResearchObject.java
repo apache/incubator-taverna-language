@@ -5,16 +5,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlIDREF;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import net.sf.taverna.scufl2.api.activity.Activity;
 import net.sf.taverna.scufl2.api.bindings.Bindings;
-import net.sf.taverna.scufl2.api.common.Configurable;
 import net.sf.taverna.scufl2.api.common.WorkflowBean;
 import net.sf.taverna.scufl2.api.configurations.Configuration;
 import net.sf.taverna.scufl2.api.core.Workflow;
@@ -24,6 +22,7 @@ import net.sf.taverna.scufl2.api.reference.Reference;
  * @author alanrw
  *
  */
+@XmlRootElement
 @XmlType (propOrder = {"workflows", "mainWorkflowReference", "activities", "configurations", "bindings"})
 public class TavernaResearchObject implements ResearchObject, WorkflowBean {
 
@@ -34,6 +33,8 @@ public class TavernaResearchObject implements ResearchObject, WorkflowBean {
 	/**
 	 * @return
 	 */
+	@XmlElementWrapper( name="workflows",nillable=false,required=true)
+	@XmlElement( name="workflow",nillable=false)
 	public Set<Workflow> getWorkflows() {
 		return workflows;
 	}

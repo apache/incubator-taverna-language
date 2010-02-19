@@ -3,10 +3,10 @@
  */
 package net.sf.taverna.scufl2.api.activity;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
+import net.sf.taverna.scufl2.api.common.AbstractNamed;
 import net.sf.taverna.scufl2.api.common.Child;
 
 /**
@@ -19,7 +19,7 @@ import net.sf.taverna.scufl2.api.common.Child;
  * @author alanrw
  * 
  */
-public class InputActivityPort implements Child<Activity> {
+public class InputActivityPort extends AbstractNamed implements Child<Activity> {
 
 	private Activity parent;
 

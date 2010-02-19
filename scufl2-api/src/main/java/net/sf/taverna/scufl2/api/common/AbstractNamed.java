@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlElement;
  * @author alanrw
  *
  */
-public class AbstractNamed implements Named {
+public abstract class AbstractNamed implements Named {
 	
 	public AbstractNamed(String name) {
 		setName(name);

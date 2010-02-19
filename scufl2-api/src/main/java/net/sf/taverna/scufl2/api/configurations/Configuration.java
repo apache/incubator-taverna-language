@@ -16,6 +16,7 @@ import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import net.sf.taverna.scufl2.api.common.AbstractNamed;
 import net.sf.taverna.scufl2.api.common.Configurable;
 import net.sf.taverna.scufl2.api.common.ConfigurableProperty;
 import net.sf.taverna.scufl2.api.common.WorkflowBean;
@@ -27,7 +28,7 @@ import net.sf.taverna.scufl2.api.reference.Reference;
  *
  */
 @XmlType (propOrder = {"configuredReference", "configurablePropertyConfigurations"})
-public class Configuration implements WorkflowBean {
+public class Configuration extends AbstractNamed implements WorkflowBean {
 	private Configurable configured;
 	
 	private Set<ConfigurablePropertyConfiguration> configurablePropertyConfigurations = new HashSet<ConfigurablePropertyConfiguration>();

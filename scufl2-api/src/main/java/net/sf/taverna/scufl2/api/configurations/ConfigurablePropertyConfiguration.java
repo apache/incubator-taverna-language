@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 import net.sf.taverna.scufl2.api.common.Child;
 import net.sf.taverna.scufl2.api.common.ConfigurableProperty;
@@ -17,6 +18,7 @@ import net.sf.taverna.scufl2.api.reference.Reference;
  * @author alanrw
  *
  */
+@XmlType (propOrder = {"configuredPropertyReference", "value"})
 public class ConfigurablePropertyConfiguration implements Child<Configuration> {
 	
 	private ConfigurableProperty configuredProperty;
