@@ -8,6 +8,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+
 import net.sf.taverna.scufl2.api.common.ToBeDecided;
 import net.sf.taverna.scufl2.api.container.TavernaResearchObject;
 import net.sf.taverna.scufl2.api.core.DataLink;
@@ -20,47 +25,60 @@ import net.sf.taverna.scufl2.api.port.OutputProcessorPort;
 import net.sf.taverna.scufl2.api.port.OutputWorkflowPort;
 import net.sf.taverna.scufl2.api.port.ReceiverPort;
 import net.sf.taverna.scufl2.api.port.SenderPort;
-import net.sf.taverna.scufl2.xml.t2flow.AnnotatedGranularDepthPort;
-import net.sf.taverna.scufl2.xml.t2flow.AnnotatedGranularDepthPorts;
-import net.sf.taverna.scufl2.xml.t2flow.Dataflow;
-import net.sf.taverna.scufl2.xml.t2flow.Datalinks;
-import net.sf.taverna.scufl2.xml.t2flow.DepthPort;
-import net.sf.taverna.scufl2.xml.t2flow.DepthPorts;
-import net.sf.taverna.scufl2.xml.t2flow.DispatchStack;
-import net.sf.taverna.scufl2.xml.t2flow.GranularDepthPort;
-import net.sf.taverna.scufl2.xml.t2flow.GranularDepthPorts;
-import net.sf.taverna.scufl2.xml.t2flow.IterationStrategyStack;
-import net.sf.taverna.scufl2.xml.t2flow.Link;
-import net.sf.taverna.scufl2.xml.t2flow.LinkType;
-import net.sf.taverna.scufl2.xml.t2flow.Port;
-import net.sf.taverna.scufl2.xml.t2flow.Ports;
-import net.sf.taverna.scufl2.xml.t2flow.Processors;
-import net.sf.taverna.scufl2.xml.t2flow.Role;
-import net.sf.taverna.scufl2.xml.t2flow.WorkflowDocument;
+import net.sf.taverna.scufl2.xml.t2flow.jaxb.AnnotatedGranularDepthPort;
+import net.sf.taverna.scufl2.xml.t2flow.jaxb.AnnotatedGranularDepthPorts;
+import net.sf.taverna.scufl2.xml.t2flow.jaxb.Dataflow;
+import net.sf.taverna.scufl2.xml.t2flow.jaxb.Datalinks;
+import net.sf.taverna.scufl2.xml.t2flow.jaxb.DepthPort;
+import net.sf.taverna.scufl2.xml.t2flow.jaxb.DepthPorts;
+import net.sf.taverna.scufl2.xml.t2flow.jaxb.DispatchStack;
+import net.sf.taverna.scufl2.xml.t2flow.jaxb.GranularDepthPort;
+import net.sf.taverna.scufl2.xml.t2flow.jaxb.GranularDepthPorts;
+import net.sf.taverna.scufl2.xml.t2flow.jaxb.IterationStrategyStack;
+import net.sf.taverna.scufl2.xml.t2flow.jaxb.Link;
+import net.sf.taverna.scufl2.xml.t2flow.jaxb.LinkType;
+import net.sf.taverna.scufl2.xml.t2flow.jaxb.Port;
+import net.sf.taverna.scufl2.xml.t2flow.jaxb.Ports;
+import net.sf.taverna.scufl2.xml.t2flow.jaxb.Processors;
+import net.sf.taverna.scufl2.xml.t2flow.jaxb.Role;
 
 import org.apache.log4j.Logger;
-import org.apache.xmlbeans.XmlException;
 
+@SuppressWarnings("restriction")
 public class T2FlowParser {
 
 	private Logger logger = Logger.getLogger(T2FlowParser.class);
+	private JAXBContext jc;
+	private Unmarshaller unmarshaller;
 
-	public TavernaResearchObject parseT2Flow(File t2File) throws XmlException,
-			IOException, ParseException {
-		WorkflowDocument wfDoc = WorkflowDocument.Factory.parse(t2File);
-		return parseT2Flow(wfDoc.getWorkflow());
+	public T2FlowParser() throws JAXBException {
+		jc = JAXBContext.newInstance("net.sf.taverna.scufl2.xml.t2flow.jaxb",
+				getClass().getClassLoader());
+		unmarshaller = jc.createUnmarshaller();
 	}
 
+	@SuppressWarnings("unchecked")
+	public TavernaResearchObject parseT2Flow(File t2File) throws IOException,
+			ParseException, JAXBException {
+		JAXBElement<net.sf.taverna.scufl2.xml.t2flow.jaxb.Workflow> root = (JAXBElement<net.sf.taverna.scufl2.xml.t2flow.jaxb.Workflow>) unmarshaller
+				.unmarshal(t2File);
+		return parseT2Flow(root.getValue());
+	}
+
+	@SuppressWarnings("unchecked")
 	public TavernaResearchObject parseT2Flow(InputStream t2File)
-			throws XmlException, IOException, ParseException {
-		WorkflowDocument wfDoc = WorkflowDocument.Factory.parse(t2File);
-		return parseT2Flow(wfDoc.getWorkflow());
+			throws IOException, JAXBException, ParseException {
+		JAXBElement<net.sf.taverna.scufl2.xml.t2flow.jaxb.Workflow> root = (JAXBElement<net.sf.taverna.scufl2.xml.t2flow.jaxb.Workflow>) unmarshaller
+				.unmarshal(t2File);
+		return parseT2Flow(root.getValue());
 	}
 
 	public TavernaResearchObject parseT2Flow(
-			net.sf.taverna.scufl2.xml.t2flow.Workflow wf) throws ParseException {
+			net.sf.taverna.scufl2.xml.t2flow.jaxb.Workflow wf)
+			throws ParseException {
+
 		TavernaResearchObject ro = new TavernaResearchObject();
-		for (Dataflow df : wf.getDataflowArray()) {
+		for (Dataflow df : wf.getDataflow()) {
 			Workflow workflow = parseDataflow(df);
 			if (df.getRole().equals(Role.TOP)) {
 				ro.setMainWorkflow(workflow);
@@ -102,7 +120,7 @@ public class T2FlowParser {
 			throw new ParseException(
 					"Translation of merges not yet implemented");
 		}
-		throw new ParseException("Could not parse receiver " + sink.xmlText());
+		throw new ParseException("Could not parse receiver " + sink);
 	}
 
 	protected SenderPort findSenderPort(Workflow wf, Link source)
@@ -137,7 +155,7 @@ public class T2FlowParser {
 			throw new ParseException(
 					"Translation of merges not yet implemented");
 		}
-		throw new ParseException("Could not parse sender " + source.xmlText());
+		throw new ParseException("Could not parse sender " + source);
 	}
 
 	protected Workflow parseDataflow(Dataflow df) throws ParseException {
@@ -155,8 +173,8 @@ public class T2FlowParser {
 	protected Set<DataLink> parseDatalinks(Workflow wf, Datalinks origLinks)
 			throws ParseException {
 		HashSet<DataLink> newLinks = new HashSet<DataLink>();
-		for (net.sf.taverna.scufl2.xml.t2flow.DataLink origLink : origLinks
-				.getDatalinkArray()) {
+		for (net.sf.taverna.scufl2.xml.t2flow.jaxb.DataLink origLink : origLinks
+				.getDatalink()) {
 			try {
 				SenderPort senderPort = findSenderPort(wf, origLink.getSource());
 				ReceiverPort receiverPort = findReceiverPort(wf, origLink
@@ -164,8 +182,7 @@ public class T2FlowParser {
 				DataLink newLink = new DataLink(senderPort, receiverPort);
 				newLinks.add(newLink);
 			} catch (ParseException ex) {
-				logger.warn("Could not translate link:\n" + origLink.xmlText(),
-						ex);
+				logger.warn("Could not translate link:\n" + origLink, ex);
 				continue;
 			}
 		}
@@ -180,8 +197,7 @@ public class T2FlowParser {
 	protected Set<InputWorkflowPort> parseInputPorts(Workflow wf,
 			AnnotatedGranularDepthPorts originalPorts) {
 		Set<InputWorkflowPort> createdPorts = new HashSet<InputWorkflowPort>();
-		for (AnnotatedGranularDepthPort originalPort : originalPorts
-				.getPortArray()) {
+		for (AnnotatedGranularDepthPort originalPort : originalPorts.getPort()) {
 			InputWorkflowPort newPort = new InputWorkflowPort(wf, originalPort
 					.getName());
 			newPort.setDepth(originalPort.getDepth().intValue());
@@ -208,7 +224,7 @@ public class T2FlowParser {
 	protected Set<OutputWorkflowPort> parseOutputPorts(Workflow wf,
 			Ports originalPorts) {
 		Set<OutputWorkflowPort> createdPorts = new HashSet<OutputWorkflowPort>();
-		for (Port originalPort : originalPorts.getPortArray()) {
+		for (Port originalPort : originalPorts.getPort()) {
 			OutputWorkflowPort newPort = new OutputWorkflowPort(wf,
 					originalPort.getName());
 			createdPorts.add(newPort);
@@ -221,7 +237,7 @@ public class T2FlowParser {
 	protected Set<InputProcessorPort> parseProcessorInputPorts(
 			Processor newProc, DepthPorts origPorts) {
 		Set<InputProcessorPort> newPorts = new HashSet<InputProcessorPort>();
-		for (DepthPort origPort : origPorts.getPortArray()) {
+		for (DepthPort origPort : origPorts.getPort()) {
 			InputProcessorPort newPort = new InputProcessorPort(newProc,
 					origPort.getName());
 			newPort.setDepth(origPort.getDepth().intValue());
@@ -235,12 +251,11 @@ public class T2FlowParser {
 	protected Set<OutputProcessorPort> parseProcessorOutputPorts(
 			Processor newProc, GranularDepthPorts origPorts) {
 		Set<OutputProcessorPort> newPorts = new HashSet<OutputProcessorPort>();
-		for (GranularDepthPort origPort : origPorts.getPortArray()) {
+		for (GranularDepthPort origPort : origPorts.getPort()) {
 			OutputProcessorPort newPort = new OutputProcessorPort(newProc,
 					origPort.getName());
 			newPort.setDepth(origPort.getDepth().intValue());
-			newPort.setGranularDepth(origPort.getGranularDepth()
-								.intValue());
+			newPort.setGranularDepth(origPort.getGranularDepth().intValue());
 			newPorts.add(newPort);
 		}
 		return newPorts;
@@ -249,8 +264,8 @@ public class T2FlowParser {
 	protected Set<Processor> parseProcessors(Workflow wf,
 			Processors originalProcessors) {
 		HashSet<Processor> newProcessors = new HashSet<Processor>();
-		for (net.sf.taverna.scufl2.xml.t2flow.Processor origProc : originalProcessors
-				.getProcessorArray()) {
+		for (net.sf.taverna.scufl2.xml.t2flow.jaxb.Processor origProc : originalProcessors
+				.getProcessor()) {
 			Processor newProc = new Processor(wf, origProc.getName());
 			newProc.setInputPorts(parseProcessorInputPorts(newProc, origProc
 					.getInputPorts()));
