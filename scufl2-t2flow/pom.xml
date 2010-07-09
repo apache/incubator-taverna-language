@@ -23,7 +23,7 @@
 					</execution>
 				</executions>
 				<configuration>
-                    <packageName>net.sf.taverna.scufl2.xml.t2flow.jaxb</packageName>
+                    <packageName>uk.org.taverna.scufl2.xml.t2flow.jaxb</packageName>
                 </configuration>
 			</plugin>
 		</plugins>
