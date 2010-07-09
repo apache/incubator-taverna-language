@@ -26,6 +26,6 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>scufl2-t2flow</artifactId>
 			<version>${project.version}</version>
-		</dependency>
+		</dependency>		
 	</dependencies>
 </project>
