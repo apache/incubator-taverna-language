@@ -279,7 +279,6 @@ public class T2FlowParser {
 							.getIterationStrategyStack()));
 			newProcessors.add(newProc);
 		}
-		System.out.println(newProcessors);
 		return newProcessors;
 	}
 
