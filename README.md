@@ -6,7 +6,7 @@ SCUFL2
 
 Licensed under the [GNU Lesser General Public License (LGPL) 2.1][9],
 except for `scufl2-usecases`, which are licensed under a [modified BSD
-license](scufl2-usecases/LICENSE.txt).
+license](scufl2-usecases/LICENSE.txt). See LICENSE.txt for details.
 
 This is the code, model and XML syntax of SCUFL2 which will replace the current 
 [Taverna][8] format [t2flow][2].
