@@ -18,24 +18,25 @@ import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.reference.Reference;
 
-
 /**
  * @author alanrw
- *
+ * 
  */
+
 @XmlRootElement
-@XmlType (propOrder = {"workflows", "mainWorkflowReference", "activities", "configurations", "bindings"})
+@XmlType(propOrder = { "workflows", "mainWorkflowReference", "activities",
+		"configurations", "bindings" })
 public class TavernaResearchObject implements ResearchObject, WorkflowBean {
 
 	private Set<Bindings> bindings = new HashSet<Bindings>();
 	private Workflow mainWorkflow;
 	private Set<Workflow> workflows = new HashSet<Workflow>();
-	
+
 	/**
 	 * @return
 	 */
-	@XmlElementWrapper( name="workflows",nillable=false,required=true)
-	@XmlElement( name="workflow",nillable=false)
+	@XmlElementWrapper(name = "workflows", nillable = false, required = true)
+	@XmlElement(name = "workflow", nillable = false)
 	public Set<Workflow> getWorkflows() {
 		return workflows;
 	}
@@ -53,8 +54,8 @@ public class TavernaResearchObject implements ResearchObject, WorkflowBean {
 	/**
 	 * @return
 	 */
-	@XmlElementWrapper( name="configurations",nillable=false,required=true)
-	@XmlElement( name="configuration",nillable=false)
+	@XmlElementWrapper(name = "configurations", nillable = false, required = true)
+	@XmlElement(name = "configuration", nillable = false)
 	public Set<Configuration> getConfigurations() {
 		return configurations;
 	}
@@ -69,8 +70,8 @@ public class TavernaResearchObject implements ResearchObject, WorkflowBean {
 	/**
 	 * @return
 	 */
-	@XmlElementWrapper( name="bindings",nillable=false,required=true)
-	@XmlElement( name="binding",nillable=false)
+	@XmlElementWrapper(name = "bindings", nillable = false, required = true)
+	@XmlElement(name = "binding", nillable = false)
 	public Set<Bindings> getBindings() {
 		return bindings;
 	}
@@ -79,9 +80,11 @@ public class TavernaResearchObject implements ResearchObject, WorkflowBean {
 		return Reference.createReference(mainWorkflow);
 	}
 
-	public void setMainWorkflowReference(Reference<Workflow> mainWorkflowReference) {
+	public void setMainWorkflowReference(
+			Reference<Workflow> mainWorkflowReference) {
 		mainWorkflow = mainWorkflowReference.resolve();
 	}
+
 	/**
 	 * @return
 	 */
@@ -110,8 +113,8 @@ public class TavernaResearchObject implements ResearchObject, WorkflowBean {
 	/**
 	 * @return
 	 */
-	@XmlElementWrapper( name="activities",nillable=false,required=true)
-	@XmlElement( name="activity",nillable=false)
+	@XmlElementWrapper(name = "activities", nillable = false, required = true)
+	@XmlElement(name = "activity", nillable = false)
 	public Set<Activity> getActivities() {
 		return activities;
 	}
@@ -146,7 +149,5 @@ public class TavernaResearchObject implements ResearchObject, WorkflowBean {
 		builder.append("]");
 		return builder.toString();
 	}
-
-	
 
 }
