@@ -51,7 +51,7 @@ public class Processor extends AbstractNamed implements Configurable, Child<Work
 	/**
 	 * @return
 	 */
-	@XmlElementWrapper( name="startConditions",nillable=false,required=true)
+	@XmlElementWrapper( name="startConditions",nillable=false,required=false)
 	@XmlElement( name="startCondition",nillable=false)
 	public Set<StartCondition> getStartConditions() {
 		return startConditions;
@@ -67,7 +67,7 @@ public class Processor extends AbstractNamed implements Configurable, Child<Work
 	/* (non-Javadoc)
 	 * @see uk.org.taverna.scufl2.api.common.Configurable#getConfigurableProperties()
 	 */
-	@XmlElementWrapper( name="configurableProperties",nillable=false,required=true)
+	@XmlElementWrapper( name="configurableProperties",nillable=false,required=false)
 	@XmlElement( name="configurableProperty",nillable=false)
 	public NamedSet<ConfigurableProperty> getConfigurableProperties() {
 		return configurableProperties;

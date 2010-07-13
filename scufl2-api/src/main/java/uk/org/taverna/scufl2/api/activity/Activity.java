@@ -61,7 +61,7 @@ public class Activity extends AbstractNamed implements Configurable {
 	 * It should be noted that some of the set of ConfigurableProperty may be
 	 * inferred from the ActivityType. This is yet to be decided.
 	 */
-	@XmlElementWrapper( name="configurableProperties",nillable=false,required=true)
+	@XmlElementWrapper( name="configurableProperties",nillable=false,required=false)
 	@XmlElement( name="configurableProperty",nillable=false)
 	public NamedSet<ConfigurableProperty> getConfigurableProperties() {
 		return configurableProperties;

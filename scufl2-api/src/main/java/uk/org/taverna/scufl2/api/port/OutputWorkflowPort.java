@@ -25,7 +25,7 @@ public class OutputWorkflowPort extends AbstractNamed implements ReceiverPort,
 	/* (non-Javadoc)
 	 * @see uk.org.taverna.scufl2.api.common.Configurable#getConfigurableProperties()
 	 */
-	@XmlElementWrapper( name="configurableProperties",nillable=false,required=true)
+	@XmlElementWrapper( name="configurableProperties",nillable=false,required=false)
 	@XmlElement( name="configurableProperty",nillable=false)
 	public NamedSet<ConfigurableProperty> getConfigurableProperties() {
 		return configurableProperties;
