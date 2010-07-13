@@ -1,5 +1,7 @@
 package uk.org.taverna.scufl2.api.common;
 
+import java.util.UUID;
+
 import javax.xml.bind.annotation.XmlElement;
 
 /**
@@ -13,7 +15,7 @@ public abstract class AbstractNamed implements Named {
 	}
 	
 	public AbstractNamed() {
-		setName("missing");
+		setName(UUID.randomUUID().toString());
 	}
 	
 	@Override
