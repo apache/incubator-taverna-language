@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import uk.org.taverna.scufl2.api.common.AbstractNamed;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.ConfigurableProperty;
+import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.core.Workflow;
 
 
@@ -19,14 +20,14 @@ import uk.org.taverna.scufl2.api.core.Workflow;
  */
 public class OutputWorkflowPort extends AbstractNamed implements ReceiverPort,
 		WorkflowPort, Child<Workflow> {
-	private Set<ConfigurableProperty> configurableProperties = new HashSet<ConfigurableProperty>();
+	private NamedSet<ConfigurableProperty> configurableProperties = new NamedSet<ConfigurableProperty>();
 
 	/* (non-Javadoc)
 	 * @see uk.org.taverna.scufl2.api.common.Configurable#getConfigurableProperties()
 	 */
 	@XmlElementWrapper( name="configurableProperties",nillable=false,required=true)
 	@XmlElement( name="configurableProperty",nillable=false)
-	public Set<ConfigurableProperty> getConfigurableProperties() {
+	public NamedSet<ConfigurableProperty> getConfigurableProperties() {
 		return configurableProperties;
 	}
 
@@ -35,7 +36,8 @@ public class OutputWorkflowPort extends AbstractNamed implements ReceiverPort,
 	 */
 	public void setConfigurableProperties(
 			Set<ConfigurableProperty> configurableProperties) {
-		this.configurableProperties = configurableProperties;
+		this.configurableProperties.clear();
+		this.configurableProperties.addAll(configurableProperties);
 	}
 
 	private Workflow parent;

@@ -9,13 +9,14 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.ConfigurableProperty;
+import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.core.Processor;
 
 
 public class OutputProcessorPort extends AbstractGranularDepthPort implements
 		SenderPort, ProcessorPort, Child<Processor> {
 	
-	private Set<ConfigurableProperty> configurableProperties = new HashSet<ConfigurableProperty>();
+	private NamedSet<ConfigurableProperty> configurableProperties = new NamedSet<ConfigurableProperty>();
 
 
 	/* (non-Javadoc)
@@ -23,7 +24,7 @@ public class OutputProcessorPort extends AbstractGranularDepthPort implements
 	 */
 	@XmlElementWrapper( name="configurableProperties",nillable=false,required=true)
 	@XmlElement( name="configurableProperty",nillable=false)
-	public Set<ConfigurableProperty> getConfigurableProperties() {
+	public NamedSet<ConfigurableProperty> getConfigurableProperties() {
 		return configurableProperties;
 	}
 
@@ -32,7 +33,8 @@ public class OutputProcessorPort extends AbstractGranularDepthPort implements
 	 */
 	public void setConfigurableProperties(
 			Set<ConfigurableProperty> configurableProperties) {
-		this.configurableProperties = configurableProperties;
+		this.configurableProperties.clear();
+		this.configurableProperties.addAll(configurableProperties);
 	}
 
 	private Processor parent;

@@ -36,14 +36,15 @@ public class Workflow extends AbstractNamed implements Configurable {
 	private Set<DataLink> datalinks = new HashSet<DataLink>();
 	private NamedSet<Processor> processors = new NamedSet<Processor>();
 	private NamedSet<OutputWorkflowPort> outputPorts = new NamedSet<OutputWorkflowPort>();
-	private Set<ConfigurableProperty> configurableProperties = new HashSet<ConfigurableProperty>();
+	private NamedSet<ConfigurableProperty> configurableProperties = new NamedSet<ConfigurableProperty>();
 
 	/* (non-Javadoc)
 	 * @see uk.org.taverna.scufl2.api.common.Configurable#setConfigurableProperties(java.util.Set)
 	 */
 	public void setConfigurableProperties(
 			Set<ConfigurableProperty> configurableProperties) {
-		this.configurableProperties = configurableProperties;
+		this.configurableProperties.clear();
+		this.configurableProperties.addAll(configurableProperties);
 	}
 
 	/**
@@ -151,7 +152,7 @@ public class Workflow extends AbstractNamed implements Configurable {
 	 */
 	@XmlElementWrapper( name="configurableProperties",nillable=false,required=true)
 	@XmlElement( name="configurableProperty",nillable=false)
-	public Set<ConfigurableProperty> getConfigurableProperties() {
+	public NamedSet<ConfigurableProperty> getConfigurableProperties() {
 		return this.configurableProperties ;
 	}
 
