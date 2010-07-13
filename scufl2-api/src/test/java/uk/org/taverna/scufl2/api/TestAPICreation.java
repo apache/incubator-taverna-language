@@ -1,15 +1,13 @@
 package uk.org.taverna.scufl2.api;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.FileOutputStream;
-import java.util.Arrays;
 import java.util.Collections;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
-
 
 import org.junit.Test;
 

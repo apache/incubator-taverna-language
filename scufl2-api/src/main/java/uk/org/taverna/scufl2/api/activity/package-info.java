@@ -3,4 +3,5 @@
 package uk.org.taverna.scufl2.api.activity;
 
 import static javax.xml.bind.annotation.XmlNsForm.QUALIFIED;
+
 import javax.xml.bind.annotation.XmlSchema;

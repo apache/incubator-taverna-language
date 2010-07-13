@@ -3,11 +3,8 @@
  */
 package uk.org.taverna.scufl2.api.core;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
 
-import uk.org.taverna.scufl2.api.port.ReceiverPort;
 import uk.org.taverna.scufl2.api.reference.Reference;
 
 

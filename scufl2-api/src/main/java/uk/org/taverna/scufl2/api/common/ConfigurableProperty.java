@@ -1,8 +1,6 @@
 package uk.org.taverna.scufl2.api.common;
 
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 
 /**
