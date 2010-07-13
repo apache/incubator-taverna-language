@@ -14,7 +14,7 @@ import uk.org.taverna.scufl2.api.core.Workflow;
 
 
 /**
- * @author alanrw
+ * @author Alan R Williams
  *
  */
 public class InputWorkflowPort extends AbstractDepthPort implements SenderPort,

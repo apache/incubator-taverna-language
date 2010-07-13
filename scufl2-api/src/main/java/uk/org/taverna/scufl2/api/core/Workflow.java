@@ -19,7 +19,7 @@ import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
 
 
 /**
- * @author alanrw
+ * @author Alan R Williams
  *
  */
 @XmlType(propOrder = {"inputPorts", "outputPorts", "processors", "datalinks", "configurableProperties"})

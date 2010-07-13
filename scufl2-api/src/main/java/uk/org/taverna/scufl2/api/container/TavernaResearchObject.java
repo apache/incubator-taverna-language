@@ -19,7 +19,7 @@ import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.reference.Reference;
 
 /**
- * @author alanrw
+ * @author Alan R Williams
  * 
  */
 

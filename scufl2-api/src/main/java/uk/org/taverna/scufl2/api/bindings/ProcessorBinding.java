@@ -27,7 +27,7 @@ import uk.org.taverna.scufl2.api.reference.Reference;
  * It has not been decided if the binding must be unique for a given Processor
  * or Activity port within a ProcessorBinding.
  * 
- * @author alanrw
+ * @author Alan R Williams
  * 
  */
 @XmlType (propOrder = {"boundProcessorReference", "boundActivityReference", "inputPortBindings", "outputPortBindings"})

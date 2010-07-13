@@ -12,7 +12,7 @@ import uk.org.taverna.scufl2.api.reference.Reference;
 
 
 /**
- * @author alanrw
+ * @author Alan R Williams
  *
  */
 @XmlType (propOrder = {"configuredPropertyReference", "value"})

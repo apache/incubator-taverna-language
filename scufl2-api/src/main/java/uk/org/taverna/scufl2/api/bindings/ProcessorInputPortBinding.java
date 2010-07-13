@@ -21,7 +21,7 @@ import uk.org.taverna.scufl2.api.reference.Reference;
  * parent ProcessorBinding. The InputActivityPort must be a port of the Activity
  * of the parent ProcessorBinding.
  * 
- * @author alanrw
+ * @author Alan R Williams
  * 
  */
 @XmlType (propOrder = {"boundProcessorPortReference", "boundActivityPortReference"})

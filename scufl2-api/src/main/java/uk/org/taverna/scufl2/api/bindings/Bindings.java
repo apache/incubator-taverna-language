@@ -21,7 +21,7 @@ import uk.org.taverna.scufl2.api.common.WorkflowBean;
  * a single Workflow. One or more Bindings may be used to help run a Workflow
  * and conversely the same Bindings may be used to run more than one Workflow.
  * 
- * @author alanrw
+ * @author Alan R Williams
  * 
  */
 @XmlType (propOrder = {"processorBindings"})

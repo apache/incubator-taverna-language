@@ -3,7 +3,7 @@ package uk.org.taverna.scufl2.api.common;
 import java.util.Set;
 
 /**
- * @author alanrw
+ * @author Alan R Williams
  *
  */
 public interface Configurable extends WorkflowBean {

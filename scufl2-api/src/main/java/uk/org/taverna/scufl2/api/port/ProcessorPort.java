@@ -4,7 +4,7 @@ import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.core.Processor;
 
 /**
- * @author alanrw
+ * @author Alan R Williams
  *
  */
 public interface ProcessorPort extends Port, Child<Processor> {

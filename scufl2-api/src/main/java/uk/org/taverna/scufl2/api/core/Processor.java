@@ -20,7 +20,7 @@ import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
 
 
 /**
- * @author alanrw
+ * @author Alan R Williams
  *
  */
 public class Processor extends AbstractNamed implements Configurable, Child<Workflow> {

@@ -7,7 +7,7 @@ import uk.org.taverna.scufl2.api.common.WorkflowBean;
 
 
 /**
- * @author alanrw
+ * @author Alan R Williams
  *
  */
 public class IterationStrategy implements WorkflowBean, Child<Processor> {

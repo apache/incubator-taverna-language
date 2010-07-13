@@ -2,7 +2,7 @@ package uk.org.taverna.scufl2.api.common;
 
 
 /**
- * @author alanrw
+ * @author Alan R Williams
  *
  */
 public interface WorkflowBean {
