@@ -327,7 +327,8 @@
 				found.</documentation>
 		</annotation>
 		<sequence>
-			<element name="activity" type="tav:Activity"></element>
+			<element name="activity" type="tav:Activity" maxOccurs="unbounded"
+				minOccurs="0" />
 		</sequence>
 	</complexType>
 
