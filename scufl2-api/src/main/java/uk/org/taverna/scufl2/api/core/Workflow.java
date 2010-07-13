@@ -6,15 +6,14 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 
 import uk.org.taverna.scufl2.api.common.AbstractNamed;
 import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.common.ConfigurableProperty;
+import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.port.InputWorkflowPort;
 import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
 
@@ -33,10 +32,10 @@ public class Workflow extends AbstractNamed implements Configurable {
 		super("wf-" + UUID.randomUUID().toString());
 	}
 
-	private Set<InputWorkflowPort> inputPorts = new HashSet<InputWorkflowPort>();
+	private NamedSet<InputWorkflowPort> inputPorts = new NamedSet<InputWorkflowPort>();
 	private Set<DataLink> datalinks = new HashSet<DataLink>();
-	private Set<Processor> processors = new HashSet<Processor>();
-	private Set<OutputWorkflowPort> outputPorts = new HashSet<OutputWorkflowPort>();
+	private NamedSet<Processor> processors = new NamedSet<Processor>();
+	private NamedSet<OutputWorkflowPort> outputPorts = new NamedSet<OutputWorkflowPort>();
 	private Set<ConfigurableProperty> configurableProperties = new HashSet<ConfigurableProperty>();
 
 	/* (non-Javadoc)
@@ -52,7 +51,7 @@ public class Workflow extends AbstractNamed implements Configurable {
 	 */
 	@XmlElementWrapper( name="outputWorkflowPorts",nillable=false,required=true)
 	@XmlElement( name="outputWorkflowPort",nillable=false)
-	public Set<OutputWorkflowPort> getOutputPorts() {
+	public NamedSet<OutputWorkflowPort> getOutputPorts() {
 		return outputPorts;
 	}
 
@@ -93,7 +92,8 @@ public class Workflow extends AbstractNamed implements Configurable {
 	 * @param outputPorts
 	 */
 	public void setOutputPorts(Set<OutputWorkflowPort> outputPorts) {
-		this.outputPorts = outputPorts;
+		this.outputPorts.clear();
+		this.outputPorts.addAll(outputPorts);
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class Workflow extends AbstractNamed implements Configurable {
 	 */
 	@XmlElementWrapper( name="inputWorkflowPorts",nillable=false,required=true)
 	@XmlElement( name="inputWorkflowPort",nillable=false)
-	public Set<InputWorkflowPort> getInputPorts() {
+	public NamedSet<InputWorkflowPort> getInputPorts() {
 		return inputPorts;
 	}
 
@@ -109,14 +109,16 @@ public class Workflow extends AbstractNamed implements Configurable {
 	 * @param inputPorts
 	 */
 	public void setInputPorts(Set<InputWorkflowPort> inputPorts) {
-		this.inputPorts = inputPorts;
+		this.inputPorts.clear();
+		this.inputPorts.addAll(inputPorts);
 	}
 
 	/**
 	 * @param processors
 	 */
 	public void setProcessors(Set<Processor> processors) {
-		this.processors = processors;
+		this.processors.clear();
+		this.processors.addAll(processors);
 	}
 
 	/**
@@ -124,7 +126,7 @@ public class Workflow extends AbstractNamed implements Configurable {
 	 */
 	@XmlElementWrapper( name="processors",nillable=false,required=true)
 	@XmlElement( name="processor",nillable=false)
-	public Set<Processor> getProcessors() {
+	public NamedSet<Processor> getProcessors() {
 		return processors;
 	}
 

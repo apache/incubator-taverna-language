@@ -4,7 +4,6 @@
 package uk.org.taverna.scufl2.api.activity;
 
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
 
 import uk.org.taverna.scufl2.api.common.AbstractNamed;
 import uk.org.taverna.scufl2.api.common.Child;
@@ -42,7 +41,13 @@ public class InputActivityPort extends AbstractNamed implements Child<Activity> 
 	 * .api.common.WorkflowBean)
 	 */
 	public void setParent(Activity parent) {
+		if (this.parent != null && this.parent != parent) {
+			this.parent.getInputPorts().remove(this);
+		}
 		this.parent = parent;
+		if (parent != null) {
+			parent.getInputPorts().add(this);
+		}
 	}
 
 }

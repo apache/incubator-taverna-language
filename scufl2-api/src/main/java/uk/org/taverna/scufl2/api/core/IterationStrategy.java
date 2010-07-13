@@ -20,7 +20,13 @@ public class IterationStrategy implements WorkflowBean, Child<Processor> {
 	}
 
 	public void setParent(Processor parent) {
+		if (this.parent != null && this.parent != parent) {
+			this.parent.getIterationStrategyStack().remove(this);
+		}
 		this.parent = parent;
+		if (parent != null) {
+			parent.getIterationStrategyStack().add(this);
+		}
 	}
 
 	public IterationStrategy() {
