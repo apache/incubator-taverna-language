@@ -1,8 +1,13 @@
 package uk.org.taverna.scufl2.translator.t2flow;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,15 +21,20 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
 
 import uk.org.taverna.scufl2.api.activity.ActivityType;
+import uk.org.taverna.scufl2.api.activity.InputActivityPort;
 import uk.org.taverna.scufl2.api.activity.OutputActivityPort;
 import uk.org.taverna.scufl2.api.bindings.Bindings;
 import uk.org.taverna.scufl2.api.bindings.ProcessorBinding;
 import uk.org.taverna.scufl2.api.bindings.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.bindings.ProcessorOutputPortBinding;
+import uk.org.taverna.scufl2.api.common.ConfigurableProperty;
 import uk.org.taverna.scufl2.api.common.Named;
 import uk.org.taverna.scufl2.api.common.ToBeDecided;
+import uk.org.taverna.scufl2.api.configurations.ConfigurablePropertyConfiguration;
+import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.TavernaResearchObject;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.IterationStrategy;
@@ -39,6 +49,7 @@ import uk.org.taverna.scufl2.api.port.SenderPort;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Activity;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedGranularDepthPort;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedGranularDepthPorts;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Dataflow;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Datalinks;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.DepthPort;
@@ -160,7 +171,6 @@ public class T2FlowParser {
 			uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow wf) {
 		Bindings bindings = new Bindings(wf.getProducedBy());
 		currentResearchObject.get().getBindings().add(bindings);
-		// bindings.setName("???");
 		currentBindings.set(bindings);
 	}
 
@@ -190,18 +200,98 @@ public class T2FlowParser {
 		currentProcessorBinding.set(processorBinding);
 
 		uk.org.taverna.scufl2.api.activity.Activity newActivity = parseActivity(origActivity);
-		currentActivity.set(newActivity);
+		currentActivity.set(newActivity);		
+		currentResearchObject.get().getActivities().add(newActivity);
 		processorBinding.setBoundActivity(newActivity);
 
 		parseActivityInputMap(origActivity.getInputMap());
 		parseActivityOutputMap(origActivity.getOutputMap());
-
+		parseActivityConfiguration(origActivity.getConfigBean());
+		
 		currentActivity.remove();
 		currentProcessorBinding.remove();
 	}
 
-	protected void parseActivityInputMap(Map inputMap) {
-		// TODO Auto-generated method stub
+	protected void parseActivityConfiguration(ConfigBean configBean) {		
+		Configuration configuration = new Configuration();
+		configuration.setConfigured(currentActivity.get());
+				
+		
+		Object config = configBean.getAny();
+		System.out.println("Checking " + config + " " + config.getClass());
+		BeanInfo configBeanInfo;
+		try {
+			configBeanInfo = Introspector.getBeanInfo(config.getClass());
+		} catch (IntrospectionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			return;
+		}
+		for (PropertyDescriptor property : configBeanInfo.getPropertyDescriptors()) {
+			if (property.getReadMethod() == null) {
+				continue;
+			}
+			ConfigurablePropertyConfiguration configurablePropertyConfiguration = new ConfigurablePropertyConfiguration();
+			configurablePropertyConfiguration.setParent(configuration);
+			
+			String propertyName = property.getName();
+			ConfigurableProperty configuredProperty = new ConfigurableProperty(propertyName);
+			configurablePropertyConfiguration.setConfiguredProperty(configuredProperty);
+			try {
+				Object value = property.getReadMethod().invoke(config);
+				System.out.println(propertyName + ": "+ value);
+				if (value instanceof Document) {
+					Document document = (Document) value;
+					value = document.getDocumentElement();
+				}
+				configurablePropertyConfiguration.setValue(value);
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+		
+		currentResearchObject.get().getConfigurations().add(configuration);
+		
+	}
+	protected void parseActivityInputMap(Map inputMap) throws ParseException {
+		for (Mapping mapping : inputMap.getMap()) {
+			String fromProcessorOutput = mapping.getFrom();
+			String toActivityOutput = mapping.getTo();
+			ProcessorInputPortBinding processorInputPortBinding = new ProcessorInputPortBinding();
+			
+			InputProcessorPort inputProcessorPort = findNamed(
+					currentProcessor.get().getInputPorts(), fromProcessorOutput);
+			if (inputProcessorPort == null) {
+				String message = "Invalid input port binding, "
+						+ "unknown processor port: " + fromProcessorOutput + "->"
+						+ toActivityOutput + " in " + currentProcessor.get();
+				if (isStrict()) {
+					throw new ParseException(message);
+				} else {
+					logger.warn(message);
+					continue;
+				}
+			}
+
+			InputActivityPort inputActivityPort = new InputActivityPort();
+			inputActivityPort.setName(toActivityOutput);
+			inputActivityPort.setParent(currentActivity.get());			
+			currentActivity.get().getInputPorts().add(inputActivityPort);
+
+			processorInputPortBinding.setBoundActivityPort(inputActivityPort);
+			processorInputPortBinding.setBoundProcessorPort(inputProcessorPort);			
+			currentProcessorBinding.get().getInputPortBindings().add(
+					processorInputPortBinding);
+		}
 
 	}
 
@@ -215,7 +305,7 @@ public class T2FlowParser {
 					currentProcessor.get().getOutputPorts(), toProcessorOutput);
 			if (outputProcessorPort == null) {
 				String message = "Invalid output port binding, "
-						+ "unknown processor port " + fromActivityOutput + "->"
+						+ "unknown processor port: " + fromActivityOutput + "->"
 						+ toProcessorOutput + " in " + currentProcessor.get();
 				if (isStrict()) {
 					throw new ParseException(message);
@@ -227,7 +317,7 @@ public class T2FlowParser {
 
 			OutputActivityPort outputActivityPort = new OutputActivityPort();
 			outputActivityPort.setName(fromActivityOutput);
-			//outputActivityPort.setParent(currentActivity.get());
+			outputActivityPort.setParent(currentActivity.get());			
 			currentActivity.get().getOutputPorts().add(outputActivityPort);
 
 			processorOutputPortBinding.setBoundActivityPort(outputActivityPort);
