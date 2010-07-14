@@ -1,6 +1,5 @@
 package uk.org.taverna.scufl2.api.port;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;

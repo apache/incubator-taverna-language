@@ -34,11 +34,12 @@ public final class Reference<T> {
 	}
 	
 	public static <X> Reference<X> createReference(X object) {
-		Reference<X> result = new Reference();
+		Reference<X> result = new Reference<X>();
 		result.setIdentification(getRoute(object));
 		return result;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private static String getRoute(Object object) {
 		String id = "unknown";
 		if (object instanceof Named) {
