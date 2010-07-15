@@ -22,6 +22,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import uk.org.taverna.scufl2.api.activity.ActivityType;
 import uk.org.taverna.scufl2.api.activity.InputActivityPort;
@@ -80,6 +81,7 @@ public class T2FlowParser {
 		}
 		return null;
 	}
+
 	protected ThreadLocal<uk.org.taverna.scufl2.api.activity.Activity> currentActivity = new ThreadLocal<uk.org.taverna.scufl2.api.activity.Activity>();
 	protected ThreadLocal<Bindings> currentBindings = new ThreadLocal<Bindings>();
 
@@ -92,20 +94,33 @@ public class T2FlowParser {
 
 	protected ThreadLocal<Workflow> currentWorkflow = new ThreadLocal<Workflow>();
 
-	private JAXBContext jc;
-	private Logger logger = Logger.getLogger(T2FlowParser.class);
+	private final JAXBContext jc;
+	private final Logger logger = Logger.getLogger(T2FlowParser.class);
 	private boolean strict = true;
-	private Unmarshaller unmarshaller;
+	private final ThreadLocal<Unmarshaller> unmarshaller;
+
 	public T2FlowParser() throws JAXBException {
 		jc = JAXBContext.newInstance("uk.org.taverna.scufl2.xml.t2flow.jaxb",
 				getClass().getClassLoader());
-		unmarshaller = jc.createUnmarshaller();
+		unmarshaller = new ThreadLocal<Unmarshaller>() {
+			@Override
+			protected Unmarshaller initialValue() {
+				try {
+					return jc.createUnmarshaller();
+				} catch (JAXBException e) {
+					logger.error("Could not create unmarshaller", e);
+					return null;
+				}
+			}
+		};
 	}
+
 	protected ReceiverPort findReceiverPort(Workflow wf, Link sink)
 			throws ParseException {
 		if (sink.getType().equals(LinkType.DATAFLOW)) {
 			String portName = sink.getPort();
-			OutputWorkflowPort candidate = wf.getOutputPorts().getByName(portName);			
+			OutputWorkflowPort candidate = wf.getOutputPorts().getByName(
+					portName);
 			if (candidate == null) {
 				throw new ParseException("Link to unknown workflow port "
 						+ portName);
@@ -119,12 +134,13 @@ public class T2FlowParser {
 						+ processorName);
 			}
 			String portName = sink.getPort();
-			InputProcessorPort candidate = processor.getInputPorts().getByName(portName);
+			InputProcessorPort candidate = processor.getInputPorts().getByName(
+					portName);
 			if (candidate == null) {
 				throw new ParseException("Link to unknown port " + portName
 						+ " in " + processorName);
 			}
-			return candidate;			
+			return candidate;
 		} else if (sink.getType().equals(LinkType.MERGE)) {
 			throw new ParseException(
 					"Translation of merges not yet implemented");
@@ -136,7 +152,8 @@ public class T2FlowParser {
 			throws ParseException {
 		if (source.getType().equals(LinkType.DATAFLOW)) {
 			String portName = source.getPort();
-			InputWorkflowPort candidate = wf.getInputPorts().getByName(portName);
+			InputWorkflowPort candidate = wf.getInputPorts()
+					.getByName(portName);
 			if (candidate == null) {
 				throw new ParseException("Link from unknown workflow port "
 						+ portName);
@@ -150,10 +167,11 @@ public class T2FlowParser {
 						+ processorName);
 			}
 			String portName = source.getPort();
-			OutputProcessorPort candidate = processor.getOutputPorts().getByName(portName);
+			OutputProcessorPort candidate = processor.getOutputPorts()
+					.getByName(portName);
 			if (candidate == null) {
-				throw new ParseException("Link from unknown port "
-						+ portName + " in " + processorName);
+				throw new ParseException("Link from unknown port " + portName
+						+ " in " + processorName);
 			}
 			return candidate;
 		} else if (source.getType().equals(LinkType.MERGE)) {
@@ -200,80 +218,96 @@ public class T2FlowParser {
 		currentProcessorBinding.set(processorBinding);
 
 		uk.org.taverna.scufl2.api.activity.Activity newActivity = parseActivity(origActivity);
-		currentActivity.set(newActivity);		
+		currentActivity.set(newActivity);
 		currentResearchObject.get().getActivities().add(newActivity);
 		processorBinding.setBoundActivity(newActivity);
 
 		parseActivityInputMap(origActivity.getInputMap());
 		parseActivityOutputMap(origActivity.getOutputMap());
-		//parseActivityConfiguration(origActivity.getConfigBean());
-		
+		parseActivityConfiguration(origActivity.getConfigBean());
+
 		currentActivity.remove();
 		currentProcessorBinding.remove();
 	}
 
-	protected void parseActivityConfiguration(ConfigBean configBean) {		
+	protected void parseActivityConfiguration(ConfigBean configBean) {
 		Configuration configuration = new Configuration();
 		configuration.setConfigured(currentActivity.get());
-				
-		
+
 		Object config = configBean.getAny();
-		System.out.println("Checking " + config + " " + config.getClass());
-		BeanInfo configBeanInfo;
-		try {
-			configBeanInfo = Introspector.getBeanInfo(config.getClass());
-		} catch (IntrospectionException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			return;
-		}
-		for (PropertyDescriptor property : configBeanInfo.getPropertyDescriptors()) {
-			if (property.getReadMethod() == null) {
-				continue;
-			}
+		if (config instanceof Element) {
+
+			unmarshaller.get().unmarshal(config);
+
 			ConfigurablePropertyConfiguration configurablePropertyConfiguration = new ConfigurablePropertyConfiguration();
 			configurablePropertyConfiguration.setParent(configuration);
-			
-			String propertyName = property.getName();
-			ConfigurableProperty configuredProperty = new ConfigurableProperty(propertyName);
-			configurablePropertyConfiguration.setConfiguredProperty(configuredProperty);
+			ConfigurableProperty configuredProperty = new ConfigurableProperty(
+					"xml");
+			configurablePropertyConfiguration
+					.setConfiguredProperty(configuredProperty);
+			configurablePropertyConfiguration.setValue(config);
+		} else {
+
+			System.out.println("Checking " + config + " " + config.getClass());
+			BeanInfo configBeanInfo;
 			try {
-				Object value = property.getReadMethod().invoke(config);
-				System.out.println(propertyName + ": "+ value);
-				if (value instanceof Document) {
-					Document document = (Document) value;
-					value = document.getDocumentElement();
-				}
-				configurablePropertyConfiguration.setValue(value);
-			} catch (IllegalArgumentException e) {
+				configBeanInfo = Introspector.getBeanInfo(config.getClass());
+			} catch (IntrospectionException e1) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				e1.printStackTrace();
+				return;
 			}
-			
+			for (PropertyDescriptor property : configBeanInfo
+					.getPropertyDescriptors()) {
+				if (property.getReadMethod() == null) {
+					continue;
+				}
+				ConfigurablePropertyConfiguration configurablePropertyConfiguration = new ConfigurablePropertyConfiguration();
+				configurablePropertyConfiguration.setParent(configuration);
+
+				String propertyName = property.getName();
+				ConfigurableProperty configuredProperty = new ConfigurableProperty(
+						propertyName);
+				configurablePropertyConfiguration
+						.setConfiguredProperty(configuredProperty);
+				try {
+					Object value = property.getReadMethod().invoke(config);
+					System.out.println(propertyName + ": " + value);
+					if (value instanceof Document) {
+						Document document = (Document) value;
+						value = document.getDocumentElement();
+					}
+					configurablePropertyConfiguration.setValue(value);
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		}
-		
-		
+
 		currentResearchObject.get().getConfigurations().add(configuration);
-		
+
 	}
+
 	protected void parseActivityInputMap(Map inputMap) throws ParseException {
 		for (Mapping mapping : inputMap.getMap()) {
 			String fromProcessorOutput = mapping.getFrom();
 			String toActivityOutput = mapping.getTo();
 			ProcessorInputPortBinding processorInputPortBinding = new ProcessorInputPortBinding();
-			
-			InputProcessorPort inputProcessorPort = findNamed(
-					currentProcessor.get().getInputPorts(), fromProcessorOutput);
+
+			InputProcessorPort inputProcessorPort = findNamed(currentProcessor
+					.get().getInputPorts(), fromProcessorOutput);
 			if (inputProcessorPort == null) {
 				String message = "Invalid input port binding, "
-						+ "unknown processor port: " + fromProcessorOutput + "->"
-						+ toActivityOutput + " in " + currentProcessor.get();
+						+ "unknown processor port: " + fromProcessorOutput
+						+ "->" + toActivityOutput + " in "
+						+ currentProcessor.get();
 				if (isStrict()) {
 					throw new ParseException(message);
 				} else {
@@ -284,11 +318,11 @@ public class T2FlowParser {
 
 			InputActivityPort inputActivityPort = new InputActivityPort();
 			inputActivityPort.setName(toActivityOutput);
-			inputActivityPort.setParent(currentActivity.get());			
+			inputActivityPort.setParent(currentActivity.get());
 			currentActivity.get().getInputPorts().add(inputActivityPort);
 
 			processorInputPortBinding.setBoundActivityPort(inputActivityPort);
-			processorInputPortBinding.setBoundProcessorPort(inputProcessorPort);			
+			processorInputPortBinding.setBoundProcessorPort(inputProcessorPort);
 			currentProcessorBinding.get().getInputPortBindings().add(
 					processorInputPortBinding);
 		}
@@ -300,13 +334,14 @@ public class T2FlowParser {
 			String fromActivityOutput = mapping.getFrom();
 			String toProcessorOutput = mapping.getTo();
 			ProcessorOutputPortBinding processorOutputPortBinding = new ProcessorOutputPortBinding();
-			
+
 			OutputProcessorPort outputProcessorPort = findNamed(
 					currentProcessor.get().getOutputPorts(), toProcessorOutput);
 			if (outputProcessorPort == null) {
 				String message = "Invalid output port binding, "
-						+ "unknown processor port: " + fromActivityOutput + "->"
-						+ toProcessorOutput + " in " + currentProcessor.get();
+						+ "unknown processor port: " + fromActivityOutput
+						+ "->" + toProcessorOutput + " in "
+						+ currentProcessor.get();
 				if (isStrict()) {
 					throw new ParseException(message);
 				} else {
@@ -317,11 +352,12 @@ public class T2FlowParser {
 
 			OutputActivityPort outputActivityPort = new OutputActivityPort();
 			outputActivityPort.setName(fromActivityOutput);
-			outputActivityPort.setParent(currentActivity.get());			
+			outputActivityPort.setParent(currentActivity.get());
 			currentActivity.get().getOutputPorts().add(outputActivityPort);
 
 			processorOutputPortBinding.setBoundActivityPort(outputActivityPort);
-			processorOutputPortBinding.setBoundProcessorPort(outputProcessorPort);			
+			processorOutputPortBinding
+					.setBoundProcessorPort(outputProcessorPort);
 			currentProcessorBinding.get().getOutputPortBindings().add(
 					processorOutputPortBinding);
 		}
@@ -470,6 +506,7 @@ public class T2FlowParser {
 	public TavernaResearchObject parseT2Flow(File t2File) throws IOException,
 			ParseException, JAXBException {
 		JAXBElement<uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow> root = (JAXBElement<uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow>) unmarshaller
+				.get()
 				.unmarshal(t2File);
 		return parseT2Flow(root.getValue());
 	}
@@ -478,7 +515,7 @@ public class T2FlowParser {
 	public TavernaResearchObject parseT2Flow(InputStream t2File)
 			throws IOException, JAXBException, ParseException {
 		JAXBElement<uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow> root = (JAXBElement<uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow>) unmarshaller
-				.unmarshal(t2File);
+				get().unmarshal(t2File);
 		return parseT2Flow(root.getValue());
 	}
 
