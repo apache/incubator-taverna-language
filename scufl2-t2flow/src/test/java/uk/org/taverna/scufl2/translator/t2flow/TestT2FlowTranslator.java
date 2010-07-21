@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package uk.org.taverna.scufl2.translator.t2flow;
 
@@ -30,12 +30,12 @@ public class TestT2FlowTranslator {
 		URL wfResource = getClass().getResource(AS_T2FLOW);
 		assertNotNull("Could not find workflow " + AS_T2FLOW, wfResource);
 		T2FlowParser parser = new T2FlowParser();
-		parser.setStrict(false);
+		parser.setStrict(true);
 		TavernaResearchObject researchObj = parser.parseT2Flow(wfResource.openStream());
 
 		JAXBContext jc = JAXBContext.newInstance(TavernaResearchObject.class );
 		Marshaller marshaller = jc.createMarshaller();
-		marshaller.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, 
+		marshaller.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT,
 	              Boolean.TRUE );
 	    marshaller.marshal( researchObj, new FileOutputStream("target/foo.xml") );
 

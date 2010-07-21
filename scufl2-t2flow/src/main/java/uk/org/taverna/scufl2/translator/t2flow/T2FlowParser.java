@@ -9,20 +9,29 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
-import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 import uk.org.taverna.scufl2.api.activity.ActivityType;
 import uk.org.taverna.scufl2.api.activity.InputActivityPort;
@@ -50,8 +59,10 @@ import uk.org.taverna.scufl2.api.port.SenderPort;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Activity;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedGranularDepthPort;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedGranularDepthPorts;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedPorts;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Dataflow;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.DataflowConfig;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Datalinks;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.DepthPort;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.DepthPorts;
@@ -72,6 +83,14 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.Role;
 @SuppressWarnings("restriction")
 public class T2FlowParser {
 
+	private static final String T2FLOW_EXTENDED_XSD = "xsd/t2flow-extended.xsd";
+
+	private static final Logger logger = Logger.getLogger(T2FlowParser.class
+			.getCanonicalName());
+
+	public static final URI ravenURI = URI
+			.create("http://ns.taverna.org.uk/2010/activity/raven/");
+
 	public static <T extends Named> T findNamed(Collection<T> namedObjects,
 			String name) {
 		for (T named : namedObjects) {
@@ -82,37 +101,43 @@ public class T2FlowParser {
 		return null;
 	}
 
+	protected Set<T2Parser> additionalParsers = new HashSet<T2Parser>();
 	protected ThreadLocal<uk.org.taverna.scufl2.api.activity.Activity> currentActivity = new ThreadLocal<uk.org.taverna.scufl2.api.activity.Activity>();
 	protected ThreadLocal<Bindings> currentBindings = new ThreadLocal<Bindings>();
-
 	protected ThreadLocal<Processor> currentProcessor = new ThreadLocal<Processor>();
-
 	protected ThreadLocal<ProcessorBinding> currentProcessorBinding = new ThreadLocal<ProcessorBinding>();
-
-	// Currently parsing
 	protected ThreadLocal<TavernaResearchObject> currentResearchObject = new ThreadLocal<TavernaResearchObject>();
-
+	protected ThreadLocal<T2Parser> currentT2Parser = new ThreadLocal<T2Parser>();
 	protected ThreadLocal<Workflow> currentWorkflow = new ThreadLocal<Workflow>();
-
-	private final JAXBContext jc;
-	private final Logger logger = Logger.getLogger(T2FlowParser.class);
-	private boolean strict = true;
-	private final ThreadLocal<Unmarshaller> unmarshaller;
+	protected final JAXBContext jaxbContext;
+	protected boolean strict = false;
+	protected final ServiceLoader<T2Parser> t2Parsers;
+	protected final ThreadLocal<Unmarshaller> unmarshaller;
 
 	public T2FlowParser() throws JAXBException {
-		jc = JAXBContext.newInstance("uk.org.taverna.scufl2.xml.t2flow.jaxb",
-				getClass().getClassLoader());
+		jaxbContext = JAXBContext.newInstance(
+				"uk.org.taverna.scufl2.xml.t2flow.jaxb", getClass()
+						.getClassLoader());
 		unmarshaller = new ThreadLocal<Unmarshaller>() {
 			@Override
 			protected Unmarshaller initialValue() {
 				try {
-					return jc.createUnmarshaller();
+					return jaxbContext.createUnmarshaller();
 				} catch (JAXBException e) {
-					logger.error("Could not create unmarshaller", e);
+					logger
+							.log(Level.SEVERE, "Could not create unmarshaller",
+									e);
 					return null;
 				}
 			}
 		};
+		t2Parsers = ServiceLoader.load(T2Parser.class);
+	}
+
+	public void addT2Parser(T2Parser t2Parser) {
+		synchronized (additionalParsers) {
+			additionalParsers.add(t2Parser);
+		}
 	}
 
 	protected ReceiverPort findReceiverPort(Workflow wf, Link sink)
@@ -181,6 +206,30 @@ public class T2FlowParser {
 		throw new ParseException("Could not parse sender " + source);
 	}
 
+	protected T2Parser getT2Parser(URI classURI) {
+		for (T2Parser t2Parser : getT2Parsers()) {
+			if (t2Parser.canHandlePlugin(classURI)) {
+				return t2Parser;
+			}
+		}
+		return null;
+	}
+
+	private Set<T2Parser> getT2Parsers() {
+		Set<T2Parser> parsers = new HashSet<T2Parser>();
+		// TODO: Do we need to cache this, or is the cache in ServiceLoader fast
+		// enough?
+		synchronized (t2Parsers) {
+			for (T2Parser parser : t2Parsers) {
+				parsers.add(parser);
+			}
+		}
+		synchronized (additionalParsers) {
+			parsers.addAll(additionalParsers);
+		}
+		return parsers;
+	}
+
 	public boolean isStrict() {
 		return strict;
 	}
@@ -192,16 +241,31 @@ public class T2FlowParser {
 		currentBindings.set(bindings);
 	}
 
-	protected URI mapActivityFromRaven(Raven raven, String activityClass) {
-		URI ravenURI = URI
-				.create("http://ns.taverna.org.uk/2010/activity/raven/");
-		// TODO: Perform actual mapping
+	private URI makeRavenURI(Raven raven, String className) {
 		return ravenURI.resolve(raven.getGroup() + "/" + raven.getArtifact()
-				+ "/" + raven.getVersion() + "/" + activityClass);
+				+ "/" + raven.getVersion() + "/" + className);
+	}
+
+	private URI mapActivityFromRaven(Raven raven, String activityClass)
+			throws ParseException {
+		URI classURI = makeRavenURI(raven, activityClass);
+		T2Parser t2Parser = getT2Parser(classURI);
+		if (t2Parser == null) {
+			String message = "Unknown T2 activity " + classURI
+					+ ", install supporting T2Parser";
+			if (isStrict()) {
+				throw new ParseException(message);
+			} else {
+				logger.warning(message);
+				return classURI;
+			}
+		}
+		currentT2Parser.set(t2Parser);
+		return t2Parser.mapT2flowActivityToURI(classURI);
 	}
 
 	protected uk.org.taverna.scufl2.api.activity.Activity parseActivity(
-			Activity origActivity) {
+			Activity origActivity) throws ParseException {
 		Raven raven = origActivity.getRaven();
 		String activityClass = origActivity.getClazz();
 		URI activityId = mapActivityFromRaven(raven, activityClass);
@@ -211,7 +275,7 @@ public class T2FlowParser {
 	}
 
 	protected void parseActivityBinding(Activity origActivity)
-			throws ParseException {
+			throws ParseException, JAXBException {
 		ProcessorBinding processorBinding = new ProcessorBinding();
 		currentBindings.get().getProcessorBindings().add(processorBinding);
 		processorBinding.setBoundProcessor(currentProcessor.get());
@@ -224,28 +288,42 @@ public class T2FlowParser {
 
 		parseActivityInputMap(origActivity.getInputMap());
 		parseActivityOutputMap(origActivity.getOutputMap());
-		parseActivityConfiguration(origActivity.getConfigBean());
+
+		try {
+			parseActivityConfiguration(origActivity.getConfigBean());
+		} catch (JAXBException e) {
+			if (isStrict()) {
+				throw e;
+			}
+			logger.log(Level.WARNING, "Can't configure activity" + newActivity,
+					e);
+		}
 
 		currentActivity.remove();
 		currentProcessorBinding.remove();
 	}
 
-	protected void parseActivityConfiguration(ConfigBean configBean) {
+	protected void parseActivityConfiguration(ConfigBean configBean)
+			throws JAXBException {
 		Configuration configuration = new Configuration();
 		configuration.setConfigured(currentActivity.get());
 
 		Object config = configBean.getAny();
-		if (config instanceof Element) {
+		if (config instanceof Element
+				&& configBean.getEncoding().equals("dataflow")) {
 
-			unmarshaller.get().unmarshal(config);
+			JAXBElement<DataflowConfig> dataflowElem = getUnmarshaller()
+					.unmarshal((Element) config, DataflowConfig.class);
+			DataflowConfig dataflowConfig = dataflowElem.getValue();
+			String dataflowReference = dataflowConfig.getRef();
 
 			ConfigurablePropertyConfiguration configurablePropertyConfiguration = new ConfigurablePropertyConfiguration();
 			configurablePropertyConfiguration.setParent(configuration);
 			ConfigurableProperty configuredProperty = new ConfigurableProperty(
-					"xml");
+					"dataflow");
 			configurablePropertyConfiguration
 					.setConfiguredProperty(configuredProperty);
-			configurablePropertyConfiguration.setValue(config);
+			configurablePropertyConfiguration.setValue(dataflowReference);
 		} else {
 
 			System.out.println("Checking " + config + " " + config.getClass());
@@ -295,6 +373,37 @@ public class T2FlowParser {
 
 	}
 
+	private Unmarshaller getUnmarshaller() {
+		Unmarshaller u = unmarshaller.get();
+
+		if (!isStrict() && u.getSchema() != null) {
+			u.setSchema(null);
+		} else if (isStrict() && u.getSchema() == null) {
+			// Load and set schema to validate against
+			Schema schema;
+			try {
+				SchemaFactory schemaFactory = SchemaFactory
+						.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
+				URL t2flowExtendedXSD = getClass().getResource(
+						T2FLOW_EXTENDED_XSD);
+				Source schemaSource = new StreamSource(t2flowExtendedXSD
+						.toURI().toASCIIString());
+				schema = schemaFactory.newSchema(schemaSource);
+			} catch (SAXException e) {
+				throw new RuntimeException("Can't load schema "
+						+ T2FLOW_EXTENDED_XSD, e);
+			} catch (URISyntaxException e) {
+				throw new RuntimeException("Can't find schema "
+						+ T2FLOW_EXTENDED_XSD, e);
+			} catch (NullPointerException e) {
+				throw new RuntimeException("Can't find schema "
+						+ T2FLOW_EXTENDED_XSD, e);
+			}
+			u.setSchema(schema);
+		}
+		return u;
+	}
+
 	protected void parseActivityInputMap(Map inputMap) throws ParseException {
 		for (Mapping mapping : inputMap.getMap()) {
 			String fromProcessorOutput = mapping.getFrom();
@@ -311,7 +420,7 @@ public class T2FlowParser {
 				if (isStrict()) {
 					throw new ParseException(message);
 				} else {
-					logger.warn(message);
+					logger.log(Level.WARNING, message);
 					continue;
 				}
 			}
@@ -345,7 +454,7 @@ public class T2FlowParser {
 				if (isStrict()) {
 					throw new ParseException(message);
 				} else {
-					logger.warn(message);
+					logger.log(Level.WARNING, message);
 					continue;
 				}
 			}
@@ -364,7 +473,8 @@ public class T2FlowParser {
 
 	}
 
-	protected Workflow parseDataflow(Dataflow df) throws ParseException {
+	protected Workflow parseDataflow(Dataflow df) throws ParseException,
+			JAXBException {
 		Workflow wf = new Workflow();
 		currentWorkflow.set(wf);
 		wf.setName(df.getName());
@@ -391,7 +501,8 @@ public class T2FlowParser {
 				DataLink newLink = new DataLink(senderPort, receiverPort);
 				newLinks.add(newLink);
 			} catch (ParseException ex) {
-				logger.warn("Could not translate link:\n" + origLink, ex);
+				logger.log(Level.WARNING, "Could not translate link:\n"
+						+ origLink, ex);
 				if (isStrict()) {
 					throw ex;
 				}
@@ -420,7 +531,7 @@ public class T2FlowParser {
 						+ " has depth " + originalPort.getDepth()
 						+ " and granular depth "
 						+ originalPort.getGranularDepth();
-				logger.warn(message);
+				logger.log(Level.WARNING, message);
 				if (isStrict()) {
 					throw new ParseException(message);
 				}
@@ -437,7 +548,8 @@ public class T2FlowParser {
 		return newStack;
 	}
 
-	protected Set<OutputWorkflowPort> parseOutputPorts(Ports originalPorts) {
+	protected Set<OutputWorkflowPort> parseOutputPorts(
+			AnnotatedPorts originalPorts) {
 		Set<OutputWorkflowPort> createdPorts = new HashSet<OutputWorkflowPort>();
 		for (Port originalPort : originalPorts.getPort()) {
 			OutputWorkflowPort newPort = new OutputWorkflowPort(currentWorkflow
@@ -477,7 +589,7 @@ public class T2FlowParser {
 	}
 
 	protected Set<Processor> parseProcessors(Processors originalProcessors)
-			throws ParseException {
+			throws ParseException, JAXBException {
 		HashSet<Processor> newProcessors = new HashSet<Processor>();
 		for (uk.org.taverna.scufl2.xml.t2flow.jaxb.Processor origProc : originalProcessors
 				.getProcessor()) {
@@ -505,8 +617,7 @@ public class T2FlowParser {
 	@SuppressWarnings("unchecked")
 	public TavernaResearchObject parseT2Flow(File t2File) throws IOException,
 			ParseException, JAXBException {
-		JAXBElement<uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow> root = (JAXBElement<uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow>) unmarshaller
-				.get()
+		JAXBElement<uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow> root = (JAXBElement<uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow>) getUnmarshaller()
 				.unmarshal(t2File);
 		return parseT2Flow(root.getValue());
 	}
@@ -514,14 +625,14 @@ public class T2FlowParser {
 	@SuppressWarnings("unchecked")
 	public TavernaResearchObject parseT2Flow(InputStream t2File)
 			throws IOException, JAXBException, ParseException {
-		JAXBElement<uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow> root = (JAXBElement<uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow>) unmarshaller
-				get().unmarshal(t2File);
+		JAXBElement<uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow> root = (JAXBElement<uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow>) getUnmarshaller()
+				.unmarshal(t2File);
 		return parseT2Flow(root.getValue());
 	}
 
 	public TavernaResearchObject parseT2Flow(
 			uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow wf)
-			throws ParseException {
+			throws ParseException, JAXBException {
 
 		TavernaResearchObject ro = new TavernaResearchObject();
 		currentResearchObject.set(ro);
@@ -543,6 +654,7 @@ public class T2FlowParser {
 
 	public void setStrict(boolean strict) {
 		this.strict = strict;
+
 	}
 
 }
