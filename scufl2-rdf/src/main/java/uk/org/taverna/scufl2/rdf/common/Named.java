@@ -4,7 +4,7 @@ import org.openrdf.elmo.annotations.rdf;
 
 @rdf(Ontology.Named)
 public interface Named extends WorkflowBean {
-	
+
 	@rdf(Ontology.name)
 	public String getName();
 
