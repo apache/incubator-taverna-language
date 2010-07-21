@@ -1,2 +1,10 @@
 uk.org.taverna.scufl2.translator.t2flow.defaultactivities.DataflowActivityParser
 uk.org.taverna.scufl2.translator.t2flow.defaultactivities.BeanshellActivityParser
+uk.org.taverna.scufl2.translator.t2flow.defaultactivities.RshellActivityParser
+uk.org.taverna.scufl2.translator.t2flow.defaultactivities.SpreadsheetActivityParser
+uk.org.taverna.scufl2.translator.t2flow.defaultactivities.StringConstantActivityParser
+uk.org.taverna.scufl2.translator.t2flow.defaultactivities.BiomobyActivityParser
+uk.org.taverna.scufl2.translator.t2flow.defaultactivities.SoaplabActivityParser
+uk.org.taverna.scufl2.translator.t2flow.defaultactivities.WSDLActivityParser
+uk.org.taverna.scufl2.translator.t2flow.defaultactivities.BiomartActivityParser
+uk.org.taverna.scufl2.translator.t2flow.defaultactivities.ApiConsomerActivityParser
