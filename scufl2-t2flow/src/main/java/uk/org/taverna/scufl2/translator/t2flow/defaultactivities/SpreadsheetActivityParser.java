@@ -2,12 +2,15 @@ package uk.org.taverna.scufl2.translator.t2flow.defaultactivities;
 
 import java.net.URI;
 
+import uk.org.taverna.scufl2.api.configurations.Configuration;
+import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.T2Parser;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 
 public class SpreadsheetActivityParser implements T2Parser {
 
-	private static URI activityRavenURI = URI
-			.create("http://ns.taverna.org.uk/2010/activity/raven/net.sf.taverna.t2.activities/spreadsheet-import-activity/");
+	private static URI activityRavenURI =
+			T2FlowParser.ravenURI.resolve("net.sf.taverna.t2.activities/spreadsheet-import-activity/");
 
 	private static String activityClassName = "net.sf.taverna.t2.activities.spreadsheet.SpreadsheetImportActivity";
 
@@ -24,6 +27,13 @@ public class SpreadsheetActivityParser implements T2Parser {
 	@Override
 	public URI mapT2flowActivityToURI(URI t2flowActivity) {
 		return scufl2Uri;
+	}
+
+	@Override
+	public Configuration parseActivityConfiguration(T2FlowParser t2FlowParser,
+			ConfigBean configBean) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

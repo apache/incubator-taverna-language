@@ -79,17 +79,20 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.Processors;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Raven;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Role;
 
-@SuppressWarnings("restriction")
 public class T2FlowParser {
 
 	private static final String T2FLOW_EXTENDED_XSD = "xsd/t2flow-extended.xsd";
+	@SuppressWarnings("unused")
 	private static final String T2FLOW_XSD = "xsd/t2flow.xsd";
 
 	private static final Logger logger = Logger.getLogger(T2FlowParser.class
 			.getCanonicalName());
 
 	public static final URI ravenURI = URI
-			.create("http://ns.taverna.org.uk/2010/activity/raven/");
+			.create("http://ns.taverna.org.uk/2010/xml/t2flow/raven/");
+
+	public static final URI configBeanURI = URI
+			.create("http://ns.taverna.org.uk/2010/xml/t2flow/configbean/");
 
 	public static <T extends Named> T findNamed(Collection<T> namedObjects,
 			String name) {
@@ -287,12 +290,11 @@ public class T2FlowParser {
 	protected void parseActivityBinding(Activity origActivity)
 			throws ParseException, JAXBException {
 		ProcessorBinding processorBinding = new ProcessorBinding();
-		currentBindings.get().getProcessorBindings().add(processorBinding);
 		processorBinding.setBoundProcessor(currentProcessor.get());
 		currentProcessorBinding.set(processorBinding);
-
 		uk.org.taverna.scufl2.api.activity.Activity newActivity = parseActivity(origActivity);
 		currentActivity.set(newActivity);
+		currentBindings.get().getProcessorBindings().add(processorBinding);
 		currentResearchObject.get().getActivities().add(newActivity);
 		processorBinding.setBoundActivity(newActivity);
 
@@ -314,78 +316,49 @@ public class T2FlowParser {
 	}
 
 	protected void parseActivityConfiguration(ConfigBean configBean)
-			throws JAXBException {
-		Configuration configuration = new Configuration();
-		configuration.setConfigured(currentActivity.get());
+			throws JAXBException, ParseException {
 
-		Object config = configBean.getAny();
-		if (config instanceof Element
-				&& configBean.getEncoding().equals("dataflow")) {
-
-			Unmarshaller unmarshaller2 = getUnmarshaller();
-			unmarshaller2.setSchema(null);
-			JAXBElement<DataflowConfig> dataflowElem = unmarshaller2
-					.unmarshal((Element) config, DataflowConfig.class);
-			DataflowConfig dataflowConfig = dataflowElem.getValue();
-			String dataflowReference = dataflowConfig.getRef();
-
-			ConfigurablePropertyConfiguration configurablePropertyConfiguration = new ConfigurablePropertyConfiguration();
-			configurablePropertyConfiguration.setParent(configuration);
-			ConfigurableProperty configuredProperty = new ConfigurableProperty(
-					"dataflow");
-			configurablePropertyConfiguration
-					.setConfiguredProperty(configuredProperty);
-			configurablePropertyConfiguration.setValue(dataflowReference);
-		} else {
-
-			System.out.println("Checking " + config + " " + config.getClass());
-			BeanInfo configBeanInfo;
-			try {
-				configBeanInfo = Introspector.getBeanInfo(config.getClass());
-			} catch (IntrospectionException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-				return;
-			}
-			for (PropertyDescriptor property : configBeanInfo
-					.getPropertyDescriptors()) {
-				if (property.getReadMethod() == null) {
-					continue;
-				}
-				ConfigurablePropertyConfiguration configurablePropertyConfiguration = new ConfigurablePropertyConfiguration();
-				configurablePropertyConfiguration.setParent(configuration);
-
-				String propertyName = property.getName();
-				ConfigurableProperty configuredProperty = new ConfigurableProperty(
-						propertyName);
-				configurablePropertyConfiguration
-						.setConfiguredProperty(configuredProperty);
-				try {
-					Object value = property.getReadMethod().invoke(config);
-					System.out.println(propertyName + ": " + value);
-					if (value instanceof Document) {
-						Document document = (Document) value;
-						value = document.getDocumentElement();
-					}
-					configurablePropertyConfiguration.setValue(value);
-				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+		Configuration configuration = null;
+		if (currentT2Parser.get() == null) {
+			String message = "No config parser for activity "
+					+ currentActivity.get();
+			if (isStrict()) {
+				throw new ParseException(message);
 			}
 		}
+		try {
+			configuration = currentT2Parser.get().parseActivityConfiguration(
+					this, configBean);
+		} catch (ParseException e) {
+			if (isStrict()) {
+				throw e;
+			}
+		}
+		if (configuration == null) {
+			if (isStrict()) {
+				throw new ParseException("No configuration returned from "
+						+ currentT2Parser.get() + " for activity "
+						+ currentActivity.get());
+			}
+			// We'll have to fake it
+			configuration = new Configuration();
 
+			URI fallBackURI = configBeanURI.resolve(configBean.getEncoding());
+			ConfigurableProperty fallbackConfig = new ConfigurableProperty(
+					fallBackURI.toASCIIString());
+			currentActivity.get().getConfigurableProperties().add(
+					fallbackConfig);
+
+			ConfigurablePropertyConfiguration property = new ConfigurablePropertyConfiguration();
+			property.setParent(configuration);
+			property.setConfiguredProperty(fallbackConfig);
+			property.setValue(configBean.getAny());
+		}
+		configuration.setConfigured(currentActivity.get());
 		currentResearchObject.get().getConfigurations().add(configuration);
-
 	}
 
-	private Unmarshaller getUnmarshaller() {
+	public Unmarshaller getUnmarshaller() {
 		Unmarshaller u = unmarshaller.get();
 
 		if (!isValidating() && u.getSchema() != null) {
@@ -489,7 +462,7 @@ public class T2FlowParser {
 			JAXBException {
 		Workflow wf = new Workflow();
 		currentWorkflow.set(wf);
-		wf.setName(df.getName());
+		wf.setName(df.getId());
 		// wf.setId(df.getId());
 		wf.setInputPorts(parseInputPorts(df.getInputPorts()));
 		wf.setOutputPorts(parseOutputPorts(df.getOutputPorts()));
