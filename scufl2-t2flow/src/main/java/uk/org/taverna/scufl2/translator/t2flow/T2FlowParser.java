@@ -75,7 +75,6 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.LinkType;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Map;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Mapping;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Port;
-import uk.org.taverna.scufl2.xml.t2flow.jaxb.Ports;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Processors;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Raven;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Role;
@@ -84,6 +83,7 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.Role;
 public class T2FlowParser {
 
 	private static final String T2FLOW_EXTENDED_XSD = "xsd/t2flow-extended.xsd";
+	private static final String T2FLOW_XSD = "xsd/t2flow.xsd";
 
 	private static final Logger logger = Logger.getLogger(T2FlowParser.class
 			.getCanonicalName());
@@ -110,7 +110,17 @@ public class T2FlowParser {
 	protected ThreadLocal<T2Parser> currentT2Parser = new ThreadLocal<T2Parser>();
 	protected ThreadLocal<Workflow> currentWorkflow = new ThreadLocal<Workflow>();
 	protected final JAXBContext jaxbContext;
-	protected boolean strict = false;
+	private boolean strict = false;
+	private boolean validating = false;
+
+	public final boolean isValidating() {
+		return validating;
+	}
+
+	public final void setValidating(boolean validating) {
+		this.validating = validating;
+	}
+
 	protected final ServiceLoader<T2Parser> t2Parsers;
 	protected final ThreadLocal<Unmarshaller> unmarshaller;
 
@@ -376,9 +386,9 @@ public class T2FlowParser {
 	private Unmarshaller getUnmarshaller() {
 		Unmarshaller u = unmarshaller.get();
 
-		if (!isStrict() && u.getSchema() != null) {
+		if (!isValidating() && u.getSchema() != null) {
 			u.setSchema(null);
-		} else if (isStrict() && u.getSchema() == null) {
+		} else if (isValidating() && u.getSchema() == null) {
 			// Load and set schema to validate against
 			Schema schema;
 			try {
@@ -654,7 +664,6 @@ public class T2FlowParser {
 
 	public void setStrict(boolean strict) {
 		this.strict = strict;
-
 	}
 
 }
