@@ -47,6 +47,11 @@
 
 						<!--  activity beans -->
 						<xsd:element form="unqualified"
+							name="net.sf.taverna.t2.activities.apiconsumer.ApiConsumerActivityConfigurationBean"
+							type="activities:ApiConsumerConfig">
+						</xsd:element>
+
+						<xsd:element form="unqualified"
 							name="net.sf.taverna.t2.activities.beanshell.BeanshellActivityConfigurationBean"
 							type="activities:BeanshellConfig">
 						</xsd:element>
