@@ -322,7 +322,9 @@ public class T2FlowParser {
 		if (config instanceof Element
 				&& configBean.getEncoding().equals("dataflow")) {
 
-			JAXBElement<DataflowConfig> dataflowElem = getUnmarshaller()
+			Unmarshaller unmarshaller2 = getUnmarshaller();
+			unmarshaller2.setSchema(null);
+			JAXBElement<DataflowConfig> dataflowElem = unmarshaller2
 					.unmarshal((Element) config, DataflowConfig.class);
 			DataflowConfig dataflowConfig = dataflowElem.getValue();
 			String dataflowReference = dataflowConfig.getRef();
