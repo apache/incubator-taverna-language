@@ -79,6 +79,12 @@
 							type="activities:BioMobyObjectConfig" />
 						<xsd:element form="unqualified" name="net.sf.taverna.t2.activities.biomoby.MobyParseDatatypeActivityConfigurationBean"
 							type="activities:BioMobyParserConfig"/>
+							
+						<xsd:element form="unqualified" name="net.sf.taverna.t2.activities.spreadsheet.SpreadsheetImportConfiguration"
+							type="activities:SpreadsheetImportConfig"/>
+
+						<xsd:element form="unqualified" name="net.sf.taverna.t2.activities.soaplab.SoaplabActivityConfigurationBean"
+							type="activities:SoaplabConfig"/>
 
 						
 						<xsd:element name="dataflow" type="activities:DataflowConfig">
