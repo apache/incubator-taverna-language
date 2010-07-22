@@ -11,7 +11,7 @@ import uk.org.taverna.scufl2.api.common.AbstractNamed;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
-
+import uk.org.taverna.scufl2.api.container.TavernaResearchObject;
 
 /**
  * A Profile specifies a set of compatible ProcessorBindings. For example, one
@@ -27,6 +27,8 @@ public class Profile extends AbstractNamed implements WorkflowBean {
 	private Set<ProcessorBinding> processorBindings = new HashSet<ProcessorBinding>();
 
 	private NamedSet<Configuration> configurations = new NamedSet<Configuration>();
+
+	private int profilePosition;
 
 	public Profile() {
 		super();
@@ -50,10 +52,23 @@ public class Profile extends AbstractNamed implements WorkflowBean {
 	 * 
 	 * @return
 	 */
-	@XmlElementWrapper( name="processorBindings",nillable=false,required=true)
-	@XmlElement( name="processorBinding",nillable=false)
+	@XmlElementWrapper(name = "processorBindings", nillable = false, required = true)
+	@XmlElement(name = "processorBinding", nillable = false)
 	public Set<ProcessorBinding> getProcessorBindings() {
 		return processorBindings;
+	}
+
+	/**
+	 * Position of this profile within the {@link TavernaResearchObject}. When
+	 * ordering profiles, they can be sorted by decreasing profilePosition. If
+	 * two profiles have the same position, their internal order is
+	 * indetermined.
+	 * 
+	 * @return
+	 */
+	@XmlElement(required = true, nillable = false)
+	public final int getProfilePosition() {
+		return profilePosition;
 	}
 
 	/**
@@ -69,6 +84,10 @@ public class Profile extends AbstractNamed implements WorkflowBean {
 	 */
 	public void setProcessorBindings(Set<ProcessorBinding> processorBindings) {
 		this.processorBindings = processorBindings;
+	}
+
+	public final void setProfilePosition(int profilePosition) {
+		this.profilePosition = profilePosition;
 	}
 
 }
