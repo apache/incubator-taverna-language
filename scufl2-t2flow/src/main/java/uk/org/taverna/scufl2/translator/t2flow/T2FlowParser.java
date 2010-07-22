@@ -33,13 +33,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+
 import uk.org.taverna.scufl2.api.activity.ActivityType;
 import uk.org.taverna.scufl2.api.activity.InputActivityPort;
 import uk.org.taverna.scufl2.api.activity.OutputActivityPort;
-import uk.org.taverna.scufl2.api.bindings.Bindings;
-import uk.org.taverna.scufl2.api.bindings.ProcessorBinding;
-import uk.org.taverna.scufl2.api.bindings.ProcessorInputPortBinding;
-import uk.org.taverna.scufl2.api.bindings.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.api.common.ConfigurableProperty;
 import uk.org.taverna.scufl2.api.common.Named;
 import uk.org.taverna.scufl2.api.common.ToBeDecided;
@@ -56,6 +53,10 @@ import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
 import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
 import uk.org.taverna.scufl2.api.port.ReceiverPort;
 import uk.org.taverna.scufl2.api.port.SenderPort;
+import uk.org.taverna.scufl2.api.profiles.Bindings;
+import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
+import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
+import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Activity;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedGranularDepthPort;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedGranularDepthPorts;

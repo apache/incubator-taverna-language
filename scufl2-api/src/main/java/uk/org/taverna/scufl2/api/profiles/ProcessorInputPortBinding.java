@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uk.org.taverna.scufl2.api.bindings;
+package uk.org.taverna.scufl2.api.profiles;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
