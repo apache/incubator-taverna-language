@@ -19,7 +19,7 @@ import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.TavernaResearchObject;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
-import uk.org.taverna.scufl2.api.profiles.Bindings;
+import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.translator.t2flow.ParseException;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
@@ -97,7 +97,7 @@ public class ProcessorNames {
 			DefaultMutableTreeNode processorNode = new DefaultMutableTreeNode(
 					processor.getName());
 			parent.add(processorNode);
-			for (Bindings bindings : ro.getBindings()) {
+			for (Profile bindings : ro.getProfiles()) {
 				for (ProcessorBinding pb : bindings.getProcessorBindings()) {
 					if (pb.getBoundProcessor().equals(processor)) {
 						Activity boundActivity = pb.getBoundActivity();

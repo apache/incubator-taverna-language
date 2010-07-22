@@ -10,13 +10,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
-import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.core.Workflow;
-import uk.org.taverna.scufl2.api.profiles.Bindings;
+import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.api.reference.Reference;
 
 /**
@@ -26,66 +24,21 @@ import uk.org.taverna.scufl2.api.reference.Reference;
 
 @XmlRootElement
 @XmlType(propOrder = { "workflows", "mainWorkflowReference", "activities",
-		"configurations", "bindings" })
+		"profiles" })
 public class TavernaResearchObject implements ResearchObject, WorkflowBean {
 
-	private NamedSet<Bindings> bindings = new NamedSet<Bindings>();
+	private NamedSet<Profile> profiles = new NamedSet<Profile>();
 	private Workflow mainWorkflow;
 	private NamedSet<Workflow> workflows = new NamedSet<Workflow>();
 	private NamedSet<Activity> activities = new NamedSet<Activity>();
-	private NamedSet<Configuration> configurations = new NamedSet<Configuration>();
 
 	/**
 	 * @return
 	 */
-	@XmlElementWrapper(name = "workflows", nillable = false, required = true)
-	@XmlElement(name = "workflow", nillable = false)
-	public NamedSet<Workflow> getWorkflows() {
-		return workflows;
-	}
-
-	/**
-	 * @param workflows
-	 */
-	public void setWorkflows(Set<Workflow> workflows) {
-		this.workflows.clear();
-		this.workflows.addAll(workflows);
-	}
-
-
-	/**
-	 * @return
-	 */
-	@XmlElementWrapper(name = "configurations", nillable = false, required = true)
-	@XmlElement(name = "configuration", nillable = false)
-	public NamedSet<Configuration> getConfigurations() {
-		return configurations;
-	}
-
-	/**
-	 * @param configurations
-	 */
-	public void setConfigurations(Set<Configuration> configurations) {
-		this.configurations.clear();
-		this.configurations.addAll(configurations);
-	}
-
-	/**
-	 * @return
-	 */
-	@XmlElementWrapper(name = "bindings", nillable = false, required = true)
-	@XmlElement(name = "binding", nillable = false)
-	public NamedSet<Bindings> getBindings() {
-		return bindings;
-	}
-
-	public Reference<Workflow> getMainWorkflowReference() {
-		return Reference.createReference(mainWorkflow);
-	}
-
-	public void setMainWorkflowReference(
-			Reference<Workflow> mainWorkflowReference) {
-		mainWorkflow = mainWorkflowReference.resolve();
+	@XmlElementWrapper(name = "activities", nillable = false, required = true)
+	@XmlElement(name = "activity", nillable = false)
+	public NamedSet<Activity> getActivities() {
+		return activities;
 	}
 
 	/**
@@ -99,28 +52,26 @@ public class TavernaResearchObject implements ResearchObject, WorkflowBean {
 		return mainWorkflow;
 	}
 
-	/**
-	 * @param bindings
-	 */
-	public void setBindings(Set<Bindings> bindings) {
-		this.bindings.clear();
-		this.bindings.addAll(bindings);
-	}
-
-	/**
-	 * @param mainWorkflow
-	 */
-	public void setMainWorkflow(Workflow mainWorkflow) {
-		this.mainWorkflow = mainWorkflow;
+	public Reference<Workflow> getMainWorkflowReference() {
+		return Reference.createReference(mainWorkflow);
 	}
 
 	/**
 	 * @return
 	 */
-	@XmlElementWrapper(name = "activities", nillable = false, required = true)
-	@XmlElement(name = "activity", nillable = false)
-	public NamedSet<Activity> getActivities() {
-		return activities;
+	@XmlElementWrapper(name = "profiles", nillable = false, required = true)
+	@XmlElement(name = "profile", nillable = false)
+	public NamedSet<Profile> getProfiles() {
+		return profiles;
+	}
+
+	/**
+	 * @return
+	 */
+	@XmlElementWrapper(name = "workflows", nillable = false, required = true)
+	@XmlElement(name = "workflow", nillable = false)
+	public NamedSet<Workflow> getWorkflows() {
+		return workflows;
 	}
 
 	/**
@@ -131,14 +82,42 @@ public class TavernaResearchObject implements ResearchObject, WorkflowBean {
 		this.activities.addAll(activities);
 	}
 
+	/**
+	 * @param mainWorkflow
+	 */
+	public void setMainWorkflow(Workflow mainWorkflow) {
+		this.mainWorkflow = mainWorkflow;
+	}
+
+	public void setMainWorkflowReference(
+			Reference<Workflow> mainWorkflowReference) {
+		mainWorkflow = mainWorkflowReference.resolve();
+	}
+
+	/**
+	 * @param profiles
+	 */
+	public void setProfiles(Set<Profile> profiles) {
+		this.profiles.clear();
+		this.profiles.addAll(profiles);
+	}
+
+	/**
+	 * @param workflows
+	 */
+	public void setWorkflows(Set<Workflow> workflows) {
+		this.workflows.clear();
+		this.workflows.addAll(workflows);
+	}
+
 	@Override
 	public String toString() {
 		final int maxLen = 6;
 		return "TavernaResearchObject [activities="
-				+ (activities != null ? toString(activities, maxLen) : null)
-				+ ", bindings="
-				+ (bindings != null ? toString(bindings, maxLen) : null)
-				+ ", mainWorkflow=" + mainWorkflow + "]";
+		+ (activities != null ? toString(activities, maxLen) : null)
+				+ ", profiles="
+				+ (profiles != null ? toString(profiles, maxLen) : null)
+		+ ", mainWorkflow=" + mainWorkflow + "]";
 	}
 
 	private String toString(Collection<?> collection, int maxLen) {
@@ -146,9 +125,10 @@ public class TavernaResearchObject implements ResearchObject, WorkflowBean {
 		builder.append("[");
 		int i = 0;
 		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext()
-				&& i < maxLen; i++) {
-			if (i > 0)
+		&& i < maxLen; i++) {
+			if (i > 0) {
 				builder.append(", ");
+			}
 			builder.append(iterator.next());
 		}
 		builder.append("]");
