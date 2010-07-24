@@ -2,12 +2,17 @@ package uk.org.taverna.scufl2.translator.t2flow.defaultactivities;
 
 import java.net.URI;
 
+import uk.org.taverna.scufl2.api.common.ConfigurableProperty;
+import uk.org.taverna.scufl2.api.configurations.ConfigurablePropertyConfiguration;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
+import uk.org.taverna.scufl2.translator.t2flow.ParseException;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.T2Parser;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.BeanshellConfig;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.DataflowConfig;
 
-public class BeanshellActivityParser implements T2Parser {
+public class BeanshellActivityParser extends AbstractActivityParser {
 
 	private static URI activityRavenURI = T2FlowParser.ravenURI
 			.resolve("net.sf.taverna.t2.activities/beanshell-activity/");
@@ -44,9 +49,21 @@ public class BeanshellActivityParser implements T2Parser {
 
 	@Override
 	public Configuration parseActivityConfiguration(T2FlowParser t2FlowParser,
-			ConfigBean configBean) {
-		// TODO Auto-generated method stub
-		return null;
+			ConfigBean configBean) throws ParseException {
+		BeanshellConfig beanshellConfig = unmarshallConfig(t2FlowParser,
+				configBean, "xstream", BeanshellConfig.class);
+		Configuration configuration = new Configuration();
+
+		String script = beanshellConfig.getScript();
+		ConfigurablePropertyConfiguration configurablePropertyConfiguration = new ConfigurablePropertyConfiguration();
+		configurablePropertyConfiguration.setParent(configuration);
+		ConfigurableProperty configuredProperty = new ConfigurableProperty(
+				scufl2Uri.resolve("#script").toASCIIString());
+		configurablePropertyConfiguration
+				.setConfiguredProperty(configuredProperty);
+		configurablePropertyConfiguration.setValue(script);
+
+		return configuration;
 	}
 
 }
