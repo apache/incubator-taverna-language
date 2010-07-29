@@ -1,12 +1,11 @@
 package uk.org.taverna.scufl2.rdf;
-import java.net.URI;
 import java.util.UUID;
 
 import javax.xml.namespace.QName;
 
-
 import org.junit.Before;
 import org.junit.Test;
+import org.openrdf.concepts.owl.Ontology;
 import org.openrdf.elmo.ElmoModule;
 import org.openrdf.elmo.sesame.SesameManager;
 import org.openrdf.elmo.sesame.SesameManagerFactory;
@@ -15,22 +14,20 @@ import org.openrdf.rio.helpers.OrganizedRDFWriter;
 import org.openrdf.rio.n3.N3Writer;
 import org.openrdf.rio.rdfxml.util.OrganizedRDFXMLWriter;
 
-import uk.org.taverna.scufl2.rdf.activity.Activity;
-import uk.org.taverna.scufl2.rdf.activity.ActivityType;
-import uk.org.taverna.scufl2.rdf.common.Named;
-import uk.org.taverna.scufl2.rdf.common.Ontology;
-import uk.org.taverna.scufl2.rdf.common.WorkflowBean;
-import uk.org.taverna.scufl2.rdf.container.TavernaResearchObject;
-import uk.org.taverna.scufl2.rdf.core.DataLink;
-import uk.org.taverna.scufl2.rdf.core.IterationStrategy;
-import uk.org.taverna.scufl2.rdf.core.Processor;
-import uk.org.taverna.scufl2.rdf.core.Workflow;
-import uk.org.taverna.scufl2.rdf.port.InputProcessorPort;
-import uk.org.taverna.scufl2.rdf.port.InputWorkflowPort;
-import uk.org.taverna.scufl2.rdf.port.OutputProcessorPort;
-import uk.org.taverna.scufl2.rdf.port.OutputWorkflowPort;
-import uk.org.taverna.scufl2.rdf.port.ReceiverPort;
-import uk.org.taverna.scufl2.rdf.port.SenderPort;
+import uk.org.taverna.scufl2.ontology.Activity;
+import uk.org.taverna.scufl2.ontology.ActivityType;
+import uk.org.taverna.scufl2.ontology.DataLink;
+import uk.org.taverna.scufl2.ontology.InputProcessorPort;
+import uk.org.taverna.scufl2.ontology.InputWorkflowPort;
+import uk.org.taverna.scufl2.ontology.Named;
+import uk.org.taverna.scufl2.ontology.OutputProcessorPort;
+import uk.org.taverna.scufl2.ontology.OutputWorkflowPort;
+import uk.org.taverna.scufl2.ontology.Processor;
+import uk.org.taverna.scufl2.ontology.ReceiverPort;
+import uk.org.taverna.scufl2.ontology.SenderPort;
+import uk.org.taverna.scufl2.ontology.TavernaResearchObject;
+import uk.org.taverna.scufl2.ontology.Workflow;
+import uk.org.taverna.scufl2.ontology.WorkflowElement;
 
 
 public class TestRDF {
@@ -44,53 +41,50 @@ public class TestRDF {
 		factory.setInferencingEnabled(true);
 		elmoManager = factory.createElmoManager();
 	}
-	
+
 	@Test
 	public void makeExampleWorkflow() throws Exception {
-		
+
 
 
 		TavernaResearchObject ro = elmoManager.create(randomQName(), TavernaResearchObject.class);
 
 		Workflow wf1= elmoManager.create(randomWfQName(), Workflow.class);
 		ro.setMainWorkflow(wf1);
-		
 
-		wf1.getInputPorts().add(makeNamed(wf1, "I", InputWorkflowPort.class));
+
+		wf1.getInputWorkflowPort().add(
+				makeNamed(wf1, "I", InputWorkflowPort.class));
 		OutputWorkflowPort wf1_out1 = makeNamed(wf1, "out1", OutputWorkflowPort.class);
-		wf1.getOutputPorts().add(wf1_out1);
-			
+		wf1.getOutputWorkflowPort().add(wf1_out1);
+
 		Processor p1 = makeNamed(wf1, "p1", Processor.class);
 		wf1.getProcessors().add(p1);
 		InputProcessorPort p1_y1 = makeNamed(wf1, "Y1", InputProcessorPort.class);
-		p1.getInputPorts().add(p1_y1);
+		p1.getInputProcessorPort().add(p1_y1);
 		OutputProcessorPort p1_y2 = makeNamed(wf1, "Y2", OutputProcessorPort.class);
-		p1.getOutputPorts().add(p1_y2);
-		
-		IterationStrategy itStrat = elmoManager.create(IterationStrategy.class);
-		//itStrat.setRoot(new CrossProduct());
-		//
-		//
-		//p1.getIterationStrategyStack().add(itStrat );
-		
+		p1.getOutputProcessorPort().add(p1_y2);
+
+
 		Processor p4 = makeNamed(wf1, "p4", Processor.class);
 		wf1.getProcessors().add(p4);
 		InputProcessorPort p4_x2 = makeNamed(wf1, "X2", InputProcessorPort.class);
-		p4.getInputPorts().add(p4_x2);
-		p4.getInputPorts().add(makeNamed(wf1, "Y1", InputProcessorPort.class));
+		p4.getInputProcessorPort().add(p4_x2);
+		p4.getInputProcessorPort().add(
+				makeNamed(wf1, "Y1", InputProcessorPort.class));
 		OutputProcessorPort p4_y = makeNamed(wf1, "Y", OutputProcessorPort.class);
-		p4.getOutputPorts().add(p4_y);
-		
+		p4.getOutputProcessorPort().add(p4_y);
+
 		Processor pNested = makeNamed(wf1, "PNested", Processor.class);
 		wf1.getProcessors().add(pNested);
-		
+
 		InputProcessorPort pNested_i = makeNamed(wf1, "I", InputProcessorPort.class);
-		pNested.getInputPorts().add(pNested_i);
+		pNested.getInputProcessorPort().add(pNested_i);
 		OutputProcessorPort pNested_o = makeNamed(wf1, "O", OutputProcessorPort.class);
-		pNested.getOutputPorts().add(pNested_o);
+		pNested.getOutputProcessorPort().add(pNested_o);
 
 		wf1.getDatalinks().add(makeDataLink(p1_y2, pNested_i));
-		
+
 		wf1.getDatalinks().add(makeDataLink(p1_y2, p4_x2));
 
 		wf1.getDatalinks().add(makeDataLink(pNested_o,
@@ -102,20 +96,20 @@ public class TestRDF {
 		Activity activity = makeNamed(wf1, "act0", Activity.class);
 		ro.getActivities().add(activity);
 		activity.setType(makeNamed(wf1, "beanshell", ActivityType.class));
-		
+
 		elmoManager.persist(ro);
-		
+
 		ContextAwareConnection connection = elmoManager.getConnection();
 		connection.setNamespace("core", Ontology.CORE);
 		connection.setNamespace("instance", Ontology.INSTANCE);
 		connection.setNamespace("wf", Ontology.WORKFLOW);
 		connection.setNamespace("wf1", Ontology.WORKFLOW);
-		
+
 
 		connection.export(new OrganizedRDFXMLWriter(System.out));
-		
+
 		System.out.println("\n\n##\n\n");
-		
+
 		connection.export(new OrganizedRDFWriter(new N3Writer(System.out)));
 	}
 
@@ -133,12 +127,13 @@ public class TestRDF {
 		return named;
 	}
 
-	private <T extends WorkflowBean> QName wfPartQName(Workflow wf, String name, Class<T> beanType) {
+	private <T extends WorkflowElement> QName wfPartQName(Workflow wf,
+			String name, Class<T> beanType) {
 		String wfNamespace = wf.getQName().getNamespaceURI() + wf.getQName().getLocalPart();
 		String path = wfNamespace + "/" + beanType.getSimpleName() + "/";
 		return new QName(path, name);
 	}
-	
+
 	private QName randomQName() {
 		return new QName(uk.org.taverna.scufl2.rdf.common.Ontology.INSTANCE, UUID.randomUUID().toString());
 	}
@@ -146,6 +141,6 @@ public class TestRDF {
 	private QName randomWfQName() {
 		return new QName(uk.org.taverna.scufl2.rdf.common.Ontology.WORKFLOW, UUID.randomUUID().toString());
 	}
-	
-	
+
+
 }
