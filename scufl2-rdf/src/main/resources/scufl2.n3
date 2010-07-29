@@ -1,0 +1,536 @@
+@base <http://ns.taverna.org.uk/2010/scufl2/ontology/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix : <http://ns.taverna.org.uk/2010/scufl2/ontology/> .
+
+
+<>
+  a owl:Ontology ;
+  dc:title "SCUFL2 Core ontology" ;
+  rdfs:comment """The ontology for defining SCUFL2
+       """ ;
+  rdfs:seeAlso <http://www.mygrid.org.uk/dev/wiki/display/developer/SCUFL2> .
+
+### General classes and properties
+
+:ResearchObject
+    a owl:Class ;
+    rdfs:label "ResearchObject" .
+
+:Parent
+   a owl:Class ;
+   rdfs:label "Parent" .
+
+:Child
+    a owl:Class ;
+    rdfs:label "Child" .
+
+:parent
+    a owl:InverseFunctionalProperty, owl:ObjectProperty ;
+    rdfs:range :Child ;
+    rdfs:label "parent" ;
+    rdfs:domain :Parent ;
+    owl:inverseOf :child .
+
+:child
+    a owl:FunctionalProperty, owl:ObjectProperty ;
+    owl:inverseOf :parent ;
+    rdfs:range :Parent ;
+    rdfs:label "child" ;
+    rdfs:domain :Child .
+
+:Configurable
+    a owl:Class ;
+    rdfs:label "Configurable" ;
+    rdfs:subClassOf :WorkflowElement .
+
+
+
+:WorkflowElement
+    a owl:Class ;
+    rdfs:label "Workflow element" .
+
+:Named
+    a owl:Class ;
+    rdfs:label "Named" ;
+    rdfs:subClassOf :WorkflowElement .
+
+:name
+    a owl:DatatypeProperty, owl:FunctionalProperty ;
+    rdfs:domain :Named ;
+    rdfs:label "name" ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf dc:title .
+
+### Top level entry point for a SCUFL2 archive
+
+:TavernaResearchObject
+    a owl:Class ;
+    rdfs:label "TavernaResearchObject" ;
+    rdfs:subClassOf :Named, :ResearchObject .
+
+:workflow
+    a owl:ObjectProperty ;
+    rdfs:domain :TavernaResearchObject ;
+    rdfs:label "workflow" ;
+    rdfs:range :Workflow ;
+    rdfs:subPropertyOf :child .
+
+:mainWorkflow
+    a owl:FunctionalProperty, owl:ObjectProperty ;
+    rdfs:label "mainWorkflow" ;
+    rdfs:subPropertyOf :workflow ;
+    rdfs:domain :TavernaResearchObject ;
+    rdfs:range :Workflow .
+
+:profile
+    a owl:ObjectProperty ;
+    rdfs:domain :TavernaResearchObject ;
+    rdfs:label "profile" ;
+    rdfs:range :Profile .
+
+:profilePosition
+    a owl:DatatypeProperty, owl:FunctionalProperty ;
+    rdfs:domain :Profile ;
+    rdfs:label "profilePosition" ;
+    rdfs:range xsd:nonNegativeInteger .
+
+:activities
+    a owl:FunctionalProperty, owl:ObjectProperty ;
+    rdfs:domain :TavernaResearchObject ;
+    rdfs:label "activities" ;
+    rdfs:range :Activity ;
+    rdfs:subPropertyOf :child .
+
+
+### Workflow structure
+
+
+:Workflow
+    a owl:Class ;
+    rdfs:label "Workflow" ;
+    rdfs:subClassOf :Named  .
+
+:Port
+    a owl:Class ;
+    rdfs:label "Port" ;
+    rdfs:subClassOf :Named .
+
+:port
+    a owl:ObjectProperty ;
+    rdfs:domain :Parent;
+    rdfs:label "Port" ;
+    rdfs:range :Port ;
+    rdfs:subPropertyOf :child .
+
+:ReceiverPort
+    a owl:Class ;
+    rdfs:label "ReceiverPort" ;
+    rdfs:subClassOf :Port .
+
+:SenderPort
+    a owl:Class ;
+    rdfs:label "SenderPort" ;
+    rdfs:subClassOf :Port .
+
+:WorkflowPort
+    a owl:Class ;
+    rdfs:label "ReceiverPort" ;
+    rdfs:subClassOf :Port .
+
+:workflowPort
+    a owl:ObjectProperty ;
+    rdfs:domain :Workflow ;
+    rdfs:label "Workflow port" ;
+    rdfs:range :WorkflowPort ;
+    rdfs:subPropertyOf :port .
+
+:InputWorkflowPort
+    a owl:Class ;
+    rdfs:label "Input workflow port" ;
+    rdfs:subClassOf :WorkflowPort, :SenderPort .
+
+:OutputWorkflowPort
+    a owl:Class ;
+    rdfs:label "Output workflow port" ;
+    rdfs:subClassOf :WorkflowPort, :ReceiverPort .
+
+:inputWorkflowPort
+    a owl:ObjectProperty ;
+    rdfs:domain :Workflow ;
+    rdfs:label "Workflow input port" ;
+    rdfs:range :InputWorkflowPort ;
+    rdfs:subPropertyOf :workflowPort .
+
+:outputWorkflowPort
+    a owl:ObjectProperty ;
+    rdfs:domain :Workflow ;
+    rdfs:label "Workflow output port" ;
+    rdfs:range :OutputWorkflowPort ;
+    rdfs:subPropertyOf :workflowPort .
+
+:portDepth
+    a owl:DatatypeProperty, owl:FunctionalProperty ;
+    rdfs:domain :InputWorkflowPort, :InputProcessorPort, :InputActivityPort, :OutputActivityPort;
+    rdfs:label "depth" ;
+    rdfs:range xsd:nonNegativeInteger .
+
+:granularPortDepth
+    a owl:DatatypeProperty, owl:FunctionalProperty ;
+    rdfs:domain :InputProcessorPort, :InputActivityPort, :OutputActivityPort;
+    rdfs:label "granular depth" ;
+    rdfs:range xsd:nonNegativeInteger .
+
+
+:DataLink
+    a owl:Class ;
+    rdfs:label "DataLink" .
+
+:datalink
+    a owl:ObjectProperty ;
+    rdfs:domain :Workflow ;
+    rdfs:label "datalink" ;
+    rdfs:range :DataLink .
+
+
+:receivesFrom
+    a owl:FunctionalProperty, owl:ObjectProperty ;
+    rdfs:domain :DataLink ;
+    rdfs:label "receiverPort" ;
+    rdfs:range :ReceiverPort .
+
+:sendsTo
+    a owl:FunctionalProperty, owl:ObjectProperty ;
+    rdfs:domain :DataLink ;
+    rdfs:label "senderPort" ;
+    rdfs:range :SenderPort .
+
+
+:Processor
+    a owl:Class ;
+    rdfs:label "Processor" ;
+    rdfs:subClassOf :Named, :Child, :Configurable .
+
+:processor
+    a owl:ObjectProperty ;
+    rdfs:domain :Workflow ;
+    rdfs:label "processor" ;
+    rdfs:range :Processor ;
+    rdfs:subPropertyOf :child .
+
+:processorType
+    a owl:FunctionalProperty, owl:ObjectProperty ;
+    rdfs:domain :Processor ;
+    rdfs:label "processorType" ;
+    rdfs:range :ProcessorType .
+
+:ProcessorType
+    a owl:Class ;
+    rdfs:label "ProcessorType" .
+
+# Dispatch stack    
+
+:dispatchStack
+    a owl:FunctionalProperty, owl:ObjectProperty ;
+    rdfs:domain :Processor ;
+    rdfs:label "dispatchStack" ;
+    rdfs:range :DispatchStack ;
+    rdfs:subPropertyOf :child .
+
+:DispatchStack
+    a owl:Class ;
+    rdfs:subClassOf rdf:List, [
+             a owl:Restriction;
+             owl:allValuesFrom :DispathStackLayer;
+             owl:onProperty rdf:first ] .
+
+:DispatchStackLayer
+    a owl:Class .
+
+# Iteration strategy
+
+:iterationStrategyStack
+    a owl:FunctionalProperty, owl:ObjectProperty ;
+    rdfs:domain :Processor ;
+    rdfs:label "iterationStrategyStack" ;
+    rdfs:range :IterationStrategyStack ;
+    rdfs:subPropertyOf :child .
+
+:IterationStrategyStack
+    a owl:Class ;
+    rdfs:subClassOf rdf:List, [
+             a owl:Restriction;
+             owl:allValuesFrom :IterationStrategyNodeWithChildren;
+             owl:onProperty rdf:first ] .
+
+:IterationStrategyNode
+    a owl:Class ;
+    rdfs:label "IterationStrategyNode" ;
+    rdfs:subClassOf :WorkflowElement .
+
+:IterationStrategyNodeWithChildren
+    a owl:Class ;
+    rdfs:label "IterationStrategyNode" ;
+    rdfs:subClassOf :IterationStrategyNode .
+
+:iterationStrategyChildren
+    a owl:FunctionalProperty, owl:ObjectProperty ;
+    rdfs:domain :IterationStrategyNodeWithChildren;
+    rdfs:range :IterationStrategyChildren;
+    rdfs:subPropertyOf :child .
+
+:IterationStrategyChildren
+    a owl:Class ;
+    rdfs:subClassOf rdf:List, [
+             a owl:Restriction;
+             owl:allValuesFrom :IterationStrategyNode;
+             owl:onProperty rdf:first ] .
+
+:CrossProduct
+    a owl:Class ;
+    rdfs:label "CrossProduct" ;
+    rdfs:subClassOf :IterationStrategyNodeWithChildren .
+
+:DotProduct
+    a owl:Class ;
+    rdfs:label "DotProduct" ;
+    rdfs:subClassOf :IterationStrategyNodeWithChildren .
+
+:InputProcessorPort
+    rdfs:subClassOf :IterationStrategyNode .
+
+
+# conditions    
+
+:StartCondition
+    a owl:Class ;
+    rdfs:label "StartCondition" .
+
+:startConditions
+    a owl:ObjectProperty ;
+    rdfs:domain :Processor ;
+    rdfs:label "startConditions" ;
+    rdfs:range :StartCondition .
+
+:ProcessorControlledStartCondition
+    a owl:Class ;
+    rdfs:label "ProcessorControlledStartCondition" ;
+    rdfs:subClassOf :StartCondition .
+
+:controllingProcessor
+    a owl:FunctionalProperty, owl:ObjectProperty ;
+    rdfs:domain :ProcessorControlledStartCondition ;
+    rdfs:label "controllingProcessor" ;
+    rdfs:range :Processor .
+
+:RunAfterCondition
+    a owl:Class ;
+    rdfs:label "RunAfterCondition" ;
+    rdfs:subClassOf :ProcessorControlledStartCondition .
+
+
+:ProcessorPort
+    a owl:Class ;
+    rdfs:label "ProcessorPort" ;
+    rdfs:subClassOf :Port, :Child .
+
+:processorPort
+    a owl:ObjectProperty ;
+    rdfs:domain :Processor ;
+    rdfs:label "Processor port" ;
+    rdfs:range :ProcessorPort ;
+    rdfs:subPropertyOf :port .
+
+:InputProcessorPort
+    a owl:Class ;
+    rdfs:label "Input processor port" ;
+    rdfs:subClassOf :ProcessorPort, :ReceiverPort .
+
+:OutputProcessorPort
+    a owl:Class ;
+    rdfs:label "Output processor port" ;
+    rdfs:subClassOf :ProcessorPort, :SenderPort .
+
+:inputProcessorPort
+    a owl:ObjectProperty ;
+    rdfs:domain :Processor ;
+    rdfs:label "Processor input port" ;
+    rdfs:range :InputProcessorPort ;
+    rdfs:subPropertyOf :processorPort.
+
+:outputProcessorPort
+    a owl:ObjectProperty ;
+    rdfs:domain :Processor ;
+    rdfs:label "Processor output port" ;
+    rdfs:range :OutputProcessorPort ;
+    rdfs:subPropertyOf :processorPort.
+
+
+#### Activities
+
+:Activity
+    a owl:Class ;
+    rdfs:label "Activity" ;
+    rdfs:subClassOf :WorkflowElement .
+
+:ActivityType
+    a owl:Class ;
+    rdfs:label "Activity type" .
+
+:activityType
+    a owl:ObjectProperty ;
+    rdfs:domain :Activity ;
+    rdfs:label "Activity type" ;
+    rdfs:range :ActivityType .
+
+:ActivityPort
+    a owl:Class ;
+    rdfs:label "ActivityPort" ;
+    rdfs:subClassOf :Port, :Child .
+
+:activityPort
+    a owl:ObjectProperty ;
+    rdfs:domain :Activity ;
+    rdfs:label "Activity port" ;
+    rdfs:range :ActivityPort ;
+    rdfs:subPropertyOf :port .
+
+:InputActivityPort
+    a owl:Class ;
+    rdfs:label "Input activity port" ;
+    rdfs:subClassOf :ActivityPort .
+
+:OutputActivityPort
+    a owl:Class ;
+    rdfs:label "Output activity port" ;
+    rdfs:subClassOf :ActivityPort .
+
+:inputActivityPort
+    a owl:ObjectProperty ;
+    rdfs:domain :Activity ;
+    rdfs:label "Activity input port" ;
+    rdfs:range :InputActivityPort ;
+    rdfs:subPropertyOf :activityPort.
+
+:outputActivityPort
+    a owl:ObjectProperty ;
+    rdfs:domain :Activity ;
+    rdfs:label "Activity output port" ;
+    rdfs:range :OutputActivityPort ;
+    rdfs:subPropertyOf :activityPort.
+
+
+####### Bindings
+
+:Profile
+    a owl:Class ;
+    rdfs:label "Profile" ;
+    rdfs:subClassOf :Named, :Child, :WorkflowElement .
+
+
+:activatesConfiguration
+    a owl:ObjectProperty ;
+    rdfs:domain :Profile ;
+    rdfs:label "activates configuration" ;
+    rdfs:range :Configuration .
+
+:Configuration
+    a owl:Class ;
+    rdfs:subClassOf :WorkflowElement .
+
+:ProcessorBinding
+    a owl:Class ;
+    rdfs:label "ProcessorBinding" ;
+    rdfs:subClassOf :WorkflowElement .
+
+:processorBinding
+    a owl:ObjectProperty ;
+    rdfs:domain :Profile ;
+    rdfs:label "processorBindings" ;
+    rdfs:range :ProcessorBinding .
+
+:boundProcessor
+    a owl:FunctionalProperty, owl:ObjectProperty ;
+    rdfs:domain :ProcessorBinding ;
+    rdfs:label "bound processor" ;
+    rdfs:range :Processor .
+
+:boundActivity
+    a owl:FunctionalProperty, owl:ObjectProperty ;
+    rdfs:domain :ProcessorBinding ;
+    rdfs:label "boundActivity" ;
+    rdfs:range :Activity .
+
+:activityPosition
+    a owl:DatatypeProperty, owl:FunctionalProperty ;
+    rdfs:domain :ProcessorBinding ;
+    rdfs:label "activityPosition" ;
+    rdfs:range xsd:nonNegativeInteger .
+
+
+## Port bindings
+
+:InputPortBinding
+    a owl:Class ;
+    rdfs:label "Processor input port binding" .
+
+:OutputPortBinding
+    a owl:Class ;
+    rdfs:label "Processor output Port binding" .
+
+:inputPortBinding
+    a owl:ObjectProperty ;
+    rdfs:domain :ProcessorBinding ;
+    rdfs:label "inputPortBindings" ;
+    rdfs:range :InputPortBinding .
+
+:outputPortBinding
+    a owl:ObjectProperty ;
+    rdfs:domain :ProcessorBinding ;
+    rdfs:label "outputPortBindings" ;
+    rdfs:range :OutputPortBinding .
+
+
+:boundInputActivityPort
+    a owl:FunctionalProperty, owl:ObjectProperty ;
+    rdfs:domain :InputPortBinding ;
+    rdfs:label "Bound input activity port" ;
+    rdfs:range :InputActivityPort .
+
+:boundOutputActivityPort
+    a owl:FunctionalProperty, owl:ObjectProperty ;
+    rdfs:domain :OutputPortBinding ;
+    rdfs:label "Bound output activity port" ;
+    rdfs:range :OutputActivityPort .
+
+
+:boundInputProcessorPort
+    a owl:FunctionalProperty, owl:ObjectProperty ;
+    rdfs:domain :InputPortBinding ;
+    rdfs:label "bound input processor port" ;
+    rdfs:range :InputProcessorPort .
+
+
+:boundOutputProcessorPort
+    a owl:FunctionalProperty, owl:ObjectProperty ;
+    rdfs:domain :OutputPortBinding ;
+    rdfs:label "bound output processor port" ;
+    rdfs:range :OutputProcessorPort .
+
+
+## Configurations
+
+
+###########
+
+
+
+
+
+
+
+
+
