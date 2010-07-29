@@ -1,0 +1,19 @@
+@base <profile/tavernaWorkbench/> .
+@prefix scufl2: <http://ns.taverna.org.uk/2010/scufl2/ontology/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+
+<>
+    a scufl2:Profile;
+    scufl2:name "tavernaWorkbench" ;
+    dc:description """A profile for invoking the workflow on a Taverna Workbench""" ;
+    dc:creator "Stian Soiland-Reyes" ;
+    dc:date "2010-07-29" ;
+    scufl2:processorBinding <binding/Hello> ;
+    scufl2:activatesConfiguration <configuration> .
+
+<binding/Hello> a scufl2:ProcessorBinding .
+           
+       
+<configuration> a scufl2:Configuration .
+    
+
