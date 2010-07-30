@@ -11,3 +11,6 @@
     scufl2:workflow <workflow/85365915-ee82-4fc4-a134-6b8de87f244e/> ;
     scufl2:mainWorkflow <workflow/85365915-ee82-4fc4-a134-6b8de87f244e/> ;
     scufl2:profile <profile/tavernaWorkbench/> .
+
+<workflow/85365915-ee82-4fc4-a134-6b8de87f244e/> rdf:seeAlso <<workflow/85365915-ee82-4fc4-a134-6b8de87f244e.ttl> .  
+<profile/tavernaWorkbench/> rdf:seeAlso <profile/tavernaWorkbench.ttl> .
