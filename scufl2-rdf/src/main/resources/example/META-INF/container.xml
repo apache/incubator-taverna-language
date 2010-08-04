@@ -2,7 +2,7 @@
 <container version="1.0"
     xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
     <rootfiles>
-        <rootfile full-path="tavernaResearchObject.ttl"
+        <rootfile full-path="worklowBundle.ttl"
          media-type="text/turtle" />  
     </rootfiles>
     <relationships>
