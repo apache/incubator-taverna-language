@@ -57,8 +57,11 @@
 <configuration/Hello> a beanshell:Configuration;
     scufl2:configures <activity/HelloScript/> ;
     beanshell:script """
-        hello = "Hello, " + personName;
-        System.out.println("Server says: " + hello);
+    import javax.swing.JOptionPane;
+
+    hello = "Hello, " + personName;
+    JOptionPane.showMessageDialog(null, hello, "Greeting", 
+      JOptionPane.INFORMATION_MESSAGE);
     """ .
 
 

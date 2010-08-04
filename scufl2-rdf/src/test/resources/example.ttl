@@ -122,8 +122,11 @@
     <profile/tavernaWorkbench/configuration/Hello>     a :Configuration;
          <http://ns.taverna.org.uk/2010/scufl2/ontology/configures> <profile/tavernaWorkbench/activity/HelloScript/>;
          :script """
-        hello = "Hello, " + personName;
-        System.out.println("Server says: " + hello);
+    import javax.swing.JOptionPane;
+
+    hello = "Hello, " + personName;
+    JOptionPane.showMessageDialog(null, hello, "Greeting", 
+      JOptionPane.INFORMATION_MESSAGE);
     """ .
     
     <workflow/HelloWorld/>     a <http://ns.taverna.org.uk/2010/scufl2/ontology/Workflow>;

@@ -4,6 +4,8 @@
     <rootfiles>
         <rootfile full-path="worklowBundle.ttl"
          media-type="text/turtle" />  
+        <rootfile full-path="worklowBundle.rdf"
+         media-type="application/rdf+xml" />  
     </rootfiles>
     <relationships>
         <relationship type="metadata" target="/annotation/$dir/$filename.$ext" />

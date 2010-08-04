@@ -144,8 +144,11 @@
     <beanshell:Configuration rdf:about="profile/tavernaWorkbench/configuration/Hello">
         <configures rdf:resource="profile/tavernaWorkbench/activity/HelloScript/"/>
         <beanshell:script>
-        hello = "Hello, " + personName;
-        System.out.println("Server says: " + hello);
+    import javax.swing.JOptionPane;
+
+    hello = "Hello, " + personName;
+    JOptionPane.showMessageDialog(null, hello, "Greeting", 
+      JOptionPane.INFORMATION_MESSAGE);
     </beanshell:script>
     </beanshell:Configuration>
 
