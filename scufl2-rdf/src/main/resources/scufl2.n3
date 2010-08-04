@@ -48,6 +48,16 @@
     rdfs:label "Configurable" ;
     rdfs:subClassOf :WorkflowElement .
 
+:sameBaseAs
+    a owl:Property ;
+    rdfs:comment """The resources are the same (like in owl:sameAs), and
+    so are the sub-resources.  For instance if <file:///tmp/example/>
+    scufl2:sameBaseAs
+    <http://ns.taverna.org.uk/2010/researchObject/28f7c554-4f35-401f-b34b-516e9a0ef731/>
+    ., then also <file:///tmp/example/workflow/HelloWorld/>
+    scufl2:sameBaseAs <http://ns.taverna.org.uk/2010/researchObject/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/> """ ;
+    rdfs:subClassOf owl:sameAs .
+
 
 
 :WorkflowElement
@@ -69,7 +79,7 @@
 ### Top level entry point for a SCUFL2 archive
 
 :TavernaResearchObject
-    a owl:Class ;
+    a owlClass ;
     rdfs:label "TavernaResearchObject" ;
     rdfs:subClassOf :Named, :ResearchObject .
 

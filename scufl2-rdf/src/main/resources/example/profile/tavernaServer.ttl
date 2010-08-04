@@ -1,4 +1,4 @@
-@base <tavernaWorkbench/> .
+@base <tavernaServer/> .
 @prefix beanshell: <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#> .
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
@@ -10,21 +10,47 @@
 :
     a scufl2:Profile;
     scufl2:name "tavernaWorkbench" ;
-    dc:description """A profile for invoking the workflow on the Taverna Workbench""" ;
+    dc:description """A profile for invoking the workflow on a Taverna Server""" ;
     dc:creator "Stian Soiland-Reyes" ;
     dc:date "2010-07-29" ;
     scufl2:processorBinding <binding/Hello> ;
     scufl2:activatesConfiguration <configuration/Hello> ;
     scufl2:recommendsEnvironment [
+        # Not really any need to give a URI to this specialized
+        # environment
         a scufl2:Environment;
-        scufl2:workflowProduct <http://ns.taverna.org.uk/2010/taverna/workbench/>
+        scufl2:workflowProduct <http://ns.taverna.org.uk/2010/taverna/server/>;
+        scufl2:os <http://www.ubuntu.com/#10.04>;
+        dc:title "Taverna server installed on Ubuntu"
     ] ;
     scufl2:requiresEnvironment [
-        a scufl2:Environment;
-        scufl2:workflowProduct <http://ns.taverna.org.uk/2010/taverna/>;
-        scufl2:workflowPlugin beanshell:plugin
+        a scufl2:Environment;  
+        scufl2:product <http://ns.taverna.org.uk/2010/taverna/>;
+        scufl2:plugin beanshell:plugin;
+        dc:description """
+            BioConductor installed in R, and Rserve running
+            on port 1234. x64 but architecture.
+        """;
+        # There's not really any agreed URIs for Windows/Linux/etc
+        # .. but at least the scufl:os and :software URIs can be clickable
+        # for a browser. A GUI could simply say:
+        #
+        #   This workflow execution profile requires/recommends:
+        #           OS: [x] Ubuntu Linux (10.04)
+        #     Software: [x] http://www.r-project.org/
+        #               [x] http://www.rforge.net/Rserve/
+        #               [ ] http://www.bioconductor.org/
+        #   Tick for software you have installed.
+        #
+        scufl2:software <http://www.r-project.org/#2.11>;
+        scufl2:software <http://www.rforge.net/Rserve/>;
+        scufl2:software <http://www.bioconductor.org/>;
+        scufl2:architecture <http://www.intel.org/x64>
     ] .
 
+<http://www.ubuntu.com/#10.04> 
+    scufl2:version "10.04";
+    dc:title "Ubuntu Linux".  
 
 <binding/Hello> a scufl2:ProcessorBinding ;
     scufl2:boundProcessor <../../workflow/HelloWorld/processor/Hello/> ;

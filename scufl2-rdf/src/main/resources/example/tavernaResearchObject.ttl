@@ -1,5 +1,4 @@
-# @base <http://ns.taverna.org.uk/2010/researchObject/28f7c554-4f35-401f-b34b-516e9a0ef731/> .
-@base <.> .
+# @base <./> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix scufl2: <http://ns.taverna.org.uk/2010/scufl2/ontology/> .
@@ -7,6 +6,7 @@
 
 <>
     a scufl2:TavernaResearchObject ;
+    scufl2:sameAs <http://ns.taverna.org.uk/2010/researchObject/28f7c554-4f35-401f-b34b-516e9a0ef731/> ;
     scufl2:name "Hello world" ;
     scufl2:workflow <workflow/HelloWorld/> ;
     scufl2:mainWorkflow <workflow/HelloWorld/> ;
