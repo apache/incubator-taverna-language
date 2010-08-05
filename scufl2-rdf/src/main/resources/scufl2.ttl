@@ -12,6 +12,11 @@
 <>
     a owl:Ontology ;
     dc:title "SCUFL2 Core ontology" ;
+    # Note: Protege does not support this as
+    # owl:imports dc:, dcterms:,rdfs: ; 
+    owl:imports <http://purl.org/dc/elements/1.1/>,
+    <http://purl.org/dc/terms/>,<http://www.w3.org/2000/01/rdf-schema#>;
+
     rdfs:comment """The ontology defining SCUFL2 - a model for
         describing Taverna workflows.""" ;
     rdfs:seeAlso
@@ -91,7 +96,7 @@
         Where 28f7c554-4f35-401f-b34b-516e9a0ef731 must be a randomly
         generated UUID.    
     """ ;
-    rdfs:subClassOf owl:sameAs .
+    rdfs:subPropertyOf owl:sameAs .
 
 
 
