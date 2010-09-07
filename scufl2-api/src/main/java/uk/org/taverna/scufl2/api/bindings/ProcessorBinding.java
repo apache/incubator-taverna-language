@@ -36,6 +36,9 @@ public class ProcessorBinding implements WorkflowBean {
 	private Processor boundProcessor;
 	private Activity boundActivity;
 	
+	private Set<ProcessorInputPortBinding> inputPortBindings = new HashSet<ProcessorInputPortBinding>();
+	private Set<ProcessorOutputPortBinding> outputPortBindings = new HashSet<ProcessorOutputPortBinding>();
+	
 	@XmlElement(required=true, nillable=false)
 	public Reference<Processor> getBoundProcessorReference() {
 		return Reference.createReference(boundProcessor);
@@ -54,9 +57,6 @@ public class ProcessorBinding implements WorkflowBean {
 	public void setBoundActivityReference(Reference<Activity> boundActivityReference) {
 		this.boundActivity = boundActivityReference.resolve();
 	}
-
-	private Set<ProcessorInputPortBinding> inputPortBindings = new HashSet<ProcessorInputPortBinding>();
-	private Set<ProcessorOutputPortBinding> outputPortBindings = new HashSet<ProcessorOutputPortBinding>();
 
 	/**
 	 * Returns the bindings for individual input ports of the bound Processor.
