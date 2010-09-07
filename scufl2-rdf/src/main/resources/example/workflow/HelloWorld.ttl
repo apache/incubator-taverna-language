@@ -1,4 +1,4 @@
-@base <workflow/Helloworld> .
+@base <HelloWorld/> .
 @prefix scufl2: <http://ns.taverna.org.uk/2010/scufl2/ontology/> .
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
 
