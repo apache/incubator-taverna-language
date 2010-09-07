@@ -10,6 +10,7 @@ import uk.org.taverna.scufl2.rdf.common.Ontology;
 import uk.org.taverna.scufl2.rdf.port.InputWorkflowPort;
 import uk.org.taverna.scufl2.rdf.port.OutputWorkflowPort;
 
+@rdf(Ontology.Workflow)
 public interface Workflow extends Named {
 
 	@rdf(Ontology.CORE + "hasOutputWorkflowPort")
