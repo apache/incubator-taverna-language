@@ -3,8 +3,6 @@
  */
 package uk.org.taverna.scufl2.api.reference;
 
-import javax.xml.bind.annotation.XmlTransient;
-
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Named;
 

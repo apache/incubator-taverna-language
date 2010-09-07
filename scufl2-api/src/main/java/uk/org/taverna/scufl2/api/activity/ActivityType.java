@@ -1,7 +1,5 @@
 package uk.org.taverna.scufl2.api.activity;
 
-import javax.xml.bind.annotation.XmlType;
-
 import uk.org.taverna.scufl2.api.common.AbstractNamed;
 
 
