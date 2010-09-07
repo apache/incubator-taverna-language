@@ -12,7 +12,7 @@ public class DataflowActivityParser implements T2Parser {
 	private static String activityClassName = "net.sf.taverna.t2.activities.dataflow.DataflowActivity";
 
 	public static URI scufl2Uri = URI
-			.create("http://ns.taverna.org.uk/2010/activity/beanshell");
+			.create("http://ns.taverna.org.uk/2010/activity/nested-workflow");
 
 	@Override
 	public boolean canHandlePlugin(URI activityURI) {
