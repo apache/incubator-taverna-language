@@ -30,7 +30,7 @@ import uk.org.taverna.scufl2.api.reference.Reference;
  * 
  */
 @XmlType(propOrder = { "boundProcessorReference", "boundActivityReference",
-		"inputPortBindings", "outputPortBindings" })
+		"activityPosition", "inputPortBindings", "outputPortBindings" })
 		public class ProcessorBinding implements WorkflowBean {
 
 	private Processor boundProcessor;
@@ -39,7 +39,7 @@ import uk.org.taverna.scufl2.api.reference.Reference;
 	private Set<ProcessorInputPortBinding> inputPortBindings = new HashSet<ProcessorInputPortBinding>();
 	private Set<ProcessorOutputPortBinding> outputPortBindings = new HashSet<ProcessorOutputPortBinding>();
 
-	private int activityPosition;
+	private Integer activityPosition;
 
 	/**
 	 * The relative position of this activity within the processor (for the
@@ -49,7 +49,8 @@ import uk.org.taverna.scufl2.api.reference.Reference;
 	 * 
 	 * @return
 	 */
-	public final int getActivityPosition() {
+	@XmlElement(required = false, nillable = false)
+	public final Integer getActivityPosition() {
 		return activityPosition;
 	}
 
@@ -107,7 +108,7 @@ import uk.org.taverna.scufl2.api.reference.Reference;
 		return outputPortBindings;
 	}
 
-	public void setActivityPosition(int activityPosition) {
+	public void setActivityPosition(Integer activityPosition) {
 		this.activityPosition = activityPosition;
 	}
 

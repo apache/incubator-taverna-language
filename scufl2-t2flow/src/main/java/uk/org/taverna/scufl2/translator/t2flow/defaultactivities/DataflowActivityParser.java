@@ -17,7 +17,7 @@ import uk.org.taverna.scufl2.translator.t2flow.T2Parser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.DataflowConfig;
 
-public class DataflowActivityParser implements T2Parser {
+public class DataflowActivityParser extends AbstractActivityParser {
 
 	private static URI activityRavenURI = T2FlowParser.ravenURI
 			.resolve("net.sf.taverna.t2.activities/dataflow-activity/");
@@ -42,23 +42,8 @@ public class DataflowActivityParser implements T2Parser {
 	@Override
 	public Configuration parseActivityConfiguration(T2FlowParser t2FlowParser,
 			ConfigBean configBean) throws ParseException {
-		Object config = configBean.getAny();
-		if (!(config instanceof Element)
-				|| !configBean.getEncoding().equals("dataflow")) {
-			throw new ParseException("Unsupported config bean " + configBean);
-		}
-
-		Unmarshaller unmarshaller2 = t2FlowParser.getUnmarshaller();
-		unmarshaller2.setSchema(null);
-		JAXBElement<DataflowConfig> dataflowElem;
-		try {
-			dataflowElem = unmarshaller2.unmarshal((Element) config,
-					DataflowConfig.class);
-		} catch (JAXBException e) {
-			throw new ParseException("Can't parse config bean " + configBean, e);
-		}
-
-		DataflowConfig dataflowConfig = dataflowElem.getValue();
+		DataflowConfig dataflowConfig = unmarshallConfig(t2FlowParser,
+				configBean, "dataflow", DataflowConfig.class);
 		String dataflowReference = dataflowConfig.getRef();
 
 		Configuration configuration = new Configuration();

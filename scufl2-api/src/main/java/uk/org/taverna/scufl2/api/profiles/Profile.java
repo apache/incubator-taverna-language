@@ -21,7 +21,7 @@ import uk.org.taverna.scufl2.api.container.TavernaResearchObject;
  * @author Alan R Williams
  * 
  */
-@XmlType(propOrder = { "processorBindings, configurations" })
+@XmlType(propOrder = { "profilePosition", "processorBindings", "configurations" })
 public class Profile extends AbstractNamed implements WorkflowBean {
 
 	private Set<ProcessorBinding> processorBindings = new HashSet<ProcessorBinding>();
