@@ -158,7 +158,7 @@ public class T2FlowParser {
 
 	protected void makeDefaultBindings(
 			uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow wf) {
-		Bindings bindings = new Bindings();
+		Bindings bindings = new Bindings(wf.getProducedBy());
 		currentResearchObject.get().getBindings().add(bindings);
 		// bindings.setName("???");
 		currentBindings.set(bindings);
@@ -227,6 +227,7 @@ public class T2FlowParser {
 
 			OutputActivityPort outputActivityPort = new OutputActivityPort();
 			outputActivityPort.setName(fromActivityOutput);
+			//outputActivityPort.setParent(currentActivity.get());
 			currentActivity.get().getOutputPorts().add(outputActivityPort);
 
 			processorOutputPortBinding.setBoundActivityPort(outputActivityPort);
