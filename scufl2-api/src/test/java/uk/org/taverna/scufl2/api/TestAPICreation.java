@@ -90,6 +90,6 @@ public class TestAPICreation {
 		Marshaller marshaller = jc.createMarshaller();
 		marshaller.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, 
 	              Boolean.TRUE );
-	    marshaller.marshal( ro, new FileOutputStream("foo.xml") );
+	    marshaller.marshal( ro, new FileOutputStream("target/foo.xml") );
 	}
 }
