@@ -4,7 +4,7 @@ import java.net.URI;
 
 public interface T2Parser {
 
-	boolean canHandlePlugin(URI activityURI);
+	boolean canHandlePlugin(URI pluginURI);
 
 	URI mapT2flowActivityToURI(URI t2flowActivity);
 
