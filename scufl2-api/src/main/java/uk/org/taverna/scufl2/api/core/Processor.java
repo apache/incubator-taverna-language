@@ -5,16 +5,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlTransient;
 
 import uk.org.taverna.scufl2.api.common.AbstractNamed;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.common.ConfigurableProperty;
+import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.ToBeDecided;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
 import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
@@ -26,11 +25,11 @@ import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
  */
 public class Processor extends AbstractNamed implements Configurable, Child<Workflow> {
 
-	private Set<OutputProcessorPort> outputPorts = new HashSet<OutputProcessorPort>();
-	private Set<InputProcessorPort> inputPorts = new HashSet<InputProcessorPort>();
+	private NamedSet<OutputProcessorPort> outputPorts = new NamedSet<OutputProcessorPort>();
+	private NamedSet<InputProcessorPort> inputPorts = new NamedSet<InputProcessorPort>();
 	private List<IterationStrategy> iterationStrategyStack = new ArrayList<IterationStrategy>();
 	private ProcessorType processorType;
-	private Set<ConfigurableProperty> configurableProperties = new HashSet<ConfigurableProperty>();
+	private NamedSet<ConfigurableProperty> configurableProperties = new NamedSet<ConfigurableProperty>();
 	private Set<StartCondition> startConditions = new HashSet<StartCondition>();
 	private ToBeDecided dispatchStack;
 	
@@ -70,7 +69,7 @@ public class Processor extends AbstractNamed implements Configurable, Child<Work
 	 */
 	@XmlElementWrapper( name="configurableProperties",nillable=false,required=true)
 	@XmlElement( name="configurableProperty",nillable=false)
-	public Set<ConfigurableProperty> getConfigurableProperties() {
+	public NamedSet<ConfigurableProperty> getConfigurableProperties() {
 		return configurableProperties;
 	}
 
@@ -79,7 +78,8 @@ public class Processor extends AbstractNamed implements Configurable, Child<Work
 	 */
 	public void setConfigurableProperties(
 			Set<ConfigurableProperty> configurableProperties) {
-		this.configurableProperties = configurableProperties;
+		this.configurableProperties.clear();
+		this.configurableProperties.addAll(configurableProperties);		
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class Processor extends AbstractNamed implements Configurable, Child<Work
 	 */
 	@XmlElementWrapper( name="outputProcessorPorts",nillable=false,required=true)
 	@XmlElement( name="outputProcessorPort",nillable=false)
-	public Set<OutputProcessorPort> getOutputPorts() {
+	public NamedSet<OutputProcessorPort> getOutputPorts() {
 		return outputPorts;
 	}
 
@@ -116,7 +116,8 @@ public class Processor extends AbstractNamed implements Configurable, Child<Work
 	 * @param inputPorts
 	 */
 	public void setInputPorts(Set<InputProcessorPort> inputPorts) {
-		this.inputPorts = inputPorts;
+		this.inputPorts.clear();
+		this.inputPorts.addAll(inputPorts);
 	}
 
 	/**
@@ -124,7 +125,7 @@ public class Processor extends AbstractNamed implements Configurable, Child<Work
 	 */
 	@XmlElementWrapper( name="inputProcessorPorts",nillable=false,required=true)
 	@XmlElement( name="inputProcessorPort",nillable=false)
-	public Set<InputProcessorPort> getInputPorts() {
+	public NamedSet<InputProcessorPort> getInputPorts() {
 		return inputPorts;
 	}
 

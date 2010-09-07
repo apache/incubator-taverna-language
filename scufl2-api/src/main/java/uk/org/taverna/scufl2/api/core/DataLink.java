@@ -37,7 +37,13 @@ public class DataLink implements WorkflowBean, Child<Workflow> {
 	}
 
 	public void setParent(Workflow parent) {
+		if (this.parent != null && this.parent != parent) {
+			this.parent.getDatalinks().remove(this);
+		}
 		this.parent = parent;
+		if (parent != null) {
+			parent.getDatalinks().add(this);
+		}
 	}
 
 	/**

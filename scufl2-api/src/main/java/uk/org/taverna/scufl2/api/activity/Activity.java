@@ -1,6 +1,5 @@
 package uk.org.taverna.scufl2.api.activity;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -10,6 +9,7 @@ import javax.xml.bind.annotation.XmlType;
 import uk.org.taverna.scufl2.api.common.AbstractNamed;
 import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.common.ConfigurableProperty;
+import uk.org.taverna.scufl2.api.common.NamedSet;
 
 
 /**
@@ -25,29 +25,31 @@ import uk.org.taverna.scufl2.api.common.ConfigurableProperty;
 @XmlType (propOrder = {"type", "inputPorts", "outputPorts", "configurableProperties"})
 public class Activity extends AbstractNamed implements Configurable {
 
-	private Set<ConfigurableProperty> configurableProperties = new HashSet<ConfigurableProperty>();
+	private NamedSet<ConfigurableProperty> configurableProperties = new NamedSet<ConfigurableProperty>();
 	
-	private Set<InputActivityPort> inputPorts = new HashSet<InputActivityPort>();
-	private Set<OutputActivityPort> outputPorts = new HashSet<OutputActivityPort>();
+	private NamedSet<InputActivityPort> inputPorts = new NamedSet<InputActivityPort>();
+	private NamedSet<OutputActivityPort> outputPorts = new NamedSet<OutputActivityPort>();
 	
 	@XmlElementWrapper( name="inputActivityPorts",nillable=false,required=true)
 	@XmlElement( name="inputActivityPort",nillable=false)
-	public Set<InputActivityPort> getInputPorts() {
+	public NamedSet<InputActivityPort> getInputPorts() {
 		return inputPorts;
 	}
 
 	public void setInputPorts(Set<InputActivityPort> inputPorts) {
-		this.inputPorts = inputPorts;
+		this.inputPorts.clear();
+		this.inputPorts.addAll(inputPorts);		
 	}
 
 	@XmlElementWrapper( name="outputActivityPorts",nillable=false,required=true)
 	@XmlElement( name="outputActivityPort",nillable=false)
-	public Set<OutputActivityPort> getOutputPorts() {
+	public NamedSet<OutputActivityPort> getOutputPorts() {
 		return outputPorts;
 	}
 
 	public void setOutputPorts(Set<OutputActivityPort> outputPorts) {
-		this.outputPorts = outputPorts;
+		this.outputPorts.clear();
+		this.outputPorts.addAll(outputPorts);
 	}
 
 	/*
@@ -61,7 +63,7 @@ public class Activity extends AbstractNamed implements Configurable {
 	 */
 	@XmlElementWrapper( name="configurableProperties",nillable=false,required=true)
 	@XmlElement( name="configurableProperty",nillable=false)
-	public Set<ConfigurableProperty> getConfigurableProperties() {
+	public NamedSet<ConfigurableProperty> getConfigurableProperties() {
 		return configurableProperties;
 	}
 
@@ -74,7 +76,8 @@ public class Activity extends AbstractNamed implements Configurable {
 	 */
 	public void setConfigurableProperties(
 			Set<ConfigurableProperty> configurableProperties) {
-		this.configurableProperties = configurableProperties;
+		this.configurableProperties.clear();
+		this.configurableProperties.addAll(configurableProperties);
 	}
 
 	/**

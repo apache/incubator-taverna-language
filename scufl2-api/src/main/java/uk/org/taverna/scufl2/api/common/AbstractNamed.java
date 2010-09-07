@@ -54,12 +54,24 @@ public abstract class AbstractNamed implements Named {
 	/* (non-Javadoc)
 	 * @see uk.org.taverna.scufl2.api.common.Named#setName(java.lang.String)
 	 */
+	@SuppressWarnings("unchecked")
 	public void setName(String name) {
 		if (name == null) {
 			throw new NullPointerException("Name can't be null");
 		}
 		if (name.length() == 0) {
 			throw new IllegalArgumentException("Name can't be empty");
+		}
+		
+		if (this instanceof Child) {
+			Child child = (Child) this;
+			WorkflowBean parent = child.getParent();
+			if (parent != null) {
+				child.setParent(null);
+				this.name = name;
+				// Might overwrite other Named object with same name
+				child.setParent(parent);
+			}			
 		}
 		this.name = name;
 	}

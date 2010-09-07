@@ -1,7 +1,6 @@
 package uk.org.taverna.scufl2.api.container;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -13,6 +12,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.bindings.Bindings;
+import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.core.Workflow;
@@ -28,16 +28,18 @@ import uk.org.taverna.scufl2.api.reference.Reference;
 		"configurations", "bindings" })
 public class TavernaResearchObject implements ResearchObject, WorkflowBean {
 
-	private Set<Bindings> bindings = new HashSet<Bindings>();
+	private NamedSet<Bindings> bindings = new NamedSet<Bindings>();
 	private Workflow mainWorkflow;
-	private Set<Workflow> workflows = new HashSet<Workflow>();
+	private NamedSet<Workflow> workflows = new NamedSet<Workflow>();
+	private NamedSet<Activity> activities = new NamedSet<Activity>();
+	private NamedSet<Configuration> configurations = new NamedSet<Configuration>();
 
 	/**
 	 * @return
 	 */
 	@XmlElementWrapper(name = "workflows", nillable = false, required = true)
 	@XmlElement(name = "workflow", nillable = false)
-	public Set<Workflow> getWorkflows() {
+	public NamedSet<Workflow> getWorkflows() {
 		return workflows;
 	}
 
@@ -45,18 +47,17 @@ public class TavernaResearchObject implements ResearchObject, WorkflowBean {
 	 * @param workflows
 	 */
 	public void setWorkflows(Set<Workflow> workflows) {
-		this.workflows = workflows;
+		this.workflows.clear();
+		this.workflows.addAll(workflows);
 	}
 
-	private Set<Activity> activities = new HashSet<Activity>();
-	private Set<Configuration> configurations = new HashSet<Configuration>();
 
 	/**
 	 * @return
 	 */
 	@XmlElementWrapper(name = "configurations", nillable = false, required = true)
 	@XmlElement(name = "configuration", nillable = false)
-	public Set<Configuration> getConfigurations() {
+	public NamedSet<Configuration> getConfigurations() {
 		return configurations;
 	}
 
@@ -64,7 +65,8 @@ public class TavernaResearchObject implements ResearchObject, WorkflowBean {
 	 * @param configurations
 	 */
 	public void setConfigurations(Set<Configuration> configurations) {
-		this.configurations = configurations;
+		this.configurations.clear();
+		this.configurations.addAll(configurations);
 	}
 
 	/**
@@ -72,7 +74,7 @@ public class TavernaResearchObject implements ResearchObject, WorkflowBean {
 	 */
 	@XmlElementWrapper(name = "bindings", nillable = false, required = true)
 	@XmlElement(name = "binding", nillable = false)
-	public Set<Bindings> getBindings() {
+	public NamedSet<Bindings> getBindings() {
 		return bindings;
 	}
 
@@ -100,7 +102,8 @@ public class TavernaResearchObject implements ResearchObject, WorkflowBean {
 	 * @param bindings
 	 */
 	public void setBindings(Set<Bindings> bindings) {
-		this.bindings = bindings;
+		this.bindings.clear();
+		this.bindings.addAll(bindings);
 	}
 
 	/**
@@ -115,7 +118,7 @@ public class TavernaResearchObject implements ResearchObject, WorkflowBean {
 	 */
 	@XmlElementWrapper(name = "activities", nillable = false, required = true)
 	@XmlElement(name = "activity", nillable = false)
-	public Set<Activity> getActivities() {
+	public NamedSet<Activity> getActivities() {
 		return activities;
 	}
 
@@ -123,7 +126,8 @@ public class TavernaResearchObject implements ResearchObject, WorkflowBean {
 	 * @param activities
 	 */
 	public void setActivities(Set<Activity> activities) {
-		this.activities = activities;
+		this.activities.clear();
+		this.activities.addAll(activities);
 	}
 
 	@Override

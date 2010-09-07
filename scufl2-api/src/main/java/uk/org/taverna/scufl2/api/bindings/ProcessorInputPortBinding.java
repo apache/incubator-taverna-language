@@ -104,7 +104,13 @@ public class ProcessorInputPortBinding implements Child<ProcessorBinding> {
 	 * .api.common.WorkflowBean)
 	 */
 	public void setParent(ProcessorBinding parent) {
+		if (this.parent != null && this.parent != parent) {
+			this.parent.getInputPortBindings().remove(this);
+		}
 		this.parent = parent;
+		if (parent != null) {
+			parent.getInputPortBindings().add(this);
+		}
 	}
 
 }

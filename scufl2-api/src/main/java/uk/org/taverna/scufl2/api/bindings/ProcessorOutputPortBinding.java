@@ -3,18 +3,13 @@
  */
 package uk.org.taverna.scufl2.api.bindings;
 
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import uk.org.taverna.scufl2.api.activity.InputActivityPort;
 import uk.org.taverna.scufl2.api.activity.OutputActivityPort;
 import uk.org.taverna.scufl2.api.common.Child;
-import uk.org.taverna.scufl2.api.port.InputProcessorPort;
 import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
-import uk.org.taverna.scufl2.api.port.ProcessorPort;
 import uk.org.taverna.scufl2.api.reference.Reference;
 
 
@@ -67,7 +62,7 @@ public class ProcessorOutputPortBinding implements Child<ProcessorBinding> {
 	/**
 	 * @param boundProcessorPort
 	 */
-	public void setOutputBoundProcessorPort(OutputProcessorPort boundProcessorPort) {
+	public void setBoundProcessorPort(OutputProcessorPort boundProcessorPort) {
 		this.boundProcessorPort = boundProcessorPort;
 	}
 
@@ -100,7 +95,18 @@ public class ProcessorOutputPortBinding implements Child<ProcessorBinding> {
 	 * @see uk.org.taverna.scufl2.api.common.Child#setParent(uk.org.taverna.scufl2.api.common.WorkflowBean)
 	 */
 	public void setParent(ProcessorBinding parent) {
+		if (this.parent != null && this.parent != parent) {
+			this.parent.getOutputPortBindings().remove(this);
+		}
 		this.parent = parent;
+		if (parent != null) {
+			parent.getOutputPortBindings().add(this);
+		}
+	}
+	
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " " + getBoundActivityPort() + " -> " + getBoundProcessorPort();
 	}
 
 }

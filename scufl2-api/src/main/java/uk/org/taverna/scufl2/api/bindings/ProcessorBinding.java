@@ -132,4 +132,9 @@ public class ProcessorBinding implements WorkflowBean {
 		this.boundProcessor = boundProcessor;
 	}
 
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " " + getBoundProcessor() + " " + getBoundActivity();
+	}
+	
 }
