@@ -25,6 +25,14 @@ import uk.org.taverna.scufl2.api.reference.Reference;
 public class Configuration extends AbstractNamed implements WorkflowBean {
 	private Configurable configured;
 	
+	public Configuration() {
+		super();
+	}
+	
+	public Configuration(String name) {
+		super(name);
+	}
+	
 	private Set<ConfigurablePropertyConfiguration> configurablePropertyConfigurations = new HashSet<ConfigurablePropertyConfiguration>();
 	
 	public Reference<Configurable> getConfiguredReference() {

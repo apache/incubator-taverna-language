@@ -2,7 +2,6 @@ package uk.org.taverna.scufl2.api.bindings;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
