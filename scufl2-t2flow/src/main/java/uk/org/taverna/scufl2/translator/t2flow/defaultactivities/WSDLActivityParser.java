@@ -2,11 +2,14 @@ package uk.org.taverna.scufl2.translator.t2flow.defaultactivities;
 
 import java.net.URI;
 
+import uk.org.taverna.scufl2.api.configurations.Configuration;
+import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.T2Parser;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 
 public class WSDLActivityParser implements T2Parser {
-	private static URI wsdlActivityRavenURI = URI
-			.create("http://ns.taverna.org.uk/2010/activity/raven/net.sf.taverna.t2.activities/wsdl-activity/");
+	private static URI wsdlActivityRavenURI =
+			T2FlowParser.ravenURI.resolve("net.sf.taverna.t2.activities/wsdl-activity/");
 
 	private static String wsdlActivityClassName = "net.sf.taverna.t2.activities.wsdl.WSDLActivity";
 
@@ -44,6 +47,13 @@ public class WSDLActivityParser implements T2Parser {
 		} else {
 			return wsdlScufl2Uri;
 		}
+	}
+
+	@Override
+	public Configuration parseActivityConfiguration(T2FlowParser t2FlowParser,
+			ConfigBean configBean) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

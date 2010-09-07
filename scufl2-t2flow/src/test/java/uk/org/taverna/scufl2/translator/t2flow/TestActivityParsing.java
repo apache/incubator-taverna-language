@@ -20,7 +20,7 @@ public class TestActivityParsing {
 		assertNotNull("Could not find workflow " + WORKFLOW, wfResource);
 		T2FlowParser parser = new T2FlowParser();
 		parser.setValidating(true);
-		parser.setStrict(true);
+		// parser.setStrict(true);
 		TavernaResearchObject researchObj = parser.parseT2Flow(wfResource.openStream());
 		System.out.println(researchObj);
 	}

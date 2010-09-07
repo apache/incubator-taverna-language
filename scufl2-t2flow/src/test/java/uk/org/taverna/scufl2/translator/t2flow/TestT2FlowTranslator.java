@@ -30,7 +30,7 @@ public class TestT2FlowTranslator {
 		URL wfResource = getClass().getResource(AS_T2FLOW);
 		assertNotNull("Could not find workflow " + AS_T2FLOW, wfResource);
 		T2FlowParser parser = new T2FlowParser();
-		parser.setStrict(true);
+		// parser.setStrict(true);
 		TavernaResearchObject researchObj = parser.parseT2Flow(wfResource.openStream());
 
 		JAXBContext jc = JAXBContext.newInstance(TavernaResearchObject.class );
