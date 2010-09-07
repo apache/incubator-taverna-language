@@ -1,7 +1,7 @@
 package uk.org.taverna.scufl2.api.iterationstrategy;
 
 /**
- * @author alanrw
+ * @author Alan R Williams
  *
  */
 public interface DotProduct extends IterationStrategyNode {

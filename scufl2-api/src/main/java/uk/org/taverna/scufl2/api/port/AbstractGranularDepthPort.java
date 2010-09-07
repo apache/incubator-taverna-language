@@ -3,7 +3,7 @@ package uk.org.taverna.scufl2.api.port;
 import javax.xml.bind.annotation.XmlElement;
 
 /**
- * @author alanrw
+ * @author Alan R Williams
  *
  */
 public abstract class AbstractGranularDepthPort extends AbstractDepthPort implements

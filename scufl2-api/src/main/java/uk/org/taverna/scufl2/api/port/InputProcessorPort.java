@@ -14,7 +14,7 @@ import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyNode;
 
 
 /**
- * @author alanrw
+ * @author Alan R Williams
  *
  */
 public class InputProcessorPort extends AbstractGranularDepthPort implements IterationStrategyNode,

@@ -6,7 +6,7 @@ import uk.org.taverna.scufl2.api.common.AbstractNamed;
 
 
 /**
- * @author alanrw
+ * @author Alan R Williams
  *
  */
 public abstract class AbstractDepthPort extends AbstractNamed implements Port {

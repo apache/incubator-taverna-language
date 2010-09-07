@@ -19,7 +19,7 @@ import uk.org.taverna.scufl2.api.common.NamedSet;
  * the Processor and Configuration information will be specified for the
  * Activity.
  * 
- * @author alanrw
+ * @author Alan R Williams
  * 
  */
 @XmlType (propOrder = {"type", "inputPorts", "outputPorts", "configurableProperties"})

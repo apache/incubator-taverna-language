@@ -16,7 +16,7 @@ import uk.org.taverna.scufl2.api.common.Child;
  * represent a workflow object but is instead a means of passing data to
  * whatever underlies the Activity.
  * 
- * @author alanrw
+ * @author Alan R Williams
  * 
  */
 public class InputActivityPort extends AbstractNamed implements Child<Activity> {

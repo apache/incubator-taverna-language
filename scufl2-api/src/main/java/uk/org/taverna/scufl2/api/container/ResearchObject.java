@@ -2,7 +2,7 @@ package uk.org.taverna.scufl2.api.container;
 
 
 /**
- * @author alanrw
+ * @author Alan R Williams
  *
  */
 public interface ResearchObject {

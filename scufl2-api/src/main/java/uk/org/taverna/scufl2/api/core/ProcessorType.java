@@ -3,7 +3,7 @@ package uk.org.taverna.scufl2.api.core;
 import uk.org.taverna.scufl2.api.common.AbstractNamed;
 
 /**
- * @author alanrw
+ * @author Alan R Williams
  *
  */
 public class ProcessorType extends AbstractNamed {

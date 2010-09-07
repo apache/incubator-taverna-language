@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * @author alanrw
+ * @author Alan R Williams
  *
  */
 @XmlType (propOrder = {"complianceLevel", "defaultValue", "description", "mandatoryStatus"})
