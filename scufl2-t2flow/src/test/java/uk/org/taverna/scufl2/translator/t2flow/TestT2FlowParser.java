@@ -19,6 +19,7 @@ public class TestT2FlowParser {
 		URL wfResource = getClass().getResource(AS_T2FLOW);
 		assertNotNull("Could not find workflow " + AS_T2FLOW, wfResource);
 		T2FlowParser parser = new T2FlowParser();
+		parser.setStrict(false);
 		TavernaResearchObject researchObj = parser.parseT2Flow(wfResource.openStream());
 		System.out.println(researchObj);
 	}
