@@ -1,6 +1,8 @@
 @base <HelloWorld/> .
 @prefix scufl2: <http://ns.taverna.org.uk/2010/scufl2/ontology/> .
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
 
 <>
     a scufl2:Workflow ;
@@ -9,7 +11,8 @@
     scufl2:inputWorkflowPort <in/yourName> ;
     scufl2:outputWorkflowPort <out/results> ;
     scufl2:datalink _:datalink1, <datalink/5>, <datalink?from=processor/Hello/out/greeting&to=out/results&mergePosition=0> ;
-    scufl2:processor <processor/Hello> .
+    scufl2:processor <processor/Hello> ;
+    rdfs:seeAlso <../annotation/workflow/HelloWorld.ttl> .
 
 <in/yourName> a scufl2:InputWorkflowPort ;
     scufl2:name "yourName" ;
@@ -51,9 +54,3 @@ _:datalink1 a scufl2:DataLink ;
 <processor/Hello/iterationStrategy/0> a scufl2:CrossProduct;
     scufl2:iterationStrategyChildren ( <processor/Hello/in/name> ) .
 
-    
-<> scufl2:datalink [ 
-    scufl2:receivesFrom <in/yourName> ;
-    scufl2:sendsTo <processor/Hello/in/name> 
-] .
-    
