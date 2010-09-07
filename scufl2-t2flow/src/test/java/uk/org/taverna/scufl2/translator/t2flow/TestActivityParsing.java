@@ -2,8 +2,11 @@ package uk.org.taverna.scufl2.translator.t2flow;
 
 import static org.junit.Assert.*;
 
+import java.io.FileOutputStream;
 import java.net.URL;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 
 import org.junit.Test;
 
@@ -23,6 +26,13 @@ public class TestActivityParsing {
 		// parser.setStrict(true);
 		TavernaResearchObject researchObj = parser.parseT2Flow(wfResource.openStream());
 		System.out.println(researchObj);
+
+		JAXBContext jc = JAXBContext.newInstance(TavernaResearchObject.class);
+		Marshaller marshaller = jc.createMarshaller();
+		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		marshaller.marshal(researchObj, new FileOutputStream("target/"
+				+ WORKFLOW + ".scufl2.xml"));
+
 	}
 
 }

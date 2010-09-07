@@ -352,7 +352,7 @@ public class T2FlowParser {
 			ConfigurablePropertyConfiguration property = new ConfigurablePropertyConfiguration();
 			property.setParent(configuration);
 			property.setConfiguredProperty(fallbackConfig);
-			property.setValue(configBean.getAny());
+			property.setValue((configBean.getAny()));
 		}
 		configuration.setConfigured(currentActivity.get());
 		currentResearchObject.get().getConfigurations().add(configuration);
