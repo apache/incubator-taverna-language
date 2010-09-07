@@ -310,15 +310,14 @@
 :receivesFrom
     a owl:FunctionalProperty, owl:ObjectProperty ;
     rdfs:domain :DataLink ;
-    rdfs:label "receiverPort" ;
+    rdfs:label "receives from" ;
     rdfs:range :SenderPort .
 
 :sendsTo
     a owl:FunctionalProperty, owl:ObjectProperty ;
     rdfs:domain :DataLink ;
-    rdfs:label "senderPort" ;
+    rdfs:label "sends to" ;
     rdfs:range :ReceiverPort .
-
 
 :Processor
     a owl:Class ;
