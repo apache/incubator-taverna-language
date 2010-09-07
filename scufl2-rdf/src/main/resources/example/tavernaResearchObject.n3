@@ -1,0 +1,13 @@
+@base <http://ns.taverna.org.uk/2010/researchObject/28f7c554-4f35-401f-b34b-516e9a0ef731> .
+@prefix scufl2: <http://ns.taverna.org.uk/2010/scufl2/ontology/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+
+<>
+    a scufl2:TavernaResearchObject ;
+    scufl2:name "Hello world" ;
+    dc:description """An example workflow to illustrate SCUFL2""" ;
+    dc:creator "Stian Soiland-Reyes" ;
+    dc:date "2010-07-29" ;
+    scufl2:workflow <workflow/85365915-ee82-4fc4-a134-6b8de87f244e/> ;
+    scufl2:mainWorkflow <workflow/85365915-ee82-4fc4-a134-6b8de87f244e/> ;
+    scufl2:profile <profile/tavernaWorkbench/> .
