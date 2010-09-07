@@ -359,6 +359,11 @@ public class T2FlowParser {
 		}
 		configuration.setConfigured(currentActivity.get());
 		currentProfile.get().getConfigurations().add(configuration);
+		for (ConfigurablePropertyConfiguration prop : configuration
+				.getConfigurablePropertyConfigurations()) {
+			currentActivity.get().getConfigurableProperties().add(
+					prop.getConfiguredProperty());
+		}
 	}
 
 	public Unmarshaller getUnmarshaller() {

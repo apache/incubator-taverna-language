@@ -11,7 +11,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import javax.xml.bind.JAXBException;
 
-
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.ConfigurableProperty;
 import uk.org.taverna.scufl2.api.configurations.ConfigurablePropertyConfiguration;
@@ -83,7 +82,8 @@ public class ProcessorNames {
 	public TreeModel makeProcessorTree(TavernaResearchObject ro)
 			throws JAXBException, IOException, ParseException {
 		Workflow workflow = ro.getMainWorkflow();
-		TreeModel treeModel = new DefaultTreeModel(new DefaultMutableTreeNode(workflow.getName()));
+		TreeModel treeModel = new DefaultTreeModel(new DefaultMutableTreeNode(
+				workflow.getName()));
 		DefaultMutableTreeNode parent = (DefaultMutableTreeNode) treeModel
 				.getRoot();
 
@@ -97,41 +97,38 @@ public class ProcessorNames {
 			DefaultMutableTreeNode processorNode = new DefaultMutableTreeNode(
 					processor.getName());
 			parent.add(processorNode);
-			for (Profile bindings : ro.getProfiles()) {
-				for (ProcessorBinding pb : bindings.getProcessorBindings()) {
+			// Look for nested workflows
+			for (Profile profile : ro.getProfiles()) {
+				for (ProcessorBinding pb : profile.getProcessorBindings()) {
 					if (pb.getBoundProcessor().equals(processor)) {
 						Activity boundActivity = pb.getBoundActivity();
 						if (!boundActivity
 								.getType()
 								.getName()
 								.equals(
-										"http://taverna.sf.net/2009/2.1/activity/nestedworkflow")) {
+										"http://ns.taverna.org.uk/2010/activity/nested-workflow")) {
 							continue;
 						}
-						for (ConfigurableProperty prop : boundActivity
-								.getConfigurableProperties()) {
-							if (!prop.getName().equals(
-									"http://taverna.sf.net/2009/2.1/activity")) {
+						ConfigurableProperty prop = boundActivity
+								.getConfigurableProperties()
+								.getByName(
+										"http://ns.taverna.org.uk/2010/activity/nested-workflow#workflow");
+						for (Configuration co : profile.getConfigurations()) {
+							if (!co.getConfigured().equals(boundActivity)) {
 								continue;
 							}
-							for (Configuration co : ro.getConfigurations()) {
-								if (!co.getConfigured().equals(boundActivity)) {
+							for (ConfigurablePropertyConfiguration propConfig : co
+									.getConfigurablePropertyConfigurations()) {
+								if (!propConfig.getConfiguredProperty().equals(
+										prop)) {
 									continue;
 								}
-								for (ConfigurablePropertyConfiguration propConfig : co
-										.getConfigurablePropertyConfigurations()) {
-									if (!propConfig.getConfiguredProperty()
-											.equals(prop)) {
-										continue;
-									}
-									String workflowId = (String) propConfig
-											.getValue();
-									for (Workflow wf : ro.getWorkflows()) {
-										if (!wf.getName().equals(workflowId)) {
-											continue;
-										}
-									}
-								}
+								String workflowId = (String) propConfig
+										.getValue();
+								Workflow wf = ro.getWorkflows().getByName(
+										workflowId);
+								findProcessors(ro, wf, processorNode);
+
 							}
 						}
 					}
