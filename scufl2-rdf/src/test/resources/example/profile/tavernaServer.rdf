@@ -1,6 +1,6 @@
 
 <!-- Processed by Id: cwm.py,v 1.197 2007/12/13 15:38:39 syosi Exp -->
-<!--     using base file:///home/stain/stuff/src/workspace/scufl2/scufl2-rdf/src/main/resources/example/profile/tavernaServer.ttl-->
+<!--     using base file:///home/stain/stuff/src/workspace/scufl2/scufl2-rdf/src/test/resources/example/profile/tavernaServer.ttl-->
 
 
 <rdf:RDF xmlns="http://ns.taverna.org.uk/2010/scufl2/ontology/"
@@ -11,7 +11,7 @@
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
     xmlns:scufl2="http://ns.taverna.org.uk/2010/scufl2/ontology/">
 
-    <Profile rdf:about="#">
+    <Profile rdf:about="tavernaServer/">
         <activatesConfiguration rdf:resource="tavernaServer/configuration/Hello"/>
         <name>tavernaWorkbench</name>
         <processorBinding rdf:resource="tavernaServer/binding/Hello"/>

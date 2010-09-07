@@ -15,14 +15,14 @@
          <http://ns.taverna.org.uk/2010/scufl2/ontology/mainWorkflow> <workflow/HelloWorld/>;
          <http://ns.taverna.org.uk/2010/scufl2/ontology/name> "Hello world";
          <http://ns.taverna.org.uk/2010/scufl2/ontology/profile> <profile/tavernaWorkbench/>;
-         <http://ns.taverna.org.uk/2010/scufl2/ontology/sameAs> <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/>;
+         <http://ns.taverna.org.uk/2010/scufl2/ontology/sameBaseAs> <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/>;
          <http://ns.taverna.org.uk/2010/scufl2/ontology/workflow> <workflow/HelloWorld/>;
          <http://purl.org/dc/elements/1.1/creator> "Stian Soiland-Reyes";
          <http://purl.org/dc/elements/1.1/date> "2010-07-29";
          <http://purl.org/dc/elements/1.1/description> "An example workflow to illustrate SCUFL2";
          rdf:seeAlso <annotation/workflowBundle.ttl> .
     
-    <profile/tavernaServer.ttl#>     a <http://ns.taverna.org.uk/2010/scufl2/ontology/Profile>;
+    <profile/tavernaServer/>     a <http://ns.taverna.org.uk/2010/scufl2/ontology/Profile>;
          <http://ns.taverna.org.uk/2010/scufl2/ontology/activatesConfiguration> <profile/tavernaServer/configuration/Hello>;
          <http://ns.taverna.org.uk/2010/scufl2/ontology/name> "tavernaWorkbench";
          <http://ns.taverna.org.uk/2010/scufl2/ontology/processorBinding> <profile/tavernaServer/binding/Hello>;
@@ -78,7 +78,7 @@
         System.out.println("Server says: " + hello);
     """ .
     
-    <profile/tavernaWorkbench.ttl#>     a <http://ns.taverna.org.uk/2010/scufl2/ontology/Profile>;
+    <profile/tavernaWorkbench/>     a <http://ns.taverna.org.uk/2010/scufl2/ontology/Profile>;
          <http://ns.taverna.org.uk/2010/scufl2/ontology/activatesConfiguration> <profile/tavernaWorkbench/configuration/Hello>;
          <http://ns.taverna.org.uk/2010/scufl2/ontology/name> "tavernaWorkbench";
          <http://ns.taverna.org.uk/2010/scufl2/ontology/processorBinding> <profile/tavernaWorkbench/binding/Hello>;
@@ -91,9 +91,8 @@
              <http://ns.taverna.org.uk/2010/scufl2/ontology/workflowProduct> <http://ns.taverna.org.uk/2010/taverna/> ];
          <http://purl.org/dc/elements/1.1/creator> "Stian Soiland-Reyes";
          <http://purl.org/dc/elements/1.1/date> "2010-07-29";
-         <http://purl.org/dc/elements/1.1/description> "A profile for invoking the workflow on the Taverna Workbench" .
-    
-    <profile/tavernaWorkbench/>     rdfs:seeAlso <profile/tavernaWorkbench.ttl> .
+         <http://purl.org/dc/elements/1.1/description> "A profile for invoking the workflow on the Taverna Workbench";
+         rdfs:seeAlso <profile/tavernaWorkbench.ttl> .
     
     <profile/tavernaWorkbench/activity/HelloScript/>     a :Activity;
          <http://ns.taverna.org.uk/2010/scufl2/ontology/inputActivityPort> <profile/tavernaWorkbench/activity/HelloScript/in/personName>;

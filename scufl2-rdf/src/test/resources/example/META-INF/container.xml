@@ -2,9 +2,9 @@
 <container version="1.0"
     xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
     <rootfiles>
-        <rootfile full-path="worklowBundle.ttl"
+        <rootfile full-path="workflowBundle.ttl"
          media-type="text/turtle" />  
-        <rootfile full-path="worklowBundle.rdf"
+        <rootfile full-path="workflowBundle.rdf"
          media-type="application/rdf+xml" />  
     </rootfiles>
     <relationships>

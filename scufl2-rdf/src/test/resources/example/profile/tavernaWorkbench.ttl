@@ -7,7 +7,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 
-:
+<.>
     a scufl2:Profile;
     scufl2:name "tavernaWorkbench" ;
     dc:description """A profile for invoking the workflow on the Taverna Workbench""" ;

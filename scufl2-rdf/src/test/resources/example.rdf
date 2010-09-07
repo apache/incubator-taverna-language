@@ -15,7 +15,7 @@
         <mainWorkflow rdf:resource="workflow/HelloWorld/"/>
         <name>Hello world</name>
         <profile rdf:resource="profile/tavernaWorkbench/"/>
-        <sameAs rdf:resource="http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/"/>
+        <sameBaseAs rdf:resource="http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/"/>
         <workflow rdf:resource="workflow/HelloWorld/"/>
         <dc:creator>Stian Soiland-Reyes</dc:creator>
         <dc:date>2010-07-29</dc:date>
@@ -23,7 +23,7 @@
         <rdf:seeAlso rdf:resource="annotation/workflowBundle.ttl"/>
     </WorkflowBundle>
 
-    <Profile rdf:about="profile/tavernaServer.ttl#">
+    <Profile rdf:about="profile/tavernaServer/">
         <activatesConfiguration rdf:resource="profile/tavernaServer/configuration/Hello"/>
         <name>tavernaWorkbench</name>
         <processorBinding rdf:resource="profile/tavernaServer/binding/Hello"/>
@@ -89,7 +89,7 @@
     </beanshell:script>
     </beanshell:Configuration>
 
-    <Profile rdf:about="profile/tavernaWorkbench.ttl#">
+    <Profile rdf:about="profile/tavernaWorkbench/">
         <activatesConfiguration rdf:resource="profile/tavernaWorkbench/configuration/Hello"/>
         <name>tavernaWorkbench</name>
         <processorBinding rdf:resource="profile/tavernaWorkbench/binding/Hello"/>
@@ -105,11 +105,8 @@
         <dc:creator>Stian Soiland-Reyes</dc:creator>
         <dc:date>2010-07-29</dc:date>
         <dc:description>A profile for invoking the workflow on the Taverna Workbench</dc:description>
-    </Profile>
-
-    <rdf:Description rdf:about="profile/tavernaWorkbench/">
         <rdfs:seeAlso rdf:resource="profile/tavernaWorkbench.ttl"/>
-    </rdf:Description>
+    </Profile>
 
     <beanshell:Activity rdf:about="profile/tavernaWorkbench/activity/HelloScript/">
         <inputActivityPort rdf:resource="profile/tavernaWorkbench/activity/HelloScript/in/personName"/>
