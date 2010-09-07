@@ -1,6 +1,6 @@
 
 <!-- Processed by Id: cwm.py,v 1.197 2007/12/13 15:38:39 syosi Exp -->
-<!--     using base file:///home/stain/stuff/src/workspace/scufl2/scufl2-rdf/src/main/resources/example/profile/tavernaWorkbench.ttl-->
+<!--     using base file:///home/stain/stuff/src/workspace/scufl2/scufl2-rdf/src/test/resources/example/profile/tavernaWorkbench.ttl-->
 
 
 <rdf:RDF xmlns="http://ns.taverna.org.uk/2010/scufl2/ontology/"
@@ -62,8 +62,11 @@
     <beanshell:Configuration rdf:about="tavernaWorkbench/configuration/Hello">
         <configures rdf:resource="tavernaWorkbench/activity/HelloScript/"/>
         <beanshell:script>
-        hello = "Hello, " + personName;
-        System.out.println("Server says: " + hello);
+    import javax.swing.JOptionPane;
+
+    hello = "Hello, " + personName;
+    JOptionPane.showMessageDialog(null, hello, "Greeting", 
+      JOptionPane.INFORMATION_MESSAGE);
     </beanshell:script>
     </beanshell:Configuration>
 
