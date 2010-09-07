@@ -13,7 +13,6 @@ import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.reference.Reference;
 
-
 /**
  * A ProcessorBinding specifies that when enacting a Workflow, if this
  * particular ProcessorBinding is used, then the boundActivity will be used to
@@ -30,8 +29,9 @@ import uk.org.taverna.scufl2.api.reference.Reference;
  * @author Alan R Williams
  * 
  */
-@XmlType (propOrder = {"boundProcessorReference", "boundActivityReference", "inputPortBindings", "outputPortBindings"})
-public class ProcessorBinding implements WorkflowBean {
+@XmlType(propOrder = { "boundProcessorReference", "boundActivityReference",
+		"inputPortBindings", "outputPortBindings" })
+		public class ProcessorBinding implements WorkflowBean {
 
 	private Processor boundProcessor;
 	private Activity boundActivity;
@@ -41,6 +41,14 @@ public class ProcessorBinding implements WorkflowBean {
 
 	private int activityPosition;
 
+	/**
+	 * The relative position of this activity within the processor (for the
+	 * purpose of Failover). Activities will be ordered by this position. Gaps
+	 * will be ignored, overlapping activity positions will have an undetermined
+	 * order.
+	 * 
+	 * @return
+	 */
 	public final int getActivityPosition() {
 		return activityPosition;
 	}
@@ -56,7 +64,7 @@ public class ProcessorBinding implements WorkflowBean {
 		return boundActivity;
 	}
 
-	@XmlElement(required=true, nillable=false)
+	@XmlElement(required = true, nillable = false)
 	public Reference<Activity> getBoundActivityReference() {
 		return Reference.createReference(boundActivity);
 	}
@@ -72,7 +80,7 @@ public class ProcessorBinding implements WorkflowBean {
 		return boundProcessor;
 	}
 
-	@XmlElement(required=true, nillable=false)
+	@XmlElement(required = true, nillable = false)
 	public Reference<Processor> getBoundProcessorReference() {
 		return Reference.createReference(boundProcessor);
 	}
@@ -82,8 +90,8 @@ public class ProcessorBinding implements WorkflowBean {
 	 * 
 	 * @return
 	 */
-	@XmlElementWrapper( name="inputPortBindings",nillable=false,required=true)
-	@XmlElement( name="inputPortBinding",nillable=false)
+	@XmlElementWrapper(name = "inputPortBindings", nillable = false, required = true)
+	@XmlElement(name = "inputPortBinding", nillable = false)
 	public Set<ProcessorInputPortBinding> getInputPortBindings() {
 		return inputPortBindings;
 	}
@@ -93,8 +101,8 @@ public class ProcessorBinding implements WorkflowBean {
 	 * 
 	 * @return
 	 */
-	@XmlElementWrapper( name="outputPortBindings",nillable=false,required=true)
-	@XmlElement( name="outputPortBinding",nillable=false)
+	@XmlElementWrapper(name = "outputPortBindings", nillable = false, required = true)
+	@XmlElement(name = "outputPortBinding", nillable = false)
 	public Set<ProcessorOutputPortBinding> getOutputPortBindings() {
 		return outputPortBindings;
 	}
@@ -110,7 +118,8 @@ public class ProcessorBinding implements WorkflowBean {
 		this.boundActivity = boundActivity;
 	}
 
-	public void setBoundActivityReference(Reference<Activity> boundActivityReference) {
+	public void setBoundActivityReference(
+			Reference<Activity> boundActivityReference) {
 		boundActivity = boundActivityReference.resolve();
 	}
 
@@ -144,7 +153,8 @@ public class ProcessorBinding implements WorkflowBean {
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + " " + getBoundProcessor() + " " + getBoundActivity();
+		return getClass().getSimpleName() + " " + getBoundProcessor() + " "
+		+ getBoundActivity();
 	}
 
 }
