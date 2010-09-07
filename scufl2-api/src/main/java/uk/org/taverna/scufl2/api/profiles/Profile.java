@@ -8,33 +8,41 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
 import uk.org.taverna.scufl2.api.common.AbstractNamed;
+import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
+import uk.org.taverna.scufl2.api.configurations.Configuration;
 
 
 /**
- * A Bindings specifies a set of compatible ProcessorBindings. For example, one
- * Bindings could contain ways of enacting a set of Processors on a grid whilst
+ * A Profile specifies a set of compatible ProcessorBindings. For example, one
+ * Profile could contain ways of enacting a set of Processors on a grid whilst
  * another contained ways of enacting the Processors on a laptop.
- * 
- * A given Bindings does not need to specify bindings for all the Processors
- * within a workflow, nor is it limited to giving bindings for Processors within
- * a single Workflow. One or more Bindings may be used to help run a Workflow
- * and conversely the same Bindings may be used to run more than one Workflow.
  * 
  * @author Alan R Williams
  * 
  */
-@XmlType (propOrder = {"processorBindings"})
-public class Bindings extends AbstractNamed implements WorkflowBean {
+@XmlType(propOrder = { "processorBindings, configurations" })
+public class Profile extends AbstractNamed implements WorkflowBean {
 
 	private Set<ProcessorBinding> processorBindings = new HashSet<ProcessorBinding>();
 
-	public Bindings() {
+	private NamedSet<Configuration> configurations = new NamedSet<Configuration>();
+
+	public Profile() {
 		super();
 	}
-	
-	public Bindings(String name) {
+
+	public Profile(String name) {
 		super(name);
+	}
+
+	/**
+	 * @return
+	 */
+	@XmlElementWrapper(name = "configurations", nillable = false, required = true)
+	@XmlElement(name = "configuration", nillable = false)
+	public NamedSet<Configuration> getConfigurations() {
+		return configurations;
 	}
 
 	/**
@@ -46,6 +54,14 @@ public class Bindings extends AbstractNamed implements WorkflowBean {
 	@XmlElement( name="processorBinding",nillable=false)
 	public Set<ProcessorBinding> getProcessorBindings() {
 		return processorBindings;
+	}
+
+	/**
+	 * @param configurations
+	 */
+	public void setConfigurations(Set<Configuration> configurations) {
+		this.configurations.clear();
+		this.configurations.addAll(configurations);
 	}
 
 	/**

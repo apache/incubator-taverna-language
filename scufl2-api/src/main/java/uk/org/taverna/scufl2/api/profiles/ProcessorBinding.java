@@ -35,18 +35,25 @@ public class ProcessorBinding implements WorkflowBean {
 
 	private Processor boundProcessor;
 	private Activity boundActivity;
-	
+
 	private Set<ProcessorInputPortBinding> inputPortBindings = new HashSet<ProcessorInputPortBinding>();
 	private Set<ProcessorOutputPortBinding> outputPortBindings = new HashSet<ProcessorOutputPortBinding>();
-	
-	@XmlElement(required=true, nillable=false)
-	public Reference<Processor> getBoundProcessorReference() {
-		return Reference.createReference(boundProcessor);
+
+	private int activityPosition;
+
+	public final int getActivityPosition() {
+		return activityPosition;
 	}
 
-	public void setBoundProcessorReference(
-			Reference<Processor> boundProcessorReference) {
-		this.boundProcessor = boundProcessorReference.resolve();
+	/**
+	 * Returns the Activity that will be used to enact the Processor if this
+	 * ProcessorBinding is used.
+	 * 
+	 * @return
+	 */
+	@XmlTransient
+	public Activity getBoundActivity() {
+		return boundActivity;
 	}
 
 	@XmlElement(required=true, nillable=false)
@@ -54,8 +61,20 @@ public class ProcessorBinding implements WorkflowBean {
 		return Reference.createReference(boundActivity);
 	}
 
-	public void setBoundActivityReference(Reference<Activity> boundActivityReference) {
-		this.boundActivity = boundActivityReference.resolve();
+	/**
+	 * Returns the Processor for which a possible means of enactment is
+	 * specified.
+	 * 
+	 * @return
+	 */
+	@XmlTransient
+	public Processor getBoundProcessor() {
+		return boundProcessor;
+	}
+
+	@XmlElement(required=true, nillable=false)
+	public Reference<Processor> getBoundProcessorReference() {
+		return Reference.createReference(boundProcessor);
 	}
 
 	/**
@@ -70,14 +89,6 @@ public class ProcessorBinding implements WorkflowBean {
 	}
 
 	/**
-	 * @param inputPortBindings
-	 */
-	public void setInputPortBindings(
-			Set<ProcessorInputPortBinding> inputPortBindings) {
-		this.inputPortBindings = inputPortBindings;
-	}
-
-	/**
 	 * Returns the bindings for individual output ports of the bound Procesor
 	 * 
 	 * @return
@@ -88,23 +99,8 @@ public class ProcessorBinding implements WorkflowBean {
 		return outputPortBindings;
 	}
 
-	/**
-	 * @param outputPortBindings
-	 */
-	public void setOutputPortBindings(
-			Set<ProcessorOutputPortBinding> outputPortBindings) {
-		this.outputPortBindings = outputPortBindings;
-	}
-
-	/**
-	 * Returns the Activity that will be used to enact the Processor if this
-	 * ProcessorBinding is used.
-	 * 
-	 * @return
-	 */
-	@XmlTransient
-	public Activity getBoundActivity() {
-		return boundActivity;
+	public void setActivityPosition(int activityPosition) {
+		this.activityPosition = activityPosition;
 	}
 
 	/**
@@ -114,15 +110,8 @@ public class ProcessorBinding implements WorkflowBean {
 		this.boundActivity = boundActivity;
 	}
 
-	/**
-	 * Returns the Processor for which a possible means of enactment is
-	 * specified.
-	 * 
-	 * @return
-	 */
-	@XmlTransient
-	public Processor getBoundProcessor() {
-		return boundProcessor;
+	public void setBoundActivityReference(Reference<Activity> boundActivityReference) {
+		boundActivity = boundActivityReference.resolve();
 	}
 
 	/**
@@ -132,9 +121,30 @@ public class ProcessorBinding implements WorkflowBean {
 		this.boundProcessor = boundProcessor;
 	}
 
+	public void setBoundProcessorReference(
+			Reference<Processor> boundProcessorReference) {
+		boundProcessor = boundProcessorReference.resolve();
+	}
+
+	/**
+	 * @param inputPortBindings
+	 */
+	public void setInputPortBindings(
+			Set<ProcessorInputPortBinding> inputPortBindings) {
+		this.inputPortBindings = inputPortBindings;
+	}
+
+	/**
+	 * @param outputPortBindings
+	 */
+	public void setOutputPortBindings(
+			Set<ProcessorOutputPortBinding> outputPortBindings) {
+		this.outputPortBindings = outputPortBindings;
+	}
+
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + " " + getBoundProcessor() + " " + getBoundActivity();
 	}
-	
+
 }

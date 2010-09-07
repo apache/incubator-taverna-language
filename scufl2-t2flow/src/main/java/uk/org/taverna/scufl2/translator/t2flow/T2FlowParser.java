@@ -53,7 +53,7 @@ import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
 import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
 import uk.org.taverna.scufl2.api.port.ReceiverPort;
 import uk.org.taverna.scufl2.api.port.SenderPort;
-import uk.org.taverna.scufl2.api.profiles.Bindings;
+import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
@@ -107,7 +107,7 @@ public class T2FlowParser {
 
 	protected Set<T2Parser> additionalParsers = new HashSet<T2Parser>();
 	protected ThreadLocal<uk.org.taverna.scufl2.api.activity.Activity> currentActivity = new ThreadLocal<uk.org.taverna.scufl2.api.activity.Activity>();
-	protected ThreadLocal<Bindings> currentBindings = new ThreadLocal<Bindings>();
+	protected ThreadLocal<Profile> currentProfile = new ThreadLocal<Profile>();
 	protected ThreadLocal<Processor> currentProcessor = new ThreadLocal<Processor>();
 	protected ThreadLocal<ProcessorBinding> currentProcessorBinding = new ThreadLocal<ProcessorBinding>();
 	protected ThreadLocal<TavernaResearchObject> currentResearchObject = new ThreadLocal<TavernaResearchObject>();
@@ -250,9 +250,9 @@ public class T2FlowParser {
 
 	protected void makeDefaultBindings(
 			uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow wf) {
-		Bindings bindings = new Bindings(wf.getProducedBy());
-		currentResearchObject.get().getBindings().add(bindings);
-		currentBindings.set(bindings);
+		Profile profile = new Profile(wf.getProducedBy());
+		currentResearchObject.get().getProfiles().add(profile);
+		currentProfile.set(profile);
 	}
 
 	private URI makeRavenURI(Raven raven, String className) {
@@ -288,16 +288,18 @@ public class T2FlowParser {
 		return newActivity;
 	}
 
-	protected void parseActivityBinding(Activity origActivity)
+	protected void parseActivityBinding(Activity origActivity,
+			int activityPosition)
 			throws ParseException, JAXBException {
 		ProcessorBinding processorBinding = new ProcessorBinding();
 		processorBinding.setBoundProcessor(currentProcessor.get());
 		currentProcessorBinding.set(processorBinding);
 		uk.org.taverna.scufl2.api.activity.Activity newActivity = parseActivity(origActivity);
 		currentActivity.set(newActivity);
-		currentBindings.get().getProcessorBindings().add(processorBinding);
+		currentProfile.get().getProcessorBindings().add(processorBinding);
 		currentResearchObject.get().getActivities().add(newActivity);
 		processorBinding.setBoundActivity(newActivity);
+		processorBinding.setActivityPosition(activityPosition);
 
 		parseActivityInputMap(origActivity.getInputMap());
 		parseActivityOutputMap(origActivity.getOutputMap());
@@ -356,7 +358,7 @@ public class T2FlowParser {
 			property.setValue((configBean.getAny()));
 		}
 		configuration.setConfigured(currentActivity.get());
-		currentResearchObject.get().getConfigurations().add(configuration);
+		currentProfile.get().getConfigurations().add(configuration);
 	}
 
 	public Unmarshaller getUnmarshaller() {
@@ -592,8 +594,9 @@ public class T2FlowParser {
 					.setIterationStrategyStack(parseIterationStrategyStack(origProc
 							.getIterationStrategyStack()));
 			newProcessors.add(newProc);
+			int i = 0;
 			for (Activity origActivity : origProc.getActivities().getActivity()) {
-				parseActivityBinding(origActivity);
+				parseActivityBinding(origActivity, i++);
 			}
 		}
 		currentProcessor.remove();
