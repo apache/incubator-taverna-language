@@ -3,7 +3,7 @@
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix ro: <http://www.mygrid.org.uk/2010/ResearchObject/> .
+@prefix ro: <http://ns.mygrid.org.uk/2010/ResearchObject/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix : <http://ns.taverna.org.uk/2010/scufl2/ontology/> .
@@ -121,7 +121,9 @@
 :WorkflowBundle
     a owl:Class ;
     rdfs:label "Workflow bundle" ;
-    rdfs:subClassOf :Named, ro:ResearchObject .
+#	rdfs:subClassOf ro:ResearchObject ;
+    rdfs:subClassOf :Named .
+    
 
 :workflow
     a owl:ObjectProperty ;
@@ -202,7 +204,7 @@
     rdfs:range xsd:nonNegativeInteger .
 
 :activities
-    a owl:FunctionalProperty, owl:ObjectProperty ;
+    a owl:ObjectProperty ;
     rdfs:domain :WorkflowBundle ;
     rdfs:label "activities" ;
     rdfs:range :Activity ;
@@ -309,13 +311,13 @@
     a owl:FunctionalProperty, owl:ObjectProperty ;
     rdfs:domain :DataLink ;
     rdfs:label "receiverPort" ;
-    rdfs:range :ReceiverPort .
+    rdfs:range :SenderPort .
 
 :sendsTo
     a owl:FunctionalProperty, owl:ObjectProperty ;
     rdfs:domain :DataLink ;
     rdfs:label "senderPort" ;
-    rdfs:range :SenderPort .
+    rdfs:range :ReceiverPort .
 
 
 :Processor
@@ -487,7 +489,7 @@
     rdfs:label "Activity type" .
 
 :activityType
-    a owl:ObjectProperty ;
+    a owl:ObjectProperty, owl:FunctionalProperty ;
     rdfs:domain :Activity ;
     rdfs:label "Activity type" ;
     rdfs:range :ActivityType .

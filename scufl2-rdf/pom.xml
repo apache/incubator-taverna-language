@@ -13,6 +13,74 @@
 		<elmo.version>1.5</elmo.version>
 		<sesame.version>2.2.4</sesame.version>
 	</properties>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<configuration>
+							<tasks>
+								<property name="compile_classpath" refid="maven.compile.classpath" />
+								<property name="runtime_classpath" refid="maven.runtime.classpath" />
+								<property name="test_classpath" refid="maven.test.classpath" />
+								<property name="plugin_classpath" refid="maven.plugin.classpath" />
+
+								<!--
+									inspired by
+									http://openprovenance.org/java/maven-releases/org/openprovenance/opm-elmo/1.1.1/opm-elmo-1.1.1.pom
+								-->
+
+								<mkdir dir="${project.build.directory}" />
+								<mkdir dir="${project.build.directory}/generated-sources" />
+								<mkdir dir="${project.build.directory}/generated-sources/elmo" />
+
+								<java classname="org.openrdf.elmo.codegen.OntologyConverter"
+									fork="true" failonerror="true" maxmemory="128m">
+									<arg value="-b" />
+									<arg
+										value="uk.org.taverna.scufl2.ontology=http://ns.taverna.org.uk/2010/scufl2/ontology/" />
+									<arg value="-j" />
+									<arg value="target/scufl2-ontology.jar" />
+									<arg value="-p" />
+									<arg value="" />
+									<arg value="src/main/resources/scufl2.ttl" />
+									<classpath refid="maven.plugin.classpath" />
+									<classpath>
+										<pathelement path="." />
+									</classpath>
+								</java>
+								<unzip src="${project.build.directory}/scufl2-ontology.jar"
+									dest="${project.build.directory}/generated-sources/elmo">
+									<patternset>
+										<exclude name="**/*.class" />
+									</patternset>
+								</unzip>
+							</tasks>
+							<sourceRoot>${project.build.directory}/generated-sources/elmo/</sourceRoot>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.openrdf.elmo</groupId>
+						<artifactId>elmo-codegen</artifactId>
+						<version>1.5</version>
+					</dependency>
+					<dependency>
+						<groupId>org.slf4j</groupId>
+						<artifactId>slf4j-log4j12</artifactId>
+						<version>1.5.2</version>  <!-- note old version required for elmo! -->
+					</dependency>
+				</dependencies>
+			</plugin>
+		</plugins>
+	</build>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>

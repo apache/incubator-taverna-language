@@ -9,6 +9,7 @@ import org.openrdf.concepts.owl.Ontology;
 import org.openrdf.elmo.ElmoModule;
 import org.openrdf.elmo.sesame.SesameManager;
 import org.openrdf.elmo.sesame.SesameManagerFactory;
+import org.openrdf.elmo.sesame.roles.SesameEntity;
 import org.openrdf.repository.contextaware.ContextAwareConnection;
 import org.openrdf.rio.helpers.OrganizedRDFWriter;
 import org.openrdf.rio.n3.N3Writer;
@@ -25,8 +26,8 @@ import uk.org.taverna.scufl2.ontology.OutputWorkflowPort;
 import uk.org.taverna.scufl2.ontology.Processor;
 import uk.org.taverna.scufl2.ontology.ReceiverPort;
 import uk.org.taverna.scufl2.ontology.SenderPort;
-import uk.org.taverna.scufl2.ontology.TavernaResearchObject;
 import uk.org.taverna.scufl2.ontology.Workflow;
+import uk.org.taverna.scufl2.ontology.WorkflowBundle;
 import uk.org.taverna.scufl2.ontology.WorkflowElement;
 
 
@@ -45,9 +46,8 @@ public class TestRDF {
 	@Test
 	public void makeExampleWorkflow() throws Exception {
 
-
-
-		TavernaResearchObject ro = elmoManager.create(randomQName(), TavernaResearchObject.class);
+		WorkflowBundle ro = elmoManager.create(randomBundleQName(),
+				WorkflowBundle.class);
 
 		Workflow wf1= elmoManager.create(randomWfQName(), Workflow.class);
 		ro.setMainWorkflow(wf1);
@@ -93,18 +93,19 @@ public class TestRDF {
 		wf1.getDatalinks().add(makeDataLink(p4_y,
 				wf1_out1));
 
-		Activity activity = makeNamed(wf1, "act0", Activity.class);
+		Activity activity = elmoManager.create(Activity.class);
 		ro.getActivities().add(activity);
-		activity.setType(makeNamed(wf1, "beanshell", ActivityType.class));
+		ActivityType beanshellType = elmoManager.create(
+				new QName("http://ns.taverna.org.uk/2010/taverna/activity/",
+						"beanshell"),
+				ActivityType.class);
+		activity.setActivityType(beanshellType);
 
 		elmoManager.persist(ro);
 
 		ContextAwareConnection connection = elmoManager.getConnection();
-		connection.setNamespace("core", Ontology.CORE);
-		connection.setNamespace("instance", Ontology.INSTANCE);
-		connection.setNamespace("wf", Ontology.WORKFLOW);
-		connection.setNamespace("wf1", Ontology.WORKFLOW);
-
+		connection.setNamespace("scufl2",
+				"http://ns.taverna.org.uk/2010/scufl2/ontology/");
 
 		connection.export(new OrganizedRDFXMLWriter(System.out));
 
@@ -115,13 +116,14 @@ public class TestRDF {
 
 	private DataLink makeDataLink(SenderPort fromPort,
 			ReceiverPort toPort) {
-		DataLink link = elmoManager.create(randomQName(), DataLink.class);
-		link.setSenderPort(fromPort);
-		link.setReceiverPort(toPort);
+		DataLink link = elmoManager.create(DataLink.class);
+		link.setReceivesFrom(fromPort);
+		link.setSendsTo(toPort);
 		return link;
 	}
 
-	private <T extends Named> T makeNamed(Workflow wf, String name, Class<T> beanType) {
+	private <T extends Named> T makeNamed(Workflow wf, String name,
+			Class<T> beanType) {
 		T named = elmoManager.create(wfPartQName(wf, name, beanType), beanType);
 		named.setName(name);
 		return named;
@@ -129,17 +131,22 @@ public class TestRDF {
 
 	private <T extends WorkflowElement> QName wfPartQName(Workflow wf,
 			String name, Class<T> beanType) {
-		String wfNamespace = wf.getQName().getNamespaceURI() + wf.getQName().getLocalPart();
+		SesameEntity wfEntity = (SesameEntity) wf;
+
+		String wfNamespace = wfEntity.getQName().getNamespaceURI()
+				+ wfEntity.getQName().getLocalPart();
 		String path = wfNamespace + "/" + beanType.getSimpleName() + "/";
 		return new QName(path, name);
 	}
 
-	private QName randomQName() {
-		return new QName(uk.org.taverna.scufl2.rdf.common.Ontology.INSTANCE, UUID.randomUUID().toString());
+	private QName randomBundleQName() {
+		return new QName("http://ns.taverna.org.uk/2010/workflowBundle/", UUID
+				.randomUUID().toString());
 	}
 
 	private QName randomWfQName() {
-		return new QName(uk.org.taverna.scufl2.rdf.common.Ontology.WORKFLOW, UUID.randomUUID().toString());
+		return new QName("http://ns.taverna.org.uk/2010/workflow/", UUID
+				.randomUUID().toString());
 	}
 
 
