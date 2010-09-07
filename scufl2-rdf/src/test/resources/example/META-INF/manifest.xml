@@ -16,8 +16,8 @@
  <manifest:file-entry manifest:media-type="application/rdf+xml" manifest:full-path="profile/tavernaWorkbench.rdf"/>
  <manifest:file-entry manifest:media-type="application/rdf+xml" manifest:full-path="profile/tavernaServer.rdf"/>
 
- <manifest:file-entry manifest:media-type="image/svg+xml" manifest:full-path="Thumbnails/Thumbnail.svg"/>
- <manifest:file-entry manifest:media-type="image/png" manifest:full-path="Thumbnails/Thumbnail.png"/>
+ <manifest:file-entry manifest:media-type="image/svg+xml" manifest:full-path="Thumbnails/thumbnail.svg"/>
+ <manifest:file-entry manifest:media-type="image/png" manifest:full-path="Thumbnails/thumbnail.png"/>
 
  <manifest:file-entry manifest:media-type="image/svg+xml" manifest:full-path="diagram/workflow/HelloWorld.svg"/>
  <manifest:file-entry manifest:media-type="image/png" manifest:full-path="diagram/workflow/HelloWorld.png"/>
