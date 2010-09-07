@@ -3,27 +3,26 @@
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix ro: <http://www.mygrid.org.uk/2010/ResearchObject/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix : <http://ns.taverna.org.uk/2010/scufl2/ontology/> .
 
 
 <>
-  a owl:Ontology ;
-  dc:title "SCUFL2 Core ontology" ;
-  rdfs:comment """The ontology for defining SCUFL2
-       """ ;
-  rdfs:seeAlso <http://www.mygrid.org.uk/dev/wiki/display/developer/SCUFL2> .
+    a owl:Ontology ;
+    dc:title "SCUFL2 Core ontology" ;
+    rdfs:comment """The ontology defining SCUFL2 - a model for
+        describing Taverna workflows.""" ;
+    rdfs:seeAlso
+      <http://www.mygrid.org.uk/dev/wiki/display/developer/SCUFL2>,
+      <http://www.taverna.org.uk/> .
 
 ### General classes and properties
 
-:ResearchObject
-    a owl:Class ;
-    rdfs:label "ResearchObject" .
-
 :Parent
-   a owl:Class ;
-   rdfs:label "Parent" .
+    a owl:Class ;
+    rdfs:label "Parent" .
 
 :Child
     a owl:Class ;
@@ -49,13 +48,49 @@
     rdfs:subClassOf :WorkflowElement .
 
 :sameBaseAs
-    a owl:Property ;
+    #a owl:ObjectProperty, owl:TransitiveProperty ;
     rdfs:comment """The resources are the same (like in owl:sameAs), and
-    so are the sub-resources.  For instance if <file:///tmp/example/>
-    scufl2:sameBaseAs
-    <http://ns.taverna.org.uk/2010/researchObject/28f7c554-4f35-401f-b34b-516e9a0ef731/>
-    ., then also <file:///tmp/example/workflow/HelloWorld/>
-    scufl2:sameBaseAs <http://ns.taverna.org.uk/2010/researchObject/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/> """ ;
+      so are the sub-resources having base URI as a parent.  For instance if 
+        <file:///tmp/example/> scufl2:sameBaseAs 
+            <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/> .
+      then also 
+        <file:///tmp/example/workflow/HelloWorld/> scufl2:sameBaseAs 
+            <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/> 
+
+      Note that for URIs under
+      <http://ns.taverna.org.uk/2010/workflowBundle/> special URI template rules
+      link the URI with the scufl2:parent, rdf:type, scufl2:name of the
+      resource. 
+      
+      For instance given 
+        <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/processor/Hello/out/greeting> 
+      it must be so that:
+
+        <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/processor/Hello/out/greeting>
+            a scufl2:OutputProcessorPort;
+            scufl2:name "greeting";
+            scufl2:parent <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/processor/Hello>.
+
+        <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/processor/Hello>
+            a scufl2:Processor;
+            scufl2:name "Hello";
+            scufl2:parent <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/>;
+            scufl2:outputProcessorPort <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/processor/Hello/out/greeting>.
+        
+        <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/>    
+            a scufl2:Workflow;
+            scufl2:name "HelloWorld";
+            scufl2:parent <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/>;
+            sculf2:processor <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/processor/Hello>.
+        
+        <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/>    
+            a scufl2:WorkflowBundle;
+            scufl2:workflow <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/>;
+            scufl2:workflowBundleId "28f7c554-4f35-401f-b34b-516e9a0ef731";
+
+        Where 28f7c554-4f35-401f-b34b-516e9a0ef731 must be a randomly
+        generated UUID.    
+    """ ;
     rdfs:subClassOf owl:sameAs .
 
 
@@ -78,40 +113,92 @@
 
 ### Top level entry point for a SCUFL2 archive
 
-:TavernaResearchObject
-    a owlClass ;
-    rdfs:label "TavernaResearchObject" ;
-    rdfs:subClassOf :Named, :ResearchObject .
+:WorkflowBundle
+    a owl:Class ;
+    rdfs:label "Workflow bundle" ;
+    rdfs:subClassOf :Named, ro:ResearchObject .
 
 :workflow
     a owl:ObjectProperty ;
-    rdfs:domain :TavernaResearchObject ;
+    rdfs:domain :WorkflowBundle ;
     rdfs:label "workflow" ;
     rdfs:range :Workflow ;
     rdfs:subPropertyOf :child .
 
+
+:workflowBundleId
+    a owl:FunctionalProperty, owl:DatatypeProperty;    
+    dc:description """A randomly generated UUID. This is also the
+    :name of the :WorkflowBundle, and used by :sameBaseAs.
+
+    It is essential that the :workflowBundleId, and hence the 
+    :sameBaseAs statement, is updated whenever a structural change
+    has been made to the workflow bundle. A structural change
+    is classified as any changed triples within the :child structure of
+    the :WorkflowBundle, except for metadata annotations.
+
+    So for instance, if you change scufl2:portDepth of a processor port, 
+    that is a structural change requiring a new ID, but if you add a
+    dc:description to a workflow input port, that is simply an
+    annotation which does not modify the workflow structure or binding,
+    and don't require a new ID.
+
+    When reassigning the :workflowBundleId, SCUFL2 software is
+    recommended to annotate that the new bundle is based on the old
+    bundle by using :basedOnWorkflowBundle, and keep the old
+    chain of :basedOnWorkflowBundle annotations (but neccessarily
+    any other data about the previous bundles).
+
+    This enables external annotations made on older versions of
+    this bundle to be potentially relinked to this newer version,
+    in addition to tracing workflow development and attribution.
+
+    The UUIDs should be of type UUIDv4 or better, to avoid exposing
+    details such as MAC address or timestamps.
+
+    Example:
+    
+    <.> a scufl2:WorkflowBundle
+        scufl2:workflowBundleId "5175305c-2b09-4942-b00a-9ee4928ab0eb";
+        scufl2:sameBaseAs <http://ns.taverna.org.uk/2010/workflowBundle/5175305c-2b09-4942-b00a-9ee4928ab0eb/>;
+        scufl2:basedOnWorkflowBundle <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/> .
+
+    <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/> 
+      scufl2:basedOnWorkflowBundle <http://ns.taverna.org.uk/2010/workflowBundle/4e98d43b-e583-40f6-9308-ad7aa42dad9c/>.
+
+    """;
+    rdfs:subPropertyOf :name;
+    rdfs:seeAlso <http://en.wikipedia.org/wiki/Universally_unique_identifier>,
+                 <http://tools.ietf.org/html/rfc4122>.
+
+:basedOnWorkflowBundle
+    a owl:ObjectProperty, owl:TransitiveProperty;
+    rdfs:domain :WorkflowBundle;
+    rdfs:range :WorkflowBundle;
+    rdfs:subPropertyOf rdfs:seeAlso.
+
 :mainWorkflow
     a owl:FunctionalProperty, owl:ObjectProperty ;
-    rdfs:label "mainWorkflow" ;
+    rdfs:label "main workflow" ;
     rdfs:subPropertyOf :workflow ;
-    rdfs:domain :TavernaResearchObject ;
+    rdfs:domain :WorkflowBundle ;
     rdfs:range :Workflow .
 
 :profile
     a owl:ObjectProperty ;
-    rdfs:domain :TavernaResearchObject ;
+    rdfs:domain :WorkflowBundle ;
     rdfs:label "profile" ;
     rdfs:range :Profile .
 
 :profilePosition
     a owl:DatatypeProperty, owl:FunctionalProperty ;
     rdfs:domain :Profile ;
-    rdfs:label "profilePosition" ;
+    rdfs:label "profile position" ;
     rdfs:range xsd:nonNegativeInteger .
 
 :activities
     a owl:FunctionalProperty, owl:ObjectProperty ;
-    rdfs:domain :TavernaResearchObject ;
+    rdfs:domain :WorkflowBundle ;
     rdfs:label "activities" ;
     rdfs:range :Activity ;
     rdfs:subPropertyOf :child .
@@ -263,9 +350,6 @@
              a owl:Restriction;
              owl:allValuesFrom :DispathStackLayer;
              owl:onProperty rdf:first ] .
-
-:DispatchStackLayer
-    a owl:Class .
 
 # Iteration strategy
 
