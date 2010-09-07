@@ -87,7 +87,7 @@
 						with depth and granular depth.</documentation>
 				</annotation>
 			</element>
-			<element name="outputPorts" type="tav:Ports">
+			<element name="outputPorts" type="tav:AnnotatedPorts">
 				<annotation>
 					<documentation>List of output ports of the dataflows. Results are
 						delivered to the output ports, the depth of the output port is
@@ -571,6 +571,35 @@
 		</annotation>
 		<sequence>
 			<element name="port" type="tav:AnnotatedGranularDepthPort"
+				maxOccurs="unbounded" minOccurs="0"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="AnnotatedPort">
+		<complexContent>
+			<extension base="tav:Port">
+				<sequence>
+					<element name="annotations" type="tav:Annotations"
+						maxOccurs="1" minOccurs="0">
+						<annotation>
+							<documentation>
+								List of annotations, describing this port. For
+								instance a description could say what type of data the port
+								expects, and an example annotation could say an example value
+							</documentation>
+						</annotation>
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
+	<complexType name="AnnotatedPorts">
+		<annotation>
+			<documentation>List of annotated ports.
+			</documentation>
+		</annotation>
+		<sequence>
+			<element name="port" type="tav:AnnotatedPort"
 				maxOccurs="unbounded" minOccurs="0"></element>
 		</sequence>
 	</complexType>

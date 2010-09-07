@@ -36,12 +36,17 @@
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="LocalworkerConfig">
-		<xsd:complexContent>
-			<xsd:extension base="activities:BeanshellConfig">
-				<xsd:sequence>
-				</xsd:sequence>
-			</xsd:extension>
-		</xsd:complexContent>
+		<xsd:sequence>
+			<xsd:element name="localworkerName" type="xsd:string"
+				minOccurs="0" />
+			<xsd:element name="script" type="xsd:string" />
+			<xsd:element name="dependencies" type="activities:Dependencies" />
+			<xsd:element name="classLoaderSharing" type="activities:ClassLoaderSharing" />
+			<xsd:element name="localDependencies" type="xsd:string" />
+			<xsd:element name="artifactDependencies" type="activities:Dependencies" />
+			<xsd:element name="inputs" type="activities:ActivityInputPorts" />
+			<xsd:element name="outputs" type="activities:ActivityOutputPorts" />
+		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="StringConstantConfig">
 		<xsd:sequence>
@@ -103,15 +108,15 @@
 	<xsd:complexType name="BioMobyConfig">
 		<xsd:complexContent>
 			<xsd:extension base="activities:BioMobyObjectConfig">
-			<xsd:sequence>
-				<xsd:element name="category" type="activities:BioMobyCategory">
-			</xsd:element>
-			<xsd:element name="serviceType" type="activities:BioMobyServiceType">
-			</xsd:element>
-			<xsd:element name="secondaries" type="activities:BioMobySecondaries">
-			</xsd:element>
-			</xsd:sequence>
-			
+				<xsd:sequence>
+					<xsd:element name="category" type="activities:BioMobyCategory">
+					</xsd:element>
+					<xsd:element name="serviceType" type="activities:BioMobyServiceType">
+					</xsd:element>
+					<xsd:element name="secondaries" type="activities:BioMobySecondaries">
+					</xsd:element>
+				</xsd:sequence>
+
 			</xsd:extension>
 		</xsd:complexContent>
 	</xsd:complexType>
@@ -121,7 +126,7 @@
 			<xsd:element name="mobyEndpoint" type="xsd:anyURI" />
 			<xsd:element name="serviceName" />
 			<xsd:element name="authorityName" />
-		
+
 		</xsd:sequence>
 	</xsd:complexType>
 
@@ -176,20 +181,21 @@
 	</xsd:complexType>
 	<xsd:complexType name="BioMobyCategory">
 		<xsd:sequence>
-			<xsd:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+			<xsd:any namespace="##any" processContents="lax" minOccurs="0"
+				maxOccurs="unbounded" />
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="BioMobyServiceType">
 		<xsd:sequence>
-			<xsd:any minOccurs="0" maxOccurs="unbounded"
-				namespace="##any" processContents="lax">
+			<xsd:any minOccurs="0" maxOccurs="unbounded" namespace="##any"
+				processContents="lax">
 			</xsd:any>
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="BioMobySecondaries">
 		<xsd:sequence>
-			<xsd:element minOccurs="0" maxOccurs="unbounded"
-				name="entry" type="activities:BioMobyEntry">
+			<xsd:element minOccurs="0" maxOccurs="unbounded" name="entry"
+				type="activities:BioMobyEntry">
 			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>

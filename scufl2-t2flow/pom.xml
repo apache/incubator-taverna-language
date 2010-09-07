@@ -24,6 +24,7 @@
 				</executions>
 				<configuration>
                     <packageName>uk.org.taverna.scufl2.xml.t2flow.jaxb</packageName>
+            		<schemaDirectory>src/main/resources/uk/org/taverna/scufl2/translator/t2flow/xsd/</schemaDirectory>
                 </configuration>
 			</plugin>
 		</plugins>
