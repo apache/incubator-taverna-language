@@ -16,6 +16,53 @@
 		<xsd:attribute name="ref" type="tav:uuid"></xsd:attribute>
 	</xsd:complexType>
 
+	<xsd:complexType name="ApiConsumerConfig">
+		<xsd:sequence>
+			<xsd:element name="apiConsumerName" type="xsd:string" />
+			<xsd:element name="apiConsumerDescription" type="xsd:string" />
+			<xsd:element name="description" type="xsd:string" />
+			<xsd:element name="className" type="xsd:string" />
+			<xsd:element name="methodName" type="xsd:string" />
+			<xsd:element name="parameterNames" type="activities:ApiConsumerParameterNames" />
+
+			<xsd:element name="parameterDimensions"
+				type="activities:ApiConsumerParameterDimensions" />
+			<xsd:element name="parameterTypes" type="activities:ApiConsumerParameterTypes" />
+			<xsd:element name="returnType" type="xsd:string" />
+			<xsd:element name="returnDimension" type="xsd:nonNegativeInteger" />
+			<xsd:element name="isMethodStatic" type="xsd:boolean" />
+			<xsd:element name="isMethodConstructor" type="xsd:boolean" />
+
+			<xsd:element name="classLoaderSharing" type="activities:ClassLoaderSharing" />
+			<xsd:element name="localDependencies" type="activities:LocalDependencies" />
+			<xsd:element name="artifactDependencies" type="activities:ArtifactDependencies" />
+			<xsd:element name="inputs" type="activities:ActivityInputPorts" />
+			<xsd:element name="outputs" type="activities:ActivityOutputPorts" />
+
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="ApiConsumerParameterNames">
+		<xsd:sequence>
+			<xsd:element name="string" type="xsd:string" minOccurs="0"
+				maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ApiConsumerParameterDimensions">
+		<xsd:sequence>
+			<xsd:element name="int" type="xsd:nonNegativeInteger"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ApiConsumerParameterTypes">
+		<xsd:sequence>
+			<xsd:element name="string" type="xsd:string" minOccurs="0"
+				maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+
 	<xsd:complexType name="BeanshellConfig">
 		<xsd:annotation>
 			<xsd:documentation>Configuration for the Beanshell activity.
@@ -84,7 +131,8 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
-			<xsd:element name="securityProfile" type="activities:WSDLSecurityProfile" minOccurs="0">
+			<xsd:element name="securityProfile" type="activities:WSDLSecurityProfile"
+				minOccurs="0">
 				<xsd:annotation>
 					<xsd:documentation>Name of 'security profile' to apply.
 					</xsd:documentation>
@@ -100,11 +148,11 @@
 	<xsd:simpleType name="StandardWSDLSecurityProfile">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="HTTPDigestAuthN" />
-			<xsd:enumeration value="HTTPBasicAuthNPlainTextPassword"/>
-			<xsd:enumeration value="WSSecurityTimestampUsernameTokenDigestPassword"/>
-			<xsd:enumeration value="WSSecurityTimestampUsernameTokenPlainTextPassword"/>
-			<xsd:enumeration value="WSSecurityUsernameTokenDigestPassword"/>
-			<xsd:enumeration value="WSSecurityUsernameTokenPlainTextPassword"/>
+			<xsd:enumeration value="HTTPBasicAuthNPlainTextPassword" />
+			<xsd:enumeration value="WSSecurityTimestampUsernameTokenDigestPassword" />
+			<xsd:enumeration value="WSSecurityTimestampUsernameTokenPlainTextPassword" />
+			<xsd:enumeration value="WSSecurityUsernameTokenDigestPassword" />
+			<xsd:enumeration value="WSSecurityUsernameTokenPlainTextPassword" />
 		</xsd:restriction>
 	</xsd:simpleType>
 
@@ -194,7 +242,8 @@
 						The polling interval will however never
 						be larger than the specified
 						"pollingIntervalMax". Must be
-						above 0.0 to avoid negative polling
+						above 0.0
+						to avoid negative polling
 						intervals.
 					</xsd:documentation>
 				</xsd:annotation>
