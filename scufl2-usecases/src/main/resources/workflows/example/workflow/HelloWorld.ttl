@@ -2,6 +2,7 @@
 @prefix scufl2: <http://ns.taverna.org.uk/2010/scufl2/ontology/> .
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix taverna: <http://ns.taverna.org.uk/2010/scufl2/taverna#>.
 
 
 <>
@@ -39,17 +40,19 @@ _:datalink1 a scufl2:DataLink ;
     scufl2:name "Hello" ;
     scufl2:inputProcessorPort <processor/Hello/in/name> ;
     scufl2:outputProcessorPort <processor/Hello/out/greeting> ;
-#    scufl2:processorType <??> ;
-    scufl2:dispatchStack <http://ns.taverna.org.uk/2010/scufl2/taverna#defaultDispatchStack> ;
+    scufl2:dispatchStack taverna:defaultDispatchStack ;
     scufl2:iterationStrategyStack (<processor/Hello/iterationStrategy/0>) .
 
 <processor/Hello/in/name> a scufl2:InputProcessorPort ;
     scufl2:name "name";
-    scufl2:portDepth 0 ;
-    scufl2:granularPortDepth 0 .
+    scufl2:portDepth 0 .
+    
 
 <processor/Hello/out/greeting> a scufl2:OutputProcessorPort ;
-    scufl2:name "greeting".
+    scufl2:name "greeting";
+    scufl2:portDepth 0 ;
+    scufl2:granularPortDepth 0 .
+    
     
 <processor/Hello/iterationStrategy/0> a scufl2:CrossProduct;
     scufl2:iterationStrategyChildren ( <processor/Hello/in/name> ) .
