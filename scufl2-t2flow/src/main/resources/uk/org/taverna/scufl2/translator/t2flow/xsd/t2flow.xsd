@@ -314,9 +314,14 @@
 			<documentation>List of annotation chains</documentation>
 		</annotation>
 		<sequence>
-			<element name="annotation_chain" type="tav:AnnotationChain"
-				maxOccurs="unbounded" minOccurs="0">
-			</element>
+			<choice>
+				<element name="annotation_chain" type="tav:AnnotationChain"
+					maxOccurs="unbounded" minOccurs="0">
+				</element>
+				<element name="annotation_chain_2_2" type="tav:AnnotationChain"
+					maxOccurs="unbounded" minOccurs="0">
+				</element>
+			</choice>
 		</sequence>
 	</complexType>
 

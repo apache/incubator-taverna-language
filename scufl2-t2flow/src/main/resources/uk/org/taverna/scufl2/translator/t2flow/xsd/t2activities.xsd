@@ -29,8 +29,8 @@
 			</xsd:element>
 			<xsd:element name="dependencies" type="activities:Dependencies" />
 			<xsd:element name="classLoaderSharing" type="activities:ClassLoaderSharing" />
-			<xsd:element name="localDependencies" type="xsd:string" />
-			<xsd:element name="artifactDependencies" type="activities:Dependencies" />
+			<xsd:element name="localDependencies" type="activities:LocalDependencies" />
+			<xsd:element name="artifactDependencies" type="activities:ArtifactDependencies" />
 			<xsd:element name="inputs" type="activities:ActivityInputPorts" />
 			<xsd:element name="outputs" type="activities:ActivityOutputPorts" />
 		</xsd:sequence>
@@ -42,8 +42,8 @@
 			<xsd:element name="script" type="xsd:string" />
 			<xsd:element name="dependencies" type="activities:Dependencies" />
 			<xsd:element name="classLoaderSharing" type="activities:ClassLoaderSharing" />
-			<xsd:element name="localDependencies" type="xsd:string" />
-			<xsd:element name="artifactDependencies" type="activities:Dependencies" />
+			<xsd:element name="localDependencies" type="activities:LocalDependencies" />
+			<xsd:element name="artifactDependencies" type="activities:ArtifactDependencies" />
 			<xsd:element name="inputs" type="activities:ActivityInputPorts" />
 			<xsd:element name="outputs" type="activities:ActivityOutputPorts" />
 		</xsd:sequence>
@@ -84,8 +84,30 @@
 					</xsd:documentation>
 				</xsd:annotation>
 			</xsd:element>
+			<xsd:element name="securityProfile" type="activities:WSDLSecurityProfile" minOccurs="0">
+				<xsd:annotation>
+					<xsd:documentation>Name of 'security profile' to apply.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
+
+	<xsd:simpleType name="WSDLSecurityProfile">
+		<xsd:union memberTypes="activities:StandardWSDLSecurityProfile xsd:string" />
+	</xsd:simpleType>
+
+	<xsd:simpleType name="StandardWSDLSecurityProfile">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="HTTPDigestAuthN" />
+			<xsd:enumeration value="HTTPBasicAuthNPlainTextPassword"/>
+			<xsd:enumeration value="WSSecurityTimestampUsernameTokenDigestPassword"/>
+			<xsd:enumeration value="WSSecurityTimestampUsernameTokenPlainTextPassword"/>
+			<xsd:enumeration value="WSSecurityUsernameTokenDigestPassword"/>
+			<xsd:enumeration value="WSSecurityUsernameTokenPlainTextPassword"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
 	<xsd:complexType name="XMLSplitterConfig">
 		<xsd:sequence>
 			<xsd:element name="wrappedTypeXML" />
@@ -140,13 +162,160 @@
 		</xsd:sequence>
 	</xsd:complexType>
 
+	<xsd:complexType name="SoaplabConfig">
+		<xsd:annotation>
+			<xsd:documentation>Configuration for the SoapLab activity.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="endpoint" type="xsd:anyURI">
+				<xsd:annotation>
+					<xsd:documentation>Location of Soaplab endpoint as an URL.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="pollingInterval" type="xsd:nonNegativeInteger">
+				<xsd:annotation>
+					<xsd:documentation>Milliseconds between polling for asynchronous
+						service completion. If 0, the synchronous 'waitFor' method is
+						used
+						instead.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="pollingBackoff" type="xsd:double">
+				<xsd:annotation>
+					<xsd:documentation>
+						Multiplication factor to apply to current
+						polling interval (initially "pollingInterval"), gradually
+						increasing the polling interval. It is advisable
+						to keep this close
+						to 1.0, for instance 1.1.
+						The polling interval will however never
+						be larger than the specified
+						"pollingIntervalMax". Must be
+						above 0.0 to avoid negative polling
+						intervals.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="pollingIntervalMax" type="xsd:nonNegativeInteger">
+				<xsd:annotation>
+					<xsd:documentation>Maximum polling interval in milliseconds after
+						multiplying with "pollingBackoff". Should be larger than
+						"pollingInterval".
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
 
-	<xsd:complexType name="Dependencies">
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+	<xsd:complexType name="SpreadsheetImportConfig">
+		<xsd:sequence>
+			<xsd:element name="columnRange" type="activities:SpreadsheetRange" />
+			<xsd:element name="rowRange" type="activities:SpreadsheetRange" />
+			<xsd:element name="emptyCellValue" type="xsd:string" />
+			<xsd:element name="columnNames" type="activities:SpreadsheetColumnNames" />
+			<xsd:element name="allRows" type="xsd:boolean" />
+			<xsd:element name="excludeFirstRow" type="xsd:boolean" />
+			<xsd:element name="ignoreBlankRows" type="xsd:boolean" />
+
+			<xsd:element name="emptyCellPolicy" type="activities:SpreadsheetEmptyCellPolicy" />
+			<xsd:element name="outputFormat" type="activities:OutputFormat" />
+			<xsd:element name="csvDelimiter" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+	<xsd:simpleType name="SpreadsheetEmptyCellPolicy">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="EMPTY_STRING"></xsd:enumeration>
+			<xsd:enumeration value="USER_DEFINED"></xsd:enumeration>
+			<xsd:enumeration value="GENERATE_ERROR"></xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="OutputFormat">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="PORT_PER_COLUMN"></xsd:enumeration>
+			<xsd:enumeration value=" SINGLE_PORT"></xsd:enumeration>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+
+	<xsd:complexType name="SpreadsheetColumnNames">
+		<xsd:sequence>
+			<xsd:element name="entry" type="activities:SpreadsheetColumnNameEntry"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="SpreadsheetColumnNameEntry">
+		<xsd:sequence>
+			<xsd:element name="string" type="xsd:string" minOccurs="2"
+				maxOccurs="2" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+
+	<xsd:complexType name="SpreadsheetRange">
+		<xsd:sequence>
+			<xsd:element name="start" type="xsd:string" />
+			<xsd:element name="end" type="xsd:string" />
+			<xsd:element name="excludes" type="activities:SpreadsheetExcludes" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="SpreadsheetExcludes">
+		<xsd:sequence>
+			<xsd:element name="exclude" type="activities:SpreadsheetRange"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+	<xsd:complexType name="LocalDependencies">
+
+		<xsd:sequence>
+			<xsd:element name="string" type="xsd:string" maxOccurs="unbounded"
+				minOccurs="0">
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="ArtifactDependencies">
 		<xsd:sequence>
 			<xsd:element name="net.sf.taverna.raven.repository.BasicArtifact"
 				type="activities:BasicArtifact" maxOccurs="unbounded" minOccurs="0">
 			</xsd:element>
 		</xsd:sequence>
+	</xsd:complexType>
+
+
+	<xsd:complexType name="Dependencies">
+		<xsd:sequence>
+			<xsd:choice>
+				<xsd:element name="string" type="xsd:string" maxOccurs="unbounded"
+					minOccurs="0">
+				</xsd:element>
+				<xsd:element name="element" type="activities:DependencyElement"
+					maxOccurs="unbounded" minOccurs="0">
+				</xsd:element>
+			</xsd:choice>
+		</xsd:sequence>
+		<xsd:attribute name="class" type="xsd:string" use="optional"></xsd:attribute>
+	</xsd:complexType>
+
+
+	<xsd:complexType name="DependencyElement">
+		<xsd:simpleContent>
+			<xsd:extension base="xsd:string">
+				<xsd:attribute name="class" use="optional" />
+			</xsd:extension>
+		</xsd:simpleContent>
 	</xsd:complexType>
 
 	<xsd:simpleType name="ClassLoaderSharing">
@@ -157,9 +326,11 @@
 
 	<xsd:complexType name="BasicArtifact">
 		<xsd:sequence>
-			<xsd:element name="groupId" type="xsd:string"></xsd:element>
-			<xsd:element name="artifactId" type="xsd:string"></xsd:element>
-			<xsd:element name="version" type="xsd:string"></xsd:element>
+			<xsd:element name="groupId" type="xsd:string" />
+			<xsd:element name="artifactId" type="xsd:string" />
+			<xsd:element name="version" type="xsd:string" />
+			<xsd:element name="hashCode" type="xsd:string" minOccurs="0" />
+			<xsd:element name="string" type="xsd:string" minOccurs="0" />
 		</xsd:sequence>
 	</xsd:complexType>
 
