@@ -206,7 +206,7 @@ public class T2FlowParser {
 
 		parseActivityInputMap(origActivity.getInputMap());
 		parseActivityOutputMap(origActivity.getOutputMap());
-		parseActivityConfiguration(origActivity.getConfigBean());
+		//parseActivityConfiguration(origActivity.getConfigBean());
 		
 		currentActivity.remove();
 		currentProcessorBinding.remove();
@@ -497,7 +497,7 @@ public class T2FlowParser {
 			}
 			ro.getWorkflows().add(workflow);
 		}
-		if (isStrict() || ro.getMainWorkflow() == null) {
+		if (isStrict() && ro.getMainWorkflow() == null) {
 			throw new ParseException("No main workflow");
 		}
 		currentResearchObject.remove();
