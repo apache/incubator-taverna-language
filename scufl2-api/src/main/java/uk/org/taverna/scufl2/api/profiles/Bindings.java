@@ -1,4 +1,4 @@
-package uk.org.taverna.scufl2.api.bindings;
+package uk.org.taverna.scufl2.api.profiles;
 
 import java.util.HashSet;
 import java.util.Set;

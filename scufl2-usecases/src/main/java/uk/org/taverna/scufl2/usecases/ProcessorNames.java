@@ -11,15 +11,16 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import javax.xml.bind.JAXBException;
 
+
 import uk.org.taverna.scufl2.api.activity.Activity;
-import uk.org.taverna.scufl2.api.bindings.Bindings;
-import uk.org.taverna.scufl2.api.bindings.ProcessorBinding;
 import uk.org.taverna.scufl2.api.common.ConfigurableProperty;
 import uk.org.taverna.scufl2.api.configurations.ConfigurablePropertyConfiguration;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.TavernaResearchObject;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
+import uk.org.taverna.scufl2.api.profiles.Bindings;
+import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.translator.t2flow.ParseException;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 
