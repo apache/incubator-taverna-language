@@ -1,0 +1,700 @@
+
+<!-- Processed by Id: cwm.py,v 1.197 2007/12/13 15:38:39 syosi Exp -->
+<!--     using base file:///home/stain/stuff/src/workspace/scufl2/scufl2-rdf/src/main/resources/scufl2.ttl-->
+
+
+<rdf:RDF xmlns="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+
+    <owl:Ontology rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/">
+        <dc:title>SCUFL2 Core ontology</dc:title>
+        <comment>The ontology defining SCUFL2 - a model for
+        describing Taverna workflows.</comment>
+        <seeAlso rdf:resource="http://www.mygrid.org.uk/dev/wiki/display/developer/SCUFL2"/>
+        <seeAlso rdf:resource="http://www.taverna.org.uk/"/>
+        <owl:imports rdf:resource="http://purl.org/dc/elements/1.1/"/>
+        <owl:imports rdf:resource="http://purl.org/dc/terms/"/>
+        <owl:imports rdf:resource="http://www.w3.org/2000/01/rdf-schema#"/>
+    </owl:Ontology>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/Activity">
+        <label>Activity</label>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Configurable"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/ActivityPort">
+        <label>ActivityPort</label>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Child"/>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Port"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/ActivityType">
+        <label>Activity type</label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/Child">
+        <label>Child</label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/Configurable">
+        <label>Configurable</label>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/WorkflowElement"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/Configuration">
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/WorkflowElement"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/CrossProduct">
+        <label>CrossProduct</label>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/IterationStrategyNodeWithChildren"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/DataLink">
+        <label>DataLink</label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/DispatcStackLayer">
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Configurable"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/DispatchStack">
+        <subClassOf rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+        <subClassOf rdf:parseType="Resource">
+            <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+            <owl:allValuesFrom rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/DispathStackLayer"/>
+            <owl:onProperty rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#first"/>
+        </subClassOf>
+        <subClassOf rdf:parseType="Resource">
+            <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+            <owl:allValuesFrom rdf:parseType="Resource">
+                <owl:unionOf rdf:parseType="Resource">
+                    <rdf:first rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/DispatchStack"/>
+                    <rdf:rest rdf:parseType="Resource">
+                        <rdf:first rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                    </rdf:rest>
+                </owl:unionOf>
+            </owl:allValuesFrom>
+            <owl:onProperty rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#last"/>
+        </subClassOf>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/DotProduct">
+        <label>DotProduct</label>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/IterationStrategyNodeWithChildren"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/InputActivityPort">
+        <label>Input activity port</label>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/ActivityPort"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/InputPortBinding">
+        <label>Processor input port binding</label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/InputProcessorPort">
+        <label>Input processor port</label>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/IterationStrategyNode"/>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/ProcessorPort"/>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/ReceiverPort"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/InputWorkflowPort">
+        <label>Input workflow port</label>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/SenderPort"/>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/WorkflowPort"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/IterationStrategyChildren">
+        <subClassOf rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+        <subClassOf rdf:parseType="Resource">
+            <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+            <owl:allValuesFrom rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/IterationStrategyNode"/>
+            <owl:onProperty rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#first"/>
+        </subClassOf>
+        <subClassOf rdf:parseType="Resource">
+            <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+            <owl:allValuesFrom rdf:parseType="Resource">
+                <owl:unionOf rdf:parseType="Resource">
+                    <rdf:first rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/IterationStrategyChildren"/>
+                    <rdf:rest rdf:parseType="Resource">
+                        <rdf:first rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                    </rdf:rest>
+                </owl:unionOf>
+            </owl:allValuesFrom>
+            <owl:onProperty rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#last"/>
+        </subClassOf>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/IterationStrategyNode">
+        <label>IterationStrategyNode</label>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/WorkflowElement"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/IterationStrategyNodeWithChildren">
+        <label>IterationStrategyNode</label>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/IterationStrategyNode"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/IterationStrategyStack">
+        <subClassOf rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+        <subClassOf rdf:parseType="Resource">
+            <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+            <owl:allValuesFrom rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/IterationStrategyNodeWithChildren"/>
+            <owl:onProperty rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#first"/>
+        </subClassOf>
+        <subClassOf rdf:parseType="Resource">
+            <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+            <owl:allValuesFrom rdf:parseType="Resource">
+                <owl:unionOf rdf:parseType="Resource">
+                    <rdf:first rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/IterationStrategyStack"/>
+                    <rdf:rest rdf:parseType="Resource">
+                        <rdf:first rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                    </rdf:rest>
+                </owl:unionOf>
+            </owl:allValuesFrom>
+            <owl:onProperty rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#last"/>
+        </subClassOf>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/Named">
+        <label>Named</label>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/WorkflowElement"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/OutputActivityPort">
+        <label>Output activity port</label>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/ActivityPort"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/OutputPortBinding">
+        <label>Processor output Port binding</label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/OutputProcessorPort">
+        <label>Output processor port</label>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/ProcessorPort"/>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/SenderPort"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/OutputWorkflowPort">
+        <label>Output workflow port</label>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/ReceiverPort"/>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/WorkflowPort"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/Parent">
+        <label>Parent</label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/Port">
+        <label>Port</label>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Named"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/Processor">
+        <label>Processor</label>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Child"/>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Configurable"/>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Named"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/ProcessorBinding">
+        <label>ProcessorBinding</label>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/WorkflowElement"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/ProcessorControlledStartCondition">
+        <label>ProcessorControlledStartCondition</label>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/StartCondition"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/ProcessorPort">
+        <label>ProcessorPort</label>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Child"/>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Port"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/ProcessorType">
+        <label>ProcessorType</label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/Profile">
+        <label>Profile</label>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Child"/>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Named"/>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/WorkflowElement"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/ReceiverPort">
+        <label>ReceiverPort</label>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Port"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/RunAfterCondition">
+        <label>RunAfterCondition</label>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/ProcessorControlledStartCondition"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/SenderPort">
+        <label>SenderPort</label>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Port"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/StartCondition">
+        <label>StartCondition</label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/Workflow">
+        <label>Workflow</label>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Named"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/WorkflowBundle">
+        <label>Workflow bundle</label>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Named"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/WorkflowElement">
+        <label>Workflow element</label>
+    </owl:Class>
+
+    <owl:Class rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/WorkflowPort">
+        <label>ReceiverPort</label>
+        <subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Port"/>
+    </owl:Class>
+
+    <owl:ObjectProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/activatesConfiguration">
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Profile"/>
+        <label>activates configuration</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Configuration"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/activities">
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/WorkflowBundle"/>
+        <label>activities</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Activity"/>
+        <subPropertyOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/child"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/activityPort">
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Activity"/>
+        <label>Activity port</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/ActivityPort"/>
+        <subPropertyOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/port"/>
+    </owl:ObjectProperty>
+
+    <owl:DatatypeProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/activityPosition">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/ProcessorBinding"/>
+        <label>activityPosition</label>
+        <range rdf:resource="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"/>
+    </owl:DatatypeProperty>
+
+    <owl:FunctionalProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/activityType">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Activity"/>
+        <label>Activity type</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/ActivityType"/>
+    </owl:FunctionalProperty>
+
+    <owl:ObjectProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/basedOnWorkflowBundle">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/WorkflowBundle"/>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/WorkflowBundle"/>
+        <subPropertyOf rdf:resource="http://www.w3.org/2000/01/rdf-schema#seeAlso"/>
+    </owl:ObjectProperty>
+
+    <owl:FunctionalProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/boundActivity">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/ProcessorBinding"/>
+        <label>boundActivity</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Activity"/>
+    </owl:FunctionalProperty>
+
+    <owl:FunctionalProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/boundInputActivityPort">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/InputPortBinding"/>
+        <label>Bound input activity port</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/InputActivityPort"/>
+    </owl:FunctionalProperty>
+
+    <owl:FunctionalProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/boundInputProcessorPort">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/InputPortBinding"/>
+        <label>bound input processor port</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/InputProcessorPort"/>
+    </owl:FunctionalProperty>
+
+    <owl:FunctionalProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/boundOutputActivityPort">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/OutputPortBinding"/>
+        <label>Bound output activity port</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/OutputActivityPort"/>
+    </owl:FunctionalProperty>
+
+    <owl:FunctionalProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/boundOutputProcessorPort">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/OutputPortBinding"/>
+        <label>bound output processor port</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/OutputProcessorPort"/>
+    </owl:FunctionalProperty>
+
+    <owl:FunctionalProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/boundProcessor">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/ProcessorBinding"/>
+        <label>bound processor</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Processor"/>
+    </owl:FunctionalProperty>
+
+    <owl:FunctionalProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/child">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Child"/>
+        <label>child</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Parent"/>
+        <owl:inverseOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/parent"/>
+    </owl:FunctionalProperty>
+
+    <owl:ObjectProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/configures">
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Configuration"/>
+        <label>configuration</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Configurable"/>
+    </owl:ObjectProperty>
+
+    <owl:FunctionalProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/controllingProcessor">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/ProcessorControlledStartCondition"/>
+        <label>controllingProcessor</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Processor"/>
+    </owl:FunctionalProperty>
+
+    <owl:ObjectProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/datalink">
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Workflow"/>
+        <label>datalink</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/DataLink"/>
+    </owl:ObjectProperty>
+
+    <owl:FunctionalProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/dispatchStack">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Processor"/>
+        <label>dispatchStack</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/DispatchStack"/>
+        <subPropertyOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/child"/>
+    </owl:FunctionalProperty>
+
+    <owl:DatatypeProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/granularPortDepth">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/InputActivityPort"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/InputProcessorPort"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/OutputActivityPort"/>
+        <label>granular depth</label>
+        <range rdf:resource="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"/>
+    </owl:DatatypeProperty>
+
+    <owl:AnnotationProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/hasConfigurationType">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Configurable"/>
+        <range rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+        <range rdf:parseType="Resource">
+            <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+            <owl:hasValue rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Configuration"/>
+            <owl:onProperty rdf:resource="http://www.w3.org/2000/01/rdf-schema#subClassOf"/>
+        </range>
+    </owl:AnnotationProperty>
+
+    <owl:ObjectProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/inputActivityPort">
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Activity"/>
+        <label>Activity input port</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/InputActivityPort"/>
+        <subPropertyOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/activityPort"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/inputPortBinding">
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/ProcessorBinding"/>
+        <label>inputPortBindings</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/InputPortBinding"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/inputProcessorPort">
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Processor"/>
+        <label>Processor input port</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/InputProcessorPort"/>
+        <subPropertyOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/processorPort"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/inputWorkflowPort">
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Workflow"/>
+        <label>Workflow input port</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/InputWorkflowPort"/>
+        <subPropertyOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/workflowPort"/>
+    </owl:ObjectProperty>
+
+    <owl:FunctionalProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/iterationStrategyChildren">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/IterationStrategyNodeWithChildren"/>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/IterationStrategyChildren"/>
+        <subPropertyOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/child"/>
+    </owl:FunctionalProperty>
+
+    <owl:FunctionalProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/iterationStrategyStack">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Processor"/>
+        <label>iterationStrategyStack</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/IterationStrategyStack"/>
+        <subPropertyOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/child"/>
+    </owl:FunctionalProperty>
+
+    <owl:FunctionalProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/mainWorkflow">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/WorkflowBundle"/>
+        <label>main workflow</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Workflow"/>
+        <subPropertyOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/workflow"/>
+    </owl:FunctionalProperty>
+
+    <owl:DatatypeProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/name">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Named"/>
+        <label>name</label>
+        <range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <subPropertyOf rdf:resource="http://purl.org/dc/elements/1.1/title"/>
+    </owl:DatatypeProperty>
+
+    <owl:ObjectProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/outputActivityPort">
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Activity"/>
+        <label>Activity output port</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/OutputActivityPort"/>
+        <subPropertyOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/activityPort"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/outputPortBinding">
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/ProcessorBinding"/>
+        <label>outputPortBindings</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/OutputPortBinding"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/outputProcessorPort">
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Processor"/>
+        <label>Processor output port</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/OutputProcessorPort"/>
+        <subPropertyOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/processorPort"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/outputWorkflowPort">
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Workflow"/>
+        <label>Workflow output port</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/OutputWorkflowPort"/>
+        <subPropertyOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/workflowPort"/>
+    </owl:ObjectProperty>
+
+    <owl:InverseFunctionalProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/parent">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Parent"/>
+        <label>parent</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Child"/>
+        <owl:inverseOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/child"/>
+    </owl:InverseFunctionalProperty>
+
+    <owl:ObjectProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/port">
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Parent"/>
+        <label>Port</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Port"/>
+        <subPropertyOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/child"/>
+    </owl:ObjectProperty>
+
+    <owl:DatatypeProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/portDepth">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/InputActivityPort"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/InputProcessorPort"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/InputWorkflowPort"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/OutputActivityPort"/>
+        <label>depth</label>
+        <range rdf:resource="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"/>
+    </owl:DatatypeProperty>
+
+    <owl:ObjectProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/processor">
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Workflow"/>
+        <label>processor</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Processor"/>
+        <subPropertyOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/child"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/processorBinding">
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Profile"/>
+        <label>processorBindings</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/ProcessorBinding"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/processorPort">
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Processor"/>
+        <label>Processor port</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/ProcessorPort"/>
+        <subPropertyOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/port"/>
+    </owl:ObjectProperty>
+
+    <owl:FunctionalProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/processorType">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Processor"/>
+        <label>processorType</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/ProcessorType"/>
+    </owl:FunctionalProperty>
+
+    <owl:ObjectProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/profile">
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/WorkflowBundle"/>
+        <label>profile</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Profile"/>
+    </owl:ObjectProperty>
+
+    <owl:DatatypeProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/profilePosition">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Profile"/>
+        <label>profile position</label>
+        <range rdf:resource="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"/>
+    </owl:DatatypeProperty>
+
+    <owl:FunctionalProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/receivesFrom">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/DataLink"/>
+        <label>receives from</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/SenderPort"/>
+    </owl:FunctionalProperty>
+
+    <owl:DatatypeProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/requiredConfiguration">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <domain rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#Property"/>
+        <range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    </owl:DatatypeProperty>
+
+    <rdf:Description rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/sameBaseAs">
+        <comment>The resources are the same (like in owl:sameAs), and
+      so are the sub-resources having base URI as a parent.  For instance if 
+        &#60;file:///tmp/example/&#62; scufl2:sameBaseAs 
+            &#60;http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/&#62; .
+      then also 
+        &#60;file:///tmp/example/workflow/HelloWorld/&#62; scufl2:sameBaseAs 
+            &#60;http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/&#62; 
+
+      Note that for URIs under
+      &#60;http://ns.taverna.org.uk/2010/workflowBundle/&#62; special URI template rules
+      link the URI with the scufl2:parent, rdf:type, scufl2:name of the
+      resource. 
+      
+      For instance given 
+        &#60;http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/processor/Hello/out/greeting&#62; 
+      it must be so that:
+
+        &#60;http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/processor/Hello/out/greeting&#62;
+            a scufl2:OutputProcessorPort;
+            scufl2:name "greeting";
+            scufl2:parent &#60;http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/processor/Hello&#62;.
+
+        &#60;http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/processor/Hello&#62;
+            a scufl2:Processor;
+            scufl2:name "Hello";
+            scufl2:parent &#60;http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/&#62;;
+            scufl2:outputProcessorPort &#60;http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/processor/Hello/out/greeting&#62;.
+        
+        &#60;http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/&#62;    
+            a scufl2:Workflow;
+            scufl2:name "HelloWorld";
+            scufl2:parent &#60;http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/&#62;;
+            sculf2:processor &#60;http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/processor/Hello&#62;.
+        
+        &#60;http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/&#62;    
+            a scufl2:WorkflowBundle;
+            scufl2:workflow &#60;http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/&#62;;
+            scufl2:workflowBundleId "28f7c554-4f35-401f-b34b-516e9a0ef731";
+
+        Where 28f7c554-4f35-401f-b34b-516e9a0ef731 must be a randomly
+        generated UUID.    
+    </comment>
+        <subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#sameAs"/>
+    </rdf:Description>
+
+    <owl:FunctionalProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/sendsTo">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/DataLink"/>
+        <label>sends to</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/ReceiverPort"/>
+    </owl:FunctionalProperty>
+
+    <owl:ObjectProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/startConditions">
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Processor"/>
+        <label>startConditions</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/StartCondition"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/workflow">
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/WorkflowBundle"/>
+        <label>workflow</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Workflow"/>
+        <subPropertyOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/child"/>
+    </owl:ObjectProperty>
+
+    <owl:DatatypeProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/workflowBundleId">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <dc:description>A randomly generated UUID. This is also the
+    :name of the :WorkflowBundle, and used by :sameBaseAs.
+
+    It is essential that the :workflowBundleId, and hence the 
+    :sameBaseAs statement, is updated whenever a structural change
+    has been made to the workflow bundle. A structural change
+    is classified as any changed triples within the :child structure of
+    the :WorkflowBundle, except for metadata annotations.
+
+    So for instance, if you change scufl2:portDepth of a processor port, 
+    that is a structural change requiring a new ID, but if you add a
+    dc:description to a workflow input port, that is simply an
+    annotation which does not modify the workflow structure or binding,
+    and don't require a new ID.
+
+    When reassigning the :workflowBundleId, SCUFL2 software is
+    recommended to annotate that the new bundle is based on the old
+    bundle by using :basedOnWorkflowBundle, and keep the old
+    chain of :basedOnWorkflowBundle annotations (but neccessarily
+    any other data about the previous bundles).
+
+    This enables external annotations made on older versions of
+    this bundle to be potentially relinked to this newer version,
+    in addition to tracing workflow development and attribution.
+
+    The UUIDs should be of type UUIDv4 or better, to avoid exposing
+    details such as MAC address or timestamps.
+
+    Example:
+    
+    &#60;.&#62; a scufl2:WorkflowBundle
+        scufl2:workflowBundleId "5175305c-2b09-4942-b00a-9ee4928ab0eb";
+        scufl2:sameBaseAs &#60;http://ns.taverna.org.uk/2010/workflowBundle/5175305c-2b09-4942-b00a-9ee4928ab0eb/&#62;;
+        scufl2:basedOnWorkflowBundle &#60;http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/&#62; .
+
+    &#60;http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/&#62; 
+      scufl2:basedOnWorkflowBundle &#60;http://ns.taverna.org.uk/2010/workflowBundle/4e98d43b-e583-40f6-9308-ad7aa42dad9c/&#62;.
+
+    </dc:description>
+        <seeAlso rdf:resource="http://en.wikipedia.org/wiki/Universally_unique_identifier"/>
+        <seeAlso rdf:resource="http://tools.ietf.org/html/rfc4122"/>
+        <subPropertyOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/name"/>
+    </owl:DatatypeProperty>
+
+    <owl:FunctionalProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/workflowIdentifier">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Named"/>
+        <label>Workflow identifier</label>
+        <subPropertyOf rdf:resource="http://purl.org/dc/terms/identifier"/>
+    </owl:FunctionalProperty>
+
+    <owl:ObjectProperty rdf:about="http://ns.taverna.org.uk/2010/scufl2/ontology/workflowPort">
+        <domain rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/Workflow"/>
+        <label>Workflow port</label>
+        <range rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/WorkflowPort"/>
+        <subPropertyOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/port"/>
+    </owl:ObjectProperty>
+</rdf:RDF>
