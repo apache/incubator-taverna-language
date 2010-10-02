@@ -11,7 +11,7 @@ import uk.org.taverna.scufl2.api.common.AbstractNamed;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
-import uk.org.taverna.scufl2.api.container.TavernaResearchObject;
+import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 
 /**
  * A Profile specifies a set of compatible ProcessorBindings. For example, one
@@ -59,7 +59,7 @@ public class Profile extends AbstractNamed implements WorkflowBean {
 	}
 
 	/**
-	 * Position of this profile within the {@link TavernaResearchObject}. When
+	 * Position of this profile within the {@link WorkflowBundle}. When
 	 * ordering profiles, they can be sorted by decreasing profilePosition. If
 	 * two profiles have the same position, their internal order is
 	 * indetermined.
