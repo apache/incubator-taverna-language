@@ -21,7 +21,7 @@ import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
 public class Workflow extends AbstractNamed implements Configurable {
 
 	private static URI WORKFLOW_ROOT = URI
-			.create("http://ns.taverna.org.uk/2010/workflow/");
+	.create("http://ns.taverna.org.uk/2010/workflow/");
 
 	public static URI generateIdentifier() {
 		return WORKFLOW_ROOT.resolve(UUID.randomUUID().toString());
@@ -31,7 +31,6 @@ public class Workflow extends AbstractNamed implements Configurable {
 	private NamedSet<InputWorkflowPort> inputPorts = new NamedSet<InputWorkflowPort>();
 	private NamedSet<OutputWorkflowPort> outputPorts = new NamedSet<OutputWorkflowPort>();
 	private NamedSet<Processor> processors = new NamedSet<Processor>();
-
 	private URI workflowIdentifier;
 
 	public Workflow() {

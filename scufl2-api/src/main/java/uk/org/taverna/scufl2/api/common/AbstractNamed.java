@@ -1,5 +1,6 @@
 package uk.org.taverna.scufl2.api.common;
 
+import java.net.URI;
 import java.util.UUID;
 
 /**
@@ -43,10 +44,32 @@ public abstract class AbstractNamed implements Named {
 				return false;
 			}
 		}
+		if (this instanceof Typed) {
+			URI myId = ((Typed) this).getType();
+			URI otherId = ((Typed) obj).getType();
+			if (myId != null) {
+				return myId.equals(otherId);
+			}
+			if (myId == null && otherId != null) {
+				return false;
+			}
+		}
+		if (this instanceof Identified) {
+			URI myId = ((Identified)this).getIdentifier();
+			URI otherId = ((Identified)obj).getIdentifier();
+			if (myId != null) {
+				return myId.equals(otherId);
+			}
+			if (myId == null && otherId != null) {
+				return false;
+			}
+		}
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)AbstractNamed
+	 * 
 	 * @see uk.org.taverna.scufl2.api.common.Named#getName()
 	 */
 	public String getName() {
