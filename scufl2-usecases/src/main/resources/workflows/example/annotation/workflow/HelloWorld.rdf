@@ -6,25 +6,26 @@
 <rdf:RDF xmlns="http://purl.org/dc/elements/1.1/"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-    xmlns:scufl2="http://ns.taverna.org.uk/2010/scufl2#">
+    xmlns:scufl2="http://ns.taverna.org.uk/2010/scufl2#"
+    xml:base="../../workflow/HelloWorld/">
 
-    <rdf:Description rdf:about="../../workflow/HelloWorld/">
+    <rdf:Description rdf:about="">
         <date>2010-07-28</date>
         <description>A simple hello world workflow</description>
     </rdf:Description>
 
-    <rdf:Description rdf:about="../../workflow/HelloWorld/datalink/5">
+    <rdf:Description rdf:about="datalink/5">
         <description>Connects workflow input port "yourName"
     directly to be merged on workflow output port "result". Merged in
     position 1, meaning that the data from "Hello" will come first. </description>
     </rdf:Description>
 
-    <rdf:Description rdf:about="../../workflow/HelloWorld/in/yourName">
+    <rdf:Description rdf:about="in/yourName">
         <scufl2:exampleValue>John Doe</scufl2:exampleValue>
         <description>Your name</description>
     </rdf:Description>
 
-    <rdf:Description rdf:about="../../workflow/HelloWorld/out/results">
+    <rdf:Description rdf:about="out/results">
         <scufl2:exampleList rdf:parseType="Resource">
             <rdf:first>Hello, John Doe!</rdf:first>
             <rdf:rest rdf:parseType="Resource">
@@ -35,17 +36,17 @@
         <description>Personalised greeting, followed by name</description>
     </rdf:Description>
 
-    <rdf:Description rdf:about="../../workflow/HelloWorld/processor/Hello">
+    <rdf:Description rdf:about="processor/Hello">
         <description>A service that says greets the given name</description>
         <title>Hello world</title>
     </rdf:Description>
 
-    <rdf:Description rdf:about="../../workflow/HelloWorld/processor/Hello/in/name">
+    <rdf:Description rdf:about="processor/Hello/in/name">
         <scufl2:exampleValue>Stian</scufl2:exampleValue>
         <description>Name of person to greet</description>
     </rdf:Description>
 
-    <rdf:Description rdf:about="../../workflow/HelloWorld/processor/Hello/out/greeting">
+    <rdf:Description rdf:about="processor/Hello/out/greeting">
         <scufl2:exampleValue>Hello, Stian!</scufl2:exampleValue>
         <description>Personalised greeting</description>
     </rdf:Description>

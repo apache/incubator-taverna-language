@@ -15,7 +15,7 @@
     # Note: Protege does not support this as
     # owl:imports dc:, dcterms:,rdfs: ; 
     owl:imports <http://purl.org/dc/elements/1.1/>,
-    <http://purl.org/dc/terms/>,<http://www.w3.org/2000/01/rdf-schema#>;
+    	<http://purl.org/dc/terms/>,<http://www.w3.org/2000/01/rdf-schema#>;
 
     rdfs:comment """The ontology defining SCUFL2 - a model for
         describing Taverna workflows.""" ;
