@@ -8,7 +8,7 @@
 	<xs:element name="RDF" type="rdf:RDF" />
 	<xs:complexType name="RDF">
 		<xs:sequence>
-			<xs:any namespace="##any" maxOccurs="unbounded" minOccurs="0"></xs:any>
+			<xs:any namespace="##any" maxOccurs="unbounded" minOccurs="0" processContents="lax" />
 		</xs:sequence>
 		<xs:attribute ref="xml:base" />
 	</xs:complexType>
@@ -16,7 +16,7 @@
 	<xs:element name="Description"> 
 		<xs:complexType>
 			<xs:sequence>
-				<xs:any namespace="##any" maxOccurs="unbounded" minOccurs="0"></xs:any>
+			<xs:any namespace="##any" maxOccurs="unbounded" minOccurs="0" processContents="lax" />
 			</xs:sequence>
 			<xs:attributeGroup ref="rdf:about" />
 		</xs:complexType>
