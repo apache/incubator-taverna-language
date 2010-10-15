@@ -4,8 +4,8 @@
 	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:owl="http://www.w3.org/2002/07/owl#"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://ns.taverna.org.uk/2010/scufl2# ../workflowBundle.xsd 
-						http://www.w3.org/1999/02/22-rdf-syntax-ns# ../rdf.xsd"
+	xsi:schemaLocation="http://ns.taverna.org.uk/2010/scufl2# http://ns.taverna.org.uk/2010/scufl2/scufl2.xsd 
+						http://www.w3.org/1999/02/22-rdf-syntax-ns# http://ns.taverna.org.uk/2010/scufl2/rdf.xsd"
 	xsi:type="ProfileDocument" xml:base="tavernaWorkbench/">
 	<Profile rdf:about="">
 		<name>tavernaWorkbench</name>
