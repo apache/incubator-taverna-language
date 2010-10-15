@@ -16,8 +16,6 @@
 		schemaLocation="xml.xsd" />
 
 
-	<xs:element name="RDF" type="scufl2:WorkflowBundleDocument" />
-
 	<xs:complexType name="WorkflowBundleDocument">
 		<xs:complexContent>
 			<xs:restriction base="rdf:RDF">
