@@ -1,8 +1,0 @@
-@base <../> .
-@prefix dc: <http://purl.org/dc/elements/1.1/> .
-
-<>
-    dc:description """An example workflow to illustrate SCUFL2""" ;
-    dc:creator "Stian Soiland-Reyes" ;
-    dc:date "2010-07-29" .
-
