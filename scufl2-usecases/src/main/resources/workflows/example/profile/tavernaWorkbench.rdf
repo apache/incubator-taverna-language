@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rdf:RDF xmlns="http://ns.taverna.org.uk/2010/scufl2#"
+<rdf:RDF xmlns="http://ns.taverna.org.uk/2010/scufl2#" 
 	xmlns:beanshell="http://ns.taverna.org.uk/2010/taverna/activities/beanshell#"
 	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:owl="http://www.w3.org/2002/07/owl#"
-	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
-
-	<Profile rdf:about="tavernaWorkbench/">
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://ns.taverna.org.uk/2010/scufl2# ../workflowBundle.xsd 
+						http://www.w3.org/1999/02/22-rdf-syntax-ns# ../rdf.xsd"
+	xsi:type="ProfileDocument" xml:base="tavernaWorkbench/">
+	<Profile rdf:about="">
 		<name>tavernaWorkbench</name>
 		<dc:creator>Stian Soiland-Reyes</dc:creator>
 		<dc:date>2010-07-29</dc:date>
 		<dc:description>A profile for invoking the workflow on the Taverna
 			Workbench</dc:description>
-		<processorBinding rdf:resource="tavernaWorkbench/binding/Hello" />
+		<processorBinding rdf:resource="binding/Hello" />
 		<recommendsEnvironment>
 			<Environment>
 				<workflowProduct rdf:resource="http://ns.taverna.org.uk/2010/taverna/workbench/" />
@@ -23,41 +26,37 @@
 				<workflowProduct rdf:resource="http://ns.taverna.org.uk/2010/taverna/" />
 			</Environment>
 		</requiresEnvironment>
-		<activatesConfiguration rdf:resource="tavernaWorkbench/configuration/Hello" />
+		<activatesConfiguration rdf:resource="configuration/Hello" />
 	</Profile>
 
-	<beanshell:Activity rdf:about="tavernaWorkbench/activity/HelloScript/">
+	<Activity rdf:about="activity/HelloScript/">
+		<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity" />
 		<inputActivityPort>
-			<InputActivityPort
-				rdf:about="tavernaWorkbench/activity/HelloScript/in/personName">
-				<granularPortDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0
-				</granularPortDepth>
+			<InputActivityPort rdf:about="activity/HelloScript/in/personName">
 				<name>personName</name>
 				<portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+				<granularPortDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</granularPortDepth>
 			</InputActivityPort>
 		</inputActivityPort>
 		<outputActivityPort>
-			<OutputActivityPort rdf:about="tavernaWorkbench/activity/HelloScript/out/hello">
-				<granularPortDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0
-				</granularPortDepth>
+			<OutputActivityPort rdf:about="activity/HelloScript/out/hello">
 				<name>hello</name>
 				<portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+				<granularPortDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</granularPortDepth>
 			</OutputActivityPort>
 		</outputActivityPort>
-	</beanshell:Activity>
+	</Activity>
 
-	<ProcessorBinding rdf:about="tavernaWorkbench/binding/Hello">
-		<boundActivity rdf:resource="tavernaWorkbench/activity/HelloScript/" />
+	<ProcessorBinding rdf:about="binding/Hello">
+		<boundActivity rdf:resource="activity/HelloScript/" />
 		<boundProcessor rdf:resource="../workflow/HelloWorld/processor/Hello/" />
 		<inputPortBinding rdf:parseType="Resource">
-			<bindsInputActivityPort
-				rdf:resource="tavernaWorkbench/activity/HelloScript/in/personName" />
+			<bindsInputActivityPort rdf:resource="activity/HelloScript/in/personName" />
 			<bindsInputProcessorPort
 				rdf:resource="../workflow/HelloWorld/processor/Hello/in/name" />
 		</inputPortBinding>
 		<outputPortBinding rdf:parseType="Resource">
-			<bindsOutputActivityPort
-				rdf:resource="tavernaWorkbench/activity/HelloScript/out/hello" />
+			<bindsOutputActivityPort rdf:resource="activity/HelloScript/out/hello" />
 			<bindsOutputProcessorPort
 				rdf:resource="../workflow/HelloWorld/processor/Hello/out/greeting" />
 		</outputPortBinding>

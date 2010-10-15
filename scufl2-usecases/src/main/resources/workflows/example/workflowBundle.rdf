@@ -1,27 +1,35 @@
-
-<!-- Processed by Id: cwm.py,v 1.197 2007/12/13 15:38:39 syosi Exp -->
-<!--     using base file:///home/stain/stuff/src/workspace/scufl2/scufl2-usecases/src/main/resources/workflows/example/workflowBundle.ttl-->
-
-
 <rdf:RDF xmlns="http://ns.taverna.org.uk/2010/scufl2#"
-    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-    xmlns:scufl2="http://ns.taverna.org.uk/2010/scufl2#">
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+	xmlns:scufl2="http://ns.taverna.org.uk/2010/scufl2#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://ns.taverna.org.uk/2010/scufl2# workflowBundle.xsd 
+						http://www.w3.org/1999/02/22-rdf-syntax-ns# rdf.xsd"
+	xsi:type="scufl2:WorkflowBundleDocument">
+	<WorkflowBundle rdf:about="./">
+		<name>Hello world</name>
+		<sameBaseAs
+			rdf:resource="http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/" />		
+		<mainWorkflow rdf:resource="workflow/HelloWorld/" />
+		<workflow>
+			<Workflow rdf:about="workflow/HelloWorld/">
+				<rdfs:seeAlso rdf:resource="workflow/HelloWorld.rdf" />
+			</Workflow>
+		</workflow>
+		<workflow>
+			<Workflow rdf:about="workflow/HelloWorld/">
+				<rdfs:seeAlso rdf:resource="workflow/HelloWorld.rdf" />
+			</Workflow>
+		</workflow>
+		<profile>
+			<Profile rdf:about="profile/tavernaWorkbench/">
+				<rdfs:seeAlso rdf:resource="profile/tavernaWorkbench.rdf" />
+			</Profile>
+		</profile>
+		<profile>
+			<Profile rdf:about="profile/tavernaServer/">
+				<rdfs:seeAlso rdf:resource="profile/tavernaServer.rdf" />
+			</Profile>
+		</profile>
+		<rdfs:seeAlso rdf:resource="annotation/workflowBundle.rdf" />
+	</WorkflowBundle>
 
-    <WorkflowBundle rdf:about="./">
-        <name>Hello world</name>
-        <sameBaseAs rdf:resource="http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/"/>
-        <workflow rdf:resource="workflow/HelloWorld/"/>
-        <mainWorkflow rdf:resource="workflow/HelloWorld/"/>
-        <profile rdf:resource="profile/tavernaWorkbench/"/>
-        <rdfs:seeAlso rdf:resource="annotation/workflowBundle.ttl"/>
-    </WorkflowBundle>
-
-    <Profile rdf:about="profile/tavernaWorkbench/">
-        <rdfs:seeAlso rdf:resource="profile/tavernaWorkbench.ttl"/>
-    </Profile>
-
-    <Workflow rdf:about="workflow/HelloWorld/">
-        <rdfs:seeAlso rdf:resource="workflow/HelloWorld.ttl"/>
-    </Workflow>
 </rdf:RDF>
