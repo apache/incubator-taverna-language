@@ -32,13 +32,6 @@ public class TestT2FlowTranslator {
 		T2FlowParser parser = new T2FlowParser();
 		// parser.setStrict(true);
 		WorkflowBundle researchObj = parser.parseT2Flow(wfResource.openStream());
-
-		JAXBContext jc = JAXBContext.newInstance(WorkflowBundle.class );
-		Marshaller marshaller = jc.createMarshaller();
-		marshaller.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT,
-	              Boolean.TRUE );
-	    marshaller.marshal( researchObj, new FileOutputStream("target/foo.xml") );
-
 	}
 
 }
