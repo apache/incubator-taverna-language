@@ -3,20 +3,35 @@
 	elementFormDefault="qualified" targetNamespace="http://ns.taverna.org.uk/2010/scufl2#"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:owl="http://www.w3.org/2002/07/owl#"
 	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:scufl2="http://ns.taverna.org.uk/2010/scufl2#"
-	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+	jxb:version="1.0">
+
+	<xs:annotation>
+		<xs:appinfo>
+			<!-- See http://docs.rakeshv.org/java/jaxb/users-guide/jaxb-custom.html 
+			 -->
+			<jxb:globalBindings/>
+			<jxb:schemaBindings>
+				<jxb:package name="uk.org.taverna.scufl2.rdfxml.jaxb" />				
+			</jxb:schemaBindings>
+		</xs:appinfo>
+	</xs:annotation>
+
 	<xs:import namespace="http://purl.org/dc/elements/1.1/"
 		schemaLocation="http://dublincore.org/schemas/xmls/qdc/dc.xsd" />
+
 	<xs:import namespace="http://purl.org/dc/terms/"
 		schemaLocation="http://dublincore.org/schemas/xmls/qdc/dcterms.xsd" />
-		
+
+	<xs:import namespace="http://www.w3.org/XML/1998/namespace"
+             schemaLocation="http://www.w3.org/2001/03/xml.xsd" /> 
+
 	<xs:import namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 		schemaLocation="rdf.xsd" />
 	<xs:import namespace="http://www.w3.org/2000/01/rdf-schema#"
 		schemaLocation="rdfs.xsd" />
 	<xs:import namespace="http://www.w3.org/2002/07/owl#"
 		schemaLocation="owl.xsd" />
-	<xs:import namespace="http://www.w3.org/XML/1998/namespace"
-		schemaLocation="xml.xsd" />
 
 
 	<xs:complexType name="WorkflowBundleDocument">
@@ -50,9 +65,10 @@
 
 					<xs:element ref="scufl2:ProcessorBinding" minOccurs="0"
 						maxOccurs="unbounded" />
-					<xs:element name="Configuration" type="scufl2:Configuration" minOccurs="0"
-						maxOccurs="unbounded" />
-					<xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="lax" />
+					<xs:element name="Configuration" type="scufl2:Configuration"
+						minOccurs="0" maxOccurs="unbounded" />
+					<xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"
+						processContents="lax" />
 				</xs:sequence>
 			</xs:restriction>
 		</xs:complexContent>
@@ -65,7 +81,8 @@
 				<xs:element ref="scufl2:name" minOccurs="0" />
 				<xs:element name="sameBaseAs" type="rdf:Resource"
 					minOccurs="0" />
-				<xs:element name="mainWorkflow" type="rdf:Resource" minOccurs="0" />
+				<xs:element name="mainWorkflow" type="rdf:Resource"
+					minOccurs="0" />
 				<xs:element name="workflow" maxOccurs="unbounded">
 					<xs:complexType>
 						<xs:sequence>
@@ -90,24 +107,27 @@
 	<xs:complexType name="Configuration">
 		<xs:sequence>
 			<xs:element ref="rdf:type" />
-			<xs:element name="configures" type="rdf:Resource"  />
-			<xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="lax" />			
+			<xs:element name="configures" type="rdf:Resource" />
+			<xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"
+				processContents="lax" />
 		</xs:sequence>
-		<xs:attributeGroup ref="rdf:about" />		
+		<xs:attributeGroup ref="rdf:about" />
 	</xs:complexType>
 
 
 	<xs:complexType name="Activity">
 		<xs:sequence>
 			<xs:element ref="rdf:type" />
-			<xs:element name="inputActivityPort" minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="inputActivityPort" minOccurs="0"
+				maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:sequence>
 						<xs:element ref="scufl2:InputActivityPort" />
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
-			<xs:element name="outputActivityPort" minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="outputActivityPort" minOccurs="0"
+				maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:sequence>
 						<xs:element ref="scufl2:OutputActivityPort" />
@@ -136,10 +156,14 @@
 					<xs:element ref="dc:date" minOccurs="0" maxOccurs="1" />
 					<xs:element ref="dc:description" minOccurs="0"
 						maxOccurs="1" />
-					<xs:element name="processorBinding" type="rdf:Resource" minOccurs="0" maxOccurs="unbounded" />
-					<xs:element name="recommendsEnvironment" type="scufl2:scufl2.Environment" minOccurs="0" maxOccurs="unbounded" />
-					<xs:element name="requiresEnvironment" type="scufl2:scufl2.Environment" minOccurs="0" maxOccurs="unbounded" />
-					<xs:element name="activatesConfiguration" type="rdf:Resource" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="processorBinding" type="rdf:Resource"
+						minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="recommendsEnvironment" type="scufl2:scufl2.Environment"
+						minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="requiresEnvironment" type="scufl2:scufl2.Environment"
+						minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="activatesConfiguration" type="rdf:Resource"
+						minOccurs="0" maxOccurs="unbounded" />
 				</xs:sequence>
 			</xs:choice>
 			<xs:attributeGroup ref="rdf:about" />
