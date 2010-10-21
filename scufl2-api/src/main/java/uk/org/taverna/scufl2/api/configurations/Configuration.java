@@ -29,11 +29,19 @@ public class Configuration extends AbstractNamed implements WorkflowBean {
 		super(name);
 	}
 
+	public URI getConfigurationType() {
+		return configurationType;
+	}
 	public Configurable getConfigures() {
 		return configures;
 	}
+
 	public List<Property> getProperties() {
 		return properties;
+	}
+
+	public void setConfigurationType(URI configurationType) {
+		this.configurationType = configurationType;
 	}
 
 	/**
@@ -46,14 +54,5 @@ public class Configuration extends AbstractNamed implements WorkflowBean {
 	public void setProperties(List<Property> properties) {
 		this.properties = properties;
 	}
-
-	public void setConfigurationType(URI configurationType) {
-		this.configurationType = configurationType;
-	}
-
-	public URI getConfigurationType() {
-		return configurationType;
-	}
-
 
 }
