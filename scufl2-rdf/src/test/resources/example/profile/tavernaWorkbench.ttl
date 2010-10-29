@@ -68,10 +68,10 @@
 # Define possible configurations for a beanshell
 
 beanshell:Activity a owl:Class;
-    scufl2:configurationType beanshell:Configuration;
-    rdfs:subClassOf scufl2:Activity .
+    rdfs:subClassOf scufl2:Activity ;
+    scufl2:configurationType beanshell:Configuration .
 
-beanshell:Configuration a owl:Class;
+beanshell:Configuration a owl:Class ;
     rdfs:subClassOf scufl2:Configuration .
     
 beanshell:script
