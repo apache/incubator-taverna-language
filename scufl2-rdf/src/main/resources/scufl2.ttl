@@ -365,6 +365,12 @@
              owl:allValuesFrom :DispathStackLayer;
              owl:onProperty rdf:first ] .
 
+:DispatcStackLayer
+	a owl:Class ;
+	rdfs:subClassOf :Configurable .
+
+
+
 # Iteration strategy
 
 :iterationStrategyStack
@@ -447,6 +453,8 @@
     rdfs:subClassOf :ProcessorControlledStartCondition .
 
 
+# Processor ports
+
 :ProcessorPort
     a owl:Class ;
     rdfs:label "ProcessorPort" ;
@@ -484,7 +492,7 @@
     rdfs:subPropertyOf :processorPort.
 
 
-#### Activities
+# Activities
 
 :Activity
     a owl:Class ;
@@ -538,7 +546,7 @@
     rdfs:subPropertyOf :activityPort.
 
 
-####### Bindings
+# Profiles and configurations
 
 :Profile
     a owl:Class ;
@@ -564,6 +572,9 @@
 :requiredConfiguration a owl:FunctionalProperty, owl:DatatypeProperty ;
     rdfs:domain rdf:Property;
     rdfs:range xsd:boolean .
+
+
+# Processor bindings
 
 :ProcessorBinding
     a owl:Class ;
@@ -595,7 +606,7 @@
     rdfs:range xsd:nonNegativeInteger .
 
 
-## Port bindings
+# Port bindings
 
 :InputPortBinding
     a owl:Class ;
@@ -643,20 +654,5 @@
     rdfs:domain :OutputPortBinding ;
     rdfs:label "bound output processor port" ;
     rdfs:range :OutputProcessorPort .
-
-
-## Configurations
-
-
-
-
-
-    
-
-
-
-
-
-
 
 
