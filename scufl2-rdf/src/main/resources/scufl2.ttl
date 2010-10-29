@@ -52,6 +52,14 @@
     rdfs:label "Configurable" ;
     rdfs:subClassOf :WorkflowElement .
 
+:configurationType a owl:FunctionalProperty ;
+    rdfs:domain :Configurable ;
+    rdfs:range owl:Class, [
+             a owl:Restriction;
+             owl:hasValue :Configuration;
+             owl:onProperty rdfs:subClassOf
+    ] .
+
 :sameBaseAs
     #a owl:ObjectProperty, owl:TransitiveProperty ;
     rdfs:comment """The resources are the same (like in owl:sameAs), and
@@ -481,7 +489,7 @@
 :Activity
     a owl:Class ;
     rdfs:label "Activity" ;
-    rdfs:subClassOf :WorkflowElement .
+    rdfs:subClassOf :Configurable .
 
 :ActivityType
     a owl:Class ;
@@ -547,6 +555,15 @@
 :Configuration
     a owl:Class ;
     rdfs:subClassOf :WorkflowElement .
+
+:configures a owl:ObjectProperty ;
+    rdfs:domain :Configuration ;
+    rdfs:label "configuration" ;
+    rdfs:range :Configurable .
+
+:requiredConfiguration a owl:FunctionalProperty, owl:DatatypeProperty ;
+    rdfs:domain rdf:Property;
+    rdfs:range xsd:boolean .
 
 :ProcessorBinding
     a owl:Class ;
@@ -631,8 +648,10 @@
 ## Configurations
 
 
-###########
 
+
+
+    
 
 
 
