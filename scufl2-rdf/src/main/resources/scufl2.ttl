@@ -52,7 +52,7 @@
     rdfs:label "Configurable" ;
     rdfs:subClassOf :WorkflowElement .
 
-:configurationType a owl:FunctionalProperty ;
+:hasConfigurationType a owl:FunctionalProperty,owl:AnnotationProperty ;
     rdfs:domain :Configurable ;
     rdfs:range owl:Class, [
              a owl:Restriction;
@@ -362,8 +362,15 @@
     a owl:Class ;
     rdfs:subClassOf rdf:List, [
              a owl:Restriction;
-             owl:allValuesFrom :DispathStackLayer;
-             owl:onProperty rdf:first ] .
+             owl:onProperty rdf:first;
+             owl:allValuesFrom :DispathStackLayer
+            ], [
+             a owl:Restriction;
+             owl:onProperty rdf:last;
+             owl:allValuesFrom [
+             	owl:unionOf ( :DispatchStack rdf:nil ) 
+               ] 
+            ] .
 
 :DispatcStackLayer
 	a owl:Class ;
@@ -385,7 +392,14 @@
     rdfs:subClassOf rdf:List, [
              a owl:Restriction;
              owl:allValuesFrom :IterationStrategyNodeWithChildren;
-             owl:onProperty rdf:first ] .
+             owl:onProperty rdf:first 
+            ], [
+             a owl:Restriction;
+             owl:onProperty rdf:last;
+             owl:allValuesFrom [
+             	owl:unionOf ( :IterationStrategyStack rdf:nil ) 
+               ] 
+            ] .
 
 :IterationStrategyNode
     a owl:Class ;
@@ -407,8 +421,15 @@
     a owl:Class ;
     rdfs:subClassOf rdf:List, [
              a owl:Restriction;
-             owl:allValuesFrom :IterationStrategyNode;
-             owl:onProperty rdf:first ] .
+             owl:onProperty rdf:first;
+             owl:allValuesFrom :IterationStrategyNode
+            ], [
+             a owl:Restriction;
+             owl:onProperty rdf:last;
+             owl:allValuesFrom [
+             	owl:unionOf ( :IterationStrategyChildren rdf:nil ) 
+               ] 
+            ] .
 
 :CrossProduct
     a owl:Class ;
