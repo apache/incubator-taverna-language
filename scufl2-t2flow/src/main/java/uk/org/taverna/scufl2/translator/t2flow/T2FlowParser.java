@@ -1,22 +1,19 @@
 package uk.org.taverna.scufl2.translator.t2flow;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,16 +26,12 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
-
 
 import uk.org.taverna.scufl2.api.activity.ActivityType;
 import uk.org.taverna.scufl2.api.activity.InputActivityPort;
 import uk.org.taverna.scufl2.api.activity.OutputActivityPort;
 import uk.org.taverna.scufl2.api.common.Named;
-import uk.org.taverna.scufl2.api.common.ToBeDecided;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.configurations.DataProperty;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
@@ -52,17 +45,16 @@ import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
 import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
 import uk.org.taverna.scufl2.api.port.ReceiverPort;
 import uk.org.taverna.scufl2.api.port.SenderPort;
-import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
+import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Activity;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedGranularDepthPort;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedGranularDepthPorts;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedPorts;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Dataflow;
-import uk.org.taverna.scufl2.xml.t2flow.jaxb.DataflowConfig;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Datalinks;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.DepthPort;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.DepthPorts;
@@ -155,8 +147,15 @@ public class T2FlowParser {
 
 	protected ReceiverPort findReceiverPort(Workflow wf, Link sink)
 			throws ParseException {
-		if (sink.getType().equals(LinkType.DATAFLOW)) {
-			String portName = sink.getPort();
+		String portName = sink.getPort();
+		if (portName == null) {
+			throw new ParseException("Port name not specified");
+		}
+		String processorName = sink.getProcessor();
+		if (processorName == null) {
+			if (sink.getType().equals(LinkType.PROCESSOR)) {
+				throw new ParseException("Link type was processor, but no processor name found");
+			}
 			OutputWorkflowPort candidate = wf.getOutputPorts().getByName(
 					portName);
 			if (candidate == null) {
@@ -164,14 +163,15 @@ public class T2FlowParser {
 						+ portName);
 			}
 			return candidate;
-		} else if (sink.getType().equals(LinkType.PROCESSOR)) {
-			String processorName = sink.getProcessor();
+		} else {
+			if (sink.getType().equals(LinkType.DATAFLOW)) {
+				throw new ParseException("Link type was dataflow, but processor name was found");
+			}
 			Processor processor = wf.getProcessors().getByName(processorName);
 			if (processor == null) {
 				throw new ParseException("Link to unknown processor "
 						+ processorName);
 			}
-			String portName = sink.getPort();
 			InputProcessorPort candidate = processor.getInputPorts().getByName(
 					portName);
 			if (candidate == null) {
@@ -179,44 +179,47 @@ public class T2FlowParser {
 						+ " in " + processorName);
 			}
 			return candidate;
-		} else if (sink.getType().equals(LinkType.MERGE)) {
-			throw new ParseException(
-					"Translation of merges not yet implemented");
 		}
-		throw new ParseException("Could not parse receiver " + sink);
 	}
 
 	protected SenderPort findSenderPort(Workflow wf, Link source)
 			throws ParseException {
-		if (source.getType().equals(LinkType.DATAFLOW)) {
-			String portName = source.getPort();
-			InputWorkflowPort candidate = wf.getInputPorts()
-					.getByName(portName);
+		if (source.getType().equals(LinkType.MERGE)) {
+			throw new ParseException("Link type Merge unexpected for sender ports");
+		}
+		String portName = source.getPort();
+		if (portName == null) {
+			throw new ParseException("Port name not specified");
+		}
+		String processorName = source.getProcessor();
+		if (processorName == null) {
+			if (source.getType().equals(LinkType.PROCESSOR)) {
+				throw new ParseException("Link type was processor, but no processor name found");
+			}
+			InputWorkflowPort candidate = wf.getInputPorts().getByName(
+					portName);
 			if (candidate == null) {
 				throw new ParseException("Link from unknown workflow port "
 						+ portName);
 			}
 			return candidate;
-		} else if (source.getType().equals(LinkType.PROCESSOR)) {
-			String processorName = source.getProcessor();
+		} else {
+			if (source.getType().equals(LinkType.DATAFLOW)) {
+				throw new ParseException("Link type was dataflow, but processor name was found");
+			}
 			Processor processor = wf.getProcessors().getByName(processorName);
 			if (processor == null) {
 				throw new ParseException("Link from unknown processor "
 						+ processorName);
 			}
-			String portName = source.getPort();
-			OutputProcessorPort candidate = processor.getOutputPorts()
-					.getByName(portName);
+			OutputProcessorPort candidate = processor.getOutputPorts().getByName(
+					portName);
 			if (candidate == null) {
 				throw new ParseException("Link from unknown port " + portName
 						+ " in " + processorName);
 			}
 			return candidate;
-		} else if (source.getType().equals(LinkType.MERGE)) {
-			throw new ParseException(
-					"Translation of merges not yet implemented");
-		}
-		throw new ParseException("Could not parse sender " + source);
+		}	
 	}
 
 	protected T2Parser getT2Parser(URI classURI) {
@@ -476,6 +479,7 @@ public class T2FlowParser {
 	protected Set<DataLink> parseDatalinks(Datalinks origLinks)
 			throws ParseException {
 		HashSet<DataLink> newLinks = new HashSet<DataLink>();
+		java.util.Map<ReceiverPort, AtomicInteger> mergeCounts = new HashMap<ReceiverPort, AtomicInteger>();
 		for (uk.org.taverna.scufl2.xml.t2flow.jaxb.DataLink origLink : origLinks
 				.getDatalink()) {
 			try {
@@ -483,8 +487,26 @@ public class T2FlowParser {
 						origLink.getSource());
 				ReceiverPort receiverPort = findReceiverPort(currentWorkflow
 						.get(), origLink.getSink());
+				
 				DataLink newLink = new DataLink(currentWorkflow.get(),
 						senderPort, receiverPort);
+				
+				AtomicInteger mergeCount = mergeCounts.get(receiverPort);
+				if (origLink.getSink().getType().equals(LinkType.MERGE)) {
+					if (mergeCount != null && mergeCount.intValue() < 1) {
+						throw new ParseException("Merged and non-merged links to port " + receiverPort);						
+					}
+					if (mergeCount == null) {
+						mergeCount = new AtomicInteger(0);
+						mergeCounts.put(receiverPort, mergeCount);
+					}
+					newLink.setMergePosition(mergeCount.getAndIncrement());
+				} else {
+					if (mergeCount != null) {
+						throw new ParseException("More than one link to non-merged port " + receiverPort);
+					}
+					mergeCounts.put(receiverPort, new AtomicInteger(-1));
+				}
 				newLinks.add(newLink);
 			} catch (ParseException ex) {
 				logger.log(Level.WARNING, "Could not translate link:\n"
