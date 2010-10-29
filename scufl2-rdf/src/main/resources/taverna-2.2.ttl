@@ -60,20 +60,57 @@
 	a owl:Class ;
 	rdfs:comment """The default Taverna dispatch stack of Parallelise, 
 		ErrorBounce, Failover, Retry, Stop and Invoke.""";
-	rdfs:subClassOf rdf:List, [
+	rdfs:subClassOf scufl2:DispatcStack, [
              a owl:Restriction;
-             owl:allValuesFrom :Parallelise;
+             owl:someValuesFrom :Parallelise;
              owl:onProperty rdf:first 
-           ],
-           [
-             owl:onProperty rdf:rest,
-             owl:allValuesFrom [
+           ], [
+             a owl:Restriction;
+             owl:onProperty rdf:rest;
+             owl:someValuesFrom [
 				a owl:Restriction;
 				owl:onProperty rdf:first;
-				owl:allValuesFrom :ErrorBounce
+				owl:someValuesFrom :ErrorBounce
 				## TODO: And so on.. Is this even correct syntax?
-             	];
-             ],
+           	   ], [
+             	a owl:Restriction;
+             	owl:onProperty rdf:rest;
+             	owl:someValuesFrom [
+             		a owl:Restriction;
+             		owl:onProperty rdf:first;
+             		owl:someValuesFrom :Failover
+             	  ], [
+                    a owl:Restriction;
+                    owl:onProperty rdf:rest;
+                    owl:someValuesFrom [
+                        a owl:Restriction;
+                        owl:onProperty rdf:first;
+                        owl:someValuesFrom :Retry
+                      ], [
+                        a owl:Restriction;
+                        owl:onProperty rdf:rest;
+                        owl:someValuesFrom [
+                            a owl:Restriction;
+                            owl:onProperty rdf:first;
+                            owl:someValuesFrom :Stop
+                        ], [
+                            a owl:Restriction;
+                            owl:onProperty rdf:rest;
+                            owl:someValuesFrom [
+                                a owl:Restriction;
+                                owl:onProperty rdf:first;
+                                owl:someValuesFrom :Invoke
+                              ], [
+                                a owl:Restriction;
+                                owl:onProperty rdf:rest;
+                                owl:hasValue rdf:nil;
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+             ]. 
+             
 
 
 # Common activity properties
