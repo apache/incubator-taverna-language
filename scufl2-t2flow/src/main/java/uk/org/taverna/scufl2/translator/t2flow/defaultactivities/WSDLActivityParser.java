@@ -61,14 +61,31 @@ public class WSDLActivityParser extends AbstractActivityParser {
 	public Configuration parseActivityConfiguration(T2FlowParser t2FlowParser,
 			ConfigBean configBean) throws ParseException {
 
+		
+		// TODO: XML splitters
+		
 		WSDLConfig wsdlConfig = unmarshallConfig(t2FlowParser,
 				configBean, "xstream", WSDLConfig.class);
 
 		Configuration configuration = new Configuration();
 
-		URI wsdl = URI.create(wsdlConfig.getWsdl());
+		URI wsdl;
+		try {
+			wsdl = URI.create(wsdlConfig.getWsdl());
+			if (! wsdl.isAbsolute()) {
+				throw new ParseException("WSDL URI is not absolute: " + wsdlConfig.getWsdl());
+			}
+		} catch (IllegalArgumentException ex) {
+			throw new ParseException("WSDL not a valid URI: " + wsdlConfig.getWsdl());			
+		} catch (NullPointerException ex) {
+			throw new ParseException("WSDL config has no wsdl set");
+		}
 		String operation = wsdlConfig.getOperation();
-
+		if (operation == null || operation.equals("")) {
+			throw new ParseException("WSDL config has no operation set");
+		}
+			
+		
 		configuration = new Configuration();
 
 		// The operation should have a URI - but we don't know it
