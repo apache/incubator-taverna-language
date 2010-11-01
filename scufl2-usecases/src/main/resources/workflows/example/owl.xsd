@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified" targetNamespace="http://www.w3.org/2002/07/owl#"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	
+	xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:scufl2="http://ns.taverna.org.uk/2010/scufl2#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+	<xs:import namespace="http://ns.taverna.org.uk/2010/scufl2#"
+		schemaLocation="workflowBundle.xsd" />
+	<xs:import namespace="http://purl.org/dc/elements/1.1/"
+		schemaLocation="dc.xsd" />
+	<xs:import namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		schemaLocation="rdf.xsd" />
+	<xs:import namespace="http://www.w3.org/2000/01/rdf-schema#"
+		schemaLocation="rdfs.xsd" />
+	<xs:element name="Class">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element minOccurs="0" ref="scufl2:configurationType" />
+				<xs:element ref="rdfs:subClassOf" />
+				<xs:any namespace="##any" maxOccurs="unbounded" minOccurs="0" />
+			</xs:sequence>
+			<xs:attributeGroup ref="rdf:about" />
+			<xs:anyAttribute />
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DatatypeProperty">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="rdf:type" />
+				<xs:element ref="scufl2:required" />
+				<xs:element ref="rdfs:domain" />
+				<xs:element ref="rdfs:label" />
+				<xs:element ref="rdfs:range" />
+				<xs:element ref="rdfs:subPropertyOf" />
+				<xs:any namespace="##any" maxOccurs="unbounded" minOccurs="0" />
+			</xs:sequence>
+			<xs:attributeGroup ref="rdf:about" />
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
