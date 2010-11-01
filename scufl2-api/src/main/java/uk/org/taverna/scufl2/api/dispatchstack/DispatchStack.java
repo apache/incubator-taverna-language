@@ -1,13 +1,11 @@
 package uk.org.taverna.scufl2.api.dispatchstack;
 
-import java.util.List;
-
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.core.Processor;
 
-public class DispatchStack extends List<DispatchStackLayer>,
-Child<Processor>, WorkflowBean {
+public class DispatchStack implements Child<Processor>, WorkflowBean {
+
 	private Processor parent;
 
 	@Override
@@ -25,4 +23,5 @@ Child<Processor>, WorkflowBean {
 			parent.setDispatchStack(this);
 		}
 	}
+
 }

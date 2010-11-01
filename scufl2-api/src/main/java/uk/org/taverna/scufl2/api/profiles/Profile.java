@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
+import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.AbstractNamed;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
@@ -30,12 +31,18 @@ public class Profile extends AbstractNamed implements WorkflowBean {
 
 	private int profilePosition;
 
+	private Set<Activity> activities = new HashSet<Activity>();
+
 	public Profile() {
 		super();
 	}
 
 	public Profile(String name) {
 		super(name);
+	}
+
+	public Set<Activity> getActivities() {
+		return activities;
 	}
 
 	/**
@@ -69,6 +76,10 @@ public class Profile extends AbstractNamed implements WorkflowBean {
 	@XmlElement(required = true, nillable = false)
 	public final int getProfilePosition() {
 		return profilePosition;
+	}
+
+	public void setActivities(Set<Activity> activities) {
+		this.activities = activities;
 	}
 
 	/**

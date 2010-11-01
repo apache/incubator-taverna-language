@@ -12,6 +12,7 @@
 	<description>Taverna workflow language API</description>
 	<build>
 		<plugins>
+		<!-- 
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jaxb2-maven-plugin</artifactId>
@@ -29,6 +30,8 @@
 					</execution>
 				</executions>				
 			</plugin>
+			 -->
+		
 		</plugins>
 	</build>
 	<dependencies>

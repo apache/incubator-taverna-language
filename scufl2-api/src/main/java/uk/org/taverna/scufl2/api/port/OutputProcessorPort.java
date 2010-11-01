@@ -1,43 +1,22 @@
 package uk.org.taverna.scufl2.api.port;
 
-import java.util.Set;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlTransient;
 
 import uk.org.taverna.scufl2.api.common.Child;
-import uk.org.taverna.scufl2.api.common.ConfigurableProperty;
-import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.core.Processor;
 
 
 public class OutputProcessorPort extends AbstractGranularDepthPort implements
 		SenderPort, ProcessorPort, Child<Processor> {
 	
-	private NamedSet<ConfigurableProperty> configurableProperties = new NamedSet<ConfigurableProperty>();
 
-
-	/* (non-Javadoc)
-	 * @see uk.org.taverna.scufl2.api.common.Configurable#getConfigurableProperties()
-	 */
-	@XmlElementWrapper( name="configurableProperties",nillable=false,required=false)
-	@XmlElement( name="configurableProperty",nillable=false)
-	public NamedSet<ConfigurableProperty> getConfigurableProperties() {
-		return configurableProperties;
-	}
-
-	/* (non-Javadoc)
-	 * @see uk.org.taverna.scufl2.api.common.Configurable#setConfigurableProperties(java.util.Set)
-	 */
-	public void setConfigurableProperties(
-			Set<ConfigurableProperty> configurableProperties) {
-		this.configurableProperties.clear();
-		this.configurableProperties.addAll(configurableProperties);
-	}
 
 	private Processor parent;
 
+	public OutputProcessorPort() {
+		super();
+	}
+	
 	/**
 	 * @param parent
 	 * @param name
@@ -46,11 +25,15 @@ public class OutputProcessorPort extends AbstractGranularDepthPort implements
 		super(name);
 		setParent(parent);
 	}
-	
-	public OutputProcessorPort() {
-		super();
-	}
 
+	/* (non-Javadoc)
+	 * @see uk.org.taverna.scufl2.api.common.Child#getParent()
+	 */
+	@XmlTransient
+	public Processor getParent() {
+		return parent;
+	}
+	
 	/* (non-Javadoc)
 	 * @see uk.org.taverna.scufl2.api.common.Child#setParent(uk.org.taverna.scufl2.api.common.WorkflowBean)
 	 */
@@ -62,14 +45,6 @@ public class OutputProcessorPort extends AbstractGranularDepthPort implements
 		if (parent != null) {
 			parent.getOutputPorts().add(this);
 		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see uk.org.taverna.scufl2.api.common.Child#getParent()
-	 */
-	@XmlTransient
-	public Processor getParent() {
-		return parent;
 	}
 	
 	@Override
