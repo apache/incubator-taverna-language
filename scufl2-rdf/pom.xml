@@ -17,7 +17,7 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.4</version>
+				<version>1.6</version>
 				<executions>
 					<execution>
 						<phase>generate-sources</phase>
@@ -28,10 +28,7 @@
 								<property name="test_classpath" refid="maven.test.classpath" />
 								<property name="plugin_classpath" refid="maven.plugin.classpath" />
 
-								<!--
-									inspired by
-									http://openprovenance.org/java/maven-releases/org/openprovenance/opm-elmo/1.1.1/opm-elmo-1.1.1.pom
-								-->
+								<!-- inspired by http://openprovenance.org/java/maven-releases/org/openprovenance/opm-elmo/1.1.1/opm-elmo-1.1.1.pom -->
 
 								<mkdir dir="${project.build.directory}" />
 								<mkdir dir="${project.build.directory}/generated-sources" />
@@ -44,8 +41,7 @@
 										value="uk.org.taverna.scufl2.ontology=http://ns.taverna.org.uk/2010/scufl2#" />
 									<arg value="-j" />
 									<arg value="target/scufl2-ontology.jar" />
-									<arg value="-p" />
-									<arg value="" />
+									<!-- <arg value="-p" /> <arg value="" /> -->
 									<arg value="src/main/resources/scufl2.ttl" />
 									<classpath refid="maven.plugin.classpath" />
 									<classpath>
@@ -59,7 +55,6 @@
 									</patternset>
 								</unzip>
 							</tasks>
-							<sourceRoot>${project.build.directory}/generated-sources/elmo/</sourceRoot>
 						</configuration>
 						<goals>
 							<goal>run</goal>
@@ -78,6 +73,32 @@
 						<version>1.5.2</version>  <!-- note old version required for elmo! -->
 					</dependency>
 				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+							<goal>add-resource</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.build.directory}/generated-sources/elmo/</source>
+							</sources>
+							<resources>
+								<resource>
+									<directory>${project.build.directory}/generated-sources/elmo/META-INF</directory>
+									<targetPath>META-INF</targetPath>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
@@ -164,4 +185,17 @@
 			<url>http://repo.aduna-software.org/maven2/snapshots</url>
 		</repository>
 	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>aduna-opensource.releases</id>
+			<name>Aduna Open Source - Maven releases</name>
+			<url>http://repo.aduna-software.org/maven2/releases</url>
+		</pluginRepository>
+	</pluginRepositories>
 </project>

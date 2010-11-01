@@ -23,7 +23,7 @@
       <http://www.mygrid.org.uk/dev/wiki/display/developer/SCUFL2>,
       <http://www.taverna.org.uk/> .
 
-### General classes and properties
+# General classes and properties
 
 :Parent
     a owl:Class ;
@@ -124,7 +124,7 @@
     rdfs:range xsd:string ;
     rdfs:subPropertyOf dc:title .
 
-### Top level entry point for a SCUFL2 archive
+# Top level entry point for a SCUFL2 archive
 
 :WorkflowBundle
     a owl:Class ;
@@ -219,7 +219,7 @@
     rdfs:subPropertyOf :child .
 
 
-### Workflow structure
+# Workflow structure
 
 
 :Workflow
@@ -363,22 +363,37 @@
     rdfs:subClassOf rdf:List, [
              a owl:Restriction;
              owl:onProperty rdf:first;
-             owl:allValuesFrom :DispathStackLayer
-            ], [
+             owl:allValuesFrom :DispatchStackLayer
+            ]
+,[
              a owl:Restriction;
              owl:onProperty rdf:last;
              owl:allValuesFrom [
-             	owl:unionOf ( :DispatchStack rdf:nil ) 
+             	owl:unionOf ( :DispatchStack rdf:nil)
                ] 
-            ] .
+            ] 
+.
 
-:DispatcStackLayer
+# Trick to keep Sesame Elmo happy, let's hope this does not break anything!
+rdf:nil a owl:Class .
+
+:DispatchStackLayer
 	a owl:Class ;
 	rdfs:subClassOf :Configurable .
 
 
 
 # Iteration strategy
+
+:IterationStrategyNode
+    a owl:Class ;
+    rdfs:label "IterationStrategyNode" ;
+    rdfs:subClassOf :WorkflowElement .
+
+:IterationStrategyNodeWithChildren
+    a owl:Class ;
+    rdfs:label "IterationStrategyNode" ;
+    rdfs:subClassOf :IterationStrategyNode .
 
 :iterationStrategyStack
     a owl:FunctionalProperty, owl:ObjectProperty ;
@@ -400,16 +415,6 @@
              	owl:unionOf ( :IterationStrategyStack rdf:nil ) 
                ] 
             ] .
-
-:IterationStrategyNode
-    a owl:Class ;
-    rdfs:label "IterationStrategyNode" ;
-    rdfs:subClassOf :WorkflowElement .
-
-:IterationStrategyNodeWithChildren
-    a owl:Class ;
-    rdfs:label "IterationStrategyNode" ;
-    rdfs:subClassOf :IterationStrategyNode .
 
 :iterationStrategyChildren
     a owl:FunctionalProperty, owl:ObjectProperty ;
