@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified" targetNamespace="http://ns.taverna.org.uk/2010/scufl2#"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:owl="http://www.w3.org/2002/07/owl#"
+	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:scufl2="http://ns.taverna.org.uk/2010/scufl2#"
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+	<xs:import namespace="http://purl.org/dc/elements/1.1/"
+		schemaLocation="dc.xsd" />
+	<xs:import namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		schemaLocation="rdf.xsd" />
+	<xs:import namespace="http://www.w3.org/2000/01/rdf-schema#"
+		schemaLocation="rdfs.xsd" />
+	<xs:import namespace="http://www.w3.org/2002/07/owl#"
+		schemaLocation="owl.xsd" />
+	<xs:import namespace="http://www.w3.org/XML/1998/namespace"
+		schemaLocation="xml.xsd" />
+
+
+	<xs:element name="RDF" type="scufl2:WorkflowBundleDocument" />
+
+	<xs:complexType name="WorkflowBundleDocument">
+		<xs:complexContent>
+			<xs:restriction base="rdf:RDF">
+				<xs:sequence>
+					<xs:element ref="scufl2:WorkflowBundle"></xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="WorkflowDocument">
+		<xs:complexContent>
+			<xs:restriction base="rdf:RDF">
+				<xs:sequence>
+					<xs:element ref="scufl2:Workflow"></xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+
+	<xs:complexType name="ProfileDocument">
+		<xs:complexContent>
+			<xs:restriction base="rdf:RDF">
+				<xs:sequence>
+					<xs:element ref="scufl2:Profile" />
+					<xs:element ref="scufl2:ProcessorBinding" minOccurs="0"
+						maxOccurs="unbounded" />
+					<xs:any namespace="##other" />
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+
+	<xs:element name="WorkflowBundle">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="scufl2:name" minOccurs="0" />
+				<xs:element name="sameBaseAs" type="rdf:Resource"
+					minOccurs="0" />
+				<xs:element name="mainWorkflow" type="rdf:Resource" />
+				<xs:element name="workflow" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Workflow" type="scufl2:SeeAlsoType" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="profile" maxOccurs="unbounded"
+					minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Profile" type="scufl2:SeeAlsoType" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="rdfs:seeAlso" minOccurs="0" maxOccurs="unbounded" />
+			</xs:sequence>
+			<xs:attributeGroup ref="rdf:about" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="SeeAlsoType">
+		<xs:sequence>
+			<xs:element ref="rdfs:seeAlso" />
+		</xs:sequence>
+		<xs:attributeGroup ref="rdf:about" />
+	</xs:complexType>
+
+
+	<xs:element name="Profile">
+		<xs:complexType>
+			<xs:choice>
+				<xs:element ref="rdfs:seeAlso" />
+				<xs:sequence>
+					<xs:element ref="scufl2:name" />
+					<xs:element ref="dc:creator" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element ref="dc:date" minOccurs="0" maxOccurs="1" />
+					<xs:element ref="dc:description" minOccurs="0"
+						maxOccurs="1" />
+					<xs:element name="processorBinding" type="rdf:Resource" />
+					<xs:element name="recommendsEnvironment" type="scufl2:scufl2.Environment" />
+					<xs:element name="requiresEnvironment" type="scufl2:scufl2.Environment" />
+					<xs:element name="activatesConfiguration" type="rdf:Resource" />
+				</xs:sequence>
+			</xs:choice>
+			<xs:attributeGroup ref="rdf:about" />
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ProcessorBinding">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="boundActivity" type="rdf:Resource" />
+				<xs:element name="boundProcessor" type="rdf:Resource" />
+				<xs:element name="inputPortBinding" type="scufl2:InputPortBinding" />
+				<xs:element name="outputPortBinding" type="scufl2:OutputPortBinding" />
+			</xs:sequence>
+			<xs:attributeGroup ref="rdf:about"/>
+		</xs:complexType>
+	</xs:element>
+
+
+	<xs:complexType name="InputPortBinding">
+		<xs:sequence>
+			<xs:element name="bindsInputActivityPort" type="rdf:Resource" />
+			<xs:element name="bindsInputProcessorPort" type="rdf:Resource" />
+		</xs:sequence>
+		<xs:attribute ref="rdf:parseType" use="required" fixed="Resource" />
+	</xs:complexType>
+	<xs:complexType name="OutputPortBinding">
+		<xs:sequence>
+			<xs:element name="bindsOutputActivityPort" type="rdf:Resource" />
+			<xs:element name="bindsOutputProcessorPort" type="rdf:Resource" />
+		</xs:sequence>
+		<xs:attribute ref="rdf:parseType" use="required" fixed="Resource" />
+	</xs:complexType>
+
+	<xs:element name="inputActivityPort">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="scufl2:InputActivityPort" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="InputActivityPort">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="scufl2:name" />
+				<xs:element ref="scufl2:portDepth" />
+				<xs:element ref="scufl2:granularPortDepth" />
+			</xs:sequence>
+			<xs:attributeGroup ref="rdf:about" />
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="outputActivityPort">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="scufl2:OutputActivityPort" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="OutputActivityPort">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="scufl2:name" />
+				<xs:element ref="scufl2:portDepth" />
+				<xs:element ref="scufl2:granularPortDepth" />
+			</xs:sequence>
+			<xs:attributeGroup ref="rdf:about" />
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="configures">
+		<xs:complexType>
+			<xs:attributeGroup ref="rdf:resource" />
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Workflow">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:sequence>
+					<xs:element ref="scufl2:name" />
+					<xs:element name="workflowIdentifier" type="rdf:Resource" />
+					<xs:element name="inputWorkflowPort" maxOccurs="unbounded"
+						minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="scufl2:InputWorkflowPort" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="outputWorkflowPort" minOccurs="0"
+						maxOccurs="unbounded">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="scufl2:OutputWorkflowPort" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="processor" minOccurs="0" maxOccurs="unbounded">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="scufl2:Processor" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element ref="scufl2:datalink" minOccurs="0"
+						maxOccurs="unbounded" />
+				</xs:sequence>
+				<xs:element ref="rdfs:seeAlso" />
+			</xs:sequence>
+			<xs:attributeGroup ref="rdf:about" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="InputWorkflowPort">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="scufl2:name" />
+				<xs:element ref="scufl2:portDepth" />
+			</xs:sequence>
+			<xs:attributeGroup ref="rdf:about" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="OutputWorkflowPort">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="scufl2:name" />
+			</xs:sequence>
+			<xs:attributeGroup ref="rdf:about" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="Processor">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="scufl2:name" />
+				<xs:element name="inputProcessorPort" minOccurs="0"
+					maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="scufl2:InputProcessorPort" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="outputProcessorPort" minOccurs="0"
+					maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="scufl2:OutputProcessorPort" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="scufl2:dispatchStack" />
+				<xs:element ref="scufl2:iterationStrategyStack" />
+			</xs:sequence>
+			<xs:attributeGroup ref="rdf:about" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="InputProcessorPort">
+		<xs:complexType>
+			<xs:sequence minOccurs="0">
+				<xs:element ref="scufl2:name" />
+				<xs:element ref="scufl2:portDepth" />
+			</xs:sequence>
+			<xs:attributeGroup ref="rdf:about" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="OutputProcessorPort">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="scufl2:name" />
+				<xs:element ref="scufl2:portDepth" />
+				<xs:element ref="scufl2:granularPortDepth" />
+			</xs:sequence>
+			<xs:attributeGroup ref="rdf:about" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="dispatchStack">
+		<xs:complexType>
+			<xs:attributeGroup ref="rdf:resource" />
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="iterationStrategyStack">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="scufl2:CrossProduct" />
+			</xs:sequence>
+			<xs:attribute ref="rdf:parseType" use="required" />
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="CrossProduct">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="scufl2:iterationStrategyChildren" />
+			</xs:sequence>
+			<xs:attributeGroup ref="rdf:about" />
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="iterationStrategyChildren">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="scufl2:scufl2.InputProcessorPort">
+					<xs:attribute ref="rdf:parseType" use="required" />
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="datalink">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="DataLink" type="scufl2:DataLink" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="DataLink">
+		<xs:sequence>
+			<xs:element name="receivesFrom" type="rdf:Resource" />
+			<xs:element name="sendsTo" type="rdf:Resource" />
+			<xs:element name="mergePosition" minOccurs="0"
+				type="scufl2:integer" />
+		</xs:sequence>
+		<xs:attributeGroup ref="rdf:about" />
+	</xs:complexType>
+
+	<xs:complexType name="integer">
+		<xs:simpleContent>
+			<xs:extension base="xs:integer">
+				<xs:attribute ref="rdf:datatype" use="required"
+					fixed="http://www.w3.org/2001/XMLSchema#integer" />
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<xs:element name="configurationType">
+		<xs:complexType>
+			<xs:attributeGroup ref="rdf:resource" />
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="required">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:boolean">
+					<xs:attribute ref="rdf:datatype" use="required"
+						fixed="http://www.w3.org/2001/XMLSchema#boolean" />
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="name" type="xs:NCName" />
+	<xs:complexType name="scufl2.Environment">
+		<xs:sequence>
+			<xs:element ref="scufl2:Environment" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Environment">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element minOccurs="0" ref="scufl2:os" />
+				<xs:sequence minOccurs="0">
+					<xs:element name="architecture" type="rdf:Resource" />
+					<xs:element name="plugin" type="rdf:Resource" />
+					<xs:element name="product" type="rdf:Resource" />
+					<xs:element maxOccurs="unbounded" name="software" type="rdf:Resource" />
+					<xs:element ref="dc:description" />
+				</xs:sequence>
+				<xs:element minOccurs="0" name="workflowPlugin" type="rdf:Resource" />
+				<xs:element minOccurs="0" name="workflowProduct" type="rdf:Resource" />
+				<xs:element minOccurs="0" ref="dc:title" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="os">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="scufl2:OperatingSystem" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="OperatingSystem">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="version" minOccurs="0" />
+				<xs:element ref="dc:title" />
+			</xs:sequence>
+			<xs:attributeGroup ref="rdf:about" />
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="granularPortDepth">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:integer">
+					<xs:attribute ref="rdf:datatype" use="required"
+						fixed="http://www.w3.org/2001/XMLSchema#integer" />
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="portDepth">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:integer">
+					<xs:attribute ref="rdf:datatype" use="required"
+						fixed="http://www.w3.org/2001/XMLSchema#integer" />
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="scufl2.InputProcessorPort">
+		<xs:sequence>
+			<xs:element ref="scufl2:InputProcessorPort" />
+		</xs:sequence>
+	</xs:complexType>
+
+
+</xs:schema>

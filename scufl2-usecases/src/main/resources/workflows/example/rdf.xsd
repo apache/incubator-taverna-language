@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified" targetNamespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+	
+	<xs:import namespace="http://www.w3.org/XML/1998/namespace"
+		schemaLocation="xml.xsd" />
+	<xs:element name="RDF" type="rdf:RDF" />
+	<xs:complexType name="RDF">
+		<xs:sequence>
+			<xs:any namespace="##any" maxOccurs="unbounded" minOccurs="0"></xs:any>
+		</xs:sequence>
+		<xs:attribute ref="xml:base" />
+	</xs:complexType>
+
+	<xs:element name="Description"> 
+		<xs:complexType>
+			<xs:sequence>
+				<xs:any namespace="##any" maxOccurs="unbounded" minOccurs="0"></xs:any>
+			</xs:sequence>
+			<xs:attributeGroup ref="rdf:about" />
+		</xs:complexType>
+	</xs:element>
+	<xs:attributeGroup name="about">
+		<xs:attribute name="about" use="required" form="qualified"
+			type="xs:anyURI" />
+	</xs:attributeGroup>
+	<xs:attributeGroup name="resource">
+		<xs:attribute name="resource" use="required" form="qualified"
+			type="xs:anyURI" />
+	</xs:attributeGroup>
+	<xs:attribute name="parseType">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="Collection"></xs:enumeration>
+				<xs:enumeration value="Resource"></xs:enumeration>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:attribute>
+	<xs:attribute name="datatype" type="xs:anyURI" />
+	<xs:element name="type">
+		<xs:complexType>
+			<xs:attribute name="resource" use="required" form="qualified"
+				type="xs:anyURI" />
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="Resource">
+		<xs:attributeGroup ref="rdf:resource" />
+	</xs:complexType>
+</xs:schema>

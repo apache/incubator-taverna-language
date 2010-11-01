@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified" targetNamespace="http://purl.org/dc/elements/1.1/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/">
+
+	<xs:element name="creator" type="xs:string" />
+	<xs:element name="date" type="xs:dateTime" />
+	<xs:element name="description" type="xs:string" />
+	<xs:element name="title" type="xs:string" />
+</xs:schema>

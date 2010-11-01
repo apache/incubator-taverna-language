@@ -1,30 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rdf:RDF xmlns="http://ns.taverna.org.uk/2010/scufl2#"
-	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-	xml:base="HelloWorld/">
-
+	xmlns:scufl2="http://ns.taverna.org.uk/2010/scufl2#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://ns.taverna.org.uk/2010/scufl2# ../workflowBundle.xsd 
+						http://www.w3.org/1999/02/22-rdf-syntax-ns# ../rdf.xsd"
+	xsi:type="scufl2:WorkflowDocument" xml:base="HelloWorld/">
 	<Workflow rdf:about="">
+		<name>HelloWorld</name>
 		<workflowIdentifier
 			rdf:resource="http://ns.taverna.org.uk/2010/workflow/00626652-55ae-4a9e-80d4-c8e9ac84e2ca/" />
-		<name>HelloWorld</name>
-		
+
+		<inputWorkflowPort>
+			<InputWorkflowPort rdf:about="in/yourName">
+				<name>yourName</name> 
+				<portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+			</InputWorkflowPort>
+		</inputWorkflowPort>
+
 		<inputWorkflowPort>
 			<InputWorkflowPort rdf:about="in/yourName">
 				<name>yourName</name>
 				<portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
 			</InputWorkflowPort>
 		</inputWorkflowPort>
-		
+
+
 		<outputWorkflowPort>
 			<OutputWorkflowPort rdf:about="out/results">
 				<name>results</name>
 			</OutputWorkflowPort>
 		</outputWorkflowPort>
-		
+
+		<outputWorkflowPort>
+			<OutputWorkflowPort rdf:about="out/results">
+				<name>results</name>
+			</OutputWorkflowPort>
+		</outputWorkflowPort>
+
 		<processor>
 			<Processor rdf:about="processor/Hello">
 				<name>Hello</name>
-				
+
 				<inputProcessorPort>
 					<InputProcessorPort rdf:about="processor/Hello/in/name">
 						<name>name</name>
@@ -33,13 +49,12 @@
 				</inputProcessorPort>
 				<outputProcessorPort>
 					<OutputProcessorPort rdf:about="processor/Hello/out/greeting">
-						<granularPortDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0
-						</granularPortDepth>
 						<name>greeting</name>
 						<portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+						<granularPortDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</granularPortDepth>
 					</OutputProcessorPort>
 				</outputProcessorPort>
-				
+
 				<dispatchStack
 					rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#defaultDispatchStack" />
 				<iterationStrategyStack rdf:parseType="Collection">
@@ -52,7 +67,38 @@
 				</iterationStrategyStack>
 			</Processor>
 		</processor>
-		
+
+
+		<processor>
+			<Processor rdf:about="processor/Hello">
+				<name>Hello</name>
+				<inputProcessorPort>
+					<InputProcessorPort rdf:about="processor/Hello/in/name">
+						<name>name</name>
+						<portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+					</InputProcessorPort>
+				</inputProcessorPort>
+				<outputProcessorPort>
+					<OutputProcessorPort rdf:about="processor/Hello/out/greeting">
+						<name>greeting</name>
+						<portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+						<granularPortDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</granularPortDepth>
+					</OutputProcessorPort>
+				</outputProcessorPort>
+
+				<dispatchStack
+					rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#defaultDispatchStack" />
+				<iterationStrategyStack rdf:parseType="Collection">
+					<CrossProduct rdf:about="processor/Hello/iterationStrategy/0">
+						<iterationStrategyChildren
+							rdf:parseType="Collection">
+							<InputProcessorPort rdf:about="processor/Hello/in/name" />
+						</iterationStrategyChildren>
+					</CrossProduct>
+				</iterationStrategyStack>
+			</Processor>
+		</processor>
+
 		<datalink>
 			<DataLink rdf:about="datalink/5">
 				<receivesFrom rdf:resource="in/yourName" />
@@ -68,14 +114,13 @@
 				<mergePosition rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</mergePosition>
 			</DataLink>
 		</datalink>
-		<datalink
-			rdf:resource="datalink?from=processor/Hello/out/greeting&#38;to=out/results&#38;mergePosition=0" />
-		<datalink rdf:parseType="Resource">
-			<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/DataLink" />
-			<receivesFrom rdf:resource="in/yourName" />
-			<sendsTo rdf:resource="processor/Hello/in/name" />
+		<datalink>
+			<DataLink rdf:about="datalink/5">
+				<receivesFrom rdf:resource="in/yourName" />
+				<sendsTo rdf:resource="processor/Hello/in/name" />
+			</DataLink>
 		</datalink>
-		
+
 		<rdfs:seeAlso rdf:resource="../annotation/workflow/HelloWorld.rdf" />
 	</Workflow>
 
