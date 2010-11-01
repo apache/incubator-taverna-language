@@ -37,10 +37,8 @@ import org.xml.sax.SAXException;
 import uk.org.taverna.scufl2.api.activity.ActivityType;
 import uk.org.taverna.scufl2.api.activity.InputActivityPort;
 import uk.org.taverna.scufl2.api.activity.OutputActivityPort;
-import uk.org.taverna.scufl2.api.common.ConfigurableProperty;
 import uk.org.taverna.scufl2.api.common.Named;
 import uk.org.taverna.scufl2.api.common.ToBeDecided;
-import uk.org.taverna.scufl2.api.configurations.ConfigurablePropertyConfiguration;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.DataLink;
@@ -297,7 +295,7 @@ public class T2FlowParser {
 		uk.org.taverna.scufl2.api.activity.Activity newActivity = parseActivity(origActivity);
 		currentActivity.set(newActivity);
 		currentProfile.get().getProcessorBindings().add(processorBinding);
-		currentResearchObject.get().getActivities().add(newActivity);
+		currentProfile.get().getActivities().add(newActivity);
 		processorBinding.setBoundActivity(newActivity);
 		processorBinding.setActivityPosition(activityPosition);
 
@@ -346,24 +344,27 @@ public class T2FlowParser {
 			// We'll have to fake it
 			configuration = new Configuration();
 
-			URI fallBackURI = configBeanURI.resolve(configBean.getEncoding());
-			ConfigurableProperty fallbackConfig = new ConfigurableProperty(
-					fallBackURI.toASCIIString());
-			currentActivity.get().getConfigurableProperties().add(
-					fallbackConfig);
+			// URI fallBackURI =
+			// configBeanURI.resolve(configBean.getEncoding());
 
-			ConfigurablePropertyConfiguration property = new ConfigurablePropertyConfiguration();
-			property.setParent(configuration);
-			property.setConfiguredProperty(fallbackConfig);
-			property.setValue((configBean.getAny()));
+			// ConfigurableProperty fallbackConfig = new ConfigurableProperty(
+			// fallBackURI.toASCIIString());
+			// currentActivity.get().getConfigurableProperties().add(
+			// fallbackConfig);
+
+			// ConfigurablePropertyConfiguration property = new
+			// ConfigurablePropertyConfiguration();
+			// property.setParent(configuration);
+			// property.setConfiguredProperty(fallbackConfig);
+			// property.setValue((configBean.getAny()));
 		}
 		configuration.setConfigured(currentActivity.get());
 		currentProfile.get().getConfigurations().add(configuration);
-		for (ConfigurablePropertyConfiguration prop : configuration
-				.getConfigurablePropertyConfigurations()) {
-			currentActivity.get().getConfigurableProperties().add(
-					prop.getConfiguredProperty());
-		}
+		// for (ConfigurablePropertyConfiguration prop : configuration
+		// .getConfigurablePropertyConfigurations()) {
+		// currentActivity.get().getConfigurableProperties().add(
+		// prop.getConfiguredProperty());
+		// }
 	}
 
 	public Unmarshaller getUnmarshaller() {
@@ -491,7 +492,8 @@ public class T2FlowParser {
 						origLink.getSource());
 				ReceiverPort receiverPort = findReceiverPort(currentWorkflow
 						.get(), origLink.getSink());
-				DataLink newLink = new DataLink(senderPort, receiverPort);
+				DataLink newLink = new DataLink(currentWorkflow.get(),
+						senderPort, receiverPort);
 				newLinks.add(newLink);
 			} catch (ParseException ex) {
 				logger.log(Level.WARNING, "Could not translate link:\n"
@@ -505,8 +507,9 @@ public class T2FlowParser {
 		return newLinks;
 	}
 
-	protected ToBeDecided parseDispatchStack(DispatchStack dispatchStack) {
-		return new ToBeDecided();
+	protected uk.org.taverna.scufl2.api.dispatchstack.DispatchStack parseDispatchStack(
+			DispatchStack dispatchStack) {
+		return null;
 	}
 
 	@SuppressWarnings("boxing")

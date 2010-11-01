@@ -7,9 +7,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.w3c.dom.Element;
-
-import uk.org.taverna.scufl2.api.common.ConfigurableProperty;
-import uk.org.taverna.scufl2.api.configurations.ConfigurablePropertyConfiguration;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.translator.t2flow.ParseException;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
@@ -48,13 +45,14 @@ public class DataflowActivityParser extends AbstractActivityParser {
 
 		Configuration configuration = new Configuration();
 
-		ConfigurablePropertyConfiguration configurablePropertyConfiguration = new ConfigurablePropertyConfiguration();
-		configurablePropertyConfiguration.setParent(configuration);
-		ConfigurableProperty configuredProperty = new ConfigurableProperty(
-				scufl2Uri.resolve("#workflow").toASCIIString());
-		configurablePropertyConfiguration
-				.setConfiguredProperty(configuredProperty);
-		configurablePropertyConfiguration.setValue(dataflowReference);
+		// ConfigurablePropertyConfiguration configurablePropertyConfiguration =
+		// new ConfigurablePropertyConfiguration();
+		// configurablePropertyConfiguration.setParent(configuration);
+		// ConfigurableProperty configuredProperty = new ConfigurableProperty(
+		// scufl2Uri.resolve("#workflow").toASCIIString());
+		// configurablePropertyConfiguration
+		// .setConfiguredProperty(configuredProperty);
+		// configurablePropertyConfiguration.setValue(dataflowReference);
 		return configuration;
 	}
 
