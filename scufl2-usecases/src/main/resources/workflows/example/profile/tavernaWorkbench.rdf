@@ -62,6 +62,15 @@
 		</outputPortBinding>
 	</ProcessorBinding>
 
+	<Configuration rdf:about="configuration/Hello">
+		<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration" />
+		<configures rdf:resource="activity/HelloScript/" />
+		<beanshell:script>
+			hello = "Hello, " + personName;
+			System.out.println("Server says: " + hello);
+    	</beanshell:script>
+	</Configuration>
+
 	<owl:Class
 		rdf:about="http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity">
 		<configurationType
