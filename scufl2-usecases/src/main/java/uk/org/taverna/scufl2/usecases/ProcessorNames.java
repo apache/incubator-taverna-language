@@ -12,8 +12,6 @@ import javax.swing.tree.TreeModel;
 import javax.xml.bind.JAXBException;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
-import uk.org.taverna.scufl2.api.common.ConfigurableProperty;
-import uk.org.taverna.scufl2.api.configurations.ConfigurablePropertyConfiguration;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Processor;
@@ -109,28 +107,30 @@ public class ProcessorNames {
 										"http://ns.taverna.org.uk/2010/activity/nested-workflow")) {
 							continue;
 						}
-						ConfigurableProperty prop = boundActivity
-								.getConfigurableProperties()
-								.getByName(
-										"http://ns.taverna.org.uk/2010/activity/nested-workflow#workflow");
-						for (Configuration co : profile.getConfigurations()) {
-							if (!co.getConfigured().equals(boundActivity)) {
-								continue;
-							}
-							for (ConfigurablePropertyConfiguration propConfig : co
-									.getConfigurablePropertyConfigurations()) {
-								if (!propConfig.getConfiguredProperty().equals(
-										prop)) {
-									continue;
-								}
-								String workflowId = (String) propConfig
-										.getValue();
-								Workflow wf = ro.getWorkflows().getByName(
-										workflowId);
-								findProcessors(ro, wf, processorNode);
-
-							}
-						}
+						// ConfigurableProperty prop = boundActivity
+						// .getConfigurableProperties()
+						// .getByName(
+						// "http://ns.taverna.org.uk/2010/activity/nested-workflow#workflow");
+						// for (Configuration co : profile.getConfigurations())
+						// {
+						// if (!co.getConfigured().equals(boundActivity)) {
+						// continue;
+						// }
+						// for (ConfigurablePropertyConfiguration propConfig :
+						// co
+						// .getConfigurablePropertyConfigurations()) {
+						// if (!propConfig.getConfiguredProperty().equals(
+						// prop)) {
+						// continue;
+						// }
+						// String workflowId = (String) propConfig
+						// .getValue();
+						// Workflow wf = ro.getWorkflows().getByName(
+						// workflowId);
+						// findProcessors(ro, wf, processorNode);
+						//
+						// }
+						// }
 					}
 				}
 			}

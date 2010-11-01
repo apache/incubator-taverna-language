@@ -62,7 +62,8 @@ public class DummyParserTest {
 	@Before
 	public void makeUnmarshaller() throws JAXBException {
 		jaxbContext = JAXBContext.newInstance(
-				"uk.org.taverna.scufl2.rdfxml.jaxb", getClass()
+						"uk.org.taverna.scufl2.rdfxml.jaxb:org.purl.dc.elements._1:org.w3._1999._02._22_rdf_syntax_ns_:org.w3._2002._07.owl_:org.w3._2000._01.rdf_schema_:",
+				getClass()
 						.getClassLoader());
 		unmarshaller = jaxbContext.createUnmarshaller();
 	}

@@ -8,7 +8,7 @@
 	</parent>
 	<groupId>uk.org.taverna.scufl2</groupId>
 	<artifactId>scufl2-rdfxml</artifactId>
-	<name>Taverna Scufl2 RDF/XML</name>
+	<name>Taverna Scufl 2 RDF/XML</name>
 	<description>XSD based XML serialisation which is RDF/XML compatible</description>
 	<build>
 		<plugins>
@@ -24,7 +24,9 @@
 					</execution>
 				</executions>
 				<configuration>
+				<!-- 
 					<packageName>uk.org.taverna.scufl2.rdfxml.jaxb</packageName>
+				 -->
 					<schemaDirectory>src/main/resources/uk/org/taverna/scufl2/rdfxml/xsd/</schemaDirectory>
 				</configuration>
 			</plugin>

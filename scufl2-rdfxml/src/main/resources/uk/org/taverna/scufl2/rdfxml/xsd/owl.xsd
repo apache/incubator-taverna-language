@@ -3,8 +3,7 @@
 	elementFormDefault="qualified" targetNamespace="http://www.w3.org/2002/07/owl#"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:scufl2="http://ns.taverna.org.uk/2010/scufl2#"
 	xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
-	<xs:import namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-		schemaLocation="rdf.xsd" />
+	
 	<xs:import namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 		schemaLocation="rdf.xsd" />
 	<xs:import namespace="http://www.w3.org/2000/01/rdf-schema#"
