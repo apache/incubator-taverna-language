@@ -44,9 +44,15 @@
 			<xs:restriction base="rdf:RDF">
 				<xs:sequence>
 					<xs:element ref="scufl2:Profile" />
+					<xs:element name="Activity" type="scufl2:Activity"
+						minOccurs="0" maxOccurs="unbounded" />
+
 					<xs:element ref="scufl2:ProcessorBinding" minOccurs="0"
 						maxOccurs="unbounded" />
-					<xs:any namespace="##other" />
+						<!--
+						TODO: beanshell:Configuration and owl:Class/DatatypeProperty 
+						 -->
+					<xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="lax" />
 				</xs:sequence>
 			</xs:restriction>
 		</xs:complexContent>
@@ -80,6 +86,27 @@
 			<xs:attributeGroup ref="rdf:about" />
 		</xs:complexType>
 	</xs:element>
+
+	<xs:complexType name="Activity">
+		<xs:sequence>
+			<xs:element ref="rdf:type" />
+			<xs:element name="inputActivityPort" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="scufl2:InputActivityPort" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="outputActivityPort" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element ref="scufl2:OutputActivityPort" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attributeGroup ref="rdf:about" />
+	</xs:complexType>
 
 	<xs:complexType name="SeeAlsoType">
 		<xs:sequence>
@@ -116,7 +143,7 @@
 				<xs:element name="inputPortBinding" type="scufl2:InputPortBinding" />
 				<xs:element name="outputPortBinding" type="scufl2:OutputPortBinding" />
 			</xs:sequence>
-			<xs:attributeGroup ref="rdf:about"/>
+			<xs:attributeGroup ref="rdf:about" />
 		</xs:complexType>
 	</xs:element>
 
@@ -136,13 +163,7 @@
 		<xs:attribute ref="rdf:parseType" use="required" fixed="Resource" />
 	</xs:complexType>
 
-	<xs:element name="inputActivityPort">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="scufl2:InputActivityPort" />
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
+
 	<xs:element name="InputActivityPort">
 		<xs:complexType>
 			<xs:sequence>
@@ -153,13 +174,7 @@
 			<xs:attributeGroup ref="rdf:about" />
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="outputActivityPort">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="scufl2:OutputActivityPort" />
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
+
 	<xs:element name="OutputActivityPort">
 		<xs:complexType>
 			<xs:sequence>
