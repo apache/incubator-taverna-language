@@ -1,11 +1,6 @@
-
-<!-- Processed by Id: cwm.py,v 1.197 2007/12/13 15:38:39 syosi Exp -->
-<!-- using base file:///home/stain/stuff/src/workspace/scufl2/scufl2-usecases/src/main/resources/workflows/example/workflow/HelloWorld.ttl -->
-
-
-<rdf:RDF xmlns="http://ns.taverna.org.uk/2010/scufl2/ontology/"
+<rdf:RDF xmlns="http://ns.taverna.org.uk/2010/scufl2#"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-	xmlns:scufl2="http://ns.taverna.org.uk/2010/scufl2/ontology/">
+	xmlns:scufl2="http://ns.taverna.org.uk/2010/scufl2#">
 
 	<Workflow rdf:about="HelloWorld/">
 		<workflowIdentifier

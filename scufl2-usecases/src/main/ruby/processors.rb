@@ -4,7 +4,7 @@ require 'rdf'
 require 'rdf/raptor'
 require 'zip/zipfilesystem'
 
-scufl2 = RDF::Vocabulary.new("http://ns.taverna.org.uk/2010/scufl2/ontology/")
+scufl2 = RDF::Vocabulary.new("http://ns.taverna.org.uk/2010/scufl2#")
 dc = RDF::Vocabulary.new("http://purl.org/dc/elements/1.1/")
 
 #graph = RDF::Graph.load("../resources/workflows/example.ttl")

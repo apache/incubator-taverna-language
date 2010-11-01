@@ -6,7 +6,7 @@
 <rdf:RDF xmlns="http://purl.org/dc/elements/1.1/"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-    xmlns:scufl2="http://ns.taverna.org.uk/2010/scufl2/ontology/">
+    xmlns:scufl2="http://ns.taverna.org.uk/2010/scufl2#">
 
     <rdf:Description rdf:about="../../workflow/HelloWorld/">
         <date>2010-07-28</date>

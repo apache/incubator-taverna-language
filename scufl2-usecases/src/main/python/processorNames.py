@@ -9,7 +9,7 @@ from rdflib import Namespace
 import urllib
 from rdflib.term import URIRef
 
-Scufl2NS = Namespace("http://ns.taverna.org.uk/2010/scufl2/ontology/")
+Scufl2NS = Namespace("http://ns.taverna.org.uk/2010/scufl2#")
 
 
 NS_CONTAINER="{urn:oasis:names:tc:opendocument:xmlns:container}"

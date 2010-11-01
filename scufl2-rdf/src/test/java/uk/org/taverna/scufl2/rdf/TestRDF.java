@@ -105,7 +105,7 @@ public class TestRDF {
 
 		ContextAwareConnection connection = elmoManager.getConnection();
 		connection.setNamespace("scufl2",
-				"http://ns.taverna.org.uk/2010/scufl2/ontology/");
+				"http://ns.taverna.org.uk/2010/scufl2#");
 
 		connection.export(new OrganizedRDFXMLWriter(System.out));
 

@@ -43,7 +43,7 @@
 									fork="true" failonerror="true" maxmemory="128m">
 									<arg value="-b" />
 									<arg
-										value="uk.org.taverna.scufl2.ontology=http://ns.taverna.org.uk/2010/scufl2/ontology/" />
+										value="uk.org.taverna.scufl2.ontology=http://ns.taverna.org.uk/2010/scufl2#" />
 									<arg value="-j" />
 									<arg value="target/scufl2-ontology.jar" />
 									<arg value="-p" />
