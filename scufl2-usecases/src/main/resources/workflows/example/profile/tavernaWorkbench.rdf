@@ -10,7 +10,7 @@
 	<Profile rdf:about="">
 		<name>tavernaWorkbench</name>
 		<dc:creator>Stian Soiland-Reyes</dc:creator>
-		<dc:date>2010-07-29</dc:date>
+		<dc:date>2010-07-29T14:12:14+01:00</dc:date>
 		<dc:description>A profile for invoking the workflow on the Taverna
 			Workbench</dc:description>
 		<processorBinding rdf:resource="binding/Hello" />
