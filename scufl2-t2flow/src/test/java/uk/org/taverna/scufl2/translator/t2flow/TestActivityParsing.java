@@ -27,12 +27,6 @@ public class TestActivityParsing {
 		WorkflowBundle researchObj = parser.parseT2Flow(wfResource.openStream());
 		System.out.println(researchObj);
 
-		JAXBContext jc = JAXBContext.newInstance(WorkflowBundle.class);
-		Marshaller marshaller = jc.createMarshaller();
-		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-		marshaller.marshal(researchObj, new FileOutputStream("target/"
-				+ WORKFLOW + ".scufl2.xml"));
-
 	}
 
 }
