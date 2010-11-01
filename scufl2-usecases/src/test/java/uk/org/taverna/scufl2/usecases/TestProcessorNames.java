@@ -12,7 +12,7 @@ import javax.xml.bind.JAXBException;
 
 import org.junit.Test;
 
-import uk.org.taverna.scufl2.api.container.TavernaResearchObject;
+import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.translator.t2flow.ParseException;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 
@@ -27,7 +27,7 @@ public class TestProcessorNames {
 		assertNotNull(workflow);
 		
 		T2FlowParser t2flowParser = new T2FlowParser();
-		TavernaResearchObject ro = t2flowParser.parseT2Flow(workflow);
+		WorkflowBundle ro = t2flowParser.parseT2Flow(workflow);
 		
 		List<String> expected = Arrays.asList("CreateFasta",
 				"FlattenImageList", "GetUniqueHomolog", "emma",

@@ -42,7 +42,7 @@ import uk.org.taverna.scufl2.api.common.Named;
 import uk.org.taverna.scufl2.api.common.ToBeDecided;
 import uk.org.taverna.scufl2.api.configurations.ConfigurablePropertyConfiguration;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
-import uk.org.taverna.scufl2.api.container.TavernaResearchObject;
+import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.IterationStrategy;
 import uk.org.taverna.scufl2.api.core.Processor;
@@ -110,7 +110,7 @@ public class T2FlowParser {
 	protected ThreadLocal<Profile> currentProfile = new ThreadLocal<Profile>();
 	protected ThreadLocal<Processor> currentProcessor = new ThreadLocal<Processor>();
 	protected ThreadLocal<ProcessorBinding> currentProcessorBinding = new ThreadLocal<ProcessorBinding>();
-	protected ThreadLocal<TavernaResearchObject> currentResearchObject = new ThreadLocal<TavernaResearchObject>();
+	protected ThreadLocal<WorkflowBundle> currentResearchObject = new ThreadLocal<WorkflowBundle>();
 	protected ThreadLocal<T2Parser> currentT2Parser = new ThreadLocal<T2Parser>();
 	protected ThreadLocal<Workflow> currentWorkflow = new ThreadLocal<Workflow>();
 	protected final JAXBContext jaxbContext;
@@ -609,7 +609,7 @@ public class T2FlowParser {
 	}
 
 	@SuppressWarnings("unchecked")
-	public TavernaResearchObject parseT2Flow(File t2File) throws IOException,
+	public WorkflowBundle parseT2Flow(File t2File) throws IOException,
 			ParseException, JAXBException {
 		JAXBElement<uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow> root = (JAXBElement<uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow>) getUnmarshaller()
 				.unmarshal(t2File);
@@ -617,18 +617,18 @@ public class T2FlowParser {
 	}
 
 	@SuppressWarnings("unchecked")
-	public TavernaResearchObject parseT2Flow(InputStream t2File)
+	public WorkflowBundle parseT2Flow(InputStream t2File)
 			throws IOException, JAXBException, ParseException {
 		JAXBElement<uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow> root = (JAXBElement<uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow>) getUnmarshaller()
 				.unmarshal(t2File);
 		return parseT2Flow(root.getValue());
 	}
 
-	public TavernaResearchObject parseT2Flow(
+	public WorkflowBundle parseT2Flow(
 			uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow wf)
 			throws ParseException, JAXBException {
 
-		TavernaResearchObject ro = new TavernaResearchObject();
+		WorkflowBundle ro = new WorkflowBundle();
 		currentResearchObject.set(ro);
 		makeDefaultBindings(wf);
 
