@@ -1,167 +1,121 @@
 package uk.org.taverna.scufl2.api.configurations;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 
 import org.junit.Test;
-
-import uk.org.taverna.scufl2.api.configurations.Property.PropertyType;
 
 public class TestProperty {
 
 	private static final URI EXAMPLE_COM = URI.create("http://example.com/");
 
 	@Test
-	public void equalsSame() throws Exception {
-		Property property1 = new Property();
-		assertTrue(property1.equals(property1));
-	}
-
-	@Test
-	public void equalsSubjectUri() throws Exception {
-		Property property1 = new Property();
-		property1.setSubject(EXAMPLE_COM.resolve("#subject"));
-		property1.setPredicate(EXAMPLE_COM.resolve("#property"));
-		property1.setObjectUri(EXAMPLE_COM.resolve("#value"));
-
-		Property property2 = new Property();
-		property2.setSubject(EXAMPLE_COM.resolve("#subject"));
-		property2.setPredicate(EXAMPLE_COM.resolve("#property"));
-		property2.setObjectUri(EXAMPLE_COM.resolve("#value"));
-
-		assertEquals(property1, property2);
-		assertEquals(property1.hashCode(), property2.hashCode());
-	}
-
-	@Test
-	public void noSubjectString() throws Exception {
-		Property property = new Property();
+	public void classObject() throws Exception {
+		ObjectProperty property = new ObjectProperty();
 		property.setPredicate(EXAMPLE_COM.resolve("#property"));
-		property.setObjectValue("Hello there");
-		assertEquals("[ <http://example.com/#property> \"Hello there\" ] .",
-				property.toString());
+		property.setObjectClass(EXAMPLE_COM.resolve("#class"));
+		assertEquals("[ <http://example.com/#property> [\n"
+				+ "    a <http://example.com/#class>] ] .", property.toString());
 	}
 
 	@Test
-	public void noSubjectUri() throws Exception {
-		Property property = new Property();
-		property.setPredicate(EXAMPLE_COM.resolve("#property"));
-		property.setObjectUri(EXAMPLE_COM.resolve("#value"));
-		assertEquals(PropertyType.ObjectProperty, property.getPropertyType());
+	public void deeplyNested() throws Exception {
+		ObjectProperty prop_1 = new ObjectProperty();
+		prop_1.setPredicate(EXAMPLE_COM.resolve("#multiple"));
+
+		DataProperty prop_1_1 = new DataProperty(EXAMPLE_COM.resolve("#str1"),
+		"string");
+		DataProperty prop_1_2 = new DataProperty(EXAMPLE_COM.resolve("#num2"),
+				"123", DataProperty.XSD.resolve("#integer"));
+
+		prop_1.getObjectProperties().add(prop_1_1);
+		prop_1.getObjectProperties().add(prop_1_2);
+
+		ObjectProperty prop_2 = new ObjectProperty();
+		prop_1.setPredicate(EXAMPLE_COM.resolve("#multiple"));
+
+		ObjectProperty prop_2_1 = new ObjectProperty(
+				EXAMPLE_COM.resolve("#ref1"), EXAMPLE_COM.resolve("#url1"));
+		ObjectProperty prop_2_2 = new ObjectProperty(
+				EXAMPLE_COM.resolve("#ref2"), EXAMPLE_COM.resolve("#url1"),
+				EXAMPLE_COM.resolve("#class"));
+
+		prop_2.getObjectProperties().add(prop_2_1);
+		prop_1.getObjectProperties().add(prop_2_2);
+
+		ObjectProperty prop = new ObjectProperty();
+		prop.setPredicate(EXAMPLE_COM.resolve("#prop1"));
+		prop.getObjectProperties().add(prop_1);
+		prop.getObjectProperties().add(prop_2);
+
 		assertEquals(
-				"[ <http://example.com/#property> <http://example.com/#value> ] .",
-				property.toString());
+				"[ <http://example.com/#multiple> [\n"
+						+ "    <http://example.com/#str1> \"string\";\n"
+						+ "    <http://example.com/#num2> \"123\"^^<http://www.w3.org/2001/XMLSchema#integer>;\n"
+						+ "    <http://example.com/#ref2> [\n"
+						+ "        a <http://example.com/#class>;\n"
+						+ "        = <http://example.com/#url1>]] ] .",
+				prop_1.toString());
 	}
 
 	@Test
-	public void notEqualsNull() throws Exception {
-		Property property1 = new Property();
-		Property property2 = new Property();
-		assertFalse(property1.equals(property2));
-	}
+	public void multipleStrings() throws Exception {
+		ObjectProperty property = new ObjectProperty();
+		property.setPredicate(EXAMPLE_COM.resolve("#multiple"));
 
-	@Test
-	public void notEqualsSubjectUri() throws Exception {
-		Property property1 = new Property();
-		property1.setSubject(EXAMPLE_COM.resolve("#subject"));
-		property1.setPredicate(EXAMPLE_COM.resolve("#property"));
-		property1.setObjectUri(EXAMPLE_COM.resolve("#value"));
+		DataProperty prop1 = new DataProperty(EXAMPLE_COM.resolve("#str1"),
+		"string");
+		DataProperty prop2 = new DataProperty(EXAMPLE_COM.resolve("#num2"),
+				"123", DataProperty.XSD.resolve("#integer"));
 
-		Property property2 = new Property();
-		property2.setSubject(EXAMPLE_COM.resolve("#subject"));
-		property2.setPredicate(EXAMPLE_COM.resolve("#property"));
-		property2.setObjectUri(EXAMPLE_COM.resolve("#otherValue"));
-
-		assertFalse("properties should differ", property1.equals(property2));
-		assertNotSame(property1.hashCode(), property2.hashCode());
-	}
-
-	@Test
-	public void notEqualsSubjectValue() throws Exception {
-		Property property1 = new Property();
-		property1.setSubject(EXAMPLE_COM.resolve("#subject"));
-		property1.setPredicate(EXAMPLE_COM.resolve("#property"));
-		property1.setObjectValue("Hello there");
-
-		Property property2 = new Property();
-		property2.setSubject(EXAMPLE_COM.resolve("#subject"));
-		property2.setPredicate(EXAMPLE_COM.resolve("#property"));
-		property1.setObjectValue("Something else");
-
-		assertFalse("properties should differ", property1.equals(property2));
-		assertNotSame(property1.hashCode(), property2.hashCode());
-	}
-
-	@Test
-	public void nulls() throws Exception {
-		Property property = new Property();
-		assertEquals(PropertyType.ObjectProperty, property.getPropertyType());
-		assertEquals("[ rdf:nil rdf:nil ] .", property.toString());
+		property.getObjectProperties().add(prop1);
+		property.getObjectProperties().add(prop2);
+		assertEquals(
+				"[ <http://example.com/#multiple> [\n"
+				+ "    <http://example.com/#str1> \"string\";\n"
+				+ "    <http://example.com/#num2> \"123\"^^<http://www.w3.org/2001/XMLSchema#integer>] ] ."
+				+ "", property.toString());
 	}
 
 	@Test
 	public void stringEscaping() throws Exception {
-		Property property = new Property();
-		property.setSubject(EXAMPLE_COM.resolve("#subject"));
+		DataProperty property = new DataProperty();
 		property.setPredicate(EXAMPLE_COM.resolve("#property"));
-		property.setObjectValue("A slash \\ and a \" single quote and a double escaped quote \\\" here");
+		property.setDataValue("A slash \\ and a \" single quote and a double escaped quote \\\" here");
 		assertEquals(
-				"<http://example.com/#subject> <http://example.com/#property> \"A slash \\\\ and"
-				+ " a \\\" single quote and a double escaped quote \\\\\\\" here\" .",
+				"[ <http://example.com/#property> \"A slash \\\\ and"
+				+ " a \\\" single quote and a double escaped quote \\\\\\\" here\" ] .",
 				property.toString());
 	}
 
 	@Test
-	public void subjectString() throws Exception {
-		Property property = new Property();
+	public void stringObject() throws Exception {
+		DataProperty property = new DataProperty();
 		property.setPredicate(EXAMPLE_COM.resolve("#property"));
-		property.setObjectValue("Hello there");
-		assertEquals(PropertyType.DataProperty, property.getPropertyType());
+		property.setDataValue("Hello there");
 		assertEquals("[ <http://example.com/#property> \"Hello there\" ] .",
 				property.toString());
 	}
 
 	@Test
-	public void subjectUri() throws Exception {
-		Property property = new Property();
-		property.setSubject(EXAMPLE_COM.resolve("#subject"));
+	public void uriAndClassObject() throws Exception {
+		ObjectProperty property = new ObjectProperty();
 		property.setPredicate(EXAMPLE_COM.resolve("#property"));
 		property.setObjectUri(EXAMPLE_COM.resolve("#value"));
-		assertEquals(PropertyType.ObjectProperty, property.getPropertyType());
-		assertEquals(
-				"<http://example.com/#subject> <http://example.com/#property> <http://example.com/#value> .",
-				property.toString());
+		property.setObjectClass(EXAMPLE_COM.resolve("#class"));
+		assertEquals("[ <http://example.com/#property> [\n"
+				+ "    a <http://example.com/#class>;\n"
+				+ "    = <http://example.com/#value>] ] .", property.toString());
 	}
 
 	@Test
-	public void uriThenValue() throws Exception {
-		Property property = new Property();
+	public void uriObject() throws Exception {
+		ObjectProperty property = new ObjectProperty();
 		property.setPredicate(EXAMPLE_COM.resolve("#property"));
-		property.setObjectValue("Hello there");
-		assertEquals(PropertyType.DataProperty, property.getPropertyType());
 		property.setObjectUri(EXAMPLE_COM.resolve("#value"));
-		assertEquals(PropertyType.ObjectProperty, property.getPropertyType());
-		assertNull(property.getObjectValue());
 		assertEquals(
 				"[ <http://example.com/#property> <http://example.com/#value> ] .",
-				property.toString());
-	}
-
-	@Test
-	public void valueThenUri() throws Exception {
-		Property property = new Property();
-		property.setPredicate(EXAMPLE_COM.resolve("#property"));
-		property.setObjectUri(EXAMPLE_COM.resolve("#value"));
-		assertEquals(PropertyType.ObjectProperty, property.getPropertyType());
-		assertNull(property.getObjectValue());
-		property.setObjectValue("Hello there");
-		assertEquals(PropertyType.DataProperty, property.getPropertyType());
-		assertEquals("[ <http://example.com/#property> \"Hello there\" ] .",
 				property.toString());
 	}
 
