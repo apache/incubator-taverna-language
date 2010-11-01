@@ -40,6 +40,7 @@ import uk.org.taverna.scufl2.api.activity.OutputActivityPort;
 import uk.org.taverna.scufl2.api.common.Named;
 import uk.org.taverna.scufl2.api.common.ToBeDecided;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
+import uk.org.taverna.scufl2.api.configurations.DataProperty;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.IterationStrategy;
@@ -344,27 +345,17 @@ public class T2FlowParser {
 			// We'll have to fake it
 			configuration = new Configuration();
 
-			// URI fallBackURI =
-			// configBeanURI.resolve(configBean.getEncoding());
+			URI fallBackURI = configBeanURI.resolve(configBean.getEncoding());
 
-			// ConfigurableProperty fallbackConfig = new ConfigurableProperty(
-			// fallBackURI.toASCIIString());
-			// currentActivity.get().getConfigurableProperties().add(
-			// fallbackConfig);
-
-			// ConfigurablePropertyConfiguration property = new
-			// ConfigurablePropertyConfiguration();
-			// property.setParent(configuration);
-			// property.setConfiguredProperty(fallbackConfig);
-			// property.setValue((configBean.getAny()));
+			DataProperty property = new DataProperty();
+			property.setPredicate(fallBackURI);
+			// FIXME: Can't do toString() on getAny()
+			property.setDataValue(configBean.getAny().toString());
+			configuration.getProperties().add(property);
 		}
-		configuration.setConfigured(currentActivity.get());
+
+		configuration.setConfigures(currentActivity.get());
 		currentProfile.get().getConfigurations().add(configuration);
-		// for (ConfigurablePropertyConfiguration prop : configuration
-		// .getConfigurablePropertyConfigurations()) {
-		// currentActivity.get().getConfigurableProperties().add(
-		// prop.getConfiguredProperty());
-		// }
 	}
 
 	public Unmarshaller getUnmarshaller() {

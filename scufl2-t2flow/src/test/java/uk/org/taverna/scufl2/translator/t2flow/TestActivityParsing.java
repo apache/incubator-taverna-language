@@ -25,7 +25,8 @@ public class TestActivityParsing {
 		parser.setValidating(true);
 		// parser.setStrict(true);
 		WorkflowBundle researchObj = parser.parseT2Flow(wfResource.openStream());
-		System.out.println(researchObj);
+		System.out.println(researchObj.getProfiles().iterator().next()
+				.getConfigurations());
 
 	}
 
