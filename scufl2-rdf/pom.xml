@@ -20,9 +20,7 @@
 				<version>1.4</version>
 				<executions>
 					<execution>
-					<!-- 
 						<phase>generate-sources</phase>
-					 -->
 						<configuration>
 							<tasks>
 								<property name="compile_classpath" refid="maven.compile.classpath" />
