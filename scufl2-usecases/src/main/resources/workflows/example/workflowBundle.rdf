@@ -14,11 +14,13 @@
 				<rdfs:seeAlso rdf:resource="workflow/HelloWorld.rdf" />
 			</Workflow>
 		</workflow>
+		<!--
 		<workflow>
-			<Workflow rdf:about="workflow/HelloWorld/">
-				<rdfs:seeAlso rdf:resource="workflow/HelloWorld.rdf" />
+			<Workflow rdf:about="workflow/SomeNestedWorkflow/">
+				<rdfs:seeAlso rdf:resource="workflow/SomeNestedWorkflow.rdf" />
 			</Workflow>
 		</workflow>
+		-->
 		<profile>
 			<Profile rdf:about="profile/tavernaWorkbench/">
 				<rdfs:seeAlso rdf:resource="profile/tavernaWorkbench.rdf" />
