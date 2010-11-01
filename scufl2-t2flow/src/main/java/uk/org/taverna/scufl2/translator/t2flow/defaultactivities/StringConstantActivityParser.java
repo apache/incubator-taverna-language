@@ -2,17 +2,12 @@ package uk.org.taverna.scufl2.translator.t2flow.defaultactivities;
 
 import java.net.URI;
 
-import org.junit.matchers.StringContains;
-
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.configurations.DataProperty;
-import uk.org.taverna.scufl2.api.configurations.ObjectProperty;
 import uk.org.taverna.scufl2.translator.t2flow.ParseException;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
-import uk.org.taverna.scufl2.translator.t2flow.T2Parser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.StringConstantConfig;
-import uk.org.taverna.scufl2.xml.t2flow.jaxb.WSDLConfig;
 
 public class StringConstantActivityParser extends AbstractActivityParser {
 
