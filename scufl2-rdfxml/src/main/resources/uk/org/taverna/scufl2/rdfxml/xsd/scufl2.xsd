@@ -361,6 +361,12 @@
 	</xs:element>
 	<xs:element name="datalink">
 		<xs:complexType>
+		<xs:annotation>
+		<xs:appinfo>
+			<jxb:class name="DataLinkEntry">
+			</jxb:class>
+		</xs:appinfo>
+		</xs:annotation>
 			<xs:sequence>
 				<xs:element name="DataLink" type="scufl2:DataLink" />
 			</xs:sequence>
