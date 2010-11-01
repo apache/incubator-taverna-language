@@ -3,10 +3,10 @@
 <!--     using base file:///home/stain/stuff/src/workspace/scufl2/scufl2-usecases/src/main/resources/workflows/example/workflowBundle.ttl-->
 
 
-<rdf:RDF xmlns="http://ns.taverna.org.uk/2010/scufl2/ontology/"
+<rdf:RDF xmlns="http://ns.taverna.org.uk/2010/scufl2#"
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-    xmlns:scufl2="http://ns.taverna.org.uk/2010/scufl2/ontology/">
+    xmlns:scufl2="http://ns.taverna.org.uk/2010/scufl2#">
 
     <WorkflowBundle rdf:about="./">
         <name>Hello world</name>

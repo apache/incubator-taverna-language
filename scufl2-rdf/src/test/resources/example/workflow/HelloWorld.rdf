@@ -3,16 +3,16 @@
 <!--     using base file:///home/stain/stuff/src/workspace/scufl2/scufl2-rdf/src/main/resources/example/workflow/HelloWorld.ttl-->
 
 
-<rdf:RDF xmlns="http://ns.taverna.org.uk/2010/scufl2/ontology/"
+<rdf:RDF xmlns="http://ns.taverna.org.uk/2010/scufl2#"
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-    xmlns:scufl2="http://ns.taverna.org.uk/2010/scufl2/ontology/">
+    xmlns:scufl2="http://ns.taverna.org.uk/2010/scufl2#">
 
     <Workflow rdf:about="HelloWorld/">
         <datalink rdf:resource="HelloWorld/datalink/5"/>
         <datalink rdf:resource="HelloWorld/datalink?from=processor/Hello/out/greeting&#38;to=out/results&#38;mergePosition=0"/>
         <datalink rdf:parseType="Resource">
-            <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/DataLink"/>
+            <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2#DataLink"/>
             <receivesFrom rdf:resource="HelloWorld/in/yourName"/>
             <sendsTo rdf:resource="HelloWorld/processor/Hello/in/name"/>
         </datalink>

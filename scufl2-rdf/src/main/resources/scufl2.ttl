@@ -1,4 +1,4 @@
-@base <http://ns.taverna.org.uk/2010/scufl2/ontology/> .
+@base <http://ns.taverna.org.uk/2010/scufl2#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
@@ -6,7 +6,7 @@
 @prefix ro: <http://ns.mygrid.org.uk/2010/ResearchObject/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix : <http://ns.taverna.org.uk/2010/scufl2/ontology/> .
+@prefix : <http://ns.taverna.org.uk/2010/scufl2#> .
 
 
 <>
