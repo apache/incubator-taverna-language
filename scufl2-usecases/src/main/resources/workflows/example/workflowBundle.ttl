@@ -7,10 +7,12 @@
     a scufl2:WorkflowBundle ;
     scufl2:sameBaseAs <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/> ;
     scufl2:name "Hello world" ;
-    scufl2:workflow <workflow/HelloWorld/> ;
     scufl2:mainWorkflow <workflow/HelloWorld/> ;
+    scufl2:workflow <workflow/HelloWorld/> ;
     scufl2:profile <profile/tavernaWorkbench/> ;
-    rdf:seeAlso <annotation/workflowBundle.ttl> .
+    rdfs:seeAlso <annotation/workflowBundle.ttl> .
 
-<workflow/HelloWorld/> rdfs:seeAlso <workflow/HelloWorld.ttl> .  
-<profile/tavernaWorkbench/> rdfs:seeAlso <profile/tavernaWorkbench.ttl> .
+<workflow/HelloWorld/> a scufl2:Workflow;
+	rdfs:seeAlso <workflow/HelloWorld.ttl> .  
+<profile/tavernaWorkbench/> a scufl2:Profile;
+	rdfs:seeAlso <profile/tavernaWorkbench.ttl> .
