@@ -5,13 +5,13 @@ package uk.org.taverna.scufl2.api.common;
  *
  * @param <T>
  */
-public interface Child<T extends WorkflowBean> {
-	
+public interface Child<T extends WorkflowBean> extends WorkflowBean {
+
 	/**
 	 * @return
 	 */
 	T getParent();
-	
+
 	/**
 	 * @param parent
 	 */

@@ -1,34 +1,96 @@
 package uk.org.taverna.scufl2.api.core;
 
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.port.ReceiverPort;
 import uk.org.taverna.scufl2.api.port.SenderPort;
-import uk.org.taverna.scufl2.api.reference.Reference;
 
 
 /**
  * @author Alan R Williams
  *
  */
-@XmlRootElement
-@XmlType(propOrder = {"senderPortReference", "receiverPortReference"})
 public class DataLink implements WorkflowBean, Child<Workflow> {
 
-	private ReceiverPort receiverPort;
-	
-	private SenderPort senderPort;
-	
+	private ReceiverPort sendsTo;
+
+	private SenderPort receivesFrom;
+
+	private Integer mergePosition;
+
 	private Workflow parent;
-	
-	@XmlTransient
+
+	public DataLink() {
+		super();
+	}
+
+	public DataLink(Workflow parent, SenderPort senderPort,
+			ReceiverPort receiverPort) {
+		setReceivesFrom(senderPort);
+		setSendsTo(receiverPort);
+		setParent(parent);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		DataLink other = (DataLink) obj;
+		if (getSendsTo() == null) {
+			if (other.getSendsTo() != null) {
+				return false;
+			}
+		} else if (!getSendsTo().equals(other.getSendsTo())) {
+			return false;
+		}
+		if (getReceivesFrom() == null) {
+			if (other.getReceivesFrom() != null) {
+				return false;
+			}
+		} else if (!getReceivesFrom().equals(other.getReceivesFrom())) {
+			return false;
+		}
+		return true;
+	}
+
+	public Integer getMergePosition() {
+		return mergePosition;
+	}
+
 	public Workflow getParent() {
 		return parent;
+	}
+
+
+	public SenderPort getReceivesFrom() {
+		return receivesFrom;
+	}
+
+	public ReceiverPort getSendsTo() {
+		return sendsTo;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+		+ (getSendsTo() == null ? 0 : getSendsTo().hashCode());
+		result = prime * result
+		+ (getReceivesFrom() == null ? 0 : getReceivesFrom().hashCode());
+		return result;
+	}
+
+	public void setMergePosition(Integer mergePosition) {
+		this.mergePosition = mergePosition;
 	}
 
 	public void setParent(Workflow parent) {
@@ -41,102 +103,17 @@ public class DataLink implements WorkflowBean, Child<Workflow> {
 		}
 	}
 
-	/**
-	 * @param senderPort
-	 * @param receiverPort
-	 */
-	public DataLink(SenderPort senderPort, ReceiverPort receiverPort) {
-		this.senderPort = senderPort;
-		this.receiverPort = receiverPort;
-	}
-	
-	public DataLink() {
-		super();
+	public void setReceivesFrom(SenderPort receivesFrom) {
+		this.receivesFrom = receivesFrom;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((receiverPort == null) ? 0 : receiverPort.hashCode());
-		result = prime * result
-				+ ((senderPort == null) ? 0 : senderPort.hashCode());
-		return result;
+	public void setSendsTo(ReceiverPort sendsTo) {
+		this.sendsTo = sendsTo;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		DataLink other = (DataLink) obj;
-		if (receiverPort == null) {
-			if (other.receiverPort != null)
-				return false;
-		} else if (!receiverPort.equals(other.receiverPort))
-			return false;
-		if (senderPort == null) {
-			if (other.senderPort != null)
-				return false;
-		} else if (!senderPort.equals(other.senderPort))
-			return false;
-		return true;
-	}
-
-
-	/**
-	 * @param senderPort
-	 */
-	public void setSenderPort(SenderPort senderPort) {
-		this.senderPort = senderPort;
-	}
-
-	/**
-	 * @param receiverPort
-	 */
-	public void setReceiverPort(ReceiverPort receiverPort) {
-		this.receiverPort = receiverPort;
-	}
-
-	public Reference<ReceiverPort> getReceiverPortReference() {
-		return Reference.createReference(receiverPort);
-	}
-
-	public void setReceiverPortReference(Reference<ReceiverPort> receiverPortReference) {
-		receiverPort = receiverPortReference.resolve();
-	}
-	
-	public Reference<SenderPort> getSenderPortReference() {
-		return Reference.createReference(senderPort);
-	}
-
-	public void setSenderPortReference(Reference<SenderPort> senderPortReference) {
-		senderPort = senderPortReference.resolve();
-	}
-	
-	/**
-	 * @return
-	 */
-	@XmlTransient
-	public ReceiverPort getReceiverPort() {
-		return receiverPort;
-	}
-
-	/**
-	 * @return
-	 */
-	@XmlTransient
-	public SenderPort getSenderPort() {
-		return senderPort;
-	}
-	
 	@Override
 	public String toString() {
-		return getSenderPort() + "=>" + getReceiverPort();
+		return getReceivesFrom() + "=>" + getSendsTo();
 	}
 
 }
