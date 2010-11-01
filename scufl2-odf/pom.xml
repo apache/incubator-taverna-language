@@ -13,7 +13,7 @@
 		<dependency>
 			<groupId>org.odftoolkit</groupId>
 			<artifactId>odfdom-java</artifactId>
-			<version>0.7</version>
+			<version>0.8.6</version>
 		</dependency>
 	</dependencies>
 	<repositories>
