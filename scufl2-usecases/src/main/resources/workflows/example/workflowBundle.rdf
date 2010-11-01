@@ -1,6 +1,6 @@
 
 <!-- Processed by Id: cwm.py,v 1.197 2007/12/13 15:38:39 syosi Exp -->
-<!--     using base file:///home/stain/stuff/src/workspace/scufl2/scufl2-rdf/src/main/resources/example/workflowBundle.ttl-->
+<!--     using base file:///home/stain/stuff/src/workspace/scufl2/scufl2-usecases/src/main/resources/workflows/example/workflowBundle.ttl-->
 
 
 <rdf:RDF xmlns="http://ns.taverna.org.uk/2010/scufl2/ontology/"
@@ -9,19 +9,19 @@
     xmlns:scufl2="http://ns.taverna.org.uk/2010/scufl2/ontology/">
 
     <WorkflowBundle rdf:about="./">
-        <mainWorkflow rdf:resource="workflow/HelloWorld/"/>
         <name>Hello world</name>
-        <profile rdf:resource="profile/tavernaWorkbench/"/>
         <sameBaseAs rdf:resource="http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/"/>
         <workflow rdf:resource="workflow/HelloWorld/"/>
-        <rdf:seeAlso rdf:resource="annotation/workflowBundle.ttl"/>
+        <mainWorkflow rdf:resource="workflow/HelloWorld/"/>
+        <profile rdf:resource="profile/tavernaWorkbench/"/>
+        <rdfs:seeAlso rdf:resource="annotation/workflowBundle.ttl"/>
     </WorkflowBundle>
 
-    <rdf:Description rdf:about="profile/tavernaWorkbench/">
+    <Profile rdf:about="profile/tavernaWorkbench/">
         <rdfs:seeAlso rdf:resource="profile/tavernaWorkbench.ttl"/>
-    </rdf:Description>
+    </Profile>
 
-    <rdf:Description rdf:about="workflow/HelloWorld/">
+    <Workflow rdf:about="workflow/HelloWorld/">
         <rdfs:seeAlso rdf:resource="workflow/HelloWorld.ttl"/>
-    </rdf:Description>
+    </Workflow>
 </rdf:RDF>
