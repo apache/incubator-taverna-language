@@ -37,9 +37,9 @@ public class DummyParserTest {
 			String seeAlso = wfLink.getWorkflow().getSeeAlso().getResource();
 
 			URI wfResource = baseUri.resolve(seeAlso);
-			JAXBElement unmarshalled = (JAXBElement) unmarshaller
+			JAXBElement<WorkflowDocument> unmarshalled = (JAXBElement<WorkflowDocument>) unmarshaller
 					.unmarshal(wfResource.toURL());
-			WorkflowDocument wfDoc = (WorkflowDocument) unmarshalled.getValue();
+			WorkflowDocument wfDoc = unmarshalled.getValue();
 			Workflow wf = (Workflow) wfDoc.getAny().get(0);
 			System.out.println(about + " " + wf.getName());
 		}
