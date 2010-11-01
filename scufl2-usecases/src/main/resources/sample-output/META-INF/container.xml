@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<container version="1.0"
+	xmlns="urn:oasis:names:tc:opendocument:xmlns:container">
+	<rootfiles>
+		<rootfile full-path="outputs.rdf" media-type="application/rdf+xml" />
+		<rootfile full-path="outputs.ttl" media-type="text/turtle" />
+		<rootfile full-path="outputs" media-type="application/vnd.taverna.port-data" />
+	</rootfiles>
+</container>
