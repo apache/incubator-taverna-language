@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest:manifest xmlns:manifest="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0">
+	<manifest:file-entry manifest:full-path="/"
+		manifest:media-type="application/vnd.taverna.data-bundle" />
+		
+	<manifest:file-entry manifest:full-path="outputs.rdf"
+		manifest:media-type="application/rdf+xml" />		
+	<manifest:file-entry manifest:full-path="outputs" />
+		
+	<manifest:file-entry manifest:full-path="outputs/fish" />
+	<manifest:file-entry manifest:full-path="outputs/fish/0.txt"
+		manifest:media-type="text/plain" manifest:size="23" />
+	<manifest:file-entry manifest:full-path="outputs/fish/1.uri"
+		manifest:media-type="text/uri-list" manifest:size="19" />
+	
+	<manifest:file-entry manifest:full-path="outputs/soup" />
+	<manifest:file-entry manifest:full-path="outputs/soup/0" />
+	<manifest:file-entry manifest:full-path="outputs/soup/0/0.jpg"
+		manifest:media-type="image/jpeg" manifest:size="91344" />
+	<manifest:file-entry manifest:full-path="outputs/soup/0/1.err"
+		manifest:media-type="application/vnd.taverna.error-document+xml" manifest:size="5331" />		
+	<manifest:file-entry manifest:full-path="outputs/soup/1" />
+	<manifest:file-entry manifest:full-path="outputs/soup/2.err"
+		manifest:media-type="application/vnd.taverna.error-document+xml" manifest:size="3125" />
+		
+	<manifest:file-entry manifest:full-path="outputs/results"
+		manifest:media-type="application/octet-stream" manifest:size="311" />
+
+	<manifest:file-entry manifest:full-path="inputs.rdf"
+		manifest:media-type="application/rdf+xml" />		
+	<manifest:file-entry manifest:full-path="inputs" />
+	<!-- ... -->		
+		
+</manifest:manifest>
