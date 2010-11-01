@@ -8,7 +8,7 @@
 	</parent>
 	<groupId>uk.org.taverna.scufl2</groupId>
 	<artifactId>scufl2-bundle</artifactId>
-	<name>Taverna Scufl2 Bundle</name>
+	<name>Taverna Scufl 2 Bundle</name>
 	<description>General bundle API, making a structured ZIP file with manifest</description>
 	<dependencies>
 		<dependency>
