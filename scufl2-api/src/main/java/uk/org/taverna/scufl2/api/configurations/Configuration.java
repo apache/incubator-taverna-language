@@ -4,7 +4,8 @@
 package uk.org.taverna.scufl2.api.configurations;
 
 import java.net.URI;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import uk.org.taverna.scufl2.api.common.AbstractNamed;
 import uk.org.taverna.scufl2.api.common.Configurable;
@@ -18,7 +19,7 @@ import uk.org.taverna.scufl2.api.common.WorkflowBean;
 public class Configuration extends AbstractNamed implements WorkflowBean {
 	private Configurable configures;
 	private URI configurationType;
-	private Set<Property> properties;
+	private List<Property> properties = new ArrayList<Property>();
 
 	public Configuration() {
 		super();
@@ -31,6 +32,10 @@ public class Configuration extends AbstractNamed implements WorkflowBean {
 	public Configurable getConfigures() {
 		return configures;
 	}
+	public List<Property> getProperties() {
+		return properties;
+	}
+
 	/**
 	 * @param configurable
 	 */
@@ -38,12 +43,16 @@ public class Configuration extends AbstractNamed implements WorkflowBean {
 		configures = configurable;
 	}
 
-	public void setProperties(Set<Property> properties) {
+	public void setProperties(List<Property> properties) {
 		this.properties = properties;
 	}
 
-	public Set<Property> getProperties() {
-		return properties;
+	public void setConfigurationType(URI configurationType) {
+		this.configurationType = configurationType;
+	}
+
+	public URI getConfigurationType() {
+		return configurationType;
 	}
 
 
