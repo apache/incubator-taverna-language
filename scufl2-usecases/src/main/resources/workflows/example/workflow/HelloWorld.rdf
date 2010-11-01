@@ -1,75 +1,78 @@
 
 <!-- Processed by Id: cwm.py,v 1.197 2007/12/13 15:38:39 syosi Exp -->
-<!--     using base file:///home/stain/stuff/src/workspace/scufl2/scufl2-rdf/src/main/resources/example/workflow/HelloWorld.ttl-->
+<!-- using base file:///home/stain/stuff/src/workspace/scufl2/scufl2-usecases/src/main/resources/workflows/example/workflow/HelloWorld.ttl -->
 
 
 <rdf:RDF xmlns="http://ns.taverna.org.uk/2010/scufl2/ontology/"
-    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-    xmlns:scufl2="http://ns.taverna.org.uk/2010/scufl2/ontology/">
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+	xmlns:scufl2="http://ns.taverna.org.uk/2010/scufl2/ontology/">
 
-    <Workflow rdf:about="HelloWorld/">
-        <datalink rdf:resource="HelloWorld/datalink/5"/>
-        <datalink rdf:resource="HelloWorld/datalink?from=processor/Hello/out/greeting&#38;to=out/results&#38;mergePosition=0"/>
-        <datalink rdf:parseType="Resource">
-            <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/DataLink"/>
-            <receivesFrom rdf:resource="HelloWorld/in/yourName"/>
-            <sendsTo rdf:resource="HelloWorld/processor/Hello/in/name"/>
-        </datalink>
-        <inputWorkflowPort rdf:resource="HelloWorld/in/yourName"/>
-        <name>Helloworld</name>
-        <outputWorkflowPort rdf:resource="HelloWorld/out/results"/>
-        <processor rdf:resource="HelloWorld/processor/Hello"/>
-        <workflowIdentifier rdf:resource="http://ns.taverna.org.uk/2010/workflow/00626652-55ae-4a9e-80d4-c8e9ac84e2ca/"/>
-        <rdfs:seeAlso rdf:resource="annotation/workflow/HelloWorld.ttl"/>
-    </Workflow>
+	<Workflow rdf:about="HelloWorld/">
+		<workflowIdentifier
+			rdf:resource="http://ns.taverna.org.uk/2010/workflow/00626652-55ae-4a9e-80d4-c8e9ac84e2ca/" />
+		<name>Helloworld</name>
+		<inputWorkflowPort rdf:resource="HelloWorld/in/yourName" />
+		<outputWorkflowPort rdf:resource="HelloWorld/out/results" />
+		<processor rdf:resource="HelloWorld/processor/Hello" />
+		<datalink rdf:resource="HelloWorld/datalink/5" />
+		<datalink
+			rdf:resource="HelloWorld/datalink?from=processor/Hello/out/greeting&#38;to=out/results&#38;mergePosition=0" />
+		<datalink rdf:parseType="Resource">
+			<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/ontology/DataLink" />
+			<receivesFrom rdf:resource="HelloWorld/in/yourName" />
+			<sendsTo rdf:resource="HelloWorld/processor/Hello/in/name" />
+		</datalink>
+		<rdfs:seeAlso rdf:resource="annotation/workflow/HelloWorld.ttl" />
+	</Workflow>
 
-    <DataLink rdf:about="HelloWorld/datalink/5">
-        <mergePosition rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</mergePosition>
-        <receivesFrom rdf:resource="HelloWorld/in/yourName"/>
-        <sendsTo rdf:resource="HelloWorld/out/results"/>
-    </DataLink>
+	<DataLink rdf:about="HelloWorld/datalink/5">
+		<receivesFrom rdf:resource="HelloWorld/in/yourName" />
+		<sendsTo rdf:resource="HelloWorld/out/results" />
+		<mergePosition rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</mergePosition>
+	</DataLink>
 
-    <DataLink rdf:about="HelloWorld/datalink?from=processor/Hello/out/greeting&#38;to=out/results&#38;mergePosition=0">
-        <mergePosition rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</mergePosition>
-        <receivesFrom rdf:resource="HelloWorld/processor/Hello/out/greeting"/>
-        <sendsTo rdf:resource="HelloWorld/out/results"/>
-    </DataLink>
+	<DataLink
+		rdf:about="HelloWorld/datalink?from=processor/Hello/out/greeting&#38;to=out/results&#38;mergePosition=0">
+		<receivesFrom rdf:resource="HelloWorld/processor/Hello/out/greeting" />
+		<sendsTo rdf:resource="HelloWorld/out/results" />
+		<mergePosition rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</mergePosition>
+	</DataLink>
 
-    <InputWorkflowPort rdf:about="HelloWorld/in/yourName">
-        <name>yourName</name>
-        <portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
-    </InputWorkflowPort>
+	<InputWorkflowPort rdf:about="HelloWorld/in/yourName">
+		<name>yourName</name>
+		<portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+	</InputWorkflowPort>
 
-    <OutputWorkflowPort rdf:about="HelloWorld/out/results">
-        <name>results</name>
-    </OutputWorkflowPort>
+	<OutputWorkflowPort rdf:about="HelloWorld/out/results">
+		<name>results</name>
+	</OutputWorkflowPort>
 
-    <Processor rdf:about="HelloWorld/processor/Hello">
-        <dispatchStack rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#defaultDispatchStack"/>
-        <inputProcessorPort rdf:resource="HelloWorld/processor/Hello/in/name"/>
-        <iterationStrategyStack rdf:parseType="Resource">
-            <rdf:first rdf:resource="HelloWorld/processor/Hello/iterationStrategy/0"/>
-            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-        </iterationStrategyStack>
-        <name>Hello</name>
-        <outputProcessorPort rdf:resource="HelloWorld/processor/Hello/out/greeting"/>
-    </Processor>
+	<Processor rdf:about="HelloWorld/processor/Hello">
+		<name>Hello</name>
+		<inputProcessorPort rdf:resource="HelloWorld/processor/Hello/in/name" />
+		<outputProcessorPort rdf:resource="HelloWorld/processor/Hello/out/greeting" />
+		<dispatchStack
+			rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#defaultDispatchStack" />
+		<iterationStrategyStack rdf:parseType="Collection">
+			<CrossProduct rdf:about="HelloWorld/processor/Hello/iterationStrategy/0">
+				<iterationStrategyChildren rdf:parseType="Collection">
+					<InputProcessorPort rdf:about="HelloWorld/processor/Hello/in/name" />
+				</iterationStrategyChildren>
+			</CrossProduct>
+		</iterationStrategyStack>
+	</Processor>
 
-    <InputProcessorPort rdf:about="HelloWorld/processor/Hello/in/name">
-        <granularPortDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</granularPortDepth>
-        <name>name</name>
-        <portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
-    </InputProcessorPort>
+	<InputProcessorPort rdf:about="HelloWorld/processor/Hello/in/name">
+		<name>name</name>
+		<portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+	</InputProcessorPort>
 
-    <CrossProduct rdf:about="HelloWorld/processor/Hello/iterationStrategy/0">
-        <iterationStrategyChildren rdf:parseType="Resource">
-            <rdf:first rdf:resource="HelloWorld/processor/Hello/in/name"/>
-            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-        </iterationStrategyChildren>
-    </CrossProduct>
 
-    <OutputProcessorPort rdf:about="HelloWorld/processor/Hello/out/greeting">
-        <name>greeting</name>
-    </OutputProcessorPort>
+
+	<OutputProcessorPort rdf:about="HelloWorld/processor/Hello/out/greeting">
+		<granularPortDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0
+		</granularPortDepth>
+		<name>greeting</name>
+		<portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+	</OutputProcessorPort>
 </rdf:RDF>
