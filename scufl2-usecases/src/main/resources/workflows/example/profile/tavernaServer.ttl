@@ -20,7 +20,7 @@
         # environment
         a scufl2:Environment;
         scufl2:workflowProduct <http://ns.taverna.org.uk/2010/taverna/server/>;
-        scufl2:os <http://www.ubuntu.com/#10.04>;
+        scufl2:os <http://releases.ubuntu.com/maverick/>;
         dc:title "Taverna server installed on Ubuntu"
     ] ;
     scufl2:requiresEnvironment [
@@ -36,7 +36,7 @@
         # for a browser. A GUI could simply say:
         #
         #   This workflow execution profile requires/recommends:
-        #           OS: [x] Ubuntu Linux (10.04)
+        #           OS: [x] Ubuntu Linux (10.10)
         #     Software: [x] http://www.r-project.org/
         #               [x] http://www.rforge.net/Rserve/
         #               [ ] http://www.bioconductor.org/
@@ -48,7 +48,7 @@
         scufl2:architecture <http://www.intel.org/x64>
     ] .
 
-<http://www.ubuntu.com/#10.04> 
+<http://releases.ubuntu.com/maverick/> 
     scufl2:version "10.04";
     dc:title "Ubuntu Linux".  
 
