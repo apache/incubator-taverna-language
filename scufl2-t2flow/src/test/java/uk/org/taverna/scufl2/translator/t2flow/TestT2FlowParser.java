@@ -7,7 +7,7 @@ import java.net.URL;
 
 import org.junit.Test;
 
-import uk.org.taverna.scufl2.api.container.TavernaResearchObject;
+import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 
 public class TestT2FlowParser {
@@ -20,7 +20,7 @@ public class TestT2FlowParser {
 		assertNotNull("Could not find workflow " + AS_T2FLOW, wfResource);
 		T2FlowParser parser = new T2FlowParser();
 		parser.setStrict(false);
-		TavernaResearchObject researchObj = parser.parseT2Flow(wfResource.openStream());
+		WorkflowBundle researchObj = parser.parseT2Flow(wfResource.openStream());
 		System.out.println(researchObj);
 	}
 	

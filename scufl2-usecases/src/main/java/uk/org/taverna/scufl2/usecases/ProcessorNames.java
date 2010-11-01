@@ -15,7 +15,7 @@ import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.ConfigurableProperty;
 import uk.org.taverna.scufl2.api.configurations.ConfigurablePropertyConfiguration;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
-import uk.org.taverna.scufl2.api.container.TavernaResearchObject;
+import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.profiles.Profile;
@@ -30,7 +30,7 @@ public class ProcessorNames {
 		T2FlowParser t2flowParser = new T2FlowParser();
 		ProcessorNames processorNames = new ProcessorNames();
 		for (String filename : args) {
-			TavernaResearchObject ro = t2flowParser.parseT2Flow(new File(
+			WorkflowBundle ro = t2flowParser.parseT2Flow(new File(
 					filename));
 			System.out.print(filename + ": ");
 			System.out.println(processorNames.showProcessorNames(ro));
@@ -38,7 +38,7 @@ public class ProcessorNames {
 		}
 	}
 
-	public List<String> showProcessorNames(TavernaResearchObject ro)
+	public List<String> showProcessorNames(WorkflowBundle ro)
 			throws JAXBException, IOException, ParseException {
 		ArrayList<String> names = new ArrayList<String>();
 		for (Processor processor : ro.getMainWorkflow().getProcessors()) {
@@ -48,7 +48,7 @@ public class ProcessorNames {
 		return names;
 	}
 
-	public String showProcessorTree(TavernaResearchObject ro)
+	public String showProcessorTree(WorkflowBundle ro)
 			throws JAXBException, IOException, ParseException {
 		TreeModel treeModel = makeProcessorTree(ro);
 		return treeModelAsString(treeModel);
@@ -79,7 +79,7 @@ public class ProcessorNames {
 		}
 	}
 
-	public TreeModel makeProcessorTree(TavernaResearchObject ro)
+	public TreeModel makeProcessorTree(WorkflowBundle ro)
 			throws JAXBException, IOException, ParseException {
 		Workflow workflow = ro.getMainWorkflow();
 		TreeModel treeModel = new DefaultTreeModel(new DefaultMutableTreeNode(
@@ -91,7 +91,7 @@ public class ProcessorNames {
 		return treeModel;
 	}
 
-	private void findProcessors(TavernaResearchObject ro, Workflow workflow,
+	private void findProcessors(WorkflowBundle ro, Workflow workflow,
 			DefaultMutableTreeNode parent) {
 		for (Processor processor : workflow.getProcessors()) {
 			DefaultMutableTreeNode processorNode = new DefaultMutableTreeNode(

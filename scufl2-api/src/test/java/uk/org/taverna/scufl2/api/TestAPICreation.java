@@ -13,7 +13,7 @@ import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.activity.ActivityType;
-import uk.org.taverna.scufl2.api.container.TavernaResearchObject;
+import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
@@ -24,12 +24,12 @@ import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
 
 public class TestAPICreation {
 
-	private TavernaResearchObject ro;
+	private WorkflowBundle ro;
 
 	@Test
 	public void makeExampleWorkflow() throws Exception {
 
-		ro = new TavernaResearchObject();
+		ro = new WorkflowBundle();
 		Workflow wf1 = new Workflow();
 		ro.setWorkflows(Collections.singleton(wf1));
 		ro.setMainWorkflow(wf1);
@@ -86,7 +86,7 @@ public class TestAPICreation {
 	@Test
 	public void marshal() throws Exception {
 		makeExampleWorkflow();
-		JAXBContext jc = JAXBContext.newInstance(TavernaResearchObject.class );
+		JAXBContext jc = JAXBContext.newInstance(WorkflowBundle.class );
 		Marshaller marshaller = jc.createMarshaller();
 		marshaller.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, 
 	              Boolean.TRUE );
