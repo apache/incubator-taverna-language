@@ -2,8 +2,6 @@ package uk.org.taverna.scufl2.translator.t2flow.defaultactivities;
 
 import java.net.URI;
 
-import uk.org.taverna.scufl2.api.common.ConfigurableProperty;
-import uk.org.taverna.scufl2.api.configurations.ConfigurablePropertyConfiguration;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.translator.t2flow.ParseException;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
@@ -55,13 +53,14 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 		Configuration configuration = new Configuration();
 
 		String script = beanshellConfig.getScript();
-		ConfigurablePropertyConfiguration configurablePropertyConfiguration = new ConfigurablePropertyConfiguration();
-		configurablePropertyConfiguration.setParent(configuration);
-		ConfigurableProperty configuredProperty = new ConfigurableProperty(
-				scufl2Uri.resolve("#script").toASCIIString());
-		configurablePropertyConfiguration
-				.setConfiguredProperty(configuredProperty);
-		configurablePropertyConfiguration.setValue(script);
+		// ConfigurablePropertyConfiguration configurablePropertyConfiguration =
+		// new ConfigurablePropertyConfiguration();
+		// configurablePropertyConfiguration.setParent(configuration);
+		// ConfigurableProperty configuredProperty = new ConfigurableProperty(
+		// scufl2Uri.resolve("#script").toASCIIString());
+		// configurablePropertyConfiguration
+		// .setConfiguredProperty(configuredProperty);
+		// configurablePropertyConfiguration.setValue(script);
 
 		return configuration;
 	}
