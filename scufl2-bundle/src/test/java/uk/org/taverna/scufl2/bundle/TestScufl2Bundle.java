@@ -20,7 +20,7 @@ public class TestScufl2Bundle {
 
 
 	private static final int MIME_OFFSET = 30;
-	private static final boolean DELETE_FILES = false;
+	private static final boolean DELETE_FILES = true;
 	private File tmpFile;
 
 	@Test(expected = IllegalArgumentException.class)
@@ -56,7 +56,7 @@ public class TestScufl2Bundle {
 		assertEquals("mimetype should be uncompressed, but compressed size mismatch", mimeEntry.getCompressedSize(), mimeEntry.getSize());
 		assertEquals("mimetype should have STORED method", ZipEntry.STORED, mimeEntry.getMethod());
 		assertEquals("Wrong mimetype", Scufl2Bundle.MIME_SCUFL2_BUNDLE,
-				IOUtils.toString(zipFile.getInputStream(mimeEntry)));
+				IOUtils.toString(zipFile.getInputStream(mimeEntry), "ASCII"));
 
 		// Check position 30++ according to
 		// http://livedocs.adobe.com/navigator/9/Navigator_SDK9_HTMLHelp/wwhelp/wwhimpl/common/html/wwhelp.htm?context=Navigator_SDK9_HTMLHelp&file=Appx_Packaging.6.1.html#1522568
@@ -91,16 +91,16 @@ public class TestScufl2Bundle {
 		ZipEntry mimeEntry = zipFile.getEntry("mimetype");
 		assertEquals("mimetype", mimeEntry.getName());
 		assertEquals("Wrong mimetype", Scufl2Bundle.MIME_WORKFLOW_BUNDLE,
-				IOUtils.toString(zipFile.getInputStream(mimeEntry)));
+				IOUtils.toString(zipFile.getInputStream(mimeEntry), "ASCII"));
 
 	}
 
 	@Test
-	public void fileEntry() throws Exception {
+	public void fileEntryFromString() throws Exception {
 		Scufl2Bundle scufl2Bundle = new Scufl2Bundle();
 		scufl2Bundle.setBundleMimeType(Scufl2Bundle.MIME_WORKFLOW_BUNDLE);
 
-		scufl2Bundle.insert("Hello there", "helloworld.txt", "text/plain");
+		scufl2Bundle.insert("Hello there þĸł", "helloworld.txt", "text/plain");
 
 		scufl2Bundle.save(tmpFile);
 		ZipFile zipFile = new ZipFile(tmpFile);
@@ -111,12 +111,38 @@ public class TestScufl2Bundle {
 						+ "<manifest:manifest xmlns:manifest=\"urn:oasis:names:tc:opendocument:xmlns:manifest:1.0\">\n"
 						+ " <manifest:file-entry manifest:media-type=\"text/plain\" manifest:full-path=\"helloworld.txt\"/>\n"
 						+ "</manifest:manifest>",
-				IOUtils.toString(manifestStream));
+				IOUtils.toString(manifestStream, "UTF-8"));
 		InputStream io = zipFile.getInputStream(zipFile
 				.getEntry("helloworld.txt"));
-		assertEquals("Hello there", IOUtils.toString(io));
-
+		assertEquals("Hello there þĸł", IOUtils.toString(io, "UTF-8"));
 	}
+
+	@Test
+	public void fileEntryFromBytes() throws Exception {
+		Scufl2Bundle scufl2Bundle = new Scufl2Bundle();
+		scufl2Bundle.setBundleMimeType(Scufl2Bundle.MIME_WORKFLOW_BUNDLE);
+
+		byte[] bytes = new byte[1024];
+		bytes[0] = 0x20;
+		bytes[1022] = (byte) 0xdd;
+		bytes[1023] = (byte) 0xff;
+		scufl2Bundle.insert(bytes, "binary", Scufl2Bundle.MIME_BINARY);
+
+		scufl2Bundle.save(tmpFile);
+		ZipFile zipFile = new ZipFile(tmpFile);
+		ZipEntry manifestEntry = zipFile.getEntry("META-INF/manifest.xml");
+		InputStream manifestStream = zipFile.getInputStream(manifestEntry);
+		assertEquals(
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+						+ "<manifest:manifest xmlns:manifest=\"urn:oasis:names:tc:opendocument:xmlns:manifest:1.0\">\n"
+						+ " <manifest:file-entry manifest:media-type=\"application/octet-stream\" manifest:full-path=\"binary\"/>\n"
+						+ "</manifest:manifest>",
+				IOUtils.toString(manifestStream, "UTF-8"));
+		InputStream io = zipFile.getInputStream(zipFile
+.getEntry("binary"));
+		assertArrayEquals(bytes, IOUtils.toByteArray(io));
+	}
+
 
 	@Test
 	public void manifestMimetype() throws Exception {
@@ -131,7 +157,7 @@ public class TestScufl2Bundle {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 						+ "<manifest:manifest xmlns:manifest=\"urn:oasis:names:tc:opendocument:xmlns:manifest:1.0\">\n"
 						+ "</manifest:manifest>",
-				IOUtils.toString(manifestStream));
+				IOUtils.toString(manifestStream, "UTF-8"));
 	}
 
 
