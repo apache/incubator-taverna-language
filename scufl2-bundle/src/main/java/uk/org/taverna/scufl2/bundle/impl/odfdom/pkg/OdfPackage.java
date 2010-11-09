@@ -119,7 +119,7 @@ public class OdfPackage {
 	public enum OdfFile {
 
 		IMAGE_DIRECTORY("Pictures"), MANIFEST("META-INF/manifest.xml"), MEDIA_TYPE(
-		"mimetype");
+				"mimetype");
 		private final String packagePath;
 
 		OdfFile(String packagePath) {
@@ -133,9 +133,9 @@ public class OdfPackage {
 	private static HashSet<String> mCompressedFileTypes = new HashSet<String>();
 
 	{
-		String[] typelist = new String[]{"jpg", "gif", "png", "zip", "rar",
-			"jpeg", "mpe", "mpg", "mpeg", "mpeg4", "mp4", "7z", "ari",
-			"arj", "jar", "gz", "tar", "war", "mov", "avi"};
+		String[] typelist = new String[] { "jpg", "gif", "png", "zip", "rar",
+				"jpeg", "mpe", "mpg", "mpeg", "mpeg4", "mp4", "7z", "ari",
+				"arj", "jar", "gz", "tar", "war", "mov", "avi" };
 		for (int i = 0; i < typelist.length; i++) {
 			mCompressedFileTypes.add(typelist[i]);
 		}
@@ -183,6 +183,7 @@ public class OdfPackage {
 		mTempFiles = new HashMap<String, File>();
 		mManifestList = new LinkedList<String>();
 
+
 		// get a temp directory for everything
 		String userPropDir = System.getProperty("org.odftoolkit.odfdom.tmpdir");
 		if (userPropDir != null) {
@@ -190,13 +191,23 @@ public class OdfPackage {
 		}
 
 		// specify whether temporary files are able to used.
-		String userPropTempEnable = System.getProperty("org.odftoolkit.odfdom.tmpfile.disable");
+		String userPropTempEnable = System
+				.getProperty("org.odftoolkit.odfdom.tmpfile.disable");
 		if ((userPropTempEnable != null)
 				&& (userPropTempEnable.equalsIgnoreCase("true"))) {
 			mUseTempFile = false;
 		} else {
 			mUseTempFile = true;
 		}
+	}
+
+	public static OdfPackage create() throws Exception {
+		OdfPackage odfPackage = new OdfPackage();
+		odfPackage.mManifestEntries = new HashMap<String, OdfFileEntry>();
+		// We just need some dummy XML first
+		odfPackage.insert("<x />".getBytes(), OdfFile.MANIFEST.getPath(),
+				XML_MEDIA_TYPE);
+		return odfPackage;
 	}
 
 	/**
@@ -346,7 +357,8 @@ public class OdfPackage {
 					ByteArrayOutputStream out = new ByteArrayOutputStream();
 					StreamHelper.stream(mZipFile.getInputStream(zipEntry), out);
 					try {
-						mMediaType = new String(out.toByteArray(), 0, out.size(), "UTF-8");
+						mMediaType = new String(out.toByteArray(), 0,
+								out.size(), "UTF-8");
 					} catch (UnsupportedEncodingException ex) {
 						mLog.log(Level.SEVERE, null, ex);
 					}
@@ -623,7 +635,8 @@ public class OdfPackage {
 			return false;
 		}
 		if (key.lastIndexOf(".") > 0) {
-			String endWith = key.substring(key.lastIndexOf(".") + 1, key.length());
+			String endWith = key.substring(key.lastIndexOf(".") + 1,
+					key.length());
 			if (mCompressedFileTypes.contains(endWith.toLowerCase())) {
 				result = false;
 			}
@@ -1005,12 +1018,12 @@ public class OdfPackage {
 		InputStream is = getInputStream(packagePath);
 
 		/*
-		 * 
+		 *
 		 * // We depend on Xerces. So we just go ahead and create a Xerces DBF,
 		 * // without // forcing everything else to do so.
 		 * DocumentBuilderFactory factory = new
 		 * org.apache.xerces.jaxp.DocumentBuilderFactoryImpl();
-		 */		
+		 */
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(true);
 		factory.setValidating(false);
@@ -1093,7 +1106,8 @@ public class OdfPackage {
 			insert(data, packagePath, mediaType);
 			// image should not be stored in memory but on disc
 			if ((!packagePath.endsWith(".xml"))
-					&& (!packagePath.equals(OdfPackage.OdfFile.MEDIA_TYPE.getPath())) && mUseTempFile) {
+					&& (!packagePath.equals(OdfPackage.OdfFile.MEDIA_TYPE
+							.getPath())) && mUseTempFile) {
 				// insertOutputStream to filesystem
 				File tempFile = new File(getTempDir(), packagePath);
 				File parent = tempFile.getParentFile();
@@ -1471,7 +1485,8 @@ public class OdfPackage {
 
 		if (mPackageEntries.contains(packagePath)
 				&& mTempFiles.get(packagePath) != null) {
-			return new BufferedInputStream(new FileInputStream(mTempFiles.get(packagePath)));
+			return new BufferedInputStream(new FileInputStream(
+					mTempFiles.get(packagePath)));
 		}
 
 		// else we always cache here and return a ByteArrayInputStream because
@@ -1712,10 +1727,12 @@ public class OdfPackage {
 			if (localName.equals("file-entry")) {
 				_currentFileEntry = new OdfFileEntry();
 				_currentFileEntry.setPath(atts.getValue("manifest:full-path"));
-				_currentFileEntry.setMediaType(atts.getValue("manifest:media-type"));
+				_currentFileEntry.setMediaType(atts
+						.getValue("manifest:media-type"));
 				if (atts.getValue("manifest:size") != null) {
 					try {
-						_currentFileEntry.setSize(Integer.parseInt(atts.getValue("manifest:size")));
+						_currentFileEntry.setSize(Integer.parseInt(atts
+								.getValue("manifest:size")));
 					} catch (NumberFormatException nfe) {
 						throw new SAXException("not a number: "
 								+ atts.getValue("manifest:size"));
@@ -1724,24 +1741,29 @@ public class OdfPackage {
 			} else if (localName.equals("encryption-data")) {
 				_currentEncryptionData = new EncryptionData();
 				if (_currentFileEntry != null) {
-					_currentEncryptionData.setChecksumType(atts.getValue("manifest:checksum-type"));
-					_currentEncryptionData.setChecksum(atts.getValue("manifest:checksum"));
+					_currentEncryptionData.setChecksumType(atts
+							.getValue("manifest:checksum-type"));
+					_currentEncryptionData.setChecksum(atts
+							.getValue("manifest:checksum"));
 					_currentFileEntry.setEncryptionData(_currentEncryptionData);
 				}
 			} else if (localName.equals("algorithm")) {
 				Algorithm algorithm = new Algorithm();
 				algorithm.setName(atts.getValue("manifest:algorithm-name"));
-				algorithm.setInitializationVector(atts.getValue("manifest:initialization-vector"));
+				algorithm.setInitializationVector(atts
+						.getValue("manifest:initialization-vector"));
 				if (_currentEncryptionData != null) {
 					_currentEncryptionData.setAlgorithm(algorithm);
 				}
 			} else if (localName.equals("key-derivation")) {
 				KeyDerivation keyDerivation = new KeyDerivation();
-				keyDerivation.setName(atts.getValue("manifest:key-derivation-name"));
+				keyDerivation.setName(atts
+						.getValue("manifest:key-derivation-name"));
 				keyDerivation.setSalt(atts.getValue("manifest:salt"));
 				if (atts.getValue("manifest:iteration-count") != null) {
 					try {
-						keyDerivation.setIterationCount(Integer.parseInt(atts.getValue("manifest:iteration-count")));
+						keyDerivation.setIterationCount(Integer.parseInt(atts
+								.getValue("manifest:iteration-count")));
 					} catch (NumberFormatException nfe) {
 						throw new SAXException("not a number: "
 								+ atts.getValue("manifest:iteration-count"));
@@ -1825,7 +1847,8 @@ public class OdfPackage {
 
 			// This deactivates the attempt to loadPackage the Math DTD
 			if (publicId != null
-					&& publicId.startsWith("-//OpenOffice.org//DTD Modified W3C MathML")) {
+					&& publicId
+							.startsWith("-//OpenOffice.org//DTD Modified W3C MathML")) {
 				return new InputSource(new ByteArrayInputStream(
 						"<?xml version='1.0' encoding='UTF-8'?>".getBytes()));
 			}
@@ -1850,7 +1873,8 @@ public class OdfPackage {
 						if (systemId.length() > mBaseURI.length() + 1) {
 							InputStream in = null;
 							try {
-								String path = systemId.substring(mBaseURI.length() + 1);
+								String path = systemId.substring(mBaseURI
+										.length() + 1);
 								in = getInputStream(path);
 								InputSource ins = new InputSource(in);
 								ins.setSystemId(systemId);
@@ -1883,8 +1907,10 @@ public class OdfPackage {
 				} else if (systemId.startsWith("jar:")) {
 					try {
 						URL url = new URL(systemId);
-						JarURLConnection jarConn = (JarURLConnection) url.openConnection();
-						InputSource ins = new InputSource(jarConn.getInputStream());
+						JarURLConnection jarConn = (JarURLConnection) url
+								.openConnection();
+						InputSource ins = new InputSource(
+								jarConn.getInputStream());
 						ins.setSystemId(systemId);
 						return ins;
 					} catch (IOException ex) {

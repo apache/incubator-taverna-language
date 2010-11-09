@@ -11,6 +11,8 @@ import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import uk.org.taverna.scufl2.bundle.impl.odfdom.pkg.OdfPackage;
+
 public class Scufl2Bundle {
 
 	private static final String MIMETYPE = "mimetype";
@@ -70,14 +72,27 @@ public class Scufl2Bundle {
 	public void save(File bundleFile) throws IOException {
 		File tempFile = File.createTempFile(bundleFile.getName(), ".tmp",
 				bundleFile.getParentFile());
-		FileOutputStream fileOut = new FileOutputStream(tempFile);
-		ZipOutputStream zipOut = new ZipOutputStream(new BufferedOutputStream(
-				fileOut));
-		addMimeType(zipOut);
-		addManifest();
-		addFiles();
-		zipOut.flush();
-		zipOut.close();
+
+		try {
+			OdfPackage odf = OdfPackage.create();
+			odf.setMediaType(getMimeType());
+			odf.save(tempFile);
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new IOException("Could not save bundle to " + bundleFile, e);
+		}
+		//
+		// FileOutputStream fileOut = new FileOutputStream(tempFile);
+		// ZipOutputStream zipOut = new ZipOutputStream(new
+		// BufferedOutputStream(
+		// fileOut));
+		// addMimeType(zipOut);
+		// addManifest();
+		// addFiles();
+		// zipOut.flush();
+		// zipOut.close();
+
 		tempFile.renameTo(bundleFile);
 	}
 
