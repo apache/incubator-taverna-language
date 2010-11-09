@@ -88,7 +88,9 @@
 	</dependencyManagement>
 	<modules>
 		<module>scufl2-api</module>
+		<!-- 
 		<module>scufl2-rdf</module>
+		 -->
 		<module>scufl2-t2flow</module>
 		<module>scufl2-usecases</module>
 		<module>scufl2-rdfxml</module>
