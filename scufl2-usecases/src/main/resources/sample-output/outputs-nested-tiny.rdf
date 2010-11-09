@@ -1,103 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rdf:RDF xmlns="http://ns.taverna.org.uk/2010/data/" xmlns:owl="http://www.w3.org/2002/07/owl#"
-	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:run="http://ns.taverna.org.uk/2010/run/">
-
-	<bundle rdf:about="./">
-		<contains rdf:resource="outputs/" />
-		<owl:sameAs
-			rdf:resource="http://ns.taverna.org.uk/2010/data/bundle/1495ca3a-f61a-437b-83ad-c6437c92a3d0/" />
-	</bundle>
-
+<rdf:RDF xmlns="http://ns.taverna.org.uk/2010/data/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:scufl2="http://ns.taverna.org.uk/2010/scufl2#">
 	<workflowOutputs rdf:about="outputs/">
+		<contains>
+			<!-- A single value -->
+			<value rdf:about="outputs/results">
+				<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/data/workflowOutput" />
+				<!-- We know the port name, but not the URI, as we would have to inspect 
+					the .t2flow to find the workflow identifier -->
+				<outputFrom scufl2:name="results" />
+			</value>
+		</contains>
+
 		<contains>
 			<list rdf:about="outputs/fish">
 				<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/data/workflowOutput" />
-				<depth>1</depth>
 				<listContent rdf:parseType="Collection">
-					<missingValue />
-					<missingValue />
-					<value rdf:about="outputs/fish/2.txt">
-						<owl:sameAs
-							rdf:resource="http://ns.taverna.org.uk/2010/data/value/45b29774-8927-4e9e-8961-6137cb95ef69" />
-					</value>
-					<value rdf:about="outputs/fish/3.uri">
-						<uri rdf:resource="http://www.example.org/data4.txt" />
-						<owl:sameAs
-							rdf:resource="http://ns.taverna.org.uk/2010/data/value/59f606c9-713a-40dc-905e-56b6764e1338" />
-					</value>
-					<missingValue />
+					<missing /> <!-- missing item in position 0 -->
+					<missing /> <!-- .. 1 -->
+					<value rdf:about="outputs/fish/2" />
+					<value rdf:about="outputs/fish/3" />
+					<!-- There could be more missing items, but we wouldn't know at this 
+						time -->
 				</listContent>
-				<outputFrom
-					rdf:resource="http://ns.taverna.org.uk/2010/workflowBundle/00626652-55ae-4a9e-80d4-c8e9ac84e2ca/workflow/HelloWorld/out/fish" />
-				<producedBy
-					rdf:resource="http://ns.taverna.org.uk/2010/run/b9455363-5624-4744-901b-3d6c7ec273d7" />
-				<owl:sameAs
-					rdf:resource="http://ns.taverna.org.uk/2010/data/list/45b29774-8927-4e9e-8961-6137cb95ef69" />
+				<outputFrom scufl2:name="fish" />
+
 			</list>
 		</contains>
-		<contains>
-			<value rdf:about="outputs/results">
-				<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/data/workflowOutput" />
-				<outputFrom
-					rdf:resource="http://ns.taverna.org.uk/2010/workflowBundle/00626652-55ae-4a9e-80d4-c8e9ac84e2ca/workflow/HelloWorld/out/results" />
-				<producedBy
-					rdf:resource="http://ns.taverna.org.uk/2010/run/b9455363-5624-4744-901b-3d6c7ec273d7" />
-				<owl:sameAs
-					rdf:resource="http://ns.taverna.org.uk/2010/data/value/3d0a18ad-ad01-4576-ab9c-616ced7d90d2" />
-			</value>
 
-		</contains>
 		<contains>
 			<list rdf:about="outputs/soup/">
 				<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/data/workflowOutput" />
-				<depth>2</depth>
+				<!-- <depth> is not included, as the server can't accurately calculate 
+					this if the workflow port only have errors or empty lists (ie. folders) - 
+					neither currently annotated with the depth. -->
 				<listContent rdf:parseType="Collection">
+					<!-- List of list of values (depth 2) -->
+
 					<list rdf:about="outputs/soup/0/">
-						<depth>1</depth>
 						<listContent rdf:parseType="Collection">
-							<value rdf:about="outputs/soup/0/0.jpg">
-								<owl:sameAs
-									rdf:resource="http://ns.taverna.org.uk/2010/data/value/d433895f-5550-4d9e-9f65-ed30b5272047" />
-							</value>
-
-							<error rdf:about="outputs/soup/0/1.err">
-								<depth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</depth>
-								<owl:sameAs
-									rdf:resource="http://ns.taverna.org.uk/2010/data/value/f719b95f-5eea-4609-9c6d-c71aab75b4da" />
-							</error>
-
+							<value rdf:about="outputs/soup/0/0" />
+							<!-- We didn't include the error message, but as file name ends in 
+								.err we can at least tag the item as an error -->
+							<error rdf:about="outputs/soup/0/1.err" />
 						</listContent>
-
-						<owl:sameAs
-							rdf:resource="http://ns.taverna.org.uk/2010/data/list/d433895f-5550-4d9e-9f65-ed30b5272047" />
 					</list>
 
+					<!-- Lists could be missing as well -->
+					<missing />
 
-					<list rdf:about="outputs/soup/1/">
-						<depth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</depth>
-						<owl:sameAs
-							rdf:resource="http://ns.taverna.org.uk/2010/data/list/d433895f-5550-4d9e-9f65-ed30b5272047" />
+					<list rdf:about="outputs/soup/2/">
+						<!-- empty list -->
+						<listContent rdf:parseType="Collection" />
 					</list>
 
-					<error rdf:about="outputs/soup/2.err">
-						<depth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</depth>
-						<owl:sameAs
-							rdf:resource="http://ns.taverna.org.uk/2010/data/error/b7a07d2f-93f6-4fef-b6d4-4a68f2d6dd0b" />
-					</error>
+					<error rdf:about="outputs/soup/3.err" />
 				</listContent>
-				<outputFrom
-					rdf:resource="http://ns.taverna.org.uk/2010/workflowBundle/00626652-55ae-4a9e-80d4-c8e9ac84e2ca/workflow/HelloWorld/out/soup" />
-				<producedBy
-					rdf:resource="http://ns.taverna.org.uk/2010/run/b9455363-5624-4744-901b-3d6c7ec273d7" />
-				<owl:sameAs
-					rdf:resource="http://ns.taverna.org.uk/2010/data/list/b7e6bae6-7f09-405c-b19a-604ec36d95ca" />
+				<outputFrom scufl2:name="soup" />
 			</list>
 		</contains>
 	</workflowOutputs>
-
-	<run:workflowRun
-		rdf:about="http://ns.taverna.org.uk/2010/run/b9455363-5624-4744-901b-3d6c7ec273d7">
-		<run:runOf
-			rdf:resource="http://ns.taverna.org.uk/2010/workflowBundle/00626652-55ae-4a9e-80d4-c8e9ac84e2ca/" />
-	</run:workflowRun>
 </rdf:RDF>
