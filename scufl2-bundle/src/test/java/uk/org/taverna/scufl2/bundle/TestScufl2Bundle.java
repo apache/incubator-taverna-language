@@ -73,7 +73,6 @@ public class TestScufl2Bundle {
 		tmpFile = File.createTempFile("scufl2-test", ".bundle");
 		assertTrue(tmpFile.delete());
 		tmpFile.deleteOnExit();
-		System.out.println(tmpFile);
 	}
 
 	@Test
@@ -92,6 +91,25 @@ public class TestScufl2Bundle {
 	}
 
 	@Test
+	public void fileEntry() throws Exception {
+		Scufl2Bundle scufl2Bundle = new Scufl2Bundle();
+		scufl2Bundle.setMimeType(Scufl2Bundle.MIME_WORKFLOW_BUNDLE);
+
+		scufl2Bundle.insert("helloworld.txt", "text/plain", "Hello there");
+
+		scufl2Bundle.save(tmpFile);
+		ZipFile zipFile = new ZipFile(tmpFile);
+		ZipEntry manifestEntry = zipFile.getEntry("META-INF/manifest.xml");
+		InputStream manifestStream = zipFile.getInputStream(manifestEntry);
+		assertEquals(
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+						+ "<manifest:manifest xmlns:manifest=\"urn:oasis:names:tc:opendocument:xmlns:manifest:1.0\">\n"
+						+ "    <manifest:fileentry />"
+						+ "</manifest:manifest>",
+				IOUtils.toString(manifestStream));
+	}
+
+	@Test
 	public void manifestMimetype() throws Exception {
 		Scufl2Bundle scufl2Bundle = new Scufl2Bundle();
 		scufl2Bundle.setMimeType(Scufl2Bundle.MIME_WORKFLOW_BUNDLE);
@@ -100,7 +118,12 @@ public class TestScufl2Bundle {
 		ZipFile zipFile = new ZipFile(tmpFile);
 		ZipEntry manifestEntry = zipFile.getEntry("META-INF/manifest.xml");
 		InputStream manifestStream = zipFile.getInputStream(manifestEntry);
-
+		assertEquals(
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+						+ "<manifest:manifest xmlns:manifest=\"urn:oasis:names:tc:opendocument:xmlns:manifest:1.0\">\n"
+						+ "</manifest:manifest>",
+				IOUtils.toString(manifestStream));
 	}
+
 
 }

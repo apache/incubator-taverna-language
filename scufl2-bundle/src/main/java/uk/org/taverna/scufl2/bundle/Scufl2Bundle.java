@@ -22,33 +22,16 @@ public class Scufl2Bundle {
 	public static final String MIME_WORKFLOW_RUN_BUNDLE = "application/vnd.taverna.workflow-run-bundle";
 	public static final String MIME_SERVICE_BUNDLE = "application/vnd.taverna.service-bundle";
 
-	private String mimeType = MIME_SCUFL2_BUNDLE;
-
 	private static Charset ASCII = Charset.forName("ascii");
+	private final OdfPackage odfPackage;
 
 	public Scufl2Bundle() throws Exception {
-
-		// OdfPackage odfPackage = OdfPackage.loadPackage("quick.odt");
-		// System.out.println(odfPackage.getFileEntries());
-		//
-		// for (String odfFileEntry : new ArrayList<String>(
-		// odfPackage.getFileEntries())) {
-		// if (odfFileEntry.equals("/")) {
-		// continue;
-		// }
-		// odfPackage.remove(odfFileEntry);
-		// }
-		//
-		// odfPackage.insert(URI.create("foo.xml"), "workflows/deadbeef.xml",
-		// "application/vnd.taverna.scufl2.workflow+xml");
-		// odfPackage
-		// .setMediaType("application/vnd.taverna.scufl2.research-object");
-		// odfPackage.save("template.scufl2");
-
+		odfPackage = OdfPackage.create();
+		odfPackage.setMediaType(MIME_SCUFL2_BUNDLE);
 	}
 
 	public String getMimeType() {
-		return mimeType;
+		return odfPackage.getMediaType();
 	}
 
 	public void setMimeType(String mimeType) {
@@ -60,13 +43,7 @@ public class Scufl2Bundle {
 			throw new IllegalArgumentException("Media type must be ASCII: "
 					+ mimeType);
 		}
-		try {
-			mimeType.getBytes("ASCII");
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		this.mimeType = mimeType;
+		odfPackage.setMediaType(mimeType);
 	}
 
 	public void save(File bundleFile) throws IOException {
@@ -74,9 +51,8 @@ public class Scufl2Bundle {
 				bundleFile.getParentFile());
 
 		try {
-			OdfPackage odf = OdfPackage.create();
-			odf.setMediaType(getMimeType());
-			odf.save(tempFile);
+			odfPackage.setMediaType(getMimeType());
+			odfPackage.save(tempFile);
 		} catch (IOException e) {
 			throw e;
 		} catch (Exception e) {
@@ -106,6 +82,10 @@ public class Scufl2Bundle {
 		zipOut.putNextEntry(entry);
 		zipOut.write(mimeType);
 
+
+	}
+
+	public void insert(String path, String mimeType, String stringValue) {
 
 	}
 }
