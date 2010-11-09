@@ -383,6 +383,12 @@ rdf:nil a owl:Class .
 
 
 
+:DispatcStackLayer
+	a owl:Class ;
+	rdfs:subClassOf :Configurable .
+
+
+
 # Iteration strategy
 
 :IterationStrategyNode
