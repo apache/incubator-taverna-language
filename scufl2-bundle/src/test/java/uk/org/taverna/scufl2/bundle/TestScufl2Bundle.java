@@ -6,17 +6,21 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 public class TestScufl2Bundle {
 
 
 	private static final int MIME_OFFSET = 30;
+	private File tmpFile;
 
 	@Test(expected = IllegalArgumentException.class)
 	public void mimeTypeInvalidCharset() throws Exception {
@@ -41,8 +45,6 @@ public class TestScufl2Bundle {
 		Scufl2Bundle scufl2Bundle = new Scufl2Bundle();
 		assertEquals(Scufl2Bundle.MIME_SCUFL2_BUNDLE,
 				scufl2Bundle.getMimeType());
-		File tmpFile = File.createTempFile("test", ".bundle");
-		assertTrue(tmpFile.delete());
 		System.out.println(tmpFile);
 		scufl2Bundle.save(tmpFile);
 		assertTrue(tmpFile.exists());
@@ -65,6 +67,13 @@ public class TestScufl2Bundle {
 		byte[] actual = new byte[expected.length];
 		assertEquals(expected.length, in.read(actual));
 		assertArrayEquals(expected, actual);
+	}
+
+	@Before
+	public void createTempFile() throws IOException {
+		tmpFile = File.createTempFile("test", ".bundle");
+		assertTrue(tmpFile.delete());
+		tmpFile.deleteOnExit();
 	}
 
 	@Test

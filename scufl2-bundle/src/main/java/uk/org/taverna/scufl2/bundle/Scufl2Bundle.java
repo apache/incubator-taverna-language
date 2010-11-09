@@ -82,17 +82,6 @@ public class Scufl2Bundle {
 		} catch (Exception e) {
 			throw new IOException("Could not save bundle to " + bundleFile, e);
 		}
-		//
-		// FileOutputStream fileOut = new FileOutputStream(tempFile);
-		// ZipOutputStream zipOut = new ZipOutputStream(new
-		// BufferedOutputStream(
-		// fileOut));
-		// addMimeType(zipOut);
-		// addManifest();
-		// addFiles();
-		// zipOut.flush();
-		// zipOut.close();
-
 		tempFile.renameTo(bundleFile);
 	}
 
