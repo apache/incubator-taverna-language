@@ -20,31 +20,32 @@ public class TestScufl2Bundle {
 
 
 	private static final int MIME_OFFSET = 30;
+	private static final boolean DELETE_FILES = false;
 	private File tmpFile;
 
 	@Test(expected = IllegalArgumentException.class)
 	public void mimeTypeInvalidCharset() throws Exception {
 		Scufl2Bundle scufl2Bundle = new Scufl2Bundle();
-		scufl2Bundle.setMimeType("food/brød");
+		scufl2Bundle.setBundleMimeType("food/brød");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void mimeTypeEmpty() throws Exception {
 		Scufl2Bundle scufl2Bundle = new Scufl2Bundle();
-		scufl2Bundle.setMimeType("");
+		scufl2Bundle.setBundleMimeType("");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void mimeTypeNoSlash() throws Exception {
 		Scufl2Bundle scufl2Bundle = new Scufl2Bundle();
-		scufl2Bundle.setMimeType("applicationtext");
+		scufl2Bundle.setBundleMimeType("applicationtext");
 	}
 
 	@Test
 	public void defaultMimeType() throws Exception {
 		Scufl2Bundle scufl2Bundle = new Scufl2Bundle();
 		assertEquals(Scufl2Bundle.MIME_SCUFL2_BUNDLE,
-				scufl2Bundle.getMimeType());
+				scufl2Bundle.getBundleMimeType());
 		scufl2Bundle.save(tmpFile);
 		assertTrue(tmpFile.exists());
 		ZipFile zipFile = new ZipFile(tmpFile);
@@ -72,15 +73,19 @@ public class TestScufl2Bundle {
 	public void createTempFile() throws IOException {
 		tmpFile = File.createTempFile("scufl2-test", ".bundle");
 		assertTrue(tmpFile.delete());
-		tmpFile.deleteOnExit();
+		if (DELETE_FILES) {
+			tmpFile.deleteOnExit();
+		} else {
+			System.out.println(tmpFile);
+		}
 	}
 
 	@Test
 	public void workflowBundleMimeType() throws Exception {
 		Scufl2Bundle scufl2Bundle = new Scufl2Bundle();
-		scufl2Bundle.setMimeType(Scufl2Bundle.MIME_WORKFLOW_BUNDLE);
+		scufl2Bundle.setBundleMimeType(Scufl2Bundle.MIME_WORKFLOW_BUNDLE);
 		assertEquals(Scufl2Bundle.MIME_WORKFLOW_BUNDLE,
-				scufl2Bundle.getMimeType());
+				scufl2Bundle.getBundleMimeType());
 		scufl2Bundle.save(tmpFile);
 		ZipFile zipFile = new ZipFile(tmpFile);
 		ZipEntry mimeEntry = zipFile.getEntry("mimetype");
@@ -93,9 +98,9 @@ public class TestScufl2Bundle {
 	@Test
 	public void fileEntry() throws Exception {
 		Scufl2Bundle scufl2Bundle = new Scufl2Bundle();
-		scufl2Bundle.setMimeType(Scufl2Bundle.MIME_WORKFLOW_BUNDLE);
+		scufl2Bundle.setBundleMimeType(Scufl2Bundle.MIME_WORKFLOW_BUNDLE);
 
-		scufl2Bundle.insert("helloworld.txt", "text/plain", "Hello there");
+		scufl2Bundle.insert("Hello there", "helloworld.txt", "text/plain");
 
 		scufl2Bundle.save(tmpFile);
 		ZipFile zipFile = new ZipFile(tmpFile);
@@ -104,15 +109,19 @@ public class TestScufl2Bundle {
 		assertEquals(
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 						+ "<manifest:manifest xmlns:manifest=\"urn:oasis:names:tc:opendocument:xmlns:manifest:1.0\">\n"
-						+ "    <manifest:fileentry />"
+						+ " <manifest:file-entry manifest:media-type=\"text/plain\" manifest:full-path=\"helloworld.txt\"/>\n"
 						+ "</manifest:manifest>",
 				IOUtils.toString(manifestStream));
+		InputStream io = zipFile.getInputStream(zipFile
+				.getEntry("helloworld.txt"));
+		assertEquals("Hello there", IOUtils.toString(io));
+
 	}
 
 	@Test
 	public void manifestMimetype() throws Exception {
 		Scufl2Bundle scufl2Bundle = new Scufl2Bundle();
-		scufl2Bundle.setMimeType(Scufl2Bundle.MIME_WORKFLOW_BUNDLE);
+		scufl2Bundle.setBundleMimeType(Scufl2Bundle.MIME_WORKFLOW_BUNDLE);
 
 		scufl2Bundle.save(tmpFile);
 		ZipFile zipFile = new ZipFile(tmpFile);

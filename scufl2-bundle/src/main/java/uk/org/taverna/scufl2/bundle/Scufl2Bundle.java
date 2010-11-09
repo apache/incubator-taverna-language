@@ -1,21 +1,21 @@
 package uk.org.taverna.scufl2.bundle;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.InputStream;
+import java.net.URI;
 import java.nio.charset.Charset;
-import java.nio.charset.CodingErrorAction;
-import java.util.zip.CRC32;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+
+import org.w3c.dom.Document;
 
 import uk.org.taverna.scufl2.bundle.impl.odfdom.pkg.OdfPackage;
 
 public class Scufl2Bundle {
 
-	private static final String MIMETYPE = "mimetype";
+	public static final String MIME_BINARY = "application/octet-stream";
+	public static final String MIME_TEXT_PLAIN = "text/plain";
+	public static final String MIME_TEXT_XML = "text/xml";
+	public static final String MIME_RDF = "application/rdf+xml";
 	public static final String MIME_SCUFL2_BUNDLE = "application/vnd.taverna.bundle";
 	public static final String MIME_WORKFLOW_BUNDLE = "application/vnd.taverna.workflow-bundle";
 	public static final String MIME_DATA_BUNDLE = "application/vnd.taverna.data-bundle";
@@ -30,14 +30,13 @@ public class Scufl2Bundle {
 		odfPackage.setMediaType(MIME_SCUFL2_BUNDLE);
 	}
 
-	public String getMimeType() {
+	public String getBundleMimeType() {
 		return odfPackage.getMediaType();
 	}
 
-	public void setMimeType(String mimeType) {
+	public void setBundleMimeType(String mimeType) {
 		if (mimeType == null || !mimeType.contains("/")) {
-			throw new IllegalArgumentException("Invalid media type "
-					+ mimeType);
+			throw new IllegalArgumentException("Invalid media type " + mimeType);
 		}
 		if (!ASCII.newEncoder().canEncode(mimeType)) {
 			throw new IllegalArgumentException("Media type must be ASCII: "
@@ -51,7 +50,6 @@ public class Scufl2Bundle {
 				bundleFile.getParentFile());
 
 		try {
-			odfPackage.setMediaType(getMimeType());
 			odfPackage.save(tempFile);
 		} catch (IOException e) {
 			throw e;
@@ -61,31 +59,28 @@ public class Scufl2Bundle {
 		tempFile.renameTo(bundleFile);
 	}
 
-	protected void addFiles() {
-		// TODO Auto-generated method stub
-
+	public void insert(String stringValue, String path, String mimeType)
+			throws Exception {
+		odfPackage.insert(stringValue.getBytes("utf-8"), path, mimeType);
 	}
 
-	protected void addManifest() {
-		// TODO Auto-generated method stub
-
+	public void insert(byte[] bytesValue, String path, String mimeType)
+			throws Exception {
+		odfPackage.insert(bytesValue, path, mimeType);
 	}
 
-	protected void addMimeType(ZipOutputStream zipOut) throws IOException {
-		ZipEntry entry = new ZipEntry(MIMETYPE);
-		entry.setMethod(ZipEntry.STORED);
-		byte[] mimeType = getMimeType().getBytes("ASCII");
-		entry.setSize(mimeType.length);
-		CRC32 crc = new CRC32();
-		crc.update(mimeType);
-		entry.setCrc(crc.getValue());
-		zipOut.putNextEntry(entry);
-		zipOut.write(mimeType);
-
-
+	public void insert(Document document, String path, String mimeType)
+			throws Exception {
+		odfPackage.insert(document, path, mimeType);
 	}
 
-	public void insert(String path, String mimeType, String stringValue) {
-
+	public void insert(InputStream inputStream, String path, String mimeType)
+			throws Exception {
+		odfPackage.insert(inputStream, path, mimeType);
 	}
+
+	public void insert(URI uri, String path, String mimeType) throws Exception {
+		odfPackage.insert(uri, path, mimeType);
+	}
+
 }
