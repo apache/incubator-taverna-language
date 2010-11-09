@@ -7,10 +7,16 @@
 		<version>0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>scufl2-t2flow</artifactId>
+	<packaging>bundle</packaging>
 	<name>Taverna Scufl 2 T2Flow serialisation</name>
 	<description>Parser and generator of .t2flow file format</description>
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jaxb2-maven-plugin</artifactId>
@@ -36,12 +42,10 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<type>jar</type>
-			<scope>compile</scope>
-			
-		</dependency>	
+			<groupId>org.apache.log4j</groupId>
+			<artifactId>com.springsource.org.apache.log4j</artifactId>
+			<version>1.2.16</version>
+		</dependency>
 	<!-- Enable for Java 5 
 	    <dependency>
             <groupId>javax.xml.bind</groupId>

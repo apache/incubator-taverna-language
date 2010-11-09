@@ -8,10 +8,16 @@
 		<version>0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>scufl2-api</artifactId>
+	<packaging>bundle</packaging>
 	<name>Taverna Scufl 2 API</name>
 	<description>Taverna workflow language API</description>
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+			</plugin>
 		<!-- 
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
