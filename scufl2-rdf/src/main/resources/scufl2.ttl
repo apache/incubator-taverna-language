@@ -674,7 +674,6 @@ rdf:nil a owl:Class .
     rdfs:label "bound input processor port" ;
     rdfs:range :InputProcessorPort .
 
-
 :boundOutputProcessorPort
     a owl:FunctionalProperty, owl:ObjectProperty ;
     rdfs:domain :OutputPortBinding ;
