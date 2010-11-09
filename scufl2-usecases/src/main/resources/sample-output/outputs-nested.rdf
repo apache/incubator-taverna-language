@@ -1,0 +1,120 @@
+
+<!-- Processed by Id: cwm.py,v 1.197 2007/12/13 15:38:39 syosi Exp -->
+<!-- using base file:///home/stain/stuff/src/workspace/scufl2/scufl2-usecases/src/main/resources/sample-output/outputs.ttl -->
+
+
+<rdf:RDF xmlns="http://ns.taverna.org.uk/2010/data/" xmlns:owl="http://www.w3.org/2002/07/owl#"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:run="http://ns.taverna.org.uk/2010/run/">
+
+	<bundle rdf:about="./">
+		<contains rdf:resource="outputs/" />
+		<owl:sameAs
+			rdf:resource="http://ns.taverna.org.uk/2010/data/bundle/1495ca3a-f61a-437b-83ad-c6437c92a3d0/" />
+	</bundle>
+
+	<workflowOutputs rdf:about="outputs/">
+		<contains rdf:about="outputs/fish/">
+			<list>
+				<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/data/workflowOutput" />
+				<depth>1</depth>
+				<listContent rdf:parseType="Collection">
+					<value rdf:about="outputs/fish/0.txt">
+						<owl:sameAs
+							rdf:resource="http://ns.taverna.org.uk/2010/data/value/45b29774-8927-4e9e-8961-6137cb95ef69" />
+					</value>
+
+					<value rdf:about="outputs/fish/1.uri">
+						<uri rdf:resource="http://www.example.org/data4.txt" />
+						<owl:sameAs
+							rdf:resource="http://ns.taverna.org.uk/2010/data/value/59f606c9-713a-40dc-905e-56b6764e1338" />
+					</value>
+				</listContent>
+				<outputFrom
+					rdf:resource="http://ns.taverna.org.uk/2010/workflowBundle/00626652-55ae-4a9e-80d4-c8e9ac84e2ca/workflow/HelloWorld/out/fish" />
+				<producedBy
+					rdf:resource="http://ns.taverna.org.uk/2010/run/b9455363-5624-4744-901b-3d6c7ec273d7" />
+				<owl:sameAs
+					rdf:resource="http://ns.taverna.org.uk/2010/data/list/45b29774-8927-4e9e-8961-6137cb95ef69" />
+			</list>
+		</contains>
+		<contains rdf:resource="outputs/results" />
+		<contains rdf:resource="outputs/soup/" />
+	</workflowOutputs>
+
+
+	<value rdf:about="outputs/results">
+		<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/data/workflowOutput" />
+		<outputFrom
+			rdf:resource="http://ns.taverna.org.uk/2010/workflowBundle/00626652-55ae-4a9e-80d4-c8e9ac84e2ca/workflow/HelloWorld/out/results" />
+		<producedBy
+			rdf:resource="http://ns.taverna.org.uk/2010/run/b9455363-5624-4744-901b-3d6c7ec273d7" />
+		<owl:sameAs
+			rdf:resource="http://ns.taverna.org.uk/2010/data/value/3d0a18ad-ad01-4576-ab9c-616ced7d90d2" />
+	</value>
+
+	<list rdf:about="outputs/soup/">
+		<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/data/workflowOutput" />
+		<depth>2</depth>
+		<hasListEntry rdf:parseType="Resource">
+			<entry rdf:resource="outputs/soup/0/" />
+			<listPosition rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</listPosition>
+		</hasListEntry>
+		<hasListEntry rdf:parseType="Resource">
+			<entry rdf:resource="outputs/soup/1/" />
+			<listPosition rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</listPosition>
+		</hasListEntry>
+		<hasListEntry rdf:parseType="Resource">
+			<entry rdf:resource="outputs/soup/2.err" />
+			<listPosition rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</listPosition>
+		</hasListEntry>
+		<outputFrom
+			rdf:resource="http://ns.taverna.org.uk/2010/workflowBundle/00626652-55ae-4a9e-80d4-c8e9ac84e2ca/workflow/HelloWorld/out/soup" />
+		<producedBy
+			rdf:resource="http://ns.taverna.org.uk/2010/run/b9455363-5624-4744-901b-3d6c7ec273d7" />
+		<owl:sameAs
+			rdf:resource="http://ns.taverna.org.uk/2010/data/list/b7e6bae6-7f09-405c-b19a-604ec36d95ca" />
+	</list>
+
+	<list rdf:about="outputs/soup/0/">
+		<depth>1</depth>
+		<hasListEntry rdf:parseType="Resource">
+			<entry rdf:resource="outputs/soup/0/0.jpg" />
+			<listPosition rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</listPosition>
+		</hasListEntry>
+		<hasListEntry rdf:parseType="Resource">
+			<entry rdf:resource="outputs/soup/0/1.err" />
+			<listPosition rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</listPosition>
+		</hasListEntry>
+		<owl:sameAs
+			rdf:resource="http://ns.taverna.org.uk/2010/data/list/d433895f-5550-4d9e-9f65-ed30b5272047" />
+	</list>
+
+	<value rdf:about="outputs/soup/0/0.jpg">
+		<owl:sameAs
+			rdf:resource="http://ns.taverna.org.uk/2010/data/value/d433895f-5550-4d9e-9f65-ed30b5272047" />
+	</value>
+
+	<error rdf:about="outputs/soup/0/1.err">
+		<depth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</depth>
+		<owl:sameAs
+			rdf:resource="http://ns.taverna.org.uk/2010/data/value/f719b95f-5eea-4609-9c6d-c71aab75b4da" />
+	</error>
+
+	<list rdf:about="outputs/soup/1/">
+		<depth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</depth>
+		<owl:sameAs
+			rdf:resource="http://ns.taverna.org.uk/2010/data/list/d433895f-5550-4d9e-9f65-ed30b5272047" />
+	</list>
+
+	<error rdf:about="outputs/soup/2.err">
+		<depth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</depth>
+		<owl:sameAs
+			rdf:resource="http://ns.taverna.org.uk/2010/data/error/b7a07d2f-93f6-4fef-b6d4-4a68f2d6dd0b" />
+	</error>
+
+	<run:workflowRun
+		rdf:about="http://ns.taverna.org.uk/2010/run/b9455363-5624-4744-901b-3d6c7ec273d7">
+		<run:runOf
+			rdf:resource="http://ns.taverna.org.uk/2010/workflowBundle/00626652-55ae-4a9e-80d4-c8e9ac84e2ca/" />
+	</run:workflowRun>
+</rdf:RDF>
