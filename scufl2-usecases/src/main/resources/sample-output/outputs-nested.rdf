@@ -13,34 +13,33 @@
 	</bundle>
 
 	<workflowOutputs rdf:about="outputs/">
-		<contains rdf:about="outputs/fish/">
-			<list>
-				<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/data/workflowOutput" />
-				<depth>1</depth>
-				<listContent rdf:parseType="Collection">
-					<value rdf:about="outputs/fish/0.txt">
-						<owl:sameAs
-							rdf:resource="http://ns.taverna.org.uk/2010/data/value/45b29774-8927-4e9e-8961-6137cb95ef69" />
-					</value>
-
-					<value rdf:about="outputs/fish/1.uri">
-						<uri rdf:resource="http://www.example.org/data4.txt" />
-						<owl:sameAs
-							rdf:resource="http://ns.taverna.org.uk/2010/data/value/59f606c9-713a-40dc-905e-56b6764e1338" />
-					</value>
-				</listContent>
-				<outputFrom
-					rdf:resource="http://ns.taverna.org.uk/2010/workflowBundle/00626652-55ae-4a9e-80d4-c8e9ac84e2ca/workflow/HelloWorld/out/fish" />
-				<producedBy
-					rdf:resource="http://ns.taverna.org.uk/2010/run/b9455363-5624-4744-901b-3d6c7ec273d7" />
-				<owl:sameAs
-					rdf:resource="http://ns.taverna.org.uk/2010/data/list/45b29774-8927-4e9e-8961-6137cb95ef69" />
-			</list>
-		</contains>
+		<contains rdf:resource="outputs/fish/" />
 		<contains rdf:resource="outputs/results" />
 		<contains rdf:resource="outputs/soup/" />
 	</workflowOutputs>
 
+	<list rdf:about="outputs/fish/">
+		<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/data/workflowOutput" />
+		<depth>1</depth>
+		<listContent rdf:parseType="Collection">
+			<value rdf:about="outputs/fish/0.txt">
+				<owl:sameAs
+					rdf:resource="http://ns.taverna.org.uk/2010/data/value/45b29774-8927-4e9e-8961-6137cb95ef69" />
+			</value>
+
+			<value rdf:about="outputs/fish/1.uri">
+				<uri rdf:resource="http://www.example.org/data4.txt" />
+				<owl:sameAs
+					rdf:resource="http://ns.taverna.org.uk/2010/data/value/59f606c9-713a-40dc-905e-56b6764e1338" />
+			</value>
+		</listContent>
+		<outputFrom
+			rdf:resource="http://ns.taverna.org.uk/2010/workflowBundle/00626652-55ae-4a9e-80d4-c8e9ac84e2ca/workflow/HelloWorld/out/fish" />
+		<producedBy
+			rdf:resource="http://ns.taverna.org.uk/2010/run/b9455363-5624-4744-901b-3d6c7ec273d7" />
+		<owl:sameAs
+			rdf:resource="http://ns.taverna.org.uk/2010/data/list/45b29774-8927-4e9e-8961-6137cb95ef69" />
+	</list>
 
 	<value rdf:about="outputs/results">
 		<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/data/workflowOutput" />
