@@ -45,7 +45,6 @@ public class TestScufl2Bundle {
 		Scufl2Bundle scufl2Bundle = new Scufl2Bundle();
 		assertEquals(Scufl2Bundle.MIME_SCUFL2_BUNDLE,
 				scufl2Bundle.getMimeType());
-		System.out.println(tmpFile);
 		scufl2Bundle.save(tmpFile);
 		assertTrue(tmpFile.exists());
 		ZipFile zipFile = new ZipFile(tmpFile);
@@ -71,9 +70,10 @@ public class TestScufl2Bundle {
 
 	@Before
 	public void createTempFile() throws IOException {
-		tmpFile = File.createTempFile("test", ".bundle");
+		tmpFile = File.createTempFile("scufl2-test", ".bundle");
 		assertTrue(tmpFile.delete());
 		tmpFile.deleteOnExit();
+		System.out.println(tmpFile);
 	}
 
 	@Test
@@ -82,9 +82,6 @@ public class TestScufl2Bundle {
 		scufl2Bundle.setMimeType(Scufl2Bundle.MIME_WORKFLOW_BUNDLE);
 		assertEquals(Scufl2Bundle.MIME_WORKFLOW_BUNDLE,
 				scufl2Bundle.getMimeType());
-		File tmpFile = File.createTempFile("test", ".bundle");
-		assertTrue(tmpFile.delete());
-		System.out.println(tmpFile);
 		scufl2Bundle.save(tmpFile);
 		ZipFile zipFile = new ZipFile(tmpFile);
 		ZipEntry mimeEntry = zipFile.getEntry("mimetype");
@@ -99,9 +96,6 @@ public class TestScufl2Bundle {
 		Scufl2Bundle scufl2Bundle = new Scufl2Bundle();
 		scufl2Bundle.setMimeType(Scufl2Bundle.MIME_WORKFLOW_BUNDLE);
 
-		File tmpFile = File.createTempFile("test", ".bundle");
-		assertTrue(tmpFile.delete());
-		System.out.println(tmpFile);
 		scufl2Bundle.save(tmpFile);
 		ZipFile zipFile = new ZipFile(tmpFile);
 		ZipEntry manifestEntry = zipFile.getEntry("META-INF/manifest.xml");
