@@ -8,6 +8,7 @@ import uk.org.taverna.scufl2.api.configurations.DataProperty;
 import uk.org.taverna.scufl2.translator.t2flow.ParseException;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.T2Parser;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityPortDefinitionBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.BeanshellConfig;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.DataflowConfig;
@@ -62,10 +63,13 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 		Activity activity = getParserState().getCurrentActivity();
 		activity.getInputPorts().clear();
 		activity.getOutputPorts().clear();
-		Object b = beanshellConfig.getInputs().getNetSfTavernaT2WorkflowmodelProcessorActivityConfigActivityInputPortDefinitionBean().get(0);
-		//System.out.println(b);
-		//Object c = beanshellConfig.getOutputs().getNetSfTavernaT2WorkflowmodelProcessorActivityConfigActivityOutputPortDefinitionBean().get(0);
-		//System.out.println(c);
+		for (ActivityPortDefinitionBean b : beanshellConfig.getInputs().getNetSfTavernaT2WorkflowmodelProcessorActivityConfigActivityInputPortDefinitionBean()) {
+			System.out.println(b.getClass() + " " + b);
+			
+		}
+		for (ActivityPortDefinitionBean b : beanshellConfig.getOutputs().getNetSfTavernaT2WorkflowmodelProcessorActivityConfigActivityOutputPortDefinitionBean()) {
+			System.out.println(b.getClass() + " " + b);
+		}
 		
 		configuration.getProperties().add(property);
 		return configuration;
