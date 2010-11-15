@@ -55,10 +55,8 @@ public class TestActivityParsing {
 			if (a.getType().equals(BeanshellActivityParser.ACTIVITY_URI)) {
 				assertEquals(ACTIVITY_URI.resolve("#ConfigType"), config.getConfigurationType());
 				String script = scufl2Tools.getPropertyData(config.getProperties(), ACTIVITY_URI.resolve("#script"));
-				
 			}
 		}
-		System.out.println(profile.getConfigurations().getNames());
 	}
 
 

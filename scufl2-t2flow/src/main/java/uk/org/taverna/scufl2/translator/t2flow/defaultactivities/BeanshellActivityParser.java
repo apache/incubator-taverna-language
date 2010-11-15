@@ -54,8 +54,8 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 		BeanshellConfig beanshellConfig = unmarshallConfig(t2FlowParser,
 				configBean, "xstream", BeanshellConfig.class);
 		Configuration configuration = new Configuration();
-		String script = beanshellConfig.getScript();
-		configuration = new Configuration();
+		configuration.setConfigurationType(ACTIVITY_URI.resolve("#ConfigType"));
+		String script = beanshellConfig.getScript();		
 		DataProperty property = new DataProperty(
 				ACTIVITY_URI.resolve("#script"), script);
 
