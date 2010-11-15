@@ -96,7 +96,11 @@ public class T2FlowParser {
 		return null;
 	}
 	
-	protected ThreadLocal<ParserState> parserState = new ThreadLocal<ParserState>();
+	protected ThreadLocal<ParserState> parserState = new ThreadLocal<ParserState>() {
+		protected ParserState initialValue() {
+			return new ParserState();
+		};
+	};
 
 	protected Set<T2Parser> additionalParsers = new HashSet<T2Parser>();
 	protected final JAXBContext jaxbContext;
@@ -640,23 +644,25 @@ public class T2FlowParser {
 	public WorkflowBundle parseT2Flow(
 			uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow wf)
 			throws ParseException, JAXBException {
-
-		WorkflowBundle ro = new WorkflowBundle();
-		parserState.get().setCurrentResearchObject(ro);
-		makeDefaultBindings(wf);
-
-		for (Dataflow df : wf.getDataflow()) {
-			Workflow workflow = parseDataflow(df);
-			if (df.getRole().equals(Role.TOP)) {
-				ro.setMainWorkflow(workflow);
+		try { 
+			WorkflowBundle ro = new WorkflowBundle();		
+			parserState.get().setCurrentResearchObject(ro);
+			makeDefaultBindings(wf);
+	
+			for (Dataflow df : wf.getDataflow()) {
+				Workflow workflow = parseDataflow(df);
+				if (df.getRole().equals(Role.TOP)) {
+					ro.setMainWorkflow(workflow);
+				}
+				ro.getWorkflows().add(workflow);
 			}
-			ro.getWorkflows().add(workflow);
+			if (isStrict() && ro.getMainWorkflow() == null) {
+				throw new ParseException("No main workflow");
+			}
+			return ro;
+		} finally {
+			parserState.remove();
 		}
-		if (isStrict() && ro.getMainWorkflow() == null) {
-			throw new ParseException("No main workflow");
-		}
-		parserState.get().setCurrentResearchObject(null);
-		return ro;
 	}
 
 	public void setStrict(boolean strict) {
