@@ -32,6 +32,7 @@ Named {
 	private NamedSet<Profile> profiles = new NamedSet<Profile>();
 	private NamedSet<Workflow> workflows = new NamedSet<Workflow>();
 	private Workflow mainWorkflow;
+	private Profile mainProfile;
 
 	public Workflow getMainWorkflow() {
 		if (mainWorkflow == null) {
@@ -92,6 +93,15 @@ Named {
 		}
 		builder.append("]");
 		return builder.toString();
+	}
+
+	public Profile getMainProfile() {
+		return mainProfile;
+	}
+
+	public void setMainProfile(Profile mainProfile) {
+		getProfiles().add(mainProfile);
+		this.mainProfile = mainProfile;
 	}
 
 }

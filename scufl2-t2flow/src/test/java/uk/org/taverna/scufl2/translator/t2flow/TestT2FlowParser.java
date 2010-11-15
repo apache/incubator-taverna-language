@@ -8,6 +8,7 @@ import java.net.URL;
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 
 public class TestT2FlowParser {
@@ -21,7 +22,9 @@ public class TestT2FlowParser {
 		T2FlowParser parser = new T2FlowParser();
 		parser.setStrict(false);
 		WorkflowBundle researchObj = parser.parseT2Flow(wfResource.openStream());
-		//System.out.println(researchObj);
+		Profile profile = researchObj.getMainProfile();
+		assertEquals(1, researchObj.getProfiles().size());
+		assertEquals(profile, researchObj.getProfiles().getByName("taverna-2.1.0"));
 	}
 	
 }
