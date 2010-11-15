@@ -63,7 +63,7 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 		activity.getInputPorts().clear();
 		activity.getOutputPorts().clear();
 		Object b = beanshellConfig.getInputs().getNetSfTavernaT2WorkflowmodelProcessorActivityConfigActivityInputPortDefinitionBean().get(0);
-		System.out.println(b);
+		//System.out.println(b);
 		//Object c = beanshellConfig.getOutputs().getNetSfTavernaT2WorkflowmodelProcessorActivityConfigActivityOutputPortDefinitionBean().get(0);
 		//System.out.println(c);
 		

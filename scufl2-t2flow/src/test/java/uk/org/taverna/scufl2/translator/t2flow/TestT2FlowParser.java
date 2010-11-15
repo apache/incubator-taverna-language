@@ -21,7 +21,7 @@ public class TestT2FlowParser {
 		T2FlowParser parser = new T2FlowParser();
 		parser.setStrict(false);
 		WorkflowBundle researchObj = parser.parseT2Flow(wfResource.openStream());
-		System.out.println(researchObj);
+		//System.out.println(researchObj);
 	}
 	
 }
