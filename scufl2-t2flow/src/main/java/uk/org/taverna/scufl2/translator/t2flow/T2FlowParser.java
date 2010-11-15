@@ -95,15 +95,10 @@ public class T2FlowParser {
 		}
 		return null;
 	}
+	
+	protected ThreadLocal<ParserState> parserState = new ThreadLocal<ParserState>();
 
 	protected Set<T2Parser> additionalParsers = new HashSet<T2Parser>();
-	protected ThreadLocal<uk.org.taverna.scufl2.api.activity.Activity> currentActivity = new ThreadLocal<uk.org.taverna.scufl2.api.activity.Activity>();
-	protected ThreadLocal<Profile> currentProfile = new ThreadLocal<Profile>();
-	protected ThreadLocal<Processor> currentProcessor = new ThreadLocal<Processor>();
-	protected ThreadLocal<ProcessorBinding> currentProcessorBinding = new ThreadLocal<ProcessorBinding>();
-	protected ThreadLocal<WorkflowBundle> currentResearchObject = new ThreadLocal<WorkflowBundle>();
-	protected ThreadLocal<T2Parser> currentT2Parser = new ThreadLocal<T2Parser>();
-	protected ThreadLocal<Workflow> currentWorkflow = new ThreadLocal<Workflow>();
 	protected final JAXBContext jaxbContext;
 	private boolean strict = false;
 	private boolean validating = false;
@@ -252,9 +247,9 @@ public class T2FlowParser {
 
 	protected void makeDefaultBindings(
 			uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow wf) {
-		Profile profile = new Profile(wf.getProducedBy());
-		currentResearchObject.get().getProfiles().add(profile);
-		currentProfile.set(profile);
+		Profile profile = new Profile(wf.getProducedBy());		
+		parserState.get().getCurrentResearchObject().getProfiles().add(profile);
+		parserState.get().setCurrentProfile(profile);
 	}
 
 	private URI makeRavenURI(Raven raven, String className) {
@@ -276,7 +271,8 @@ public class T2FlowParser {
 				return classURI;
 			}
 		}
-		currentT2Parser.set(t2Parser);
+		t2Parser.setParserState(parserState.get());
+		parserState.get().setCurrentT2Parser(t2Parser);
 		return t2Parser.mapT2flowActivityToURI(classURI);
 	}
 
@@ -294,12 +290,12 @@ public class T2FlowParser {
 			int activityPosition)
 			throws ParseException, JAXBException {
 		ProcessorBinding processorBinding = new ProcessorBinding();
-		processorBinding.setBoundProcessor(currentProcessor.get());
-		currentProcessorBinding.set(processorBinding);
+		processorBinding.setBoundProcessor(parserState.get().getCurrentProcessor());
+		parserState.get().setCurrentProcessorBinding(processorBinding);
 		uk.org.taverna.scufl2.api.activity.Activity newActivity = parseActivity(origActivity);
-		currentActivity.set(newActivity);
-		currentProfile.get().getProcessorBindings().add(processorBinding);
-		currentProfile.get().getActivities().add(newActivity);
+		parserState.get().setCurrentActivity(newActivity);
+		parserState.get().getCurrentProfile().getProcessorBindings().add(processorBinding);
+		parserState.get().getCurrentProfile().getActivities().add(newActivity);
 		processorBinding.setBoundActivity(newActivity);
 		processorBinding.setActivityPosition(activityPosition);
 
@@ -316,23 +312,24 @@ public class T2FlowParser {
 					e);
 		}
 
-		currentActivity.remove();
-		currentProcessorBinding.remove();
+		parserState.get().setCurrentActivity(null);
+		parserState.get().setCurrentProcessorBinding(null);
 	}
 
 	protected void parseActivityConfiguration(ConfigBean configBean)
 			throws JAXBException, ParseException {
 
 		Configuration configuration = null;
-		if (currentT2Parser.get() == null) {
+		if (parserState.get().getCurrentT2Parser() == null) {
 			String message = "No config parser for activity "
-					+ currentActivity.get();
+					+ parserState.get().getCurrentActivity();
 			if (isStrict()) {
 				throw new ParseException(message);
 			}
 		}
+		
 		try {
-			configuration = currentT2Parser.get().parseActivityConfiguration(
+			configuration = parserState.get().getCurrentT2Parser().parseActivityConfiguration(
 					this, configBean);
 		} catch (ParseException e) {
 			if (isStrict()) {
@@ -342,8 +339,8 @@ public class T2FlowParser {
 		if (configuration == null) {
 			if (isStrict()) {
 				throw new ParseException("No configuration returned from "
-						+ currentT2Parser.get() + " for activity "
-						+ currentActivity.get());
+						+ parserState.get().getCurrentT2Parser() + " for activity "
+						+ parserState.get().getCurrentActivity());
 			}
 			// We'll have to fake it
 			configuration = new Configuration();
@@ -357,8 +354,8 @@ public class T2FlowParser {
 			configuration.getProperties().add(property);
 		}
 
-		configuration.setConfigures(currentActivity.get());
-		currentProfile.get().getConfigurations().add(configuration);
+		configuration.setConfigures(parserState.get().getCurrentActivity());
+		parserState.get().getCurrentProfile().getConfigurations().add(configuration);
 	}
 
 	public Unmarshaller getUnmarshaller() {
@@ -398,13 +395,13 @@ public class T2FlowParser {
 			String toActivityOutput = mapping.getTo();
 			ProcessorInputPortBinding processorInputPortBinding = new ProcessorInputPortBinding();
 
-			InputProcessorPort inputProcessorPort = findNamed(currentProcessor
-					.get().getInputPorts(), fromProcessorOutput);
+			InputProcessorPort inputProcessorPort = findNamed(parserState.get().getCurrentProcessor()
+					.getInputPorts(), fromProcessorOutput);
 			if (inputProcessorPort == null) {
 				String message = "Invalid input port binding, "
 						+ "unknown processor port: " + fromProcessorOutput
 						+ "->" + toActivityOutput + " in "
-						+ currentProcessor.get();
+						+ parserState.get().getCurrentProcessor();
 				if (isStrict()) {
 					throw new ParseException(message);
 				} else {
@@ -415,12 +412,12 @@ public class T2FlowParser {
 
 			InputActivityPort inputActivityPort = new InputActivityPort();
 			inputActivityPort.setName(toActivityOutput);
-			inputActivityPort.setParent(currentActivity.get());
-			currentActivity.get().getInputPorts().add(inputActivityPort);
+			inputActivityPort.setParent(parserState.get().getCurrentActivity());
+			parserState.get().getCurrentActivity().getInputPorts().add(inputActivityPort);
 
 			processorInputPortBinding.setBoundActivityPort(inputActivityPort);
 			processorInputPortBinding.setBoundProcessorPort(inputProcessorPort);
-			currentProcessorBinding.get().getInputPortBindings().add(
+			parserState.get().getCurrentProcessorBinding().getInputPortBindings().add(
 					processorInputPortBinding);
 		}
 
@@ -433,12 +430,12 @@ public class T2FlowParser {
 			ProcessorOutputPortBinding processorOutputPortBinding = new ProcessorOutputPortBinding();
 
 			OutputProcessorPort outputProcessorPort = findNamed(
-					currentProcessor.get().getOutputPorts(), toProcessorOutput);
+					parserState.get().getCurrentProcessor().getOutputPorts(), toProcessorOutput);
 			if (outputProcessorPort == null) {
 				String message = "Invalid output port binding, "
 						+ "unknown processor port: " + fromActivityOutput
 						+ "->" + toProcessorOutput + " in "
-						+ currentProcessor.get();
+						+ parserState.get().getCurrentProcessor();
 				if (isStrict()) {
 					throw new ParseException(message);
 				} else {
@@ -449,13 +446,13 @@ public class T2FlowParser {
 
 			OutputActivityPort outputActivityPort = new OutputActivityPort();
 			outputActivityPort.setName(fromActivityOutput);
-			outputActivityPort.setParent(currentActivity.get());
-			currentActivity.get().getOutputPorts().add(outputActivityPort);
+			outputActivityPort.setParent(parserState.get().getCurrentActivity());
+			parserState.get().getCurrentActivity().getOutputPorts().add(outputActivityPort);
 
 			processorOutputPortBinding.setBoundActivityPort(outputActivityPort);
 			processorOutputPortBinding
 					.setBoundProcessorPort(outputProcessorPort);
-			currentProcessorBinding.get().getOutputPortBindings().add(
+			parserState.get().getCurrentProcessorBinding().getOutputPortBindings().add(
 					processorOutputPortBinding);
 		}
 
@@ -464,7 +461,7 @@ public class T2FlowParser {
 	protected Workflow parseDataflow(Dataflow df) throws ParseException,
 			JAXBException {
 		Workflow wf = new Workflow();
-		currentWorkflow.set(wf);
+		parserState.get().setCurrentWorkflow(wf);
 		wf.setName(df.getId());
 		// wf.setId(df.getId());
 		wf.setInputPorts(parseInputPorts(df.getInputPorts()));
@@ -472,7 +469,7 @@ public class T2FlowParser {
 		wf.setProcessors(parseProcessors(df.getProcessors()));
 		wf.setDatalinks(parseDatalinks(df.getDatalinks()));
 		// TODO: Start conditions, annotations
-		currentWorkflow.remove();
+		parserState.get().setCurrentWorkflow(null);
 		return wf;
 	}
 
@@ -483,12 +480,12 @@ public class T2FlowParser {
 		for (uk.org.taverna.scufl2.xml.t2flow.jaxb.DataLink origLink : origLinks
 				.getDatalink()) {
 			try {
-				SenderPort senderPort = findSenderPort(currentWorkflow.get(),
+				SenderPort senderPort = findSenderPort(parserState.get().getCurrentWorkflow(),
 						origLink.getSource());
-				ReceiverPort receiverPort = findReceiverPort(currentWorkflow
-						.get(), origLink.getSink());
+				ReceiverPort receiverPort = findReceiverPort(parserState.get().getCurrentWorkflow()
+						, origLink.getSink());
 				
-				DataLink newLink = new DataLink(currentWorkflow.get(),
+				DataLink newLink = new DataLink(parserState.get().getCurrentWorkflow(),
 						senderPort, receiverPort);
 				
 				AtomicInteger mergeCount = mergeCounts.get(receiverPort);
@@ -530,8 +527,8 @@ public class T2FlowParser {
 			AnnotatedGranularDepthPorts originalPorts) throws ParseException {
 		Set<InputWorkflowPort> createdPorts = new HashSet<InputWorkflowPort>();
 		for (AnnotatedGranularDepthPort originalPort : originalPorts.getPort()) {
-			InputWorkflowPort newPort = new InputWorkflowPort(currentWorkflow
-					.get(), originalPort.getName());
+			InputWorkflowPort newPort = new InputWorkflowPort(parserState.get().getCurrentWorkflow(), 
+					originalPort.getName());
 			newPort.setDepth(originalPort.getDepth().intValue());
 			if (!originalPort.getGranularDepth()
 					.equals(originalPort.getDepth())) {
@@ -561,8 +558,8 @@ public class T2FlowParser {
 			AnnotatedPorts originalPorts) {
 		Set<OutputWorkflowPort> createdPorts = new HashSet<OutputWorkflowPort>();
 		for (Port originalPort : originalPorts.getPort()) {
-			OutputWorkflowPort newPort = new OutputWorkflowPort(currentWorkflow
-					.get(), originalPort.getName());
+			OutputWorkflowPort newPort = new OutputWorkflowPort(parserState.get().getCurrentWorkflow(),
+					originalPort.getName());
 			createdPorts.add(newPort);
 		}
 		return createdPorts;
@@ -602,9 +599,9 @@ public class T2FlowParser {
 		HashSet<Processor> newProcessors = new HashSet<Processor>();
 		for (uk.org.taverna.scufl2.xml.t2flow.jaxb.Processor origProc : originalProcessors
 				.getProcessor()) {
-			Processor newProc = new Processor(currentWorkflow.get(), origProc
+			Processor newProc = new Processor(parserState.get().getCurrentWorkflow(), origProc
 					.getName());
-			currentProcessor.set(newProc);
+			parserState.get().setCurrentProcessor(newProc);
 			newProc.setInputPorts(parseProcessorInputPorts(newProc, origProc
 					.getInputPorts()));
 			newProc.setOutputPorts(parseProcessorOutputPorts(newProc, origProc
@@ -620,7 +617,7 @@ public class T2FlowParser {
 				parseActivityBinding(origActivity, i++);
 			}
 		}
-		currentProcessor.remove();
+		parserState.get().setCurrentProcessor(null);
 		return newProcessors;
 	}
 
@@ -645,7 +642,7 @@ public class T2FlowParser {
 			throws ParseException, JAXBException {
 
 		WorkflowBundle ro = new WorkflowBundle();
-		currentResearchObject.set(ro);
+		parserState.get().setCurrentResearchObject(ro);
 		makeDefaultBindings(wf);
 
 		for (Dataflow df : wf.getDataflow()) {
@@ -658,7 +655,7 @@ public class T2FlowParser {
 		if (isStrict() && ro.getMainWorkflow() == null) {
 			throw new ParseException("No main workflow");
 		}
-		currentResearchObject.remove();
+		parserState.get().setCurrentResearchObject(null);
 		return ro;
 	}
 

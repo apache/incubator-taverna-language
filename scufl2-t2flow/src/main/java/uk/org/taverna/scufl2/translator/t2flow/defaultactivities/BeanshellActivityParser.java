@@ -2,6 +2,7 @@ package uk.org.taverna.scufl2.translator.t2flow.defaultactivities;
 
 import java.net.URI;
 
+import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.configurations.DataProperty;
 import uk.org.taverna.scufl2.translator.t2flow.ParseException;
@@ -58,7 +59,14 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 				ACTIVITY_URI.resolve("#script"), script);
 
 		// TODO: Dependencies, activities, etc
-
+		Activity activity = getParserState().getCurrentActivity();
+		activity.getInputPorts().clear();
+		activity.getOutputPorts().clear();
+		Object b = beanshellConfig.getInputs().getNetSfTavernaT2WorkflowmodelProcessorActivityConfigActivityInputPortDefinitionBean().get(0);
+		System.out.println(b);
+		Object c = beanshellConfig.getOutputs().getNetSfTavernaT2WorkflowmodelProcessorActivityConfigActivityOutputPortDefinitionBean().get(0);
+		System.out.println(c);
+		
 		configuration.getProperties().add(property);
 		return configuration;
 	}

@@ -14,4 +14,6 @@ public interface T2Parser {
 	Configuration parseActivityConfiguration(T2FlowParser t2FlowParser,
 			ConfigBean configBean) throws ParseException;
 
+	public void setParserState(ParserState parserState);
+
 }
