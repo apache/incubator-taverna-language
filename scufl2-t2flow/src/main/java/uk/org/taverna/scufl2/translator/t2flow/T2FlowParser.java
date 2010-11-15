@@ -28,7 +28,6 @@ import javax.xml.validation.SchemaFactory;
 
 import org.xml.sax.SAXException;
 
-import uk.org.taverna.scufl2.api.activity.ActivityType;
 import uk.org.taverna.scufl2.api.common.Named;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.configurations.DataProperty;
@@ -286,7 +285,7 @@ public class T2FlowParser {
 		String activityClass = origActivity.getClazz();
 		URI activityId = mapActivityFromRaven(raven, activityClass);
 		uk.org.taverna.scufl2.api.activity.Activity newActivity = new uk.org.taverna.scufl2.api.activity.Activity();
-		newActivity.setType(new ActivityType(activityId.toASCIIString()));
+		newActivity.setType(activityId);
 		return newActivity;
 	}
 

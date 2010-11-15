@@ -1,5 +1,6 @@
 package uk.org.taverna.scufl2.api.activity;
 
+import java.net.URI;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -26,7 +27,7 @@ public class Activity extends AbstractNamed implements Configurable {
 	private NamedSet<InputActivityPort> inputPorts = new NamedSet<InputActivityPort>();
 	private NamedSet<OutputActivityPort> outputPorts = new NamedSet<OutputActivityPort>();
 
-	private ActivityType type;
+	private URI type;
 
 	public Activity() {
 		super();
@@ -47,13 +48,7 @@ public class Activity extends AbstractNamed implements Configurable {
 		return outputPorts;
 	}
 
-	/**
-	 * getType returns the type of the Activity.
-	 * 
-	 * @return
-	 */
-	@XmlElement(required=true,nillable=false)
-	public ActivityType getType() {
+	public URI getType() {
 		return type;
 	}
 
@@ -68,16 +63,13 @@ public class Activity extends AbstractNamed implements Configurable {
 		this.outputPorts.addAll(outputPorts);
 	}
 
-	/**
-	 * @param type
-	 */
-	public void setType(ActivityType type) {
+	public void setType(URI type) {
 		this.type = type;
 	}
 
 	@Override
 	public String toString() {
-		return "Activity " + getType().getName() + " \"" + getName() + '"';
+		return "Activity " + getType() + " \"" + getName() + '"';
 	}
 
 }
