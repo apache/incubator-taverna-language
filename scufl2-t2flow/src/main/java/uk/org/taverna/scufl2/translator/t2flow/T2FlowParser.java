@@ -248,10 +248,10 @@ public class T2FlowParser {
 		return strict;
 	}
 
-	protected void makeDefaultBindings(
+	protected void makeProfile(
 			uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow wf) {
-		Profile profile = new Profile(wf.getProducedBy());		
-		parserState.get().getCurrentResearchObject().getProfiles().add(profile);
+		Profile profile = new Profile(wf.getProducedBy());
+		parserState.get().getCurrentResearchObject().setMainProfile(profile);
 		parserState.get().setCurrentProfile(profile);
 	}
 
@@ -646,7 +646,7 @@ public class T2FlowParser {
 		try { 
 			WorkflowBundle ro = new WorkflowBundle();		
 			parserState.get().setCurrentResearchObject(ro);
-			makeDefaultBindings(wf);
+			makeProfile(wf);
 	
 			for (Dataflow df : wf.getDataflow()) {
 				Workflow workflow = parseDataflow(df);

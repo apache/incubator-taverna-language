@@ -21,6 +21,7 @@
 			</Workflow>
 		</workflow>
 		-->
+		<mainProfile rdf:resource="profile/tavernaWorkbench/" />
 		<profile>
 			<Profile rdf:about="profile/tavernaWorkbench/">
 				<rdfs:seeAlso rdf:resource="profile/tavernaWorkbench.rdf" />
