@@ -83,10 +83,20 @@ public class TestActivityParsing {
 		InputActivityPort s2 = concatAct.getInputPorts().getByName("string2");
 		assertEquals(0, s2.getDepth().intValue());		
 		
+		Configuration s1Config = scufl2Tools.configurationFor(s1, profile);
+		String dataType = scufl2Tools.getPropertyData(s1Config.getProperties(), ACTIVITY_URI.resolve("#dataType"));
+		assertEquals("java.lang.String", dataType);
+		// TODO: Is java class here OK? It's a beanshell script after all..
+		
 		Set<String> expectedOutputs = new HashSet<String>(Arrays.asList("output"));		
 		assertEquals(expectedOutputs, concatAct.getOutputPorts().getNames());
 		OutputActivityPort out = concatAct.getOutputPorts().getByName("output");
 		assertEquals(0, out.getDepth().intValue());
+
+		Configuration outConfig = scufl2Tools.configurationFor(out, profile);
+		// FIXME: mimetype should be an annotation?
+		String mimeType = scufl2Tools.getPropertyData(outConfig.getProperties(), ACTIVITY_URI.resolve("#mimeType"));
+		assertEquals("text/plain", mimeType);
 		
 		
 		Processor echoList = researchObj.getMainWorkflow().getProcessors()

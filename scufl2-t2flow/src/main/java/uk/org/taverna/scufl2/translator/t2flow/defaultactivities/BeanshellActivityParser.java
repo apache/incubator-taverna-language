@@ -1,10 +1,12 @@
 package uk.org.taverna.scufl2.translator.t2flow.defaultactivities;
 
 import java.net.URI;
+import java.util.List;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.configurations.DataProperty;
+import uk.org.taverna.scufl2.api.configurations.Property;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.translator.t2flow.ParseException;
@@ -12,6 +14,7 @@ import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.T2Parser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityInputPorts;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityPortDefinitionBean;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityPortDefinitionBean.MimeTypes;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.BeanshellConfig;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.DataflowConfig;
@@ -75,6 +78,22 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 			if (b.getDepth() != null) {
 				a.setDepth(b.getDepth().intValue());
 			}
+				
+			Configuration portConfig = new Configuration();
+			portConfig.setConfigurationType(ACTIVITY_URI.resolve("#PortConfigType"));
+			portConfig.setConfigures(a);
+			List<Property> portProps = portConfig.getProperties();
+			
+			if (b.getTranslatedElementType() != null) {
+				// As "translated element type" is confusing, we'll instead use "dataType"
+				portProps.add(new DataProperty(ACTIVITY_URI.resolve("#dataType"), b.getTranslatedElementType()));
+			}
+			// T2-1681: Ignoring isAllowsLiteralValues and handledReferenceScheme  
+			
+			if (! portProps.isEmpty()) {
+				// Add the port configuration
+				getParserState().getCurrentProfile().getConfigurations().add(portConfig);
+			}				
 			a.setParent(activity);
 			// TODO: Mime types, etc
 		}
@@ -89,6 +108,36 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 			if (b.getGranularDepth() != null) {
 				a.setGranularDepth(b.getGranularDepth().intValue());
 			}
+			
+			Configuration portConfig = new Configuration();
+			portConfig.setConfigurationType(ACTIVITY_URI.resolve("#PortConfigType"));
+			portConfig.setConfigures(a);
+			List<Property> portProps = portConfig.getProperties();
+
+			MimeTypes mimeTypes = b.getMimeTypes();
+			if (mimeTypes != null) {
+				// FIXME: Do as annotation as this is not configuration
+				URI mimeType = ACTIVITY_URI.resolve("#mimeType");
+				if (mimeTypes.getElement() != null) {
+					String s = mimeTypes.getElement();
+					if (s.contains("'")) {
+						s = s.split("'")[1];
+					}					
+					portProps.add(new DataProperty(mimeType, s));
+				}
+				if (mimeTypes.getString() != null) {
+					for (String s : mimeTypes.getString()) {
+						if (s.contains("'")) {
+							s = s.split("'")[1];
+						}
+						portProps.add(new DataProperty(mimeType, s));
+					}
+				}					
+			}
+			if (! portProps.isEmpty()) {
+				// Add the port configuration
+				getParserState().getCurrentProfile().getConfigurations().add(portConfig);
+			}				
 			a.setParent(activity);		
 		}
 
