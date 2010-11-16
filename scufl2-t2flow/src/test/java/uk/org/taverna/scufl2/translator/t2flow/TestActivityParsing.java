@@ -18,6 +18,7 @@ import org.junit.Test;
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
+import uk.org.taverna.scufl2.api.configurations.ObjectProperty;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
@@ -84,8 +85,9 @@ public class TestActivityParsing {
 		assertEquals(0, s2.getDepth().intValue());		
 		
 		Configuration s1Config = scufl2Tools.configurationFor(s1, profile);
-		String dataType = scufl2Tools.getPropertyData(s1Config.getProperties(), ACTIVITY_URI.resolve("#dataType"));
-		assertEquals("java.lang.String", dataType);
+		ObjectProperty dataType = scufl2Tools.getPropertyObject(s1Config.getProperties(), ACTIVITY_URI.resolve("#dataType"));		
+		assertEquals("java", dataType.getObjectUri().getScheme());
+		assertEquals("java.lang.String", dataType.getObjectUri().getSchemeSpecificPart());
 		// TODO: Is java class here OK? It's a beanshell script after all..
 		
 		Set<String> expectedOutputs = new HashSet<String>(Arrays.asList("output"));		
@@ -95,8 +97,9 @@ public class TestActivityParsing {
 
 		Configuration outConfig = scufl2Tools.configurationFor(out, profile);
 		// FIXME: mimetype should be an annotation?
-		String mimeType = scufl2Tools.getPropertyData(outConfig.getProperties(), ACTIVITY_URI.resolve("#mimeType"));
-		assertEquals("text/plain", mimeType);
+		// FIXME: This should not be in the Beanshell namespace
+		ObjectProperty mimeType = scufl2Tools.getPropertyObject(outConfig.getProperties(), ACTIVITY_URI.resolve("#expectedMimeType"));
+		assertEquals(URI.create("http://purl.org/NET/mediatypes/text/plain"), mimeType.getObjectUri());
 		
 		
 		Processor echoList = researchObj.getMainWorkflow().getProcessors()

@@ -6,6 +6,7 @@ import java.util.List;
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.configurations.DataProperty;
+import uk.org.taverna.scufl2.api.configurations.ObjectProperty;
 import uk.org.taverna.scufl2.api.configurations.Property;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.OutputActivityPort;
@@ -34,6 +35,8 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 	public static URI ACTIVITY_URI = URI
 			.create("http://ns.taverna.org.uk/2010/activity/beanshell");
 
+	public static URI MEDIATYPES_URI = URI.create("http://purl.org/NET/mediatypes/");
+	
 	@Override
 	public boolean canHandlePlugin(URI activityURI) {
 		String activityUriStr = activityURI.toASCIIString();
@@ -86,7 +89,12 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 			
 			if (b.getTranslatedElementType() != null) {
 				// As "translated element type" is confusing, we'll instead use "dataType"
-				portProps.add(new DataProperty(ACTIVITY_URI.resolve("#dataType"), b.getTranslatedElementType()));
+				ObjectProperty p = new ObjectProperty(ACTIVITY_URI.resolve("#dataType"), 
+						URI.create("java:" + b.getTranslatedElementType()));
+				
+				// TODO: Include mapping to XSD types like xsd:string
+					
+				portProps.add(p);
 			}
 			// T2-1681: Ignoring isAllowsLiteralValues and handledReferenceScheme  
 			
@@ -117,20 +125,20 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 			MimeTypes mimeTypes = b.getMimeTypes();
 			if (mimeTypes != null) {
 				// FIXME: Do as annotation as this is not configuration
-				URI mimeType = ACTIVITY_URI.resolve("#mimeType");
+				URI mimeType = ACTIVITY_URI.resolve("#expectedMimeType");
 				if (mimeTypes.getElement() != null) {
 					String s = mimeTypes.getElement();
 					if (s.contains("'")) {
 						s = s.split("'")[1];
 					}					
-					portProps.add(new DataProperty(mimeType, s));
+					portProps.add(new ObjectProperty(mimeType, MEDIATYPES_URI.resolve(s)));
 				}
 				if (mimeTypes.getString() != null) {
 					for (String s : mimeTypes.getString()) {
 						if (s.contains("'")) {
 							s = s.split("'")[1];
 						}
-						portProps.add(new DataProperty(mimeType, s));
+						portProps.add(new ObjectProperty(mimeType, MEDIATYPES_URI.resolve(s)));
 					}
 				}					
 			}
