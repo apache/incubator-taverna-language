@@ -2,6 +2,7 @@ package uk.org.taverna.scufl2.usecases;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -102,9 +103,9 @@ public class ProcessorNames {
 						Activity boundActivity = pb.getBoundActivity();
 						if (!boundActivity
 								.getType()
-								.getName()
-								.equals(
-										"http://ns.taverna.org.uk/2010/activity/nested-workflow")) {
+								
+								.equals(URI.create(
+										"http://ns.taverna.org.uk/2010/activity/nested-workflow"))) {
 							continue;
 						}
 						// ConfigurableProperty prop = boundActivity

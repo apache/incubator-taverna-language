@@ -7,11 +7,22 @@ import javax.xml.bind.Unmarshaller;
 import org.w3c.dom.Element;
 
 import uk.org.taverna.scufl2.translator.t2flow.ParseException;
+import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.T2Parser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 
 public abstract class AbstractActivityParser implements T2Parser {
+
+	private ParserState parserState;
+
+	public ParserState getParserState() {
+		return parserState;
+	}
+
+	public void setParserState(ParserState parserState) {
+		this.parserState = parserState;
+	}
 
 	public <ConfigType> ConfigType unmarshallConfig(T2FlowParser t2FlowParser,
 			ConfigBean configBean, String encoding, Class<ConfigType> configType)
@@ -33,4 +44,5 @@ public abstract class AbstractActivityParser implements T2Parser {
 
 		return configElemElem.getValue();
 	}
+
 }
