@@ -4,7 +4,7 @@
 	<workflowOutputs rdf:about="outputs/">
 		<contains>
 			<!-- A single value -->
-			<value rdf:about="outputs/results">
+			<value rdf:about="outputs/results" xlink:href="outputs/results">
 				<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/data/workflowOutput" />
 				<!-- We know the port name, but not the URI, as we would have to inspect 
 					the .t2flow to find the workflow identifier -->
@@ -13,18 +13,17 @@
 		</contains>
 
 		<contains>
-			<list rdf:about="outputs/fish">
+			<list rdf:about="outputs/fish" xlink:href="outputs/fish">
 				<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/data/workflowOutput" />
 				<listContent rdf:parseType="Collection">
-					<missing /> <!-- missing item in position 0 -->
-					<missing /> <!-- .. 1 -->
-					<value rdf:about="outputs/fish/2" />
-					<value rdf:about="outputs/fish/3" />
+					<absent index="0" /> <!-- missing item in position 0 -->
+					<absent index="1" /> <!-- .. 1 -->
+					<value rdf:about="outputs/fish/2" index="2" size="12" />
+					<value rdf:about="outputs/fish/3" index="3" size="442" />
 					<!-- There could be more missing items, but we wouldn't know at this 
 						time -->
 				</listContent>
 				<outputFrom scufl2:name="fish" />
-
 			</list>
 		</contains>
 
@@ -37,17 +36,41 @@
 				<listContent rdf:parseType="Collection">
 					<!-- List of list of values (depth 2) -->
 
-					<list rdf:about="outputs/soup/0/">
+					<list rdf:about="outputs/soup/0/" xlink:href="outputs/soup/0/" >
 						<listContent rdf:parseType="Collection">
-							<value rdf:about="outputs/soup/0/0" />
+						
+							<data rdf:about="outputs/soup/0/0" xlink:href="outputs/soup/0/0" 
+							size="12" index="0" />
+							
+							<value index="1">skdjfksjdf</value>
+						
+							
+							<data rdf:about="outputs/soup/0/0" xlink:href="outputs/soup/0/0" 
+							size="12" index="0">
+								<stringValue>243dfsdf</stringValue>
+							</data>
+							
+							
+							<data rdf:about="outputs/soup/0/0" xlink:href="outputs/soup/0/0" 
+							size="12" index="0">
+								<stringValue><!-CDATACRAP[[243dfsdf>.,
+								]]></stringValue>
+							</data>
+							
+							<data rdf:about="outputs/soup/0/0" xlink:href="outputs/soup/0/0" 
+							size="12" index="0">
+								<binary>2BASE7</binary>
+							</data>
+							
+							
 							<!-- We didn't include the error message, but as file name ends in 
 								.err we can at least tag the item as an error -->
-							<error rdf:about="outputs/soup/0/1.err" />
+							<error rdf:about="outputs/soup/0/1.err" size="523" />
 						</listContent>
 					</list>
 
 					<!-- Lists could be missing as well -->
-					<missing />
+					<absent />
 
 					<list rdf:about="outputs/soup/2/">
 						<!-- empty list -->
