@@ -9,6 +9,7 @@ import java.util.List;
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.configurations.DataProperty;
+import uk.org.taverna.scufl2.api.configurations.ObjectProperty;
 import uk.org.taverna.scufl2.api.configurations.Property;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
@@ -52,6 +53,20 @@ public class Scufl2Tools {
 		throw new IndexOutOfBoundsException("Could not find property for "+ predicate);
 	}
 
+
+	public ObjectProperty getPropertyObject(List<Property> properties, URI predicate) {
+		for (Property prop : properties) {
+			if (prop.getPredicate().equals(predicate)) {
+				if (! (prop instanceof ObjectProperty)) {					
+					throw new IllegalStateException("Not a ObjectProperty: " + predicate);					
+				}
+				return (ObjectProperty) prop;
+			}
+		}
+		throw new IndexOutOfBoundsException("Could not find property for "+ predicate);
+	}
+
+	
 	public List<Configuration> configurationsFor(Configurable configurable, Profile profile) {
 		List<Configuration> configurations = new ArrayList<Configuration>();
 		for (Configuration config : profile.getConfigurations()) {
@@ -109,6 +124,13 @@ public class Scufl2Tools {
 			throw new IllegalStateException("More than one proc binding for " + processor);
 		}
 		return bindings.get(0);
+	}
+
+	public Configuration configurationForActivityBoundToProcessor(Processor concat,
+			Profile profile) {
+		ProcessorBinding binding = processorBindingForProcessor(concat, profile);		
+		Configuration config = configurationFor(binding.getBoundActivity(), profile);
+		return config;		
 	}
 
 	
