@@ -63,7 +63,8 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 				ACTIVITY_URI.resolve("#script"), script);
 
 		// TODO: Dependencies, activities, etc
-		Activity activity = getParserState().getCurrentActivity();
+		
+		Activity activity = getParserState().getCurrentActivity();		
 		activity.getInputPorts().clear();
 		activity.getOutputPorts().clear();
 		for (ActivityPortDefinitionBean b : beanshellConfig
@@ -75,8 +76,8 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 				a.setDepth(b.getDepth().intValue());
 			}
 			a.setParent(activity);
+			// TODO: Mime types, etc
 		}
-		// TODO: Mime types, etc
 		for (ActivityPortDefinitionBean b : beanshellConfig
 				.getOutputs()
 				.getNetSfTavernaT2WorkflowmodelProcessorActivityConfigActivityOutputPortDefinitionBean()) {
