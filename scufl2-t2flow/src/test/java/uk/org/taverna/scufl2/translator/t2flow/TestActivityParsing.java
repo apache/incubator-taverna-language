@@ -66,29 +66,45 @@ public class TestActivityParsing {
 		Processor concat = researchObj.getMainWorkflow().getProcessors()
 				.getByName("Concatenate_two_strings");
 		
-		ProcessorBinding binding = scufl2Tools.processorBindingForProcessor(concat, profile);
-		Activity bindingAct = binding.getBoundActivity();
-		Configuration config = scufl2Tools.configurationFor(binding.getBoundActivity(), profile);
 		
-		System.out.println(bindingAct.getName());
-		assertEquals(BeanshellActivityParser.ACTIVITY_URI, bindingAct.getType());
+		Configuration concatConfig = scufl2Tools.configurationForActivityBoundToProcessor(concat, profile);
+		Activity concatAct = (Activity) concatConfig.getConfigures();
+		assertEquals(BeanshellActivityParser.ACTIVITY_URI, concatAct.getType());
 		assertEquals(ACTIVITY_URI.resolve("#ConfigType"),
-				config.getConfigurationType());
-		String script = scufl2Tools.getPropertyData(config.getProperties(),
+				concatConfig.getConfigurationType());
+		String script = scufl2Tools.getPropertyData(concatConfig.getProperties(),
 				ACTIVITY_URI.resolve("#script"));
-		System.out.println(script);
+		assertEquals("output = string1 + string2;", script);
 		
 		Set<String> expectedInputs = new HashSet<String>(Arrays.asList("string1", "string2"));
-		assertEquals(expectedInputs, bindingAct.getInputPorts().getNames());
-		InputActivityPort s1 = bindingAct.getInputPorts().getByName("string1");
+		assertEquals(expectedInputs, concatAct.getInputPorts().getNames());
+		InputActivityPort s1 = concatAct.getInputPorts().getByName("string1");
 		assertEquals(0, s1.getDepth().intValue());
-		InputActivityPort s2 = bindingAct.getInputPorts().getByName("string2");
+		InputActivityPort s2 = concatAct.getInputPorts().getByName("string2");
 		assertEquals(0, s2.getDepth().intValue());		
 		
 		Set<String> expectedOutputs = new HashSet<String>(Arrays.asList("output"));		
-		assertEquals(expectedOutputs, bindingAct.getOutputPorts().getNames());
-		OutputActivityPort out = bindingAct.getOutputPorts().getByName("output");
+		assertEquals(expectedOutputs, concatAct.getOutputPorts().getNames());
+		OutputActivityPort out = concatAct.getOutputPorts().getByName("output");
 		assertEquals(0, out.getDepth().intValue());
+		
+		
+		Processor echoList = researchObj.getMainWorkflow().getProcessors()
+		.getByName("Echo_List");
+		Configuration echoConfig = scufl2Tools.configurationForActivityBoundToProcessor(echoList, profile);
+		Activity echoAct = (Activity) echoConfig.getConfigures();
+		
+		expectedInputs = new HashSet<String>(Arrays.asList("inputlist"));
+		assertEquals(expectedInputs, echoAct.getInputPorts().getNames());
+		InputActivityPort inputList = echoAct.getInputPorts().getByName("inputlist");
+		assertEquals(1, inputList.getDepth().intValue());
+		
+		expectedOutputs = new HashSet<String>(Arrays.asList("outputlist"));		
+		assertEquals(expectedOutputs, echoAct.getOutputPorts().getNames());
+		OutputActivityPort outputList = echoAct.getOutputPorts().getByName("outputlist");
+		assertEquals(1, outputList.getDepth().intValue());
+		
+		
 		
 	}
 
