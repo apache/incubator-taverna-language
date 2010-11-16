@@ -6,6 +6,9 @@ import static uk.org.taverna.scufl2.translator.t2flow.defaultactivities.Beanshel
 import java.io.FileOutputStream;
 import java.net.URI;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -17,6 +20,8 @@ import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Processor;
+import uk.org.taverna.scufl2.api.port.InputActivityPort;
+import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
@@ -72,8 +77,19 @@ public class TestActivityParsing {
 		String script = scufl2Tools.getPropertyData(config.getProperties(),
 				ACTIVITY_URI.resolve("#script"));
 		System.out.println(script);
-		System.out.println(bindingAct.getInputPorts());
-		System.out.println(bindingAct.getOutputPorts());
+		
+		Set<String> expectedInputs = new HashSet<String>(Arrays.asList("string1", "string2"));
+		assertEquals(expectedInputs, bindingAct.getInputPorts().getNames());
+		InputActivityPort s1 = bindingAct.getInputPorts().getByName("string1");
+		assertEquals(0, s1.getDepth().intValue());
+		InputActivityPort s2 = bindingAct.getInputPorts().getByName("string2");
+		assertEquals(0, s2.getDepth().intValue());		
+		
+		Set<String> expectedOutputs = new HashSet<String>(Arrays.asList("output"));		
+		assertEquals(expectedOutputs, bindingAct.getOutputPorts().getNames());
+		OutputActivityPort out = bindingAct.getOutputPorts().getByName("output");
+		assertEquals(0, out.getDepth().intValue());
+		
 	}
 
 }
