@@ -1,12 +1,9 @@
 /**
  * 
  */
-package uk.org.taverna.scufl2.api.activity;
+package uk.org.taverna.scufl2.api.port;
 
-import javax.xml.bind.annotation.XmlTransient;
-
-import uk.org.taverna.scufl2.api.common.AbstractNamed;
-import uk.org.taverna.scufl2.api.common.Child;
+import uk.org.taverna.scufl2.api.activity.Activity;
 
 
 /**
@@ -19,27 +16,14 @@ import uk.org.taverna.scufl2.api.common.Child;
  * @author Alan R Williams
  * 
  */
-public class InputActivityPort extends AbstractNamed implements Child<Activity> {
+public class InputActivityPort extends AbstractDepthPort implements ActivityPort {
 
 	private Activity parent;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see uk.org.taverna.scufl2.api.common.Child#getParent()
-	 */
-	@XmlTransient
 	public Activity getParent() {
 		return parent;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * uk.org.taverna.scufl2.api.common.Child#setParent(uk.org.taverna.scufl2
-	 * .api.common.WorkflowBean)
-	 */
 	public void setParent(Activity parent) {
 		if (this.parent != null && this.parent != parent) {
 			this.parent.getInputPorts().remove(this);

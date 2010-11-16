@@ -387,7 +387,27 @@
 		<xsd:sequence>
 			<xsd:element
 				name="net.sf.taverna.t2.workflowmodel.processor.activity.config.ActivityInputPortDefinitionBean"
-				minOccurs="0" maxOccurs="unbounded" />
+				minOccurs="0" maxOccurs="unbounded" type="activities:ActivityPortDefinitionBean" />
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ActivityPortDefinitionBean">
+		<xsd:sequence>
+			<xsd:element name="granularDepth" type="xsd:nonNegativeInteger" minOccurs="0" />
+			<xsd:element name="handledReferenceSchemes" minOccurs="0"
+				maxOccurs="unbounded" />
+			<xsd:element name="translatedElementType" type="xsd:string"  minOccurs="0" />
+			<xsd:element name="allowsLiteralValues" type="xsd:boolean"  minOccurs="0" />
+			<xsd:element name="name" type="xsd:string" />
+			<xsd:element name="depth" type="xsd:nonNegativeInteger" />
+			<xsd:element name="mimeTypes">
+				<xsd:complexType>
+					<xsd:choice>
+							<xsd:element name="string" type="xsd:string"
+								minOccurs="0" maxOccurs="unbounded" />
+						<xsd:element name="element" type="xsd:string" />
+					</xsd:choice>
+				</xsd:complexType>
+			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
 
@@ -395,7 +415,7 @@
 		<xsd:sequence>
 			<xsd:element
 				name="net.sf.taverna.t2.workflowmodel.processor.activity.config.ActivityOutputPortDefinitionBean"
-				minOccurs="0" maxOccurs="unbounded" />
+				minOccurs="0" maxOccurs="unbounded" type="activities:ActivityPortDefinitionBean" />
 		</xsd:sequence>
 
 	</xsd:complexType>

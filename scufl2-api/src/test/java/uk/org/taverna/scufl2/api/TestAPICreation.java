@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.FileOutputStream;
+import java.net.URI;
 import java.util.Collections;
 
 import javax.xml.bind.JAXBContext;
@@ -13,7 +14,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
-import uk.org.taverna.scufl2.api.activity.ActivityType;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
@@ -85,7 +85,7 @@ public class TestAPICreation {
 		ro.getProfiles().add(p);
 		p.getActivities().add(activity);
 
-		activity.setType(new ActivityType("http://taverna.sf.net/2009/2.1/activity/beanshell"));
+		activity.setType(URI.create("http://taverna.sf.net/2009/2.1/activity/beanshell#wrongURI"));
 	}
 
 	@Ignore("Not doing XML here anymore")

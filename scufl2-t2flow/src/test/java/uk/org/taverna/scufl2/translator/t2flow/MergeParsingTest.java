@@ -23,8 +23,7 @@ public class MergeParsingTest {
 		assertNotNull("Could not find workflow " + MERGE_FUN, wfResource);
 		T2FlowParser parser = new T2FlowParser();
 		parser.setStrict(true);
-		WorkflowBundle researchObj = parser.parseT2Flow(wfResource.openStream());
-		System.out.println(researchObj);
+		WorkflowBundle researchObj = parser.parseT2Flow(wfResource.openStream());		
 	}
 	
 	@Test(expected=ParseException.class)

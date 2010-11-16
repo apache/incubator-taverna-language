@@ -83,6 +83,8 @@
 					minOccurs="0" />
 				<xs:element name="mainWorkflow" type="rdf:Resource"
 					minOccurs="0" />
+				<xs:element name="mainProfile" type="rdf:Resource"
+					minOccurs="0" />
 				<xs:element name="workflow" maxOccurs="unbounded">
 					<xs:complexType>
 						<xs:sequence>

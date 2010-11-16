@@ -11,13 +11,6 @@
 	<name>Taverna Scufl 2 Bundle</name>
 	<description>General bundle API, making a structured ZIP file with manifest</description>
 	<dependencies>
-	<!-- 
-		<dependency>
-			<groupId>org.odftoolkit</groupId>
-			<artifactId>odfdom-java</artifactId>
-			<version>0.8.6</version>
-		</dependency>
-	 -->
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>

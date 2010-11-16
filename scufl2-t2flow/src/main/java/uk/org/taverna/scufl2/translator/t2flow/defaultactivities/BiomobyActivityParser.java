@@ -7,7 +7,7 @@ import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.T2Parser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 
-public class BiomobyActivityParser implements T2Parser {
+public class BiomobyActivityParser extends AbstractActivityParser {
 
 	private static URI activityRavenURI =
 			T2FlowParser.ravenURI.resolve("net.sf.taverna.t2.activities/biomoby-activity/");
