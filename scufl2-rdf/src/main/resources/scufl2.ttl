@@ -199,6 +199,13 @@
     rdfs:domain :WorkflowBundle ;
     rdfs:range :Workflow .
 
+:mainProfile
+    a owl:FunctionalProperty, owl:ObjectProperty ;
+    rdfs:label "main profile" ;
+    rdfs:subPropertyOf :profile ;
+    rdfs:domain :WorkflowBundle ;
+    rdfs:range :Profile .
+
 :profile
     a owl:ObjectProperty ;
     rdfs:domain :WorkflowBundle ;
@@ -378,12 +385,6 @@
 rdf:nil a owl:Class .
 
 :DispatchStackLayer
-	a owl:Class ;
-	rdfs:subClassOf :Configurable .
-
-
-
-:DispatcStackLayer
 	a owl:Class ;
 	rdfs:subClassOf :Configurable .
 

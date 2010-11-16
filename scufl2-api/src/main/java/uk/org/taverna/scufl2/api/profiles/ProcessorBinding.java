@@ -3,15 +3,9 @@ package uk.org.taverna.scufl2.api.profiles;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.core.Processor;
-import uk.org.taverna.scufl2.api.reference.Reference;
 
 /**
  * A ProcessorBinding specifies that when enacting a Workflow, if this
@@ -29,9 +23,7 @@ import uk.org.taverna.scufl2.api.reference.Reference;
  * @author Alan R Williams
  * 
  */
-@XmlType(propOrder = { "boundProcessorReference", "boundActivityReference",
-		"activityPosition", "inputPortBindings", "outputPortBindings" })
-		public class ProcessorBinding implements WorkflowBean {
+public class ProcessorBinding implements WorkflowBean {
 
 	private Processor boundProcessor;
 	private Activity boundActivity;
@@ -49,7 +41,6 @@ import uk.org.taverna.scufl2.api.reference.Reference;
 	 * 
 	 * @return
 	 */
-	@XmlElement(required = false, nillable = false)
 	public final Integer getActivityPosition() {
 		return activityPosition;
 	}
@@ -60,14 +51,8 @@ import uk.org.taverna.scufl2.api.reference.Reference;
 	 * 
 	 * @return
 	 */
-	@XmlTransient
 	public Activity getBoundActivity() {
 		return boundActivity;
-	}
-
-	@XmlElement(required = true, nillable = false)
-	public Reference<Activity> getBoundActivityReference() {
-		return Reference.createReference(boundActivity);
 	}
 
 	/**
@@ -76,14 +61,8 @@ import uk.org.taverna.scufl2.api.reference.Reference;
 	 * 
 	 * @return
 	 */
-	@XmlTransient
 	public Processor getBoundProcessor() {
 		return boundProcessor;
-	}
-
-	@XmlElement(required = true, nillable = false)
-	public Reference<Processor> getBoundProcessorReference() {
-		return Reference.createReference(boundProcessor);
 	}
 
 	/**
@@ -91,8 +70,6 @@ import uk.org.taverna.scufl2.api.reference.Reference;
 	 * 
 	 * @return
 	 */
-	@XmlElementWrapper(name = "inputPortBindings", nillable = false, required = true)
-	@XmlElement(name = "inputPortBinding", nillable = false)
 	public Set<ProcessorInputPortBinding> getInputPortBindings() {
 		return inputPortBindings;
 	}
@@ -102,8 +79,6 @@ import uk.org.taverna.scufl2.api.reference.Reference;
 	 * 
 	 * @return
 	 */
-	@XmlElementWrapper(name = "outputPortBindings", nillable = false, required = true)
-	@XmlElement(name = "outputPortBinding", nillable = false)
 	public Set<ProcessorOutputPortBinding> getOutputPortBindings() {
 		return outputPortBindings;
 	}
@@ -119,21 +94,11 @@ import uk.org.taverna.scufl2.api.reference.Reference;
 		this.boundActivity = boundActivity;
 	}
 
-	public void setBoundActivityReference(
-			Reference<Activity> boundActivityReference) {
-		boundActivity = boundActivityReference.resolve();
-	}
-
 	/**
 	 * @param boundProcessor
 	 */
 	public void setBoundProcessor(Processor boundProcessor) {
 		this.boundProcessor = boundProcessor;
-	}
-
-	public void setBoundProcessorReference(
-			Reference<Processor> boundProcessorReference) {
-		boundProcessor = boundProcessorReference.resolve();
 	}
 
 	/**
