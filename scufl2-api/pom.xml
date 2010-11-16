@@ -13,32 +13,11 @@
 	<description>Taverna workflow language API</description>
 	<build>
 		<plugins>
-		<!-- 
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
 				<extensions>true</extensions>
 			</plugin>
-		<!-- 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jaxb2-maven-plugin</artifactId>
-				<version>1.3</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>schemagen</goal>
-						</goals>
-						<configuration>
-							<includes>
-								<include>**/*.java</include>
-							</includes>
-						</configuration>
-					</execution>
-				</executions>				
-			</plugin>
-			 -->
-		
 		</plugins>
 	</build>
 	<dependencies>

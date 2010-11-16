@@ -41,9 +41,6 @@ public class Activity extends AbstractNamed implements Configurable {
 		return inputPorts;
 	}
 
-
-
-
 	public NamedSet<OutputActivityPort> getOutputPorts() {
 		return outputPorts;
 	}
@@ -70,11 +67,6 @@ public class Activity extends AbstractNamed implements Configurable {
 	@Override
 	public String toString() {
 		return "Activity " + getType() + " \"" + getName() + '"';
-	}
-
-	@Override
-	public String toString() {
-		return "Activity " + getType().getName() + " \"" + getName() + '"';
 	}
 
 }
