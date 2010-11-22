@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 
 import org.w3c.dom.Document;
 
+import uk.org.taverna.scufl2.bundle.UCFContainer.ResourceEntry;
 import uk.org.taverna.scufl2.bundle.impl.odfdom.pkg.OdfPackage;
 import uk.org.taverna.scufl2.bundle.impl.odfdom.pkg.manifest.OdfFileEntry;
 
@@ -109,10 +110,15 @@ public class UCFContainer {
 	}
 
 	public Map<String, ResourceEntry> listContent() {
-		return listContent("");
+		return listContent("", false);
 	}
 
 	public Map<String, ResourceEntry> listContent(String folderPath) {
+		return listContent(folderPath, false);
+	}
+
+	protected Map<String, ResourceEntry> listContent(String folderPath,
+			boolean recursive) {
 		if (!folderPath.isEmpty() && !folderPath.endsWith("/")) {
 			folderPath = folderPath + "/";
 		}
@@ -131,7 +137,8 @@ public class UCFContainer {
 				continue;
 			}
 			int firstSlash = subPath.indexOf("/");
-			if (firstSlash > -1 && firstSlash < subPath.length() - 1) {
+			if (!recursive && firstSlash > -1
+					&& firstSlash < subPath.length() - 1) {
 				// Children of a folder (note that we'll include the folder
 				// itself which ends in /)
 				continue;
@@ -164,6 +171,10 @@ public class UCFContainer {
 		public String getMediaType() {
 			return mediaType;
 		}
+	}
+
+	public Map<String, ResourceEntry> listContentRecursive() {
+		return listContent("", true);
 	}
 
 }

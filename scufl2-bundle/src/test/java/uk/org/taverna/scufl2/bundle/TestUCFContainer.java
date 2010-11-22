@@ -24,7 +24,7 @@ import uk.org.taverna.scufl2.bundle.UCFContainer.ResourceEntry;
 public class TestUCFContainer {
 
 	private static final int MIME_OFFSET = 30;
-	private static final boolean DELETE_FILES = false;
+	private static final boolean DELETE_FILES = true;
 	private File tmpFile;
 
 	@Test(expected = IllegalArgumentException.class)
@@ -42,7 +42,7 @@ public class TestUCFContainer {
 	@Test(expected = IllegalArgumentException.class)
 	public void mimeTypeNoSlash() throws Exception {
 		UCFContainer container = new UCFContainer();
-		container.setBundleMimeType("applicationtext");
+		container.setBundleMimeType("nonvalid");
 	}
 
 	@Test
@@ -242,6 +242,44 @@ public class TestUCFContainer {
 		assertEquals(expectedSubFiles, loaded.listContent("sub").keySet());
 		assertEquals(expectedSubFiles, loaded.listContent("sub/").keySet());
 		assertEquals(expectedSubSubFiles, loaded.listContent("sub/3/").keySet());
+	}
+
+	@Test
+	public void fileListingRecursive() throws Exception {
+		UCFContainer container = new UCFContainer();
+		container.setBundleMimeType(container.MIME_WORKFLOW_BUNDLE);
+		Set<String> expectedFiles = new HashSet<String>();
+
+		container.insert("Hello there", "helloworld.txt", "text/plain");
+		expectedFiles.add("helloworld.txt");
+
+		container.insert("Soup for everyone", "soup.txt", "text/plain");
+		expectedFiles.add("soup.txt");
+
+		container.insert("<html><body><h1>Yo</h1></body></html>", "soup.html",
+				"text/html");
+		expectedFiles.add("soup.html");
+
+		container.insert("Sub-folder entry 1", "sub/1.txt", "text/plain");
+		container.insert("Sub-folder entry 2", "sub/2.txt", "text/plain");
+		container.insert("Sub-folder entry 2", "sub/3/woho.txt", "text/plain");
+		expectedFiles.add("sub/");
+		expectedFiles.add("sub/1.txt");
+		expectedFiles.add("sub/2.txt");
+		expectedFiles.add("sub/3/");
+		expectedFiles.add("sub/3/woho.txt");
+
+		Map<String, ResourceEntry> beforeSaveRootEntries = container
+				.listContentRecursive();
+
+		assertEquals(expectedFiles, beforeSaveRootEntries.keySet());
+
+		container.save(tmpFile);
+
+		UCFContainer loaded = new UCFContainer(tmpFile);
+		Map<String, ResourceEntry> loadedRootEntries = loaded
+				.listContentRecursive();
+		assertEquals(expectedFiles, loadedRootEntries.keySet());
 	}
 
 	@Test
