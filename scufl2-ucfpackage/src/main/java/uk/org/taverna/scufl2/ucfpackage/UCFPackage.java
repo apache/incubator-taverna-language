@@ -28,7 +28,7 @@ public class UCFPackage {
 	public static final String MIME_SERVICE_BUNDLE = "application/vnd.taverna.service-bundle";
 
 	private static Charset ASCII = Charset.forName("ascii");
-	private final OdfPackage odfPackage;
+	private OdfPackage odfPackage;
 
 	public UCFPackage() throws Exception {
 		odfPackage = OdfPackage.create();
@@ -59,17 +59,30 @@ public class UCFPackage {
 	}
 
 	public void save(File packageFile) throws IOException {
-		File tempFile = File.createTempFile(packageFile.getName(), ".tmp",
+		// Write using temp file, and do rename in the end
+		File tempFile = File.createTempFile("." + packageFile.getName(),
+				".tmp",
 				packageFile.getParentFile());
-
 		try {
 			odfPackage.save(tempFile);
 		} catch (IOException e) {
 			throw e;
 		} catch (Exception e) {
 			throw new IOException("Could not save bundle to " + packageFile, e);
+		} finally {
+			odfPackage.close();
 		}
-		tempFile.renameTo(packageFile);
+		try {
+			// To be safe we'll reload from 'our' tempFile
+			odfPackage = OdfPackage.loadPackage(tempFile);
+		} catch (Exception e) {
+			throw new IOException("Could not reload package from "
+					+ packageFile);
+		}
+		if (!tempFile.renameTo(packageFile)) {
+			throw new IOException("Could not rename temp file " + tempFile
+					+ " to " + packageFile);
+		}
 	}
 
 	public void addResource(String stringValue, String path, String mediaType)
@@ -147,6 +160,18 @@ public class UCFPackage {
 		return content;
 	}
 
+	public void removeResource(String path) {
+		if (!odfPackage.contains(path)) {
+			return;
+		}
+		if (path.endsWith("/")) {
+			for (ResourceEntry childEntry : listResources(path).values()) {
+				removeResource(childEntry.getPath());
+			}
+		}
+		odfPackage.remove(path);
+	}
+
 	public class ResourceEntry {
 
 		private final String path;
@@ -170,6 +195,11 @@ public class UCFPackage {
 		public String getMediaType() {
 			return mediaType;
 		}
+
+		public boolean isFolder() {
+			return path.endsWith("/");
+		}
+
 	}
 
 	public Map<String, ResourceEntry> listAllResources() {
