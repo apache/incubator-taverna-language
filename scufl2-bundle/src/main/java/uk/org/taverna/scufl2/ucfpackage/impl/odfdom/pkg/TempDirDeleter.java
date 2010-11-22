@@ -19,7 +19,7 @@
  * limitations under the License.
  *
  ************************************************************************/
-package uk.org.taverna.scufl2.bundle.impl.odfdom.pkg;
+package uk.org.taverna.scufl2.ucfpackage.impl.odfdom.pkg;
 
 import java.io.File;
 import java.util.ArrayList;

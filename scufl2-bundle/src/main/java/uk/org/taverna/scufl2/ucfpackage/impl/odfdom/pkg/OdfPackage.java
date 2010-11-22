@@ -20,7 +20,7 @@
  * limitations under the License.
  *
  ************************************************************************/
-package uk.org.taverna.scufl2.bundle.impl.odfdom.pkg;
+package uk.org.taverna.scufl2.ucfpackage.impl.odfdom.pkg;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -81,10 +81,10 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-import uk.org.taverna.scufl2.bundle.impl.odfdom.pkg.manifest.Algorithm;
-import uk.org.taverna.scufl2.bundle.impl.odfdom.pkg.manifest.EncryptionData;
-import uk.org.taverna.scufl2.bundle.impl.odfdom.pkg.manifest.KeyDerivation;
-import uk.org.taverna.scufl2.bundle.impl.odfdom.pkg.manifest.OdfFileEntry;
+import uk.org.taverna.scufl2.ucfpackage.impl.odfdom.pkg.manifest.Algorithm;
+import uk.org.taverna.scufl2.ucfpackage.impl.odfdom.pkg.manifest.EncryptionData;
+import uk.org.taverna.scufl2.ucfpackage.impl.odfdom.pkg.manifest.KeyDerivation;
+import uk.org.taverna.scufl2.ucfpackage.impl.odfdom.pkg.manifest.OdfFileEntry;
 
 /**
  * OdfPackage represents the package view to an OpenDocument document. The
