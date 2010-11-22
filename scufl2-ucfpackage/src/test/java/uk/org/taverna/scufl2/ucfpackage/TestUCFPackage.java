@@ -51,7 +51,7 @@ public class TestUCFPackage {
 	@Test
 	public void defaultMimeType() throws Exception {
 		UCFPackage container = new UCFPackage();
-		assertEquals(container.MIME_EPUB, container.getPackageMediaType());
+		assertEquals(UCFPackage.MIME_EPUB, container.getPackageMediaType());
 		container.save(tmpFile);
 		assertTrue(tmpFile.exists());
 		ZipFile zipFile = new ZipFile(tmpFile);
@@ -64,12 +64,12 @@ public class TestUCFPackage {
 				mimeEntry.getCompressedSize(), mimeEntry.getSize());
 		assertEquals("mimetype should have STORED method", ZipEntry.STORED,
 				mimeEntry.getMethod());
-		assertEquals("Wrong mimetype", container.MIME_EPUB,
+		assertEquals("Wrong mimetype", UCFPackage.MIME_EPUB,
 				IOUtils.toString(zipFile.getInputStream(mimeEntry), "ASCII"));
 
 		// Check position 30++ according to
 		// http://livedocs.adobe.com/navigator/9/Navigator_SDK9_HTMLHelp/wwhelp/wwhimpl/common/html/wwhelp.htm?context=Navigator_SDK9_HTMLHelp&file=Appx_Packaging.6.1.html#1522568
-		byte[] expected = ("mimetype" + container.MIME_EPUB + "PK")
+		byte[] expected = ("mimetype" + UCFPackage.MIME_EPUB + "PK")
 				.getBytes("ASCII");
 		FileInputStream in = new FileInputStream(tmpFile);
 		assertEquals(MIME_OFFSET, in.skip(MIME_OFFSET));
@@ -92,14 +92,14 @@ public class TestUCFPackage {
 	@Test
 	public void workflowBundleMimeType() throws Exception {
 		UCFPackage container = new UCFPackage();
-		container.setPackageMediaType(container.MIME_WORKFLOW_BUNDLE);
-		assertEquals(container.MIME_WORKFLOW_BUNDLE,
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
+		assertEquals(UCFPackage.MIME_WORKFLOW_BUNDLE,
 				container.getPackageMediaType());
 		container.save(tmpFile);
 		ZipFile zipFile = new ZipFile(tmpFile);
 		ZipEntry mimeEntry = zipFile.getEntry("mimetype");
 		assertEquals("mimetype", mimeEntry.getName());
-		assertEquals("Wrong mimetype", container.MIME_WORKFLOW_BUNDLE,
+		assertEquals("Wrong mimetype", UCFPackage.MIME_WORKFLOW_BUNDLE,
 				IOUtils.toString(zipFile.getInputStream(mimeEntry), "ASCII"));
 
 	}
@@ -107,7 +107,7 @@ public class TestUCFPackage {
 	@Test
 	public void fileEntryFromString() throws Exception {
 		UCFPackage container = new UCFPackage();
-		container.setPackageMediaType(container.MIME_WORKFLOW_BUNDLE);
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
 
 		container.addResource("Hello there þĸł", "helloworld.txt", "text/plain");
 
@@ -129,7 +129,7 @@ public class TestUCFPackage {
 	@Test
 	public void retrieveStringLoadedFromFile() throws Exception {
 		UCFPackage container = new UCFPackage();
-		container.setPackageMediaType(container.MIME_WORKFLOW_BUNDLE);
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
 		container.addResource("Hello there þĸł", "helloworld.txt", "text/plain");
 		container.save(tmpFile);
 
@@ -141,7 +141,7 @@ public class TestUCFPackage {
 	@Test
 	public void doubleSave() throws Exception {
 		UCFPackage container = new UCFPackage();
-		container.setPackageMediaType(container.MIME_WORKFLOW_BUNDLE);
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
 		container
 				.addResource("Hello there þĸł", "helloworld.txt", "text/plain");
 		container.save(tmpFile);
@@ -156,7 +156,7 @@ public class TestUCFPackage {
 	@Test
 	public void retrieveBytesLoadedFromFile() throws Exception {
 		UCFPackage container = new UCFPackage();
-		container.setPackageMediaType(container.MIME_WORKFLOW_BUNDLE);
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
 		byte[] bytes = makeBytes(2048);
 		container.addResource(bytes, "randomBytes", "application/octet-stream");
 		container.save(tmpFile);
@@ -169,7 +169,7 @@ public class TestUCFPackage {
 	@Test
 	public void retrieveInputStreamLoadedFromFile() throws Exception {
 		UCFPackage container = new UCFPackage();
-		container.setPackageMediaType(container.MIME_WORKFLOW_BUNDLE);
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
 		byte[] bytes = makeBytes(4929);
 		container.addResource(bytes, "randomBytes", "application/octet-stream");
 		container.save(tmpFile);
@@ -184,10 +184,10 @@ public class TestUCFPackage {
 	@Test
 	public void fileEntryFromBytes() throws Exception {
 		UCFPackage container = new UCFPackage();
-		container.setPackageMediaType(container.MIME_WORKFLOW_BUNDLE);
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
 
 		byte[] bytes = makeBytes(1024);
-		container.addResource(bytes, "binary", container.MIME_BINARY);
+		container.addResource(bytes, "binary", UCFPackage.MIME_BINARY);
 
 		container.save(tmpFile);
 		ZipFile zipFile = new ZipFile(tmpFile);
@@ -214,7 +214,7 @@ public class TestUCFPackage {
 	@Test
 	public void fileListing() throws Exception {
 		UCFPackage container = new UCFPackage();
-		container.setPackageMediaType(container.MIME_WORKFLOW_BUNDLE);
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
 		Set<String> expectedFiles = new HashSet<String>();
 		Set<String> expectedSubFiles = new HashSet<String>();
 		Set<String> expectedSubSubFiles = new HashSet<String>();
@@ -265,7 +265,7 @@ public class TestUCFPackage {
 	@Test
 	public void removeResource() throws Exception {
 		UCFPackage container = new UCFPackage();
-		container.setPackageMediaType(container.MIME_WORKFLOW_BUNDLE);
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
 
 		container.addResource("Soup for everyone", "soup.txt", "text/plain");
 
@@ -326,7 +326,7 @@ public class TestUCFPackage {
 	@Test
 	public void fileListingRecursive() throws Exception {
 		UCFPackage container = new UCFPackage();
-		container.setPackageMediaType(container.MIME_WORKFLOW_BUNDLE);
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
 		Set<String> expectedFiles = new HashSet<String>();
 
 		container.addResource("Hello there", "helloworld.txt", "text/plain");
@@ -364,7 +364,7 @@ public class TestUCFPackage {
 	@Test
 	public void resourceEntries() throws Exception {
 		UCFPackage container = new UCFPackage();
-		container.setPackageMediaType(container.MIME_WORKFLOW_BUNDLE);
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
 		container.addResource("Hello there", "helloworld.txt", "text/plain");
 		container.addResource("Sub-folder entry 1", "sub/1.txt", "text/plain");
 
@@ -389,7 +389,7 @@ public class TestUCFPackage {
 	@Test
 	public void manifestMimetype() throws Exception {
 		UCFPackage container = new UCFPackage();
-		container.setPackageMediaType(container.MIME_WORKFLOW_BUNDLE);
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
 
 		container.save(tmpFile);
 		ZipFile zipFile = new ZipFile(tmpFile);
