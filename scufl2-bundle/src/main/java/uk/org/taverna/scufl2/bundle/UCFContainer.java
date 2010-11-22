@@ -12,6 +12,7 @@ import uk.org.taverna.scufl2.bundle.impl.odfdom.pkg.OdfPackage;
 
 public class UCFContainer {
 
+	private static final Charset UTF_8 = Charset.forName("utf-8");
 	public static final String MIME_BINARY = "application/octet-stream";
 	public static final String MIME_TEXT_PLAIN = "text/plain";
 	public static final String MIME_TEXT_XML = "text/xml";
@@ -69,7 +70,7 @@ public class UCFContainer {
 
 	public void insert(String stringValue, String path, String mimeType)
 			throws Exception {
-		odfPackage.insert(stringValue.getBytes("utf-8"), path, mimeType);
+		odfPackage.insert(stringValue.getBytes(UTF_8), path, mimeType);
 	}
 
 	public void insert(byte[] bytesValue, String path, String mimeType)
@@ -90,5 +91,18 @@ public class UCFContainer {
 	public void insert(URI uri, String path, String mimeType) throws Exception {
 		odfPackage.insert(uri, path, mimeType);
 	}
+
+	public String getEntryAsString(String path) throws Exception {
+		return new String(odfPackage.getBytes(path), UTF_8);
+	}
+
+	public byte[] getEntryAsBytes(String path) throws Exception {
+		return odfPackage.getBytes(path);
+	}
+
+	public InputStream getEntryAsInputStream(String path) throws Exception {
+		return odfPackage.getInputStream(path);
+	}
+
 
 }

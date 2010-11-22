@@ -128,16 +128,41 @@ public class TestUCFContainer {
 		assertEquals("Hello there þĸł", s);
 	}
 
+	@Test
+	public void retrieveBytesLoadedFromFile() throws Exception {
+		UCFContainer container = new UCFContainer();
+		container.setBundleMimeType(container.MIME_WORKFLOW_BUNDLE);
+		byte[] bytes = makeBytes(2048);
+		container.insert(bytes, "randomBytes", "application/octet-stream");
+		container.save(tmpFile);
+
+		UCFContainer loaded = new UCFContainer(tmpFile);
+		byte[] loadedBytes = loaded.getEntryAsBytes("randomBytes");
+		assertArrayEquals(bytes, loadedBytes);
+	}
+
+
+	@Test
+	public void retrieveInputStreamLoadedFromFile() throws Exception {
+		UCFContainer container = new UCFContainer();
+		container.setBundleMimeType(container.MIME_WORKFLOW_BUNDLE);
+		byte[] bytes = makeBytes(4929);
+		container.insert(bytes, "randomBytes", "application/octet-stream");
+		container.save(tmpFile);
+
+		UCFContainer loaded = new UCFContainer(tmpFile);
+		InputStream entryAsInputStream = loaded
+				.getEntryAsInputStream("randomBytes");
+		byte[] loadedBytes = IOUtils.toByteArray(entryAsInputStream);
+		assertArrayEquals(bytes, loadedBytes);
+	}
 
 	@Test
 	public void fileEntryFromBytes() throws Exception {
 		UCFContainer container = new UCFContainer();
 		container.setBundleMimeType(container.MIME_WORKFLOW_BUNDLE);
 
-		byte[] bytes = new byte[1024];
-		bytes[0] = 0x20;
-		bytes[1022] = (byte) 0xdd;
-		bytes[1023] = (byte) 0xff;
+		byte[] bytes = makeBytes(1024);
 		container.insert(bytes, "binary", container.MIME_BINARY);
 
 		container.save(tmpFile);
@@ -153,6 +178,14 @@ public class TestUCFContainer {
 		InputStream io = zipFile.getInputStream(zipFile
 .getEntry("binary"));
 		assertArrayEquals(bytes, IOUtils.toByteArray(io));
+	}
+
+	private byte[] makeBytes(int size) {
+		byte[] bytes = new byte[size];
+		for (int i = 0; i < size; i++) {
+			bytes[i] = (byte) i;
+		}
+		return bytes;
 	}
 
 
