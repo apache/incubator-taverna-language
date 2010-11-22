@@ -7,9 +7,9 @@
 		<version>0.1-SNAPSHOT</version>
 	</parent>
 	<groupId>uk.org.taverna.scufl2</groupId>
-	<artifactId>scufl2-bundle</artifactId>
-	<name>Taverna Scufl 2 Bundle</name>
-	<description>General bundle API, making a structured ZIP file with manifest</description>
+	<artifactId>scufl2-ucfpackage</artifactId>
+	<name>Taverna Scufl 2 UCF Package</name>
+	<description>Adobe UCF compatible Package API, making a structured ZIP file with manifest</description>
 	<dependencies>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -18,6 +18,13 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<!-- 
+	
+	Note: uk.org.taverna.scul2.ucfpackage.impl.odfdom contains a patced subset of ODFDOM 0.8.6
+	
+	 Copyright 2008, 2010 Oracle and/or its affiliates. All rights reserved.
+	 Copyright 2009 IBM. All rights reserved.	 
+	
 	<repositories>
 		<repository>
 			<id>odfdom-releases</id>
@@ -36,4 +43,5 @@
 		</repository>
 
 	</repositories>
+	 -->
 </project>
