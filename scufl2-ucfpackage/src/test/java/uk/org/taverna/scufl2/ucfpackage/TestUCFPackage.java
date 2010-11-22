@@ -107,7 +107,7 @@ public class TestUCFPackage {
 		UCFPackage container = new UCFPackage();
 		container.setPackageMediaType(container.MIME_WORKFLOW_BUNDLE);
 
-		container.insert("Hello there þĸł", "helloworld.txt", "text/plain");
+		container.addResource("Hello there þĸł", "helloworld.txt", "text/plain");
 
 		container.save(tmpFile);
 		ZipFile zipFile = new ZipFile(tmpFile);
@@ -128,11 +128,11 @@ public class TestUCFPackage {
 	public void retrieveStringLoadedFromFile() throws Exception {
 		UCFPackage container = new UCFPackage();
 		container.setPackageMediaType(container.MIME_WORKFLOW_BUNDLE);
-		container.insert("Hello there þĸł", "helloworld.txt", "text/plain");
+		container.addResource("Hello there þĸł", "helloworld.txt", "text/plain");
 		container.save(tmpFile);
 
 		UCFPackage loaded = new UCFPackage(tmpFile);
-		String s = loaded.getEntryAsString("helloworld.txt");
+		String s = loaded.getResourceAsString("helloworld.txt");
 		assertEquals("Hello there þĸł", s);
 	}
 
@@ -141,11 +141,11 @@ public class TestUCFPackage {
 		UCFPackage container = new UCFPackage();
 		container.setPackageMediaType(container.MIME_WORKFLOW_BUNDLE);
 		byte[] bytes = makeBytes(2048);
-		container.insert(bytes, "randomBytes", "application/octet-stream");
+		container.addResource(bytes, "randomBytes", "application/octet-stream");
 		container.save(tmpFile);
 
 		UCFPackage loaded = new UCFPackage(tmpFile);
-		byte[] loadedBytes = loaded.getEntryAsBytes("randomBytes");
+		byte[] loadedBytes = loaded.getResourceAsBytes("randomBytes");
 		assertArrayEquals(bytes, loadedBytes);
 	}
 
@@ -154,12 +154,12 @@ public class TestUCFPackage {
 		UCFPackage container = new UCFPackage();
 		container.setPackageMediaType(container.MIME_WORKFLOW_BUNDLE);
 		byte[] bytes = makeBytes(4929);
-		container.insert(bytes, "randomBytes", "application/octet-stream");
+		container.addResource(bytes, "randomBytes", "application/octet-stream");
 		container.save(tmpFile);
 
 		UCFPackage loaded = new UCFPackage(tmpFile);
 		InputStream entryAsInputStream = loaded
-				.getEntryAsInputStream("randomBytes");
+				.getResourceAsInputStream("randomBytes");
 		byte[] loadedBytes = IOUtils.toByteArray(entryAsInputStream);
 		assertArrayEquals(bytes, loadedBytes);
 	}
@@ -170,7 +170,7 @@ public class TestUCFPackage {
 		container.setPackageMediaType(container.MIME_WORKFLOW_BUNDLE);
 
 		byte[] bytes = makeBytes(1024);
-		container.insert(bytes, "binary", container.MIME_BINARY);
+		container.addResource(bytes, "binary", container.MIME_BINARY);
 
 		container.save(tmpFile);
 		ZipFile zipFile = new ZipFile(tmpFile);
@@ -202,21 +202,21 @@ public class TestUCFPackage {
 		Set<String> expectedSubFiles = new HashSet<String>();
 		Set<String> expectedSubSubFiles = new HashSet<String>();
 
-		container.insert("Hello there", "helloworld.txt", "text/plain");
+		container.addResource("Hello there", "helloworld.txt", "text/plain");
 		expectedFiles.add("helloworld.txt");
 
-		container.insert("Soup for everyone", "soup.txt", "text/plain");
+		container.addResource("Soup for everyone", "soup.txt", "text/plain");
 		expectedFiles.add("soup.txt");
 
-		container.insert("<html><body><h1>Yo</h1></body></html>", "soup.html",
+		container.addResource("<html><body><h1>Yo</h1></body></html>", "soup.html",
 				"text/html");
 		expectedFiles.add("soup.html");
 
-		container.insert("Sub-folder entry 1", "sub/1.txt", "text/plain");
-		container.insert("Sub-folder entry 2", "sub/2.txt", "text/plain");
-		container.insert("Sub-folder entry 2", "sub/3/woho.txt", "text/plain");
+		container.addResource("Sub-folder entry 1", "sub/1.txt", "text/plain");
+		container.addResource("Sub-folder entry 2", "sub/2.txt", "text/plain");
+		container.addResource("Sub-folder entry 2", "sub/3/woho.txt", "text/plain");
 
-		container.insert("Other sub-folder entry", "sub2/3.txt", "text/plain");
+		container.addResource("Other sub-folder entry", "sub2/3.txt", "text/plain");
 
 		expectedFiles.add("sub/");
 		expectedSubFiles.add("1.txt");
@@ -226,23 +226,23 @@ public class TestUCFPackage {
 		expectedFiles.add("sub2/");
 
 		Map<String, ResourceEntry> beforeSaveRootEntries = container
-				.listContent();
+				.listResources();
 		assertEquals(expectedFiles, beforeSaveRootEntries.keySet());
 
-		assertEquals(expectedSubFiles, container.listContent("sub").keySet());
-		assertEquals(expectedSubFiles, container.listContent("sub/").keySet());
-		assertEquals(expectedSubSubFiles, container.listContent("sub/3/")
+		assertEquals(expectedSubFiles, container.listResources("sub").keySet());
+		assertEquals(expectedSubFiles, container.listResources("sub/").keySet());
+		assertEquals(expectedSubSubFiles, container.listResources("sub/3/")
 				.keySet());
 
 		container.save(tmpFile);
 
 		UCFPackage loaded = new UCFPackage(tmpFile);
-		Map<String, ResourceEntry> loadedRootEntries = loaded.listContent();
+		Map<String, ResourceEntry> loadedRootEntries = loaded.listResources();
 		assertEquals(expectedFiles, loadedRootEntries.keySet());
 
-		assertEquals(expectedSubFiles, loaded.listContent("sub").keySet());
-		assertEquals(expectedSubFiles, loaded.listContent("sub/").keySet());
-		assertEquals(expectedSubSubFiles, loaded.listContent("sub/3/").keySet());
+		assertEquals(expectedSubFiles, loaded.listResources("sub").keySet());
+		assertEquals(expectedSubFiles, loaded.listResources("sub/").keySet());
+		assertEquals(expectedSubSubFiles, loaded.listResources("sub/3/").keySet());
 	}
 
 	@Test
@@ -251,19 +251,19 @@ public class TestUCFPackage {
 		container.setPackageMediaType(container.MIME_WORKFLOW_BUNDLE);
 		Set<String> expectedFiles = new HashSet<String>();
 
-		container.insert("Hello there", "helloworld.txt", "text/plain");
+		container.addResource("Hello there", "helloworld.txt", "text/plain");
 		expectedFiles.add("helloworld.txt");
 
-		container.insert("Soup for everyone", "soup.txt", "text/plain");
+		container.addResource("Soup for everyone", "soup.txt", "text/plain");
 		expectedFiles.add("soup.txt");
 
-		container.insert("<html><body><h1>Yo</h1></body></html>", "soup.html",
+		container.addResource("<html><body><h1>Yo</h1></body></html>", "soup.html",
 				"text/html");
 		expectedFiles.add("soup.html");
 
-		container.insert("Sub-folder entry 1", "sub/1.txt", "text/plain");
-		container.insert("Sub-folder entry 2", "sub/2.txt", "text/plain");
-		container.insert("Sub-folder entry 2", "sub/3/woho.txt", "text/plain");
+		container.addResource("Sub-folder entry 1", "sub/1.txt", "text/plain");
+		container.addResource("Sub-folder entry 2", "sub/2.txt", "text/plain");
+		container.addResource("Sub-folder entry 2", "sub/3/woho.txt", "text/plain");
 		expectedFiles.add("sub/");
 		expectedFiles.add("sub/1.txt");
 		expectedFiles.add("sub/2.txt");
@@ -271,7 +271,7 @@ public class TestUCFPackage {
 		expectedFiles.add("sub/3/woho.txt");
 
 		Map<String, ResourceEntry> beforeSaveRootEntries = container
-				.listContentRecursive();
+				.listAllResources();
 
 		assertEquals(expectedFiles, beforeSaveRootEntries.keySet());
 
@@ -279,7 +279,7 @@ public class TestUCFPackage {
 
 		UCFPackage loaded = new UCFPackage(tmpFile);
 		Map<String, ResourceEntry> loadedRootEntries = loaded
-				.listContentRecursive();
+				.listAllResources();
 		assertEquals(expectedFiles, loadedRootEntries.keySet());
 	}
 
@@ -287,10 +287,10 @@ public class TestUCFPackage {
 	public void resourceEntries() throws Exception {
 		UCFPackage container = new UCFPackage();
 		container.setPackageMediaType(container.MIME_WORKFLOW_BUNDLE);
-		container.insert("Hello there", "helloworld.txt", "text/plain");
-		container.insert("Sub-folder entry 1", "sub/1.txt", "text/plain");
+		container.addResource("Hello there", "helloworld.txt", "text/plain");
+		container.addResource("Sub-folder entry 1", "sub/1.txt", "text/plain");
 
-		ResourceEntry helloResource = container.listContent().get(
+		ResourceEntry helloResource = container.listResources().get(
 				"helloworld.txt");
 		assertEquals("helloworld.txt", helloResource.getPath());
 		assertEquals(11, helloResource.getSize());
@@ -300,7 +300,7 @@ public class TestUCFPackage {
 
 		UCFPackage loaded = new UCFPackage(tmpFile);
 
-		ResourceEntry loadedHelloResource = loaded.listContent().get(
+		ResourceEntry loadedHelloResource = loaded.listResources().get(
 				"helloworld.txt");
 		assertEquals("helloworld.txt", loadedHelloResource.getPath());
 		assertEquals(11, loadedHelloResource.getSize());
