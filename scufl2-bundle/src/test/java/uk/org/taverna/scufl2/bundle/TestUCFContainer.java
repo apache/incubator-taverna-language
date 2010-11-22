@@ -8,6 +8,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -16,11 +19,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.org.taverna.scufl2.bundle.UCFContainer.ResourceEntry;
+
 public class TestUCFContainer {
 
-
 	private static final int MIME_OFFSET = 30;
-	private static final boolean DELETE_FILES = true;
+	private static final boolean DELETE_FILES = false;
 	private File tmpFile;
 
 	@Test(expected = IllegalArgumentException.class)
@@ -52,8 +56,11 @@ public class TestUCFContainer {
 		ZipEntry mimeEntry = zipFile.entries().nextElement();
 		assertEquals("First zip entry is not 'mimetype'", "mimetype",
 				mimeEntry.getName());
-		assertEquals("mimetype should be uncompressed, but compressed size mismatch", mimeEntry.getCompressedSize(), mimeEntry.getSize());
-		assertEquals("mimetype should have STORED method", ZipEntry.STORED, mimeEntry.getMethod());
+		assertEquals(
+				"mimetype should be uncompressed, but compressed size mismatch",
+				mimeEntry.getCompressedSize(), mimeEntry.getSize());
+		assertEquals("mimetype should have STORED method", ZipEntry.STORED,
+				mimeEntry.getMethod());
 		assertEquals("Wrong mimetype", container.MIME_EPUB,
 				IOUtils.toString(zipFile.getInputStream(mimeEntry), "ASCII"));
 
@@ -108,7 +115,7 @@ public class TestUCFContainer {
 		assertEquals(
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 						+ "<manifest:manifest xmlns:manifest=\"urn:oasis:names:tc:opendocument:xmlns:manifest:1.0\">\n"
-						+ " <manifest:file-entry manifest:media-type=\"text/plain\" manifest:full-path=\"helloworld.txt\"/>\n"
+						+ " <manifest:file-entry manifest:media-type=\"text/plain\" manifest:full-path=\"helloworld.txt\" manifest:size=\"18\"/>\n"
 						+ "</manifest:manifest>",
 				IOUtils.toString(manifestStream, "UTF-8"));
 		InputStream io = zipFile.getInputStream(zipFile
@@ -141,7 +148,6 @@ public class TestUCFContainer {
 		assertArrayEquals(bytes, loadedBytes);
 	}
 
-
 	@Test
 	public void retrieveInputStreamLoadedFromFile() throws Exception {
 		UCFContainer container = new UCFContainer();
@@ -172,15 +178,14 @@ public class TestUCFContainer {
 		assertEquals(
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 						+ "<manifest:manifest xmlns:manifest=\"urn:oasis:names:tc:opendocument:xmlns:manifest:1.0\">\n"
-						+ " <manifest:file-entry manifest:media-type=\"application/octet-stream\" manifest:full-path=\"binary\"/>\n"
+						+ " <manifest:file-entry manifest:media-type=\"application/octet-stream\" manifest:full-path=\"binary\" manifest:size=\"1024\"/>\n"
 						+ "</manifest:manifest>",
 				IOUtils.toString(manifestStream, "UTF-8"));
-		InputStream io = zipFile.getInputStream(zipFile
-.getEntry("binary"));
+		InputStream io = zipFile.getInputStream(zipFile.getEntry("binary"));
 		assertArrayEquals(bytes, IOUtils.toByteArray(io));
 	}
 
-	private byte[] makeBytes(int size) {
+	protected static byte[] makeBytes(int size) {
 		byte[] bytes = new byte[size];
 		for (int i = 0; i < size; i++) {
 			bytes[i] = (byte) i;
@@ -188,6 +193,81 @@ public class TestUCFContainer {
 		return bytes;
 	}
 
+	@Test
+	public void fileListing() throws Exception {
+		UCFContainer container = new UCFContainer();
+		container.setBundleMimeType(container.MIME_WORKFLOW_BUNDLE);
+		Set<String> expectedFiles = new HashSet<String>();
+		Set<String> expectedSubFiles = new HashSet<String>();
+		Set<String> expectedSubSubFiles = new HashSet<String>();
+
+		container.insert("Hello there", "helloworld.txt", "text/plain");
+		expectedFiles.add("helloworld.txt");
+
+		container.insert("Soup for everyone", "soup.txt", "text/plain");
+		expectedFiles.add("soup.txt");
+
+		container.insert("<html><body><h1>Yo</h1></body></html>", "soup.html",
+				"text/html");
+		expectedFiles.add("soup.html");
+
+		container.insert("Sub-folder entry 1", "sub/1.txt", "text/plain");
+		container.insert("Sub-folder entry 2", "sub/2.txt", "text/plain");
+		container.insert("Sub-folder entry 2", "sub/3/woho.txt", "text/plain");
+
+		container.insert("Other sub-folder entry", "sub2/3.txt", "text/plain");
+
+		expectedFiles.add("sub/");
+		expectedSubFiles.add("1.txt");
+		expectedSubFiles.add("2.txt");
+		expectedSubFiles.add("3/");
+		expectedSubSubFiles.add("woho.txt");
+		expectedFiles.add("sub2/");
+
+		Map<String, ResourceEntry> beforeSaveRootEntries = container
+				.listContent();
+		assertEquals(expectedFiles, beforeSaveRootEntries.keySet());
+
+		assertEquals(expectedSubFiles, container.listContent("sub").keySet());
+		assertEquals(expectedSubFiles, container.listContent("sub/").keySet());
+		assertEquals(expectedSubSubFiles, container.listContent("sub/3/")
+				.keySet());
+
+		container.save(tmpFile);
+
+		UCFContainer loaded = new UCFContainer(tmpFile);
+		Map<String, ResourceEntry> loadedRootEntries = loaded.listContent();
+		assertEquals(expectedFiles, loadedRootEntries.keySet());
+
+		assertEquals(expectedSubFiles, loaded.listContent("sub").keySet());
+		assertEquals(expectedSubFiles, loaded.listContent("sub/").keySet());
+		assertEquals(expectedSubSubFiles, loaded.listContent("sub/3/").keySet());
+	}
+
+	@Test
+	public void resourceEntries() throws Exception {
+		UCFContainer container = new UCFContainer();
+		container.setBundleMimeType(container.MIME_WORKFLOW_BUNDLE);
+		container.insert("Hello there", "helloworld.txt", "text/plain");
+		container.insert("Sub-folder entry 1", "sub/1.txt", "text/plain");
+
+		ResourceEntry helloResource = container.listContent().get(
+				"helloworld.txt");
+		assertEquals("helloworld.txt", helloResource.getPath());
+		assertEquals(11, helloResource.getSize());
+		assertEquals("text/plain", helloResource.getMediaType());
+
+		container.save(tmpFile);
+
+		UCFContainer loaded = new UCFContainer(tmpFile);
+
+		ResourceEntry loadedHelloResource = loaded.listContent().get(
+				"helloworld.txt");
+		assertEquals("helloworld.txt", loadedHelloResource.getPath());
+		assertEquals(11, loadedHelloResource.getSize());
+		assertEquals("text/plain", loadedHelloResource.getMediaType());
+
+	}
 
 	@Test
 	public void manifestMimetype() throws Exception {
@@ -204,6 +284,5 @@ public class TestUCFContainer {
 						+ "</manifest:manifest>",
 				IOUtils.toString(manifestStream, "UTF-8"));
 	}
-
 
 }

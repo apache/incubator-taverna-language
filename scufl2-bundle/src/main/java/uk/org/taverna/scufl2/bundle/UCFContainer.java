@@ -5,10 +5,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.w3c.dom.Document;
 
 import uk.org.taverna.scufl2.bundle.impl.odfdom.pkg.OdfPackage;
+import uk.org.taverna.scufl2.bundle.impl.odfdom.pkg.manifest.OdfFileEntry;
 
 public class UCFContainer {
 
@@ -104,5 +108,62 @@ public class UCFContainer {
 		return odfPackage.getInputStream(path);
 	}
 
+	public Map<String, ResourceEntry> listContent() {
+		return listContent("");
+	}
+
+	public Map<String, ResourceEntry> listContent(String folderPath) {
+		if (!folderPath.isEmpty() && !folderPath.endsWith("/")) {
+			folderPath = folderPath + "/";
+		}
+		HashMap<String, ResourceEntry> content = new HashMap<String, ResourceEntry>();
+
+		for (Entry<String, OdfFileEntry> entry : odfPackage
+				.getManifestEntries().entrySet()) {
+			String entryPath = entry.getKey();
+			if (!entryPath.startsWith(folderPath)) {
+				continue;
+			}
+			String subPath = entryPath
+					.substring(folderPath.length(), entryPath.length());
+			if (subPath.isEmpty()) {
+				// The folder itself
+				continue;
+			}
+			int firstSlash = subPath.indexOf("/");
+			if (firstSlash > -1 && firstSlash < subPath.length() - 1) {
+				// Children of a folder (note that we'll include the folder
+				// itself which ends in /)
+				continue;
+			}
+			content.put(subPath, new ResourceEntry(entry.getValue()));
+		}
+		return content;
+	}
+
+	public class ResourceEntry {
+
+		private final String path;
+		private final long size;
+		private final String mediaType;
+
+		protected ResourceEntry(OdfFileEntry odfEntry) {
+			path = odfEntry.getPath();
+			size = odfEntry.getSize();
+			mediaType = odfEntry.getMediaType();
+		}
+
+		public String getPath() {
+			return path;
+		}
+
+		public long getSize() {
+			return size;
+		}
+
+		public String getMediaType() {
+			return mediaType;
+		}
+	}
 
 }
