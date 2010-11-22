@@ -772,15 +772,16 @@ public class OdfPackage {
 		}
 		OdfFileEntry fileEntry = getManifestEntries().get(packagePath);
 		ZipEntry zipEntry = mZipEntries.get(packagePath);
+
+		if (fileEntry != null) {
+			// if (XML_MEDIA_TYPE.equals(fileEntry.getMediaType())) {
+			// fileEntry.setSize(-1);
+			// } else {
+				fileEntry.setSize(size);
+			// }
+		}
 		if (zipEntry == null) {
 			return;
-		}
-		if (fileEntry != null) {
-			if (XML_MEDIA_TYPE.equals(fileEntry.getMediaType())) {
-				fileEntry.setSize(-1);
-			} else {
-				fileEntry.setSize(size);
-			}
 		}
 		zipEntry.setSize(size);
 		CRC32 crc = new CRC32();
