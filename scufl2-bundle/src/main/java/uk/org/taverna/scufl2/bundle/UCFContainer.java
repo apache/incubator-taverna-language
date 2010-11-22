@@ -30,6 +30,14 @@ public class UCFContainer {
 		odfPackage.setMediaType(MIME_EPUB);
 	}
 
+	public UCFContainer(File containerFile) throws Exception {
+		odfPackage = OdfPackage.loadPackage(containerFile);
+	}
+
+	public UCFContainer(InputStream inputStream) throws Exception {
+		odfPackage = OdfPackage.loadPackage(inputStream);
+	}
+
 	public String getBundleMimeType() {
 		return odfPackage.getMediaType();
 	}

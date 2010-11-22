@@ -25,28 +25,27 @@ public class TestUCFContainer {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void mimeTypeInvalidCharset() throws Exception {
-		UCFContainer UCFBundle = new UCFContainer();
-		UCFBundle.setBundleMimeType("food/brød");
+		UCFContainer container = new UCFContainer();
+		container.setBundleMimeType("food/brød");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void mimeTypeEmpty() throws Exception {
-		UCFContainer UCFBundle = new UCFContainer();
-		UCFBundle.setBundleMimeType("");
+		UCFContainer container = new UCFContainer();
+		container.setBundleMimeType("");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void mimeTypeNoSlash() throws Exception {
-		UCFContainer UCFBundle = new UCFContainer();
-		UCFBundle.setBundleMimeType("applicationtext");
+		UCFContainer container = new UCFContainer();
+		container.setBundleMimeType("applicationtext");
 	}
 
 	@Test
 	public void defaultMimeType() throws Exception {
-		UCFContainer UCFBundle = new UCFContainer();
-		assertEquals(UCFBundle.MIME_EPUB,
-				UCFBundle.getBundleMimeType());
-		UCFBundle.save(tmpFile);
+		UCFContainer container = new UCFContainer();
+		assertEquals(container.MIME_EPUB, container.getBundleMimeType());
+		container.save(tmpFile);
 		assertTrue(tmpFile.exists());
 		ZipFile zipFile = new ZipFile(tmpFile);
 		// Must be first entry
@@ -55,12 +54,12 @@ public class TestUCFContainer {
 				mimeEntry.getName());
 		assertEquals("mimetype should be uncompressed, but compressed size mismatch", mimeEntry.getCompressedSize(), mimeEntry.getSize());
 		assertEquals("mimetype should have STORED method", ZipEntry.STORED, mimeEntry.getMethod());
-		assertEquals("Wrong mimetype", UCFBundle.MIME_EPUB,
+		assertEquals("Wrong mimetype", container.MIME_EPUB,
 				IOUtils.toString(zipFile.getInputStream(mimeEntry), "ASCII"));
 
 		// Check position 30++ according to
 		// http://livedocs.adobe.com/navigator/9/Navigator_SDK9_HTMLHelp/wwhelp/wwhimpl/common/html/wwhelp.htm?context=Navigator_SDK9_HTMLHelp&file=Appx_Packaging.6.1.html#1522568
-		byte[] expected = ("mimetype" + UCFBundle.MIME_EPUB + "PK")
+		byte[] expected = ("mimetype" + container.MIME_EPUB + "PK")
 				.getBytes("ASCII");
 		FileInputStream in = new FileInputStream(tmpFile);
 		assertEquals(MIME_OFFSET, in.skip(MIME_OFFSET));
@@ -82,27 +81,27 @@ public class TestUCFContainer {
 
 	@Test
 	public void workflowBundleMimeType() throws Exception {
-		UCFContainer UCFBundle = new UCFContainer();
-		UCFBundle.setBundleMimeType(UCFBundle.MIME_WORKFLOW_BUNDLE);
-		assertEquals(UCFBundle.MIME_WORKFLOW_BUNDLE,
-				UCFBundle.getBundleMimeType());
-		UCFBundle.save(tmpFile);
+		UCFContainer container = new UCFContainer();
+		container.setBundleMimeType(container.MIME_WORKFLOW_BUNDLE);
+		assertEquals(container.MIME_WORKFLOW_BUNDLE,
+				container.getBundleMimeType());
+		container.save(tmpFile);
 		ZipFile zipFile = new ZipFile(tmpFile);
 		ZipEntry mimeEntry = zipFile.getEntry("mimetype");
 		assertEquals("mimetype", mimeEntry.getName());
-		assertEquals("Wrong mimetype", UCFBundle.MIME_WORKFLOW_BUNDLE,
+		assertEquals("Wrong mimetype", container.MIME_WORKFLOW_BUNDLE,
 				IOUtils.toString(zipFile.getInputStream(mimeEntry), "ASCII"));
 
 	}
 
 	@Test
 	public void fileEntryFromString() throws Exception {
-		UCFContainer UCFBundle = new UCFContainer();
-		UCFBundle.setBundleMimeType(UCFBundle.MIME_WORKFLOW_BUNDLE);
+		UCFContainer container = new UCFContainer();
+		container.setBundleMimeType(container.MIME_WORKFLOW_BUNDLE);
 
-		UCFBundle.insert("Hello there þĸł", "helloworld.txt", "text/plain");
+		container.insert("Hello there þĸł", "helloworld.txt", "text/plain");
 
-		UCFBundle.save(tmpFile);
+		container.save(tmpFile);
 		ZipFile zipFile = new ZipFile(tmpFile);
 		ZipEntry manifestEntry = zipFile.getEntry("META-INF/manifest.xml");
 		InputStream manifestStream = zipFile.getInputStream(manifestEntry);
@@ -118,17 +117,30 @@ public class TestUCFContainer {
 	}
 
 	@Test
+	public void retrieveStringLoadedFromFile() throws Exception {
+		UCFContainer container = new UCFContainer();
+		container.setBundleMimeType(container.MIME_WORKFLOW_BUNDLE);
+		container.insert("Hello there þĸł", "helloworld.txt", "text/plain");
+		container.save(tmpFile);
+
+		UCFContainer loaded = new UCFContainer(tmpFile);
+		String s = loaded.getEntryAsString("helloworld.txt");
+		assertEquals("Hello there þĸł", s);
+	}
+
+
+	@Test
 	public void fileEntryFromBytes() throws Exception {
-		UCFContainer UCFBundle = new UCFContainer();
-		UCFBundle.setBundleMimeType(UCFBundle.MIME_WORKFLOW_BUNDLE);
+		UCFContainer container = new UCFContainer();
+		container.setBundleMimeType(container.MIME_WORKFLOW_BUNDLE);
 
 		byte[] bytes = new byte[1024];
 		bytes[0] = 0x20;
 		bytes[1022] = (byte) 0xdd;
 		bytes[1023] = (byte) 0xff;
-		UCFBundle.insert(bytes, "binary", UCFBundle.MIME_BINARY);
+		container.insert(bytes, "binary", container.MIME_BINARY);
 
-		UCFBundle.save(tmpFile);
+		container.save(tmpFile);
 		ZipFile zipFile = new ZipFile(tmpFile);
 		ZipEntry manifestEntry = zipFile.getEntry("META-INF/manifest.xml");
 		InputStream manifestStream = zipFile.getInputStream(manifestEntry);
@@ -146,10 +158,10 @@ public class TestUCFContainer {
 
 	@Test
 	public void manifestMimetype() throws Exception {
-		UCFContainer UCFBundle = new UCFContainer();
-		UCFBundle.setBundleMimeType(UCFBundle.MIME_WORKFLOW_BUNDLE);
+		UCFContainer container = new UCFContainer();
+		container.setBundleMimeType(container.MIME_WORKFLOW_BUNDLE);
 
-		UCFBundle.save(tmpFile);
+		container.save(tmpFile);
 		ZipFile zipFile = new ZipFile(tmpFile);
 		ZipEntry manifestEntry = zipFile.getEntry("META-INF/manifest.xml");
 		InputStream manifestStream = zipFile.getInputStream(manifestEntry);
