@@ -1,4 +1,4 @@
-package uk.org.taverna.scufl2.bundle;
+package uk.org.taverna.scufl2.ucfpackage;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,8 +11,8 @@ import java.util.Map.Entry;
 
 import org.w3c.dom.Document;
 
-import uk.org.taverna.scufl2.bundle.impl.odfdom.pkg.OdfPackage;
-import uk.org.taverna.scufl2.bundle.impl.odfdom.pkg.manifest.OdfFileEntry;
+import uk.org.taverna.scufl2.ucfpackage.impl.odfdom.pkg.OdfPackage;
+import uk.org.taverna.scufl2.ucfpackage.impl.odfdom.pkg.manifest.OdfFileEntry;
 
 public class UCFPackage {
 

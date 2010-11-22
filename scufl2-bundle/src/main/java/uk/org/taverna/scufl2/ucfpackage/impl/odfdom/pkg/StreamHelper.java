@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package uk.org.taverna.scufl2.bundle.impl.odfdom.pkg;
+package uk.org.taverna.scufl2.ucfpackage.impl.odfdom.pkg;
 
 import java.io.IOException;
 import java.io.InputStream;

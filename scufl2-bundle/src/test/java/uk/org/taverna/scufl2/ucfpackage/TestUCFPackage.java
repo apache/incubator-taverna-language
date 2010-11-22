@@ -1,4 +1,4 @@
-package uk.org.taverna.scufl2.bundle;
+package uk.org.taverna.scufl2.ucfpackage;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -19,7 +19,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import uk.org.taverna.scufl2.bundle.UCFPackage.ResourceEntry;
+import uk.org.taverna.scufl2.ucfpackage.UCFPackage;
+import uk.org.taverna.scufl2.ucfpackage.UCFPackage.ResourceEntry;
 
 public class TestUCFPackage {
 

@@ -19,7 +19,7 @@
  * limitations under the License.
  *
  ************************************************************************/
-package uk.org.taverna.scufl2.bundle.impl.odfdom.pkg.manifest;
+package uk.org.taverna.scufl2.ucfpackage.impl.odfdom.pkg.manifest;
 
 public class Algorithm {
     private String _name;
