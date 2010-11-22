@@ -93,7 +93,7 @@
 		 -->
 		<module>scufl2-t2flow</module>
 		<module>scufl2-usecases</module>
+        <module>scufl2-ucfpackage</module>
 		<module>scufl2-rdfxml</module>
-        <module>scufl2-bundle</module>
 	</modules>
 </project>
