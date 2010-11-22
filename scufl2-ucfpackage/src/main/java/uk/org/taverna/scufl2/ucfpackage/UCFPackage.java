@@ -72,51 +72,51 @@ public class UCFPackage {
 		tempFile.renameTo(packageFile);
 	}
 
-	public void insert(String stringValue, String path, String mediaType)
+	public void addResource(String stringValue, String path, String mediaType)
 			throws Exception {
 		odfPackage.insert(stringValue.getBytes(UTF_8), path, mediaType);
 	}
 
-	public void insert(byte[] bytesValue, String path, String mediaType)
+	public void addResource(byte[] bytesValue, String path, String mediaType)
 			throws Exception {
 		odfPackage.insert(bytesValue, path, mediaType);
 	}
 
-	public void insert(Document document, String path, String mediaType)
+	public void addResource(Document document, String path, String mediaType)
 			throws Exception {
 		odfPackage.insert(document, path, mediaType);
 	}
 
-	public void insert(InputStream inputStream, String path, String mediaType)
+	public void addResource(InputStream inputStream, String path, String mediaType)
 			throws Exception {
 		odfPackage.insert(inputStream, path, mediaType);
 	}
 
-	public void insert(URI uri, String path, String mediaType) throws Exception {
+	public void addResource(URI uri, String path, String mediaType) throws Exception {
 		odfPackage.insert(uri, path, mediaType);
 	}
 
-	public String getEntryAsString(String path) throws Exception {
+	public String getResourceAsString(String path) throws Exception {
 		return new String(odfPackage.getBytes(path), UTF_8);
 	}
 
-	public byte[] getEntryAsBytes(String path) throws Exception {
+	public byte[] getResourceAsBytes(String path) throws Exception {
 		return odfPackage.getBytes(path);
 	}
 
-	public InputStream getEntryAsInputStream(String path) throws Exception {
+	public InputStream getResourceAsInputStream(String path) throws Exception {
 		return odfPackage.getInputStream(path);
 	}
 
-	public Map<String, ResourceEntry> listContent() {
-		return listContent("", false);
+	public Map<String, ResourceEntry> listResources() {
+		return listResources("", false);
 	}
 
-	public Map<String, ResourceEntry> listContent(String folderPath) {
-		return listContent(folderPath, false);
+	public Map<String, ResourceEntry> listResources(String folderPath) {
+		return listResources(folderPath, false);
 	}
 
-	protected Map<String, ResourceEntry> listContent(String folderPath,
+	protected Map<String, ResourceEntry> listResources(String folderPath,
 			boolean recursive) {
 		if (!folderPath.isEmpty() && !folderPath.endsWith("/")) {
 			folderPath = folderPath + "/";
@@ -172,8 +172,8 @@ public class UCFPackage {
 		}
 	}
 
-	public Map<String, ResourceEntry> listContentRecursive() {
-		return listContent("", true);
+	public Map<String, ResourceEntry> listAllResources() {
+		return listResources("", true);
 	}
 
 }
