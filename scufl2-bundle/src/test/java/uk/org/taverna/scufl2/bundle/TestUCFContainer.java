@@ -19,7 +19,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import uk.org.taverna.scufl2.bundle.UCFContainer.ResourceEntry;
+import uk.org.taverna.scufl2.bundle.UCFPackage.ResourceEntry;
 
 public class TestUCFContainer {
 
@@ -29,25 +29,25 @@ public class TestUCFContainer {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void mimeTypeInvalidCharset() throws Exception {
-		UCFContainer container = new UCFContainer();
+		UCFPackage container = new UCFPackage();
 		container.setBundleMimeType("food/brød");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void mimeTypeEmpty() throws Exception {
-		UCFContainer container = new UCFContainer();
+		UCFPackage container = new UCFPackage();
 		container.setBundleMimeType("");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void mimeTypeNoSlash() throws Exception {
-		UCFContainer container = new UCFContainer();
+		UCFPackage container = new UCFPackage();
 		container.setBundleMimeType("nonvalid");
 	}
 
 	@Test
 	public void defaultMimeType() throws Exception {
-		UCFContainer container = new UCFContainer();
+		UCFPackage container = new UCFPackage();
 		assertEquals(container.MIME_EPUB, container.getBundleMimeType());
 		container.save(tmpFile);
 		assertTrue(tmpFile.exists());
@@ -88,7 +88,7 @@ public class TestUCFContainer {
 
 	@Test
 	public void workflowBundleMimeType() throws Exception {
-		UCFContainer container = new UCFContainer();
+		UCFPackage container = new UCFPackage();
 		container.setBundleMimeType(container.MIME_WORKFLOW_BUNDLE);
 		assertEquals(container.MIME_WORKFLOW_BUNDLE,
 				container.getBundleMimeType());
@@ -103,7 +103,7 @@ public class TestUCFContainer {
 
 	@Test
 	public void fileEntryFromString() throws Exception {
-		UCFContainer container = new UCFContainer();
+		UCFPackage container = new UCFPackage();
 		container.setBundleMimeType(container.MIME_WORKFLOW_BUNDLE);
 
 		container.insert("Hello there þĸł", "helloworld.txt", "text/plain");
@@ -125,38 +125,38 @@ public class TestUCFContainer {
 
 	@Test
 	public void retrieveStringLoadedFromFile() throws Exception {
-		UCFContainer container = new UCFContainer();
+		UCFPackage container = new UCFPackage();
 		container.setBundleMimeType(container.MIME_WORKFLOW_BUNDLE);
 		container.insert("Hello there þĸł", "helloworld.txt", "text/plain");
 		container.save(tmpFile);
 
-		UCFContainer loaded = new UCFContainer(tmpFile);
+		UCFPackage loaded = new UCFPackage(tmpFile);
 		String s = loaded.getEntryAsString("helloworld.txt");
 		assertEquals("Hello there þĸł", s);
 	}
 
 	@Test
 	public void retrieveBytesLoadedFromFile() throws Exception {
-		UCFContainer container = new UCFContainer();
+		UCFPackage container = new UCFPackage();
 		container.setBundleMimeType(container.MIME_WORKFLOW_BUNDLE);
 		byte[] bytes = makeBytes(2048);
 		container.insert(bytes, "randomBytes", "application/octet-stream");
 		container.save(tmpFile);
 
-		UCFContainer loaded = new UCFContainer(tmpFile);
+		UCFPackage loaded = new UCFPackage(tmpFile);
 		byte[] loadedBytes = loaded.getEntryAsBytes("randomBytes");
 		assertArrayEquals(bytes, loadedBytes);
 	}
 
 	@Test
 	public void retrieveInputStreamLoadedFromFile() throws Exception {
-		UCFContainer container = new UCFContainer();
+		UCFPackage container = new UCFPackage();
 		container.setBundleMimeType(container.MIME_WORKFLOW_BUNDLE);
 		byte[] bytes = makeBytes(4929);
 		container.insert(bytes, "randomBytes", "application/octet-stream");
 		container.save(tmpFile);
 
-		UCFContainer loaded = new UCFContainer(tmpFile);
+		UCFPackage loaded = new UCFPackage(tmpFile);
 		InputStream entryAsInputStream = loaded
 				.getEntryAsInputStream("randomBytes");
 		byte[] loadedBytes = IOUtils.toByteArray(entryAsInputStream);
@@ -165,7 +165,7 @@ public class TestUCFContainer {
 
 	@Test
 	public void fileEntryFromBytes() throws Exception {
-		UCFContainer container = new UCFContainer();
+		UCFPackage container = new UCFPackage();
 		container.setBundleMimeType(container.MIME_WORKFLOW_BUNDLE);
 
 		byte[] bytes = makeBytes(1024);
@@ -195,7 +195,7 @@ public class TestUCFContainer {
 
 	@Test
 	public void fileListing() throws Exception {
-		UCFContainer container = new UCFContainer();
+		UCFPackage container = new UCFPackage();
 		container.setBundleMimeType(container.MIME_WORKFLOW_BUNDLE);
 		Set<String> expectedFiles = new HashSet<String>();
 		Set<String> expectedSubFiles = new HashSet<String>();
@@ -235,7 +235,7 @@ public class TestUCFContainer {
 
 		container.save(tmpFile);
 
-		UCFContainer loaded = new UCFContainer(tmpFile);
+		UCFPackage loaded = new UCFPackage(tmpFile);
 		Map<String, ResourceEntry> loadedRootEntries = loaded.listContent();
 		assertEquals(expectedFiles, loadedRootEntries.keySet());
 
@@ -246,7 +246,7 @@ public class TestUCFContainer {
 
 	@Test
 	public void fileListingRecursive() throws Exception {
-		UCFContainer container = new UCFContainer();
+		UCFPackage container = new UCFPackage();
 		container.setBundleMimeType(container.MIME_WORKFLOW_BUNDLE);
 		Set<String> expectedFiles = new HashSet<String>();
 
@@ -276,7 +276,7 @@ public class TestUCFContainer {
 
 		container.save(tmpFile);
 
-		UCFContainer loaded = new UCFContainer(tmpFile);
+		UCFPackage loaded = new UCFPackage(tmpFile);
 		Map<String, ResourceEntry> loadedRootEntries = loaded
 				.listContentRecursive();
 		assertEquals(expectedFiles, loadedRootEntries.keySet());
@@ -284,7 +284,7 @@ public class TestUCFContainer {
 
 	@Test
 	public void resourceEntries() throws Exception {
-		UCFContainer container = new UCFContainer();
+		UCFPackage container = new UCFPackage();
 		container.setBundleMimeType(container.MIME_WORKFLOW_BUNDLE);
 		container.insert("Hello there", "helloworld.txt", "text/plain");
 		container.insert("Sub-folder entry 1", "sub/1.txt", "text/plain");
@@ -297,7 +297,7 @@ public class TestUCFContainer {
 
 		container.save(tmpFile);
 
-		UCFContainer loaded = new UCFContainer(tmpFile);
+		UCFPackage loaded = new UCFPackage(tmpFile);
 
 		ResourceEntry loadedHelloResource = loaded.listContent().get(
 				"helloworld.txt");
@@ -309,7 +309,7 @@ public class TestUCFContainer {
 
 	@Test
 	public void manifestMimetype() throws Exception {
-		UCFContainer container = new UCFContainer();
+		UCFPackage container = new UCFPackage();
 		container.setBundleMimeType(container.MIME_WORKFLOW_BUNDLE);
 
 		container.save(tmpFile);

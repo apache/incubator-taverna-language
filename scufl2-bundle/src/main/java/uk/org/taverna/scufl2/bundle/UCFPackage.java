@@ -14,7 +14,7 @@ import org.w3c.dom.Document;
 import uk.org.taverna.scufl2.bundle.impl.odfdom.pkg.OdfPackage;
 import uk.org.taverna.scufl2.bundle.impl.odfdom.pkg.manifest.OdfFileEntry;
 
-public class UCFContainer {
+public class UCFPackage {
 
 	private static final Charset UTF_8 = Charset.forName("utf-8");
 	public static final String MIME_BINARY = "application/octet-stream";
@@ -30,16 +30,16 @@ public class UCFContainer {
 	private static Charset ASCII = Charset.forName("ascii");
 	private final OdfPackage odfPackage;
 
-	public UCFContainer() throws Exception {
+	public UCFPackage() throws Exception {
 		odfPackage = OdfPackage.create();
 		odfPackage.setMediaType(MIME_EPUB);
 	}
 
-	public UCFContainer(File containerFile) throws Exception {
+	public UCFPackage(File containerFile) throws Exception {
 		odfPackage = OdfPackage.loadPackage(containerFile);
 	}
 
-	public UCFContainer(InputStream inputStream) throws Exception {
+	public UCFPackage(InputStream inputStream) throws Exception {
 		odfPackage = OdfPackage.loadPackage(inputStream);
 	}
 
