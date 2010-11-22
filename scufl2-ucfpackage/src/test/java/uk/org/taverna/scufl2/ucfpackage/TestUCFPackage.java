@@ -33,6 +33,7 @@ public class TestUCFPackage {
 	@Test(expected = IllegalArgumentException.class)
 	public void mimeTypeInvalidCharset() throws Exception {
 		UCFPackage container = new UCFPackage();
+		// Not even Latin-1 chars allowed
 		container.setPackageMediaType("food/brød");
 	}
 
