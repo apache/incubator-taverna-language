@@ -21,7 +21,7 @@ import org.junit.Test;
 
 import uk.org.taverna.scufl2.bundle.UCFPackage.ResourceEntry;
 
-public class TestUCFContainer {
+public class TestUCFPackage {
 
 	private static final int MIME_OFFSET = 30;
 	private static final boolean DELETE_FILES = true;
