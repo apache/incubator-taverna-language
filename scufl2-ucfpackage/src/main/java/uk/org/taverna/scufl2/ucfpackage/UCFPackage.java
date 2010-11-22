@@ -43,57 +43,57 @@ public class UCFPackage {
 		odfPackage = OdfPackage.loadPackage(inputStream);
 	}
 
-	public String getBundleMimeType() {
+	public String getPackageMediaType() {
 		return odfPackage.getMediaType();
 	}
 
-	public void setBundleMimeType(String mimeType) {
-		if (mimeType == null || !mimeType.contains("/")) {
-			throw new IllegalArgumentException("Invalid media type " + mimeType);
+	public void setPackageMediaType(String mediaType) {
+		if (mediaType == null || !mediaType.contains("/")) {
+			throw new IllegalArgumentException("Invalid media type " + mediaType);
 		}
-		if (!ASCII.newEncoder().canEncode(mimeType)) {
+		if (!ASCII.newEncoder().canEncode(mediaType)) {
 			throw new IllegalArgumentException("Media type must be ASCII: "
-					+ mimeType);
+					+ mediaType);
 		}
-		odfPackage.setMediaType(mimeType);
+		odfPackage.setMediaType(mediaType);
 	}
 
-	public void save(File bundleFile) throws IOException {
-		File tempFile = File.createTempFile(bundleFile.getName(), ".tmp",
-				bundleFile.getParentFile());
+	public void save(File packageFile) throws IOException {
+		File tempFile = File.createTempFile(packageFile.getName(), ".tmp",
+				packageFile.getParentFile());
 
 		try {
 			odfPackage.save(tempFile);
 		} catch (IOException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new IOException("Could not save bundle to " + bundleFile, e);
+			throw new IOException("Could not save bundle to " + packageFile, e);
 		}
-		tempFile.renameTo(bundleFile);
+		tempFile.renameTo(packageFile);
 	}
 
-	public void insert(String stringValue, String path, String mimeType)
+	public void insert(String stringValue, String path, String mediaType)
 			throws Exception {
-		odfPackage.insert(stringValue.getBytes(UTF_8), path, mimeType);
+		odfPackage.insert(stringValue.getBytes(UTF_8), path, mediaType);
 	}
 
-	public void insert(byte[] bytesValue, String path, String mimeType)
+	public void insert(byte[] bytesValue, String path, String mediaType)
 			throws Exception {
-		odfPackage.insert(bytesValue, path, mimeType);
+		odfPackage.insert(bytesValue, path, mediaType);
 	}
 
-	public void insert(Document document, String path, String mimeType)
+	public void insert(Document document, String path, String mediaType)
 			throws Exception {
-		odfPackage.insert(document, path, mimeType);
+		odfPackage.insert(document, path, mediaType);
 	}
 
-	public void insert(InputStream inputStream, String path, String mimeType)
+	public void insert(InputStream inputStream, String path, String mediaType)
 			throws Exception {
-		odfPackage.insert(inputStream, path, mimeType);
+		odfPackage.insert(inputStream, path, mediaType);
 	}
 
-	public void insert(URI uri, String path, String mimeType) throws Exception {
-		odfPackage.insert(uri, path, mimeType);
+	public void insert(URI uri, String path, String mediaType) throws Exception {
+		odfPackage.insert(uri, path, mediaType);
 	}
 
 	public String getEntryAsString(String path) throws Exception {
