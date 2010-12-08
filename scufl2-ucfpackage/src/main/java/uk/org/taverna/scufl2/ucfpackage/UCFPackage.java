@@ -3,6 +3,7 @@ package uk.org.taverna.scufl2.ucfpackage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -12,6 +13,18 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.oasis_open.names.tc.opendocument.xmlns.container.Container;
+import org.oasis_open.names.tc.opendocument.xmlns.container.Container.RootFiles;
+import org.oasis_open.names.tc.opendocument.xmlns.container.ObjectFactory;
+import org.oasis_open.names.tc.opendocument.xmlns.container.RootFile;
 import org.w3c.dom.Document;
 
 import uk.org.taverna.scufl2.ucfpackage.UCFPackage.ResourceEntry;
@@ -34,6 +47,7 @@ public class UCFPackage {
 	private static Charset ASCII = Charset.forName("ascii");
 	private OdfPackage odfPackage;
 	private final List<String> rootFilePaths = new ArrayList<String>();
+	private static JAXBContext jaxbContext;
 
 	public UCFPackage() throws Exception {
 		odfPackage = OdfPackage.create();
@@ -54,7 +68,8 @@ public class UCFPackage {
 
 	public void setPackageMediaType(String mediaType) {
 		if (mediaType == null || !mediaType.contains("/")) {
-			throw new IllegalArgumentException("Invalid media type " + mediaType);
+			throw new IllegalArgumentException("Invalid media type "
+					+ mediaType);
 		}
 		if (!ASCII.newEncoder().canEncode(mediaType)) {
 			throw new IllegalArgumentException("Media type must be ASCII: "
@@ -70,8 +85,7 @@ public class UCFPackage {
 
 		// Write using temp file, and do rename in the end
 		File tempFile = File.createTempFile("." + packageFile.getName(),
-				".tmp",
-				packageFile.getParentFile());
+				".tmp", packageFile.getParentFile());
 		try {
 			prepareContainerXML();
 			odfPackage.save(tempFile);
@@ -97,8 +111,71 @@ public class UCFPackage {
 
 	protected void prepareContainerXML() throws Exception {
 		if (!rootFilePaths.isEmpty()) {
-			addResource("<x></x>", "META-INF/container.xml", "text/xml");
+
+			ObjectFactory containerFactory = new ObjectFactory();
+			Container container = containerFactory.createContainer();
+			RootFiles rootFiles = containerFactory.createContainerRootFiles();
+			container.setRootFiles(rootFiles);
+
+			for (ResourceEntry rootFile : getRootFiles()) {
+				RootFile rootFileElem = containerFactory.createRootFile();
+				rootFileElem.setFullPath(rootFile.getPath());
+				rootFileElem.setMediaType(rootFile.getMediaType());
+				rootFiles.getRootFile().add(rootFileElem);
+			}
+			Marshaller marshaller = createMarshaller();
+
+			OutputStream outStream = odfPackage
+					.insertOutputStream("META-INF/container.xml");
+			try {
+				JAXBElement<Container> containerElem = containerFactory
+						.createContainer(container);
+
+				// XMLStreamWriter xmlStreamWriter = XMLOutputFactory
+				// .newInstance().createXMLStreamWriter(outStream);
+				// xmlStreamWriter.setDefaultNamespace(containerElem.getName()
+				// .getNamespaceURI());
+				//
+				// xmlStreamWriter.setPrefix("dsig",
+				// "http://www.w3.org/2000/09/xmldsig#");
+				// xmlStreamWriter.setPrefix("xmlenc",
+				// "http://www.w3.org/2001/04/xmlenc#");
+
+				// FIXME: Set namespace prefixes and default namespace
+
+				marshaller.setProperty("jaxb.formatted.output", true);
+
+
+				// TODO: Ensure using default namespace
+				marshaller.marshal(containerElem, outStream);
+
+			} finally {
+				outStream.close();
+			}
+
 		}
+	}
+
+	protected static synchronized Marshaller createMarshaller()
+			throws JAXBException {
+		return getJaxbContext().createMarshaller();
+	}
+
+	protected static synchronized Unmarshaller createUnMarshaller()
+			throws JAXBException {
+		return getJaxbContext().createUnmarshaller();
+	}
+
+	protected static synchronized JAXBContext getJaxbContext()
+			throws JAXBException {
+		if (jaxbContext == null) {
+			jaxbContext = JAXBContext.newInstance(
+					"org.oasis_open.names.tc.opendocument.xmlns.container:"
+							+ "org.w3._2000._09.xmldsig_:"
+							+ "org.w3._2001._04.xmlenc_",
+					UCFPackage.class.getClassLoader());
+		}
+		return jaxbContext;
 	}
 
 	public void addResource(String stringValue, String path, String mediaType)
@@ -116,12 +193,13 @@ public class UCFPackage {
 		odfPackage.insert(document, path, mediaType);
 	}
 
-	public void addResource(InputStream inputStream, String path, String mediaType)
-			throws Exception {
+	public void addResource(InputStream inputStream, String path,
+			String mediaType) throws Exception {
 		odfPackage.insert(inputStream, path, mediaType);
 	}
 
-	public void addResource(URI uri, String path, String mediaType) throws Exception {
+	public void addResource(URI uri, String path, String mediaType)
+			throws Exception {
 		odfPackage.insert(uri, path, mediaType);
 	}
 
@@ -158,8 +236,8 @@ public class UCFPackage {
 			if (!entryPath.startsWith(folderPath)) {
 				continue;
 			}
-			String subPath = entryPath
-					.substring(folderPath.length(), entryPath.length());
+			String subPath = entryPath.substring(folderPath.length(),
+					entryPath.length());
 			if (subPath.isEmpty()) {
 				// The folder itself
 				continue;
