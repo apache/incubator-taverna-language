@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="urn:oasis:names:tc:opendocument:xmlns:container"
+	elementFormDefault="qualified" attributeFormDefault="unqualified"
+	version="1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:container="urn:oasis:names:tc:opendocument:xmlns:container"
+	xmlns:enc="http://www.w3.org/2001/04/xmlenc#" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#"
+	xmlns:jxb="http://java.sun.com/xml/ns/jaxb" jxb:version="1.0">
+
+	<xsd:annotation>
+		<xsd:documentation>
+			Copyright (C) 2010 The University of Manchester, UK
+
+			Modifications to the initial code base are copyright of their
+			respective authors, or their employers as appropriate.
+
+			This program is free software; you can redistribute it and/or
+			modify it under the terms of the GNU Lesser General Public License
+			as published by the Free Software Foundation; either version 2.1 of
+			the License, or (at your option) any later version.
+
+			This program is distributed in the hope that it will be useful, but
+			WITHOUT ANY WARRANTY; without even the implied warranty of
+			MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+			Lesser General Public License for more details.
+
+			You should have received a copy of the GNU Lesser General Public
+			License along with this program; if not, write to the Free Software
+			Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+
+
+			Manually adapted by Stian Soiland-Reyes from Relax-NG schema for
+			Adobe UCF
+			definition for META-INF/container.xml - retrieved from:
+			http://livedocs.adobe.com/navigator/9/Navigator_SDK9_HTMLHelp/wwhelp/wwhimpl/common/html/wwhelp.htm?context=Navigator_SDK9_HTMLHelp&amp;file=Appx_Packaging.6.31.html
+
+			See
+			http://livedocs.adobe.com/navigator/9/Navigator_SDK9_HTMLHelp/wwhelp/wwhimpl/common/html/wwhelp.htm?context=Navigator_SDK9_HTMLHelp&amp;file=Appx_Packaging.6.31.html
+
+
+			NOTE: urn:oasis:names:tc:opendocument:xmlns:container is *not* an
+			official namespace by OASIS,
+			but the Adobe UCF specification defines that a conforming document must
+			use the *default*
+			namespace, eg:
+			<container xmlns="urn:oasis:names:tc:opendocument:xmlns:container">..</container>
+		</xsd:documentation>
+		<xsd:appinfo>
+			<!-- See http://docs.rakeshv.org/java/jaxb/users-guide/jaxb-custom.html -->
+			<jxb:globalBindings />
+			<jxb:schemaBindings>
+				<jxb:package name="org.oasis_open.names.tc.opendocument.xmlns.container" />
+			</jxb:schemaBindings>
+		</xsd:appinfo>
+	</xsd:annotation>
+
+	<!-- xmldsig-core-schema.xsd is also included by xenc-schema.xsd -->
+	<xsd:import namespace='http://www.w3.org/2000/09/xmldsig#'
+		schemaLocation='http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd' />
+	<xsd:import namespace="http://www.w3.org/2001/04/xmlenc#"
+		schemaLocation="http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/xenc-schema.xsd" />
+
+	<xsd:element name="container" type="container:Container"></xsd:element>
+
+	<xsd:complexType name="Container">
+		<xsd:sequence>
+			<xsd:element name="rootFiles" maxOccurs="1" minOccurs="0">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="rootFile" type="container:RootFile"
+							maxOccurs="unbounded" minOccurs="1">
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="relationships">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="relationship" type="container:Relationship">
+						</xsd:element>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="signatures">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element ref="dsig:Signature" maxOccurs="unbounded" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="encryption">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:choice maxOccurs="unbounded">
+							<xsd:element ref="enc:EncryptedData" />
+							<xsd:element ref="enc:EncryptedKey" />
+						</xsd:choice>
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="version" type="xsd:string" fixed="1.0"></xsd:attribute>
+	</xsd:complexType>
+
+	<xsd:complexType name="RootFile">
+		<xsd:attribute name="full-path" type="xsd:string" use="required">
+		</xsd:attribute>
+		<xsd:attribute name="media-type" type="xsd:string" use="required">
+		</xsd:attribute>
+	</xsd:complexType>
+
+	<xsd:complexType name="Relationship">
+		<xsd:attribute name="type" type="xsd:string"></xsd:attribute>
+		<xsd:attribute name="target" type="xsd:string"></xsd:attribute>
+	</xsd:complexType>
+</xsd:schema>
