@@ -73,14 +73,6 @@
 
 	<xsd:complexType name="Container">
 		<xsd:sequence>
-			<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"
-				processContents="lax">
-				<xsd:annotation>
-					<xsd:appinfo>
-						<jaxb:property name="any1" />
-					</xsd:appinfo>
-				</xsd:annotation>
-			</xsd:any>
 			<xsd:sequence minOccurs="0">
 				<xsd:element name="rootFiles">
 					<xsd:complexType>
@@ -92,7 +84,6 @@
 										<jaxb:property name="any2" />
 									</xsd:appinfo>
 								</xsd:annotation>
-
 							</xsd:any>
 							<xsd:element name="rootFile" type="container:RootFile"
 								maxOccurs="unbounded" minOccurs="1" />
@@ -100,10 +91,17 @@
 								processContents="lax">
 								<xsd:annotation>
 									<xsd:appinfo>
+										<jaxb:property name="any1" />
+									</xsd:appinfo>
+								</xsd:annotation>
+							</xsd:any>
+							<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"
+								processContents="lax">
+								<xsd:annotation>
+									<xsd:appinfo>
 										<jaxb:property name="any3" />
 									</xsd:appinfo>
 								</xsd:annotation>
-
 							</xsd:any>
 						</xsd:sequence>
 						<xsd:anyAttribute namespace="##other"
