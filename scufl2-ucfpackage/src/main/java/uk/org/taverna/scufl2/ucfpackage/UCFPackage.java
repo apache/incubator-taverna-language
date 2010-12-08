@@ -49,6 +49,7 @@ public class UCFPackage {
 	private OdfPackage odfPackage;
 	private final List<String> rootFilePaths = new ArrayList<String>();
 	private static JAXBContext jaxbContext;
+	private JAXBElement<Container> containerElem;
 
 	public UCFPackage() throws Exception {
 		odfPackage = OdfPackage.create();
@@ -57,21 +58,27 @@ public class UCFPackage {
 
 	public UCFPackage(File containerFile) throws Exception {
 		odfPackage = OdfPackage.loadPackage(containerFile);
-		loadContainerXML();
+		parseContainerXML();
 	}
 
 	public UCFPackage(InputStream inputStream) throws Exception {
 		odfPackage = OdfPackage.loadPackage(inputStream);
-		loadContainerXML();
+		parseContainerXML();
 	}
 
-	protected void loadContainerXML() throws Exception {
+	protected void parseContainerXML() throws Exception {
+		rootFilePaths.clear();
 		InputStream containerStream = getResourceAsInputStream(CONTAINER_XML);
 		if (containerStream == null) {
+			ObjectFactory containerFactory = new ObjectFactory();
+			Container container = containerFactory.createContainer();
+			RootFiles rootFiles = containerFactory.createContainerRootFiles();
+			container.setRootFiles(rootFiles);
+
 			return;
 		}
 		Unmarshaller unMarshaller = createUnMarshaller();
-		JAXBElement<Container> containerElem = (JAXBElement<Container>) unMarshaller
+		containerElem = (JAXBElement<Container>) unMarshaller
 				.unmarshal(containerStream);
 		RootFiles rootFilesElem = containerElem.getValue().getRootFiles();
 		if (rootFilesElem != null) {
@@ -200,26 +207,41 @@ public class UCFPackage {
 	public void addResource(String stringValue, String path, String mediaType)
 			throws Exception {
 		odfPackage.insert(stringValue.getBytes(UTF_8), path, mediaType);
+		if (path.equals(CONTAINER_XML)) {
+			parseContainerXML();
+		}
 	}
 
 	public void addResource(byte[] bytesValue, String path, String mediaType)
 			throws Exception {
 		odfPackage.insert(bytesValue, path, mediaType);
+		if (path.equals(CONTAINER_XML)) {
+			parseContainerXML();
+		}
 	}
 
 	public void addResource(Document document, String path, String mediaType)
 			throws Exception {
 		odfPackage.insert(document, path, mediaType);
+		if (path.equals(CONTAINER_XML)) {
+			parseContainerXML();
+		}
 	}
 
 	public void addResource(InputStream inputStream, String path,
 			String mediaType) throws Exception {
 		odfPackage.insert(inputStream, path, mediaType);
+		if (path.equals(CONTAINER_XML)) {
+			parseContainerXML();
+		}
 	}
 
 	public void addResource(URI uri, String path, String mediaType)
 			throws Exception {
 		odfPackage.insert(uri, path, mediaType);
+		if (path.equals(CONTAINER_XML)) {
+			parseContainerXML();
+		}
 	}
 
 	public String getResourceAsString(String path) throws Exception {
