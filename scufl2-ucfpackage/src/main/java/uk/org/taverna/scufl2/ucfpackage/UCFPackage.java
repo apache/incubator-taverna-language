@@ -32,7 +32,7 @@ public class UCFPackage {
 
 	public UCFPackage() throws Exception {
 		odfPackage = OdfPackage.create();
-		odfPackage.setMediaType(MIME_EPUB);
+		// odfPackage.setMediaType(MIME_EPUB);
 	}
 
 	public UCFPackage(File containerFile) throws Exception {
@@ -59,6 +59,9 @@ public class UCFPackage {
 	}
 
 	public void save(File packageFile) throws IOException {
+		if (getPackageMediaType() == null) {
+			throw new IllegalStateException("Package media type must be set");
+		}
 		// Write using temp file, and do rename in the end
 		File tempFile = File.createTempFile("." + packageFile.getName(),
 				".tmp",
