@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 
-import uk.org.taverna.scufl2.api.common.AbstractNamed;
+import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.common.NamedSet;
@@ -20,7 +20,7 @@ import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
  * @author Alan R Williams
  *
  */
-public class Workflow extends AbstractNamed implements Configurable,
+public class Workflow extends AbstractNamedChild implements Configurable,
 		Child<WorkflowBundle> {
 
 	private static URI WORKFLOW_ROOT = URI

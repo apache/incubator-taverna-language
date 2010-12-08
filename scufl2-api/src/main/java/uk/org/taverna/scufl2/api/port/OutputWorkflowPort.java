@@ -1,6 +1,6 @@
 package uk.org.taverna.scufl2.api.port;
 
-import uk.org.taverna.scufl2.api.common.AbstractNamed;
+import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.core.Workflow;
 
@@ -8,7 +8,7 @@ import uk.org.taverna.scufl2.api.core.Workflow;
  * @author Alan R Williams
  * 
  */
-public class OutputWorkflowPort extends AbstractNamed implements ReceiverPort,
+public class OutputWorkflowPort extends AbstractNamedChild implements ReceiverPort,
 WorkflowPort, Child<Workflow> {
 
 	private Workflow parent;
