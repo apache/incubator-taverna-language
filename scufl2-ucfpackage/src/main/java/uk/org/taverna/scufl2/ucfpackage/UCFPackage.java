@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.w3c.dom.Document;
 
@@ -32,6 +33,7 @@ public class UCFPackage {
 
 	private static Charset ASCII = Charset.forName("ascii");
 	private OdfPackage odfPackage;
+	private List<String> rootFilePaths;
 
 	public UCFPackage() throws Exception {
 		odfPackage = OdfPackage.create();
@@ -213,12 +215,23 @@ public class UCFPackage {
 	}
 
 	public void setRootFile(String path) {
-		// TODO Auto-generated method stub
-
+		rootFilePaths.add(path);
 	}
 
 	public List<ResourceEntry> getRootFiles() {
-		return new ArrayList<UCFPackage.ResourceEntry>();
+		ArrayList<UCFPackage.ResourceEntry> rootFiles = new ArrayList<UCFPackage.ResourceEntry>();
+		for (String rootPath : rootFilePaths) {
+			rootFiles.add(getResourceEntry(rootPath));
+		}
+		return rootFiles;
+	}
+
+	public ResourceEntry getResourceEntry(String path) {
+		OdfFileEntry odfFileEntry = odfPackage.getManifestEntries().get(path);
+		if (odfFileEntry == null) {
+			return null;
+		}
+		return new ResourceEntry(odfFileEntry);
 	}
 
 	public void unsetRootFile(String path) {
