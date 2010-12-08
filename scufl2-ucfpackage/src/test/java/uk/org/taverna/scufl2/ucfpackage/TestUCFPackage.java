@@ -49,9 +49,16 @@ public class TestUCFPackage {
 		container.setPackageMediaType("nonvalid");
 	}
 
-	@Test
-	public void defaultMimeType() throws Exception {
+	@Test(expected = IllegalStateException.class)
+	public void noDefaultMimeType() throws Exception {
 		UCFPackage container = new UCFPackage();
+		container.save(tmpFile);
+	}
+
+	@Test
+	public void mimeTypePosition() throws Exception {
+		UCFPackage container = new UCFPackage();
+		container.setPackageMediaType(UCFPackage.MIME_EPUB);
 		assertEquals(UCFPackage.MIME_EPUB, container.getPackageMediaType());
 		container.save(tmpFile);
 		assertTrue(tmpFile.exists());
@@ -387,6 +394,7 @@ public class TestUCFPackage {
 
 	}
 
+
 	@Test
 	public void manifestMimetype() throws Exception {
 		UCFPackage container = new UCFPackage();
@@ -401,6 +409,13 @@ public class TestUCFPackage {
 						+ "<manifest:manifest xmlns:manifest=\"urn:oasis:names:tc:opendocument:xmlns:manifest:1.0\">\n"
 						+ "</manifest:manifest>",
 				IOUtils.toString(manifestStream, "UTF-8"));
+	}
+
+	@Test
+	public void getRootfiles() throws Exception {
+		UCFPackage container = new UCFPackage();
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
+
 	}
 
 }
