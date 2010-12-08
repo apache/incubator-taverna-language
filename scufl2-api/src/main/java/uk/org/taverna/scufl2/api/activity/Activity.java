@@ -3,13 +3,13 @@ package uk.org.taverna.scufl2.api.activity;
 import java.net.URI;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlElement;
-
 import uk.org.taverna.scufl2.api.common.AbstractNamed;
+import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.OutputActivityPort;
+import uk.org.taverna.scufl2.api.profiles.Profile;
 
 
 /**
@@ -22,12 +22,14 @@ import uk.org.taverna.scufl2.api.port.OutputActivityPort;
  * @author Alan R Williams
  * 
  */
-public class Activity extends AbstractNamed implements Configurable {
+public class Activity extends AbstractNamed implements Configurable,
+		Child<Profile> {
 
 	private NamedSet<InputActivityPort> inputPorts = new NamedSet<InputActivityPort>();
 	private NamedSet<OutputActivityPort> outputPorts = new NamedSet<OutputActivityPort>();
 
 	private URI type;
+	private Profile parent;
 
 	public Activity() {
 		super();
@@ -45,19 +47,35 @@ public class Activity extends AbstractNamed implements Configurable {
 		return outputPorts;
 	}
 
+	@Override
+	public Profile getParent() {
+		return parent;
+	}
+
 	public URI getType() {
 		return type;
 	}
+
 
 	public void setInputPorts(Set<InputActivityPort> inputPorts) {
 		this.inputPorts.clear();
 		this.inputPorts.addAll(inputPorts);
 	}
 
-
 	public void setOutputPorts(Set<OutputActivityPort> outputPorts) {
 		this.outputPorts.clear();
 		this.outputPorts.addAll(outputPorts);
+	}
+
+	@Override
+	public void setParent(Profile parent) {
+		if (this.parent != null && this.parent != parent) {
+			this.parent.getActivities().remove(this);
+		}
+		this.parent = parent;
+		if (parent != null) {
+			parent.getActivities().add(this);
+		}
 	}
 
 	public void setType(URI type) {
