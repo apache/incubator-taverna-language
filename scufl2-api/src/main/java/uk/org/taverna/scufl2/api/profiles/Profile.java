@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.AbstractNamed;
+import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
@@ -23,7 +24,8 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
  * 
  */
 @XmlType(propOrder = { "profilePosition", "processorBindings", "configurations" })
-public class Profile extends AbstractNamed implements WorkflowBean {
+public class Profile extends AbstractNamed implements WorkflowBean,
+		Child<WorkflowBundle> {
 
 	private Set<ProcessorBinding> processorBindings = new HashSet<ProcessorBinding>();
 
@@ -32,6 +34,8 @@ public class Profile extends AbstractNamed implements WorkflowBean {
 	private int profilePosition;
 
 	private Set<Activity> activities = new HashSet<Activity>();
+
+	private WorkflowBundle parent;
 
 	public Profile() {
 		super();
@@ -52,6 +56,11 @@ public class Profile extends AbstractNamed implements WorkflowBean {
 	@XmlElement(name = "configuration", nillable = false)
 	public NamedSet<Configuration> getConfigurations() {
 		return configurations;
+	}
+
+	@Override
+	public WorkflowBundle getParent() {
+		return parent;
 	}
 
 	/**
@@ -88,6 +97,18 @@ public class Profile extends AbstractNamed implements WorkflowBean {
 	public void setConfigurations(Set<Configuration> configurations) {
 		this.configurations.clear();
 		this.configurations.addAll(configurations);
+	}
+
+	@Override
+	public void setParent(WorkflowBundle parent) {
+		if (this.parent != null && this.parent != parent) {
+			this.parent.getProfiles().remove(this);
+		}
+		this.parent = parent;
+		if (parent != null) {
+			parent.getProfiles().add(this);
+		}
+
 	}
 
 	/**

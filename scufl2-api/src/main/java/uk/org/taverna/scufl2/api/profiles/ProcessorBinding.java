@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
+import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.core.Processor;
 
@@ -23,7 +24,7 @@ import uk.org.taverna.scufl2.api.core.Processor;
  * @author Alan R Williams
  * 
  */
-public class ProcessorBinding implements WorkflowBean {
+public class ProcessorBinding implements WorkflowBean, Child<Profile> {
 
 	private Processor boundProcessor;
 	private Activity boundActivity;
@@ -32,6 +33,7 @@ public class ProcessorBinding implements WorkflowBean {
 	private Set<ProcessorOutputPortBinding> outputPortBindings = new HashSet<ProcessorOutputPortBinding>();
 
 	private Integer activityPosition;
+	private Profile parent;
 
 	/**
 	 * The relative position of this activity within the processor (for the
@@ -83,6 +85,11 @@ public class ProcessorBinding implements WorkflowBean {
 		return outputPortBindings;
 	}
 
+	@Override
+	public Profile getParent() {
+		return parent;
+	}
+
 	public void setActivityPosition(Integer activityPosition) {
 		this.activityPosition = activityPosition;
 	}
@@ -115,6 +122,17 @@ public class ProcessorBinding implements WorkflowBean {
 	public void setOutputPortBindings(
 			Set<ProcessorOutputPortBinding> outputPortBindings) {
 		this.outputPortBindings = outputPortBindings;
+	}
+
+	@Override
+	public void setParent(Profile parent) {
+		if (this.parent != null && this.parent != parent) {
+			this.parent.getProcessorBindings().remove(this);
+		}
+		this.parent = parent;
+		if (parent != null) {
+			parent.getProcessorBindings().add(this);
+		}
 	}
 
 	@Override
