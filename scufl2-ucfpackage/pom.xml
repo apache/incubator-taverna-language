@@ -18,30 +18,31 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<!-- 
-	
-	Note: uk.org.taverna.scul2.ucfpackage.impl.odfdom contains a patced subset of ODFDOM 0.8.6
-	
-	 Copyright 2008, 2010 Oracle and/or its affiliates. All rights reserved.
-	 Copyright 2009 IBM. All rights reserved.	 
-	
-	<repositories>
-		<repository>
-			<id>odfdom-releases</id>
-			<name>ODFDOM Release</name>
-			<url>http://odftoolkit.org/svn/odfdom~maven2/release/</url>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-				<updatePolicy>never</updatePolicy>
-				<checksumPolicy>fail</checksumPolicy>
-			</snapshots>
-		</repository>
 
-	</repositories>
-	 -->
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jaxb2-maven-plugin</artifactId>
+				<version>1.3</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<!-- Note: uk.org.taverna.scul2.ucfpackage.impl.odfdom contains a patced 
+		subset of ODFDOM 0.8.6 Copyright 2008, 2010 Oracle and/or its affiliates. 
+		All rights reserved. Copyright 2009 IBM. All rights reserved. <repositories> 
+		<repository> <id>odfdom-releases</id> <name>ODFDOM Release</name> <url>http://odftoolkit.org/svn/odfdom~maven2/release/</url> 
+		<releases> <enabled>true</enabled> <updatePolicy>always</updatePolicy> <checksumPolicy>warn</checksumPolicy> 
+		</releases> <snapshots> <enabled>false</enabled> <updatePolicy>never</updatePolicy> 
+		<checksumPolicy>fail</checksumPolicy> </snapshots> </repository> </repositories> -->
 </project>
