@@ -1,6 +1,6 @@
 package uk.org.taverna.scufl2.ucfpackage;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -12,7 +12,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
@@ -415,7 +417,113 @@ public class TestUCFPackage {
 	public void getRootfiles() throws Exception {
 		UCFPackage container = new UCFPackage();
 		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
+		container.addResource("Hello there", "helloworld.txt", "text/plain");
+		assertTrue("Root files not empty", container.getRootFiles().isEmpty());
+		assertNotSame("Should return copy of rootfiles",
+				container.getRootFiles(), container.getRootFiles());
+	}
+
+	@Test
+	public void setRootfile() throws Exception {
+		UCFPackage container = new UCFPackage();
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
+		container.addResource("Hello there", "helloworld.txt", "text/plain");
+		container.addResource("Soup for everyone", "soup.txt", "text/plain");
+		container.setRootFile("helloworld.txt");
+
+		List<ResourceEntry> rootFiles = container.getRootFiles();
+
+		assertEquals(1, rootFiles.size());
+		ResourceEntry rootFile = rootFiles.get(0);
+		assertEquals("helloworld.txt", rootFile.getPath());
+		assertEquals("text/plain", rootFile.getMediaType());
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void setRootfileMissing() throws Exception {
+		UCFPackage container = new UCFPackage();
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
+		container.addResource("Hello there", "helloworld.txt", "text/plain");
+		try {
+			container.setRootFile("unknown.txt");
+		} finally {
+			assertTrue("Should not have added unknown.txt", container
+					.getRootFiles().isEmpty());
+		}
 
 	}
+
+	@Test
+	public void unmodifiableRootFiles() throws Exception {
+		UCFPackage container = new UCFPackage();
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
+		container.addResource("Hello there", "helloworld.txt", "text/plain");
+		container.setRootFile("helloworld.txt");
+		List<ResourceEntry> rootFiles = container.getRootFiles();
+		assertEquals(1, rootFiles.size());
+		rootFiles.remove(0);
+		assertEquals(0, rootFiles.size());
+		assertEquals("Should not be able to modify rootFiles list", 1,
+				container.getRootFiles().size());
+	}
+
+
+	@Test
+	public void multipleRootfiles() throws Exception {
+		UCFPackage container = new UCFPackage();
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
+		container.addResource("Hello there", "helloworld.txt", "text/plain");
+		container.addResource("<html><body><h1>Yo</h1></body></html>",
+				"helloworld.html", "text/html");
+		container.addResource("Soup for everyone", "soup.txt", "text/plain");
+		container.setRootFile("helloworld.txt");
+		// Adding a second file of a different mime type
+		container.setRootFile("helloworld.html");
+		List<ResourceEntry> rootFiles = container.getRootFiles();
+		assertEquals(2, rootFiles.size());
+
+		ResourceEntry rootFile0 = rootFiles.get(0);
+		assertEquals("helloworld.txt", rootFile0.getPath());
+		assertEquals("text/plain", rootFile0.getMediaType());
+
+		ResourceEntry rootFile1 = rootFiles.get(0);
+		assertEquals("helloworld.html", rootFile1.getPath());
+		assertEquals("text/html", rootFile1.getMediaType());
+	}
+
+	@Test
+	public void unsetMultipleRootFiles() throws Exception {
+		UCFPackage container = new UCFPackage();
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
+		container.addResource("Hello there", "helloworld.txt", "text/plain");
+		container.addResource("<html><body><h1>Yo</h1></body></html>",
+				"helloworld.html", "text/html");
+		container.addResource("Soup for everyone", "soup.txt", "text/plain");
+		container.setRootFile("helloworld.txt");
+		container.setRootFile("helloworld.html");
+		List<ResourceEntry> rootFiles = container.getRootFiles();
+		assertEquals(2, rootFiles.size());
+
+		container.unsetRootFile("helloworld.txt");
+		rootFiles = container.getRootFiles();
+		assertEquals(1, rootFiles.size());
+
+		ResourceEntry rootFile0 = rootFiles.get(0);
+		assertEquals("helloworld.html", rootFile0.getPath());
+		assertEquals("text/html", rootFile0.getMediaType());
+	}
+
+	@Test
+	public void unsetRootFile() throws Exception {
+		UCFPackage container = new UCFPackage();
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
+		container.addResource("Hello there", "helloworld.txt", "text/plain");
+		container.addResource("Soup for everyone", "soup.txt", "text/plain");
+		container.setRootFile("helloworld.txt");
+		assertEquals(1, container.getRootFiles().size());
+		container.unsetRootFile("helloworld.txt");
+		assertEquals(0, container.getRootFiles().size());
+	}
+
 
 }

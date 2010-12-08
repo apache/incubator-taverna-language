@@ -5,12 +5,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.w3c.dom.Document;
 
+import uk.org.taverna.scufl2.ucfpackage.UCFPackage.ResourceEntry;
 import uk.org.taverna.scufl2.ucfpackage.impl.odfdom.pkg.OdfPackage;
 import uk.org.taverna.scufl2.ucfpackage.impl.odfdom.pkg.manifest.OdfFileEntry;
 
@@ -207,6 +210,20 @@ public class UCFPackage {
 
 	public Map<String, ResourceEntry> listAllResources() {
 		return listResources("", true);
+	}
+
+	public void setRootFile(String path) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public List<ResourceEntry> getRootFiles() {
+		return new ArrayList<UCFPackage.ResourceEntry>();
+	}
+
+	public void unsetRootFile(String path) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
