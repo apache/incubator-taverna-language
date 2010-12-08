@@ -64,6 +64,8 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 		BeanshellConfig beanshellConfig = unmarshallConfig(t2FlowParser,
 				configBean, "xstream", BeanshellConfig.class);
 		Configuration configuration = new Configuration();
+		configuration.setParent(getParserState().getCurrentProfile());
+
 		configuration.setConfigurationType(ACTIVITY_URI.resolve("#ConfigType"));
 		String script = beanshellConfig.getScript();
 		DataProperty property = new DataProperty(
@@ -77,63 +79,71 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 		Activity activity = getParserState().getCurrentActivity();
 		activity.getInputPorts().clear();
 		activity.getOutputPorts().clear();
-		for (ActivityPortDefinitionBean b : beanshellConfig
+		for (ActivityPortDefinitionBean portBean : beanshellConfig
 				.getInputs()
 				.getNetSfTavernaT2WorkflowmodelProcessorActivityConfigActivityInputPortDefinitionBean()) {
-			InputActivityPort a = new InputActivityPort();
-			a.setName(b.getName());
-			if (b.getDepth() != null) {
-				a.setDepth(b.getDepth().intValue());
+			InputActivityPort inputPort = new InputActivityPort();
+			inputPort.setName(portBean.getName());
+			inputPort.setParent(activity);
+
+			if (portBean.getDepth() != null) {
+				inputPort.setDepth(portBean.getDepth().intValue());
 			}
 
 			ObjectProperty portConfig = new ObjectProperty();
-			portConfig.setPredicate(ACTIVITY_URI.resolve("#definesInputPort"));
+			portConfig.setPredicate(ACTIVITY_URI
+					.resolve("#inputPortdefinition"));
 			portConfig.setObjectClass(ACTIVITY_URI.resolve("#InputPortDefinition"));
+			configuration.getProperties().add(portConfig);
+
 			List<Property> properties = portConfig.getObjectProperties();
 
-			URI portUri = new URITools().relativeUri(portUri, configuration);
+			URI portUri = new URITools().relativeUriForBean(inputPort,
+					configuration);
+			properties.add(new ObjectProperty(ACTIVITY_URI
+					.resolve("#definesInputPort"), portUri));
 
-			properties.add(new ObjectProperty(ACTIVITY_URI.resolve("#InputPortDefinition"), portUri);
+			List<Property> portProps = portConfig.getObjectProperties();
 
-			portConfig.setConfigures(a);
-			List<Property> portProps = portConfig.getProperties();
-
-			if (b.getTranslatedElementType() != null) {
+			if (portBean.getTranslatedElementType() != null) {
 				// As "translated element type" is confusing, we'll instead use "dataType"
 				ObjectProperty p = new ObjectProperty(ACTIVITY_URI.resolve("#dataType"),
-						URI.create("java:" + b.getTranslatedElementType()));
+						URI.create("java:" + portBean.getTranslatedElementType()));
 
 				// TODO: Include mapping to XSD types like xsd:string
 
 				portProps.add(p);
 			}
 			// T2-1681: Ignoring isAllowsLiteralValues and handledReferenceScheme
-
-			if (! portProps.isEmpty()) {
-				// Add the port configuration
-				getParserState().getCurrentProfile().getConfigurations().add(portConfig);
-			}
-			a.setParent(activity);
 			// TODO: Mime types, etc
 		}
-		for (ActivityPortDefinitionBean b : beanshellConfig
+		for (ActivityPortDefinitionBean portBean : beanshellConfig
 				.getOutputs()
 				.getNetSfTavernaT2WorkflowmodelProcessorActivityConfigActivityOutputPortDefinitionBean()) {
-			OutputActivityPort a = new OutputActivityPort();
-			a.setName(b.getName());
-			if (b.getDepth() != null) {
-				a.setDepth(b.getDepth().intValue());
+			OutputActivityPort outputPort = new OutputActivityPort();
+			outputPort.setName(portBean.getName());
+			outputPort.setParent(activity);
+			if (portBean.getDepth() != null) {
+				outputPort.setDepth(portBean.getDepth().intValue());
 			}
-			if (b.getGranularDepth() != null) {
-				a.setGranularDepth(b.getGranularDepth().intValue());
+			if (portBean.getGranularDepth() != null) {
+				outputPort.setGranularDepth(portBean.getGranularDepth().intValue());
 			}
 
-			Configuration portConfig = new Configuration();
-			portConfig.setConfigurationType(ACTIVITY_URI.resolve("#PortConfigType"));
-			portConfig.setConfigures(a);
-			List<Property> portProps = portConfig.getProperties();
+			ObjectProperty portConfig = new ObjectProperty();
+			portConfig.setPredicate(ACTIVITY_URI
+					.resolve("#outputPortDefinition"));
+			portConfig.setObjectClass(ACTIVITY_URI
+					.resolve("#OutputPortDefinition"));
+			configuration.getProperties().add(portConfig);
+			URI portUri = new URITools().relativeUriForBean(outputPort, configuration);
+			List<Property> portProps = portConfig.getObjectProperties();
 
-			MimeTypes mimeTypes = b.getMimeTypes();
+			portProps.add(new ObjectProperty(ACTIVITY_URI
+					.resolve("#definesOutputPort"), portUri));
+
+
+			MimeTypes mimeTypes = portBean.getMimeTypes();
 			if (mimeTypes != null) {
 				// FIXME: Do as annotation as this is not configuration
 				URI mimeType = ACTIVITY_URI.resolve("#expectedMimeType");
@@ -153,11 +163,7 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 					}
 				}
 			}
-			if (! portProps.isEmpty()) {
-				// Add the port configuration
-				getParserState().getCurrentProfile().getConfigurations().add(portConfig);
-			}
-			a.setParent(activity);
+			outputPort.setParent(activity);
 		}
 
 		configuration.getProperties().add(property);
