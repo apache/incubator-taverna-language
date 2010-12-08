@@ -67,11 +67,13 @@ public class UCFPackage {
 		if (getPackageMediaType() == null) {
 			throw new IllegalStateException("Package media type must be set");
 		}
+
 		// Write using temp file, and do rename in the end
 		File tempFile = File.createTempFile("." + packageFile.getName(),
 				".tmp",
 				packageFile.getParentFile());
 		try {
+			prepareContainerXML();
 			odfPackage.save(tempFile);
 		} catch (IOException e) {
 			throw e;
@@ -90,6 +92,12 @@ public class UCFPackage {
 		if (!tempFile.renameTo(packageFile)) {
 			throw new IOException("Could not rename temp file " + tempFile
 					+ " to " + packageFile);
+		}
+	}
+
+	protected void prepareContainerXML() throws Exception {
+		if (!rootFilePaths.isEmpty()) {
+			addResource("<x></x>", "META-INF/container.xml", "text/xml");
 		}
 	}
 
