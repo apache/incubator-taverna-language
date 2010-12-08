@@ -516,15 +516,31 @@ public class TestUCFPackage {
 
 		String containerXml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
 				+ "<container xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\" xmlns:ex='http://example.com/' xmlns:ns2=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:ns3=\"http://www.w3.org/2001/04/xmlenc#\">\n"
+				+ "   <ex:example>first example</ex:example>\n"
 				+ "    <rootFiles>\n"
 				+ "        <rootFile ex:extraAnnotation='hello' media-type=\"text/plain\" full-path=\"soup.txt\"/>\n"
 				+ "    </rootFiles>\n"
-				+ "   <ex:example>more example</ex:example>\n"
+				+ "   <ex:example>second example</ex:example>\n"
 				+ "</container>\n";
 		// Should overwrite setRootFile()
 		container.addResource(containerXml, "META-INF/container.xml",
 				"text/xml");
+
+		System.out.println("any1: "
+				+ container.getContainerXML().getValue().getAny1());
+
+		System.out.println("any5: "
+				+ container.getContainerXML().getValue().getAny4());
+		System.out.println("any7: "
+				+ container.getContainerXML().getValue().getAny7());
+
+		System.out.println("any8: "
+				+ container.getContainerXML().getValue().getAny8());
+
+		System.out.println("any9: "
+				+ container.getContainerXML().getValue().getAny9());
 		assertEquals("soup.txt", container.getRootFiles().get(0).getPath());
+
 
 		container.save(tmpFile);
 
@@ -540,12 +556,13 @@ public class TestUCFPackage {
 		UCFPackage container = new UCFPackage();
 		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
 		container.addResource("Hello there", "helloworld.txt", "text/plain");
-		container.addResource("Soup for everyone", "soup.txt", "text/plain");
+		container.addResource("<html><body><h1>Yo</h1></body></html>",
+				"helloworld.html", "text/html");
 
 		String containerXml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
 				+ "<container xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\" xmlns:ex='http://example.com/' xmlns:ns2=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:ns3=\"http://www.w3.org/2001/04/xmlenc#\">\n"
 				+ "    <rootFiles>\n"
-				+ "        <rootFile ex:extraAnnotation='hello' media-type=\"text/plain\" full-path=\"soup.txt\"/>\n"
+				+ "        <rootFile ex:extraAnnotation='hello' media-type=\"text/html\" full-path=\"helloworld.html\"/>\n"
 				+ "    </rootFiles>\n"
 				+ "   <ex:example>more example</ex:example>\n"
 				+ "</container>\n";
@@ -553,7 +570,8 @@ public class TestUCFPackage {
 		container.addResource(containerXml, "META-INF/container.xml",
 				"text/xml");
 		container.setRootFile("helloworld.txt");
-		assertEquals("soup.txt", container.getRootFiles().get(0).getPath());
+		assertEquals("helloworld.html", container.getRootFiles().get(0)
+				.getPath());
 		assertEquals("helloworld.txt", container.getRootFiles().get(1)
 				.getPath());
 		container.save(tmpFile);
@@ -561,8 +579,8 @@ public class TestUCFPackage {
 		String expectedContainerXml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
 				+ "<container xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\" xmlns:ex='http://example.com/' xmlns:ns2=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:ns3=\"http://www.w3.org/2001/04/xmlenc#\">\n"
 				+ "    <rootFiles>\n"
-				+ "        <rootFile ex:extraAnnotation='hello' media-type=\"text/plain\" full-path=\"soup.txt\"/>\n"
-				+ "        <rootFile media-type=\"text/plain\" full-path=\"soup.txt\"/>\n"
+				+ "        <rootFile ex:extraAnnotation='hello' media-type=\"text/html\" full-path=\"helloworld.html\"/>\n"
+				+ "        <rootFile media-type=\"text/plain\" full-path=\"helloworld.txt\"/>\n"
 				+ "    </rootFiles>\n"
 				+ "   <ex:example>more example</ex:example>\n"
 				+ "</container>\n";
