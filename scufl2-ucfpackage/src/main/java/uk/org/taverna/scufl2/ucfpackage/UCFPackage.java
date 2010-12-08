@@ -33,6 +33,7 @@ import uk.org.taverna.scufl2.ucfpackage.impl.odfdom.pkg.manifest.OdfFileEntry;
 
 public class UCFPackage {
 
+	private static final String CONTAINER_XML = "META-INF/container.xml";
 	private static final Charset UTF_8 = Charset.forName("utf-8");
 	public static final String MIME_BINARY = "application/octet-stream";
 	public static final String MIME_TEXT_PLAIN = "text/plain";
@@ -56,10 +57,28 @@ public class UCFPackage {
 
 	public UCFPackage(File containerFile) throws Exception {
 		odfPackage = OdfPackage.loadPackage(containerFile);
+		loadContainerXML();
 	}
 
 	public UCFPackage(InputStream inputStream) throws Exception {
 		odfPackage = OdfPackage.loadPackage(inputStream);
+		loadContainerXML();
+	}
+
+	protected void loadContainerXML() throws Exception {
+		InputStream containerStream = getResourceAsInputStream(CONTAINER_XML);
+		if (containerStream == null) {
+			return;
+		}
+		Unmarshaller unMarshaller = createUnMarshaller();
+		JAXBElement<Container> containerElem = (JAXBElement<Container>) unMarshaller
+				.unmarshal(containerStream);
+		RootFiles rootFilesElem = containerElem.getValue().getRootFiles();
+		if (rootFilesElem != null) {
+			for (RootFile rf : rootFilesElem.getRootFile()) {
+				rootFilePaths.add(rf.getFullPath());
+			}
+		}
 	}
 
 	public String getPackageMediaType() {
@@ -126,7 +145,7 @@ public class UCFPackage {
 			Marshaller marshaller = createMarshaller();
 
 			OutputStream outStream = odfPackage
-					.insertOutputStream("META-INF/container.xml");
+					.insertOutputStream(CONTAINER_XML);
 			try {
 				JAXBElement<Container> containerElem = containerFactory
 						.createContainer(container);
