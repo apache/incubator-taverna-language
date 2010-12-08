@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 
-import uk.org.taverna.scufl2.api.common.AbstractNamedReally;
+import uk.org.taverna.scufl2.api.common.AbstractNamed;
 import uk.org.taverna.scufl2.api.common.Named;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.Root;
@@ -19,7 +19,7 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
  * 
  */
 
-public class WorkflowBundle extends AbstractNamedReally implements
+public class WorkflowBundle extends AbstractNamed implements
 		WorkflowBean, Named, Root {
 
 	private static URI WORKFLOW_BUNDLE_ROOT = URI

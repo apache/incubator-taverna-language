@@ -7,15 +7,15 @@ import java.util.UUID;
  * @author Alan R Williams
  *
  */
-public abstract class AbstractNamedReally implements Named {
+public abstract class AbstractNamed implements Named {
 
 	private String name;
 
-	public AbstractNamedReally() {
+	public AbstractNamed() {
 		setName(UUID.randomUUID().toString());
 	}
 
-	public AbstractNamedReally(String name) {
+	public AbstractNamed(String name) {
 		setName(name);
 	}
 
@@ -30,7 +30,7 @@ public abstract class AbstractNamedReally implements Named {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		AbstractNamedReally other = (AbstractNamedReally) obj;
+		AbstractNamed other = (AbstractNamed) obj;
 		if (!getName().equals(other.getName())) {
 			return false;
 		}
