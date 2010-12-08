@@ -396,6 +396,44 @@ public class TestUCFPackage {
 
 	}
 
+	@Test
+	public void getResourceEntry() throws Exception {
+		UCFPackage container = new UCFPackage();
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
+		container.addResource("Hello there", "helloworld.txt", "text/plain");
+		container.addResource("Sub-folder entry 1", "sub/1.txt", "text/plain");
+
+		ResourceEntry helloResource = container
+				.getResourceEntry("helloworld.txt");
+		assertEquals("helloworld.txt", helloResource.getPath());
+		assertEquals(11, helloResource.getSize());
+		assertEquals("text/plain", helloResource.getMediaType());
+		assertFalse(helloResource.isFolder());
+
+		ResourceEntry subResource = container.getResourceEntry("sub/");
+		assertEquals("sub/", subResource.getPath());
+		assertEquals(-1, subResource.getSize());
+		assertEquals("text/plain", subResource.getMediaType());
+		assertTrue(subResource.isFolder());
+
+		container.save(tmpFile);
+
+		UCFPackage loaded = new UCFPackage(tmpFile);
+
+		ResourceEntry loadedHelloResource = loaded
+				.getResourceEntry("helloworld.txt");
+		assertEquals("helloworld.txt", loadedHelloResource.getPath());
+		assertEquals(11, loadedHelloResource.getSize());
+		assertEquals("text/plain", loadedHelloResource.getMediaType());
+		assertFalse(loadedHelloResource.isFolder());
+
+		ResourceEntry loadedSubResource = loaded.getResourceEntry("sub/");
+		assertEquals("sub/", loadedSubResource.getPath());
+		assertEquals(-1, loadedSubResource.getSize());
+		assertEquals("text/plain", loadedSubResource.getMediaType());
+		assertTrue(loadedSubResource.isFolder());
+	}
+
 
 	@Test
 	public void manifestMimetype() throws Exception {
