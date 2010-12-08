@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
+import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.configurations.DataProperty;
 import uk.org.taverna.scufl2.api.configurations.ObjectProperty;
@@ -88,15 +89,12 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 			ObjectProperty portConfig = new ObjectProperty();
 			portConfig.setPredicate(ACTIVITY_URI.resolve("#definesInputPort"));
 			portConfig.setObjectClass(ACTIVITY_URI.resolve("#InputPortDefinition"));
-
-
-
 			List<Property> properties = portConfig.getObjectProperties();
 
+			URI portUri = new URITools().relativeUri(portUri, configuration);
 
+			properties.add(new ObjectProperty(ACTIVITY_URI.resolve("#InputPortDefinition"), portUri);
 
-			Configuration portConfig = new Configuration();
-			portConfig.setConfigurationType());
 			portConfig.setConfigures(a);
 			List<Property> portProps = portConfig.getProperties();
 
