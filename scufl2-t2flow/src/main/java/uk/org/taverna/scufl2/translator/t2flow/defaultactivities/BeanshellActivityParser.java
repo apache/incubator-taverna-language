@@ -36,7 +36,7 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 			.create("http://ns.taverna.org.uk/2010/activity/beanshell");
 
 	public static URI MEDIATYPES_URI = URI.create("http://purl.org/NET/mediatypes/");
-	
+
 	@Override
 	public boolean canHandlePlugin(URI activityURI) {
 		String activityUriStr = activityURI.toASCIIString();
@@ -68,9 +68,12 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 		DataProperty property = new DataProperty(
 				ACTIVITY_URI.resolve("#script"), script);
 
+
+
+
 		// TODO: Dependencies, activities, etc
-		
-		Activity activity = getParserState().getCurrentActivity();		
+
+		Activity activity = getParserState().getCurrentActivity();
 		activity.getInputPorts().clear();
 		activity.getOutputPorts().clear();
 		for (ActivityPortDefinitionBean b : beanshellConfig
@@ -81,27 +84,37 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 			if (b.getDepth() != null) {
 				a.setDepth(b.getDepth().intValue());
 			}
-				
+
+			ObjectProperty portConfig = new ObjectProperty();
+			portConfig.setPredicate(ACTIVITY_URI.resolve("#definesInputPort"));
+			portConfig.setObjectClass(ACTIVITY_URI.resolve("#InputPortDefinition"));
+
+
+
+			List<Property> properties = portConfig.getObjectProperties();
+
+
+
 			Configuration portConfig = new Configuration();
-			portConfig.setConfigurationType(ACTIVITY_URI.resolve("#PortConfigType"));
+			portConfig.setConfigurationType());
 			portConfig.setConfigures(a);
 			List<Property> portProps = portConfig.getProperties();
-			
+
 			if (b.getTranslatedElementType() != null) {
 				// As "translated element type" is confusing, we'll instead use "dataType"
-				ObjectProperty p = new ObjectProperty(ACTIVITY_URI.resolve("#dataType"), 
+				ObjectProperty p = new ObjectProperty(ACTIVITY_URI.resolve("#dataType"),
 						URI.create("java:" + b.getTranslatedElementType()));
-				
+
 				// TODO: Include mapping to XSD types like xsd:string
-					
+
 				portProps.add(p);
 			}
-			// T2-1681: Ignoring isAllowsLiteralValues and handledReferenceScheme  
-			
+			// T2-1681: Ignoring isAllowsLiteralValues and handledReferenceScheme
+
 			if (! portProps.isEmpty()) {
 				// Add the port configuration
 				getParserState().getCurrentProfile().getConfigurations().add(portConfig);
-			}				
+			}
 			a.setParent(activity);
 			// TODO: Mime types, etc
 		}
@@ -116,7 +129,7 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 			if (b.getGranularDepth() != null) {
 				a.setGranularDepth(b.getGranularDepth().intValue());
 			}
-			
+
 			Configuration portConfig = new Configuration();
 			portConfig.setConfigurationType(ACTIVITY_URI.resolve("#PortConfigType"));
 			portConfig.setConfigures(a);
@@ -130,7 +143,7 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 					String s = mimeTypes.getElement();
 					if (s.contains("'")) {
 						s = s.split("'")[1];
-					}					
+					}
 					portProps.add(new ObjectProperty(mimeType, MEDIATYPES_URI.resolve(s)));
 				}
 				if (mimeTypes.getString() != null) {
@@ -140,13 +153,13 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 						}
 						portProps.add(new ObjectProperty(mimeType, MEDIATYPES_URI.resolve(s)));
 					}
-				}					
+				}
 			}
 			if (! portProps.isEmpty()) {
 				// Add the port configuration
 				getParserState().getCurrentProfile().getConfigurations().add(portConfig);
-			}				
-			a.setParent(activity);		
+			}
+			a.setParent(activity);
 		}
 
 		configuration.getProperties().add(property);
