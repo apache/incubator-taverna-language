@@ -339,9 +339,14 @@ public class UCFPackage {
 			container.setRootFiles(rootFiles);
 		} else {
 			// Check any existing files for matching path/mime type
-			Iterator<RootFile> rootFileIt = rootFiles.getRootFile().iterator();
-			while (rootFileIt.hasNext()) {
-				RootFile rootFileElem = rootFileIt.next();
+			Iterator<Object> anyOrRootIt = rootFiles.getAnyOrRootFile()
+					.iterator();
+			while (anyOrRootIt.hasNext()) {
+				Object anyOrRoot = anyOrRootIt.next();
+				if (!(anyOrRoot instanceof RootFile)) {
+					continue;
+				}
+				RootFile rootFileElem = (RootFile) anyOrRoot;
 				if (!rootFileElem.getFullPath().equals(path)
 						&& !rootFileElem.getMediaType().equals(mediaType)) {
 					// Different path and media type - ignore
@@ -349,7 +354,7 @@ public class UCFPackage {
 				}
 				if (foundExisting) {
 					// Duplicate path/media type, we'll remove it
-					rootFileIt.remove();
+					anyOrRootIt.remove();
 					continue;
 				}
 				rootFileElem.setFullPath(rootFile.getPath());
@@ -364,7 +369,7 @@ public class UCFPackage {
 			rootFileElem.setFullPath(rootFile.getPath());
 			rootFileElem.setMediaType(mediaType);
 
-			rootFiles.getRootFile().add(rootFileElem);
+			rootFiles.getAnyOrRootFile().add(rootFileElem);
 		}
 	}
 
@@ -378,7 +383,11 @@ public class UCFPackage {
 		if (rootFilesElem == null) {
 			return rootFiles;
 		}
-		for (RootFile rf : rootFilesElem.getRootFile()) {
+		for (Object anyOrRoot : rootFilesElem.getAnyOrRootFile()) {
+			if (!(anyOrRoot instanceof RootFile)) {
+				continue;
+			}
+			RootFile rf = (RootFile) anyOrRoot;
 			ResourceEntry entry = getResourceEntry(rf.getFullPath());
 			if (rf.getMediaType() != null
 					&& rf.getMediaType() != entry.mediaType) {
@@ -404,11 +413,15 @@ public class UCFPackage {
 		if (rootFiles == null) {
 			return;
 		}
-		Iterator<RootFile> rootFileIt = rootFiles.getRootFile().iterator();
-		while (rootFileIt.hasNext()) {
-			RootFile rootFileElem = rootFileIt.next();
+		Iterator<Object> anyOrRootIt = rootFiles.getAnyOrRootFile().iterator();
+		while (anyOrRootIt.hasNext()) {
+			Object anyOrRoot = anyOrRootIt.next();
+			if (!(anyOrRoot instanceof RootFile)) {
+				continue;
+			}
+			RootFile rootFileElem = (RootFile) anyOrRoot;
 			if (rootFileElem.getFullPath().equals(path)) {
-				rootFileIt.remove();
+				anyOrRootIt.remove();
 			}
 		}
 	}

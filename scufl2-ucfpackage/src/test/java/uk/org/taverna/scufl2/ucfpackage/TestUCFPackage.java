@@ -526,19 +526,7 @@ public class TestUCFPackage {
 		container.addResource(containerXml, "META-INF/container.xml",
 				"text/xml");
 
-		System.out.println("any1: "
-				+ container.getContainerXML().getValue().getAny1());
 
-		System.out.println("any5: "
-				+ container.getContainerXML().getValue().getAny4());
-		System.out.println("any7: "
-				+ container.getContainerXML().getValue().getAny7());
-
-		System.out.println("any8: "
-				+ container.getContainerXML().getValue().getAny8());
-
-		System.out.println("any9: "
-				+ container.getContainerXML().getValue().getAny9());
 		assertEquals("soup.txt", container.getRootFiles().get(0).getPath());
 
 
