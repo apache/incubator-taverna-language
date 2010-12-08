@@ -524,7 +524,7 @@ public class TestUCFPackage {
 		assertEquals("helloworld.txt", rootFile0.getPath());
 		assertEquals("text/plain", rootFile0.getMediaType());
 
-		ResourceEntry rootFile1 = rootFiles.get(0);
+		ResourceEntry rootFile1 = rootFiles.get(1);
 		assertEquals("helloworld.html", rootFile1.getPath());
 		assertEquals("text/html", rootFile1.getMediaType());
 	}

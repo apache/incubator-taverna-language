@@ -33,7 +33,7 @@ public class UCFPackage {
 
 	private static Charset ASCII = Charset.forName("ascii");
 	private OdfPackage odfPackage;
-	private List<String> rootFilePaths;
+	private final List<String> rootFilePaths = new ArrayList<String>();
 
 	public UCFPackage() throws Exception {
 		odfPackage = OdfPackage.create();
@@ -215,6 +215,9 @@ public class UCFPackage {
 	}
 
 	public void setRootFile(String path) {
+		if (getResourceEntry(path) == null) {
+			throw new IllegalArgumentException("Unknown resource: " + path);
+		}
 		rootFilePaths.add(path);
 	}
 
@@ -235,8 +238,7 @@ public class UCFPackage {
 	}
 
 	public void unsetRootFile(String path) {
-		// TODO Auto-generated method stub
-
+		rootFilePaths.remove(path);
 	}
 
 }
