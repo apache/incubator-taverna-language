@@ -570,11 +570,13 @@ public class TestUCFPackage {
 
 		String expectedContainerXml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
 				+ "<container xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\" xmlns:ns2=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:ns3=\"http://www.w3.org/2001/04/xmlenc#\">\n"
-				+ "    <ex:example xmlns:ex=\"http://example.com/\">more example</ex:example>\n"
 				+ "    <rootFiles>\n"
 				+ "        <rootFile xmlns:ex=\"http://example.com/\" media-type=\"text/html\" full-path=\"helloworld.html\" ex:extraAnnotation=\"hello\"/>\n"
 				+ "        <rootFile media-type=\"text/plain\" full-path=\"helloworld.txt\"/>\n"
-				+ "    </rootFiles>\n" + "</container>\n";
+				+ "    </rootFiles>\n"
+				+ "    <ex:example xmlns:ex=\"http://example.com/\">more example</ex:example>\n"
+				+
+				"</container>\n";
 
 		ZipFile zipFile = new ZipFile(tmpFile);
 		ZipEntry manifestEntry = zipFile.getEntry("META-INF/container.xml");
