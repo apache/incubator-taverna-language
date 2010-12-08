@@ -8,34 +8,23 @@
 	jaxb:version="2.0"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd">
 	<xsd:annotation>
-		<xsd:documentation>
-			Copyright (C) 2010 The University of Manchester, UK
-
+		<xsd:documentation>Copyright (C) 2010 The University of Manchester, UK
 			Modifications to the initial code base are copyright of their
 			respective authors, or their employers as appropriate.
 
-			This program is
-			free software; you can redistribute it and/or modify it
-			under the
-			terms of the GNU Lesser General Public License as published
-			by the
-			Free Software Foundation; either version 2.1 of the License,
-			or (at
-			your option) any later version.
+			This program is free software; you can redistribute it and/or modify it
+			under the terms of the GNU Lesser General Public License as published
+			by the Free Software Foundation; either version 2.1 of the License,
+			or (at your option) any later version.
 
-			This program is distributed in the
-			hope that it will be useful, but
-			WITHOUT ANY WARRANTY; without even
-			the implied warranty of
-			MERCHANTABILITY or FITNESS FOR A PARTICULAR
-			PURPOSE. See the GNU
+			This program is distributed in the hope that it will be useful, but
+			WITHOUT ANY WARRANTY; without even the implied warranty of
+			MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 			Lesser General Public License for more details.
 
-			You should have received a copy of the GNU Lesser General Public
-			License
+			You should have received a copy of the GNU Lesser General Public License
 			along with this program; if not, write to the Free Software
 			Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-
 
 			Manually adapted by Stian Soiland-Reyes from Relax-NG schema for
 			Adobe UCF definition for META-INF/container.xml - retrieved from:
@@ -44,8 +33,7 @@
 			See
 			http://livedocs.adobe.com/navigator/9/Navigator_SDK9_HTMLHelp/wwhelp/wwhimpl/common/html/wwhelp.htm?context=Navigator_SDK9_HTMLHelp&amp;file=Appx_Packaging.6.31.html
 
-
-			NOTE: urn:oasis:names:tc:opendocument:xmlns:container is *not* an
+			OTE: urn:oasis:names:tc:opendocument:xmlns:container is *not* an
 			official namespace by OASIS, but the Adobe UCF specification defines
 			that a conforming META-INF/container.xml *must* use the *default*
 			namespace, eg:
@@ -76,6 +64,21 @@
 			<xsd:sequence minOccurs="0">
 				<xsd:element name="rootFiles">
 					<xsd:complexType>
+						<xsd:choice maxOccurs="unbounded">
+							<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"
+								processContents="lax">
+								<xsd:annotation>
+									<xsd:appinfo>
+										<jaxb:property name="any2" />
+									</xsd:appinfo>
+								</xsd:annotation>
+							</xsd:any>
+							<xsd:element name="rootFile" type="container:RootFile"
+								maxOccurs="unbounded" minOccurs="1" />
+						
+						</xsd:choice>
+						<!-- 
+						 -->
 						<xsd:sequence>
 							<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"
 								processContents="lax">
