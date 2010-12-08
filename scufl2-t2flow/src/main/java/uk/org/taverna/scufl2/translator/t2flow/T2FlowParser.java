@@ -94,8 +94,9 @@ public class T2FlowParser {
 		}
 		return null;
 	}
-	
+
 	protected ThreadLocal<ParserState> parserState = new ThreadLocal<ParserState>() {
+		@Override
 		protected ParserState initialValue() {
 			return new ParserState();
 		};
@@ -217,7 +218,7 @@ public class T2FlowParser {
 						+ " in " + processorName);
 			}
 			return candidate;
-		}	
+		}
 	}
 
 	protected T2Parser getT2Parser(URI classURI) {
@@ -251,6 +252,7 @@ public class T2FlowParser {
 	protected void makeProfile(
 			uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow wf) {
 		Profile profile = new Profile(wf.getProducedBy());
+		profile.setParent(parserState.get().getCurrentResearchObject());
 		parserState.get().getCurrentResearchObject().setMainProfile(profile);
 		parserState.get().setCurrentProfile(profile);
 	}
@@ -286,6 +288,7 @@ public class T2FlowParser {
 		URI activityId = mapActivityFromRaven(raven, activityClass);
 		uk.org.taverna.scufl2.api.activity.Activity newActivity = new uk.org.taverna.scufl2.api.activity.Activity();
 		newActivity.setType(activityId);
+		newActivity.setParent(parserState.get().getCurrentProfile());
 		return newActivity;
 	}
 
@@ -330,7 +333,7 @@ public class T2FlowParser {
 				throw new ParseException(message);
 			}
 		}
-		
+
 		try {
 			configuration = parserState.get().getCurrentT2Parser().parseActivityConfiguration(
 					this, configBean);
@@ -487,14 +490,14 @@ public class T2FlowParser {
 						origLink.getSource());
 				ReceiverPort receiverPort = findReceiverPort(parserState.get().getCurrentWorkflow()
 						, origLink.getSink());
-				
+
 				DataLink newLink = new DataLink(parserState.get().getCurrentWorkflow(),
 						senderPort, receiverPort);
-				
+
 				AtomicInteger mergeCount = mergeCounts.get(receiverPort);
 				if (origLink.getSink().getType().equals(LinkType.MERGE)) {
 					if (mergeCount != null && mergeCount.intValue() < 1) {
-						throw new ParseException("Merged and non-merged links to port " + receiverPort);						
+						throw new ParseException("Merged and non-merged links to port " + receiverPort);
 					}
 					if (mergeCount == null) {
 						mergeCount = new AtomicInteger(0);
@@ -530,7 +533,7 @@ public class T2FlowParser {
 			AnnotatedGranularDepthPorts originalPorts) throws ParseException {
 		Set<InputWorkflowPort> createdPorts = new HashSet<InputWorkflowPort>();
 		for (AnnotatedGranularDepthPort originalPort : originalPorts.getPort()) {
-			InputWorkflowPort newPort = new InputWorkflowPort(parserState.get().getCurrentWorkflow(), 
+			InputWorkflowPort newPort = new InputWorkflowPort(parserState.get().getCurrentWorkflow(),
 					originalPort.getName());
 			newPort.setDepth(originalPort.getDepth().intValue());
 			if (!originalPort.getGranularDepth()
@@ -643,11 +646,11 @@ public class T2FlowParser {
 	public WorkflowBundle parseT2Flow(
 			uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow wf)
 			throws ParseException, JAXBException {
-		try { 
-			WorkflowBundle ro = new WorkflowBundle();		
+		try {
+			WorkflowBundle ro = new WorkflowBundle();
 			parserState.get().setCurrentResearchObject(ro);
 			makeProfile(wf);
-	
+
 			for (Dataflow df : wf.getDataflow()) {
 				Workflow workflow = parseDataflow(df);
 				if (df.getRole().equals(Role.TOP)) {
