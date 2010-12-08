@@ -92,7 +92,7 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 
 			ObjectProperty portConfig = new ObjectProperty();
 			portConfig.setPredicate(ACTIVITY_URI
-					.resolve("#inputPortdefinition"));
+					.resolve("#inputPortDefinition"));
 			portConfig.setObjectClass(ACTIVITY_URI.resolve("#InputPortDefinition"));
 			configuration.getProperties().add(portConfig);
 
