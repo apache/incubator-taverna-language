@@ -1,13 +1,13 @@
 package uk.org.taverna.scufl2.api.port;
 
-import uk.org.taverna.scufl2.api.common.AbstractNamed;
+import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
 
 
 /**
  * @author Alan R Williams
  *
  */
-public abstract class AbstractDepthPort extends AbstractNamed implements Port {
+public abstract class AbstractDepthPort extends AbstractNamedChild implements Port {
 
 	private Integer depth;
 	
