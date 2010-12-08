@@ -8,6 +8,7 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -47,13 +48,15 @@ public class UCFPackage {
 
 	private static Charset ASCII = Charset.forName("ascii");
 	private OdfPackage odfPackage;
-	private final List<String> rootFilePaths = new ArrayList<String>();
 	private static JAXBContext jaxbContext;
-	private JAXBElement<Container> containerElem;
+	private JAXBElement<Container> containerXml;
+	private boolean createdContainerXml = false;
+	private static ObjectFactory containerFactory = new ObjectFactory();
 
 	public UCFPackage() throws Exception {
 		odfPackage = OdfPackage.create();
 		// odfPackage.setMediaType(MIME_EPUB);
+		parseContainerXML();
 	}
 
 	public UCFPackage(File containerFile) throws Exception {
@@ -67,25 +70,19 @@ public class UCFPackage {
 	}
 
 	protected void parseContainerXML() throws Exception {
-		rootFilePaths.clear();
+		createdContainerXml = false;
 		InputStream containerStream = getResourceAsInputStream(CONTAINER_XML);
 		if (containerStream == null) {
-			ObjectFactory containerFactory = new ObjectFactory();
+			// Make an empty containerXml
 			Container container = containerFactory.createContainer();
-			RootFiles rootFiles = containerFactory.createContainerRootFiles();
-			container.setRootFiles(rootFiles);
-
+			containerXml = containerFactory.createContainer(container);
+			createdContainerXml = true;
 			return;
 		}
 		Unmarshaller unMarshaller = createUnMarshaller();
-		containerElem = (JAXBElement<Container>) unMarshaller
+		containerXml = (JAXBElement<Container>) unMarshaller
 				.unmarshal(containerStream);
-		RootFiles rootFilesElem = containerElem.getValue().getRootFiles();
-		if (rootFilesElem != null) {
-			for (RootFile rf : rootFilesElem.getRootFile()) {
-				rootFilePaths.add(rf.getFullPath());
-			}
-		}
+
 	}
 
 	public String getPackageMediaType() {
@@ -136,49 +133,33 @@ public class UCFPackage {
 	}
 
 	protected void prepareContainerXML() throws Exception {
-		if (!rootFilePaths.isEmpty()) {
+		if (containerXml == null || createdContainerXml
+				&& containerXml.getValue().getRootFiles() == null) {
+			return;
+		}
 
-			ObjectFactory containerFactory = new ObjectFactory();
-			Container container = containerFactory.createContainer();
-			RootFiles rootFiles = containerFactory.createContainerRootFiles();
-			container.setRootFiles(rootFiles);
+		Marshaller marshaller = createMarshaller();
+		OutputStream outStream = odfPackage.insertOutputStream(CONTAINER_XML);
+		try {
+			// XMLStreamWriter xmlStreamWriter = XMLOutputFactory
+			// .newInstance().createXMLStreamWriter(outStream);
+			// xmlStreamWriter.setDefaultNamespace(containerElem.getName()
+			// .getNamespaceURI());
+			//
+			// xmlStreamWriter.setPrefix("dsig",
+			// "http://www.w3.org/2000/09/xmldsig#");
+			// xmlStreamWriter.setPrefix("xmlenc",
+			// "http://www.w3.org/2001/04/xmlenc#");
 
-			for (ResourceEntry rootFile : getRootFiles()) {
-				RootFile rootFileElem = containerFactory.createRootFile();
-				rootFileElem.setFullPath(rootFile.getPath());
-				rootFileElem.setMediaType(rootFile.getMediaType());
-				rootFiles.getRootFile().add(rootFileElem);
-			}
-			Marshaller marshaller = createMarshaller();
+			// FIXME: Set namespace prefixes and default namespace
 
-			OutputStream outStream = odfPackage
-					.insertOutputStream(CONTAINER_XML);
-			try {
-				JAXBElement<Container> containerElem = containerFactory
-						.createContainer(container);
+			marshaller.setProperty("jaxb.formatted.output", true);
 
-				// XMLStreamWriter xmlStreamWriter = XMLOutputFactory
-				// .newInstance().createXMLStreamWriter(outStream);
-				// xmlStreamWriter.setDefaultNamespace(containerElem.getName()
-				// .getNamespaceURI());
-				//
-				// xmlStreamWriter.setPrefix("dsig",
-				// "http://www.w3.org/2000/09/xmldsig#");
-				// xmlStreamWriter.setPrefix("xmlenc",
-				// "http://www.w3.org/2001/04/xmlenc#");
+			// TODO: Ensure using default namespace
+			marshaller.marshal(containerXml, outStream);
 
-				// FIXME: Set namespace prefixes and default namespace
-
-				marshaller.setProperty("jaxb.formatted.output", true);
-
-
-				// TODO: Ensure using default namespace
-				marshaller.marshal(containerElem, outStream);
-
-			} finally {
-				outStream.close();
-			}
-
+		} finally {
+			outStream.close();
 		}
 	}
 
@@ -189,7 +170,9 @@ public class UCFPackage {
 
 	protected static synchronized Unmarshaller createUnMarshaller()
 			throws JAXBException {
-		return getJaxbContext().createUnmarshaller();
+		Unmarshaller unmarshaller = getJaxbContext().createUnmarshaller();
+
+		return unmarshaller;
 	}
 
 	protected static synchronized JAXBContext getJaxbContext()
@@ -311,7 +294,7 @@ public class UCFPackage {
 
 		private final String path;
 		private final long size;
-		private final String mediaType;
+		private String mediaType;
 
 		protected ResourceEntry(OdfFileEntry odfEntry) {
 			path = odfEntry.getPath();
@@ -342,16 +325,67 @@ public class UCFPackage {
 	}
 
 	public void setRootFile(String path) {
-		if (getResourceEntry(path) == null) {
+		ResourceEntry rootFile = getResourceEntry(path);
+		if (rootFile == null) {
 			throw new IllegalArgumentException("Unknown resource: " + path);
 		}
-		rootFilePaths.add(path);
+
+		Container container = containerXml.getValue();
+		RootFiles rootFiles = container.getRootFiles();
+		String mediaType = rootFile.getMediaType();
+		boolean foundExisting = false;
+		if (rootFiles == null) {
+			rootFiles = containerFactory.createContainerRootFiles();
+			container.setRootFiles(rootFiles);
+		} else {
+			// Check any existing files for matching path/mime type
+			Iterator<RootFile> rootFileIt = rootFiles.getRootFile().iterator();
+			while (rootFileIt.hasNext()) {
+				RootFile rootFileElem = rootFileIt.next();
+				if (!rootFileElem.getFullPath().equals(path)
+						&& !rootFileElem.getMediaType().equals(mediaType)) {
+					// Different path and media type - ignore
+					continue;
+				}
+				if (foundExisting) {
+					// Duplicate path/media type, we'll remove it
+					rootFileIt.remove();
+					continue;
+				}
+				rootFileElem.setFullPath(rootFile.getPath());
+				if (mediaType != null) {
+					rootFileElem.setMediaType(mediaType);
+				}
+				foundExisting = true;
+			}
+		}
+		if (!foundExisting) {
+			RootFile rootFileElem = containerFactory.createRootFile();
+			rootFileElem.setFullPath(rootFile.getPath());
+			rootFileElem.setMediaType(mediaType);
+
+			rootFiles.getRootFile().add(rootFileElem);
+		}
 	}
 
 	public List<ResourceEntry> getRootFiles() {
 		ArrayList<UCFPackage.ResourceEntry> rootFiles = new ArrayList<UCFPackage.ResourceEntry>();
-		for (String rootPath : rootFilePaths) {
-			rootFiles.add(getResourceEntry(rootPath));
+		if (containerXml == null) {
+			return rootFiles;
+		}
+
+		RootFiles rootFilesElem = containerXml.getValue().getRootFiles();
+		if (rootFilesElem == null) {
+			return rootFiles;
+		}
+		for (RootFile rf : rootFilesElem.getRootFile()) {
+			ResourceEntry entry = getResourceEntry(rf.getFullPath());
+			if (rf.getMediaType() != null
+					&& rf.getMediaType() != entry.mediaType) {
+				// Override the mime type in the returned entry
+				entry.mediaType = rf.getMediaType();
+			}
+			rootFiles.add(entry);
 		}
 		return rootFiles;
 	}
@@ -365,7 +399,21 @@ public class UCFPackage {
 	}
 
 	public void unsetRootFile(String path) {
-		rootFilePaths.remove(path);
+		Container container = containerXml.getValue();
+		RootFiles rootFiles = container.getRootFiles();
+		if (rootFiles == null) {
+			return;
+		}
+		Iterator<RootFile> rootFileIt = rootFiles.getRootFile().iterator();
+		while (rootFileIt.hasNext()) {
+			RootFile rootFileElem = rootFileIt.next();
+			if (rootFileElem.getFullPath().equals(path)) {
+				rootFileIt.remove();
+			}
+		}
 	}
 
+	protected JAXBElement<Container> getContainerXML() {
+		return containerXml;
+	}
 }
