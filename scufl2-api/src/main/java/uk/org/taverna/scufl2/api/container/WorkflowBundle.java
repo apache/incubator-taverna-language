@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 
-import uk.org.taverna.scufl2.api.common.AbstractNamed;
+import uk.org.taverna.scufl2.api.common.AbstractNamedReally;
 import uk.org.taverna.scufl2.api.common.Named;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.Root;
@@ -19,11 +19,11 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
  * 
  */
 
-public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
-		Named, Root {
+public class WorkflowBundle extends AbstractNamedReally implements
+		WorkflowBean, Named, Root {
 
 	private static URI WORKFLOW_BUNDLE_ROOT = URI
-	.create("http://ns.taverna.org.uk/2010/workflowBundle/");
+			.create("http://ns.taverna.org.uk/2010/workflowBundle/");
 
 	public static URI generateIdentifier() {
 		return WORKFLOW_BUNDLE_ROOT.resolve(UUID.randomUUID().toString());
@@ -50,6 +50,7 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 		return profiles;
 	}
 
+	@Override
 	public URI getSameBaseAs() {
 		return sameBaseAs;
 	}
@@ -73,6 +74,7 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 		this.profiles.addAll(profiles);
 	}
 
+	@Override
 	public void setSameBaseAs(URI sameBaseAs) {
 		this.sameBaseAs = sameBaseAs;
 	}
@@ -86,8 +88,8 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 	public String toString() {
 		final int maxLen = 6;
 		return "TavernaResearchObject [" + "profiles="
-		+ (profiles != null ? toString(profiles, maxLen) : null)
-		+ ", mainWorkflow=" + mainWorkflow + "]";
+				+ (profiles != null ? toString(profiles, maxLen) : null)
+				+ ", mainWorkflow=" + mainWorkflow + "]";
 	}
 
 	private String toString(Collection<?> collection, int maxLen) {
@@ -95,7 +97,7 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 		builder.append("[");
 		int i = 0;
 		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext()
-		&& i < maxLen; i++) {
+				&& i < maxLen; i++) {
 			if (i > 0) {
 				builder.append(", ");
 			}
