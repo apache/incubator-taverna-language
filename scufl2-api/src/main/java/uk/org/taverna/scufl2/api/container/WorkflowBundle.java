@@ -9,6 +9,7 @@ import java.util.UUID;
 import uk.org.taverna.scufl2.api.common.AbstractNamed;
 import uk.org.taverna.scufl2.api.common.Named;
 import uk.org.taverna.scufl2.api.common.NamedSet;
+import uk.org.taverna.scufl2.api.common.Root;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.profiles.Profile;
@@ -19,7 +20,7 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
  */
 
 public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
-Named {
+		Named, Root {
 
 	private static URI WORKFLOW_BUNDLE_ROOT = URI
 	.create("http://ns.taverna.org.uk/2010/workflowBundle/");
@@ -33,6 +34,10 @@ Named {
 	private NamedSet<Workflow> workflows = new NamedSet<Workflow>();
 	private Workflow mainWorkflow;
 	private Profile mainProfile;
+
+	public Profile getMainProfile() {
+		return mainProfile;
+	}
 
 	public Workflow getMainWorkflow() {
 		if (mainWorkflow == null) {
@@ -51,6 +56,11 @@ Named {
 
 	public NamedSet<Workflow> getWorkflows() {
 		return workflows;
+	}
+
+	public void setMainProfile(Profile mainProfile) {
+		getProfiles().add(mainProfile);
+		this.mainProfile = mainProfile;
 	}
 
 	public void setMainWorkflow(Workflow mainWorkflow) {
@@ -93,15 +103,6 @@ Named {
 		}
 		builder.append("]");
 		return builder.toString();
-	}
-
-	public Profile getMainProfile() {
-		return mainProfile;
-	}
-
-	public void setMainProfile(Profile mainProfile) {
-		getProfiles().add(mainProfile);
-		this.mainProfile = mainProfile;
 	}
 
 }
