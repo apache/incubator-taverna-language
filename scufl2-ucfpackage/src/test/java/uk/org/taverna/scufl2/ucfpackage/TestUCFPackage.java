@@ -489,8 +489,12 @@ public class TestUCFPackage {
 		ZipFile zipFile = new ZipFile(tmpFile);
 		ZipEntry manifestEntry = zipFile.getEntry("META-INF/container.xml");
 		InputStream manifestStream = zipFile.getInputStream(manifestEntry);
-		assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-				+ "<container>helloworld.txt / text plain</container>",
+		assertEquals(
+				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+						+ "<container xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\" xmlns:ns2=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:ns3=\"http://www.w3.org/2001/04/xmlenc#\">\n"
+						+ "    <rootFiles>\n"
+						+ "        <rootFile media-type=\"text/plain\" full-path=\"helloworld.txt\"/>\n"
+						+ "    </rootFiles>\n" + "</container>\n",
 				IOUtils.toString(manifestStream, "UTF-8"));
 
 	}
