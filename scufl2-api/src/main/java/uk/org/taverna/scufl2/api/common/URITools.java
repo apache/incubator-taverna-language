@@ -13,6 +13,9 @@ public class URITools {
 	}
 
 	private URI uriForBean(WorkflowBean bean) {
+		if (bean == null) {
+			throw new NullPointerException("Bean can't be null");
+		}
 		if (bean instanceof Root) {
 			Root root = (Root) bean;
 			if (root.getSameBaseAs() == null) {
@@ -28,6 +31,10 @@ public class URITools {
 		if (bean instanceof Child) {
 			Child child = (Child) bean;
 			WorkflowBean parent = child.getParent();
+			if (parent == null) {
+				throw new IllegalStateException("Bean does not have a parent: "
+						+ child);
+			}
 			URI parentUri = uriForBean(parent);
 
 			if (!parentUri.getPath().endsWith("/")) {
