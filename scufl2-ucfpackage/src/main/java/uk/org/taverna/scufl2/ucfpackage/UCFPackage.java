@@ -19,6 +19,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -343,6 +344,9 @@ public class UCFPackage {
 					.iterator();
 			while (anyOrRootIt.hasNext()) {
 				Object anyOrRoot = anyOrRootIt.next();
+				if (anyOrRoot instanceof JAXBElement) {
+					anyOrRoot = ((JAXBElement) anyOrRoot).getValue();
+				}
 				if (!(anyOrRoot instanceof RootFile)) {
 					continue;
 				}
@@ -368,8 +372,11 @@ public class UCFPackage {
 			RootFile rootFileElem = containerFactory.createRootFile();
 			rootFileElem.setFullPath(rootFile.getPath());
 			rootFileElem.setMediaType(mediaType);
-
-			rootFiles.getAnyOrRootFile().add(rootFileElem);
+			rootFiles.getAnyOrRootFile().add(
+					new JAXBElement<RootFile>(new QName(
+							"urn:oasis:names:tc:opendocument:xmlns:container",
+							"rootFile"), RootFile.class, rootFileElem));
+			// rootFiles.getAnyOrRootFile().add(rootFileElem);
 		}
 	}
 
@@ -384,6 +391,9 @@ public class UCFPackage {
 			return rootFiles;
 		}
 		for (Object anyOrRoot : rootFilesElem.getAnyOrRootFile()) {
+			if (anyOrRoot instanceof JAXBElement) {
+				anyOrRoot = ((JAXBElement) anyOrRoot).getValue();
+			}
 			if (!(anyOrRoot instanceof RootFile)) {
 				continue;
 			}
@@ -416,6 +426,9 @@ public class UCFPackage {
 		Iterator<Object> anyOrRootIt = rootFiles.getAnyOrRootFile().iterator();
 		while (anyOrRootIt.hasNext()) {
 			Object anyOrRoot = anyOrRootIt.next();
+			if (anyOrRoot instanceof JAXBElement) {
+				anyOrRoot = ((JAXBElement) anyOrRoot).getValue();
+			}
 			if (!(anyOrRoot instanceof RootFile)) {
 				continue;
 			}
