@@ -521,6 +521,8 @@ public class TestUCFPackage {
 				+ "        <rootFile ex:extraAnnotation='hello' media-type=\"text/plain\" full-path=\"soup.txt\"/>\n"
 				+ "    </rootFiles>\n"
 				+ "   <ex:example>second example</ex:example>\n"
+				+ "  <relationships /> "
+				+ "   <ex:example>third example</ex:example>\n"
 				+ "</container>\n";
 		// Should overwrite setRootFile()
 		container.addResource(containerXml, "META-INF/container.xml",
@@ -529,6 +531,7 @@ public class TestUCFPackage {
 		assertEquals("soup.txt", container.getRootFiles().get(0).getPath());
 
 		container.save(tmpFile);
+
 
 		ZipFile zipFile = new ZipFile(tmpFile);
 		ZipEntry manifestEntry = zipFile.getEntry("META-INF/container.xml");
