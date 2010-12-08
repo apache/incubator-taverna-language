@@ -3,7 +3,7 @@ package uk.org.taverna.scufl2.api.activity;
 import java.net.URI;
 import java.util.Set;
 
-import uk.org.taverna.scufl2.api.common.AbstractNamed;
+import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.common.NamedSet;
@@ -22,7 +22,7 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
  * @author Alan R Williams
  * 
  */
-public class Activity extends AbstractNamed implements Configurable,
+public class Activity extends AbstractNamedChild implements Configurable,
 		Child<Profile> {
 
 	private NamedSet<InputActivityPort> inputPorts = new NamedSet<InputActivityPort>();

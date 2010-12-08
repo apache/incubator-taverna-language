@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlType;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
-import uk.org.taverna.scufl2.api.common.AbstractNamed;
+import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
@@ -24,7 +24,7 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
  * 
  */
 @XmlType(propOrder = { "profilePosition", "processorBindings", "configurations" })
-public class Profile extends AbstractNamed implements WorkflowBean,
+public class Profile extends AbstractNamedChild implements WorkflowBean,
 		Child<WorkflowBundle> {
 
 	private Set<ProcessorBinding> processorBindings = new HashSet<ProcessorBinding>();

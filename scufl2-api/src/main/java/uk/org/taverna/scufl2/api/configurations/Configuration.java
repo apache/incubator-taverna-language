@@ -7,7 +7,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.org.taverna.scufl2.api.common.AbstractNamed;
+import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
@@ -18,7 +18,7 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
  * @author Alan R Williams
  *
  */
-public class Configuration extends AbstractNamed implements WorkflowBean,
+public class Configuration extends AbstractNamedChild implements WorkflowBean,
 		Child<Profile> {
 	private Configurable configures;
 	private URI configurationType;
