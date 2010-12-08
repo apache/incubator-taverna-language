@@ -477,6 +477,24 @@ public class TestUCFPackage {
 		assertEquals("text/plain", rootFile.getMediaType());
 	}
 
+	@Test
+	public void setRootfileSaved() throws Exception {
+		UCFPackage container = new UCFPackage();
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
+		container.addResource("Hello there", "helloworld.txt", "text/plain");
+		container.addResource("Soup for everyone", "soup.txt", "text/plain");
+		container.setRootFile("helloworld.txt");
+		container.save(tmpFile);
+
+		ZipFile zipFile = new ZipFile(tmpFile);
+		ZipEntry manifestEntry = zipFile.getEntry("META-INF/container.xml");
+		InputStream manifestStream = zipFile.getInputStream(manifestEntry);
+		assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+				+ "<container>helloworld.txt / text plain</container>",
+				IOUtils.toString(manifestStream, "UTF-8"));
+
+	}
+
 	@Test(expected = IllegalArgumentException.class)
 	public void setRootfileMissing() throws Exception {
 		UCFPackage container = new UCFPackage();
@@ -518,6 +536,33 @@ public class TestUCFPackage {
 		// Adding a second file of a different mime type
 		container.setRootFile("helloworld.html");
 		List<ResourceEntry> rootFiles = container.getRootFiles();
+		assertEquals(2, rootFiles.size());
+
+		ResourceEntry rootFile0 = rootFiles.get(0);
+		assertEquals("helloworld.txt", rootFile0.getPath());
+		assertEquals("text/plain", rootFile0.getMediaType());
+
+		ResourceEntry rootFile1 = rootFiles.get(1);
+		assertEquals("helloworld.html", rootFile1.getPath());
+		assertEquals("text/html", rootFile1.getMediaType());
+	}
+
+	@Test
+	public void multipleRootfilesReloaded() throws Exception {
+		UCFPackage container = new UCFPackage();
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
+		container.addResource("Hello there", "helloworld.txt", "text/plain");
+		container.addResource("<html><body><h1>Yo</h1></body></html>",
+				"helloworld.html", "text/html");
+		container.addResource("Soup for everyone", "soup.txt", "text/plain");
+		container.setRootFile("helloworld.txt");
+		// Adding a second file of a different mime type
+		container.setRootFile("helloworld.html");
+
+		container.save(tmpFile);
+		UCFPackage reloaded = new UCFPackage(tmpFile);
+
+		List<ResourceEntry> rootFiles = reloaded.getRootFiles();
 		assertEquals(2, rootFiles.size());
 
 		ResourceEntry rootFile0 = rootFiles.get(0);
