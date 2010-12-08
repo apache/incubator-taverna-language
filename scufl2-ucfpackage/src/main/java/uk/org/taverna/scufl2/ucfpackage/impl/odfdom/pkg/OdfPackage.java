@@ -1162,7 +1162,7 @@ public class OdfPackage {
 							if (mediaType != null) {
 								if (getManifestEntries().get(d) == null) {
 									OdfFileEntry fileEntry = new OdfFileEntry(
-											d, mediaType);
+											d, mediaType, -1);
 									getManifestEntries().put(d, fileEntry);
 									if (!mManifestList.contains(d)) {
 										mManifestList.add(d);
