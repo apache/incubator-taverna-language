@@ -35,12 +35,19 @@ import uk.org.taverna.scufl2.api.configurations.PropertyDefinition;
  */
 public class ActivityConfigurationDefinition {
 
-	private final URI activityType;
+	private URI activityType;
 
 	private final Map<URI, PropertyDefinition> propertyDefinitions;
 
 	/**
 	 * Creates the definition of the configuration required by an Activity.
+	 */
+	public ActivityConfigurationDefinition() {
+		propertyDefinitions = new HashMap<URI, PropertyDefinition>();
+	}
+
+	/**
+	 * Creates the definition of the configuration required by the Activity specified by the URI.
 	 * 
 	 * @param activityType
 	 *            the URI that identifies the Activity type
@@ -51,7 +58,7 @@ public class ActivityConfigurationDefinition {
 	}
 
 	/**
-	 * Creates the definition of the configuration required by an Activity.
+	 * Creates the definition of the configuration required by the Activity specified by the URI.
 	 * 
 	 * @param activityType
 	 *            the URI that identifies the Activity type
@@ -71,6 +78,16 @@ public class ActivityConfigurationDefinition {
 	 */
 	public URI getActivityType() {
 		return activityType;
+	}
+
+	/**
+	 * Sets the URI that identifies the Activity type.
+	 * 
+	 * @param activityType
+	 *            the URI that identifies the Activity type
+	 */
+	public void setActivityType(URI activityType) {
+		this.activityType = activityType;
 	}
 
 	/**
@@ -126,6 +143,7 @@ public class ActivityConfigurationDefinition {
 		sb.append("[\n");
 		for (PropertyDefinition property : getPropertyDefinitions()) {
 			sb.append(property);
+			sb.append("\n");
 		}
 		sb.append("]\n");
 		return sb.toString();

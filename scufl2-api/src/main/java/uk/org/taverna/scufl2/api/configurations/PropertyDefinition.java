@@ -38,11 +38,17 @@ public abstract class PropertyDefinition {
 	public static final URI INTEGER = URI.create(XMLConstants.W3C_XML_SCHEMA_NS_URI + "#integer");
 	public static final URI STRING = URI.create(XMLConstants.W3C_XML_SCHEMA_NS_URI + "#string");
 
-	private final URI predicate, dataType;
-	private final String label, description;
-	private final boolean required, multiple;
-	private final String[] options;
+	private URI predicate, dataType;
+	private String label, description;
+	private boolean required, multiple;
+	private String[] options;
 
+	/**
+	 * Creates a PropertyDefinition that defines the attributes of a {@link Property}.
+	 */
+	public PropertyDefinition() {
+	}
+	
 	/**
 	 * Creates a PropertyDefinition that defines the attributes of a {@link Property}.
 	 * 
@@ -82,12 +88,30 @@ public abstract class PropertyDefinition {
 	}
 
 	/**
+	 * Sets the URI identifying the <code>Property</code> that this class defines.
+	 * 
+	 * @param predicate the URI identifying the <code>Property</code> that this class defines
+	 */
+	public void setPredicate(URI predicate) {
+		this.predicate = predicate;
+	}
+
+	/**
 	 * Returns the datatype of the <code>Property</code>.
 	 * 
 	 * @return the datatype of the <code>Property</code>
 	 */
 	public URI getDataType() {
 		return dataType;
+	}
+
+	/**
+	 * Sets the datatype of the <code>Property</code>.
+	 * 
+	 * @param dataType the datatype of the <code>Property</code>
+	 */
+	public void setDataType(URI dataType) {
+		this.dataType = dataType;
 	}
 
 	/**
@@ -100,12 +124,30 @@ public abstract class PropertyDefinition {
 	}
 
 	/**
+	 * Sets a human readable label for the <code>Property</code>.
+	 * 
+	 * @param label a human readable label for the <code>Property</code>
+	 */
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	/**
 	 * Returns a description of the <code>Property</code>.
 	 * 
 	 * @return a description of the <code>Property</code>
 	 */
 	public String getDescription() {
 		return description;
+	}
+
+	/**
+	 * Sets a description of the <code>Property</code>.
+	 * 
+	 * @param description a description of the <code>Property</code>
+	 */
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	/**
@@ -118,12 +160,30 @@ public abstract class PropertyDefinition {
 	}
 
 	/**
+	 * Sets whether the <code>Property</code> is mandatory.
+	 * 
+	 * @param required whether the <code>Property</code> is mandatory
+	 */
+	public void setRequired(boolean required) {
+		this.required = required;
+	}
+
+	/**
 	 * Returns true if there can be multiple instances of the <code>Property</code>.
 	 * 
 	 * @return true if there can be multiple instances of the <code>Property</code>
 	 */
 	public boolean isMultiple() {
 		return multiple;
+	}
+
+	/**
+	 * Sets whether there can be multiple instances of the <code>Property</code>.
+	 * 
+	 * @param multiple whether there can be multiple instances of the <code>Property</code>
+	 */
+	public void setMultiple(boolean multiple) {
+		this.multiple = multiple;
 	}
 
 	/**
@@ -136,6 +196,15 @@ public abstract class PropertyDefinition {
 	 */
 	public String[] getOptions() {
 		return options;
+	}
+
+	/**
+	 * Sets the valid values for the <code>Property</code>.
+	 * 
+	 * @param options
+	 */
+	public void setOptions(String[] options) {
+		this.options = options;
 	}
 
 	@Override
