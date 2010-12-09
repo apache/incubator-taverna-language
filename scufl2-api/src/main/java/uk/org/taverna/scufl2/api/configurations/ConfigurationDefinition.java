@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-
 /**
  * Definition of the {@link Configuration} required to configure a
  * {@link uk.org.taverna.scufl2.api.common.Configurable Configurable}.
@@ -40,8 +39,7 @@ public class ConfigurationDefinition {
 	private final Map<URI, PropertyDefinition> propertyDefinitions;
 
 	/**
-	 * Creates the definition of the {@link Configuration} required to configure a
-	 * {@link uk.org.taverna.scufl2.api.common.Configurable}.
+	 * Creates the definition of the {@link Configuration}.
 	 */
 	public ConfigurationDefinition() {
 		propertyDefinitions = new HashMap<URI, PropertyDefinition>();
@@ -49,7 +47,7 @@ public class ConfigurationDefinition {
 
 	/**
 	 * Creates the definition of the {@link Configuration} required to configure the
-	 * {@link uk.org.taverna.scufl2.api.common.Configurable} specified by the URI.
+	 * {@link uk.org.taverna.scufl2.api.common.Configurable Configurable} specified by the URI.
 	 * 
 	 * @param configurableType
 	 *            the URI that identifies the <code>Configurable</code> type
@@ -61,22 +59,22 @@ public class ConfigurationDefinition {
 
 	/**
 	 * Creates the definition of the {@link Configuration} required to configure the
-	 * {@link uk.org.taverna.scufl2.api.common.Configurable} specified by the URI.
+	 * {@link uk.org.taverna.scufl2.api.common.Configurable Configurable} specified by the URI.
 	 * 
 	 * @param configurableType
 	 *            the URI that identifies the <code>Configurable</code> type
 	 * @param propertyDefinitions
-	 *            the <code>PropertyDefinition</code>s required to configure the <code>Configurable</code>
+	 *            the <code>PropertyDefinition</code>s required to configure the
+	 *            <code>Configurable</code>
 	 */
-	public ConfigurationDefinition(URI configurableType,
-			Set<PropertyDefinition> propertyDefinitions) {
+	public ConfigurationDefinition(URI configurableType, Set<PropertyDefinition> propertyDefinitions) {
 		this(configurableType);
 		setPropertyDefinitions(propertyDefinitions);
 	}
 
 	/**
-	 * Returns the URI that identifies the {@link uk.org.taverna.scufl2.api.common.Configurable}
-	 * type.
+	 * Returns the URI that identifies the {@link uk.org.taverna.scufl2.api.common.Configurable
+	 * Configurable} type.
 	 * 
 	 * @return the URI that identifies the <code>Configurable</code> type
 	 */
@@ -85,7 +83,8 @@ public class ConfigurationDefinition {
 	}
 
 	/**
-	 * Sets the URI that identifies the {@link uk.org.taverna.scufl2.api.common.Configurable} type.
+	 * Sets the URI that identifies the {@link uk.org.taverna.scufl2.api.common.Configurable
+	 * Configurable} type.
 	 * 
 	 * @param configurableType
 	 *            the URI that identifies the <code>Configurable</code> type
@@ -106,18 +105,19 @@ public class ConfigurationDefinition {
 	/**
 	 * Sets the URI that identifies the {@link Configuration} type.
 	 * 
-	 * @param configurationType the URI that identifies the {@link Configuration} type
+	 * @param configurationType
+	 *            the URI that identifies the {@link Configuration} type
 	 */
 	public void setConfigurationType(URI configurationType) {
-		this.configurationType = configurationType;	
+		this.configurationType = configurationType;
 	}
-	
+
 	/**
 	 * Returns the <code>PropertyDefinition</code>s required to configure the
-	 * {@link uk.org.taverna.scufl2.api.common.Configurable}.
+	 * {@link uk.org.taverna.scufl2.api.common.Configurable Configurable}.
 	 * 
 	 * @return the <code>PropertyDefinition</code>s required to configure the
-	 *         {@link uk.org.taverna.scufl2.api.common.Configurable}
+	 *         <code>Configurable</code>
 	 */
 	public Set<PropertyDefinition> getPropertyDefinitions() {
 		return new HashSet<PropertyDefinition>(propertyDefinitions.values());
@@ -129,7 +129,7 @@ public class ConfigurationDefinition {
 	 * 
 	 * @param propertyDefinitions
 	 *            the <code>PropertyDefinition</code>s required to configure the
-	 *            {@link uk.org.taverna.scufl2.api.common.Configurable}
+	 *            <code>Configurable</code>
 	 */
 	public void setPropertyDefinitions(Set<PropertyDefinition> propertyDefinitions) {
 		this.propertyDefinitions.clear();
