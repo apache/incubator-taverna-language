@@ -37,7 +37,15 @@ public class ObjectPropertyDefinition extends PropertyDefinition {
 	private final Map<URI, PropertyDefinition> propertyDefinitions;
 
 	/**
+	 * Creates a definition of an <code>ObjectProperty</code>.
 	 * 
+	 */
+	public ObjectPropertyDefinition() {
+		propertyDefinitions = new HashMap<URI, PropertyDefinition>();
+	}	
+	
+	/**
+	 * Creates a definition of an <code>ObjectProperty</code>.
 	 * 
 	 * @param predicate
 	 *            the URI identifying the <code>Property</code> that this class defines
@@ -59,7 +67,7 @@ public class ObjectPropertyDefinition extends PropertyDefinition {
 	}
 
 	/**
-	 * 
+	 * Creates a definition of an <code>ObjectProperty</code>.
 	 * 
 	 * @param predicate
 	 *            the URI identifying the <code>Property</code> that this class defines

@@ -31,6 +31,12 @@ import java.util.Arrays;
 public class DataPropertyDefinition extends PropertyDefinition {
 
 	/**
+	 * Creates a definition of a <code>DataProperty</code>.
+	 */
+	public DataPropertyDefinition() {
+	}
+	
+	/**
 	 * Creates a definition of a <code>DataProperty</code> with no constraints on the property
 	 * value.
 	 * 
