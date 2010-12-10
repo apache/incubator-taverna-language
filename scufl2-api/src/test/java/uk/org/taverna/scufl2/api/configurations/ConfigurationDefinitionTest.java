@@ -41,24 +41,25 @@ public class ConfigurationDefinitionTest {
 	
 	private Set<PropertyDefinition> propertyDefinitions;
 	
-	private URI activityURI;
+	private URI configurableType, configurationType;
 
 	@Before
 	public void setUp() throws Exception {
-		activityURI = URI.create("http://ns.taverna.org.uk/2010/activity/test");
+		configurableType = URI.create("http://ns.taverna.org.uk/2010/activity/test");
+		configurationType = configurableType.resolve("#ConfigType");
 		propertyDefinitions = new HashSet<PropertyDefinition>();
-		propertyDefinitions.add(new DataPropertyDefinition(activityURI.resolve("#testProperty"), PropertyDefinition.STRING, "", "", true, false));
-		configurationDefinition = new ConfigurationDefinition(activityURI, propertyDefinitions);
-		configurationDefinition.setConfigurationType(activityURI.resolve("#ConfigType"));
+		propertyDefinitions.add(new DataPropertyDefinition(configurableType.resolve("#testProperty"), PropertyDefinition.STRING, "", "", "", true, false));
+		configurationDefinition = new ConfigurationDefinition(configurableType, configurationType, propertyDefinitions);
+		configurationDefinition.setConfigurationType(configurableType.resolve("#ConfigType"));
 	}
 
 	/**
-	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.ConfigurationDefinition#ActivityConfigurationDefinition(java.net.URI)}.
+	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.ConfigurationDefinition#ActivityConfigurationDefinition(java.net.URI, java.net.URI)}.
 	 */
 	@Test
-	public void testActivityConfigurationDefinitionURI() {
-		assertEquals(activityURI, new ConfigurationDefinition(activityURI).getConfigurableType());
-		assertEquals(new HashSet<PropertyDefinition>(), new ConfigurationDefinition(activityURI).getPropertyDefinitions());
+	public void testActivityConfigurationDefinitionURIURI() {
+		assertEquals(configurableType, new ConfigurationDefinition(configurableType, configurationType).getConfigurableType());
+		assertEquals(new HashSet<PropertyDefinition>(), new ConfigurationDefinition(configurableType, configurationType).getPropertyDefinitions());
 	}
 
 	/**
@@ -66,8 +67,8 @@ public class ConfigurationDefinitionTest {
 	 */
 	@Test
 	public void testActivityConfigurationDefinitionURISetOfPropertyDefinition() {
-		assertEquals(activityURI, new ConfigurationDefinition(activityURI, propertyDefinitions).getConfigurableType());
-		assertEquals(propertyDefinitions, new ConfigurationDefinition(activityURI, propertyDefinitions).getPropertyDefinitions());
+		assertEquals(configurableType, new ConfigurationDefinition(configurableType, configurationType, propertyDefinitions).getConfigurableType());
+		assertEquals(propertyDefinitions, new ConfigurationDefinition(configurableType, configurationType, propertyDefinitions).getPropertyDefinitions());
 	}
 
 	/**
@@ -75,8 +76,8 @@ public class ConfigurationDefinitionTest {
 	 */
 	@Test
 	public void testGetConfigurableType() {
-		assertEquals(activityURI, configurationDefinition.getConfigurableType());
-		assertEquals(activityURI, configurationDefinition.getConfigurableType());
+		assertEquals(configurableType, configurationDefinition.getConfigurableType());
+		assertEquals(configurableType, configurationDefinition.getConfigurableType());
 	}
 
 	/**
@@ -84,7 +85,7 @@ public class ConfigurationDefinitionTest {
 	 */
 	@Test
 	public void testSetConfigurableType() {
-		assertEquals(activityURI, configurationDefinition.getConfigurableType());
+		assertEquals(configurableType, configurationDefinition.getConfigurableType());
 		configurationDefinition.setConfigurableType(URI.create("test:test"));
 		assertEquals(URI.create("test:test"), configurationDefinition.getConfigurableType());
 	}
@@ -94,8 +95,8 @@ public class ConfigurationDefinitionTest {
 	 */
 	@Test
 	public void testGetConfigurationType() {
-		assertEquals(activityURI.resolve("#ConfigType"), configurationDefinition.getConfigurationType());
-		assertEquals(activityURI.resolve("#ConfigType"), configurationDefinition.getConfigurationType());
+		assertEquals(configurationType, configurationDefinition.getConfigurationType());
+		assertEquals(configurationType, configurationDefinition.getConfigurationType());
 	}
 
 	/**
@@ -103,7 +104,7 @@ public class ConfigurationDefinitionTest {
 	 */
 	@Test
 	public void testSetConfigurationType() {
-		assertEquals(activityURI.resolve("#ConfigType"), configurationDefinition.getConfigurationType());
+		assertEquals(configurationType, configurationDefinition.getConfigurationType());
 		configurationDefinition.setConfigurationType(URI.create("test:test"));
 		assertEquals(URI.create("test:test"), configurationDefinition.getConfigurationType());
 	}
@@ -131,9 +132,9 @@ public class ConfigurationDefinitionTest {
 	 */
 	@Test
 	public void testGetPropertyDefinition() {
-		assertNotNull(configurationDefinition.getPropertyDefinition(activityURI.resolve("#testProperty")));
-		assertEquals(activityURI.resolve("#testProperty"), configurationDefinition.getPropertyDefinition(activityURI.resolve("#testProperty")).getPredicate());
-		assertEquals(activityURI.resolve("#testProperty"), configurationDefinition.getPropertyDefinition(activityURI.resolve("#testProperty")).getPredicate());
+		assertNotNull(configurationDefinition.getPropertyDefinition(configurableType.resolve("#testProperty")));
+		assertEquals(configurableType.resolve("#testProperty"), configurationDefinition.getPropertyDefinition(configurableType.resolve("#testProperty")).getPredicate());
+		assertEquals(configurableType.resolve("#testProperty"), configurationDefinition.getPropertyDefinition(configurableType.resolve("#testProperty")).getPredicate());
 	}
 
 	/**

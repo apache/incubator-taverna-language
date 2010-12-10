@@ -52,8 +52,9 @@ public class ConfigurationDefinition {
 	 * @param configurableType
 	 *            the URI that identifies the <code>Configurable</code> type
 	 */
-	public ConfigurationDefinition(URI configurableType) {
+	public ConfigurationDefinition(URI configurableType, URI configurationType) {
 		this.configurableType = configurableType;
+		this.configurationType = configurationType;
 		propertyDefinitions = new HashMap<URI, PropertyDefinition>();
 	}
 
@@ -67,8 +68,8 @@ public class ConfigurationDefinition {
 	 *            the <code>PropertyDefinition</code>s required to configure the
 	 *            <code>Configurable</code>
 	 */
-	public ConfigurationDefinition(URI configurableType, Set<PropertyDefinition> propertyDefinitions) {
-		this(configurableType);
+	public ConfigurationDefinition(URI configurableType, URI configurationType, Set<PropertyDefinition> propertyDefinitions) {
+		this(configurableType, configurationType);
 		setPropertyDefinitions(propertyDefinitions);
 	}
 
