@@ -25,23 +25,23 @@ package uk.org.taverna.scufl2.api.configurations;
  * 
  * @author David Withers
  */
-public class PropertyNotFoundExecption extends Exception {
+public class PropertyNotFoundException extends Exception {
 
 	private static final long serialVersionUID = 2590871147239697985L;
 
-	public PropertyNotFoundExecption() {
+	public PropertyNotFoundException() {
 		super();
 	}
 
-	public PropertyNotFoundExecption(String message) {
+	public PropertyNotFoundException(String message) {
 		super(message);
 	}
 
-	public PropertyNotFoundExecption(String message, Throwable cause) {
+	public PropertyNotFoundException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
-	public PropertyNotFoundExecption(Throwable cause) {
+	public PropertyNotFoundException(Throwable cause) {
 		super(cause);
 	}
 
