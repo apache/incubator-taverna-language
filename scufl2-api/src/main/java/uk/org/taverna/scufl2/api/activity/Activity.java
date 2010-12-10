@@ -23,7 +23,7 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
  * 
  */
 public class Activity extends AbstractNamedChild implements Configurable,
-		Child<Profile> {
+Child<Profile> {
 
 	private NamedSet<InputActivityPort> inputPorts = new NamedSet<InputActivityPort>();
 	private NamedSet<OutputActivityPort> outputPorts = new NamedSet<OutputActivityPort>();
@@ -39,6 +39,10 @@ public class Activity extends AbstractNamedChild implements Configurable,
 		super(name);
 	}
 
+	public URI getConfigurableType() {
+		return type;
+	}
+
 	public NamedSet<InputActivityPort> getInputPorts() {
 		return inputPorts;
 	}
@@ -52,10 +56,10 @@ public class Activity extends AbstractNamedChild implements Configurable,
 		return parent;
 	}
 
-	public URI getType() {
-		return type;
-	}
 
+	public void setConfigurableType(URI type) {
+		this.type = type;
+	}
 
 	public void setInputPorts(Set<InputActivityPort> inputPorts) {
 		this.inputPorts.clear();
@@ -78,13 +82,9 @@ public class Activity extends AbstractNamedChild implements Configurable,
 		}
 	}
 
-	public void setType(URI type) {
-		this.type = type;
-	}
-
 	@Override
 	public String toString() {
-		return "Activity " + getType() + " \"" + getName() + '"';
+		return "Activity " + getConfigurableType() + " \"" + getName() + '"';
 	}
 
 }
