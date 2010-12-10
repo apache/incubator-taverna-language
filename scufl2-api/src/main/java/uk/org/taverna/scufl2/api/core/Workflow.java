@@ -9,19 +9,17 @@ import java.util.UUID;
 
 import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
 import uk.org.taverna.scufl2.api.common.Child;
-import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.port.InputWorkflowPort;
 import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
 
-
 /**
  * @author Alan R Williams
- *
+ * 
  */
-public class Workflow extends AbstractNamedChild implements Configurable,
-		Child<WorkflowBundle> {
+public class Workflow extends AbstractNamedChild implements
+Child<WorkflowBundle> {
 
 	private static URI WORKFLOW_ROOT = URI
 	.create("http://ns.taverna.org.uk/2010/workflow/");
@@ -36,6 +34,7 @@ public class Workflow extends AbstractNamedChild implements Configurable,
 	private NamedSet<Processor> processors = new NamedSet<Processor>();
 	private URI workflowIdentifier;
 	private WorkflowBundle parent;
+	private URI configurableType;
 
 	public Workflow() {
 		setWorkflowIdentifier(generateIdentifier());
@@ -48,11 +47,9 @@ public class Workflow extends AbstractNamedChild implements Configurable,
 		return datalinks;
 	}
 
-
 	public NamedSet<InputWorkflowPort> getInputPorts() {
 		return inputPorts;
 	}
-
 
 	public NamedSet<OutputWorkflowPort> getOutputPorts() {
 		return outputPorts;
@@ -63,7 +60,6 @@ public class Workflow extends AbstractNamedChild implements Configurable,
 		return parent;
 	}
 
-
 	public NamedSet<Processor> getProcessors() {
 		return processors;
 	}
@@ -72,11 +68,9 @@ public class Workflow extends AbstractNamedChild implements Configurable,
 		return workflowIdentifier;
 	}
 
-
 	public void setDatalinks(Set<DataLink> datalinks) {
 		this.datalinks = datalinks;
 	}
-
 
 	public void setInputPorts(Set<InputWorkflowPort> inputPorts) {
 		this.inputPorts.clear();
@@ -85,14 +79,12 @@ public class Workflow extends AbstractNamedChild implements Configurable,
 		}
 	}
 
-
 	public void setOutputPorts(Set<OutputWorkflowPort> outputPorts) {
 		this.outputPorts.clear();
 		for (OutputWorkflowPort outputPort : outputPorts) {
 			outputPort.setParent(this);
 		}
 	}
-
 
 	@Override
 	public void setParent(WorkflowBundle parent) {
@@ -121,19 +113,19 @@ public class Workflow extends AbstractNamedChild implements Configurable,
 	public String toString() {
 		final int maxLen = 6;
 		return "Workflow [getName()="
-				+ getName()
-				+ ", getDatalinks()="
-				+ (getDatalinks() != null ? toString(getDatalinks(), maxLen)
-						: null)
+		+ getName()
+		+ ", getDatalinks()="
+		+ (getDatalinks() != null ? toString(getDatalinks(), maxLen)
+				: null)
 				+ ", getInputPorts()="
 				+ (getInputPorts() != null ? toString(getInputPorts(), maxLen)
 						: null)
-				+ ", getOutputPorts()="
-				+ (getOutputPorts() != null ? toString(getOutputPorts(), maxLen)
-						: null)
-				+ ", getProcessors()="
-				+ (getProcessors() != null ? toString(getProcessors(), maxLen)
-						: null) + "]";
+						+ ", getOutputPorts()="
+						+ (getOutputPorts() != null ? toString(getOutputPorts(), maxLen)
+								: null)
+								+ ", getProcessors()="
+								+ (getProcessors() != null ? toString(getProcessors(), maxLen)
+										: null) + "]";
 	}
 
 	private String toString(Collection<?> collection, int maxLen) {
@@ -141,7 +133,7 @@ public class Workflow extends AbstractNamedChild implements Configurable,
 		builder.append("[");
 		int i = 0;
 		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext()
-				&& i < maxLen; i++) {
+		&& i < maxLen; i++) {
 			if (i > 0) {
 				builder.append(", ");
 			}
