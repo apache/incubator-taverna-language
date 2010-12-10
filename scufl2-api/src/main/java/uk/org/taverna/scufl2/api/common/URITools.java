@@ -6,10 +6,29 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 
 public class URITools {
 
+	public URI relativePath(URI base, URI uri) {
+		if (! base.resolve("/").equals(uri.resolve("/"))) {
+			// Different protocol/host/auth
+			return uri;
+		}
+		URI relation = URI.create(".");
+		URI candidate = base.relativize(uri);
+		while (candidate.isAbsolute() &&
+				! (base.getPath().isEmpty() || base.getPath().equals("/"))) {
+			base = base.resolve("../");
+			relation = relation.resolve("../");
+			candidate = base.relativize(uri);
+		}
+		// Add the ../.. again
+		URI resolved = relation.resolve(candidate);
+		return resolved;
+
+	}
+
 	public URI relativeUriForBean(WorkflowBean bean, WorkflowBean relativeToBean) {
 		URI rootUri = uriForBean(relativeToBean);
 		URI beanUri = uriForBean(bean);
-		return rootUri.relativize(beanUri);
+		return relativePath(rootUri, beanUri);
 	}
 
 	private URI uriForBean(WorkflowBean bean) {
@@ -40,8 +59,19 @@ public class URITools {
 			if (!parentUri.getPath().endsWith("/")) {
 				parentUri = parentUri.resolve(parentUri.getPath() + "/");
 			}
+			// TODO: Get relation by container
 			String relation = child.getClass().getSimpleName() + "/";
-			return parentUri.resolve(relation);
+			URI relationUri = parentUri.resolve(relation.toLowerCase());
+			if (bean instanceof Named) {
+				Named named = (Named) bean;
+				String name = named.getName();
+				// TODO: Escape name
+				return relationUri.resolve(name);
+			} else {
+				throw new IllegalStateException(
+						"Can't create URIs for non-named child: " + bean);
+			}
+
 		}
 		throw new IllegalArgumentException("Unsupported type "
 				+ bean.getClass() + " for bean " + bean);

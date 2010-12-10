@@ -515,38 +515,26 @@ public class TestUCFPackage {
 				.getPath());
 
 		String containerXml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-				+ "<container xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\" xmlns:ex='http://example.com/' xmlns:ns2=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:ns3=\"http://www.w3.org/2001/04/xmlenc#\">\n"
-				+ "   <ex:example>first example</ex:example>\n"
+				+ "<container xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\" xmlns:ns2=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:ns3=\"http://www.w3.org/2001/04/xmlenc#\">\n"
+				+ "    <ex:example xmlns:ex=\"http://example.com/\">first example</ex:example>\n"
 				+ "    <rootFiles>\n"
-				+ "        <rootFile ex:extraAnnotation='hello' media-type=\"text/plain\" full-path=\"soup.txt\"/>\n"
+				+ "        <rootFile xmlns:ex=\"http://example.com/\" media-type=\"text/plain\" full-path=\"soup.txt\" ex:extraAnnotation=\"hello\"/>\n"
 				+ "    </rootFiles>\n"
-				+ "   <ex:example>second example</ex:example>\n"
+				+ "    <ex:example xmlns:ex=\"http://example.com/\">second example</ex:example>\n"
+				+ "    <ex:example xmlns:ex=\"http://example.com/\">third example</ex:example>\n"
 				+ "</container>\n";
 		// Should overwrite setRootFile()
 		container.addResource(containerXml, "META-INF/container.xml",
 				"text/xml");
 
-		System.out.println("any1: "
-				+ container.getContainerXML().getValue().getAny1());
-
-		System.out.println("any5: "
-				+ container.getContainerXML().getValue().getAny4());
-		System.out.println("any7: "
-				+ container.getContainerXML().getValue().getAny7());
-
-		System.out.println("any8: "
-				+ container.getContainerXML().getValue().getAny8());
-
-		System.out.println("any9: "
-				+ container.getContainerXML().getValue().getAny9());
 		assertEquals("soup.txt", container.getRootFiles().get(0).getPath());
-
 
 		container.save(tmpFile);
 
 		ZipFile zipFile = new ZipFile(tmpFile);
 		ZipEntry manifestEntry = zipFile.getEntry("META-INF/container.xml");
 		InputStream manifestStream = zipFile.getInputStream(manifestEntry);
+		// NOTE: This test is sensitive to namespace prefix reshuffling
 		assertEquals(containerXml, IOUtils.toString(manifestStream, "UTF-8"));
 
 	}
@@ -569,6 +557,9 @@ public class TestUCFPackage {
 		// Should overwrite setRootFile()
 		container.addResource(containerXml, "META-INF/container.xml",
 				"text/xml");
+		assertEquals("helloworld.html", container.getRootFiles().get(0)
+				.getPath());
+
 		container.setRootFile("helloworld.txt");
 		assertEquals("helloworld.html", container.getRootFiles().get(0)
 				.getPath());
@@ -577,13 +568,14 @@ public class TestUCFPackage {
 		container.save(tmpFile);
 
 		String expectedContainerXml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-				+ "<container xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\" xmlns:ex='http://example.com/' xmlns:ns2=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:ns3=\"http://www.w3.org/2001/04/xmlenc#\">\n"
+				+ "<container xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\" xmlns:ns2=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:ns3=\"http://www.w3.org/2001/04/xmlenc#\">\n"
 				+ "    <rootFiles>\n"
-				+ "        <rootFile ex:extraAnnotation='hello' media-type=\"text/html\" full-path=\"helloworld.html\"/>\n"
+				+ "        <rootFile xmlns:ex=\"http://example.com/\" media-type=\"text/html\" full-path=\"helloworld.html\" ex:extraAnnotation=\"hello\"/>\n"
 				+ "        <rootFile media-type=\"text/plain\" full-path=\"helloworld.txt\"/>\n"
 				+ "    </rootFiles>\n"
-				+ "   <ex:example>more example</ex:example>\n"
-				+ "</container>\n";
+				+ "    <ex:example xmlns:ex=\"http://example.com/\">more example</ex:example>\n"
+				+
+				"</container>\n";
 
 		ZipFile zipFile = new ZipFile(tmpFile);
 		ZipEntry manifestEntry = zipFile.getEntry("META-INF/container.xml");
