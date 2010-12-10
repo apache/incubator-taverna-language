@@ -48,21 +48,23 @@ public class ObjectPropertyDefinition extends PropertyDefinition {
 	 * Creates a definition of an <code>ObjectProperty</code>.
 	 * 
 	 * @param predicate
-	 *            the URI identifying the <code>Property</code> that this class defines
+	 *            the URI identifying the <code>ObjectProperty</code> that this class defines
 	 * @param dataType
-	 *            the datatype of the <code>Property</code>
+	 *            the datatype of the <code>ObjectProperty</code>
+	 * @param name
+	 *            the name of the <code>ObjectProperty</code>
 	 * @param label
-	 *            a human readable label for the <code>Property</code>
+	 *            a human readable label for the <code>ObjectProperty</code>
 	 * @param description
-	 *            a description of the <code>Property</code>
+	 *            a description of the <code>ObjectProperty</code>
 	 * @param required
-	 *            whether the <code>Property</code> is mandatory
+	 *            whether the <code>ObjectProperty</code> is mandatory
 	 * @param multiple
-	 *            whether there can be multiple instances of the <code>Property</code>
+	 *            whether there can be multiple instances of the <code>ObjectProperty</code>
 	 */
-	public ObjectPropertyDefinition(URI predicate, URI dataType, String label, String description,
+	public ObjectPropertyDefinition(URI predicate, URI dataType, String name, String label, String description,
 			boolean required, boolean multiple) {
-		super(predicate, dataType, label, description, required, multiple, new String[0]);
+		super(predicate, dataType, name, label, description, required, multiple, new String[0]);
 		propertyDefinitions = new HashMap<URI, PropertyDefinition>();
 	}
 
@@ -70,23 +72,25 @@ public class ObjectPropertyDefinition extends PropertyDefinition {
 	 * Creates a definition of an <code>ObjectProperty</code>.
 	 * 
 	 * @param predicate
-	 *            the URI identifying the <code>Property</code> that this class defines
+	 *            the URI identifying the <code>ObjectProperty</code> that this class defines
 	 * @param dataType
-	 *            the datatype of the <code>Property</code>
+	 *            the datatype of the <code>ObjectProperty</code>
+	 * @param name
+	 *            the name of the <code>ObjectProperty</code>
 	 * @param label
-	 *            a human readable label for the <code>Property</code>
+	 *            a human readable label for the <code>ObjectProperty</code>
 	 * @param description
-	 *            a description of the <code>Property</code>
+	 *            a description of the <code>ObjectProperty</code>
 	 * @param required
-	 *            whether the <code>Property</code> is mandatory
+	 *            whether the <code>ObjectProperty</code> is mandatory
 	 * @param multiple
-	 *            whether there can be multiple instances of the <code>Property</code>
+	 *            whether there can be multiple instances of the <code>ObjectProperty</code>
 	 * @param propertyDefinitions
 	 *            the <code>PropertyDefinition</code>s that define the <code>ObjectProperty</code>
 	 */
-	public ObjectPropertyDefinition(URI predicate, URI dataType, String label, String description,
+	public ObjectPropertyDefinition(URI predicate, URI dataType, String name, String label, String description,
 			boolean required, boolean multiple, Set<PropertyDefinition> propertyDefinitions) {
-		this(predicate, dataType, label, description, required, multiple);
+		this(predicate, dataType, name, label, description, required, multiple);
 		setPropertyDefinitions(propertyDefinitions);
 	}
 
