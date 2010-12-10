@@ -44,7 +44,7 @@ public class StringConstantActivityParser extends AbstractActivityParser {
 
 		configuration = new Configuration();
 		DataProperty prop = new DataProperty(CONSTANT.resolve("#string"), value);
-		configuration.getProperties().add(prop);
+		configuration.getObjectProperties().add(prop);
 		return configuration;
 	}
 

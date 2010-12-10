@@ -357,7 +357,7 @@ public class T2FlowParser {
 			property.setPredicate(fallBackURI);
 			// FIXME: Can't do toString() on getAny()
 			property.setDataValue(configBean.getAny().toString());
-			configuration.getProperties().add(property);
+			configuration.getObjectProperties().add(property);
 		}
 
 		configuration.setConfigures(parserState.get().getCurrentActivity());

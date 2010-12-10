@@ -31,7 +31,7 @@ Child<Profile> {
 		super(name);
 	}
 
-	public URI getConfigurationType() {
+	public URI getObjectClass() {
 		return configurationObject.getObjectClass();
 	}
 	public Configurable getConfigures() {
@@ -43,11 +43,11 @@ Child<Profile> {
 		return parent;
 	}
 
-	public List<Property> getProperties() {
+	public List<Property> getObjectProperties() {
 		return configurationObject.getObjectProperties();
 	}
 
-	public void setConfigurationType(URI configurationType) {
+	public void setObjectClass(URI configurationType) {
 		configurationObject.setObjectClass(configurationType);
 	}
 
@@ -70,7 +70,7 @@ Child<Profile> {
 
 	}
 
-	public void setProperties(List<Property> properties) {
+	public void setObjectProperties(List<Property> properties) {
 		configurationObject.setObjectProperties(properties);
 	}
 
