@@ -12,17 +12,25 @@
 			Modifications to the initial code base are copyright of their
 			respective authors, or their employers as appropriate.
 
-			This program is free software; you can redistribute it and/or modify it
-			under the terms of the GNU Lesser General Public License as published
-			by the Free Software Foundation; either version 2.1 of the License,
-			or (at your option) any later version.
+			This program is
+			free software; you can redistribute it and/or modify it
+			under the
+			terms of the GNU Lesser General Public License as published
+			by the
+			Free Software Foundation; either version 2.1 of the License,
+			or (at
+			your option) any later version.
 
-			This program is distributed in the hope that it will be useful, but
-			WITHOUT ANY WARRANTY; without even the implied warranty of
-			MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+			This program is distributed in the
+			hope that it will be useful, but
+			WITHOUT ANY WARRANTY; without even
+			the implied warranty of
+			MERCHANTABILITY or FITNESS FOR A PARTICULAR
+			PURPOSE. See the GNU
 			Lesser General Public License for more details.
 
-			You should have received a copy of the GNU Lesser General Public License
+			You should have received a copy of the GNU Lesser General Public
+			License
 			along with this program; if not, write to the Free Software
 			Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
 
@@ -60,53 +68,30 @@
 	<xsd:element name="container" type="container:Container"></xsd:element>
 
 	<xsd:complexType name="Container">
+
 		<xsd:sequence>
-			<xsd:sequence minOccurs="0">
+			<xsd:choice minOccurs="0" maxOccurs="2">
 				<xsd:element name="rootFiles">
 					<xsd:complexType>
 						<xsd:choice maxOccurs="unbounded">
-							<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"
-								processContents="lax">
-								<xsd:annotation>
-									<xsd:appinfo>
-										<jaxb:property name="any2" />
-									</xsd:appinfo>
-								</xsd:annotation>
-							</xsd:any>
-							<xsd:element name="rootFile" type="container:RootFile"
-								maxOccurs="unbounded" minOccurs="1" />
-						
+							<xsd:any namespace="##other" processContents="lax" />
+							<xsd:element name="rootFile" type="container:RootFile" />
 						</xsd:choice>
-						<!-- 
-						 -->
-						<xsd:sequence>
-							<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"
-								processContents="lax">
-								<xsd:annotation>
-									<xsd:appinfo>
-										<jaxb:property name="any2" />
-									</xsd:appinfo>
-								</xsd:annotation>
-							</xsd:any>
-							<xsd:element name="rootFile" type="container:RootFile"
-								maxOccurs="unbounded" minOccurs="1" />
-							<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"
-								processContents="lax">
-								<xsd:annotation>
-									<xsd:appinfo>
-										<jaxb:property name="any1" />
-									</xsd:appinfo>
-								</xsd:annotation>
-							</xsd:any>
-							<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"
-								processContents="lax">
-								<xsd:annotation>
-									<xsd:appinfo>
-										<jaxb:property name="any3" />
-									</xsd:appinfo>
-								</xsd:annotation>
-							</xsd:any>
-						</xsd:sequence>
+						<xsd:anyAttribute namespace="##other"
+							processContents="lax" />
+					</xsd:complexType>
+				</xsd:element>
+				<xsd:any namespace="##other" 
+					processContents="lax" maxOccurs="unbounded" />
+			</xsd:choice>
+
+			<xsd:sequence minOccurs="0">
+				<xsd:element name="relationships">
+					<xsd:complexType>
+						<xsd:choice maxOccurs="unbounded">
+							<xsd:any namespace="##other" processContents="lax" />
+							<xsd:element name="relationship" type="container:Relationship" />
+						</xsd:choice>
 						<xsd:anyAttribute namespace="##other"
 							processContents="lax" />
 					</xsd:complexType>
@@ -115,36 +100,23 @@
 					processContents="lax">
 					<xsd:annotation>
 						<xsd:appinfo>
-							<jaxb:property name="any4" />
+							<jaxb:property name="any5" />
 						</xsd:appinfo>
 					</xsd:annotation>
+
 				</xsd:any>
 			</xsd:sequence>
 
+
 			<xsd:sequence minOccurs="0">
-				<xsd:element name="relationships">
+				<xsd:element name="signatures">
 					<xsd:complexType>
-						<xsd:sequence>
-							<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"
-								processContents="lax">
-								<xsd:annotation>
-									<xsd:appinfo>
-										<jaxb:property name="any5" />
-									</xsd:appinfo>
-								</xsd:annotation>
-
-							</xsd:any>
-							<xsd:element name="relationship" type="container:Relationship" />
-							<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"
-								processContents="lax">
-								<xsd:annotation>
-									<xsd:appinfo>
-										<jaxb:property name="any6" />
-									</xsd:appinfo>
-								</xsd:annotation>
-
-							</xsd:any>
-						</xsd:sequence>
+						<xsd:choice maxOccurs="unbounded">
+							<!-- Can't use ##other as dsig: is in other <xsd:any namespace="##other" 
+								processContents="lax"> <xsd:annotation> <xsd:appinfo> <jaxb:property name="any6" 
+								/> </xsd:appinfo> </xsd:annotation> </xsd:any> -->
+							<xsd:element ref="dsig:Signature" />
+						</xsd:choice>
 						<xsd:anyAttribute namespace="##other"
 							processContents="lax" />
 					</xsd:complexType>
@@ -156,66 +128,46 @@
 							<jaxb:property name="any7" />
 						</xsd:appinfo>
 					</xsd:annotation>
-
 				</xsd:any>
 			</xsd:sequence>
 
 			<xsd:sequence minOccurs="0">
-				<xsd:element name="signatures">
+				<xsd:element name="encryption">
 					<xsd:complexType>
-						<xsd:sequence>
-							<xsd:element ref="dsig:Signature" maxOccurs="unbounded" />
-						</xsd:sequence>
+						<xsd:choice maxOccurs="unbounded">
+							<xsd:element ref="enc:EncryptedData" />
+							<xsd:element ref="enc:EncryptedKey" />
+							<!-- Can't use ##other as enc: is in other <xsd:any namespace="##other" 
+								processContents="lax"> <xsd:annotation> <xsd:appinfo> <jaxb:property name="any8" 
+								/> </xsd:appinfo> </xsd:annotation> </xsd:any> -->
+						</xsd:choice>
 						<xsd:anyAttribute namespace="##other"
 							processContents="lax" />
 					</xsd:complexType>
 				</xsd:element>
+
 				<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"
 					processContents="lax">
 					<xsd:annotation>
 						<xsd:appinfo>
-							<jaxb:property name="any8" />
+							<jaxb:property name="any9" />
 						</xsd:appinfo>
 					</xsd:annotation>
 				</xsd:any>
 			</xsd:sequence>
-			<xsd:element name="encryption">
-				<xsd:complexType>
-					<xsd:sequence>
-						<xsd:choice maxOccurs="unbounded">
-							<xsd:element ref="enc:EncryptedData" />
-							<xsd:element ref="enc:EncryptedKey" />
-						</xsd:choice>
-					</xsd:sequence>
-					<xsd:anyAttribute namespace="##other"
-						processContents="lax" />
-				</xsd:complexType>
-			</xsd:element>
-			<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"
-				processContents="lax">
-				<xsd:annotation>
-					<xsd:appinfo>
-						<jaxb:property name="any9" />
-					</xsd:appinfo>
-				</xsd:annotation>
 
-			</xsd:any>
 		</xsd:sequence>
+
 		<xsd:attribute name="version" type="xsd:string" fixed="1.0"></xsd:attribute>
 		<xsd:anyAttribute namespace="##other"
 			processContents="lax" />
+
 	</xsd:complexType>
 
 	<xsd:complexType name="RootFile">
 		<xsd:sequence>
 			<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"
-				processContents="lax">
-				<xsd:annotation>
-					<xsd:appinfo>
-						<jaxb:property name="any11" />
-					</xsd:appinfo>
-				</xsd:annotation>
-			</xsd:any>
+				processContents="lax" />
 		</xsd:sequence>
 		<xsd:attribute name="full-path" type="xsd:string" use="required">
 		</xsd:attribute>
@@ -229,13 +181,7 @@
 	<xsd:complexType name="Relationship">
 		<xsd:sequence>
 			<xsd:any namespace="##other" minOccurs="0" maxOccurs="unbounded"
-				processContents="lax">
-				<xsd:annotation>
-					<xsd:appinfo>
-						<jaxb:property name="any12" />
-					</xsd:appinfo>
-				</xsd:annotation>
-			</xsd:any>
+				processContents="lax" />
 		</xsd:sequence>
 		<xsd:attribute name="type" type="xsd:string"></xsd:attribute>
 		<xsd:attribute name="target" type="xsd:string"></xsd:attribute>

@@ -90,13 +90,13 @@ public class TestActivityParsing {
 				ACTIVITY_URI.resolve("#inputPortDefinition"));
 		assertEquals(2, inputDef.size());
 
-		Set<URI> inputPorts = new HashSet<URI>();
+		Set<URI> expectedPortUris = new HashSet<URI>();
 		for (InputActivityPort inPort : concatAct.getInputPorts()) {
-			inputPorts.add(new URITools().relativeUriForBean(inPort,
+			expectedPortUris.add(new URITools().relativeUriForBean(inPort,
 					concatConfig));
 		}
-		// assertEquals(2, inputPorts.size());
-
+		assertEquals(2, expectedPortUris.size());
+		assertEquals(2, inputDef.size());
 		for (ObjectProperty portDef : inputDef) {
 			assertEquals(ACTIVITY_URI.resolve("#InputPortDefinition"),
 					portDef.getObjectClass());
@@ -112,8 +112,9 @@ public class TestActivityParsing {
 			ObjectProperty port = scufl2Tools.getPropertyObject(
 					portDef.getObjectProperties(),
 					ACTIVITY_URI.resolve("#definesInputPort"));
-			System.out.println(port.getObjectUri());
-
+			URI objectUri = port.getObjectUri();
+			assertTrue("Unknown port " + objectUri,
+					expectedPortUris.contains(objectUri));
 		}
 
 

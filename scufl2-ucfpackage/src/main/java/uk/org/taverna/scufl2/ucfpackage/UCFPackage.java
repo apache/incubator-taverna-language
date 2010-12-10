@@ -12,15 +12,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamWriter;
+import javax.xml.namespace.QName;
 
 import org.oasis_open.names.tc.opendocument.xmlns.container.Container;
 import org.oasis_open.names.tc.opendocument.xmlns.container.Container.RootFiles;
@@ -28,7 +26,6 @@ import org.oasis_open.names.tc.opendocument.xmlns.container.ObjectFactory;
 import org.oasis_open.names.tc.opendocument.xmlns.container.RootFile;
 import org.w3c.dom.Document;
 
-import uk.org.taverna.scufl2.ucfpackage.UCFPackage.ResourceEntry;
 import uk.org.taverna.scufl2.ucfpackage.impl.odfdom.pkg.OdfPackage;
 import uk.org.taverna.scufl2.ucfpackage.impl.odfdom.pkg.manifest.OdfFileEntry;
 
@@ -69,6 +66,7 @@ public class UCFPackage {
 		parseContainerXML();
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void parseContainerXML() throws Exception {
 		createdContainerXml = false;
 		InputStream containerStream = getResourceAsInputStream(CONTAINER_XML);
@@ -134,8 +132,31 @@ public class UCFPackage {
 
 	protected void prepareContainerXML() throws Exception {
 		if (containerXml == null || createdContainerXml
-				&& containerXml.getValue().getRootFiles() == null) {
+				&& containerXml.getValue().getRootFilesOrAny() == null) {
 			return;
+		}
+
+		/* Check if we should prune <rootFiles> */
+		Iterator<Object> iterator = containerXml.getValue().getRootFilesOrAny().iterator();
+		boolean foundAlready = false;
+		while (iterator.hasNext()) {
+			Object anyOrRoot = iterator.next();
+			if (! (anyOrRoot instanceof JAXBElement)) {
+				continue;
+			}
+			@SuppressWarnings("rawtypes")
+			JAXBElement elem = (JAXBElement)anyOrRoot;
+			if (! elem.getDeclaredType().equals(RootFiles.class)) {
+				continue;
+			}
+			RootFiles rootFiles = (RootFiles) elem.getValue();
+			if (foundAlready ||
+					(rootFiles.getOtherAttributes().isEmpty() && rootFiles.getAnyOrRootFile().isEmpty())) {
+				// Delete it!
+				System.err.println("Deleting unneccessary <rootFiles>");
+				iterator.remove();
+			}
+			foundAlready = true;
 		}
 
 		Marshaller marshaller = createMarshaller();
@@ -324,6 +345,7 @@ public class UCFPackage {
 		return listResources("", true);
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void setRootFile(String path) {
 		ResourceEntry rootFile = getResourceEntry(path);
 		if (rootFile == null) {
@@ -331,54 +353,83 @@ public class UCFPackage {
 		}
 
 		Container container = containerXml.getValue();
-		RootFiles rootFiles = container.getRootFiles();
+
+		RootFiles rootFiles = getRootFiles(container);
 		String mediaType = rootFile.getMediaType();
 		boolean foundExisting = false;
-		if (rootFiles == null) {
-			rootFiles = containerFactory.createContainerRootFiles();
-			container.setRootFiles(rootFiles);
-		} else {
-			// Check any existing files for matching path/mime type
-			Iterator<RootFile> rootFileIt = rootFiles.getRootFile().iterator();
-			while (rootFileIt.hasNext()) {
-				RootFile rootFileElem = rootFileIt.next();
-				if (!rootFileElem.getFullPath().equals(path)
-						&& !rootFileElem.getMediaType().equals(mediaType)) {
-					// Different path and media type - ignore
-					continue;
-				}
-				if (foundExisting) {
-					// Duplicate path/media type, we'll remove it
-					rootFileIt.remove();
-					continue;
-				}
-				rootFileElem.setFullPath(rootFile.getPath());
-				if (mediaType != null) {
-					rootFileElem.setMediaType(mediaType);
-				}
-				foundExisting = true;
+		// Check any existing files for matching path/mime type
+		Iterator<Object> anyOrRootIt = rootFiles.getAnyOrRootFile().iterator();
+		while (anyOrRootIt.hasNext()) {
+			Object anyOrRoot = anyOrRootIt.next();
+			if (anyOrRoot instanceof JAXBElement) {
+				anyOrRoot = ((JAXBElement) anyOrRoot).getValue();
 			}
+			if (!(anyOrRoot instanceof RootFile)) {
+				continue;
+			}
+			RootFile rootFileElem = (RootFile) anyOrRoot;
+			if (!rootFileElem.getFullPath().equals(path)
+					&& !rootFileElem.getMediaType().equals(mediaType)) {
+				// Different path and media type - ignore
+				continue;
+			}
+			if (foundExisting) {
+				// Duplicate path/media type, we'll remove it
+				anyOrRootIt.remove();
+				continue;
+			}
+			rootFileElem.setFullPath(rootFile.getPath());
+			if (mediaType != null) {
+				rootFileElem.setMediaType(mediaType);
+			}
+			foundExisting = true;
 		}
 		if (!foundExisting) {
 			RootFile rootFileElem = containerFactory.createRootFile();
 			rootFileElem.setFullPath(rootFile.getPath());
 			rootFileElem.setMediaType(mediaType);
-
-			rootFiles.getRootFile().add(rootFileElem);
+			rootFiles.getAnyOrRootFile().add(
+					containerFactory
+							.createContainerRootFilesRootFile(rootFileElem));
+			// rootFiles.getAnyOrRootFile().add(rootFileElem);
 		}
 	}
 
+	protected RootFiles getRootFiles(Container container) {
+
+		for (Object o : container.getRootFilesOrAny()) {
+			if (o instanceof JAXBElement) {
+				@SuppressWarnings("rawtypes")
+				JAXBElement jaxbElement = (JAXBElement) o;
+				o = jaxbElement.getValue();
+			}
+			if (o instanceof RootFiles) {
+				return (RootFiles) o;
+			}
+		}
+		// Not found - add it
+		RootFiles rootFiles = containerFactory.createContainerRootFiles();
+		container.getRootFilesOrAny().add(
+				containerFactory.createContainerRootFiles(rootFiles));
+		return rootFiles;
+	}
+
+	@SuppressWarnings("rawtypes")
 	public List<ResourceEntry> getRootFiles() {
 		ArrayList<UCFPackage.ResourceEntry> rootFiles = new ArrayList<UCFPackage.ResourceEntry>();
 		if (containerXml == null) {
 			return rootFiles;
 		}
 
-		RootFiles rootFilesElem = containerXml.getValue().getRootFiles();
-		if (rootFilesElem == null) {
-			return rootFiles;
-		}
-		for (RootFile rf : rootFilesElem.getRootFile()) {
+		RootFiles rootFilesElem = getRootFiles(containerXml.getValue());
+		for (Object anyOrRoot : rootFilesElem.getAnyOrRootFile()) {
+			if (anyOrRoot instanceof JAXBElement) {
+				anyOrRoot = ((JAXBElement) anyOrRoot).getValue();
+			}
+			if (!(anyOrRoot instanceof RootFile)) {
+				continue;
+			}
+			RootFile rf = (RootFile) anyOrRoot;
 			ResourceEntry entry = getResourceEntry(rf.getFullPath());
 			if (rf.getMediaType() != null
 					&& rf.getMediaType() != entry.mediaType) {
@@ -398,17 +449,22 @@ public class UCFPackage {
 		return new ResourceEntry(odfFileEntry);
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void unsetRootFile(String path) {
 		Container container = containerXml.getValue();
-		RootFiles rootFiles = container.getRootFiles();
-		if (rootFiles == null) {
-			return;
-		}
-		Iterator<RootFile> rootFileIt = rootFiles.getRootFile().iterator();
-		while (rootFileIt.hasNext()) {
-			RootFile rootFileElem = rootFileIt.next();
+		RootFiles rootFiles = getRootFiles(container);
+		Iterator<Object> anyOrRootIt = rootFiles.getAnyOrRootFile().iterator();
+		while (anyOrRootIt.hasNext()) {
+			Object anyOrRoot = anyOrRootIt.next();
+			if (anyOrRoot instanceof JAXBElement) {
+				anyOrRoot = ((JAXBElement) anyOrRoot).getValue();
+			}
+			if (!(anyOrRoot instanceof RootFile)) {
+				continue;
+			}
+			RootFile rootFileElem = (RootFile) anyOrRoot;
 			if (rootFileElem.getFullPath().equals(path)) {
-				rootFileIt.remove();
+				anyOrRootIt.remove();
 			}
 		}
 	}
