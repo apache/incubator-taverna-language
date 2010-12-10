@@ -13,7 +13,7 @@ import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.configurations.DataProperty;
 import uk.org.taverna.scufl2.api.configurations.ObjectProperty;
 import uk.org.taverna.scufl2.api.configurations.Property;
-import uk.org.taverna.scufl2.api.configurations.PropertyNotFoundExecption;
+import uk.org.taverna.scufl2.api.configurations.PropertyNotFoundException;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
@@ -73,7 +73,7 @@ public class Scufl2Tools {
 		return configurations;
 	}
 
-	public String getPropertyData(List<Property> properties, URI predicate) throws PropertyNotFoundExecption {
+	public String getPropertyData(List<Property> properties, URI predicate) throws PropertyNotFoundException {
 		for (Property prop : properties) {
 			if (prop.getPredicate().equals(predicate)) {
 				if (! (prop instanceof DataProperty)) {
@@ -82,7 +82,7 @@ public class Scufl2Tools {
 				return ((DataProperty)prop).getDataValue();
 			}
 		}
-		throw new PropertyNotFoundExecption("Could not find property for "+ predicate);
+		throw new PropertyNotFoundException("Could not find property for "+ predicate);
 	}
 
 	public Set<String> getPropertyDatas(List<Property> properties, URI predicate) {
@@ -100,7 +100,7 @@ public class Scufl2Tools {
 	}
 
 
-	public ObjectProperty getPropertyObject(List<Property> properties, URI predicate) throws PropertyNotFoundExecption {
+	public ObjectProperty getPropertyObject(List<Property> properties, URI predicate) throws PropertyNotFoundException {
 		for (Property prop : properties) {
 			if (prop.getPredicate().equals(predicate)) {
 				if (! (prop instanceof ObjectProperty)) {
@@ -109,7 +109,7 @@ public class Scufl2Tools {
 				return (ObjectProperty) prop;
 			}
 		}
-		throw new PropertyNotFoundExecption("Could not find property for "+ predicate);
+		throw new PropertyNotFoundException("Could not find property for "+ predicate);
 	}
 
 
