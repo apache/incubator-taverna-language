@@ -66,7 +66,7 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 		Configuration configuration = new Configuration();
 		configuration.setParent(getParserState().getCurrentProfile());
 
-		configuration.setConfigurationType(ACTIVITY_URI.resolve("#ConfigType"));
+		configuration.setObjectClass(ACTIVITY_URI.resolve("#ConfigType"));
 		String script = beanshellConfig.getScript();
 		DataProperty property = new DataProperty(
 				ACTIVITY_URI.resolve("#script"), script);
@@ -94,7 +94,7 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 			portConfig.setPredicate(ACTIVITY_URI
 					.resolve("#inputPortDefinition"));
 			portConfig.setObjectClass(ACTIVITY_URI.resolve("#InputPortDefinition"));
-			configuration.getProperties().add(portConfig);
+			configuration.getObjectProperties().add(portConfig);
 
 			List<Property> properties = portConfig.getObjectProperties();
 
@@ -135,7 +135,7 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 					.resolve("#outputPortDefinition"));
 			portConfig.setObjectClass(ACTIVITY_URI
 					.resolve("#OutputPortDefinition"));
-			configuration.getProperties().add(portConfig);
+			configuration.getObjectProperties().add(portConfig);
 			URI portUri = new URITools().relativeUriForBean(outputPort, configuration);
 			List<Property> portProps = portConfig.getObjectProperties();
 
@@ -166,7 +166,7 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 			outputPort.setParent(activity);
 		}
 
-		configuration.getProperties().add(property);
+		configuration.getObjectProperties().add(property);
 		return configuration;
 	}
 
