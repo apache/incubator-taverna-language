@@ -44,7 +44,7 @@ public class PropertyDefinitionTest {
 	@Before
 	public void setUp() throws Exception {
 		activityURI = URI.create("http://ns.taverna.org.uk/2010/activity/test");
-		propertyDefinition = new PropertyDefinition(activityURI.resolve("#testProperty"), PropertyDefinition.STRING, "label", "description", true, false, new String[0]) {
+		propertyDefinition = new PropertyDefinition(activityURI.resolve("#testProperty"), PropertyDefinition.STRING, "name", "label", "description", true, false, new String[0]) {
 			protected String toString(String indent) {
 				return "";
 			}			
@@ -56,13 +56,14 @@ public class PropertyDefinitionTest {
 	 */
 	@Test
 	public void testPropertyDefinition() {
-		PropertyDefinition propertyDefinition = new PropertyDefinition(activityURI.resolve("#testProperty"), PropertyDefinition.BOOLEAN, "A", "B", true, true, new String[] {"yes", "no"}) {
+		PropertyDefinition propertyDefinition = new PropertyDefinition(activityURI.resolve("#testProperty"), PropertyDefinition.BOOLEAN, "name", "A", "B", true, true, new String[] {"yes", "no"}) {
 			protected String toString(String indent) {
 				return "";
 			}			
 		};
 		assertEquals(activityURI.resolve("#testProperty"), propertyDefinition.getPredicate());
 		assertEquals(PropertyDefinition.BOOLEAN, propertyDefinition.getDataType());
+		assertEquals("name", propertyDefinition.getName());
 		assertEquals("A", propertyDefinition.getLabel());
 		assertEquals("B", propertyDefinition.getDescription());
 		assertTrue(propertyDefinition.isRequired());
@@ -86,6 +87,15 @@ public class PropertyDefinitionTest {
 	public void testGetDataType() {
 		assertEquals(PropertyDefinition.STRING, propertyDefinition.getDataType());
 		assertEquals(PropertyDefinition.STRING, propertyDefinition.getDataType());
+	}
+
+	/**
+	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.PropertyDefinition#getName()}.
+	 */
+	@Test
+	public void testGetName() {
+		assertEquals("name", propertyDefinition.getName());
+		assertEquals("name", propertyDefinition.getName());
 	}
 
 	/**

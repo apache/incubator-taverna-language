@@ -39,7 +39,7 @@ public abstract class PropertyDefinition {
 	public static final URI STRING = URI.create(XMLConstants.W3C_XML_SCHEMA_NS_URI + "#string");
 
 	private URI predicate, dataType;
-	private String label, description;
+	private String name, label, description;
 	private boolean required, multiple;
 	private String[] options;
 
@@ -56,6 +56,8 @@ public abstract class PropertyDefinition {
 	 *            the URI identifying the <code>Property</code> that this class defines
 	 * @param dataType
 	 *            the datatype of the <code>Property</code>
+	 * @param name
+	 *            the name of the <code>Property</code>
 	 * @param label
 	 *            a human readable label for the <code>Property</code>
 	 * @param description
@@ -67,10 +69,11 @@ public abstract class PropertyDefinition {
 	 * @param options
 	 *            the valid values for the <code>Property</code>
 	 */
-	public PropertyDefinition(URI predicate, URI dataType, String label, String description,
+	public PropertyDefinition(URI predicate, URI dataType, String name, String label, String description,
 			boolean required, boolean multiple, String[] options) {
 		this.predicate = predicate;
 		this.dataType = dataType;
+		this.name = name;
 		this.label = label;
 		this.description = description;
 		this.required = required;
@@ -112,6 +115,24 @@ public abstract class PropertyDefinition {
 	 */
 	public void setDataType(URI dataType) {
 		this.dataType = dataType;
+	}
+
+	/**
+	 * Returns the name of the <code>Property</code>.
+	 * 
+	 * @return the name of the <code>Property</code>
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Sets the name of the <code>Property</code>.
+	 * 
+	 * @param name the name of the <code>Property</code>
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**
