@@ -4,7 +4,6 @@
 package uk.org.taverna.scufl2.api.configurations;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 
 import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
@@ -19,11 +18,10 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
  *
  */
 public class Configuration extends AbstractNamedChild implements WorkflowBean,
-		Child<Profile> {
+Child<Profile> {
 	private Configurable configures;
-	private URI configurationType;
-	private List<Property> properties = new ArrayList<Property>();
 	private Profile parent;
+	private ObjectProperty configurationObject = new ObjectProperty();
 
 	public Configuration() {
 		super();
@@ -34,7 +32,7 @@ public class Configuration extends AbstractNamedChild implements WorkflowBean,
 	}
 
 	public URI getConfigurationType() {
-		return configurationType;
+		return configurationObject.getObjectClass();
 	}
 	public Configurable getConfigures() {
 		return configures;
@@ -46,11 +44,11 @@ public class Configuration extends AbstractNamedChild implements WorkflowBean,
 	}
 
 	public List<Property> getProperties() {
-		return properties;
+		return configurationObject.getObjectProperties();
 	}
 
 	public void setConfigurationType(URI configurationType) {
-		this.configurationType = configurationType;
+		configurationObject.setObjectClass(configurationType);
 	}
 
 	/**
@@ -73,7 +71,7 @@ public class Configuration extends AbstractNamedChild implements WorkflowBean,
 	}
 
 	public void setProperties(List<Property> properties) {
-		this.properties = properties;
+		configurationObject.setObjectProperties(properties);
 	}
 
 }
