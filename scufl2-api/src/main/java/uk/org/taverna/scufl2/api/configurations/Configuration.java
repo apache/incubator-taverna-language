@@ -12,16 +12,15 @@ import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 
-
 /**
  * @author Alan R Williams
- *
+ * 
  */
 public class Configuration extends AbstractNamedChild implements WorkflowBean,
-Child<Profile> {
+Child<Profile>, ObjectProperties {
 	private Configurable configures;
 	private Profile parent;
-	private ObjectProperty configurationObject = new ObjectProperty();
+	private ObjectProperty configurationObjectProperty = new ObjectProperty();
 
 	public Configuration() {
 		super();
@@ -31,11 +30,22 @@ Child<Profile> {
 		super(name);
 	}
 
-	public URI getObjectClass() {
-		return configurationObject.getObjectClass();
+	public ObjectProperty getConfigurationObjectProperty() {
+		return configurationObjectProperty;
 	}
+
 	public Configurable getConfigures() {
 		return configures;
+	}
+
+	@Override
+	public URI getObjectClass() {
+		return getConfigurationObjectProperty().getObjectClass();
+	}
+
+	@Override
+	public List<Property> getObjectProperties() {
+		return getConfigurationObjectProperty().getObjectProperties();
 	}
 
 	@Override
@@ -43,12 +53,9 @@ Child<Profile> {
 		return parent;
 	}
 
-	public List<Property> getObjectProperties() {
-		return configurationObject.getObjectProperties();
-	}
-
-	public void setObjectClass(URI configurationType) {
-		configurationObject.setObjectClass(configurationType);
+	public void setConfigurationObjectProperty(
+			ObjectProperty configurationObjectProperty) {
+		this.configurationObjectProperty = configurationObjectProperty;
 	}
 
 	/**
@@ -56,6 +63,16 @@ Child<Profile> {
 	 */
 	public void setConfigures(Configurable configurable) {
 		configures = configurable;
+	}
+
+	@Override
+	public void setObjectClass(URI configurationType) {
+		getConfigurationObjectProperty().setObjectClass(configurationType);
+	}
+
+	@Override
+	public void setObjectProperties(List<Property> properties) {
+		getConfigurationObjectProperty().setObjectProperties(properties);
 	}
 
 	@Override
@@ -70,8 +87,5 @@ Child<Profile> {
 
 	}
 
-	public void setObjectProperties(List<Property> properties) {
-		configurationObject.setObjectProperties(properties);
-	}
 
 }
