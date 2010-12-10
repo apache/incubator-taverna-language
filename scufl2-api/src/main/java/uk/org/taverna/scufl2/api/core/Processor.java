@@ -1,5 +1,6 @@
 package uk.org.taverna.scufl2.api.core;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -7,7 +8,6 @@ import java.util.Set;
 
 import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
 import uk.org.taverna.scufl2.api.common.Child;
-import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.dispatchstack.DispatchStack;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
@@ -18,7 +18,7 @@ import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
  * @author Alan R Williams
  *
  */
-public class Processor extends AbstractNamedChild implements Configurable, Child<Workflow> {
+public class Processor extends AbstractNamedChild implements Child<Workflow> {
 
 	private NamedSet<OutputProcessorPort> outputPorts = new NamedSet<OutputProcessorPort>();
 	private NamedSet<InputProcessorPort> inputPorts = new NamedSet<InputProcessorPort>();
@@ -26,6 +26,7 @@ public class Processor extends AbstractNamedChild implements Configurable, Child
 	private Set<StartCondition> startConditions = new HashSet<StartCondition>();
 	private DispatchStack dispatchStack;
 	private Workflow parent;
+	private URI configurableType;
 
 	public Processor() {
 		super();
@@ -64,6 +65,7 @@ public class Processor extends AbstractNamedChild implements Configurable, Child
 		return startConditions;
 	}
 
+
 	public void setDispatchStack(DispatchStack dispatchStack) {
 		this.dispatchStack = dispatchStack;
 	}
@@ -99,12 +101,9 @@ public class Processor extends AbstractNamedChild implements Configurable, Child
 
 	@Override
 	public String toString() {
-		return super.toString() + "[" +
-		"getInputPorts()=" + getInputPorts() + ", " +
-		"getOutputPorts()=" + getOutputPorts() + ", " +
-		"]";
+		return super.toString() + "[" + "getInputPorts()=" + getInputPorts()
+		+ ", " + "getOutputPorts()=" + getOutputPorts() + ", " + "]";
 	}
-
 
 }
 

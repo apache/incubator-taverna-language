@@ -45,8 +45,8 @@ public abstract class AbstractNamed implements Named {
 			}
 		}
 		if (this instanceof Typed) {
-			URI myId = ((Typed) this).getType();
-			URI otherId = ((Typed) obj).getType();
+			URI myId = ((Typed) this).getConfigurableType();
+			URI otherId = ((Typed) obj).getConfigurableType();
 			if (myId != null) {
 				return myId.equals(otherId);
 			}

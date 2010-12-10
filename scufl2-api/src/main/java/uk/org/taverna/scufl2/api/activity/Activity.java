@@ -7,6 +7,7 @@ import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.common.NamedSet;
+import uk.org.taverna.scufl2.api.common.Typed;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.api.profiles.Profile;
@@ -23,7 +24,7 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
  * 
  */
 public class Activity extends AbstractNamedChild implements Configurable,
-Child<Profile> {
+		Child<Profile>, Typed {
 
 	private NamedSet<InputActivityPort> inputPorts = new NamedSet<InputActivityPort>();
 	private NamedSet<OutputActivityPort> outputPorts = new NamedSet<OutputActivityPort>();
@@ -39,6 +40,7 @@ Child<Profile> {
 		super(name);
 	}
 
+	@Override
 	public URI getConfigurableType() {
 		return type;
 	}
@@ -56,7 +58,7 @@ Child<Profile> {
 		return parent;
 	}
 
-
+	@Override
 	public void setConfigurableType(URI type) {
 		this.type = type;
 	}
