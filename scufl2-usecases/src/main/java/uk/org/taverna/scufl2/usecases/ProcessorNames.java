@@ -102,8 +102,8 @@ public class ProcessorNames {
 					if (pb.getBoundProcessor().equals(processor)) {
 						Activity boundActivity = pb.getBoundActivity();
 						if (!boundActivity
-								.getType()
-								
+								.getConfigurableType()
+
 								.equals(URI.create(
 										"http://ns.taverna.org.uk/2010/activity/nested-workflow"))) {
 							continue;

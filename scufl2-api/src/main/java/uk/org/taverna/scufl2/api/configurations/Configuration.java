@@ -50,7 +50,7 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
  * 
  */
 public class Configuration extends AbstractNamedChild implements WorkflowBean,
-Child<Profile>, ObjectProperties {
+		Child<Profile>, ObjectProperties {
 	private Configurable configures;
 	private Profile parent;
 	private ObjectProperty configurationObjectProperty = new ObjectProperty();

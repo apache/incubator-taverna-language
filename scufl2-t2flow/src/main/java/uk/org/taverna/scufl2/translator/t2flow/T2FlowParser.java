@@ -287,7 +287,7 @@ public class T2FlowParser {
 		String activityClass = origActivity.getClazz();
 		URI activityId = mapActivityFromRaven(raven, activityClass);
 		uk.org.taverna.scufl2.api.activity.Activity newActivity = new uk.org.taverna.scufl2.api.activity.Activity();
-		newActivity.setType(activityId);
+		newActivity.setConfigurableType(activityId);
 		newActivity.setParent(parserState.get().getCurrentProfile());
 		return newActivity;
 	}
