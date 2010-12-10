@@ -4,7 +4,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ObjectProperty extends Property {
+public class ObjectProperty extends Property implements ObjectProperties {
 
 	private URI objectUri;
 	private URI objectClass;
@@ -24,10 +24,12 @@ public class ObjectProperty extends Property {
 		setObjectClass(objectClass);
 	}
 
+	@Override
 	public URI getObjectClass() {
 		return objectClass;
 	}
 
+	@Override
 	public List<Property> getObjectProperties() {
 		return objectProperties;
 	}
@@ -36,10 +38,12 @@ public class ObjectProperty extends Property {
 		return objectUri;
 	}
 
+	@Override
 	public void setObjectClass(URI objectClass) {
 		this.objectClass = objectClass;
 	}
 
+	@Override
 	public void setObjectProperties(List<Property> objectProperties) {
 		if (objectProperties == null) {
 			throw new NullPointerException("Properties can't be null");
