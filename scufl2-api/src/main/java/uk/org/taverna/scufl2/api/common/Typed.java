@@ -3,7 +3,7 @@ package uk.org.taverna.scufl2.api.common;
 import java.net.URI;
 
 public interface Typed extends WorkflowBean {
-	public URI getType();
+	public URI getConfigurableType();
 
-	public void setType(URI type);
+	public void setConfigurableType(URI type);
 }
