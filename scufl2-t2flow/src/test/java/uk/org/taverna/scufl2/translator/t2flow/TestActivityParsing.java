@@ -71,7 +71,8 @@ public class TestActivityParsing {
 
 		Configuration concatConfig = scufl2Tools.configurationForActivityBoundToProcessor(concat, profile);
 		Activity concatAct = (Activity) concatConfig.getConfigures();
-		assertEquals(BeanshellActivityParser.ACTIVITY_URI, concatAct.getType());
+		assertEquals(BeanshellActivityParser.ACTIVITY_URI,
+				concatAct.getConfigurableType());
 		assertEquals(ACTIVITY_URI.resolve("#ConfigType"),
 				concatConfig.getObjectClass());
 		String script = scufl2Tools.getPropertyData(concatConfig.getObjectProperties(),

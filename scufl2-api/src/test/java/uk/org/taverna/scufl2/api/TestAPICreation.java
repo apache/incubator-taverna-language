@@ -85,7 +85,8 @@ public class TestAPICreation {
 		ro.getProfiles().add(p);
 		p.getActivities().add(activity);
 
-		activity.setType(URI.create("http://taverna.sf.net/2009/2.1/activity/beanshell#wrongURI"));
+		activity.setConfigurableType(URI
+				.create("http://taverna.sf.net/2009/2.1/activity/beanshell#wrongURI"));
 	}
 
 	@Ignore("Not doing XML here anymore")
