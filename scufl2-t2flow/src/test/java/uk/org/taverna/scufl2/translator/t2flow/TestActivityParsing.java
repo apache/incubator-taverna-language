@@ -73,8 +73,8 @@ public class TestActivityParsing {
 		Activity concatAct = (Activity) concatConfig.getConfigures();
 		assertEquals(BeanshellActivityParser.ACTIVITY_URI, concatAct.getType());
 		assertEquals(ACTIVITY_URI.resolve("#ConfigType"),
-				concatConfig.getConfigurationType());
-		String script = scufl2Tools.getPropertyData(concatConfig.getProperties(),
+				concatConfig.getObjectClass());
+		String script = scufl2Tools.getPropertyData(concatConfig.getObjectProperties(),
 				ACTIVITY_URI.resolve("#script"));
 		assertEquals("output = string1 + string2;", script);
 
@@ -86,7 +86,7 @@ public class TestActivityParsing {
 		assertEquals(0, s2.getDepth().intValue());
 
 		Set<ObjectProperty> inputDef = scufl2Tools.getPropertyObjects(
-				concatConfig.getProperties(),
+				concatConfig.getObjectProperties(),
 				ACTIVITY_URI.resolve("#inputPortDefinition"));
 		assertEquals(2, inputDef.size());
 
@@ -127,7 +127,7 @@ public class TestActivityParsing {
 		assertEquals(0, out.getDepth().intValue());
 
 		Set<ObjectProperty> outputDef = scufl2Tools.getPropertyObjects(
-				concatConfig.getProperties(),
+				concatConfig.getObjectProperties(),
 				ACTIVITY_URI.resolve("#outputPortDefinition"));
 		assertEquals(1, outputDef.size());
 		ObjectProperty out1Def = outputDef.iterator().next();
