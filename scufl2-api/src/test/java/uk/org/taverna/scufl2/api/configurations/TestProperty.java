@@ -12,11 +12,9 @@ public class TestProperty {
 
 	@Test
 	public void classObject() throws Exception {
-		ObjectProperty property = new ObjectProperty();
-		property.setPredicate(EXAMPLE_COM.resolve("#property"));
-		property.setObjectClass(EXAMPLE_COM.resolve("#class"));
-		assertEquals("[ <http://example.com/#property> [\n"
-				+ "    a <http://example.com/#class>] ] .", property.toString());
+		PropertyResource resource = new PropertyResource();
+		resource.getProperties().get(EXAMPLE_COM.resolve("#property"))
+				.add(new PropertyResource());
 	}
 
 	@Test
@@ -51,11 +49,11 @@ public class TestProperty {
 
 		assertEquals(
 				"[ <http://example.com/#multiple> [\n"
-						+ "    <http://example.com/#str1> \"string\";\n"
-						+ "    <http://example.com/#num2> \"123\"^^<http://www.w3.org/2001/XMLSchema#integer>;\n"
-						+ "    <http://example.com/#ref2> [\n"
-						+ "        a <http://example.com/#class>;\n"
-						+ "        = <http://example.com/#url1>]] ] .",
+				+ "    <http://example.com/#str1> \"string\";\n"
+				+ "    <http://example.com/#num2> \"123\"^^<http://www.w3.org/2001/XMLSchema#integer>;\n"
+				+ "    <http://example.com/#ref2> [\n"
+				+ "        a <http://example.com/#class>;\n"
+				+ "        = <http://example.com/#url1>]] ] .",
 				prop_1.toString());
 	}
 
