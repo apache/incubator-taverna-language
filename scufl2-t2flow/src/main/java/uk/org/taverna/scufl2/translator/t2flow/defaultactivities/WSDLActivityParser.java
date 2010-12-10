@@ -14,9 +14,6 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.WSDLConfig;
 
 public class WSDLActivityParser extends AbstractActivityParser {
 
-	public static URI ACTIVITY_URI = URI
-			.create("http://ns.taverna.org.uk/2010/activity/beanshell");
-
 	private static URI wsdlActivityRavenURI =
 			T2FlowParser.ravenURI.resolve("net.sf.taverna.t2.activities/wsdl-activity/");
 
@@ -61,13 +58,14 @@ public class WSDLActivityParser extends AbstractActivityParser {
 	public Configuration parseActivityConfiguration(T2FlowParser t2FlowParser,
 			ConfigBean configBean) throws ParseException {
 
-		
+
 		// TODO: XML splitters
-		
+
 		WSDLConfig wsdlConfig = unmarshallConfig(t2FlowParser,
 				configBean, "xstream", WSDLConfig.class);
 
 		Configuration configuration = new Configuration();
+		configuration.setObjectClass(WSDL.resolve("ConfigType"));
 
 		URI wsdl;
 		try {
@@ -76,7 +74,7 @@ public class WSDLActivityParser extends AbstractActivityParser {
 				throw new ParseException("WSDL URI is not absolute: " + wsdlConfig.getWsdl());
 			}
 		} catch (IllegalArgumentException ex) {
-			throw new ParseException("WSDL not a valid URI: " + wsdlConfig.getWsdl());			
+			throw new ParseException("WSDL not a valid URI: " + wsdlConfig.getWsdl());
 		} catch (NullPointerException ex) {
 			throw new ParseException("WSDL config has no wsdl set");
 		}
@@ -84,9 +82,7 @@ public class WSDLActivityParser extends AbstractActivityParser {
 		if (operation == null || operation.equals("")) {
 			throw new ParseException("WSDL config has no operation set");
 		}
-			
-		
-		configuration = new Configuration();
+
 
 		// The operation should have a URI - but we don't know it
 		ObjectProperty wsdlOperation = new ObjectProperty();
@@ -98,7 +94,7 @@ public class WSDLActivityParser extends AbstractActivityParser {
 				new DataProperty(WSDL.resolve("operationName"), operation));
 		// TODO: WSDL portName/portType
 
-		configuration.getProperties().add(wsdlOperation);
+		configuration.getObjectProperties().add(wsdlOperation);
 
 		if (wsdlConfig.getSecurityProfile() != null
 				&& !wsdlConfig.getSecurityProfile().isEmpty()) {
@@ -107,7 +103,7 @@ public class WSDLActivityParser extends AbstractActivityParser {
 
 			ObjectProperty securityProfile = new ObjectProperty(
 					WSDL.resolve("securityProfile"), securityProfileURI);
-			configuration.getProperties().add(securityProfile);
+			configuration.getObjectProperties().add(securityProfile);
 		}
 
 		// TODO: Security stuff
