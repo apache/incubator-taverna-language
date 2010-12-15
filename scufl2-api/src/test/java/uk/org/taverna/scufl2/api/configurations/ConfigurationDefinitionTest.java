@@ -24,8 +24,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.net.URI;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -39,18 +39,17 @@ public class ConfigurationDefinitionTest {
 	
 	private ConfigurationDefinition configurationDefinition;
 	
-	private Set<PropertyDefinition> propertyDefinitions;
-	
-	private URI configurableType, configurationType;
+	private List<PropertyDefinition> propertyDefinitions;
+		
+	private URI configurableType, objectType;
 
 	@Before
 	public void setUp() throws Exception {
 		configurableType = URI.create("http://ns.taverna.org.uk/2010/activity/test");
-		configurationType = configurableType.resolve("#ConfigType");
-		propertyDefinitions = new HashSet<PropertyDefinition>();
+		objectType = configurableType.resolve("#ConfigType");
+		propertyDefinitions = new ArrayList<PropertyDefinition>();
 		propertyDefinitions.add(new DataPropertyDefinition(configurableType.resolve("#testProperty"), PropertyDefinition.STRING, "", "", "", true, false));
-		configurationDefinition = new ConfigurationDefinition(configurableType, configurationType, propertyDefinitions);
-		configurationDefinition.setConfigurationType(configurableType.resolve("#ConfigType"));
+		configurationDefinition = new ConfigurationDefinition(configurableType, objectType, propertyDefinitions);
 	}
 
 	/**
@@ -58,17 +57,19 @@ public class ConfigurationDefinitionTest {
 	 */
 	@Test
 	public void testActivityConfigurationDefinitionURIURI() {
-		assertEquals(configurableType, new ConfigurationDefinition(configurableType, configurationType).getConfigurableType());
-		assertEquals(new HashSet<PropertyDefinition>(), new ConfigurationDefinition(configurableType, configurationType).getPropertyDefinitions());
+		assertEquals(configurableType, new ConfigurationDefinition(configurableType, objectType).getConfigurableType());
+		assertEquals(objectType, new ConfigurationDefinition(configurableType, objectType).getObjectClass());
+		assertEquals(new ArrayList<PropertyDefinition>(), new ConfigurationDefinition(configurableType, objectType).getPropertyDefinitions());
 	}
 
 	/**
-	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.ConfigurationDefinition#ActivityConfigurationDefinition(java.net.URI, java.util.Set)}.
+	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.ConfigurationDefinition#ActivityConfigurationDefinition(java.net.URI, java.net.URI, java.util.List)}.
 	 */
 	@Test
-	public void testActivityConfigurationDefinitionURISetOfPropertyDefinition() {
-		assertEquals(configurableType, new ConfigurationDefinition(configurableType, configurationType, propertyDefinitions).getConfigurableType());
-		assertEquals(propertyDefinitions, new ConfigurationDefinition(configurableType, configurationType, propertyDefinitions).getPropertyDefinitions());
+	public void testActivityConfigurationDefinitionURIURIList() {
+		assertEquals(configurableType, new ConfigurationDefinition(configurableType, objectType, propertyDefinitions).getConfigurableType());
+		assertEquals(objectType, new ConfigurationDefinition(configurableType, objectType).getObjectClass());
+		assertEquals(propertyDefinitions, new ConfigurationDefinition(configurableType, objectType, propertyDefinitions).getPropertyDefinitions());
 	}
 
 	/**
@@ -91,22 +92,22 @@ public class ConfigurationDefinitionTest {
 	}
 
 	/**
-	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.ConfigurationDefinition#getConfigurationType()}.
+	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.ConfigurationDefinition#getObjectClass()}.
 	 */
 	@Test
-	public void testGetConfigurationType() {
-		assertEquals(configurationType, configurationDefinition.getConfigurationType());
-		assertEquals(configurationType, configurationDefinition.getConfigurationType());
+	public void testGetObjectClass() {
+		assertEquals(objectType, configurationDefinition.getObjectClass());
+		assertEquals(objectType, configurationDefinition.getObjectClass());
 	}
 
 	/**
-	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.ConfigurationDefinition#setConfigurationType(java.net.URI)}.
+	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.ConfigurationDefinition#setObjectClass(java.net.URI)}.
 	 */
 	@Test
-	public void testSetConfigurationType() {
-		assertEquals(configurationType, configurationDefinition.getConfigurationType());
-		configurationDefinition.setConfigurationType(URI.create("test:test"));
-		assertEquals(URI.create("test:test"), configurationDefinition.getConfigurationType());
+	public void testSetObjectClass() {
+		assertEquals(objectType, configurationDefinition.getObjectClass());
+		configurationDefinition.setObjectClass(URI.create("test:test"));
+		assertEquals(URI.create("test:test"), configurationDefinition.getObjectClass());
 	}
 
 	/**
@@ -123,8 +124,8 @@ public class ConfigurationDefinitionTest {
 	 */
 	@Test
 	public void testSetPropertyDefinitions() {
-		configurationDefinition.setPropertyDefinitions(new HashSet<PropertyDefinition>());
-		assertEquals(new HashSet<PropertyDefinition>(), configurationDefinition.getPropertyDefinitions());
+		configurationDefinition.setPropertyDefinitions(new ArrayList<PropertyDefinition>());
+		assertEquals(new ArrayList<PropertyDefinition>(), configurationDefinition.getPropertyDefinitions());
 	}
 
 	/**

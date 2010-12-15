@@ -27,8 +27,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -42,14 +42,14 @@ public class ObjectPropertyDefinitionTest {
 
 	private ObjectPropertyDefinition objectPropertyDefinition;
 	
-	private Set<PropertyDefinition> propertyDefinitions;
+	private List<PropertyDefinition> propertyDefinitions;
 
 	private URI activityURI;
 
 	@Before
 	public void setUp() throws Exception {
 		activityURI = URI.create("http://ns.taverna.org.uk/2010/activity/test");
-		propertyDefinitions = new HashSet<PropertyDefinition>();
+		propertyDefinitions = new ArrayList<PropertyDefinition>();
 		propertyDefinitions.add(new DataPropertyDefinition(activityURI.resolve("#testProperty"), PropertyDefinition.STRING, "", "", "", true, false));
 		objectPropertyDefinition = new ObjectPropertyDefinition(activityURI.resolve("#testProperty"), PropertyDefinition.STRING, "name", "label", "defn", true, false, propertyDefinitions);
 	}
@@ -61,14 +61,14 @@ public class ObjectPropertyDefinitionTest {
 	public void testObjectPropertyDefinitionURIURIStringStringBooleanBoolean() {
 		objectPropertyDefinition = new ObjectPropertyDefinition(activityURI.resolve("#testProperty"), PropertyDefinition.STRING, "n", "a", "b", false, true);
 		assertEquals(activityURI.resolve("#testProperty"), objectPropertyDefinition.getPredicate());
-		assertEquals(PropertyDefinition.STRING, objectPropertyDefinition.getDataType());
+		assertEquals(PropertyDefinition.STRING, objectPropertyDefinition.getObjectClass());
 		assertEquals("n", objectPropertyDefinition.getName());
 		assertEquals("a", objectPropertyDefinition.getLabel());
 		assertEquals("b", objectPropertyDefinition.getDescription());
 		assertFalse(objectPropertyDefinition.isRequired());
 		assertTrue(objectPropertyDefinition.isMultiple());
 		assertArrayEquals(new String[0], objectPropertyDefinition.getOptions());
-		assertEquals(new HashSet<PropertyDefinition>(), objectPropertyDefinition.getPropertyDefinitions());
+		assertEquals(new ArrayList<PropertyDefinition>(), objectPropertyDefinition.getPropertyDefinitions());
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class ObjectPropertyDefinitionTest {
 	public void testObjectPropertyDefinitionURIURIStringStringBooleanBooleanSetOfPropertyDefinition() {
 		objectPropertyDefinition = new ObjectPropertyDefinition(activityURI.resolve("#testProperty"), PropertyDefinition.STRING, "n", "a", "b", false, true, propertyDefinitions);
 		assertEquals(activityURI.resolve("#testProperty"), objectPropertyDefinition.getPredicate());
-		assertEquals(PropertyDefinition.STRING, objectPropertyDefinition.getDataType());
+		assertEquals(PropertyDefinition.STRING, objectPropertyDefinition.getObjectClass());
 		assertEquals("n", objectPropertyDefinition.getName());
 		assertEquals("a", objectPropertyDefinition.getLabel());
 		assertEquals("b", objectPropertyDefinition.getDescription());
@@ -86,6 +86,25 @@ public class ObjectPropertyDefinitionTest {
 		assertTrue(objectPropertyDefinition.isMultiple());
 		assertArrayEquals(new String[0], objectPropertyDefinition.getOptions());
 		assertEquals(propertyDefinitions, objectPropertyDefinition.getPropertyDefinitions());
+	}
+
+	/**
+	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.ObjectDefinition#getObjectClass()}.
+	 */
+	@Test
+	public void testGetObjectClass() {
+		assertEquals(PropertyDefinition.STRING, objectPropertyDefinition.getObjectClass());
+		assertEquals(PropertyDefinition.STRING, objectPropertyDefinition.getObjectClass());
+	}
+
+	/**
+	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.ObjectDefinition#setObjectClass(java.net.URI)}.
+	 */
+	@Test
+	public void testSetObjectClass() {
+		assertEquals(PropertyDefinition.STRING, objectPropertyDefinition.getObjectClass());
+		objectPropertyDefinition.setObjectClass(PropertyDefinition.DOUBLE);
+		assertEquals(PropertyDefinition.DOUBLE, objectPropertyDefinition.getObjectClass());
 	}
 
 	/**
@@ -102,8 +121,8 @@ public class ObjectPropertyDefinitionTest {
 	 */
 	@Test
 	public void testSetPropertyDefinitions() {
-		objectPropertyDefinition.setPropertyDefinitions(new HashSet<PropertyDefinition>());
-		assertEquals(new HashSet<PropertyDefinition>(), objectPropertyDefinition.getPropertyDefinitions());
+		objectPropertyDefinition.setPropertyDefinitions(new ArrayList<PropertyDefinition>());
+		assertEquals(new ArrayList<PropertyDefinition>(), objectPropertyDefinition.getPropertyDefinitions());
 	}
 
 	/**
