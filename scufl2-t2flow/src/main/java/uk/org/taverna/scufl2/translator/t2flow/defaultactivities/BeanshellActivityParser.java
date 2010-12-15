@@ -9,6 +9,8 @@ import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.configurations.DataProperty;
 import uk.org.taverna.scufl2.api.configurations.ObjectProperty;
 import uk.org.taverna.scufl2.api.configurations.Property;
+import uk.org.taverna.scufl2.api.configurations.PropertyLiteral;
+import uk.org.taverna.scufl2.api.configurations.PropertyResource;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.translator.t2flow.ParseException;
@@ -63,16 +65,14 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 			ConfigBean configBean) throws ParseException {
 		BeanshellConfig beanshellConfig = unmarshallConfig(t2FlowParser,
 				configBean, "xstream", BeanshellConfig.class);
+
 		Configuration configuration = new Configuration();
 		configuration.setParent(getParserState().getCurrentProfile());
 
-		configuration.setObjectClass(ACTIVITY_URI.resolve("#ConfigType"));
+		PropertyResource configResource = configuration.getPropertyResource();
+		configResource.setTypeURI(ACTIVITY_URI.resolve("#ConfigType"));
 		String script = beanshellConfig.getScript();
-		DataProperty property = new DataProperty(
-				ACTIVITY_URI.resolve("#script"), script);
-
-
-
+		configResource.addProperty(ACTIVITY_URI.resolve("#script"), script);
 
 		// TODO: Dependencies, activities, etc
 
@@ -90,29 +90,22 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 				inputPort.setDepth(portBean.getDepth().intValue());
 			}
 
-			ObjectProperty portConfig = new ObjectProperty();
-			portConfig.setPredicate(ACTIVITY_URI
-					.resolve("#inputPortDefinition"));
-			portConfig.setObjectClass(ACTIVITY_URI.resolve("#InputPortDefinition"));
-			configuration.getObjectProperties().add(portConfig);
-
-			List<Property> properties = portConfig.getObjectProperties();
+			PropertyResource portConfig = configResource.addPropertyResource(
+					ACTIVITY_URI.resolve("#inputPortDefinition"),
+					ACTIVITY_URI.resolve("#InputPortDefinition"));
 
 			URI portUri = new URITools().relativeUriForBean(inputPort,
 					configuration);
-			properties.add(new ObjectProperty(ACTIVITY_URI
-					.resolve("#definesInputPort"), portUri));
-
-			List<Property> portProps = portConfig.getObjectProperties();
+			portConfig.addPropertyURI(
+					ACTIVITY_URI.resolve("#definesInputPort"), portUri);
 
 			if (portBean.getTranslatedElementType() != null) {
 				// As "translated element type" is confusing, we'll instead use "dataType"
-				ObjectProperty p = new ObjectProperty(ACTIVITY_URI.resolve("#dataType"),
+				portConfig.addPropertyURI(
+						ACTIVITY_URI.resolve("#dataType"),
 						URI.create("java:" + portBean.getTranslatedElementType()));
 
 				// TODO: Include mapping to XSD types like xsd:string
-
-				portProps.add(p);
 			}
 			// T2-1681: Ignoring isAllowsLiteralValues and handledReferenceScheme
 			// TODO: Mime types, etc

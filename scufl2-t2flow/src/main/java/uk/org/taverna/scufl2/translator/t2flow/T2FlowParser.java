@@ -30,7 +30,9 @@ import org.xml.sax.SAXException;
 
 import uk.org.taverna.scufl2.api.common.Named;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
-import uk.org.taverna.scufl2.api.configurations.DataProperty;
+import uk.org.taverna.scufl2.api.configurations.PropertyLiteral;
+import uk.org.taverna.scufl2.api.configurations.PropertyObject;
+
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.IterationStrategy;
@@ -353,11 +355,13 @@ public class T2FlowParser {
 
 			URI fallBackURI = configBeanURI.resolve(configBean.getEncoding());
 
-			DataProperty property = new DataProperty();
-			property.setPredicate(fallBackURI);
-			// FIXME: Can't do toString() on getAny()
-			property.setDataValue(configBean.getAny().toString());
-			configuration.getObjectProperties().add(property);
+			java.util.Map<URI, Set<PropertyObject>> properties = configuration
+					.getPropertyResource().getProperties();
+			PropertyLiteral literal = new PropertyLiteral();
+			literal.setLiteralValue(configBean.getAny().toString());
+			literal.setLiteralType(PropertyLiteral.XML_LITERAL);
+			properties.get(fallBackURI).add(literal);
+
 		}
 
 		configuration.setConfigures(parserState.get().getCurrentActivity());

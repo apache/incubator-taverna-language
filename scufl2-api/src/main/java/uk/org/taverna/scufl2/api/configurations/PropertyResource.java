@@ -18,6 +18,32 @@ public class PropertyResource implements PropertyObject {
 	};
 
 
+	public PropertyResource() {
+	}
+
+	public PropertyResource(URI resourceURI) {
+		setResourceURI(resourceURI);
+	}
+
+	public void addProperty(URI predicate, PropertyObject object) {
+		getProperties().get(predicate).add(object);
+	}
+
+	public void addProperty(URI predicate, String value) {
+		addProperty(predicate, new PropertyLiteral(value));
+	}
+
+	public PropertyResource addPropertyResource(URI predicate, URI typeURI) {
+		PropertyResource resource = new PropertyResource();
+		resource.setTypeURI(typeURI);
+		addProperty(predicate, resource);
+		return resource;
+	}
+
+	public void addPropertyURI(URI predicate, URI resourceURI) {
+		addProperty(predicate, new PropertyResource(resourceURI));
+	}
+
 	public final Map<URI, Set<PropertyObject>> getProperties() {
 		return properties;
 	}
