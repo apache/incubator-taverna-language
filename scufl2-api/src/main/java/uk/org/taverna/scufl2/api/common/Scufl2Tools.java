@@ -89,8 +89,8 @@ public class Scufl2Tools {
 		Set<String> results = new HashSet<String>();
 		for (Property prop : properties) {
 			if (prop.getPredicate().equals(predicate)) {
-				if (!(prop instanceof ObjectProperty)) {
-					throw new IllegalStateException("Not a ObjectProperty: "
+				if (!(prop instanceof DataProperty)) {
+					throw new IllegalStateException("Not a DataProperty: "
 							+ predicate);
 				}
 				results.add(((DataProperty) prop).getDataValue());
