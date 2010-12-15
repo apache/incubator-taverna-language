@@ -3,7 +3,6 @@ package uk.org.taverna.scufl2.translator.t2flow.defaultactivities;
 import java.net.URI;
 
 import uk.org.taverna.scufl2.api.configurations.Configuration;
-import uk.org.taverna.scufl2.api.configurations.DataProperty;
 import uk.org.taverna.scufl2.translator.t2flow.ParseException;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
@@ -41,10 +40,10 @@ public class StringConstantActivityParser extends AbstractActivityParser {
 			throw new ParseException("String constant configuration has no value set");
 		}
 		Configuration configuration = new Configuration();
-
-		configuration = new Configuration();
-		DataProperty prop = new DataProperty(CONSTANT.resolve("#string"), value);
-		configuration.getObjectProperties().add(prop);
+		configuration.getPropertyResource().setTypeURI(
+				CONSTANT.resolve("ConfigType"));
+		configuration.getPropertyResource().addPropertyAsString(
+				CONSTANT.resolve("#string"), value);
 		return configuration;
 	}
 

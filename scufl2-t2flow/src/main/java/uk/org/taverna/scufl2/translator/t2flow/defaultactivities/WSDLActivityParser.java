@@ -3,19 +3,16 @@ package uk.org.taverna.scufl2.translator.t2flow.defaultactivities;
 import java.net.URI;
 
 import uk.org.taverna.scufl2.api.configurations.Configuration;
-import uk.org.taverna.scufl2.api.configurations.DataProperty;
-import uk.org.taverna.scufl2.api.configurations.ObjectProperty;
+import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.ParseException;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
-import uk.org.taverna.scufl2.translator.t2flow.T2Parser;
-import uk.org.taverna.scufl2.xml.t2flow.jaxb.BeanshellConfig;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.WSDLConfig;
 
 public class WSDLActivityParser extends AbstractActivityParser {
 
-	private static URI wsdlActivityRavenURI =
-			T2FlowParser.ravenURI.resolve("net.sf.taverna.t2.activities/wsdl-activity/");
+	private static URI wsdlActivityRavenURI = T2FlowParser.ravenURI
+			.resolve("net.sf.taverna.t2.activities/wsdl-activity/");
 
 	private static String wsdlActivityClassName = "net.sf.taverna.t2.activities.wsdl.WSDLActivity";
 
@@ -58,23 +55,25 @@ public class WSDLActivityParser extends AbstractActivityParser {
 	public Configuration parseActivityConfiguration(T2FlowParser t2FlowParser,
 			ConfigBean configBean) throws ParseException {
 
-
 		// TODO: XML splitters
 
-		WSDLConfig wsdlConfig = unmarshallConfig(t2FlowParser,
-				configBean, "xstream", WSDLConfig.class);
+		WSDLConfig wsdlConfig = unmarshallConfig(t2FlowParser, configBean,
+				"xstream", WSDLConfig.class);
 
 		Configuration configuration = new Configuration();
-		configuration.setObjectClass(WSDL.resolve("ConfigType"));
+		configuration.getPropertyResource().setTypeURI(
+				WSDL.resolve("ConfigType"));
 
 		URI wsdl;
 		try {
 			wsdl = URI.create(wsdlConfig.getWsdl());
-			if (! wsdl.isAbsolute()) {
-				throw new ParseException("WSDL URI is not absolute: " + wsdlConfig.getWsdl());
+			if (!wsdl.isAbsolute()) {
+				throw new ParseException("WSDL URI is not absolute: "
+						+ wsdlConfig.getWsdl());
 			}
 		} catch (IllegalArgumentException ex) {
-			throw new ParseException("WSDL not a valid URI: " + wsdlConfig.getWsdl());
+			throw new ParseException("WSDL not a valid URI: "
+					+ wsdlConfig.getWsdl());
 		} catch (NullPointerException ex) {
 			throw new ParseException("WSDL config has no wsdl set");
 		}
@@ -83,27 +82,18 @@ public class WSDLActivityParser extends AbstractActivityParser {
 			throw new ParseException("WSDL config has no operation set");
 		}
 
-
-		// The operation should have a URI - but we don't know it
-		ObjectProperty wsdlOperation = new ObjectProperty();
-		wsdlOperation.setPredicate(WSDL.resolve("operation"));
-		wsdlOperation.setObjectClass(WSDL.resolve("WSDLOperation"));
-		wsdlOperation.getObjectProperties().add(
-				new ObjectProperty(WSDL.resolve("wsdl"), wsdl));
-		wsdlOperation.getObjectProperties().add(
-				new DataProperty(WSDL.resolve("operationName"), operation));
-		// TODO: WSDL portName/portType
-
-		configuration.getObjectProperties().add(wsdlOperation);
+		PropertyResource wsdlOperation = configuration.getPropertyResource()
+				.addPropertyAsNewResource(WSDL.resolve("operation"),
+						WSDL.resolve("Operation"));
+		wsdlOperation.addPropertyAsResourceURI(WSDL.resolve("wsdl"), wsdl);
+		wsdlOperation.addPropertyAsString(WSDL.resolve("operationName"), operation);
 
 		if (wsdlConfig.getSecurityProfile() != null
 				&& !wsdlConfig.getSecurityProfile().isEmpty()) {
 			URI securityProfileURI = SECURITY.resolve(wsdlConfig
 					.getSecurityProfile());
-
-			ObjectProperty securityProfile = new ObjectProperty(
+			configuration.getPropertyResource().addPropertyAsResourceURI(
 					WSDL.resolve("securityProfile"), securityProfileURI);
-			configuration.getObjectProperties().add(securityProfile);
 		}
 
 		// TODO: Security stuff
