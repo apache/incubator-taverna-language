@@ -20,9 +20,8 @@ public class TestAddProperty {
 	public void addProperty() throws Exception {
 		PropertyResource propertyResource = new PropertyResource();
 
-		PropertyLiteral literal = new PropertyLiteral(15);
-		assertEquals("15", literal.getLiteralValue());
-		assertEquals(PropertyLiteral.XSD_INT, literal.getLiteralType());
+		PropertyLiteral literal = new PropertyLiteral("Hello there");
+		propertyResource.addProperty(PROPERTY, literal);
 
 		Set<PropertyObject> properties = propertyResource.getProperties().get(PROPERTY);
 		assertEquals(1, properties.size());
