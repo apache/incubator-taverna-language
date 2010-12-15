@@ -1,4 +1,4 @@
-package uk.org.taverna.scufl2.api.configurations;
+package uk.org.taverna.scufl2.api.property;
 
 import java.util.ArrayList;
 import java.util.List;

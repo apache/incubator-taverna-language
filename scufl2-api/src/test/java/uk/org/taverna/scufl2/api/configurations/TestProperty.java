@@ -7,6 +7,9 @@ import java.net.URI;
 
 import org.junit.Test;
 
+import uk.org.taverna.scufl2.api.property.PropertyNotFoundException;
+import uk.org.taverna.scufl2.api.property.PropertyResource;
+
 public class TestProperty {
 
 	private static final URI EXAMPLE_COM = URI.create("http://example.com/");
