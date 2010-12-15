@@ -1,4 +1,4 @@
-package uk.org.taverna.scufl2.api.configurations;
+package uk.org.taverna.scufl2.api.property;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
