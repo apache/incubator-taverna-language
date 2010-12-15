@@ -1,28 +1,21 @@
 package uk.org.taverna.scufl2.api.common;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
-import uk.org.taverna.scufl2.api.configurations.DataProperty;
-import uk.org.taverna.scufl2.api.configurations.ObjectProperty;
-import uk.org.taverna.scufl2.api.configurations.Property;
-import uk.org.taverna.scufl2.api.configurations.PropertyNotFoundException;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 
 /**
- * Utillity methods for dealing with SCUFL2 models
+ * Utility methods for dealing with SCUFL2 models
  * 
  * @author Stian Soiland-Reyes
- *
+ * 
  */
 public class Scufl2Tools {
 
@@ -71,61 +64,6 @@ public class Scufl2Tools {
 			}
 		}
 		return configurations;
-	}
-
-	public String getPropertyData(List<Property> properties, URI predicate) throws PropertyNotFoundException {
-		for (Property prop : properties) {
-			if (prop.getPredicate().equals(predicate)) {
-				if (! (prop instanceof DataProperty)) {
-					throw new IllegalStateException("Not a DataProperty: " + predicate);
-				}
-				return ((DataProperty)prop).getDataValue();
-			}
-		}
-		throw new PropertyNotFoundException("Could not find property for "+ predicate);
-	}
-
-	public Set<String> getPropertyDatas(List<Property> properties, URI predicate) {
-		Set<String> results = new HashSet<String>();
-		for (Property prop : properties) {
-			if (prop.getPredicate().equals(predicate)) {
-				if (!(prop instanceof DataProperty)) {
-					throw new IllegalStateException("Not a DataProperty: "
-							+ predicate);
-				}
-				results.add(((DataProperty) prop).getDataValue());
-			}
-		}
-		return results;
-	}
-
-
-	public ObjectProperty getPropertyObject(List<Property> properties, URI predicate) throws PropertyNotFoundException {
-		for (Property prop : properties) {
-			if (prop.getPredicate().equals(predicate)) {
-				if (! (prop instanceof ObjectProperty)) {
-					throw new IllegalStateException("Not a ObjectProperty: " + predicate);
-				}
-				return (ObjectProperty) prop;
-			}
-		}
-		throw new PropertyNotFoundException("Could not find property for "+ predicate);
-	}
-
-
-	public Set<ObjectProperty> getPropertyObjects(List<Property> properties,
-			URI predicate) {
-		Set<ObjectProperty> results = new HashSet<ObjectProperty>();
-		for (Property prop : properties) {
-			if (prop.getPredicate().equals(predicate)) {
-				if (!(prop instanceof ObjectProperty)) {
-					throw new IllegalStateException("Not a ObjectProperty: "
-							+ predicate);
-				}
-				results.add((ObjectProperty) prop);
-			}
-		}
-		return results;
 	}
 
 	public ProcessorBinding processorBindingForProcessor(Processor processor,

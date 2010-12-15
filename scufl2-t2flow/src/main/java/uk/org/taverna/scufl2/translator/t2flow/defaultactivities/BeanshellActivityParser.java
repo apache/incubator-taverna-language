@@ -1,25 +1,19 @@
 package uk.org.taverna.scufl2.translator.t2flow.defaultactivities;
 
 import java.net.URI;
-import java.util.List;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
-import uk.org.taverna.scufl2.api.configurations.DataProperty;
-import uk.org.taverna.scufl2.api.configurations.ObjectProperty;
-import uk.org.taverna.scufl2.api.configurations.Property;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.OutputActivityPort;
+import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.ParseException;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
-import uk.org.taverna.scufl2.translator.t2flow.T2Parser;
-import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityInputPorts;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityPortDefinitionBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityPortDefinitionBean.MimeTypes;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.BeanshellConfig;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
-import uk.org.taverna.scufl2.xml.t2flow.jaxb.DataflowConfig;
 
 public class BeanshellActivityParser extends AbstractActivityParser {
 
@@ -63,16 +57,14 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 			ConfigBean configBean) throws ParseException {
 		BeanshellConfig beanshellConfig = unmarshallConfig(t2FlowParser,
 				configBean, "xstream", BeanshellConfig.class);
+
 		Configuration configuration = new Configuration();
 		configuration.setParent(getParserState().getCurrentProfile());
 
-		configuration.setObjectClass(ACTIVITY_URI.resolve("#ConfigType"));
+		PropertyResource configResource = configuration.getPropertyResource();
+		configResource.setTypeURI(ACTIVITY_URI.resolve("#ConfigType"));
 		String script = beanshellConfig.getScript();
-		DataProperty property = new DataProperty(
-				ACTIVITY_URI.resolve("#script"), script);
-
-
-
+		configResource.addPropertyAsString(ACTIVITY_URI.resolve("#script"), script);
 
 		// TODO: Dependencies, activities, etc
 
@@ -90,29 +82,22 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 				inputPort.setDepth(portBean.getDepth().intValue());
 			}
 
-			ObjectProperty portConfig = new ObjectProperty();
-			portConfig.setPredicate(ACTIVITY_URI
-					.resolve("#inputPortDefinition"));
-			portConfig.setObjectClass(ACTIVITY_URI.resolve("#InputPortDefinition"));
-			configuration.getObjectProperties().add(portConfig);
-
-			List<Property> properties = portConfig.getObjectProperties();
+			PropertyResource portConfig = configResource.addPropertyAsNewResource(
+					ACTIVITY_URI.resolve("#inputPortDefinition"),
+					ACTIVITY_URI.resolve("#InputPortDefinition"));
 
 			URI portUri = new URITools().relativeUriForBean(inputPort,
 					configuration);
-			properties.add(new ObjectProperty(ACTIVITY_URI
-					.resolve("#definesInputPort"), portUri));
-
-			List<Property> portProps = portConfig.getObjectProperties();
+			portConfig.addPropertyAsResourceURI(
+					ACTIVITY_URI.resolve("#definesInputPort"), portUri);
 
 			if (portBean.getTranslatedElementType() != null) {
 				// As "translated element type" is confusing, we'll instead use "dataType"
-				ObjectProperty p = new ObjectProperty(ACTIVITY_URI.resolve("#dataType"),
+				portConfig.addPropertyAsResourceURI(
+						ACTIVITY_URI.resolve("#dataType"),
 						URI.create("java:" + portBean.getTranslatedElementType()));
 
 				// TODO: Include mapping to XSD types like xsd:string
-
-				portProps.add(p);
 			}
 			// T2-1681: Ignoring isAllowsLiteralValues and handledReferenceScheme
 			// TODO: Mime types, etc
@@ -130,18 +115,14 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 				outputPort.setGranularDepth(portBean.getGranularDepth().intValue());
 			}
 
-			ObjectProperty portConfig = new ObjectProperty();
-			portConfig.setPredicate(ACTIVITY_URI
-					.resolve("#outputPortDefinition"));
-			portConfig.setObjectClass(ACTIVITY_URI
-					.resolve("#OutputPortDefinition"));
-			configuration.getObjectProperties().add(portConfig);
+			PropertyResource portConfig = configResource.addPropertyAsNewResource(
+					ACTIVITY_URI.resolve("#outputPortDefinition"),
+					ACTIVITY_URI.resolve("#OutputPortDefinition"));
+
 			URI portUri = new URITools().relativeUriForBean(outputPort, configuration);
-			List<Property> portProps = portConfig.getObjectProperties();
 
-			portProps.add(new ObjectProperty(ACTIVITY_URI
-					.resolve("#definesOutputPort"), portUri));
-
+			portConfig.addPropertyAsResourceURI(
+					ACTIVITY_URI.resolve("#definesOutputPort"), portUri);
 
 			MimeTypes mimeTypes = portBean.getMimeTypes();
 			if (mimeTypes != null) {
@@ -152,21 +133,21 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 					if (s.contains("'")) {
 						s = s.split("'")[1];
 					}
-					portProps.add(new ObjectProperty(mimeType, MEDIATYPES_URI.resolve(s)));
+					portConfig.addPropertyAsResourceURI(mimeType,
+							MEDIATYPES_URI.resolve(s));
 				}
 				if (mimeTypes.getString() != null) {
 					for (String s : mimeTypes.getString()) {
 						if (s.contains("'")) {
 							s = s.split("'")[1];
 						}
-						portProps.add(new ObjectProperty(mimeType, MEDIATYPES_URI.resolve(s)));
+						portConfig.addPropertyAsResourceURI(mimeType,
+								MEDIATYPES_URI.resolve(s));
 					}
 				}
 			}
 			outputPort.setParent(activity);
 		}
-
-		configuration.getObjectProperties().add(property);
 		return configuration;
 	}
 
