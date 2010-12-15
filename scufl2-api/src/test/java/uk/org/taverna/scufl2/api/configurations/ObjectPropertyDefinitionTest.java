@@ -50,8 +50,8 @@ public class ObjectPropertyDefinitionTest {
 	public void setUp() throws Exception {
 		activityURI = URI.create("http://ns.taverna.org.uk/2010/activity/test");
 		propertyDefinitions = new HashSet<PropertyDefinition>();
-		propertyDefinitions.add(new DataPropertyDefinition(activityURI.resolve("#testProperty"), PropertyDefinition.STRING, "", "", true, false));
-		objectPropertyDefinition = new ObjectPropertyDefinition(activityURI.resolve("#testProperty"), PropertyDefinition.STRING, "label", "defn", true, false, propertyDefinitions);
+		propertyDefinitions.add(new DataPropertyDefinition(activityURI.resolve("#testProperty"), PropertyDefinition.STRING, "", "", "", true, false));
+		objectPropertyDefinition = new ObjectPropertyDefinition(activityURI.resolve("#testProperty"), PropertyDefinition.STRING, "name", "label", "defn", true, false, propertyDefinitions);
 	}
 
 	/**
@@ -59,9 +59,10 @@ public class ObjectPropertyDefinitionTest {
 	 */
 	@Test
 	public void testObjectPropertyDefinitionURIURIStringStringBooleanBoolean() {
-		objectPropertyDefinition = new ObjectPropertyDefinition(activityURI.resolve("#testProperty"), PropertyDefinition.STRING, "a", "b", false, true);
+		objectPropertyDefinition = new ObjectPropertyDefinition(activityURI.resolve("#testProperty"), PropertyDefinition.STRING, "n", "a", "b", false, true);
 		assertEquals(activityURI.resolve("#testProperty"), objectPropertyDefinition.getPredicate());
 		assertEquals(PropertyDefinition.STRING, objectPropertyDefinition.getDataType());
+		assertEquals("n", objectPropertyDefinition.getName());
 		assertEquals("a", objectPropertyDefinition.getLabel());
 		assertEquals("b", objectPropertyDefinition.getDescription());
 		assertFalse(objectPropertyDefinition.isRequired());
@@ -75,9 +76,10 @@ public class ObjectPropertyDefinitionTest {
 	 */
 	@Test
 	public void testObjectPropertyDefinitionURIURIStringStringBooleanBooleanSetOfPropertyDefinition() {
-		objectPropertyDefinition = new ObjectPropertyDefinition(activityURI.resolve("#testProperty"), PropertyDefinition.STRING, "a", "b", false, true, propertyDefinitions);
+		objectPropertyDefinition = new ObjectPropertyDefinition(activityURI.resolve("#testProperty"), PropertyDefinition.STRING, "n", "a", "b", false, true, propertyDefinitions);
 		assertEquals(activityURI.resolve("#testProperty"), objectPropertyDefinition.getPredicate());
 		assertEquals(PropertyDefinition.STRING, objectPropertyDefinition.getDataType());
+		assertEquals("n", objectPropertyDefinition.getName());
 		assertEquals("a", objectPropertyDefinition.getLabel());
 		assertEquals("b", objectPropertyDefinition.getDescription());
 		assertFalse(objectPropertyDefinition.isRequired());

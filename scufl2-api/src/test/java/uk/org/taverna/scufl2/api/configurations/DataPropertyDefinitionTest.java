@@ -49,9 +49,10 @@ public class DataPropertyDefinitionTest {
 	 */
 	@Test
 	public void testDataPropertyDefinitionURIURIStringStringBooleanBoolean() {
-		DataPropertyDefinition dataPropertyDefinition = new DataPropertyDefinition(activityURI.resolve("#testProperty"), PropertyDefinition.STRING, "l", "d", false, false);
+		DataPropertyDefinition dataPropertyDefinition = new DataPropertyDefinition(activityURI.resolve("#testProperty"), PropertyDefinition.STRING, "n", "l", "d", false, false);
 		assertEquals(activityURI.resolve("#testProperty"), dataPropertyDefinition.getPredicate());
 		assertEquals(PropertyDefinition.STRING, dataPropertyDefinition.getDataType());
+		assertEquals("n", dataPropertyDefinition.getName());
 		assertEquals("l", dataPropertyDefinition.getLabel());
 		assertEquals("d", dataPropertyDefinition.getDescription());
 		assertFalse(dataPropertyDefinition.isRequired());
@@ -64,9 +65,10 @@ public class DataPropertyDefinitionTest {
 	 */
 	@Test
 	public void testDataPropertyDefinitionURIURIStringStringBooleanBooleanStringArray() {
-		DataPropertyDefinition dataPropertyDefinition = new DataPropertyDefinition(activityURI.resolve("#testProperty"), PropertyDefinition.INTEGER, "x", "y", false, true, new String[] {"A", "Z"});
+		DataPropertyDefinition dataPropertyDefinition = new DataPropertyDefinition(activityURI.resolve("#testProperty"), PropertyDefinition.INTEGER, "name", "x", "y", false, true, new String[] {"A", "Z"});
 		assertEquals(activityURI.resolve("#testProperty"), dataPropertyDefinition.getPredicate());
 		assertEquals(PropertyDefinition.INTEGER, dataPropertyDefinition.getDataType());
+		assertEquals("name", dataPropertyDefinition.getName());
 		assertEquals("x", dataPropertyDefinition.getLabel());
 		assertEquals("y", dataPropertyDefinition.getDescription());
 		assertFalse(dataPropertyDefinition.isRequired());

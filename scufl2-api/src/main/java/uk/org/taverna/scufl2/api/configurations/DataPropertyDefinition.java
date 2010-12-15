@@ -41,44 +41,48 @@ public class DataPropertyDefinition extends PropertyDefinition {
 	 * value.
 	 * 
 	 * @param predicate
-	 *            the URI identifying the <code>Property</code> that this class defines
+	 *            the URI identifying the <code>DataProperty</code> that this class defines
 	 * @param dataType
-	 *            the datatype of the <code>Property</code>
+	 *            the datatype of the <code>DataProperty</code>
+	 * @param name
+	 *            the name of the <code>DataProperty</code>
 	 * @param label
-	 *            a human readable label for the <code>Property</code>
+	 *            a human readable label for the <code>DataProperty</code>
 	 * @param description
-	 *            a description of the <code>Property</code>
+	 *            a description of the <code>DataProperty</code>
 	 * @param required
-	 *            whether the <code>Property</code> is mandatory
+	 *            whether the <code>DataProperty</code> is mandatory
 	 * @param multiple
-	 *            whether there can be multiple instances of the <code>Property</code>
+	 *            whether there can be multiple instances of the <code>DataProperty</code>
 	 */
-	public DataPropertyDefinition(URI predicate, URI dataType, String label, String description,
+	public DataPropertyDefinition(URI predicate, URI dataType, String name, String label, String description,
 			boolean required, boolean multiple) {
-		super(predicate, dataType, label, description, required, multiple, new String[0]);
+		super(predicate, dataType, name, label, description, required, multiple, new String[0]);
 	}
 
 	/**
 	 * Creates a definition of a <code>DataProperty</code>.
 	 * 
 	 * @param predicate
-	 *            the URI identifying the <code>Property</code> that this class defines
+	 *            the URI identifying the <code>DataProperty</code> that this class defines
 	 * @param dataType
-	 *            the datatype of the <code>Property</code>
+	 *            the datatype of the <code>DataProperty</code>
+	 * @param name
+	 *            the name of the <code>DataProperty</code>
 	 * @param label
-	 *            a human readable label for the <code>Property</code>
+	 *            a human readable label for the <code>DataProperty</code>
 	 * @param description
-	 *            a description of the <code>Property</code>
+	 *            a description of the <code>DataProperty</code>
 	 * @param required
-	 *            whether the <code>Property</code> is mandatory
+	 *            whether the <code>DataProperty</code> is mandatory
 	 * @param multiple
-	 *            whether there can be multiple instances of the <code>Property</code>
+	 *            whether there can be multiple instances of the <code>DataProperty</code>
 	 * @param options
-	 *            the valid values for the <code>Property</code>
+	 *            the valid values for the <code>DataProperty</code>
 	 */
-	public DataPropertyDefinition(URI predicate, URI dataType, String label, String description,
+	public DataPropertyDefinition(URI predicate, URI dataType, String name, String label, String description,
 			boolean required, boolean multiple, String[] options) {
-		super(predicate, dataType, label, description, required, multiple, options);
+		super(predicate, dataType, name, label, description, required, multiple, options);
 	}
 
 	protected String toString(String indent) {
