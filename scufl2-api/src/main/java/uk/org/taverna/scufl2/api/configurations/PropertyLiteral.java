@@ -14,6 +14,9 @@ public class PropertyLiteral implements PropertyObject {
 	private String literalValue = "";
 	private URI literalType = XSD_STRING;
 
+	public PropertyLiteral() {
+	}
+
 	public PropertyLiteral(String value) {
 		setLiteralValue(value);
 	}
@@ -34,7 +37,7 @@ public class PropertyLiteral implements PropertyObject {
 	public void setLiteralType(URI literalType) {
 		if (literalType == null) {
 			throw new NullPointerException(
-					"Data value type can't be null, try PropertyLiteral");
+			"Data value type can't be null, try PropertyLiteral");
 		}
 		this.literalType = literalType;
 	}
