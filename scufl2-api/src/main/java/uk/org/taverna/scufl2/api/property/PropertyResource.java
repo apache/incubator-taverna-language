@@ -50,29 +50,34 @@ public class PropertyResource implements PropertyObject {
 		return properties;
 	}
 
-	public Set<PropertyLiteral> getPropertiesAsLiterals(URI predicate) {
+	public Set<PropertyLiteral> getPropertiesAsLiterals(URI predicate)
+			throws UnexpectedPropertyException {
 		return getPropertiesOfType(predicate, PropertyLiteral.class);
 	}
 
-	public Set<PropertyResource> getPropertiesAsResources(URI predicate) {
+	public Set<PropertyResource> getPropertiesAsResources(URI predicate)
+			throws UnexpectedPropertyException {
 		return getPropertiesOfType(predicate, PropertyResource.class);
 	}
 
-	public Set<URI> getPropertiesAsResourceURIs(URI predicate) {
+	public Set<URI> getPropertiesAsResourceURIs(URI predicate)
+	throws UnexpectedPropertyException {
 		Set<URI> uris = new HashSet<URI>();
 		for (PropertyResource resource : getPropertiesAsResources(predicate)) {
 			URI uri = resource.getResourceURI();
 			if (uri == null) {
-				throw new IllegalStateException(
+				throw new UnexpectedPropertyException(
 						"Resource property without URI for " + predicate
-						+ " in " + this + ": " + resource);
+						+ " in " + this + ": " + resource, predicate,
+						this);
 			}
 			uris.add(uri);
 		}
 		return uris;
 	}
 
-	public Set<String> getPropertiesAsStrings(URI predicate) {
+	public Set<String> getPropertiesAsStrings(URI predicate)
+			throws UnexpectedPropertyException {
 		Set<String> strings = new HashSet<String>();
 		for (PropertyLiteral literal : getPropertiesAsLiterals(predicate)) {
 			strings.add(literal.getLiteralValue());
@@ -81,12 +86,13 @@ public class PropertyResource implements PropertyObject {
 	}
 
 	protected <PropertyType extends PropertyObject> Set<PropertyType> getPropertiesOfType(
-			URI predicate, Class<PropertyType> propertyType) {
+			URI predicate, Class<PropertyType> propertyType)
+			throws UnexpectedPropertyException {
 		Set<PropertyType> properties = new HashSet<PropertyType>();
 		for (PropertyObject obj : getProperties().get(predicate)) {
 			if (!propertyType.isInstance(obj)) {
-				throw new IllegalStateException("Not a " + propertyType + ": "
-						+ predicate + " in " + this);
+				throw new UnexpectedPropertyException("Not a " + propertyType
+						+ ": " + predicate + " in " + this, predicate, this);
 			}
 			properties.add(propertyType.cast(obj));
 		}
@@ -110,20 +116,21 @@ public class PropertyResource implements PropertyObject {
 	}
 
 	public URI getPropertyAsResourceURI(URI predicate)
-	throws PropertyNotFoundException, MultiplePropertiesException {
+			throws UnexpectedPropertyException, PropertyNotFoundException,
+			MultiplePropertiesException {
 		PropertyResource propertyResource = getPropertyOfType(predicate,
 				PropertyResource.class);
 		URI uri = propertyResource.getResourceURI();
 		if (uri == null) {
-			throw new IllegalStateException(
-					"Resource property without URI for " + predicate + " in "
-					+ this + ": " + propertyResource);
+			throw new UnexpectedPropertyException(
+					"Resource property without URI for "
+					+ predicate + " in " + this + ": " + propertyResource,
+					predicate, this);
 		}
 		return uri;
 	}
 
-	public String getPropertyAsString(URI predicate)
-	throws PropertyNotFoundException, MultiplePropertiesException {
+	public String getPropertyAsString(URI predicate) throws PropertyException {
 		PropertyLiteral propertyLiteral = getPropertyOfType(predicate,
 				PropertyLiteral.class);
 		return propertyLiteral.getLiteralValue();
@@ -131,11 +138,13 @@ public class PropertyResource implements PropertyObject {
 
 	protected <PropertyType extends PropertyObject> PropertyType getPropertyOfType(
 			URI predicate, Class<PropertyType> propertyType)
-	throws PropertyNotFoundException, MultiplePropertiesException {
+	throws UnexpectedPropertyException, PropertyNotFoundException,
+			MultiplePropertiesException {
 		PropertyObject propObj = getProperty(predicate);
 		if (!propertyType.isInstance(propObj)) {
-			throw new IllegalStateException("Not a " + propertyType + ": "
-					+ predicate + " in " + this);
+			throw new UnexpectedPropertyException("Not a " + propertyType
+					+ ": "
+					+ predicate + " in " + this, predicate, this);
 		}
 		return propertyType.cast(propObj);
 	}

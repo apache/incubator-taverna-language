@@ -6,6 +6,9 @@ import java.net.URI;
  * Thrown when an error occured when trying to retrieve a property.
  * 
  * @see PropertyNotFoundException
+ * @see MultiplePropertiesException
+ * @see UnexpectedPropertyException
+ * 
  * @author Stian Soiland-Reyes
  */
 public abstract class PropertyException extends Exception {
