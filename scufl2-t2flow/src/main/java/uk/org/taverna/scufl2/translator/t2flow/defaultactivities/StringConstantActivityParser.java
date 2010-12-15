@@ -42,7 +42,7 @@ public class StringConstantActivityParser extends AbstractActivityParser {
 		Configuration configuration = new Configuration();
 		configuration.getPropertyResource().setTypeURI(
 				CONSTANT.resolve("ConfigType"));
-		configuration.getPropertyResource().addProperty(
+		configuration.getPropertyResource().addPropertyAsString(
 				CONSTANT.resolve("#string"), value);
 		return configuration;
 	}

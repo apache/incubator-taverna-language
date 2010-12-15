@@ -45,7 +45,7 @@ public class TestAddProperty {
 	@Test
 	public void addStringLiteral() throws Exception {
 		PropertyResource propertyResource = new PropertyResource();
-		propertyResource.addProperty(PROPERTY, "Hello there");
+		propertyResource.addPropertyAsString(PROPERTY, "Hello there");
 
 		Set<PropertyObject> properties = propertyResource.getProperties().get(PROPERTY);
 		assertEquals(1, properties.size());

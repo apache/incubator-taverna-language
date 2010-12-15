@@ -64,7 +64,7 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 		PropertyResource configResource = configuration.getPropertyResource();
 		configResource.setTypeURI(ACTIVITY_URI.resolve("#ConfigType"));
 		String script = beanshellConfig.getScript();
-		configResource.addProperty(ACTIVITY_URI.resolve("#script"), script);
+		configResource.addPropertyAsString(ACTIVITY_URI.resolve("#script"), script);
 
 		// TODO: Dependencies, activities, etc
 

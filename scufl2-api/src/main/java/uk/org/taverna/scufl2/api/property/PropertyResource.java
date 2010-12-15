@@ -31,7 +31,7 @@ public class PropertyResource implements PropertyObject {
 		getProperties().get(predicate).add(object);
 	}
 
-	public void addProperty(URI predicate, String value) {
+	public void addPropertyAsString(URI predicate, String value) {
 		addProperty(predicate, new PropertyLiteral(value));
 	}
 
