@@ -6,6 +6,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import uk.org.taverna.scufl2.api.impl.LazyMap;
+
 public class PropertyResource implements PropertyObject {
 	private URI resourceURI;
 	private URI typeURI;
