@@ -8,7 +8,7 @@ import java.net.URI;
 
 import org.junit.Test;
 
-public class TestProperty {
+public class TestGetProperty {
 
 	private static final URI EXAMPLE_COM = URI.create("http://example.com/");
 	private static final URI CONSTANT = EXAMPLE_COM.resolve("#constant");
