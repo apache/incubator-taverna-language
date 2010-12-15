@@ -21,11 +21,9 @@
 package uk.org.taverna.scufl2.api.configurations;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.List;
 
 /**
  * The definition of an {@link ObjectProperty}.
@@ -34,14 +32,16 @@ import java.util.Set;
  */
 public class ObjectPropertyDefinition extends PropertyDefinition {
 
-	private final Map<URI, PropertyDefinition> propertyDefinitions;
+	private URI objectClass;
 
+	private List<PropertyDefinition> propertyDefinitions;
+	
 	/**
 	 * Creates a definition of an <code>ObjectProperty</code>.
 	 * 
 	 */
 	public ObjectPropertyDefinition() {
-		propertyDefinitions = new HashMap<URI, PropertyDefinition>();
+		propertyDefinitions = new ArrayList<PropertyDefinition>();
 	}	
 	
 	/**
@@ -49,8 +49,8 @@ public class ObjectPropertyDefinition extends PropertyDefinition {
 	 * 
 	 * @param predicate
 	 *            the URI identifying the <code>ObjectProperty</code> that this class defines
-	 * @param dataType
-	 *            the datatype of the <code>ObjectProperty</code>
+	 * @param objectClass
+	 *            the objectClass of the <code>ObjectProperty</code>
 	 * @param name
 	 *            the name of the <code>ObjectProperty</code>
 	 * @param label
@@ -62,10 +62,11 @@ public class ObjectPropertyDefinition extends PropertyDefinition {
 	 * @param multiple
 	 *            whether there can be multiple instances of the <code>ObjectProperty</code>
 	 */
-	public ObjectPropertyDefinition(URI predicate, URI dataType, String name, String label, String description,
+	public ObjectPropertyDefinition(URI predicate, URI objectClass, String name, String label, String description,
 			boolean required, boolean multiple) {
-		super(predicate, dataType, name, label, description, required, multiple, new String[0]);
-		propertyDefinitions = new HashMap<URI, PropertyDefinition>();
+		super(predicate, name, label, description, required, multiple, new String[0]);
+		this.objectClass = objectClass;
+		propertyDefinitions = new ArrayList<PropertyDefinition>();
 	}
 
 	/**
@@ -73,8 +74,8 @@ public class ObjectPropertyDefinition extends PropertyDefinition {
 	 * 
 	 * @param predicate
 	 *            the URI identifying the <code>ObjectProperty</code> that this class defines
-	 * @param dataType
-	 *            the datatype of the <code>ObjectProperty</code>
+	 * @param objectClass
+	 *            the objectClass of the <code>ObjectProperty</code>
 	 * @param name
 	 *            the name of the <code>ObjectProperty</code>
 	 * @param label
@@ -88,10 +89,28 @@ public class ObjectPropertyDefinition extends PropertyDefinition {
 	 * @param propertyDefinitions
 	 *            the <code>PropertyDefinition</code>s that define the <code>ObjectProperty</code>
 	 */
-	public ObjectPropertyDefinition(URI predicate, URI dataType, String name, String label, String description,
-			boolean required, boolean multiple, Set<PropertyDefinition> propertyDefinitions) {
-		this(predicate, dataType, name, label, description, required, multiple);
+	public ObjectPropertyDefinition(URI predicate, URI objectClass, String name, String label, String description,
+			boolean required, boolean multiple, List<PropertyDefinition> propertyDefinitions) {
+		this(predicate, objectClass, name, label, description, required, multiple);
 		setPropertyDefinitions(propertyDefinitions);
+	}
+
+	/**
+	 * Returns the objectClass of the <code>ObjectProperty</code>.
+	 * 
+	 * @return the objectClass of the <code>ObjectProperty</code>
+	 */
+	public URI getObjectClass() {
+		return objectClass;
+	}
+
+	/**
+	 * Sets the objectClass of the <code>ObjectProperty</code>.
+	 * 
+	 * @param objectClass the objectClass of the <code>ObjectProperty</code>
+	 */
+	public void setObjectClass(URI objectClass) {
+		this.objectClass = objectClass;
 	}
 
 	/**
@@ -99,8 +118,8 @@ public class ObjectPropertyDefinition extends PropertyDefinition {
 	 * 
 	 * @return the <code>PropertyDefinition</code>s that define the <code>ObjectProperty</code>
 	 */
-	public Set<PropertyDefinition> getPropertyDefinitions() {
-		return new HashSet<PropertyDefinition>(propertyDefinitions.values());
+	public List<PropertyDefinition> getPropertyDefinitions() {
+		return propertyDefinitions;
 	}
 
 	/**
@@ -109,11 +128,8 @@ public class ObjectPropertyDefinition extends PropertyDefinition {
 	 * @param propertyDefinitions
 	 *            the <code>PropertyDefinition</code>s that define the <code>ObjectProperty</code>
 	 */
-	public void setPropertyDefinitions(Set<PropertyDefinition> propertyDefinitions) {
-		this.propertyDefinitions.clear();
-		for (PropertyDefinition propertyDefinition : propertyDefinitions) {
-			this.propertyDefinitions.put(propertyDefinition.getPredicate(), propertyDefinition);
-		}
+	public void setPropertyDefinitions(List<PropertyDefinition> propertyDefinitions) {
+		this.propertyDefinitions = propertyDefinitions;
 	}
 
 	/**
@@ -127,7 +143,12 @@ public class ObjectPropertyDefinition extends PropertyDefinition {
 	 * @return a <code>PropertyDefinition</code> with the specified predicate
 	 */
 	public PropertyDefinition getPropertyDefinition(URI predicate) {
-		return propertyDefinitions.get(predicate);
+		for (PropertyDefinition propertyDefinition : propertyDefinitions) {
+			if (propertyDefinition.getPredicate().equals(predicate)) {
+				return propertyDefinition;
+			}
+		}
+		return null;
 	}
 
 	protected String toString(String indent) {
@@ -139,7 +160,7 @@ public class ObjectPropertyDefinition extends PropertyDefinition {
 		sb.append(indent);
 		sb.append(" label=" + getLabel() + ", description=" + getDescription() + ", required="
 				+ isRequired() + ", multiple=" + isMultiple() + ", options="
-				+ Arrays.toString(getOptions()) + ", dataType=" + getDataType() + "\n");
+				+ Arrays.toString(getOptions()) + ", objectClass=" + getObjectClass() + "\n");
 		for (PropertyDefinition propertyDefinition : getPropertyDefinitions()) {
 			sb.append(propertyDefinition.toString("  "));
 		}

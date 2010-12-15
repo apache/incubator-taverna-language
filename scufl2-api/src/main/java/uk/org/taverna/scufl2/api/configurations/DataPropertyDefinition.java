@@ -30,6 +30,8 @@ import java.util.Arrays;
  */
 public class DataPropertyDefinition extends PropertyDefinition {
 
+	private URI dataValueType;
+
 	/**
 	 * Creates a definition of a <code>DataProperty</code>.
 	 */
@@ -42,8 +44,8 @@ public class DataPropertyDefinition extends PropertyDefinition {
 	 * 
 	 * @param predicate
 	 *            the URI identifying the <code>DataProperty</code> that this class defines
-	 * @param dataType
-	 *            the datatype of the <code>DataProperty</code>
+	 * @param dataValueType
+	 *            the dataValueType of the <code>DataProperty</code>
 	 * @param name
 	 *            the name of the <code>DataProperty</code>
 	 * @param label
@@ -55,9 +57,10 @@ public class DataPropertyDefinition extends PropertyDefinition {
 	 * @param multiple
 	 *            whether there can be multiple instances of the <code>DataProperty</code>
 	 */
-	public DataPropertyDefinition(URI predicate, URI dataType, String name, String label, String description,
+	public DataPropertyDefinition(URI predicate, URI dataValueType, String name, String label, String description,
 			boolean required, boolean multiple) {
-		super(predicate, dataType, name, label, description, required, multiple, new String[0]);
+		super(predicate, name, label, description, required, multiple, new String[0]);
+		this.dataValueType = dataValueType;
 	}
 
 	/**
@@ -65,8 +68,8 @@ public class DataPropertyDefinition extends PropertyDefinition {
 	 * 
 	 * @param predicate
 	 *            the URI identifying the <code>DataProperty</code> that this class defines
-	 * @param dataType
-	 *            the datatype of the <code>DataProperty</code>
+	 * @param dataValueType
+	 *            the dataValueType of the <code>DataProperty</code>
 	 * @param name
 	 *            the name of the <code>DataProperty</code>
 	 * @param label
@@ -80,9 +83,28 @@ public class DataPropertyDefinition extends PropertyDefinition {
 	 * @param options
 	 *            the valid values for the <code>DataProperty</code>
 	 */
-	public DataPropertyDefinition(URI predicate, URI dataType, String name, String label, String description,
+	public DataPropertyDefinition(URI predicate, URI dataValueType, String name, String label, String description,
 			boolean required, boolean multiple, String[] options) {
-		super(predicate, dataType, name, label, description, required, multiple, options);
+		super(predicate, name, label, description, required, multiple, options);
+		this.dataValueType = dataValueType;
+	}
+
+	/**
+	 * Returns the dataValueType of the <code>DataProperty</code>.
+	 * 
+	 * @return the dataValueType of the <code>DataProperty</code>
+	 */
+	public URI getDataValueType() {
+		return dataValueType;
+	}
+
+	/**
+	 * Sets the dataValueType of the <code>DataProperty</code>.
+	 * 
+	 * @param dataValueType the dataValueType of the <code>DataProperty</code>
+	 */
+	public void setDataValueType(URI dataValueType) {
+		this.dataValueType = dataValueType;
 	}
 
 	protected String toString(String indent) {
@@ -94,7 +116,7 @@ public class DataPropertyDefinition extends PropertyDefinition {
 		sb.append(indent);
 		sb.append(" label=" + getLabel() + ", description=" + getDescription() + ", required="
 				+ isRequired() + ", multiple=" + isMultiple() + ", options="
-				+ Arrays.toString(getOptions()) + ", dataType=" + getDataType() + "\n");
+				+ Arrays.toString(getOptions()) + ", dataValueType=" + getDataValueType() + "\n");
 		return sb.toString();
 	}
 

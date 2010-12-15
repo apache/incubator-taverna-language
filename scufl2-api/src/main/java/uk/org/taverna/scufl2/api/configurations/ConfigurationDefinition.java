@@ -21,10 +21,7 @@
 package uk.org.taverna.scufl2.api.configurations;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.List;
 
 /**
  * Definition of the {@link Configuration} required to configure a
@@ -34,43 +31,45 @@ import java.util.Set;
  */
 public class ConfigurationDefinition {
 
-	private URI configurableType, configurationType;
+	private URI configurableType;
 
-	private final Map<URI, PropertyDefinition> propertyDefinitions;
+	private final ObjectPropertyDefinition objectPropertyDefinition = new ObjectPropertyDefinition();
 
 	/**
-	 * Creates the definition of the {@link Configuration}.
+	 * Creates the definition of a {@link Configuration}.
 	 */
 	public ConfigurationDefinition() {
-		propertyDefinitions = new HashMap<URI, PropertyDefinition>();
 	}
 
 	/**
 	 * Creates the definition of the {@link Configuration} required to configure the
-	 * {@link uk.org.taverna.scufl2.api.common.Configurable Configurable} specified by the URI.
+	 * {@link uk.org.taverna.scufl2.api.common.Configurable Configurable} specified by the
+	 * configurableType.
 	 * 
 	 * @param configurableType
 	 *            the URI that identifies the <code>Configurable</code> type
+	 * @param objectClass
 	 */
-	public ConfigurationDefinition(URI configurableType, URI configurationType) {
+	public ConfigurationDefinition(URI configurableType, URI objectClass) {
 		this.configurableType = configurableType;
-		this.configurationType = configurationType;
-		propertyDefinitions = new HashMap<URI, PropertyDefinition>();
+		objectPropertyDefinition.setObjectClass(objectClass);
 	}
 
 	/**
 	 * Creates the definition of the {@link Configuration} required to configure the
-	 * {@link uk.org.taverna.scufl2.api.common.Configurable Configurable} specified by the URI.
+	 * {@link uk.org.taverna.scufl2.api.common.Configurable Configurable} specified by the
+	 * configurableType.
 	 * 
 	 * @param configurableType
 	 *            the URI that identifies the <code>Configurable</code> type
+	 * @param objectClass
 	 * @param propertyDefinitions
-	 *            the <code>PropertyDefinition</code>s required to configure the
-	 *            <code>Configurable</code>
 	 */
-	public ConfigurationDefinition(URI configurableType, URI configurationType, Set<PropertyDefinition> propertyDefinitions) {
-		this(configurableType, configurationType);
-		setPropertyDefinitions(propertyDefinitions);
+	public ConfigurationDefinition(URI configurableType, URI objectClass,
+			List<PropertyDefinition> propertyDefinitions) {
+		this.configurableType = configurableType;
+		objectPropertyDefinition.setObjectClass(objectClass);
+		objectPropertyDefinition.setPropertyDefinitions(propertyDefinitions);
 	}
 
 	/**
@@ -95,52 +94,46 @@ public class ConfigurationDefinition {
 	}
 
 	/**
-	 * Returns the URI that identifies the {@link Configuration} type.
 	 * 
-	 * @return the URI that identifies the <code>Configuration</code> type
+	 * 
+	 * @return
 	 */
-	public URI getConfigurationType() {
-		return configurationType;
+	public URI getObjectClass() {
+		return objectPropertyDefinition.getObjectClass();
 	}
 
 	/**
-	 * Sets the URI that identifies the {@link Configuration} type.
 	 * 
-	 * @param configurationType
-	 *            the URI that identifies the {@link Configuration} type
+	 * 
+	 * @param objectClass
 	 */
-	public void setConfigurationType(URI configurationType) {
-		this.configurationType = configurationType;
+	public void setObjectClass(URI objectClass) {
+		objectPropertyDefinition.setObjectClass(objectClass);
 	}
 
 	/**
-	 * Returns the <code>PropertyDefinition</code>s required to configure the
-	 * {@link uk.org.taverna.scufl2.api.common.Configurable Configurable}.
+	 * Returns the {@link PropertyDefinition PropertyDefinitions} required by the
+	 * {@link Configuration}.
 	 * 
-	 * @return the <code>PropertyDefinition</code>s required to configure the
-	 *         <code>Configurable</code>
+	 * @return the <code>PropertyDefinition</code>s required by the <code>Configuration</code>
 	 */
-	public Set<PropertyDefinition> getPropertyDefinitions() {
-		return new HashSet<PropertyDefinition>(propertyDefinitions.values());
+	public List<PropertyDefinition> getPropertyDefinitions() {
+		return objectPropertyDefinition.getPropertyDefinitions();
 	}
 
 	/**
-	 * Sets the <code>PropertyDefinition</code>s required to configure the
-	 * {@link uk.org.taverna.scufl2.api.common.Configurable}.
+	 * Sets the {@link PropertyDefinition PropertyDefinitions} required by the {@link Configuration}
+	 * .
 	 * 
 	 * @param propertyDefinitions
-	 *            the <code>PropertyDefinition</code>s required to configure the
-	 *            <code>Configurable</code>
+	 *            the <code>PropertyDefinition</code>s required by the <code>Configuration</code>
 	 */
-	public void setPropertyDefinitions(Set<PropertyDefinition> propertyDefinitions) {
-		this.propertyDefinitions.clear();
-		for (PropertyDefinition propertyDefinition : propertyDefinitions) {
-			this.propertyDefinitions.put(propertyDefinition.getPredicate(), propertyDefinition);
-		}
+	public void setPropertyDefinitions(List<PropertyDefinition> propertyDefinitions) {
+		objectPropertyDefinition.setPropertyDefinitions(propertyDefinitions);
 	}
 
 	/**
-	 * Returns a <code>PropertyDefinition</code> with the specified predicate.
+	 * Returns a {@link PropertyDefinition PropertyDefinitions} with the specified predicate.
 	 * 
 	 * Return null if this <code>ConfigurationDefinition</code> does not contain a
 	 * <code>PropertyDefinition</code> with the specified predicate.
@@ -150,7 +143,7 @@ public class ConfigurationDefinition {
 	 * @return a <code>PropertyDefinition</code> with the specified predicate
 	 */
 	public PropertyDefinition getPropertyDefinition(URI predicate) {
-		return propertyDefinitions.get(predicate);
+		return objectPropertyDefinition.getPropertyDefinition(predicate);
 	}
 
 	@Override

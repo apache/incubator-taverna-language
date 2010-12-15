@@ -37,11 +37,14 @@ import org.junit.Test;
  */
 public class DataPropertyDefinitionTest {
 
+	private DataPropertyDefinition dataPropertyDefinition;
+	
 	private URI activityURI;
 
 	@Before
 	public void setUp() throws Exception {
 		activityURI = URI.create("http://ns.taverna.org.uk/2010/activity/test");
+		dataPropertyDefinition = new DataPropertyDefinition(activityURI.resolve("#testProperty"), PropertyDefinition.STRING, "n", "l", "d", false, false);
 	}
 
 	/**
@@ -51,7 +54,7 @@ public class DataPropertyDefinitionTest {
 	public void testDataPropertyDefinitionURIURIStringStringBooleanBoolean() {
 		DataPropertyDefinition dataPropertyDefinition = new DataPropertyDefinition(activityURI.resolve("#testProperty"), PropertyDefinition.STRING, "n", "l", "d", false, false);
 		assertEquals(activityURI.resolve("#testProperty"), dataPropertyDefinition.getPredicate());
-		assertEquals(PropertyDefinition.STRING, dataPropertyDefinition.getDataType());
+		assertEquals(PropertyDefinition.STRING, dataPropertyDefinition.getDataValueType());
 		assertEquals("n", dataPropertyDefinition.getName());
 		assertEquals("l", dataPropertyDefinition.getLabel());
 		assertEquals("d", dataPropertyDefinition.getDescription());
@@ -67,7 +70,7 @@ public class DataPropertyDefinitionTest {
 	public void testDataPropertyDefinitionURIURIStringStringBooleanBooleanStringArray() {
 		DataPropertyDefinition dataPropertyDefinition = new DataPropertyDefinition(activityURI.resolve("#testProperty"), PropertyDefinition.INTEGER, "name", "x", "y", false, true, new String[] {"A", "Z"});
 		assertEquals(activityURI.resolve("#testProperty"), dataPropertyDefinition.getPredicate());
-		assertEquals(PropertyDefinition.INTEGER, dataPropertyDefinition.getDataType());
+		assertEquals(PropertyDefinition.INTEGER, dataPropertyDefinition.getDataValueType());
 		assertEquals("name", dataPropertyDefinition.getName());
 		assertEquals("x", dataPropertyDefinition.getLabel());
 		assertEquals("y", dataPropertyDefinition.getDescription());
@@ -75,5 +78,25 @@ public class DataPropertyDefinitionTest {
 		assertTrue(dataPropertyDefinition.isMultiple());
 		assertArrayEquals(new String[] {"A", "Z"}, dataPropertyDefinition.getOptions());
 	}
+
+	/**
+	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.DataPropertyDefinition#getDataValueType()}.
+	 */
+	@Test
+	public void testGetDataValueType() {
+		assertEquals(PropertyDefinition.STRING, dataPropertyDefinition.getDataValueType());
+		assertEquals(PropertyDefinition.STRING, dataPropertyDefinition.getDataValueType());
+	}
+
+	/**
+	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.DataDefinition#setDataValueType(java.net.URI)}.
+	 */
+	@Test
+	public void testSetDataValueType() {
+		assertEquals(PropertyDefinition.STRING, dataPropertyDefinition.getDataValueType());
+		dataPropertyDefinition.setDataValueType(PropertyDefinition.FLOAT);
+		assertEquals(PropertyDefinition.FLOAT, dataPropertyDefinition.getDataValueType());
+	}
+
 
 }

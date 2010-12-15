@@ -38,7 +38,7 @@ public abstract class PropertyDefinition {
 	public static final URI INTEGER = URI.create(XMLConstants.W3C_XML_SCHEMA_NS_URI + "#integer");
 	public static final URI STRING = URI.create(XMLConstants.W3C_XML_SCHEMA_NS_URI + "#string");
 
-	private URI predicate, dataType;
+	private URI predicate;
 	private String name, label, description;
 	private boolean required, multiple;
 	private String[] options;
@@ -54,8 +54,6 @@ public abstract class PropertyDefinition {
 	 * 
 	 * @param predicate
 	 *            the URI identifying the <code>Property</code> that this class defines
-	 * @param dataType
-	 *            the datatype of the <code>Property</code>
 	 * @param name
 	 *            the name of the <code>Property</code>
 	 * @param label
@@ -69,10 +67,9 @@ public abstract class PropertyDefinition {
 	 * @param options
 	 *            the valid values for the <code>Property</code>
 	 */
-	public PropertyDefinition(URI predicate, URI dataType, String name, String label, String description,
+	public PropertyDefinition(URI predicate, String name, String label, String description,
 			boolean required, boolean multiple, String[] options) {
 		this.predicate = predicate;
-		this.dataType = dataType;
 		this.name = name;
 		this.label = label;
 		this.description = description;
@@ -97,24 +94,6 @@ public abstract class PropertyDefinition {
 	 */
 	public void setPredicate(URI predicate) {
 		this.predicate = predicate;
-	}
-
-	/**
-	 * Returns the datatype of the <code>Property</code>.
-	 * 
-	 * @return the datatype of the <code>Property</code>
-	 */
-	public URI getDataType() {
-		return dataType;
-	}
-
-	/**
-	 * Sets the datatype of the <code>Property</code>.
-	 * 
-	 * @param dataType the datatype of the <code>Property</code>
-	 */
-	public void setDataType(URI dataType) {
-		this.dataType = dataType;
 	}
 
 	/**
