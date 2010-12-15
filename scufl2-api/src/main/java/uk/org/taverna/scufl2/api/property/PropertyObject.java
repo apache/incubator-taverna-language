@@ -1,5 +1,7 @@
 package uk.org.taverna.scufl2.api.property;
 
-public interface PropertyObject {
+import uk.org.taverna.scufl2.api.common.WorkflowBean;
+
+public interface PropertyObject extends WorkflowBean {
 
 }
