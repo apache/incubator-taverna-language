@@ -7,12 +7,11 @@ import java.net.URI;
 
 import org.junit.Test;
 
-import uk.org.taverna.scufl2.api.property.PropertyNotFoundException;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
-
 public class TestProperty {
 
 	private static final URI EXAMPLE_COM = URI.create("http://example.com/");
+	private static final URI CONSTANT = EXAMPLE_COM.resolve("#constant");
+	private static final URI PROPERTY = EXAMPLE_COM.resolve("#property");
 
 	@Test
 	public void emptyObject() throws Exception {
@@ -25,16 +24,27 @@ public class TestProperty {
 	@Test
 	public void getPropertyAsResourceURI() throws Exception {
 		PropertyResource resource = new PropertyResource();
-		resource.getProperties().get(EXAMPLE_COM.resolve("#property"))
-		.add(new PropertyResource(EXAMPLE_COM.resolve("#constant")));
+		resource.getProperties().get(PROPERTY)
+		.add(new PropertyResource(CONSTANT));
 
 		assertEquals(1, resource.getProperties().size());
-		assertEquals(EXAMPLE_COM.resolve("#constant"),
-				resource.getPropertyAsResourceURI(EXAMPLE_COM
-						.resolve("#property")));
+		assertEquals(CONSTANT, resource.getPropertyAsResourceURI(PROPERTY));
 	}
 
-	@Test(expected=PropertyNotFoundException.class)
+	@Test(expected = MultiplePropertiesException.class)
+	public void getPropertyAsResourceURIMultiple() throws Exception {
+		PropertyResource resource = new PropertyResource();
+		resource.getProperties().get(PROPERTY)
+		.add(new PropertyResource(EXAMPLE_COM.resolve("#constant1")));
+		resource.getProperties().get(PROPERTY)
+		.add(new PropertyResource(EXAMPLE_COM.resolve("#constant2")));
+
+		assertEquals(1, resource.getProperties().size());
+		assertEquals(2, resource.getProperties().get(PROPERTY).size());
+		resource.getPropertyAsResourceURI(PROPERTY);
+	}
+
+	@Test(expected = PropertyNotFoundException.class)
 	public void getPropertyAsResourceURINotFound() throws Exception {
 		PropertyResource resource = new PropertyResource();
 		resource.getPropertyAsResourceURI(EXAMPLE_COM.resolve("#notFound"));
@@ -43,8 +53,9 @@ public class TestProperty {
 	@Test
 	public void resourceConstructor() throws Exception {
 		PropertyResource resource = new PropertyResource(
-				EXAMPLE_COM.resolve("#fish"));
-		assertEquals(EXAMPLE_COM.resolve("#fish"), resource.getResourceURI());
+				EXAMPLE_COM.resolve("#resourceURI"));
+		assertEquals(EXAMPLE_COM.resolve("#resourceURI"),
+				resource.getResourceURI());
 		assertNull(resource.getTypeURI());
 	}
 

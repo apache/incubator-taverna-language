@@ -94,38 +94,36 @@ public class PropertyResource implements PropertyObject {
 	}
 
 	public PropertyObject getProperty(URI predicate)
-	throws PropertyNotFoundException {
+	throws PropertyNotFoundException, MultiplePropertiesException {
 		PropertyObject foundProperty = null;
 		// Could have checked set's size() - but it's
 		for (PropertyObject obj : getProperties().get(predicate)) {
 			if (foundProperty != null) {
-				throw new IllegalStateException("More than one property "
-						+ predicate + " exists in " + this);
+				throw new MultiplePropertiesException(predicate, this);
 			}
 			foundProperty = obj;
 		}
 		if (foundProperty == null) {
-			throw new PropertyNotFoundException("Can't find " + predicate
-					+ " in " + this);
+			throw new PropertyNotFoundException(predicate, this);
 		}
 		return foundProperty;
 	}
 
 	public URI getPropertyAsResourceURI(URI predicate)
-	throws PropertyNotFoundException {
+	throws PropertyNotFoundException, MultiplePropertiesException {
 		PropertyResource propertyResource = getPropertyOfType(predicate,
 				PropertyResource.class);
 		URI uri = propertyResource.getResourceURI();
 		if (uri == null) {
 			throw new IllegalStateException(
-					"Resource property without URI for " + predicate
-					+ " in " + this + ": " + propertyResource);
+					"Resource property without URI for " + predicate + " in "
+					+ this + ": " + propertyResource);
 		}
 		return uri;
 	}
 
 	public String getPropertyAsString(URI predicate)
-	throws PropertyNotFoundException {
+	throws PropertyNotFoundException, MultiplePropertiesException {
 		PropertyLiteral propertyLiteral = getPropertyOfType(predicate,
 				PropertyLiteral.class);
 		return propertyLiteral.getLiteralValue();
@@ -133,7 +131,7 @@ public class PropertyResource implements PropertyObject {
 
 	protected <PropertyType extends PropertyObject> PropertyType getPropertyOfType(
 			URI predicate, Class<PropertyType> propertyType)
-	throws PropertyNotFoundException {
+	throws PropertyNotFoundException, MultiplePropertiesException {
 		PropertyObject propObj = getProperty(predicate);
 		if (!propertyType.isInstance(propObj)) {
 			throw new IllegalStateException("Not a " + propertyType + ": "

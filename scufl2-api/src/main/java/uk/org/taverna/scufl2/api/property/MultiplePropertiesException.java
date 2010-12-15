@@ -23,19 +23,22 @@ package uk.org.taverna.scufl2.api.property;
 import java.net.URI;
 
 /**
- * Thrown when a {@link PropertyObject} is not found when a single property was
- * expected.
+ * Thrown when more than one {@link PropertyObject} was found, buy only one
+ * property was expected.
  * 
  * @see PropertyResource#getProperty(java.net.URI)
- * @author David Withers
+ * @see PropertyResource#getPropertyAsString(java.net.URI)
+ * @see PropertyResource#getPropertyAsResourceURI(java.net.URI)
+ * 
+ * @author Stian Soiland-Reyes
  */
-public class PropertyNotFoundException extends PropertyException {
+public class MultiplePropertiesException extends PropertyException {
 
-	private static final long serialVersionUID = 1916372334894633453L;
+	private static final long serialVersionUID = 2801964990757296381L;
 
-	public PropertyNotFoundException(URI predicate,
+	public MultiplePropertiesException(URI predicate,
 			PropertyResource propertyResource) {
-		super("Could not find property " + predicate + " in "
+		super("More than one property " + predicate + " found in "
 				+ propertyResource, predicate, propertyResource);
 	}
 
