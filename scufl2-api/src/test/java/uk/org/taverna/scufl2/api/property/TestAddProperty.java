@@ -17,7 +17,7 @@ public class TestAddProperty {
 	private static final URI SOME_TYPE = EXAMPLE_COM.resolve("#SomeType");
 
 	@Test
-	public void addPropertyResource() throws Exception {
+	public void addPropertyAsNewResource() throws Exception {
 		PropertyResource propertyResource = new PropertyResource();
 		PropertyResource propResource = propertyResource.addPropertyAsNewResource(PROPERTY, SOME_TYPE);
 		// No need to fill in propResource as we can check same-ness below
@@ -28,7 +28,7 @@ public class TestAddProperty {
 	}
 
 	@Test
-	public void addPropertyURI() throws Exception {
+	public void addPropertyAsResourceURI() throws Exception {
 		PropertyResource propertyResource = new PropertyResource();
 		propertyResource.addPropertyAsResourceURI(PROPERTY, CONSTANT);
 
@@ -43,7 +43,7 @@ public class TestAddProperty {
 	}
 
 	@Test
-	public void addStringLiteral() throws Exception {
+	public void addPropertyAsString() throws Exception {
 		PropertyResource propertyResource = new PropertyResource();
 		propertyResource.addPropertyAsString(PROPERTY, "Hello there");
 
