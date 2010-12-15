@@ -51,12 +51,12 @@ public class PropertyResource implements PropertyObject {
 	}
 
 	public Set<PropertyLiteral> getPropertiesAsLiterals(URI predicate)
-			throws UnexpectedPropertyException {
+	throws UnexpectedPropertyException {
 		return getPropertiesOfType(predicate, PropertyLiteral.class);
 	}
 
 	public Set<PropertyResource> getPropertiesAsResources(URI predicate)
-			throws UnexpectedPropertyException {
+	throws UnexpectedPropertyException {
 		return getPropertiesOfType(predicate, PropertyResource.class);
 	}
 
@@ -77,7 +77,7 @@ public class PropertyResource implements PropertyObject {
 	}
 
 	public Set<String> getPropertiesAsStrings(URI predicate)
-			throws UnexpectedPropertyException {
+	throws UnexpectedPropertyException {
 		Set<String> strings = new HashSet<String>();
 		for (PropertyLiteral literal : getPropertiesAsLiterals(predicate)) {
 			strings.add(literal.getLiteralValue());
@@ -116,8 +116,8 @@ public class PropertyResource implements PropertyObject {
 	}
 
 	public URI getPropertyAsResourceURI(URI predicate)
-			throws UnexpectedPropertyException, PropertyNotFoundException,
-			MultiplePropertiesException {
+	throws UnexpectedPropertyException, PropertyNotFoundException,
+	MultiplePropertiesException {
 		PropertyResource propertyResource = getPropertyOfType(predicate,
 				PropertyResource.class);
 		URI uri = propertyResource.getResourceURI();
@@ -136,10 +136,10 @@ public class PropertyResource implements PropertyObject {
 		return propertyLiteral.getLiteralValue();
 	}
 
-	protected <PropertyType extends PropertyObject> PropertyType getPropertyOfType(
+	public <PropertyType extends PropertyObject> PropertyType getPropertyOfType(
 			URI predicate, Class<PropertyType> propertyType)
 	throws UnexpectedPropertyException, PropertyNotFoundException,
-			MultiplePropertiesException {
+	MultiplePropertiesException {
 		PropertyObject propObj = getProperty(predicate);
 		if (!propertyType.isInstance(propObj)) {
 			throw new UnexpectedPropertyException("Not a " + propertyType
