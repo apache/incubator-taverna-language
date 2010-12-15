@@ -17,6 +17,21 @@ public class TestAddProperty {
 	private static final URI SOME_TYPE = EXAMPLE_COM.resolve("#SomeType");
 
 	@Test
+	public void addProperty() throws Exception {
+		PropertyResource propertyResource = new PropertyResource();
+
+		PropertyLiteral literal = new PropertyLiteral(15);
+		assertEquals("15", literal.getLiteralValue());
+		assertEquals(PropertyLiteral.XSD_INT, literal.getLiteralType());
+
+		Set<PropertyObject> properties = propertyResource.getProperties().get(PROPERTY);
+		assertEquals(1, properties.size());
+		PropertyLiteral propertyLiteral = (PropertyLiteral) properties.iterator().next();
+		assertEquals("Hello there", propertyLiteral.getLiteralValue());
+		assertEquals(PropertyLiteral.XSD_STRING, propertyLiteral.getLiteralType());
+	}
+
+	@Test
 	public void addPropertyAsNewResource() throws Exception {
 		PropertyResource propertyResource = new PropertyResource();
 		PropertyResource propResource = propertyResource.addPropertyAsNewResource(PROPERTY, SOME_TYPE);
