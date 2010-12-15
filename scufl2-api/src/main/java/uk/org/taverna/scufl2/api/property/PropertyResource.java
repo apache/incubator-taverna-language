@@ -42,7 +42,7 @@ public class PropertyResource implements PropertyObject {
 		return resource;
 	}
 
-	public void addPropertyURI(URI predicate, URI resourceURI) {
+	public void addPropertyAsResourceURI(URI predicate, URI resourceURI) {
 		addProperty(predicate, new PropertyResource(resourceURI));
 	}
 

@@ -85,14 +85,14 @@ public class WSDLActivityParser extends AbstractActivityParser {
 		PropertyResource wsdlOperation = configuration.getPropertyResource()
 				.addPropertyResource(WSDL.resolve("operation"),
 						WSDL.resolve("Operation"));
-		wsdlOperation.addPropertyURI(WSDL.resolve("wsdl"), wsdl);
+		wsdlOperation.addPropertyAsResourceURI(WSDL.resolve("wsdl"), wsdl);
 		wsdlOperation.addPropertyAsString(WSDL.resolve("operationName"), operation);
 
 		if (wsdlConfig.getSecurityProfile() != null
 				&& !wsdlConfig.getSecurityProfile().isEmpty()) {
 			URI securityProfileURI = SECURITY.resolve(wsdlConfig
 					.getSecurityProfile());
-			configuration.getPropertyResource().addPropertyURI(
+			configuration.getPropertyResource().addPropertyAsResourceURI(
 					WSDL.resolve("securityProfile"), securityProfileURI);
 		}
 

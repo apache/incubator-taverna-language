@@ -30,7 +30,7 @@ public class TestAddProperty {
 	@Test
 	public void addPropertyURI() throws Exception {
 		PropertyResource propertyResource = new PropertyResource();
-		propertyResource.addPropertyURI(PROPERTY, CONSTANT);
+		propertyResource.addPropertyAsResourceURI(PROPERTY, CONSTANT);
 
 		Set<PropertyObject> properties = propertyResource.getProperties().get(
 				PROPERTY);
