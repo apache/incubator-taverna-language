@@ -35,7 +35,7 @@ public class PropertyResource implements PropertyObject {
 		addProperty(predicate, new PropertyLiteral(value));
 	}
 
-	public PropertyResource addPropertyResource(URI predicate, URI typeURI) {
+	public PropertyResource addPropertyAsNewResource(URI predicate, URI typeURI) {
 		PropertyResource resource = new PropertyResource();
 		resource.setTypeURI(typeURI);
 		addProperty(predicate, resource);

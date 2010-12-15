@@ -82,7 +82,7 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 				inputPort.setDepth(portBean.getDepth().intValue());
 			}
 
-			PropertyResource portConfig = configResource.addPropertyResource(
+			PropertyResource portConfig = configResource.addPropertyAsNewResource(
 					ACTIVITY_URI.resolve("#inputPortDefinition"),
 					ACTIVITY_URI.resolve("#InputPortDefinition"));
 
@@ -115,7 +115,7 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 				outputPort.setGranularDepth(portBean.getGranularDepth().intValue());
 			}
 
-			PropertyResource portConfig = configResource.addPropertyResource(
+			PropertyResource portConfig = configResource.addPropertyAsNewResource(
 					ACTIVITY_URI.resolve("#outputPortDefinition"),
 					ACTIVITY_URI.resolve("#OutputPortDefinition"));
 

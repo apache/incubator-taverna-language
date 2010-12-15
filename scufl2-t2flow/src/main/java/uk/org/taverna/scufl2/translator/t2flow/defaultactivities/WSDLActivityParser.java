@@ -83,7 +83,7 @@ public class WSDLActivityParser extends AbstractActivityParser {
 		}
 
 		PropertyResource wsdlOperation = configuration.getPropertyResource()
-				.addPropertyResource(WSDL.resolve("operation"),
+				.addPropertyAsNewResource(WSDL.resolve("operation"),
 						WSDL.resolve("Operation"));
 		wsdlOperation.addPropertyAsResourceURI(WSDL.resolve("wsdl"), wsdl);
 		wsdlOperation.addPropertyAsString(WSDL.resolve("operationName"), operation);

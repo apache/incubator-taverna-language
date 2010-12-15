@@ -19,7 +19,7 @@ public class TestAddProperty {
 	@Test
 	public void addPropertyResource() throws Exception {
 		PropertyResource propertyResource = new PropertyResource();
-		PropertyResource propResource = propertyResource.addPropertyResource(PROPERTY, SOME_TYPE);
+		PropertyResource propResource = propertyResource.addPropertyAsNewResource(PROPERTY, SOME_TYPE);
 		// No need to fill in propResource as we can check same-ness below
 
 		Set<PropertyObject> properties = propertyResource.getProperties().get(PROPERTY);
