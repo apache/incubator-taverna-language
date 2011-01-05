@@ -21,6 +21,11 @@ public class InputActivityPort extends AbstractDepthPort implements ActivityPort
 
 	private Activity parent;
 
+	public InputActivityPort(Activity activity, String portName) {
+		setParent(activity);
+		setName(portName);
+	}
+
 	@ParentProperty(property = "inputPorts", uri = "inputs/")
 	public Activity getParent() {
 		return parent;
