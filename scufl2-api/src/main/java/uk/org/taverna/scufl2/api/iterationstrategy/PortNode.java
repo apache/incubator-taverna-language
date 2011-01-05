@@ -11,6 +11,12 @@ Child<IterationStrategyParent> {
 
 	private IterationStrategyParent parent;
 
+	public PortNode(IterationStrategyParent parent,
+			InputProcessorPort inputProcessorPort) {
+		setParent(parent);
+		setInputProcessorPort(inputProcessorPort);
+	}
+
 	public InputProcessorPort getInputProcessorPort() {
 		return inputProcessorPort;
 	}
@@ -21,10 +27,6 @@ Child<IterationStrategyParent> {
 	}
 
 	public void PortNode() {
-	}
-
-	public void PortNode(InputProcessorPort inputProcessorPort) {
-		setInputProcessorPort(inputProcessorPort);
 	}
 
 	public void setInputProcessorPort(InputProcessorPort inputProcessorPort) {

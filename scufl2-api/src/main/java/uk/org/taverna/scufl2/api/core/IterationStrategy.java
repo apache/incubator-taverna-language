@@ -12,7 +12,7 @@ import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyParent;
  *
  */
 public class IterationStrategy implements WorkflowBean, Child<Processor>,
-		IterationStrategyParent {
+IterationStrategyParent {
 
 	private Processor parent;
 	private IterationStrategyNode rootStrategyNode;

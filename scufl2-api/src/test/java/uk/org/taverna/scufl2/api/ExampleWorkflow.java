@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.IterationStrategy;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.dispatchstack.DispatchStack;
 import uk.org.taverna.scufl2.api.iterationstrategy.CrossProduct;
+import uk.org.taverna.scufl2.api.iterationstrategy.PortNode;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
 import uk.org.taverna.scufl2.api.port.InputWorkflowPort;
 import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
@@ -32,7 +34,11 @@ public class ExampleWorkflow {
 		ArrayList<IterationStrategy> stack = new ArrayList<IterationStrategy>();
 		IterationStrategy strategy = new IterationStrategy();
 		stack.add(strategy);
-		strategy.setRootStrategyNode(new CrossProduct());
+		CrossProduct crossProduct = new CrossProduct();
+		strategy.setRootStrategyNode(crossProduct);
+		for (InputProcessorPort inp : inputs) {
+			crossProduct.add(new PortNode(crossProduct, inp));
+		}
 		return stack;
 	}
 
@@ -57,6 +63,16 @@ public class ExampleWorkflow {
 
 		workflow.getProcessors().add(makeProcessor());
 
+		// Make links
+		DataLink directLink = new DataLink(workflow, yourName, results);
+		directLink.setMergePosition(1);
+
+		DataLink greetingLink = new DataLink(workflow, processorGreeting,
+				results);
+		greetingLink.setMergePosition(0);
+
+		DataLink nameLink = new DataLink(workflow, yourName, processorName);
+
 		return workflow;
 	}
 
@@ -70,7 +86,7 @@ public class ExampleWorkflow {
 
 		// FIXME: Should not need to make default iteration stack
 		processor
-				.setIterationStrategyStack(makeIterationStrategyStack(processorName));
+		.setIterationStrategyStack(makeIterationStrategyStack(processorName));
 
 		return processor;
 	}
