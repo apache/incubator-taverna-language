@@ -7,6 +7,7 @@ public class TestExampleWorkflow extends ExampleWorkflow {
 	@Test
 	public void makeflowBundle() throws Exception {
 		makeWorkflowBundle();
+		// TODO: Check fields
 	}
 
 }

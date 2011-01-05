@@ -7,7 +7,7 @@ public class SillyWriter implements WorkflowBundleWriter {
 
 	@Override
 	public Set<String> getMediaTypes() {
-		return Collections.singleton("application/vnd.example.silly-writer");
+		return Collections.singleton("application/vnd.example.silly");
 	}
 
 
