@@ -5,6 +5,7 @@ import org.junit.Test;
 public class TestSillyWriter {
 	@Test
 	public void findSillyWriter() throws Exception {
+		WorkflowBundleIO bundleIO = new WorkflowBundleIO();
 
 	}
 }

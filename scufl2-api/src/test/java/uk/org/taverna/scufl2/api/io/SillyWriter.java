@@ -3,7 +3,7 @@ package uk.org.taverna.scufl2.api.io;
 import java.util.Collections;
 import java.util.Set;
 
-public class SillyWriter implements Scufl2Writer {
+public class SillyWriter implements WorkflowBundleWriter {
 
 	@Override
 	public Set<String> getMediaTypes() {
