@@ -23,12 +23,12 @@ public class TestProcessorNames {
 			ParseException {
 		InputStream workflow = getClass()
 		.getResourceAsStream(
-				"/workflows/biomartandembossanalysis_904962.t2flow");
+				"/workflows/t2flow/biomartandembossanalysis_904962.t2flow");
 		assertNotNull(workflow);
-		
+
 		T2FlowParser t2flowParser = new T2FlowParser();
 		WorkflowBundle ro = t2flowParser.parseT2Flow(workflow);
-		
+
 		List<String> expected = Arrays.asList("CreateFasta",
 				"FlattenImageList", "GetUniqueHomolog", "emma",
 				"getHSapSequence", "getMMusSequence", "getRNorSequence",
