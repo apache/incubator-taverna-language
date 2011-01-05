@@ -1,22 +1,32 @@
 package uk.org.taverna.scufl2.api.core;
 
-import javax.xml.bind.annotation.XmlTransient;
 
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
+import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyNode;
+import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyParent;
 
 
 /**
  * @author Alan R Williams
  *
  */
-public class IterationStrategy implements WorkflowBean, Child<Processor> {
-	
-	private Processor parent;
+public class IterationStrategy implements WorkflowBean, Child<Processor>,
+		IterationStrategyParent {
 
-	@XmlTransient
+	private Processor parent;
+	private IterationStrategyNode rootStrategyNode;
+
+	public IterationStrategy() {
+		super();
+	}
+
 	public Processor getParent() {
 		return parent;
+	}
+
+	public IterationStrategyNode getRootStrategyNode() {
+		return rootStrategyNode;
 	}
 
 	public void setParent(Processor parent) {
@@ -29,7 +39,8 @@ public class IterationStrategy implements WorkflowBean, Child<Processor> {
 		}
 	}
 
-	public IterationStrategy() {
-		super();
+	public void setRootStrategyNode(IterationStrategyNode rootStrategyNode) {
+		this.rootStrategyNode = rootStrategyNode;
 	}
+
 }

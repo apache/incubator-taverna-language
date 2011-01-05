@@ -1,8 +1,14 @@
 package uk.org.taverna.scufl2.api;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.core.IterationStrategy;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
+import uk.org.taverna.scufl2.api.dispatchstack.DispatchStack;
+import uk.org.taverna.scufl2.api.iterationstrategy.CrossProduct;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
 import uk.org.taverna.scufl2.api.port.InputWorkflowPort;
 import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
@@ -15,6 +21,20 @@ public class ExampleWorkflow {
 	private Processor processor;
 	private WorkflowBundle workflowBundle;
 	private InputProcessorPort processorName;
+	private OutputProcessorPort processorGreeting;
+
+	private DispatchStack makeDispatchStack() {
+		return new DispatchStack();
+	}
+
+	private List<IterationStrategy> makeIterationStrategyStack(
+			InputProcessorPort... inputs) {
+		ArrayList<IterationStrategy> stack = new ArrayList<IterationStrategy>();
+		IterationStrategy strategy = new IterationStrategy();
+		stack.add(strategy);
+		strategy.setRootStrategyNode(new CrossProduct());
+		return stack;
+	}
 
 	public Profile makeMainProfile() {
 		return new Profile();
@@ -44,6 +64,13 @@ public class ExampleWorkflow {
 		processor = new Processor(workflow, "Hello");
 		processorName = new InputProcessorPort(processor, "name");
 		processorGreeting = new OutputProcessorPort(processor, "greeting");
+
+		// FIXME: Should not need to make default dispatch stack
+		processor.setDispatchStack(makeDispatchStack());
+
+		// FIXME: Should not need to make default iteration stack
+		processor
+				.setIterationStrategyStack(makeIterationStrategyStack(processorName));
 
 		return processor;
 	}
