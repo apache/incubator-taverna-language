@@ -6,13 +6,67 @@ import java.util.ServiceLoader;
 
 public class WorkflowBundleIO {
 
-	protected ServiceLoader<WorkflowBundleWriter> writers = ServiceLoader
-	.load(WorkflowBundleWriter.class);
-	protected ServiceLoader<WorkflowBundleReader> readers = ServiceLoader
-	.load(WorkflowBundleReader.class);
+	// delay initialising the ServiceLoaders
+	protected ServiceLoader<WorkflowBundleWriter> writersLoader;
+	protected ServiceLoader<WorkflowBundleReader> readersLoader;
 
-	public WorkflowBundleWriter getWriterForMediaType(
-			String mediaType) {
+	private List<WorkflowBundleWriter> writers;
+
+	private List<WorkflowBundleReader> readers;
+
+	public List<WorkflowBundleReader> discoverReaders() {
+		synchronized (this) {
+
+			if (readersLoader == null) {
+				// FIXME: This uses Thread.currentThread.getContextClassLoader()
+				// - depending on who gets synchronized-block first this can
+				// vary - but as it's still local per instance of
+				// WorkflowBundleIO it should be OK for now..
+				readersLoader = ServiceLoader.load(WorkflowBundleReader.class);
+			}
+		}
+
+		List<WorkflowBundleReader> allReaders = new ArrayList<WorkflowBundleReader>();
+		for (WorkflowBundleReader reader : readersLoader) {
+			allReaders.add(reader);
+		}
+		return allReaders;
+	}
+
+	public List<WorkflowBundleWriter> discoverWriters() {
+		synchronized (this) {
+			if (writersLoader == null) {
+				// FIXME: This uses Thread.currentThread.getContextClassLoader()
+				// - depending on who gets synchronized-block first this can
+				// vary - but as it's still local per instance of
+				// WorkflowBundleIO it should be OK for now..
+				writersLoader = ServiceLoader.load(WorkflowBundleWriter.class);
+			}
+		}
+		List<WorkflowBundleWriter> allWriters = new ArrayList<WorkflowBundleWriter>();
+		for (WorkflowBundleWriter writer : writersLoader) {
+			allWriters.add(writer);
+		}
+		return allWriters;
+	}
+
+	public WorkflowBundleReader getReaderForMediaType(String mediaType) {
+		for (WorkflowBundleReader reader : getReaders()) {
+			if (reader.getMediaTypes().contains(mediaType)) {
+				return reader;
+			}
+		}
+		return null;
+	}
+
+	public List<WorkflowBundleReader> getReaders() {
+		if (readers == null) {
+			return discoverReaders();
+		}
+		return readers;
+	}
+
+	public WorkflowBundleWriter getWriterForMediaType(String mediaType) {
 		for (WorkflowBundleWriter writer : getWriters()) {
 			if (writer.getMediaTypes().contains(mediaType)) {
 				return writer;
@@ -22,13 +76,18 @@ public class WorkflowBundleIO {
 	}
 
 	public List<WorkflowBundleWriter> getWriters() {
-		List<WorkflowBundleWriter> allWriters = new ArrayList<WorkflowBundleWriter>();
-		for (WorkflowBundleWriter writer : writers) {
-			allWriters.add(writer);
+		if (writers == null) {
+			return discoverWriters();
 		}
-		return allWriters;
+		return writers;
 	}
 
+	public void setReaders(List<WorkflowBundleReader> readers) {
+		this.readers = readers;
+	}
 
+	public void setWriters(List<WorkflowBundleWriter> writers) {
+		this.writers = writers;
+	}
 
 }

@@ -19,19 +19,24 @@ public class TestSillyWriter extends ExampleWorkflow {
 	WorkflowBundle wfBundle = makeWorkflowBundle();
 
 	@Test
-	public void addOwnWriters() {
-		WorkflowBundleWriter myWriter = new WorkflowBundleWriter() {
-			@Override
-			public Set<String> getMediaTypes() {
-				return Collections.singleton("application/vnd.example.myOwn");
-			}
-		};
-		bundleIO.addWriter(myWriter);
-		assertEquals(2, bundleIO.getWriters().size());
-		assertSame(myWriter, bundleIO.getWriters().get(1));
-		assertSame(myWriter,
-				bundleIO.getWriterForMediaType("application/vnd.example.myOwn"));
+	public void getReaderForMediaType() throws Exception {
+		WorkflowBundleReader Reader = bundleIO
+		.getReaderForMediaType("application/vnd.example.silly");
+		assertTrue(Reader instanceof SillyReader);
+	}
 
+	@Test
+	public void getReaderForUnknownMediaType() throws Exception {
+		assertNull(bundleIO
+				.getReaderForMediaType("application/vnd.example.unknownStuff"));
+	}
+
+	@Test
+	public void getWorkflowBundleReaders() throws Exception {
+
+		assertEquals(1, bundleIO.getReaders().size());
+		WorkflowBundleReader Reader = bundleIO.getReaders().get(0);
+		assertTrue(Reader instanceof SillyReader);
 	}
 
 	@Test
@@ -45,7 +50,7 @@ public class TestSillyWriter extends ExampleWorkflow {
 	@Test
 	public void getWriterForMediaType() throws Exception {
 		WorkflowBundleWriter writer = bundleIO
-		.getWriterForMediaType("application/vnd.example.silly");
+				.getWriterForMediaType("application/vnd.example.silly");
 		assertTrue(writer instanceof SillyWriter);
 	}
 
@@ -53,6 +58,46 @@ public class TestSillyWriter extends ExampleWorkflow {
 	public void getWriterForUnknownMediaType() throws Exception {
 		assertNull(bundleIO
 				.getWriterForMediaType("application/vnd.example.unknownStuff"));
+	}
+
+	@Test
+	public void setReaders() {
+		WorkflowBundleReader myReader = new WorkflowBundleReader() {
+			@Override
+			public Set<String> getMediaTypes() {
+				return Collections.singleton("application/vnd.example.myOwn");
+			}
+		};
+
+		bundleIO.setReaders(Collections.singletonList(myReader));
+		assertEquals(1, bundleIO.getReaders().size());
+		assertSame(myReader, bundleIO.getReaders().get(0));
+		assertSame(myReader,
+				bundleIO.getReaderForMediaType("application/vnd.example.myOwn"));
+
+		// Should now be null
+		assertNull(bundleIO
+				.getReaderForMediaType("application/vnd.example.silly"));
+	}
+
+	@Test
+	public void setWriters() {
+		WorkflowBundleWriter myWriter = new WorkflowBundleWriter() {
+			@Override
+			public Set<String> getMediaTypes() {
+				return Collections.singleton("application/vnd.example.myOwn");
+			}
+		};
+
+		bundleIO.setWriters(Collections.singletonList(myWriter));
+		assertEquals(1, bundleIO.getWriters().size());
+		assertSame(myWriter, bundleIO.getWriters().get(0));
+		assertSame(myWriter,
+				bundleIO.getWriterForMediaType("application/vnd.example.myOwn"));
+
+		// Should now be null
+		assertNull(bundleIO
+				.getWriterForMediaType("application/vnd.example.silly"));
 	}
 
 }
