@@ -24,7 +24,7 @@ public class Processor extends AbstractNamedChild implements Child<Workflow> {
 	private NamedSet<InputProcessorPort> inputPorts = new NamedSet<InputProcessorPort>();
 	private List<IterationStrategy> iterationStrategyStack = new ArrayList<IterationStrategy>();
 	private Set<StartCondition> startConditions = new HashSet<StartCondition>();
-	private DispatchStack dispatchStack;
+	private DispatchStack dispatchStack = new DispatchStack();
 	private Workflow parent;
 	private URI configurableType;
 
