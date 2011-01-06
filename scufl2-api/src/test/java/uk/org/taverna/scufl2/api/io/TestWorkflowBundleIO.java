@@ -5,9 +5,11 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.ExampleWorkflow;
@@ -33,7 +35,6 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 
 	@Test
 	public void getWorkflowBundleReaders() throws Exception {
-
 		assertEquals(1, bundleIO.getReaders().size());
 		WorkflowBundleReader Reader = bundleIO.getReaders().get(0);
 		assertTrue(Reader instanceof SillyReader);
@@ -50,7 +51,7 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 	@Test
 	public void getWriterForMediaType() throws Exception {
 		WorkflowBundleWriter writer = bundleIO
-				.getWriterForMediaType("application/vnd.example.silly");
+		.getWriterForMediaType("application/vnd.example.silly");
 		assertTrue(writer instanceof SillyWriter);
 	}
 
@@ -98,6 +99,54 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 		// Should now be null
 		assertNull(bundleIO
 				.getWriterForMediaType("application/vnd.example.silly"));
+	}
+
+	@Test
+	public void writeBundleFile() throws Exception {
+		File bundleFile = File.createTempFile("scufl2", "txt");
+		bundleIO.writeBundle(wfBundle, bundleFile,
+		"application/vnd.example.silly");
+		String bundleTxt = FileUtils.readFileToString(bundleFile, "utf-8");
+		assertTrue(bundleTxt
+				.equals("WorkflowBundle 'helloWorld'\n"
+						+ "  MainWorkflow 'HelloWorld'\n"
+						+ "  Workflow 'HelloWorld'\n"
+						+ "    In 'yourName'\n"
+						+ "    Out 'results'\n"
+						+ "    Processor 'Hello'\n"
+						+ "      In 'name'\n"
+						+ "      Out 'greeting'\n"
+						+ "    Links\n"
+						+ "       'yourName' -> 'results'\n"
+						+ "       'yourName' -> 'Hello:name'\n"
+						+ "       'Hello:greeting' -> 'results'\n"
+						+ "  MainProfile 'tavernaWorkbench'\n"
+						+ "  Profile 'tavernaWorkbench'\n"
+						+ "    Activity 'HelloScript'\n"
+						+ "      Type <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity>\n"
+						+ "      In 'personName'\n"
+						+ "      Out 'hello'\n"
+						+ "    ProcessorBinding 'Hello'\n"
+						+ "      Activity 'HelloScript'\n"
+						+ "      Processor 'HelloWorld:Hello'\n"
+						+ "      InputPortBindings\n"
+						+ "        'name' -> 'personName'\n"
+						+ "      OutputPortBindings\n"
+						+ "        'hello' -> 'greeting'\n"
+						+ "    ActivatesConfiguration 'Hello'\n"
+						+ "    Configuration 'Hello'\n"
+						+ "       Type <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration>\n"
+						+ "       Configures 'activity/HelloScript'\n"
+						+ "       Property <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Script>\n"
+						+ "         '''hello = \"Hello, \" + personName;\n"
+						+ "System.out.println(\"Server says: \" + hello);'''\n"));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void writeBundleUnknownMediaType() throws Exception {
+		File bundleFile = File.createTempFile("scufl2", "txt");
+		bundleIO.writeBundle(wfBundle, bundleFile,
+		"application/vnd.example.unknownStuff");
 	}
 
 }
