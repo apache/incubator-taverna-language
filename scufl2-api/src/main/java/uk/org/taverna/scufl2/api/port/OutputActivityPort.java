@@ -5,7 +5,6 @@ package uk.org.taverna.scufl2.api.port;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
 
-
 /**
  * An OutputActivityPort represents an output from an Activity.
  * 
@@ -14,10 +13,19 @@ import uk.org.taverna.scufl2.api.activity.Activity;
  * whatever underlies the Activity.
  * 
  * @author Alan R Williams
- *
+ * 
  */
-public class OutputActivityPort extends AbstractGranularDepthPort implements ActivityPort {
+public class OutputActivityPort extends AbstractGranularDepthPort implements
+		ActivityPort, OutputPort {
 	private Activity parent;
+
+	public OutputActivityPort() {
+	}
+
+	public OutputActivityPort(Activity activity, String portName) {
+		setParent(activity);
+		setName(portName);
+	}
 
 	public Activity getParent() {
 		return parent;

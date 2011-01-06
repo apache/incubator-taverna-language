@@ -4,18 +4,13 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.core.Processor;
-import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyNode;
-
 
 /**
  * @author Alan R Williams
- *
+ * 
  */
-public class InputProcessorPort extends AbstractGranularDepthPort implements IterationStrategyNode,
-ReceiverPort, ProcessorPort, Child<Processor> {
-
-
-
+public class InputProcessorPort extends AbstractGranularDepthPort implements
+		ReceiverPort, ProcessorPort, InputPort, Child<Processor> {
 
 	private Processor parent;
 
@@ -32,7 +27,9 @@ ReceiverPort, ProcessorPort, Child<Processor> {
 		setParent(parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see uk.org.taverna.scufl2.api.common.Child#getParent()
 	 */
 	@XmlTransient
@@ -40,8 +37,12 @@ ReceiverPort, ProcessorPort, Child<Processor> {
 		return parent;
 	}
 
-	/* (non-Javadoc)
-	 * @see uk.org.taverna.scufl2.api.common.Child#setParent(uk.org.taverna.scufl2.api.common.WorkflowBean)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * uk.org.taverna.scufl2.api.common.Child#setParent(uk.org.taverna.scufl2
+	 * .api.common.WorkflowBean)
 	 */
 	public void setParent(Processor parent) {
 		if (this.parent != null && this.parent != parent) {
@@ -57,7 +58,5 @@ ReceiverPort, ProcessorPort, Child<Processor> {
 	public String toString() {
 		return parent.getName() + ":" + getName();
 	}
-
-
 
 }

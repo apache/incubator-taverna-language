@@ -20,11 +20,11 @@ public class TestT2FlowParser {
 		URL wfResource = getClass().getResource(AS_T2FLOW);
 		assertNotNull("Could not find workflow " + AS_T2FLOW, wfResource);
 		T2FlowParser parser = new T2FlowParser();
-		parser.setStrict(false);
+		parser.setStrict(true);
 		WorkflowBundle researchObj = parser.parseT2Flow(wfResource.openStream());
 		Profile profile = researchObj.getMainProfile();
 		assertEquals(1, researchObj.getProfiles().size());
 		assertEquals(profile, researchObj.getProfiles().getByName("taverna-2.1.0"));
 	}
-	
+
 }
