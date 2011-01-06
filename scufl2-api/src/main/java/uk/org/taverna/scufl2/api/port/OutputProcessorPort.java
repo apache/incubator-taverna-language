@@ -7,8 +7,8 @@ import uk.org.taverna.scufl2.api.core.Processor;
 
 
 public class OutputProcessorPort extends AbstractGranularDepthPort implements
-		SenderPort, ProcessorPort, Child<Processor> {
-	
+SenderPort, ProcessorPort, OutputPort, Child<Processor> {
+
 
 
 	private Processor parent;
@@ -16,7 +16,7 @@ public class OutputProcessorPort extends AbstractGranularDepthPort implements
 	public OutputProcessorPort() {
 		super();
 	}
-	
+
 	/**
 	 * @param parent
 	 * @param name
@@ -33,7 +33,7 @@ public class OutputProcessorPort extends AbstractGranularDepthPort implements
 	public Processor getParent() {
 		return parent;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see uk.org.taverna.scufl2.api.common.Child#setParent(uk.org.taverna.scufl2.api.common.WorkflowBean)
 	 */
@@ -46,7 +46,7 @@ public class OutputProcessorPort extends AbstractGranularDepthPort implements
 			parent.getOutputPorts().add(this);
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return getParent().getName() + "." + getName();

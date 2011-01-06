@@ -10,6 +10,7 @@ import java.util.UUID;
 import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.NamedSet;
+import uk.org.taverna.scufl2.api.common.Ported;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.port.InputWorkflowPort;
 import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
@@ -19,7 +20,7 @@ import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
  * 
  */
 public class Workflow extends AbstractNamedChild implements
-Child<WorkflowBundle> {
+		Child<WorkflowBundle>, Ported {
 
 	private static URI WORKFLOW_ROOT = URI
 	.create("http://ns.taverna.org.uk/2010/workflow/");

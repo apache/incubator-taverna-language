@@ -25,7 +25,7 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
  */
 @XmlType(propOrder = { "profilePosition", "processorBindings", "configurations" })
 public class Profile extends AbstractNamedChild implements WorkflowBean,
-		Child<WorkflowBundle> {
+Child<WorkflowBundle> {
 
 	private Set<ProcessorBinding> processorBindings = new HashSet<ProcessorBinding>();
 
@@ -33,7 +33,7 @@ public class Profile extends AbstractNamedChild implements WorkflowBean,
 
 	private int profilePosition;
 
-	private Set<Activity> activities = new HashSet<Activity>();
+	private NamedSet<Activity> activities = new NamedSet<Activity>();
 
 	private WorkflowBundle parent;
 
@@ -45,7 +45,7 @@ public class Profile extends AbstractNamedChild implements WorkflowBean,
 		super(name);
 	}
 
-	public Set<Activity> getActivities() {
+	public NamedSet<Activity> getActivities() {
 		return activities;
 	}
 
@@ -88,7 +88,8 @@ public class Profile extends AbstractNamedChild implements WorkflowBean,
 	}
 
 	public void setActivities(Set<Activity> activities) {
-		this.activities = activities;
+		this.activities.clear();
+		this.activities.addAll(activities);
 	}
 
 	/**
