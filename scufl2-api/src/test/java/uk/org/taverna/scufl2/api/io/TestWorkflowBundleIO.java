@@ -13,7 +13,7 @@ import org.junit.Test;
 import uk.org.taverna.scufl2.api.ExampleWorkflow;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 
-public class TestSillyWriter extends ExampleWorkflow {
+public class TestWorkflowBundleIO extends ExampleWorkflow {
 
 	WorkflowBundleIO bundleIO = new WorkflowBundleIO();
 	WorkflowBundle wfBundle = makeWorkflowBundle();
