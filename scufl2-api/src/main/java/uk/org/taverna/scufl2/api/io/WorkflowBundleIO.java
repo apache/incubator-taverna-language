@@ -14,7 +14,7 @@ public class WorkflowBundleIO {
 
 	private List<WorkflowBundleReader> readers;
 
-	public List<WorkflowBundleReader> discoverReaders() {
+	protected List<WorkflowBundleReader> discoverReaders() {
 		synchronized (this) {
 
 			if (readersLoader == null) {
@@ -33,7 +33,7 @@ public class WorkflowBundleIO {
 		return allReaders;
 	}
 
-	public List<WorkflowBundleWriter> discoverWriters() {
+	protected List<WorkflowBundleWriter> discoverWriters() {
 		synchronized (this) {
 			if (writersLoader == null) {
 				// FIXME: This uses Thread.currentThread.getContextClassLoader()
