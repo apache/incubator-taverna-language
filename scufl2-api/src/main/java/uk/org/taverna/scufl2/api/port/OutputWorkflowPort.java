@@ -9,7 +9,7 @@ import uk.org.taverna.scufl2.api.core.Workflow;
  * 
  */
 public class OutputWorkflowPort extends AbstractNamedChild implements ReceiverPort,
-WorkflowPort, Child<Workflow> {
+ WorkflowPort, OutputPort, Child<Workflow> {
 
 	private Workflow parent;
 

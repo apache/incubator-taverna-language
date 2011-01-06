@@ -16,7 +16,7 @@ import uk.org.taverna.scufl2.api.activity.Activity;
  * 
  */
 public class OutputActivityPort extends AbstractGranularDepthPort implements
-ActivityPort {
+		ActivityPort, OutputPort {
 	private Activity parent;
 
 	public OutputActivityPort() {

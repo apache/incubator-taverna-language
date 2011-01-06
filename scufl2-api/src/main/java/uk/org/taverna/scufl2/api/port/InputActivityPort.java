@@ -17,7 +17,8 @@ import uk.org.taverna.scufl2.api.common.ParentProperty;
  * @author Alan R Williams
  * 
  */
-public class InputActivityPort extends AbstractDepthPort implements ActivityPort {
+public class InputActivityPort extends AbstractDepthPort implements
+		ActivityPort, InputPort {
 
 	private Activity parent;
 
