@@ -1,6 +1,7 @@
 package uk.org.taverna.scufl2.api.io;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -94,13 +95,13 @@ public class WorkflowBundleIO {
 	}
 
 	public void writeBundle(WorkflowBundle wfBundle, File destination,
-			String mediaType) {
+			String mediaType) throws WriterException, IOException {
 		WorkflowBundleWriter writer = getWriterForMediaType(mediaType);
 		if (writer == null) {
 			throw new IllegalArgumentException(
 					"Could not find writer for media type " + mediaType);
 		}
-
+		writer.writeBundle(wfBundle, destination, mediaType);
 	}
 
 }

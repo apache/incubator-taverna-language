@@ -6,6 +6,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
 
@@ -88,6 +89,11 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 			public Set<String> getMediaTypes() {
 				return Collections.singleton("application/vnd.example.myOwn");
 			}
+
+			@Override
+			public void writeBundle(WorkflowBundle wfBundle, File destination,
+					String mediaType) throws WriterException, IOException {
+			}
 		};
 
 		bundleIO.setWriters(Collections.singletonList(myWriter));
@@ -107,39 +113,57 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 		bundleIO.writeBundle(wfBundle, bundleFile,
 		"application/vnd.example.silly");
 		String bundleTxt = FileUtils.readFileToString(bundleFile, "utf-8");
-		assertTrue(bundleTxt
-				.equals("WorkflowBundle 'helloWorld'\n"
-						+ "  MainWorkflow 'HelloWorld'\n"
-						+ "  Workflow 'HelloWorld'\n"
-						+ "    In 'yourName'\n"
-						+ "    Out 'results'\n"
-						+ "    Processor 'Hello'\n"
-						+ "      In 'name'\n"
-						+ "      Out 'greeting'\n"
-						+ "    Links\n"
-						+ "       'yourName' -> 'results'\n"
-						+ "       'yourName' -> 'Hello:name'\n"
-						+ "       'Hello:greeting' -> 'results'\n"
-						+ "  MainProfile 'tavernaWorkbench'\n"
-						+ "  Profile 'tavernaWorkbench'\n"
-						+ "    Activity 'HelloScript'\n"
-						+ "      Type <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity>\n"
-						+ "      In 'personName'\n"
-						+ "      Out 'hello'\n"
-						+ "    ProcessorBinding 'Hello'\n"
-						+ "      Activity 'HelloScript'\n"
-						+ "      Processor 'HelloWorld:Hello'\n"
-						+ "      InputPortBindings\n"
-						+ "        'name' -> 'personName'\n"
-						+ "      OutputPortBindings\n"
-						+ "        'hello' -> 'greeting'\n"
-						+ "    ActivatesConfiguration 'Hello'\n"
-						+ "    Configuration 'Hello'\n"
-						+ "       Type <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration>\n"
-						+ "       Configures 'activity/HelloScript'\n"
-						+ "       Property <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Script>\n"
-						+ "         '''hello = \"Hello, \" + personName;\n"
-						+ "System.out.println(\"Server says: \" + hello);'''\n"));
+		assertEquals(
+				"WorkflowBundle 'HelloWorld'\n"
+				+ "  MainWorkflow 'HelloWorld'\n"
+				+ "  Workflow 'HelloWorld'\n"
+				+ "    In 'yourName'\n"
+				+ "    Out 'results'\n"
+				+ "    Processor 'Hello'\n"
+				+ "      In 'name'\n"
+				+ "      Out 'greeting'\n"
+				+ "    Links\n"
+				+ "      'Hello:greeting' -> 'results'\n"
+				+ "      'yourName' -> 'Hello:name'\n"
+				+ "      'yourName' -> 'results'\n"
+				+ "  MainProfile 'tavernaWorkbench'\n"
+				+ "  Profile 'tavernaServer'\n"
+				+ "    Activity 'HelloScript'\n"
+				+ "      Type <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity>\n"
+				+ "      In 'personName'\n"
+				+ "      Out 'hello'\n"
+				+ "    ProcessorBinding\n"
+				+ "      Activity 'HelloScript'\n"
+				+ "      Processor 'HelloWorld:Hello'\n"
+				+ "      InputPortBindings\n"
+				+ "        'name' -> 'personName'\n"
+				+ "      OutputPortBindings\n"
+				+ "        'hello' -> 'greeting'\n"
+				+ "    Configuration 'Hello'\n"
+				+ "      Type <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration>\n"
+				+ "      Configures 'activity/HelloScript'\n"
+				+ "      Property <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#script>\n"
+				+ "        '''hello = \"Hello, \" + personName;\n"
+				+ "System.out.println(\"Server says: \" + hello);'''\n"
+				+ "  Profile 'tavernaWorkbench'\n"
+				+ "    Activity 'HelloScript'\n"
+				+ "      Type <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity>\n"
+				+ "      In 'personName'\n"
+				+ "      Out 'hello'\n"
+				+ "    ProcessorBinding\n"
+				+ "      Activity 'HelloScript'\n"
+				+ "      Processor 'HelloWorld:Hello'\n"
+				+ "      InputPortBindings\n"
+				+ "        'name' -> 'personName'\n"
+				+ "      OutputPortBindings\n"
+				+ "        'hello' -> 'greeting'\n"
+				+ "    Configuration 'Hello'\n"
+				+ "      Type <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration>\n"
+				+ "      Configures 'activity/HelloScript'\n"
+				+ "      Property <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#script>\n"
+				+ "        '''hello = \"Hello, \" + personName;\n"
+						+ "System.out.println(\"Server says: \" + hello);'''\n",
+				bundleTxt);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -147,6 +171,15 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 		File bundleFile = File.createTempFile("scufl2", "txt");
 		bundleIO.writeBundle(wfBundle, bundleFile,
 		"application/vnd.example.unknownStuff");
+	}
+
+	@Test(expected = IOException.class)
+	public void writeBundleWrongLocation() throws Exception {
+		File bundleDir = File.createTempFile("scufl2", "txt");
+		bundleDir.delete();
+		File bundleFile = new File(bundleDir, "nonExistingDir");
+		bundleIO.writeBundle(wfBundle, bundleFile,
+		"application/vnd.example.silly");
 	}
 
 }
