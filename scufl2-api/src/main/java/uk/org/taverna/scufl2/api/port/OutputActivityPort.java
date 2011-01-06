@@ -19,6 +19,9 @@ public class OutputActivityPort extends AbstractGranularDepthPort implements
 ActivityPort {
 	private Activity parent;
 
+	public OutputActivityPort() {
+	}
+
 	public OutputActivityPort(Activity activity, String portName) {
 		setParent(activity);
 		setName(portName);

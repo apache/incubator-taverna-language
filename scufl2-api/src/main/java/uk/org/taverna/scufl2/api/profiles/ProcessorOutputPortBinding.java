@@ -26,6 +26,9 @@ public class ProcessorOutputPortBinding implements Child<ProcessorBinding> {
 	private OutputProcessorPort boundProcessorPort;
 	private OutputActivityPort boundActivityPort;
 
+	public ProcessorOutputPortBinding() {
+	}
+
 	public ProcessorOutputPortBinding(ProcessorBinding processorBinding,
 			OutputActivityPort activityPort, OutputProcessorPort processorPort) {
 		setParent(processorBinding);
