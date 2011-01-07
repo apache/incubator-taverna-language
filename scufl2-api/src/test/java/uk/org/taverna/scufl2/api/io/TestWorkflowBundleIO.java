@@ -147,7 +147,15 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 
 	@Test
 	public void readToWriteRoundTrip() throws Exception {
+		InputStream inputStream = new ByteArrayInputStream(
+				getSillyFormatWorkflowBundle().getBytes("utf-8"));
+		WorkflowBundle readBundle = bundleIO.readBundle(inputStream,
+				APPLICATION_VND_EXAMPLE_SILLY);
 
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		bundleIO.writeBundle(readBundle, output, APPLICATION_VND_EXAMPLE_SILLY);
+		String bundleTxt = new String(output.toByteArray(), UTF_8);
+		assertEquals(getSillyFormatWorkflowBundle(), bundleTxt);
 	}
 
 	@Test
