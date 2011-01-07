@@ -40,7 +40,7 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 				.getReaderForMediaType("application/vnd.example.unknownStuff"));
 	}
 
-	private String getSillyFormatWorkflowBundle() {
+	public String getSillyFormatWorkflowBundle() {
 		return "WorkflowBundle 'HelloWorld'\n"
 		+ "  MainWorkflow 'HelloWorld'\n"
 		+ "  Workflow 'HelloWorld'\n"
@@ -215,7 +215,7 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 				.getWriterForMediaType(APPLICATION_VND_EXAMPLE_SILLY));
 	}
 
-	private File tempFile() throws IOException {
+	public File tempFile() throws IOException {
 		File bundleFile = File.createTempFile("scufl2", "txt");
 		bundleFile.deleteOnExit();
 		return bundleFile;
