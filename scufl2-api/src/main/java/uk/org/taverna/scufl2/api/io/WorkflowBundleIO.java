@@ -2,6 +2,9 @@ package uk.org.taverna.scufl2.api.io;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -86,6 +89,26 @@ public class WorkflowBundleIO {
 		return writers;
 	}
 
+	public WorkflowBundle readBundle(File bundleFile, String mediaType)
+	throws ParseException, IOException {
+		WorkflowBundleReader reader = getReaderForMediaType(mediaType);
+		if (reader == null) {
+			throw new IllegalArgumentException(
+					"Could not find reader for media type " + mediaType);
+		}
+		return reader.readBundle(bundleFile, mediaType);
+	}
+
+	public WorkflowBundle readBundle(InputStream inputStream, String mediaType)
+	throws ParseException, IOException {
+		WorkflowBundleReader reader = getReaderForMediaType(mediaType);
+		if (reader == null) {
+			throw new IllegalArgumentException(
+					"Could not find reader for media type " + mediaType);
+		}
+		return reader.readBundle(inputStream, mediaType);
+	}
+
 	public void setReaders(List<WorkflowBundleReader> readers) {
 		this.readers = readers;
 	}
@@ -95,13 +118,24 @@ public class WorkflowBundleIO {
 	}
 
 	public void writeBundle(WorkflowBundle wfBundle, File destination,
-			String mediaType) throws WriterException, IOException {
+			String mediaType) throws ParseException, IOException {
 		WorkflowBundleWriter writer = getWriterForMediaType(mediaType);
 		if (writer == null) {
 			throw new IllegalArgumentException(
 					"Could not find writer for media type " + mediaType);
 		}
 		writer.writeBundle(wfBundle, destination, mediaType);
+	}
+
+	public void writeBundle(WorkflowBundle wfBundle, OutputStream output,
+			String mediaType) throws ParseException, IOException {
+		WorkflowBundleWriter writer = getWriterForMediaType(mediaType);
+		if (writer == null) {
+			throw new IllegalArgumentException(
+					"Could not find writer for media type " + mediaType);
+		}
+		writer.writeBundle(wfBundle, output, mediaType);
+
 	}
 
 }

@@ -1,7 +1,10 @@
 package uk.org.taverna.scufl2.api.io;
 
+import static uk.org.taverna.scufl2.api.io.SillyReader.APPLICATION_VND_EXAMPLE_SILLY;
+
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,6 +14,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.Named;
@@ -63,52 +67,7 @@ public class SillyWriter implements WorkflowBundleWriter {
 		}
 	}
 
-	private String datalink(Port port) {
-		StringBuffer s = new StringBuffer();
-		s.append("'");
-		if (port instanceof ProcessorPort) {
-			ProcessorPort processorPort = (ProcessorPort) port;
-			s.append(escapeName(processorPort.getParent().getName()));
-			s.append(":");
-		}
-		s.append(escapeName(port.getName()));
-		s.append("'");
-		return s.toString();
-	}
-
-	private String escapeName(String name) {
-		return name.replace("\\", "\\\\").replace("'", "\\'")
-		.replace(":", "\\:").replace("/", "\\/");
-	}
-
-	@Override
-	public Set<String> getMediaTypes() {
-		return Collections.singleton("application/vnd.example.silly");
-	}
-
-	private void newLine(int indentLevel) {
-		sb.append("\n");
-		for (int i = 0; i < indentLevel; i++) {
-			sb.append("  ");
-		}
-	}
-
-	private <T extends Named> List<T> sorted(NamedSet<T> namedSet) {
-		List<T> sorted = new ArrayList<T>();
-		sorted.addAll(namedSet);
-		Collections.sort(sorted, new Comparator<T>() {
-			@Override
-			public int compare(T o1, T o2) {
-				return o1.getName().compareTo(o2.getName());
-			}
-		});
-		return sorted;
-	}
-
-	@Override
-	public synchronized void writeBundle(WorkflowBundle wb, File destination,
-			String mediaType) throws WriterException, IOException {
-		destination.createNewFile();
+	protected String bundleString(WorkflowBundle wb) {
 		sb = new StringBuffer();
 		append("WorkflowBundle");
 		append(wb);
@@ -261,10 +220,63 @@ public class SillyWriter implements WorkflowBundleWriter {
 
 		}
 		append("\n");
-
-		FileUtils.write(destination, sb.toString(), "utf-8");
 		System.out.println(sb);
+		return sb.toString();
+	}
 
+	private String datalink(Port port) {
+		StringBuffer s = new StringBuffer();
+		s.append("'");
+		if (port instanceof ProcessorPort) {
+			ProcessorPort processorPort = (ProcessorPort) port;
+			s.append(escapeName(processorPort.getParent().getName()));
+			s.append(":");
+		}
+		s.append(escapeName(port.getName()));
+		s.append("'");
+		return s.toString();
+	}
+
+	private String escapeName(String name) {
+		return name.replace("\\", "\\\\").replace("'", "\\'")
+		.replace(":", "\\:").replace("/", "\\/");
+	}
+
+	@Override
+	public Set<String> getMediaTypes() {
+		return Collections.singleton(APPLICATION_VND_EXAMPLE_SILLY);
+	}
+
+	private void newLine(int indentLevel) {
+		sb.append("\n");
+		for (int i = 0; i < indentLevel; i++) {
+			sb.append("  ");
+		}
+	}
+
+	private <T extends Named> List<T> sorted(NamedSet<T> namedSet) {
+		List<T> sorted = new ArrayList<T>();
+		sorted.addAll(namedSet);
+		Collections.sort(sorted, new Comparator<T>() {
+			@Override
+			public int compare(T o1, T o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
+		return sorted;
+	}
+
+	@Override
+	public synchronized void writeBundle(WorkflowBundle wb, File destination,
+			String mediaType) throws IOException {
+		destination.createNewFile();
+		FileUtils.write(destination, bundleString(wb), "utf-8");
+	}
+
+	@Override
+	public void writeBundle(WorkflowBundle wfBundle, OutputStream output,
+			String mediaType) throws IOException {
+		IOUtils.write(bundleString(wfBundle), output, "utf-8");
 	}
 
 }
