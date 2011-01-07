@@ -17,6 +17,7 @@ import org.apache.commons.io.IOUtils;
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
@@ -158,6 +159,7 @@ public class SillyReader implements WorkflowBundleReader {
 			processor = new Processor();
 			String processorName = parseName(scanner);
 			processor.setName(processorName);
+			processor.setParent(workflow);
 			workflow.getProcessors().add(processor);
 			return;
 		}
@@ -189,8 +191,10 @@ public class SillyReader implements WorkflowBundleReader {
 				.getByName(procPort[0]);
 				receiverPort = proc.getInputPorts().getByName(procPort[1]);
 			} else {
-				receiverPort = workflow.getOutputPorts().getByName(firstLink);
+				receiverPort = workflow.getOutputPorts().getByName(secondLink);
 			}
+
+			new DataLink(workflow, senderPort, receiverPort);
 			return;
 		}
 
@@ -287,6 +291,7 @@ public class SillyReader implements WorkflowBundleReader {
 		if (next.equals("Configuration")) {
 			level = Level.Configuration;
 			configuration = new Configuration();
+			profile.getConfigurations().add(configuration);
 			String configName = parseName(scanner);
 			configuration.setName(configName);
 			return;
@@ -314,12 +319,15 @@ public class SillyReader implements WorkflowBundleReader {
 			String[] split = nextLine.split("'''", 3);
 			if (split.length == 1) {
 				largeString.append(split[0]);
+				largeString.append('\n');
 			} else if (next.startsWith("'''")) {
 				largeString = new StringBuffer();
 				largeString.append(split[1]);
 				if (split.length == 3) {
 					// It was a one-liner
 					finished = true;
+				} else {
+					largeString.append('\n');
 				}
 			} else {
 				largeString.append(split[0]);
