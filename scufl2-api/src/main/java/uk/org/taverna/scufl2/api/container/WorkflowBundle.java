@@ -16,11 +16,11 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
 
 /**
  * @author Alan R Williams
- * 
+ *
  */
 
-public class WorkflowBundle extends AbstractNamed implements
-		WorkflowBean, Named, Root {
+public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
+		Named, Root {
 
 	private static URI WORKFLOW_BUNDLE_ROOT = URI
 			.create("http://ns.taverna.org.uk/2010/workflowBundle/");
