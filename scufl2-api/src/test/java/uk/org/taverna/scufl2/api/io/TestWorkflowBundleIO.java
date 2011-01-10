@@ -24,8 +24,8 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 public class TestWorkflowBundleIO extends ExampleWorkflow {
 
 	private static final String UTF_8 = "utf-8";
-	WorkflowBundleIO bundleIO = new WorkflowBundleIO();
-	WorkflowBundle wfBundle = makeWorkflowBundle();
+	protected WorkflowBundleIO bundleIO = new WorkflowBundleIO();
+	protected WorkflowBundle wfBundle = makeWorkflowBundle();
 
 	@Test
 	public void getReaderForMediaType() throws Exception {
