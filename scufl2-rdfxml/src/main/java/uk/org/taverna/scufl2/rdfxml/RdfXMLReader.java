@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
+import java.util.Collections;
 import java.util.Set;
 
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
@@ -11,10 +12,12 @@ import uk.org.taverna.scufl2.api.io.WorkflowBundleReader;
 
 public class RdfXMLReader implements WorkflowBundleReader {
 
+	public static final String APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE = "application/vnd.taverna.scufl2.workflow-bundle";
+
 	@Override
 	public Set<String> getMediaTypes() {
-		// TODO Auto-generated method stub
-		return null;
+		return Collections
+				.singleton(APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE);
 	}
 
 	@Override

@@ -41,9 +41,14 @@
 		<dependency>
 			<groupId>uk.org.taverna.scufl2</groupId>
 			<artifactId>scufl2-api</artifactId>
-			<version>0.1-SNAPSHOT</version>
-			<type>bundle</type>
+			<version>0.1-SNAPSHOT</version>			
+			<type>test-jar</type>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>uk.org.taverna.scufl2</groupId>
+			<artifactId>scufl2-ucfpackage</artifactId>
+			<version>0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
