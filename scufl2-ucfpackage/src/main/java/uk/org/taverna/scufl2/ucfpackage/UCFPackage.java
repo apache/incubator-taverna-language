@@ -1,6 +1,7 @@
 package uk.org.taverna.scufl2.ucfpackage;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -18,7 +19,6 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.namespace.QName;
 
 import org.oasis_open.names.tc.opendocument.xmlns.container.Container;
 import org.oasis_open.names.tc.opendocument.xmlns.container.Container.RootFiles;
@@ -50,20 +50,41 @@ public class UCFPackage {
 	private boolean createdContainerXml = false;
 	private static ObjectFactory containerFactory = new ObjectFactory();
 
-	public UCFPackage() throws Exception {
-		odfPackage = OdfPackage.create();
+	public UCFPackage() throws IOException {
+		try {
+			odfPackage = OdfPackage.create();
+			parseContainerXML();
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new IOException("Could not create empty UCF Package", e);
+		}
 		// odfPackage.setMediaType(MIME_EPUB);
-		parseContainerXML();
 	}
 
-	public UCFPackage(File containerFile) throws Exception {
-		odfPackage = OdfPackage.loadPackage(containerFile);
-		parseContainerXML();
+	public UCFPackage(File containerFile) throws IOException {
+		try {
+			odfPackage = OdfPackage.loadPackage(containerFile);
+			parseContainerXML();
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new IOException("Could not load UCF Package from "
+					+ containerFile, e);
+		}
 	}
 
-	public UCFPackage(InputStream inputStream) throws Exception {
-		odfPackage = OdfPackage.loadPackage(inputStream);
-		parseContainerXML();
+	public UCFPackage(InputStream inputStream) throws IOException {
+		try {
+			odfPackage = OdfPackage.loadPackage(inputStream);
+			parseContainerXML();
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new IOException(
+					"Could not load UCF Package from input stream", e);
+		}
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -100,20 +121,29 @@ public class UCFPackage {
 	}
 
 	public void save(File packageFile) throws IOException {
+		File tempFile = File.createTempFile("." + packageFile.getName(),
+				".tmp", packageFile.getParentFile());
+		prepareAndSave(tempFile);
+		if (!tempFile.renameTo(packageFile)) {
+			throw new IOException("Could not rename temp file " + tempFile
+					+ " to " + packageFile);
+		}
+	}
+
+	protected void prepareAndSave(File tempFile) throws IOException {
 		if (getPackageMediaType() == null) {
 			throw new IllegalStateException("Package media type must be set");
 		}
 
 		// Write using temp file, and do rename in the end
-		File tempFile = File.createTempFile("." + packageFile.getName(),
-				".tmp", packageFile.getParentFile());
+
 		try {
 			prepareContainerXML();
 			odfPackage.save(tempFile);
 		} catch (IOException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new IOException("Could not save bundle to " + packageFile, e);
+			throw new IOException("Could not save bundle to " + tempFile, e);
 		} finally {
 			odfPackage.close();
 		}
@@ -121,12 +151,7 @@ public class UCFPackage {
 			// To be safe we'll reload from 'our' tempFile
 			odfPackage = OdfPackage.loadPackage(tempFile);
 		} catch (Exception e) {
-			throw new IOException("Could not reload package from "
-					+ packageFile);
-		}
-		if (!tempFile.renameTo(packageFile)) {
-			throw new IOException("Could not rename temp file " + tempFile
-					+ " to " + packageFile);
+			throw new IOException("Could not reload package from " + tempFile);
 		}
 	}
 
@@ -137,21 +162,23 @@ public class UCFPackage {
 		}
 
 		/* Check if we should prune <rootFiles> */
-		Iterator<Object> iterator = containerXml.getValue().getRootFilesOrAny().iterator();
+		Iterator<Object> iterator = containerXml.getValue().getRootFilesOrAny()
+				.iterator();
 		boolean foundAlready = false;
 		while (iterator.hasNext()) {
 			Object anyOrRoot = iterator.next();
-			if (! (anyOrRoot instanceof JAXBElement)) {
+			if (!(anyOrRoot instanceof JAXBElement)) {
 				continue;
 			}
 			@SuppressWarnings("rawtypes")
-			JAXBElement elem = (JAXBElement)anyOrRoot;
-			if (! elem.getDeclaredType().equals(RootFiles.class)) {
+			JAXBElement elem = (JAXBElement) anyOrRoot;
+			if (!elem.getDeclaredType().equals(RootFiles.class)) {
 				continue;
 			}
 			RootFiles rootFiles = (RootFiles) elem.getValue();
-			if (foundAlready ||
-					(rootFiles.getOtherAttributes().isEmpty() && rootFiles.getAnyOrRootFile().isEmpty())) {
+			if (foundAlready
+					|| (rootFiles.getOtherAttributes().isEmpty() && rootFiles
+							.getAnyOrRootFile().isEmpty())) {
 				// Delete it!
 				System.err.println("Deleting unneccessary <rootFiles>");
 				iterator.remove();
@@ -471,5 +498,27 @@ public class UCFPackage {
 
 	protected JAXBElement<Container> getContainerXML() {
 		return containerXml;
+	}
+
+	public void save(OutputStream output) throws IOException {
+		File tempFile = File.createTempFile("ucfpackage", ".tmp");
+		prepareAndSave(tempFile);
+
+		// Copy file to the output
+
+		// Note - Should use IOUtils, but we're trying to avoid external
+		// dependencies
+		InputStream inStream = new FileInputStream(tempFile);
+		try {
+			byte[] buffer = new byte[8192];
+			int n = 0;
+			while (n > -1) {
+				output.write(buffer, 0, n);
+				n = inStream.read(buffer);
+			}
+		} finally {
+			inStream.close();
+			tempFile.delete();
+		}
 	}
 }

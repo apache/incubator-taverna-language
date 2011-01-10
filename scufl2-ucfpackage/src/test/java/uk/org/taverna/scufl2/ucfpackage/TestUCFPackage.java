@@ -20,7 +20,11 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.management.openmbean.InvalidOpenTypeException;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -162,6 +166,27 @@ public class TestUCFPackage {
 		ZipFile zipFile = new ZipFile(tmpFile);
 		assertNotNull(zipFile.getEntry("helloworld.txt"));
 
+		assertNotNull(zipFile.getEntry("again.txt"));
+	}
+
+	@Test
+	public void doubleSaveOutputStream() throws Exception {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		UCFPackage container = new UCFPackage();
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
+		container
+				.addResource("Hello there þĸł", "helloworld.txt", "text/plain");
+		container.save(outStream);
+		container.addResource("Hello again", "again.txt", "text/plain");
+		outStream.close();
+
+		outStream = new ByteArrayOutputStream();
+		container.save(outStream);
+		outStream.close();
+
+		FileUtils.writeByteArrayToFile(tmpFile, outStream.toByteArray());
+		ZipFile zipFile = new ZipFile(tmpFile);
+		assertNotNull(zipFile.getEntry("helloworld.txt"));
 		assertNotNull(zipFile.getEntry("again.txt"));
 	}
 
