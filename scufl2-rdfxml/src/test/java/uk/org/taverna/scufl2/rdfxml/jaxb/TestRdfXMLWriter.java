@@ -1,11 +1,22 @@
 package uk.org.taverna.scufl2.rdfxml.jaxb;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.text.ParseException;
 
+import javax.management.openmbean.InvalidOpenTypeException;
+
+import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.TestWorkflowBundleIO;
@@ -36,6 +47,27 @@ public class TestRdfXMLWriter {
 
 	}
 
+	@Test
+	public void writeBundleToStream() throws Exception {
+
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		bundleIO.writeBundle(workflowBundle, outStream,
+				APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE);
+		outStream.close();
+
+		InputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
+		UCFPackage ucfPackage;
+		try {
+			// Avoid UCFPackage from creating a temporary file
+			System.setProperty("org.odftoolkit.odfdom.tmpfile.disable", "true");
+			ucfPackage = new UCFPackage(inStream);
+		} finally {
+			System.clearProperty("org.odftoolkit.odfdom.tmpfile.disable");
+		}
+		verifyPackageStructure(ucfPackage);
+
+	}
+
 	protected void verifyPackageStructure(UCFPackage ucfPackage) {
 		assertEquals(
 				RdfXMLReader.APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE,
@@ -45,11 +77,15 @@ public class TestRdfXMLWriter {
 						.getMediaType());
 
 		assertEquals(APPLICATION_RDF_XML,
-				ucfPackage.getResourceEntry("workflowBundle.rdf")
+				ucfPackage.getResourceEntry("workflow/HelloWorld.rdf")
 						.getMediaType());
 
-
-
+		assertEquals(APPLICATION_RDF_XML,
+				ucfPackage.getResourceEntry("profile/tavernaServer.rdf")
+						.getMediaType());
+		assertEquals(APPLICATION_RDF_XML,
+				ucfPackage.getResourceEntry("profile/tavernaWorkbench.rdf")
+						.getMediaType());
 	}
 
 	public File tempFile() throws IOException {
