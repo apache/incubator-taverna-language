@@ -22,6 +22,7 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.TestWorkflowBundleIO;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
 import uk.org.taverna.scufl2.rdfxml.RdfXMLReader;
+import uk.org.taverna.scufl2.rdfxml.RdfXMLWriter;
 import uk.org.taverna.scufl2.ucfpackage.UCFPackage;
 import uk.org.taverna.scufl2.ucfpackage.UCFPackage.ResourceEntry;
 
@@ -44,9 +45,15 @@ public class TestRdfXMLWriter {
 				APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE);
 		UCFPackage ucfPackage = new UCFPackage(bundleFile);
 		verifyPackageStructure(ucfPackage);
-
+		// TODO: Check RDF/XML using xpath
 	}
 
+	@Test
+	public void validFileName() {
+		assertEquals("f%2fsd%5Csdf'asd%20fa%3asd%20%C4%91%C3%BE%E2%80%9D%C2%BB%C3%A6", 
+				new RdfXMLWriter().validFilename("f/sd\\sdf'asd fa:sd đþ”»æ"));
+	}
+	
 	@Test
 	public void writeBundleToStream() throws Exception {
 
