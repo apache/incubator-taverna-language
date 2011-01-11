@@ -582,4 +582,19 @@ public class UCFPackage {
 			tempFile.delete();
 		}
 	}
+	public OutputStream addResourceUsingOutputStream(String path,
+			String mediaType) throws IOException {
+		if (path.equals(CONTAINER_XML)) {
+			throw new IllegalArgumentException("Can't add " + CONTAINER_XML + " using OutputStream");
+			// as we need to parse it after insertion
+		}
+		try {
+			return odfPackage.insertOutputStream(path, mediaType);
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new IOException("Could not add " + path, e);
+		}
+		
+	}
 }
