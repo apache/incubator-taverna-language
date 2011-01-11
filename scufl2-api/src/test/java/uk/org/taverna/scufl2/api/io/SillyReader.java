@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.text.ParseException;
 import java.util.Collections;
 import java.util.Scanner;
 import java.util.Set;
@@ -78,7 +77,7 @@ public class SillyReader implements WorkflowBundleReader {
 		return Collections.singleton(APPLICATION_VND_EXAMPLE_SILLY);
 	}
 
-	protected WorkflowBundle parse(String bundleString) throws ParseException {
+	protected WorkflowBundle parse(String bundleString) throws ReaderException {
 		System.out.println(bundleString);
 		wb = new WorkflowBundle();
 		Scanner scanner = new Scanner(bundleString);
@@ -93,7 +92,7 @@ public class SillyReader implements WorkflowBundleReader {
 		return wb;
 	}
 
-	protected void parseLine(String nextLine) throws ParseException {
+	protected void parseLine(String nextLine) throws ReaderException {
 		Scanner scanner = new Scanner(nextLine.trim());
 		// allow any whitespace
 		String next = scanner.next();
@@ -148,8 +147,8 @@ public class SillyReader implements WorkflowBundleReader {
 				}
 				break;
 			default:
-				throw new ParseException("Unexpected " + next + " at level "
-						+ level, 0);
+				throw new ReaderException("Unexpected " + next + " at level "
+						+ level);
 			}
 			return;
 		}
@@ -355,14 +354,14 @@ public class SillyReader implements WorkflowBundleReader {
 
 	@Override
 	public WorkflowBundle readBundle(File bundleFile, String mediaType)
-	throws IOException, ParseException {
+			throws IOException, ReaderException {
 		String bundleString = FileUtils.readFileToString(bundleFile, "utf-8");
 		return parse(bundleString);
 	}
 
 	@Override
 	public WorkflowBundle readBundle(InputStream inputStream, String mediaType)
-	throws IOException, ParseException {
+			throws IOException, ReaderException {
 		String bundleString = IOUtils.toString(inputStream, "utf-8");
 		return parse(bundleString);
 

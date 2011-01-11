@@ -3,14 +3,11 @@ package uk.org.taverna.scufl2.rdfxml;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleReader;
 
 public class RdfXMLReader implements WorkflowBundleReader {
@@ -28,7 +25,7 @@ public class RdfXMLReader implements WorkflowBundleReader {
 
 	@Override
 	public WorkflowBundle readBundle(File bundleFile, String mediaType)
-			throws ParseException, IOException {
+			throws ReaderException, IOException {
 
 		// TODO Auto-generated method stub
 		return null;
@@ -36,7 +33,7 @@ public class RdfXMLReader implements WorkflowBundleReader {
 
 	@Override
 	public WorkflowBundle readBundle(InputStream inputStream, String mediaType)
-			throws ParseException, IOException {
+			throws ReaderException, IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}

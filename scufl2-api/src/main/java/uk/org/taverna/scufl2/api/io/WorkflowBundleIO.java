@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -90,7 +89,7 @@ public class WorkflowBundleIO {
 	}
 
 	public WorkflowBundle readBundle(File bundleFile, String mediaType)
-	throws ParseException, IOException {
+			throws ReaderException, IOException {
 		WorkflowBundleReader reader = getReaderForMediaType(mediaType);
 		if (reader == null) {
 			throw new IllegalArgumentException(
@@ -100,7 +99,7 @@ public class WorkflowBundleIO {
 	}
 
 	public WorkflowBundle readBundle(InputStream inputStream, String mediaType)
-	throws ParseException, IOException {
+			throws ReaderException, IOException {
 		WorkflowBundleReader reader = getReaderForMediaType(mediaType);
 		if (reader == null) {
 			throw new IllegalArgumentException(
@@ -118,7 +117,7 @@ public class WorkflowBundleIO {
 	}
 
 	public void writeBundle(WorkflowBundle wfBundle, File destination,
-			String mediaType) throws ParseException, IOException {
+			String mediaType) throws WriterException, IOException {
 		WorkflowBundleWriter writer = getWriterForMediaType(mediaType);
 		if (writer == null) {
 			throw new IllegalArgumentException(
@@ -128,7 +127,7 @@ public class WorkflowBundleIO {
 	}
 
 	public void writeBundle(WorkflowBundle wfBundle, OutputStream output,
-			String mediaType) throws ParseException, IOException {
+			String mediaType) throws WriterException, IOException {
 		WorkflowBundleWriter writer = getWriterForMediaType(mediaType);
 		if (writer == null) {
 			throw new IllegalArgumentException(
