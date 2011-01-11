@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -198,6 +199,26 @@ public class TestUCFPackage {
 		container.addResource(bytes, "randomBytes", "application/octet-stream");
 		container.save(tmpFile);
 
+		UCFPackage loaded = new UCFPackage(tmpFile);
+		byte[] loadedBytes = loaded.getResourceAsBytes("randomBytes");
+		assertArrayEquals(bytes, loadedBytes);
+	}
+	
+	@Test
+	public void addResourceOutputStream() throws Exception {
+		UCFPackage container = new UCFPackage();
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
+		byte[] bytes = makeBytes(2048);
+		
+		OutputStream outStream = container.addResourceUsingOutputStream("randomBytes", "application/octet-stream");
+		IOUtils.write(bytes, outStream);
+
+		assertTrue(container.listResources().isEmpty());
+		
+		outStream.close();		
+		assertFalse(container.listResources().isEmpty());
+		
+		container.save(tmpFile);
 		UCFPackage loaded = new UCFPackage(tmpFile);
 		byte[] loadedBytes = loaded.getResourceAsBytes("randomBytes");
 		assertArrayEquals(bytes, loadedBytes);
