@@ -14,8 +14,11 @@ import org.w3c.dom.Document;
 
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Workflow;
+import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ObjectFactory;
+import uk.org.taverna.scufl2.rdfxml.jaxb.ProfileDocument;
 import uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowBundleDocument;
+import uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowDocument;
 
 public class RDFXMLSerializer {
 
@@ -62,9 +65,10 @@ public class RDFXMLSerializer {
 		}		
 	}
 
-	public Document workflowDoc(Workflow wf, URI path) {
-		// TODO Auto-generated method stub
-		return null;
+	public void workflowDoc(OutputStream outputStream, Workflow wf, URI path) throws JAXBException {
+		WorkflowDocument doc = getObjectFactory().createWorkflowDocument();
+		JAXBElement<RDF> element = new org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory().createRDF(doc);
+		getMarshaller().marshal(element, outputStream);
 	}
 
 	public void setWfBundle(WorkflowBundle wfBundle) {
@@ -84,6 +88,13 @@ public class RDFXMLSerializer {
 			return getJAxbContextStatic();
 		}
 		return jaxbContext;
+	}
+
+	public void profileDoc(OutputStream outputStream, Profile pf, URI create) throws JAXBException {
+		ProfileDocument doc = getObjectFactory().createProfileDocument();
+		JAXBElement<RDF> element = new org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory().createRDF(doc);
+		getMarshaller().marshal(element, outputStream);
+		
 	}
 
 }
