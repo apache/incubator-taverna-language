@@ -181,10 +181,17 @@ public class ExampleWorkflow {
 		// NOTE: setSameBaseAs should only be called when loading a workflow
 		// bundle
 		// which already has an ID
-		// workflowBundle.setSameBaseAs(URI.create("http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/"))
-		workflowBundle.setMainWorkflow(makeMainWorkflow());
-		workflowBundle.setMainProfile(makeMainProfile());
-		workflowBundle.getProfiles().add(makeSecondaryProfile());
+		workflowBundle
+				.setSameBaseAs(URI
+						.create("http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/"));
+		Workflow workflow = makeMainWorkflow();
+		workflow.setParent(workflowBundle);
+		workflowBundle.setMainWorkflow(workflow);
+		Profile profile = makeMainProfile();
+		profile.setParent(workflowBundle);
+		workflowBundle.setMainProfile(profile);
+		Profile secondaryProfile = makeSecondaryProfile();
+		secondaryProfile.setParent(workflowBundle);
 		return workflowBundle;
 	}
 
