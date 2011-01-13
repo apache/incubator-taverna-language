@@ -11,6 +11,7 @@ import java.io.InputStream;
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.TestWorkflowBundleIO;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
@@ -38,11 +39,6 @@ public class TestRDFXMLWriter {
 		// TODO: Check RDF/XML using xpath
 	}
 
-	@Test
-	public void validFileName() {
-		assertEquals("f%2fsd%5Csdf'asd%20fa%3asd%20%C4%91%C3%BE%E2%80%9D%C2%BB%C3%A6", 
-				new RDFXMLWriter().validFilename("f/sd\\sdf'asd fa:sd đþ”»æ"));
-	}
 	
 	@Test
 	public void writeBundleToStream() throws Exception {
@@ -87,7 +83,8 @@ public class TestRDFXMLWriter {
 
 	public File tempFile() throws IOException {
 		File bundleFile = File.createTempFile("test", ".scufl2");
-		bundleFile.deleteOnExit();
+		//bundleFile.deleteOnExit();
+		System.out.println(bundleFile);
 		return bundleFile;
 	}
 

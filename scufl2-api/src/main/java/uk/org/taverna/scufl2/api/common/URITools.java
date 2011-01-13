@@ -1,6 +1,7 @@
 package uk.org.taverna.scufl2.api.common;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 
@@ -31,7 +32,7 @@ public class URITools {
 		return relativePath(rootUri, beanUri);
 	}
 
-	private URI uriForBean(WorkflowBean bean) {
+	public URI uriForBean(WorkflowBean bean) {
 		if (bean == null) {
 			throw new NullPointerException("Bean can't be null");
 		}
@@ -64,9 +65,8 @@ public class URITools {
 			URI relationUri = parentUri.resolve(relation.toLowerCase());
 			if (bean instanceof Named) {
 				Named named = (Named) bean;
-				String name = named.getName();
-				// TODO: Escape name
-				return relationUri.resolve(name);
+				String name = validFilename(named.getName());
+				return relationUri.resolve(name + "/");
 			} else {
 				throw new IllegalStateException(
 						"Can't create URIs for non-named child: " + bean);
@@ -76,4 +76,22 @@ public class URITools {
 		throw new IllegalArgumentException("Unsupported type "
 				+ bean.getClass() + " for bean " + bean);
 	}
+
+	public String validFilename(String name) {
+
+		// Make a relative URI
+		URI uri;
+		try {
+			uri = new URI(null, null, name, null, null);
+		} catch (URISyntaxException e) {
+			throw new IllegalArgumentException("Invalid name " + name);
+		}
+		String ascii = uri.toASCIIString();
+		// And escape / and \
+		String escaped = ascii.replace("/", "%2f");
+		escaped = escaped.replace("\\", "%5c");
+		escaped = escaped.replace(":", "%3a");
+		return escaped;
+	}
+
 }
