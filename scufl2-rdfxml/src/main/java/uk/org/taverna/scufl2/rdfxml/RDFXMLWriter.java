@@ -19,9 +19,9 @@ import uk.org.taverna.scufl2.api.io.WorkflowBundleWriter;
 import uk.org.taverna.scufl2.api.io.WriterException;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.ucfpackage.UCFPackage;
-import static uk.org.taverna.scufl2.rdfxml.RdfXMLReader.*;
+import static uk.org.taverna.scufl2.rdfxml.RDFXMLReader.*;
 
-public class RdfXMLWriter implements WorkflowBundleWriter {
+public class RDFXMLWriter implements WorkflowBundleWriter {
 
 	private static final String RDF = ".rdf";
 	private static final String WORKFLOW = "workflow/";

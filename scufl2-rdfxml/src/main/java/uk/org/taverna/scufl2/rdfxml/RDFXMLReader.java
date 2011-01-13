@@ -10,7 +10,7 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleReader;
 
-public class RdfXMLReader implements WorkflowBundleReader {
+public class RDFXMLReader implements WorkflowBundleReader {
 
 	public static final String APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE = "application/vnd.taverna.scufl2.workflow-bundle";
 
