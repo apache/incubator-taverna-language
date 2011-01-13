@@ -13,6 +13,7 @@ import javax.xml.bind.JAXBException;
 
 import org.w3c.dom.Document;
 
+import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleWriter;
@@ -28,6 +29,8 @@ public class RDFXMLWriter implements WorkflowBundleWriter {
 	private static final String PROFILE = "profile/";
 	private static final String WORKFLOW_BUNDLE_RDF = "workflowBundle.rdf";
 
+	private static URITools uriTools = new URITools();
+	
 	@Override
 	public Set<String> getMediaTypes() {
 		return Collections
@@ -50,7 +53,7 @@ public class RDFXMLWriter implements WorkflowBundleWriter {
 		RDFXMLSerializer serializer = new RDFXMLSerializer(wfBundle);
 		
 		for (Workflow wf : wfBundle.getWorkflows()) {
-			String path = WORKFLOW + validFilename(wf.getName()) + RDF;
+			String path = WORKFLOW + uriTools.validFilename(wf.getName()) + RDF;
 
 			OutputStream outputStream = ucfPackage
 					.addResourceUsingOutputStream(path, APPLICATION_RDF_XML);
@@ -63,7 +66,7 @@ public class RDFXMLWriter implements WorkflowBundleWriter {
 		}
 
 		for (Profile pf : wfBundle.getProfiles()) {
-			String path = PROFILE + validFilename(pf.getName()) + RDF;
+			String path = PROFILE + uriTools.validFilename(pf.getName()) + RDF;
 			OutputStream outputStream = ucfPackage
 					.addResourceUsingOutputStream(path, APPLICATION_RDF_XML);
 			try {
@@ -91,22 +94,6 @@ public class RDFXMLWriter implements WorkflowBundleWriter {
 
 	}
 
-	public String validFilename(String name) {
-
-		// Make a relative URI
-		URI uri;
-		try {
-			uri = new URI(null, null, name, null, null);
-		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException("Invalid name " + name);
-		}
-		String ascii = uri.toASCIIString();
-		// And escape / and \
-		String escaped = ascii.replace("/", "%2f");
-		escaped = escaped.replace("\\", "%5c");
-		escaped = escaped.replace(":", "%3a");
-		return escaped;
-	}
 
 	@Override
 	public void writeBundle(WorkflowBundle wfBundle, OutputStream output,
