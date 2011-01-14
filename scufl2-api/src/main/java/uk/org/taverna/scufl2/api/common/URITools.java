@@ -4,6 +4,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.port.InputPort;
+import uk.org.taverna.scufl2.api.port.OutputPort;
 
 public class URITools {
 
@@ -80,8 +82,17 @@ public class URITools {
 			if (!parentUri.getPath().endsWith("/")) {
 				parentUri = parentUri.resolve(parentUri.getPath() + "/");
 			}
-			// TODO: Get relation by container
-			String relation = child.getClass().getSimpleName() + "/";
+			String relation;
+			if (child instanceof InputPort) {
+				relation = "in/";
+			} else if (child instanceof OutputPort) {
+				relation = "out/";
+			} else {
+				// TODO: Get relation by container annotations
+				relation = child.getClass().getSimpleName() + "/";
+				// Stupid fallback
+			}
+
 			URI relationUri = parentUri.resolve(relation.toLowerCase());
 			if (bean instanceof Named) {
 				Named named = (Named) bean;
