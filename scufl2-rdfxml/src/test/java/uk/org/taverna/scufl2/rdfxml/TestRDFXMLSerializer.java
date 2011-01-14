@@ -35,6 +35,7 @@ public class TestRDFXMLSerializer {
 	@Before
 	public void makeExampleWorkflow() {
 		workflowBundle = new ExampleWorkflow().makeWorkflowBundle();
+		serializer.setWfBundle(workflowBundle);
 	}
 
 	
@@ -44,6 +45,8 @@ public class TestRDFXMLSerializer {
 		serializer.workflowBundleDoc(outStream, URI.create("workflowBundle.rdf"));
 		Document doc = parseXml(outStream);
 
+		System.out.write(outStream.toByteArray());
+		
 		Element root = doc.getRootElement();
 		
 		checkRoot(root);
@@ -53,7 +56,7 @@ public class TestRDFXMLSerializer {
 
 
 	protected void checkWorkflowBundleDocument(Element root) {
-		assertEquals("scufl2:WorkflowBundleDocument", root.getAttributeValue("type", XSI_NS));
+		assertEquals("WorkflowBundleDocument", root.getAttributeValue("type", XSI_NS));
 
 		Element wbundle = root.getChild("WorkflowBundle", SCUFL2_NS);
 		assertSame(wbundle, root.getChildren().get(0));
@@ -65,11 +68,10 @@ public class TestRDFXMLSerializer {
 	protected void checkRoot(Element root) {
 		assertEquals(RDF_NS, root.getNamespace());		
 		assertEquals("rdf", root.getNamespacePrefix());
-		assertEquals("RDF", root.getName());
-		assertEquals(SCUFL2_NS, root.getNamespace("scufl2"));
+		assertEquals("RDF", root.getName());		
 		assertEquals(SCUFL2_NS, root.getNamespace(""));		
 		String schemaLocation = root.getAttributeValue("schemaLocation", XSI_NS);
-		String[] schemaLocations = schemaLocation.replaceAll("\\w+", " ").split(" ");
+		String[] schemaLocations = schemaLocation.split(" ");
 		String[] expectedSchemaLocations = {
 				"http://ns.taverna.org.uk/2010/scufl2#","http://ns.taverna.org.uk/2010/scufl2/scufl2.xsd",
 				"http://www.w3.org/1999/02/22-rdf-syntax-ns#","http://ns.taverna.org.uk/2010/scufl2/rdf.xsd"

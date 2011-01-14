@@ -1,9 +1,9 @@
 package uk.org.taverna.scufl2.rdfxml.impl;
 
-import com.sun.xml.internal.bind.marshaller.NamespacePrefixMapper;
+import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 
 @SuppressWarnings("restriction")
-public class NamespacePrefixMapperImpl extends NamespacePrefixMapper {
+public class NamespacePrefixMapperJAXB_RI extends NamespacePrefixMapper {
 
 	public String getPreferredPrefix(String namespaceUri, String suggestion,
 			boolean requirePrefix) {
