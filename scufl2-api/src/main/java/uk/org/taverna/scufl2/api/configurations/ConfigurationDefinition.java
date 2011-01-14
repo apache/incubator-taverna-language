@@ -21,7 +21,8 @@
 package uk.org.taverna.scufl2.api.configurations;
 
 import java.net.URI;
-import java.util.List;
+
+import uk.org.taverna.scufl2.api.property.PropertyResource;
 
 /**
  * Definition of the {@link Configuration} required to configure a
@@ -33,12 +34,13 @@ public class ConfigurationDefinition {
 
 	private URI configurableType;
 
-	private final ObjectPropertyDefinition objectPropertyDefinition = new ObjectPropertyDefinition();
+	private final PropertyResourceDefinition propertyResourceDefinition;
 
 	/**
 	 * Creates the definition of a {@link Configuration}.
 	 */
 	public ConfigurationDefinition() {
+		propertyResourceDefinition = new PropertyResourceDefinition();
 	}
 
 	/**
@@ -48,28 +50,11 @@ public class ConfigurationDefinition {
 	 * 
 	 * @param configurableType
 	 *            the URI that identifies the <code>Configurable</code> type
-	 * @param objectClass
 	 */
-	public ConfigurationDefinition(URI configurableType, URI objectClass) {
+	public ConfigurationDefinition(URI configurableType) {
 		this.configurableType = configurableType;
-		objectPropertyDefinition.setObjectClass(objectClass);
-	}
-
-	/**
-	 * Creates the definition of the {@link Configuration} required to configure the
-	 * {@link uk.org.taverna.scufl2.api.common.Configurable Configurable} specified by the
-	 * configurableType.
-	 * 
-	 * @param configurableType
-	 *            the URI that identifies the <code>Configurable</code> type
-	 * @param objectClass
-	 * @param propertyDefinitions
-	 */
-	public ConfigurationDefinition(URI configurableType, URI objectClass,
-			List<PropertyDefinition> propertyDefinitions) {
-		this.configurableType = configurableType;
-		objectPropertyDefinition.setObjectClass(objectClass);
-		objectPropertyDefinition.setPropertyDefinitions(propertyDefinitions);
+		propertyResourceDefinition = new PropertyResourceDefinition();
+		propertyResourceDefinition.setTypeURI(configurableType.resolve("#ConfigType"));
 	}
 
 	/**
@@ -94,56 +79,14 @@ public class ConfigurationDefinition {
 	}
 
 	/**
+	 * Returns the definition of the {@link PropertyResource} required by the
+	 * <code>Configuration</code>.
 	 * 
-	 * 
-	 * @return
+	 * @return the definition of the {@link PropertyResource} required by the
+	 *         <code>Configuration</code>
 	 */
-	public URI getObjectClass() {
-		return objectPropertyDefinition.getObjectClass();
-	}
-
-	/**
-	 * 
-	 * 
-	 * @param objectClass
-	 */
-	public void setObjectClass(URI objectClass) {
-		objectPropertyDefinition.setObjectClass(objectClass);
-	}
-
-	/**
-	 * Returns the {@link PropertyDefinition PropertyDefinitions} required by the
-	 * {@link Configuration}.
-	 * 
-	 * @return the <code>PropertyDefinition</code>s required by the <code>Configuration</code>
-	 */
-	public List<PropertyDefinition> getPropertyDefinitions() {
-		return objectPropertyDefinition.getPropertyDefinitions();
-	}
-
-	/**
-	 * Sets the {@link PropertyDefinition PropertyDefinitions} required by the {@link Configuration}
-	 * .
-	 * 
-	 * @param propertyDefinitions
-	 *            the <code>PropertyDefinition</code>s required by the <code>Configuration</code>
-	 */
-	public void setPropertyDefinitions(List<PropertyDefinition> propertyDefinitions) {
-		objectPropertyDefinition.setPropertyDefinitions(propertyDefinitions);
-	}
-
-	/**
-	 * Returns a {@link PropertyDefinition PropertyDefinitions} with the specified predicate.
-	 * 
-	 * Return null if this <code>ConfigurationDefinition</code> does not contain a
-	 * <code>PropertyDefinition</code> with the specified predicate.
-	 * 
-	 * @param predicate
-	 *            the predicate of the <code>PropertyDefinition</code> to return
-	 * @return a <code>PropertyDefinition</code> with the specified predicate
-	 */
-	public PropertyDefinition getPropertyDefinition(URI predicate) {
-		return objectPropertyDefinition.getPropertyDefinition(predicate);
+	public PropertyResourceDefinition getPropertyResourceDefinition() {
+		return propertyResourceDefinition;
 	}
 
 	@Override
@@ -152,10 +95,7 @@ public class ConfigurationDefinition {
 		sb.append("ConfigurationDefinition for ");
 		sb.append(configurableType);
 		sb.append("[\n");
-		for (PropertyDefinition property : getPropertyDefinitions()) {
-			sb.append(property);
-			sb.append("\n");
-		}
+		sb.append(propertyResourceDefinition);
 		sb.append("]\n");
 		return sb.toString();
 	}

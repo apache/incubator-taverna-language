@@ -22,6 +22,7 @@ package uk.org.taverna.scufl2.api.configurations;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -44,7 +45,7 @@ public class PropertyDefinitionTest {
 	@Before
 	public void setUp() throws Exception {
 		activityURI = URI.create("http://ns.taverna.org.uk/2010/activity/test");
-		propertyDefinition = new PropertyDefinition(activityURI.resolve("#testProperty"), "name", "label", "description", true, false, new String[0]) {
+		propertyDefinition = new PropertyDefinition(activityURI.resolve("#testProperty"), "name", "label", "description", true, false, false, new String[0]) {
 			protected String toString(String indent) {
 				return "";
 			}			
@@ -56,7 +57,7 @@ public class PropertyDefinitionTest {
 	 */
 	@Test
 	public void testPropertyDefinition() {
-		PropertyDefinition propertyDefinition = new PropertyDefinition(activityURI.resolve("#testProperty"), "name", "A", "B", true, true, new String[] {"yes", "no"}) {
+		PropertyDefinition propertyDefinition = new PropertyDefinition(activityURI.resolve("#testProperty"), "name", "A", "B", true, true, true, new String[] {"yes", "no"}) {
 			protected String toString(String indent) {
 				return "";
 			}			
@@ -67,6 +68,7 @@ public class PropertyDefinitionTest {
 		assertEquals("B", propertyDefinition.getDescription());
 		assertTrue(propertyDefinition.isRequired());
 		assertTrue(propertyDefinition.isMultiple());
+		assertTrue(propertyDefinition.isOrdered());
 		assertArrayEquals(new String[] {"yes", "no"}, propertyDefinition.getOptions());
 	}
 
@@ -111,8 +113,8 @@ public class PropertyDefinitionTest {
 	 */
 	@Test
 	public void testIsRequired() {
-		assertEquals(true, propertyDefinition.isRequired());
-		assertEquals(true, propertyDefinition.isRequired());
+		assertTrue(propertyDefinition.isRequired());
+		assertTrue(propertyDefinition.isRequired());
 	}
 
 	/**
@@ -120,8 +122,17 @@ public class PropertyDefinitionTest {
 	 */
 	@Test
 	public void testIsMultiple() {
-		assertEquals(false, propertyDefinition.isMultiple());
-		assertEquals(false, propertyDefinition.isMultiple());
+		assertFalse(propertyDefinition.isMultiple());
+		assertFalse(propertyDefinition.isMultiple());
+	}
+
+	/**
+	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.PropertyDefinition#isOrdered()}.
+	 */
+	@Test
+	public void testIsOrdered() {
+		assertFalse(propertyDefinition.isOrdered());
+		assertFalse(propertyDefinition.isOrdered());
 	}
 
 	/**

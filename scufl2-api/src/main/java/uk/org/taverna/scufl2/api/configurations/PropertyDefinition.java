@@ -21,36 +21,30 @@
 package uk.org.taverna.scufl2.api.configurations;
 
 import java.net.URI;
+import java.util.Arrays;
 
-import javax.xml.XMLConstants;
+import uk.org.taverna.scufl2.api.property.PropertyObject;
 
 /**
- * Abstract definition of a {@link Property}.
+ * Abstract definition of a {@link PropertyObject}.
  * 
  * @author David Withers
  */
 public abstract class PropertyDefinition {
 
-	public static final URI BOOLEAN = URI.create(XMLConstants.W3C_XML_SCHEMA_NS_URI + "#boolean");
-	public static final URI DOUBLE = URI.create(XMLConstants.W3C_XML_SCHEMA_NS_URI + "#double");
-	public static final URI FLOAT = URI.create(XMLConstants.W3C_XML_SCHEMA_NS_URI + "#float");
-	public static final URI LONG = URI.create(XMLConstants.W3C_XML_SCHEMA_NS_URI + "#long");
-	public static final URI INTEGER = URI.create(XMLConstants.W3C_XML_SCHEMA_NS_URI + "#integer");
-	public static final URI STRING = URI.create(XMLConstants.W3C_XML_SCHEMA_NS_URI + "#string");
-
 	private URI predicate;
 	private String name, label, description;
-	private boolean required, multiple;
+	private boolean required, multiple, ordered;
 	private String[] options;
 
 	/**
-	 * Creates a PropertyDefinition that defines the attributes of a {@link Property}.
+	 * Creates a PropertyDefinition that defines the attributes of a {@link PropertyObject}.
 	 */
 	public PropertyDefinition() {
 	}
 	
 	/**
-	 * Creates a PropertyDefinition that defines the attributes of a {@link Property}.
+	 * Creates a PropertyDefinition that defines the attributes of a {@link PropertyObject}.
 	 * 
 	 * @param predicate
 	 *            the URI identifying the <code>Property</code> that this class defines
@@ -64,17 +58,20 @@ public abstract class PropertyDefinition {
 	 *            whether the <code>Property</code> is mandatory
 	 * @param multiple
 	 *            whether there can be multiple instances of the <code>Property</code>
+	 * @param ordered
+	 *            whether the order of multiple instances of the <code>Property</code> is significant
 	 * @param options
 	 *            the valid values for the <code>Property</code>
 	 */
 	public PropertyDefinition(URI predicate, String name, String label, String description,
-			boolean required, boolean multiple, String[] options) {
+			boolean required, boolean multiple, boolean ordered, String[] options) {
 		this.predicate = predicate;
 		this.name = name;
 		this.label = label;
 		this.description = description;
 		this.required = required;
 		this.multiple = multiple;
+		this.ordered = ordered;
 		this.options = options;
 	}
 
@@ -187,6 +184,24 @@ public abstract class PropertyDefinition {
 	}
 
 	/**
+	 * Returns true if the order of multiple instances of the <code>Property</code> is significant.
+	 * 
+	 * @return true if the order of multiple instances of the <code>Property</code> is significant
+	 */
+	public boolean isOrdered() {
+		return ordered;
+	}
+
+	/**
+	 * Sets whether the order of multiple instances of the <code>Property</code> is significant.
+	 * 
+	 * @param ordered the order of multiple instances of the <code>Property</code> is significant
+	 */
+	public void setOrdered(boolean ordered) {
+		this.ordered = ordered;
+	}
+
+	/**
 	 * Returns the valid values for the <code>Property</code>.
 	 * 
 	 * If the value of the <code>Property</code> is not constrained this method will return an zero
@@ -205,6 +220,61 @@ public abstract class PropertyDefinition {
 	 */
 	public void setOptions(String[] options) {
 		this.options = options;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((label == null) ? 0 : label.hashCode());
+		result = prime * result + (multiple ? 1231 : 1237);
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + Arrays.hashCode(options);
+		result = prime * result + (ordered ? 1231 : 1237);
+		result = prime * result + ((predicate == null) ? 0 : predicate.hashCode());
+		result = prime * result + (required ? 1231 : 1237);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PropertyDefinition other = (PropertyDefinition) obj;
+		if (description == null) {
+			if (other.description != null)
+				return false;
+		} else if (!description.equals(other.description))
+			return false;
+		if (label == null) {
+			if (other.label != null)
+				return false;
+		} else if (!label.equals(other.label))
+			return false;
+		if (multiple != other.multiple)
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (!Arrays.equals(options, other.options))
+			return false;
+		if (ordered != other.ordered)
+			return false;
+		if (predicate == null) {
+			if (other.predicate != null)
+				return false;
+		} else if (!predicate.equals(other.predicate))
+			return false;
+		if (required != other.required)
+			return false;
+		return true;
 	}
 
 	@Override

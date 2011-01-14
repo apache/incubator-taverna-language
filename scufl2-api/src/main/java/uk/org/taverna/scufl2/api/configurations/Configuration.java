@@ -31,7 +31,7 @@ import uk.org.taverna.scufl2.api.property.PropertyResource;
  * <p>
  * These requirements are described in the {@link ConfigurationDefinition} which
  * {@link ConfigurationDefinition#getConfigurationType()} matches this
- * configuration's {@link #getObjectClass()}. <strong>TODO: Where are the
+ * configuration's {@link #getTypeURI()}. <strong>TODO: Where are the
  * ConfigurationDefinitions found?</strong>
  * 
  * @author Alan R Williams
