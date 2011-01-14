@@ -115,6 +115,11 @@ public class PropertyLiteral implements PropertyObject {
 		setLiteralValue(DatatypeConverter.printDateTime(cal));
 	}
 
+	public PropertyLiteral(float f) {
+		setLiteralValue(DatatypeConverter.printFloat(f));
+		setLiteralType(XSD_FLOAT);
+	}
+
 	public PropertyLiteral(double d) {
 		setLiteralValue(DatatypeConverter.printDouble(d));
 		setLiteralType(XSD_DOUBLE);
@@ -123,6 +128,11 @@ public class PropertyLiteral implements PropertyObject {
 	public PropertyLiteral(int i) {
 		setLiteralValue(DatatypeConverter.printInt(i));
 		setLiteralType(XSD_INT);
+	}
+
+	public PropertyLiteral(long l) {
+		setLiteralValue(DatatypeConverter.printLong(l));
+		setLiteralType(XSD_LONG);
 	}
 
 	public PropertyLiteral(String value) {
@@ -150,12 +160,20 @@ public class PropertyLiteral implements PropertyObject {
 		return DatatypeConverter.parseDateTime(getLiteralValue());
 	}
 
+	public float getLiteralValueAsFloat() {
+		return DatatypeConverter.parseFloat(getLiteralValue());
+	}
+
 	public double getLiteralValueAsDouble() {
 		return DatatypeConverter.parseDouble(getLiteralValue());
 	}
 
 	public int getLiteralValueAsInt() {
 		return DatatypeConverter.parseInt(getLiteralValue());
+	}
+
+	public long getLiteralValueAsLong() {
+		return DatatypeConverter.parseLong(getLiteralValue());
 	}
 
 	public void setLiteralType(URI literalType) {
