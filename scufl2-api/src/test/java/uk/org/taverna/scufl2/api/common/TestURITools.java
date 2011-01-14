@@ -24,6 +24,75 @@ public class TestURITools {
 	}
 
 	@Test
+	public void relativizeNotSameFolder() {
+		URI base = URI.create("workflow/Workflow.rdf");
+		URI uri = URI.create("profile/Profile/");
+		assertEquals("../profile/Profile/", uriTools.relativePath(base, uri).toASCIIString());
+	}
+
+	@Test
+	public void relativizeNotSameFolderAbsolute() {
+		URI base = URI.create("/workflow/Workflow.rdf");
+		URI uri = URI.create("/profile/Profile/");
+		assertEquals("../profile/Profile/", uriTools.relativePath(base, uri).toASCIIString());
+	}
+
+	@Test
+	public void relativizeNotSameFolderComplete() {
+		URI base = URI.create("http://example.com/workflow/Workflow.rdf");
+		URI uri = URI.create("http://example.com/profile/Profile/");
+		assertEquals("../profile/Profile/", uriTools.relativePath(base, uri)
+				.toASCIIString());
+	}
+
+	@Test
+	public void relativizeSameFolder() {
+		URI base = URI.create("workflow/Workflow.rdf");
+		URI uri = URI.create("workflow/Folder/");
+		assertEquals("Folder/", uriTools.relativePath(base, uri)
+				.toASCIIString());
+	}
+
+	@Test
+	public void relativizeSameFolderAbsoulute() {
+		URI base = URI.create("/workflow/Workflow.rdf");
+		URI uri = URI.create("/workflow/Folder/");
+		assertEquals("Folder/", uriTools.relativePath(base, uri)
+				.toASCIIString());
+	}
+
+	@Test
+	public void relativizeSameFolderComplete() {
+		URI base = URI.create("http://example.com/workflow/Workflow.rdf");
+		URI uri = URI.create("http://example.com/workflow/Folder/");
+		assertEquals("Folder/", uriTools.relativePath(base, uri)
+				.toASCIIString());
+	}
+
+	@Test
+	public void relativizeSamePath() {
+		URI base = URI.create("workflow/../workflow//Workflow.rdf#");
+		URI uri = URI.create("workflow/Workflow.rdf#fish");
+		assertEquals("#fish", uriTools.relativePath(base, uri).toASCIIString());
+	}
+
+	@Test
+	public void relativizeSamePathAbsolute() {
+		URI base = URI.create("/workflow/../workflow//Workflow.rdf#");
+		URI uri = URI.create("/workflow/Workflow.rdf#fish");
+		assertEquals("#fish", uriTools.relativePath(base, uri).toASCIIString());
+	}
+
+	@Test
+	public void relativizeSamePathComplete() {
+		URI base = URI
+				.create("http://example.com/workflow/../workflow//Workflow.rdf#");
+		URI uri = URI
+.create("http://example.com/workflow/Workflow.rdf#fish");
+		assertEquals("#fish", uriTools.relativePath(base, uri).toASCIIString());
+	}
+
+	@Test
 	public void validFileName() {
 		assertEquals(
 				"f%2fsd%5Csdf'asd%20fa%3asd%20%C4%91%C3%BE%E2%80%9D%C2%BB%C3%A6",

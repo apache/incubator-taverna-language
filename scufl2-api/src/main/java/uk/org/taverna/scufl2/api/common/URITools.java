@@ -7,15 +7,35 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 
 public class URITools {
 
+	private static final URI DOT = URI.create(".");
+
 	public URI relativePath(URI base, URI uri) {
-		if (! base.resolve("/").equals(uri.resolve("/"))) {
+
+		URI root = base.resolve("/");
+		if (!root.equals(uri.resolve("/"))) {
 			// Different protocol/host/auth
 			return uri;
 		}
-		URI relation = URI.create(".");
+		base = base.normalize();
+		uri = uri.normalize();
+		if (base.resolve("#").equals(uri.resolve("#"))) {
+			// Same path, easy
+			return base.relativize(uri);
+		}
+
+		if (base.isAbsolute()) {
+			// Ignore hostname and protocol
+			base = root.relativize(base).resolve(".");
+			uri = root.relativize(uri);
+		}
+		// Pretend they start from /
+		base = root.resolve(base).resolve(".");
+		uri = root.resolve(uri);
+
 		URI candidate = base.relativize(uri);
-		while (candidate.isAbsolute() &&
-				! (base.getPath().isEmpty() || base.getPath().equals("/"))) {
+		URI relation = DOT;
+		while (candidate.getPath().startsWith("/")
+				&& !(base.getPath().isEmpty() || base.getPath().equals("/"))) {
 			base = base.resolve("../");
 			relation = relation.resolve("../");
 			candidate = base.relativize(uri);
