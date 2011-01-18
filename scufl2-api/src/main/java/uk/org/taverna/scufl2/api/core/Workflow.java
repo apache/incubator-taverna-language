@@ -35,7 +35,6 @@ public class Workflow extends AbstractNamedChild implements
 	private NamedSet<Processor> processors = new NamedSet<Processor>();
 	private URI workflowIdentifier;
 	private WorkflowBundle parent;
-	private URI configurableType;
 
 	public Workflow() {
 		setWorkflowIdentifier(generateIdentifier());
