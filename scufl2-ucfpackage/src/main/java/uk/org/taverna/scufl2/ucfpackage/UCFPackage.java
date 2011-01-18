@@ -1,6 +1,7 @@
 package uk.org.taverna.scufl2.ucfpackage;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -18,7 +19,6 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.namespace.QName;
 
 import org.oasis_open.names.tc.opendocument.xmlns.container.Container;
 import org.oasis_open.names.tc.opendocument.xmlns.container.Container.RootFiles;
@@ -50,24 +50,45 @@ public class UCFPackage {
 	private boolean createdContainerXml = false;
 	private static ObjectFactory containerFactory = new ObjectFactory();
 
-	public UCFPackage() throws Exception {
-		odfPackage = OdfPackage.create();
+	public UCFPackage() throws IOException {
+		try {
+			odfPackage = OdfPackage.create();
+			parseContainerXML();
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new IOException("Could not create empty UCF Package", e);
+		}
 		// odfPackage.setMediaType(MIME_EPUB);
-		parseContainerXML();
 	}
 
-	public UCFPackage(File containerFile) throws Exception {
-		odfPackage = OdfPackage.loadPackage(containerFile);
-		parseContainerXML();
+	public UCFPackage(File containerFile) throws IOException {
+		try {
+			odfPackage = OdfPackage.loadPackage(containerFile);
+			parseContainerXML();
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new IOException("Could not load UCF Package from "
+					+ containerFile, e);
+		}
 	}
 
-	public UCFPackage(InputStream inputStream) throws Exception {
-		odfPackage = OdfPackage.loadPackage(inputStream);
-		parseContainerXML();
+	public UCFPackage(InputStream inputStream) throws IOException {
+		try {
+			odfPackage = OdfPackage.loadPackage(inputStream);
+			parseContainerXML();
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new IOException(
+					"Could not load UCF Package from input stream", e);
+		}
+
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void parseContainerXML() throws Exception {
+	protected void parseContainerXML() throws IOException {
 		createdContainerXml = false;
 		InputStream containerStream = getResourceAsInputStream(CONTAINER_XML);
 		if (containerStream == null) {
@@ -77,9 +98,13 @@ public class UCFPackage {
 			createdContainerXml = true;
 			return;
 		}
-		Unmarshaller unMarshaller = createUnMarshaller();
-		containerXml = (JAXBElement<Container>) unMarshaller
-				.unmarshal(containerStream);
+		try {
+			Unmarshaller unMarshaller = createUnMarshaller();
+			containerXml = (JAXBElement<Container>) unMarshaller
+					.unmarshal(containerStream);
+		} catch (JAXBException e) {
+			throw new IOException("Could not parse " + CONTAINER_XML, e);
+		}
 
 	}
 
@@ -100,20 +125,29 @@ public class UCFPackage {
 	}
 
 	public void save(File packageFile) throws IOException {
+		File tempFile = File.createTempFile("." + packageFile.getName(),
+				".tmp", packageFile.getParentFile());
+		prepareAndSave(tempFile);
+		if (!tempFile.renameTo(packageFile)) {
+			throw new IOException("Could not rename temp file " + tempFile
+					+ " to " + packageFile);
+		}
+	}
+
+	protected void prepareAndSave(File tempFile) throws IOException {
 		if (getPackageMediaType() == null) {
 			throw new IllegalStateException("Package media type must be set");
 		}
 
 		// Write using temp file, and do rename in the end
-		File tempFile = File.createTempFile("." + packageFile.getName(),
-				".tmp", packageFile.getParentFile());
+
 		try {
 			prepareContainerXML();
 			odfPackage.save(tempFile);
 		} catch (IOException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new IOException("Could not save bundle to " + packageFile, e);
+			throw new IOException("Could not save bundle to " + tempFile, e);
 		} finally {
 			odfPackage.close();
 		}
@@ -121,37 +155,34 @@ public class UCFPackage {
 			// To be safe we'll reload from 'our' tempFile
 			odfPackage = OdfPackage.loadPackage(tempFile);
 		} catch (Exception e) {
-			throw new IOException("Could not reload package from "
-					+ packageFile);
-		}
-		if (!tempFile.renameTo(packageFile)) {
-			throw new IOException("Could not rename temp file " + tempFile
-					+ " to " + packageFile);
+			throw new IOException("Could not reload package from " + tempFile);
 		}
 	}
 
-	protected void prepareContainerXML() throws Exception {
+	protected void prepareContainerXML() throws IOException {
 		if (containerXml == null || createdContainerXml
 				&& containerXml.getValue().getRootFilesOrAny() == null) {
 			return;
 		}
 
 		/* Check if we should prune <rootFiles> */
-		Iterator<Object> iterator = containerXml.getValue().getRootFilesOrAny().iterator();
+		Iterator<Object> iterator = containerXml.getValue().getRootFilesOrAny()
+				.iterator();
 		boolean foundAlready = false;
 		while (iterator.hasNext()) {
 			Object anyOrRoot = iterator.next();
-			if (! (anyOrRoot instanceof JAXBElement)) {
+			if (!(anyOrRoot instanceof JAXBElement)) {
 				continue;
 			}
 			@SuppressWarnings("rawtypes")
-			JAXBElement elem = (JAXBElement)anyOrRoot;
-			if (! elem.getDeclaredType().equals(RootFiles.class)) {
+			JAXBElement elem = (JAXBElement) anyOrRoot;
+			if (!elem.getDeclaredType().equals(RootFiles.class)) {
 				continue;
 			}
 			RootFiles rootFiles = (RootFiles) elem.getValue();
-			if (foundAlready ||
-					(rootFiles.getOtherAttributes().isEmpty() && rootFiles.getAnyOrRootFile().isEmpty())) {
+			if (foundAlready
+					|| (rootFiles.getOtherAttributes().isEmpty() && rootFiles
+							.getAnyOrRootFile().isEmpty())) {
 				// Delete it!
 				System.err.println("Deleting unneccessary <rootFiles>");
 				iterator.remove();
@@ -159,9 +190,10 @@ public class UCFPackage {
 			foundAlready = true;
 		}
 
-		Marshaller marshaller = createMarshaller();
-		OutputStream outStream = odfPackage.insertOutputStream(CONTAINER_XML);
+		Marshaller marshaller;
+		OutputStream outStream = null;
 		try {
+			marshaller = createMarshaller();
 			// XMLStreamWriter xmlStreamWriter = XMLOutputFactory
 			// .newInstance().createXMLStreamWriter(outStream);
 			// xmlStreamWriter.setDefaultNamespace(containerElem.getName()
@@ -171,6 +203,7 @@ public class UCFPackage {
 			// "http://www.w3.org/2000/09/xmldsig#");
 			// xmlStreamWriter.setPrefix("xmlenc",
 			// "http://www.w3.org/2001/04/xmlenc#");
+			outStream = odfPackage.insertOutputStream(CONTAINER_XML);
 
 			// FIXME: Set namespace prefixes and default namespace
 
@@ -179,8 +212,14 @@ public class UCFPackage {
 			// TODO: Ensure using default namespace
 			marshaller.marshal(containerXml, outStream);
 
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new IOException("Could not parse " + CONTAINER_XML, e);
 		} finally {
-			outStream.close();
+			if (outStream != null) {
+				outStream.close();
+			}
 		}
 	}
 
@@ -209,55 +248,104 @@ public class UCFPackage {
 	}
 
 	public void addResource(String stringValue, String path, String mediaType)
-			throws Exception {
-		odfPackage.insert(stringValue.getBytes(UTF_8), path, mediaType);
-		if (path.equals(CONTAINER_XML)) {
-			parseContainerXML();
+			throws IOException {
+		try {
+			odfPackage.insert(stringValue.getBytes(UTF_8), path, mediaType);
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new IOException("Could not add " + path, e);
 		}
+		parseContainerXML();
 	}
 
 	public void addResource(byte[] bytesValue, String path, String mediaType)
-			throws Exception {
-		odfPackage.insert(bytesValue, path, mediaType);
+			throws IOException {
+		try {
+			odfPackage.insert(bytesValue, path, mediaType);
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new IOException("Could not add " + path, e);
+		}
 		if (path.equals(CONTAINER_XML)) {
 			parseContainerXML();
 		}
 	}
 
 	public void addResource(Document document, String path, String mediaType)
-			throws Exception {
-		odfPackage.insert(document, path, mediaType);
+			throws IOException {
+		try {
+			odfPackage.insert(document, path, mediaType);
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new IOException("Could not add " + path, e);
+		}
 		if (path.equals(CONTAINER_XML)) {
 			parseContainerXML();
 		}
 	}
 
 	public void addResource(InputStream inputStream, String path,
-			String mediaType) throws Exception {
-		odfPackage.insert(inputStream, path, mediaType);
+			String mediaType) throws IOException {
+		try {
+			odfPackage.insert(inputStream, path, mediaType);
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new IOException("Could not add " + path, e);
+		}
+
 		if (path.equals(CONTAINER_XML)) {
 			parseContainerXML();
 		}
 	}
 
 	public void addResource(URI uri, String path, String mediaType)
-			throws Exception {
-		odfPackage.insert(uri, path, mediaType);
+			throws IOException {
+		try {
+			odfPackage.insert(uri, path, mediaType);
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new IOException("Could not add " + path, e);
+		}
+
 		if (path.equals(CONTAINER_XML)) {
 			parseContainerXML();
 		}
 	}
 
-	public String getResourceAsString(String path) throws Exception {
-		return new String(odfPackage.getBytes(path), UTF_8);
+	public String getResourceAsString(String path) throws IOException {
+		try {
+			return new String(odfPackage.getBytes(path), UTF_8);
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new IOException("Could not get " + path, e);
+		}
 	}
 
-	public byte[] getResourceAsBytes(String path) throws Exception {
+	public byte[] getResourceAsBytes(String path) throws IOException {
+		try {
 		return odfPackage.getBytes(path);
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new IOException("Could not get " + path, e);
+		}
+
 	}
 
-	public InputStream getResourceAsInputStream(String path) throws Exception {
-		return odfPackage.getInputStream(path);
+	public InputStream getResourceAsInputStream(String path) throws IOException {
+		try {
+			return odfPackage.getInputStream(path);
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new IOException("Could not get " + path, e);
+		}
 	}
 
 	public Map<String, ResourceEntry> listResources() {
@@ -471,5 +559,42 @@ public class UCFPackage {
 
 	protected JAXBElement<Container> getContainerXML() {
 		return containerXml;
+	}
+
+	public void save(OutputStream output) throws IOException {
+		File tempFile = File.createTempFile("ucfpackage", ".tmp");
+		prepareAndSave(tempFile);
+
+		// Copy file to the output
+
+		// Note - Should use IOUtils, but we're trying to avoid external
+		// dependencies
+		InputStream inStream = new FileInputStream(tempFile);
+		try {
+			byte[] buffer = new byte[8192];
+			int n = 0;
+			while (n > -1) {
+				output.write(buffer, 0, n);
+				n = inStream.read(buffer);
+			}
+		} finally {
+			inStream.close();
+			tempFile.delete();
+		}
+	}
+	public OutputStream addResourceUsingOutputStream(String path,
+			String mediaType) throws IOException {
+		if (path.equals(CONTAINER_XML)) {
+			throw new IllegalArgumentException("Can't add " + CONTAINER_XML + " using OutputStream");
+			// as we need to parse it after insertion
+		}
+		try {
+			return odfPackage.insertOutputStream(path, mediaType);
+		} catch (IOException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new IOException("Could not add " + path, e);
+		}
+		
 	}
 }

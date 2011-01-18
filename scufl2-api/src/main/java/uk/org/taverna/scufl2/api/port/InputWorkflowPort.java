@@ -5,9 +5,9 @@ import uk.org.taverna.scufl2.api.core.Workflow;
 
 /**
  * @author Alan R Williams
- * 
+ *
  */
-public class InputWorkflowPort extends AbstractGranularDepthPort implements
+public class InputWorkflowPort extends AbstractDepthPort implements
 SenderPort, WorkflowPort, InputPort, Child<Workflow> {
 
 	private Workflow parent;

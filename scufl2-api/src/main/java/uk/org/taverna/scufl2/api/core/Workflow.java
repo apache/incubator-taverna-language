@@ -17,16 +17,16 @@ import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
 
 /**
  * @author Alan R Williams
- * 
+ *
  */
 public class Workflow extends AbstractNamedChild implements
 		Child<WorkflowBundle>, Ported {
 
-	private static URI WORKFLOW_ROOT = URI
+	public static final URI WORKFLOW_ROOT = URI
 	.create("http://ns.taverna.org.uk/2010/workflow/");
 
 	public static URI generateIdentifier() {
-		return WORKFLOW_ROOT.resolve(UUID.randomUUID().toString());
+		return WORKFLOW_ROOT.resolve(UUID.randomUUID().toString() + "/");
 	}
 
 	private Set<DataLink> datalinks = new HashSet<DataLink>();

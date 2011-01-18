@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -20,7 +21,11 @@ import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.management.openmbean.InvalidOpenTypeException;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -166,6 +171,27 @@ public class TestUCFPackage {
 	}
 
 	@Test
+	public void doubleSaveOutputStream() throws Exception {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		UCFPackage container = new UCFPackage();
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
+		container
+				.addResource("Hello there þĸł", "helloworld.txt", "text/plain");
+		container.save(outStream);
+		container.addResource("Hello again", "again.txt", "text/plain");
+		outStream.close();
+
+		outStream = new ByteArrayOutputStream();
+		container.save(outStream);
+		outStream.close();
+
+		FileUtils.writeByteArrayToFile(tmpFile, outStream.toByteArray());
+		ZipFile zipFile = new ZipFile(tmpFile);
+		assertNotNull(zipFile.getEntry("helloworld.txt"));
+		assertNotNull(zipFile.getEntry("again.txt"));
+	}
+
+	@Test
 	public void retrieveBytesLoadedFromFile() throws Exception {
 		UCFPackage container = new UCFPackage();
 		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
@@ -173,6 +199,26 @@ public class TestUCFPackage {
 		container.addResource(bytes, "randomBytes", "application/octet-stream");
 		container.save(tmpFile);
 
+		UCFPackage loaded = new UCFPackage(tmpFile);
+		byte[] loadedBytes = loaded.getResourceAsBytes("randomBytes");
+		assertArrayEquals(bytes, loadedBytes);
+	}
+	
+	@Test
+	public void addResourceOutputStream() throws Exception {
+		UCFPackage container = new UCFPackage();
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
+		byte[] bytes = makeBytes(2048);
+		
+		OutputStream outStream = container.addResourceUsingOutputStream("randomBytes", "application/octet-stream");
+		IOUtils.write(bytes, outStream);
+
+		assertTrue(container.listResources().isEmpty());
+		
+		outStream.close();		
+		assertFalse(container.listResources().isEmpty());
+		
+		container.save(tmpFile);
 		UCFPackage loaded = new UCFPackage(tmpFile);
 		byte[] loadedBytes = loaded.getResourceAsBytes("randomBytes");
 		assertArrayEquals(bytes, loadedBytes);
