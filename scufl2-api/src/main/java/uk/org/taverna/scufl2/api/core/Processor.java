@@ -1,7 +1,6 @@
 package uk.org.taverna.scufl2.api.core;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -24,7 +23,6 @@ public class Processor extends AbstractNamedChild implements Child<Workflow>,
 	private NamedSet<OutputProcessorPort> outputPorts = new NamedSet<OutputProcessorPort>();
 	private NamedSet<InputProcessorPort> inputPorts = new NamedSet<InputProcessorPort>();
 	private List<IterationStrategy> iterationStrategyStack = new ArrayList<IterationStrategy>();
-	private Set<StartCondition> startConditions = new HashSet<StartCondition>();
 	private DispatchStack dispatchStack = new DispatchStack();
 	private Workflow parent;
 
@@ -61,11 +59,6 @@ public class Processor extends AbstractNamedChild implements Child<Workflow>,
 		return parent;
 	}
 
-	public Set<StartCondition> getStartConditions() {
-		return startConditions;
-	}
-
-
 	public void setDispatchStack(DispatchStack dispatchStack) {
 		this.dispatchStack = dispatchStack;
 	}
@@ -93,10 +86,6 @@ public class Processor extends AbstractNamedChild implements Child<Workflow>,
 		if (parent != null) {
 			parent.getProcessors().add(this);
 		}
-	}
-
-	public void setStartConditions(Set<StartCondition> startConditions) {
-		this.startConditions = startConditions;
 	}
 
 	@Override
