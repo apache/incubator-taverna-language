@@ -11,7 +11,7 @@
 	<name>Taverna Scufl 2 RDF serialisation</name>
 	<properties>
 		<elmo.version>1.5</elmo.version>
-		<sesame.version>2.2.4</sesame.version>
+		<sesame.version>2.3.2</sesame.version>
 	</properties>
 	<build>
 		<plugins>
