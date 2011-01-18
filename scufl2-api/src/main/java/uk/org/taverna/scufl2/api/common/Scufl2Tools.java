@@ -7,28 +7,34 @@ import java.util.List;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
+import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
+import uk.org.taverna.scufl2.api.core.Workflow;
+import uk.org.taverna.scufl2.api.port.ReceiverPort;
+import uk.org.taverna.scufl2.api.port.SenderPort;
 import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 
 /**
  * Utility methods for dealing with SCUFL2 models
- * 
+ *
  * @author Stian Soiland-Reyes
- * 
+ *
  */
 public class Scufl2Tools {
 
 	/**
-	 * Compare {@link ProcessorBinding}s by their {@link ProcessorBinding#getActivityPosition()}.
-	 * 
-	 * Note: this comparator imposes orderings that are inconsistent with equals.
-	 * 
+	 * Compare {@link ProcessorBinding}s by their
+	 * {@link ProcessorBinding#getActivityPosition()}.
+	 *
+	 * Note: this comparator imposes orderings that are inconsistent with
+	 * equals.
+	 *
 	 * @author Stian Soiland-Reyes
 	 *
 	 */
 	public static class BindingComparator implements
-	Comparator<ProcessorBinding> {
+			Comparator<ProcessorBinding> {
 
 		@Override
 		public int compare(ProcessorBinding o1, ProcessorBinding o2) {
@@ -56,6 +62,7 @@ public class Scufl2Tools {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	public List<Configuration> configurationsFor(Configurable configurable, Profile profile) {
 		List<Configuration> configurations = new ArrayList<Configuration>();
 		for (Configuration config : profile.getConfigurations()) {
@@ -63,7 +70,55 @@ public class Scufl2Tools {
 				configurations.add(config);
 			}
 		}
+		Collections.sort(configurations);
 		return configurations;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<DataLink> datalinksFrom(SenderPort senderPort) {
+		@SuppressWarnings("rawtypes")
+		Workflow wf = findParent(Workflow.class, (Child) senderPort);
+		List<DataLink> links = new ArrayList();
+		for (DataLink link : wf.getDatalinks()) {
+			if (link.getReceivesFrom().equals(senderPort)) {
+				links.add(link);
+			}
+		}
+		Collections.sort(links);
+		return links;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<DataLink> datalinksTo(ReceiverPort receiverPort) {
+		@SuppressWarnings("rawtypes")
+		Workflow wf = findParent(Workflow.class, (Child) receiverPort);
+		List<DataLink> links = new ArrayList<DataLink>();
+		for (DataLink link : wf.getDatalinks()) {
+			if (link.getSendsTo().equals(receiverPort)) {
+				links.add(link);
+			}
+		}
+		Collections.sort(links);
+		return links;
+	}
+
+
+
+	public <T extends WorkflowBean> T findParent(Class<T> parentClass, Child<?> child) {
+		WorkflowBean parent = child.getParent();
+		if (parent == null) {
+			return null;
+		}
+		if (parentClass.isAssignableFrom(parent.getClass())) {
+			@SuppressWarnings("unchecked")
+			T foundParent = (T) parent;
+			return foundParent;
+		}
+		if (parent instanceof Child) {
+			return findParent(parentClass, (Child<?>) parent);
+		}
+		return null;
+
 	}
 
 	public ProcessorBinding processorBindingForProcessor(Processor processor,
@@ -78,8 +133,8 @@ public class Scufl2Tools {
 		return bindings.get(0);
 	}
 
-	public List<ProcessorBinding> processorBindingsForProcessor(Processor processor,
-			Profile profile) {
+	public List<ProcessorBinding> processorBindingsForProcessor(
+			Processor processor, Profile profile) {
 		List<ProcessorBinding> bindings = new ArrayList<ProcessorBinding>();
 		for (ProcessorBinding pb : profile.getProcessorBindings()) {
 			if (pb.getBoundProcessor().equals(processor)) {
@@ -101,6 +156,5 @@ public class Scufl2Tools {
 		Collections.sort(bindings, new BindingComparator());
 		return bindings;
 	}
-
 
 }
