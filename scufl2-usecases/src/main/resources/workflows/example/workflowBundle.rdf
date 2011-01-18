@@ -3,7 +3,7 @@
 	xmlns:scufl2="http://ns.taverna.org.uk/2010/scufl2#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://ns.taverna.org.uk/2010/scufl2# http://ns.taverna.org.uk/2010/scufl2/scufl2.xsd 
 						http://www.w3.org/1999/02/22-rdf-syntax-ns# http://ns.taverna.org.uk/2010/scufl2/rdf.xsd"
-	xsi:type="scufl2:WorkflowBundleDocument">
+	xsi:type="WorkflowBundleDocument">
 	<WorkflowBundle rdf:about="./">
 		<name>HelloWorld</name>
 		<sameBaseAs
