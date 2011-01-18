@@ -1,6 +1,7 @@
 package uk.org.taverna.scufl2.rdfxml;
 
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,11 +23,15 @@ import org.xml.sax.SAXException;
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.io.WriterException;
+import uk.org.taverna.scufl2.api.port.InputWorkflowPort;
+import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.rdfxml.impl.NamespacePrefixMapperJAXB_RI;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ObjectFactory;
+import uk.org.taverna.scufl2.rdfxml.jaxb.PortDepth;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ProfileDocument;
 import uk.org.taverna.scufl2.rdfxml.jaxb.SeeAlsoType;
 import uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowBundleDocument;
@@ -174,7 +179,7 @@ public class RDFXMLSerializer {
 					.setProperty(
 							"jaxb.schemaLocation",
 							"http://ns.taverna.org.uk/2010/scufl2# http://ns.taverna.org.uk/2010/scufl2/scufl2.xsd "
-							+ "http://www.w3.org/1999/02/22-rdf-syntax-ns# http://ns.taverna.org.uk/2010/scufl2/rdf.xsd");
+									+ "http://www.w3.org/1999/02/22-rdf-syntax-ns# http://ns.taverna.org.uk/2010/scufl2/rdf.xsd");
 		} catch (JAXBException e) {
 			throw new IllegalStateException(e);
 		} catch (SAXException e) {
@@ -213,14 +218,80 @@ public class RDFXMLSerializer {
 
 	public void workflowDoc(OutputStream outputStream, Workflow wf, URI path)
 			throws JAXBException, WriterException {
+		uk.org.taverna.scufl2.rdfxml.jaxb.Workflow wfElem = makeWorkflow(wf,
+				path);
 		WorkflowDocument doc = objectFactory.createWorkflowDocument();
-		uk.org.taverna.scufl2.rdfxml.jaxb.Workflow wfElem = objectFactory
-				.createWorkflow();
 		doc.getAny().add(wfElem);
+
 		JAXBElement<RDF> element = new org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory()
 				.createRDF(doc);
 		getMarshaller().marshal(element, outputStream);
 		seeAlsoUris.put(wf, path);
+	}
+
+	protected uk.org.taverna.scufl2.rdfxml.jaxb.Workflow makeWorkflow(
+			Workflow wf, URI documentPath) {
+		uk.org.taverna.scufl2.rdfxml.jaxb.Workflow workflow = objectFactory
+				.createWorkflow();
+		URI wfUri = uriTools.relativeUriForBean(wf, wfBundle);		
+		workflow.setAbout(uriTools.relativePath(documentPath, wfUri).toASCIIString());
+		
+		workflow.setName(wf.getName());
+	
+		if (wf.getWorkflowIdentifier() != null) {
+			Resource wfId = rdfObjectFactory.createResource();
+			wfId.setResource(wf.getWorkflowIdentifier().toASCIIString());
+			workflow.setWorkflowIdentifier(wfId);
+		}
+	
+		for (InputWorkflowPort ip : wf.getInputPorts()) {
+			uk.org.taverna.scufl2.rdfxml.jaxb.Workflow.InputWorkflowPort inP = objectFactory.createWorkflowInputWorkflowPort();
+			uk.org.taverna.scufl2.rdfxml.jaxb.InputWorkflowPort inPort = objectFactory.createInputWorkflowPort();
+			inP.setInputWorkflowPort(inPort);
+			inPort.setName(ip.getName());
+			
+			URI portURI = uriTools.relativeUriForBean(ip, wf);
+			inPort.setAbout(uriTools.relativePath(documentPath, portURI).toASCIIString());
+			// FIXME: Add xml:base - no need for relativePath here!
+			if (ip.getDepth() != null) {
+				PortDepth portDepth = objectFactory.createPortDepth();
+				portDepth.setValue(BigInteger.valueOf(ip.getDepth()));			
+				inPort.setPortDepth(portDepth);
+			}
+			workflow.getInputWorkflowPort().add(inP);			
+		}
+		
+		for (OutputWorkflowPort op : wf.getOutputPorts()) {
+			uk.org.taverna.scufl2.rdfxml.jaxb.Workflow.OutputWorkflowPort inP = objectFactory.createWorkflowOutputWorkflowPort();
+			uk.org.taverna.scufl2.rdfxml.jaxb.OutputWorkflowPort outPort = objectFactory.createOutputWorkflowPort();
+			inP.setOutputWorkflowPort(outPort);
+			outPort.setName(op.getName());
+			
+			URI portURI = uriTools.relativeUriForBean(op, wf);
+			outPort.setAbout(uriTools.relativePath(documentPath, portURI).toASCIIString());			
+			workflow.getOutputWorkflowPort().add(inP);			
+		}
+		
+		for (Processor p : wf.getProcessors()) {
+			uk.org.taverna.scufl2.rdfxml.jaxb.Workflow.Processor wfProc = objectFactory.createWorkflowProcessor();
+			uk.org.taverna.scufl2.rdfxml.jaxb.Processor proc = objectFactory.createProcessor();
+			wfProc.setProcessor(proc);			
+			proc.setName(p.getName());
+			
+			URI procUri = uriTools.relativeUriForBean(p, wf);
+			proc.setAbout(uriTools.relativePath(documentPath, procUri).toASCIIString());
+			wfProc.setProcessor(proc);			
+			workflow.getProcessor().add(wfProc);
+			
+			// TODO: Input/Output
+
+			// TODO: dispatchStack
+			// TODO: iteration strategy
+		}
+		
+		// TODO: Datalinks
+		
+		return workflow;
 	}
 
 	public void setWfBundle(WorkflowBundle wfBundle) {
