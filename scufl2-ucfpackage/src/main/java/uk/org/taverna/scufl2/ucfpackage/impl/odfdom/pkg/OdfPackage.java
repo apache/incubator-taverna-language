@@ -79,6 +79,8 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.XMLReader;
 
 import uk.org.taverna.scufl2.ucfpackage.impl.odfdom.pkg.manifest.Algorithm;
@@ -829,9 +831,13 @@ public class OdfPackage {
 		// http://xerces.apache.org/xerces2-j/features.html#namespace-prefixes
 		xmlReader.setFeature("http://xml.org/sax/features/namespace-prefixes",
 				true);
-		// More details at
-		// http://xerces.apache.org/xerces2-j/features.html#xmlns-uris
-		xmlReader.setFeature("http://xml.org/sax/features/xmlns-uris", true);
+		try {
+			// More details at
+			// http://xerces.apache.org/xerces2-j/features.html#xmlns-uris
+			xmlReader.setFeature("http://xml.org/sax/features/xmlns-uris", true);
+		} catch (SAXException ex) {
+			mLog.log(Level.INFO, "Can't set XML reader feature xmlns-uris", ex);
+		}
 
 		String uri = mBaseURI + OdfPackage.OdfFile.MANIFEST.packagePath;
 		xmlReader.setEntityResolver(getEntityResolver());
