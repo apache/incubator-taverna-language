@@ -107,7 +107,8 @@ public class ExampleWorkflow {
 		// NOTE: setWorkflowIdentifier should only be called when loading a
 		// workflow
 		// which already has an ID
-		// workflow.setWorkflowIdentifier(URI.create("http://ns.taverna.org.uk/2010/workflow/00626652-55ae-4a9e-80d4-c8e9ac84e2ca/"));
+		workflow.setWorkflowIdentifier(URI
+				.create("http://ns.taverna.org.uk/2010/workflow/00626652-55ae-4a9e-80d4-c8e9ac84e2ca/"));
 
 		InputWorkflowPort yourName = new InputWorkflowPort(workflow, "yourName");
 		OutputWorkflowPort results = new OutputWorkflowPort(workflow, "results");
