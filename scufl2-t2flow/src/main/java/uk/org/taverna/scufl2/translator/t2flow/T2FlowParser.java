@@ -487,7 +487,7 @@ public class T2FlowParser {
 		wf.setInputPorts(parseInputPorts(df.getInputPorts()));
 		wf.setOutputPorts(parseOutputPorts(df.getOutputPorts()));
 		wf.setProcessors(parseProcessors(df.getProcessors()));
-		wf.setDatalinks(parseDatalinks(df.getDatalinks()));
+		wf.setDataLinks(parseDatalinks(df.getDatalinks()));
 		// TODO: Start conditions, annotations
 		parserState.get().setCurrentWorkflow(null);
 		return wf;

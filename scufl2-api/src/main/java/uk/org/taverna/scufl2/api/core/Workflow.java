@@ -29,9 +29,9 @@ public class Workflow extends AbstractNamedChild implements
 		return WORKFLOW_ROOT.resolve(UUID.randomUUID().toString() + "/");
 	}
 
-	private Set<DataLink> datalinks = new HashSet<DataLink>();
+	private Set<DataLink> dataLinks = new HashSet<DataLink>();
 
-	private Set<Condition> conditions = new HashSet<Condition>();
+	private Set<ControlLink> controlLinks = new HashSet<ControlLink>();
 
 	private NamedSet<InputWorkflowPort> inputPorts = new NamedSet<InputWorkflowPort>();
 	private NamedSet<OutputWorkflowPort> outputPorts = new NamedSet<OutputWorkflowPort>();
@@ -46,12 +46,12 @@ public class Workflow extends AbstractNamedChild implements
 		setName("wf-" + workflowId);
 	}
 
-	public Set<Condition> getConditions() {
-		return conditions;
+	public Set<ControlLink> getControlLinks() {
+		return controlLinks;
 	}
 
-	public Set<DataLink> getDatalinks() {
-		return datalinks;
+	public Set<DataLink> getDataLinks() {
+		return dataLinks;
 	}
 
 	public NamedSet<InputWorkflowPort> getInputPorts() {
@@ -75,12 +75,12 @@ public class Workflow extends AbstractNamedChild implements
 		return workflowIdentifier;
 	}
 
-	public void setConditions(Set<Condition> conditions) {
-		this.conditions = conditions;
+	public void setControlLinks(Set<ControlLink> controlLinks) {
+		this.controlLinks = controlLinks;
 	}
 
-	public void setDatalinks(Set<DataLink> datalinks) {
-		this.datalinks = datalinks;
+	public void setDataLinks(Set<DataLink> datalinks) {
+		this.dataLinks = datalinks;
 	}
 
 	public void setInputPorts(Set<InputWorkflowPort> inputPorts) {
@@ -126,7 +126,7 @@ public class Workflow extends AbstractNamedChild implements
 		return "Workflow [getName()="
 				+ getName()
 				+ ", getDatalinks()="
-				+ (getDatalinks() != null ? toString(getDatalinks(), maxLen)
+				+ (getDataLinks() != null ? toString(getDataLinks(), maxLen)
 						: null)
 				+ ", getInputPorts()="
 				+ (getInputPorts() != null ? toString(getInputPorts(), maxLen)
