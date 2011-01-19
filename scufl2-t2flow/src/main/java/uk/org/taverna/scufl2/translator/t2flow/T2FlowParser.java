@@ -36,6 +36,7 @@ import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.IterationStrategy;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
+import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
 import uk.org.taverna.scufl2.api.port.InputWorkflowPort;
@@ -62,7 +63,6 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.DepthPorts;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.DispatchStack;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.GranularDepthPort;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.GranularDepthPorts;
-import uk.org.taverna.scufl2.xml.t2flow.jaxb.IterationStrategyStack;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Link;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.LinkType;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Map;
@@ -571,9 +571,9 @@ public class T2FlowParser {
 		return createdPorts;
 	}
 
-	protected List<IterationStrategy> parseIterationStrategyStack(
-			IterationStrategyStack originalStack) {
-		List<IterationStrategy> newStack = new ArrayList<IterationStrategy>();
+	protected IterationStrategyStack parseIterationStrategyStack(
+			uk.org.taverna.scufl2.xml.t2flow.jaxb.IterationStrategyStack originalStack) {
+		IterationStrategyStack newStack = new IterationStrategyStack();
 		// TODO: Copy iteration strategy
 		return newStack;
 	}
