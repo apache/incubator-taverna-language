@@ -16,6 +16,7 @@ import org.apache.commons.io.IOUtils;
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.core.BlockingControlLink;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
@@ -35,7 +36,7 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
 public class SillyReader implements WorkflowBundleReader {
 
 	public enum Level {
-		WorkflowBundle, Workflow, Processor, Activity, Links, Profile, Configuration, ProcessorBinding, OutputPortBindings, InputPortBindings, Property
+		WorkflowBundle, Workflow, Processor, Activity, Links, Profile, Configuration, ProcessorBinding, OutputPortBindings, InputPortBindings, Property, Controls
 
 	}
 
@@ -57,6 +58,9 @@ public class SillyReader implements WorkflowBundleReader {
 
 	Pattern linkPattern = Pattern
 	.compile("'(.*[^\\\\])'\\s->\\s'(.*[^\\\\\\\\])'");
+
+	Pattern blockPattern = Pattern
+			.compile("\\s*block\\s+'(.*[^\\\\])'\\s+until\\s+'(.*[^\\\\\\\\])'\\s+finish");
 
 	private String mainProfile;
 
@@ -166,6 +170,21 @@ public class SillyReader implements WorkflowBundleReader {
 			level = Level.Links;
 			processor = null;
 			return;
+		}
+		if (next.equals("Controls")) {
+			level = Level.Controls;
+			return;
+		}
+		if (next.equals("block")) {
+			Matcher blockMatcher = blockPattern.matcher(nextLine);
+			blockMatcher.find();
+			String block = blockMatcher.group(1);
+			String untilFinish = blockMatcher.group(2);
+
+			Processor blockProc = workflow.getProcessors().getByName(block);
+			Processor untilFinishedProc = workflow.getProcessors().getByName(
+					untilFinish);
+			new BlockingControlLink(blockProc, untilFinishedProc);
 		}
 		if (next.startsWith("'") && level.equals(Level.Links)) {
 			Matcher linkMatcher = linkPattern.matcher(nextLine);
