@@ -1,8 +1,10 @@
 package uk.org.taverna.scufl2.api.container;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -10,6 +12,7 @@ import uk.org.taverna.scufl2.api.common.AbstractNamed;
 import uk.org.taverna.scufl2.api.common.Named;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.Root;
+import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.profiles.Profile;
@@ -34,6 +37,23 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 	private NamedSet<Workflow> workflows = new NamedSet<Workflow>();
 	private Workflow mainWorkflow;
 	private Profile mainProfile;
+
+	@Override
+	public boolean accept(Visitor visitor) {
+		if (visitor.visitEnter(this)) {
+			List<Iterable<? extends WorkflowBean>> children = new ArrayList<Iterable<? extends WorkflowBean>>();
+			children.add(getWorkflows());
+			children.add(getProfiles());
+			for (Iterable<? extends WorkflowBean> it : children) {
+				for (WorkflowBean bean : it) {
+					if (!bean.accept(visitor)) {
+						break;
+					}
+				}
+			}
+		}
+		return visitor.visitLeave(this);
+	}
 
 	public Profile getMainProfile() {
 		return mainProfile;

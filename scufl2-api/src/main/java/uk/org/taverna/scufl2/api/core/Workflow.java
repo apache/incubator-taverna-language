@@ -1,9 +1,11 @@
 package uk.org.taverna.scufl2.api.core;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -11,6 +13,8 @@ import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.Ported;
+import uk.org.taverna.scufl2.api.common.Visitor;
+import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.port.InputWorkflowPort;
 import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
@@ -23,7 +27,7 @@ public class Workflow extends AbstractNamedChild implements
 		Child<WorkflowBundle>, Ported {
 
 	public static final URI WORKFLOW_ROOT = URI
-	.create("http://ns.taverna.org.uk/2010/workflow/");
+			.create("http://ns.taverna.org.uk/2010/workflow/");
 
 	public static URI generateIdentifier() {
 		return WORKFLOW_ROOT.resolve(UUID.randomUUID().toString() + "/");
@@ -42,8 +46,28 @@ public class Workflow extends AbstractNamedChild implements
 	public Workflow() {
 		setWorkflowIdentifier(generateIdentifier());
 		String workflowId = WORKFLOW_ROOT.relativize(getWorkflowIdentifier())
-		.toASCIIString();
+				.toASCIIString();
 		setName("wf-" + workflowId);
+	}
+
+	@Override
+	public boolean accept(Visitor visitor) {
+		if (visitor.visitEnter(this)) {
+			List<Iterable<? extends WorkflowBean>> children = new ArrayList<Iterable<? extends WorkflowBean>>();
+			children.add(getInputPorts());
+			children.add(getOutputPorts());
+			children.add(getProcessors());
+			children.add(getDataLinks());
+			children.add(getControlLinks());
+			for (Iterable<? extends WorkflowBean> it : children) {
+				for (WorkflowBean bean : it) {
+					if (!bean.accept(visitor)) {
+						break;
+					}
+				}
+			}
+		}
+		return visitor.visitLeave(this);
 	}
 
 	public Set<ControlLink> getControlLinks() {
@@ -80,7 +104,7 @@ public class Workflow extends AbstractNamedChild implements
 	}
 
 	public void setDataLinks(Set<DataLink> datalinks) {
-		this.dataLinks = datalinks;
+		dataLinks = datalinks;
 	}
 
 	public void setInputPorts(Set<InputWorkflowPort> inputPorts) {

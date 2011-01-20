@@ -164,4 +164,5 @@ public abstract class AbstractNamed implements Named {
 		return getClass().getSimpleName() + " \"" + getName() + '"';
 	}
 
+
 }

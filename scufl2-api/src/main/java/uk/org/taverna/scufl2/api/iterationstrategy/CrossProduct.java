@@ -4,17 +4,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.org.taverna.scufl2.api.common.Child;
+import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.core.IterationStrategy;
 
 /**
  * @author Stian Soiland-Reyes
- * 
+ *
  */
 public class CrossProduct extends ArrayList<IterationStrategyNode> implements
-List<IterationStrategyNode>, IterationStrategyNode,
-IterationStrategyParent, Child<IterationStrategyParent> {
+		List<IterationStrategyNode>, IterationStrategyNode,
+		IterationStrategyParent, Child<IterationStrategyParent> {
 
 	private IterationStrategyParent parent;
+
+	@Override
+	public boolean accept(Visitor visitor) {
+		if (visitor.visitEnter(this)) {
+			for (IterationStrategyNode strategy : this) {
+				if (!visitor.visit(strategy)) {
+					break;
+				}
+			}
+		}
+		return visitor.visitLeave(this);
+	}
 
 	@Override
 	public IterationStrategyParent getParent() {
@@ -31,16 +44,19 @@ IterationStrategyParent, Child<IterationStrategyParent> {
 			// Remove from old parent
 
 			if (parent instanceof IterationStrategy) {
-				IterationStrategy iterationStrategy = (IterationStrategy)parent;
+				IterationStrategy iterationStrategy = (IterationStrategy) parent;
 				if (iterationStrategy.getRootStrategyNode() == this) {
 					iterationStrategy.setRootStrategyNode(null);
 				}
-			} else if (parent instanceof DotProduct || parent instanceof CrossProduct) {
+			} else if (parent instanceof DotProduct
+					|| parent instanceof CrossProduct) {
 				@SuppressWarnings("unchecked")
 				List<IterationStrategyNode> parentList = (List<IterationStrategyNode>) parent;
 				parentList.remove(this);
 			} else {
-				throw new IllegalArgumentException("Old parent must be a IterationStrategy, DotProduct or CrossProduct: " + parent);
+				throw new IllegalArgumentException(
+						"Old parent must be a IterationStrategy, DotProduct or CrossProduct: "
+								+ parent);
 			}
 
 		}
@@ -48,18 +64,21 @@ IterationStrategyParent, Child<IterationStrategyParent> {
 		parent = newParent;
 
 		if (parent instanceof IterationStrategy) {
-			IterationStrategy iterationStrategy = (IterationStrategy)parent;
+			IterationStrategy iterationStrategy = (IterationStrategy) parent;
 			if (iterationStrategy.getRootStrategyNode() != this) {
 				iterationStrategy.setRootStrategyNode(this);
 			}
-		} else if (parent instanceof DotProduct || parent instanceof CrossProduct) {
+		} else if (parent instanceof DotProduct
+				|| parent instanceof CrossProduct) {
 			@SuppressWarnings("unchecked")
 			List<IterationStrategyNode> parentList = (List<IterationStrategyNode>) parent;
-			if (! parentList.contains(this)) {
+			if (!parentList.contains(this)) {
 				parentList.add(this);
 			}
 		} else {
-			throw new IllegalArgumentException("Parent must be a IterationStrategy, DotProduct or CrossProduct: " + parent);
+			throw new IllegalArgumentException(
+					"Parent must be a IterationStrategy, DotProduct or CrossProduct: "
+							+ parent);
 		}
 
 	}

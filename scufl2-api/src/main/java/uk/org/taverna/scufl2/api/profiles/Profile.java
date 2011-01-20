@@ -1,6 +1,8 @@
 package uk.org.taverna.scufl2.api.profiles;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -11,6 +13,7 @@ import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.NamedSet;
+import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
@@ -19,9 +22,9 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
  * A Profile specifies a set of compatible ProcessorBindings. For example, one
  * Profile could contain ways of enacting a set of Processors on a grid whilst
  * another contained ways of enacting the Processors on a laptop.
- * 
+ *
  * @author Alan R Williams
- * 
+ *
  */
 @XmlType(propOrder = { "profilePosition", "processorBindings", "configurations" })
 public class Profile extends AbstractNamedChild implements WorkflowBean,
@@ -45,6 +48,24 @@ Child<WorkflowBundle> {
 		super(name);
 	}
 
+	@Override
+	public boolean accept(Visitor visitor) {
+		if (visitor.visitEnter(this)) {
+			List<Iterable<? extends WorkflowBean>> children = new ArrayList<Iterable<? extends WorkflowBean>>();
+			children.add(getActivities());
+			children.add(getProcessorBindings());
+			children.add(getConfigurations());
+			for (Iterable<? extends WorkflowBean> it : children) {
+				for (WorkflowBean bean : it) {
+					if (!bean.accept(visitor)) {
+						break;
+					}
+				}
+			}
+		}
+		return visitor.visitLeave(this);
+	}
+
 	public NamedSet<Activity> getActivities() {
 		return activities;
 	}
@@ -65,7 +86,7 @@ Child<WorkflowBundle> {
 
 	/**
 	 * Return the set of bindings for individual Processors.
-	 * 
+	 *
 	 * @return
 	 */
 	@XmlElementWrapper(name = "processorBindings", nillable = false, required = true)
@@ -79,7 +100,7 @@ Child<WorkflowBundle> {
 	 * ordering profiles, they can be sorted by decreasing profilePosition. If
 	 * two profiles have the same position, their internal order is
 	 * indetermined.
-	 * 
+	 *
 	 * @return
 	 */
 	@XmlElement(required = true, nillable = false)

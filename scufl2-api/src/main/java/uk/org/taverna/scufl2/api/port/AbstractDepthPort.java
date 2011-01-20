@@ -1,6 +1,7 @@
 package uk.org.taverna.scufl2.api.port;
 
 import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
+import uk.org.taverna.scufl2.api.common.Visitor;
 
 
 /**
@@ -10,7 +11,7 @@ import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
 public abstract class AbstractDepthPort extends AbstractNamedChild implements Port {
 
 	private Integer depth;
-	
+
 	public AbstractDepthPort() {
 		super();
 	}
@@ -20,6 +21,11 @@ public abstract class AbstractDepthPort extends AbstractNamedChild implements Po
 	 */
 	public AbstractDepthPort(String name) {
 		super(name);
+	}
+
+	@Override
+	public boolean accept(Visitor visitor) {
+		return visitor.visit(this);
 	}
 
 	public Integer getDepth() {

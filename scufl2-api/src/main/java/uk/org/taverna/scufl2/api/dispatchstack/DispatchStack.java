@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.org.taverna.scufl2.api.common.Child;
+import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.core.Processor;
 
@@ -23,6 +24,18 @@ public class DispatchStack extends ArrayList<DispatchStackLayer> implements
 	}
 
 	@Override
+	public boolean accept(Visitor visitor) {
+		if (visitor.visitEnter(this)) {
+			for (WorkflowBean bean : this) {
+				if (!bean.accept(visitor)) {
+					break;
+				}
+			}
+		}
+		return visitor.visitLeave(this);
+	}
+
+	@Override
 	public Processor getParent() {
 		return parent;
 	}
@@ -30,6 +43,7 @@ public class DispatchStack extends ArrayList<DispatchStackLayer> implements
 	public URI getType() {
 		return type;
 	}
+
 
 	@Override
 	public void setParent(Processor parent) {
@@ -45,10 +59,8 @@ public class DispatchStack extends ArrayList<DispatchStackLayer> implements
 		}
 	}
 
-
 	public void setType(URI type) {
 		this.type = type;
 	}
-
 
 }

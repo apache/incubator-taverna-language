@@ -6,5 +6,5 @@ package uk.org.taverna.scufl2.api.common;
  *
  */
 public interface WorkflowBean {
-
+	public boolean accept(Visitor visitor);
 }
