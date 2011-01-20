@@ -51,10 +51,10 @@ Child<Profile>, Typed, Ported {
 			List<Iterable<? extends WorkflowBean>> children = new ArrayList<Iterable<? extends WorkflowBean>>();
 			children.add(getInputPorts());
 			children.add(getOutputPorts());
-			for (Iterable<? extends WorkflowBean> it : children) {
+			outer: for (Iterable<? extends WorkflowBean> it : children) {
 				for (WorkflowBean bean : it) {
 					if (!bean.accept(visitor)) {
-						break;
+						break outer;
 					}
 				}
 			}

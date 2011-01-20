@@ -44,10 +44,10 @@ public class ProcessorBinding implements WorkflowBean, Child<Profile> {
 			List<Iterable<? extends WorkflowBean>> children = new ArrayList<Iterable<? extends WorkflowBean>>();
 			children.add(getInputPortBindings());
 			children.add(getOutputPortBindings());
-			for (Iterable<? extends WorkflowBean> it : children) {
+			outer: for (Iterable<? extends WorkflowBean> it : children) {
 				for (WorkflowBean bean : it) {
 					if (!bean.accept(visitor)) {
-						break;
+						break outer;
 					}
 				}
 			}

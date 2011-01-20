@@ -59,10 +59,10 @@ public class Workflow extends AbstractNamedChild implements
 			children.add(getProcessors());
 			children.add(getDataLinks());
 			children.add(getControlLinks());
-			for (Iterable<? extends WorkflowBean> it : children) {
+			outer: for (Iterable<? extends WorkflowBean> it : children) {
 				for (WorkflowBean bean : it) {
 					if (!bean.accept(visitor)) {
-						break;
+						break outer;
 					}
 				}
 			}

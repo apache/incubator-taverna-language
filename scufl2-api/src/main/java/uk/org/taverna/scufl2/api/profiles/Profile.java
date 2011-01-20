@@ -55,10 +55,10 @@ Child<WorkflowBundle> {
 			children.add(getActivities());
 			children.add(getProcessorBindings());
 			children.add(getConfigurations());
-			for (Iterable<? extends WorkflowBean> it : children) {
+			outer: for (Iterable<? extends WorkflowBean> it : children) {
 				for (WorkflowBean bean : it) {
 					if (!bean.accept(visitor)) {
-						break;
+						break outer;
 					}
 				}
 			}
