@@ -49,8 +49,6 @@ public class Processor extends AbstractNamedChild implements Child<Workflow>,
 			List<Iterable<? extends WorkflowBean>> children = new ArrayList<Iterable<? extends WorkflowBean>>();
 			children.add(getInputPorts());
 			children.add(getOutputPorts());
-			children.add(getIterationStrategyStack());
-			children.add(getDispatchStack());
 			for (Iterable<? extends WorkflowBean> it : children) {
 				for (WorkflowBean bean : it) {
 					if (!bean.accept(visitor)) {
@@ -58,6 +56,8 @@ public class Processor extends AbstractNamedChild implements Child<Workflow>,
 					}
 				}
 			}
+			getIterationStrategyStack().accept(visitor);
+			getDispatchStack().accept(visitor);
 		}
 		return visitor.visitLeave(this);
 	}
@@ -84,7 +84,6 @@ public class Processor extends AbstractNamedChild implements Child<Workflow>,
 
 	public void setDispatchStack(DispatchStack dispatchStack) {
 		this.dispatchStack = dispatchStack;
-		dispatchStack.setParent(this);
 	}
 
 	public void setInputPorts(Set<InputProcessorPort> inputPorts) {
@@ -95,7 +94,6 @@ public class Processor extends AbstractNamedChild implements Child<Workflow>,
 	public void setIterationStrategyStack(
 			IterationStrategyStack iterationStrategyStack) {
 		this.iterationStrategyStack = iterationStrategyStack;
-		iterationStrategyStack.setParent(this);
 	}
 
 	public void setOutputPorts(Set<OutputProcessorPort> outputPorts) {
