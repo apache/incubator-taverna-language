@@ -82,7 +82,7 @@ public interface Visitor {
 		 * @return A {@link List} of the current path of the ancestors of the
 		 *         currently visiting {@link WorkflowBean}.
 		 */
-		public List<WorkflowBean> getCurrentPath() {
+		public Stack<WorkflowBean> getCurrentPath() {
 			return currentPath;
 		}
 
