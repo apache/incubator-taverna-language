@@ -13,21 +13,21 @@ import javax.xml.bind.JAXBException;
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
-import uk.org.taverna.scufl2.translator.t2flow.ParseException;
+import uk.org.taverna.scufl2.api.io.ReaderException;
+import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 
 public class TestProcessorNames {
 
 	@Test
-	public void processorNames() throws JAXBException, IOException,
-			ParseException {
-		InputStream workflow = getClass()
-		.getResourceAsStream(
+	public void processorNames() throws JAXBException, IOException, ReaderException {
+		InputStream workflow = getClass().getResourceAsStream(
 				"/workflows/t2flow/biomartandembossanalysis_904962.t2flow");
 		assertNotNull(workflow);
 
-		T2FlowParser t2flowParser = new T2FlowParser();
-		WorkflowBundle ro = t2flowParser.parseT2Flow(workflow);
+		WorkflowBundleIO io = new WorkflowBundleIO();
+		WorkflowBundle ro = io.readBundle(workflow,
+				"application/vnd.taverna.t2flow+xml");
 
 		List<String> expected = Arrays.asList("CreateFasta",
 				"FlattenImageList", "GetUniqueHomolog", "emma",

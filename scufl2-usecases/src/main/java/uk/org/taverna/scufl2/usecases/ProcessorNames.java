@@ -13,24 +13,22 @@ import javax.swing.tree.TreeModel;
 import javax.xml.bind.JAXBException;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
-import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
-import uk.org.taverna.scufl2.api.profiles.Profile;
+import uk.org.taverna.scufl2.api.io.ReaderException;
+import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
 import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
-import uk.org.taverna.scufl2.translator.t2flow.ParseException;
-import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
+import uk.org.taverna.scufl2.api.profiles.Profile;
 
 public class ProcessorNames {
 
-	public static void main(String[] args) throws JAXBException, IOException,
-			ParseException {
-		T2FlowParser t2flowParser = new T2FlowParser();
+	public static void main(String[] args) throws JAXBException, IOException, ReaderException {
+		WorkflowBundleIO io = new WorkflowBundleIO();
 		ProcessorNames processorNames = new ProcessorNames();
 		for (String filename : args) {
-			WorkflowBundle ro = t2flowParser.parseT2Flow(new File(
-					filename));
+			WorkflowBundle ro = io.readBundle(new File(
+					filename), "application/vnd.taverna.t2flow+xml");
 			System.out.print(filename + ": ");
 			System.out.println(processorNames.showProcessorNames(ro));
 			System.out.println(processorNames.showProcessorTree(ro));
@@ -38,7 +36,7 @@ public class ProcessorNames {
 	}
 
 	public List<String> showProcessorNames(WorkflowBundle ro)
-			throws JAXBException, IOException, ParseException {
+			throws JAXBException, IOException {
 		ArrayList<String> names = new ArrayList<String>();
 		for (Processor processor : ro.getMainWorkflow().getProcessors()) {
 			names.add(processor.getName());
@@ -48,7 +46,7 @@ public class ProcessorNames {
 	}
 
 	public String showProcessorTree(WorkflowBundle ro)
-			throws JAXBException, IOException, ParseException {
+			throws JAXBException, IOException {
 		TreeModel treeModel = makeProcessorTree(ro);
 		return treeModelAsString(treeModel);
 	}
@@ -79,7 +77,7 @@ public class ProcessorNames {
 	}
 
 	public TreeModel makeProcessorTree(WorkflowBundle ro)
-			throws JAXBException, IOException, ParseException {
+			throws JAXBException, IOException {
 		Workflow workflow = ro.getMainWorkflow();
 		TreeModel treeModel = new DefaultTreeModel(new DefaultMutableTreeNode(
 				workflow.getName()));
