@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package uk.org.taverna.scufl2.api.configurations;
 
@@ -7,6 +7,7 @@ import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Configurable;
+import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
@@ -33,10 +34,10 @@ import uk.org.taverna.scufl2.api.property.PropertyResource;
  * {@link ConfigurationDefinition#getConfigurationType()} matches this
  * configuration's {@link #getTypeURI()}. <strong>TODO: Where are the
  * ConfigurationDefinitions found?</strong>
- * 
+ *
  * @author Alan R Williams
  * @author Stian Soiland-Reyes
- * 
+ *
  */
 public class Configuration extends AbstractNamedChild implements WorkflowBean,
 Child<Profile> {
@@ -52,6 +53,14 @@ Child<Profile> {
 		super(name);
 	}
 
+	@Override
+	public boolean accept(Visitor visitor) {
+		if (visitor.visitEnter(this)) {
+			getPropertyResource().accept(visitor);
+		}
+		return visitor.visitLeave(this);
+	}
+
 	/**
 	 * The {@link Configurable} workflow bean that is configured. Typically an
 	 * {@link Activity} or {@link DispatchStackLayer}, but in theory also
@@ -59,7 +68,7 @@ Child<Profile> {
 	 * configured.
 	 * <p>
 	 * {@link Configurable#}
-	 * 
+	 *
 	 * @return
 	 */
 	public Configurable getConfigures() {
@@ -75,7 +84,7 @@ Child<Profile> {
 	 * Get the underlying {@link PropertyResource} which contains the properties
 	 * set by this configuration.
 	 * <p>
-	 * 
+	 *
 	 * @return The backing {@link PropertyResource}.
 	 */
 	public PropertyResource getPropertyResource() {

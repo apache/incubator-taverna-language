@@ -1,11 +1,15 @@
 package uk.org.taverna.scufl2.api.core;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.Ported;
+import uk.org.taverna.scufl2.api.common.Visitor;
+import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.dispatchstack.DispatchStack;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
@@ -37,6 +41,25 @@ public class Processor extends AbstractNamedChild implements Child<Workflow>,
 	public Processor(Workflow parent, String name) {
 		super(name);
 		setParent(parent);
+	}
+
+	@Override
+	public boolean accept(Visitor visitor) {
+		if (visitor.visitEnter(this)) {
+			List<Iterable<? extends WorkflowBean>> children = new ArrayList<Iterable<? extends WorkflowBean>>();
+			children.add(getInputPorts());
+			children.add(getOutputPorts());
+			children.add(getIterationStrategyStack());
+			children.add(getDispatchStack());
+			for (Iterable<? extends WorkflowBean> it : children) {
+				for (WorkflowBean bean : it) {
+					if (!bean.accept(visitor)) {
+						break;
+					}
+				}
+			}
+		}
+		return visitor.visitLeave(this);
 	}
 
 	public DispatchStack getDispatchStack() {
@@ -93,7 +116,7 @@ public class Processor extends AbstractNamedChild implements Child<Workflow>,
 	@Override
 	public String toString() {
 		return super.toString() + "[" + "getInputPorts()=" + getInputPorts()
-		+ ", " + "getOutputPorts()=" + getOutputPorts() + ", " + "]";
+				+ ", " + "getOutputPorts()=" + getOutputPorts() + ", " + "]";
 	}
 
 }

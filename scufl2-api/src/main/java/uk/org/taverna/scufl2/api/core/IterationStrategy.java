@@ -2,6 +2,7 @@ package uk.org.taverna.scufl2.api.core;
 
 
 import uk.org.taverna.scufl2.api.common.Child;
+import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyNode;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyParent;
@@ -21,6 +22,14 @@ IterationStrategyParent {
 
 	public IterationStrategy() {
 		super();
+	}
+
+	@Override
+	public boolean accept(Visitor visitor) {
+		if (visitor.visitEnter(this)) {
+			getRootStrategyNode().accept(visitor);
+		}
+		return visitor.visitLeave(this);
 	}
 
 	public IterationStrategyStack getParent() {
@@ -44,5 +53,4 @@ IterationStrategyParent {
 	public void setRootStrategyNode(IterationStrategyNode rootStrategyNode) {
 		this.rootStrategyNode = rootStrategyNode;
 	}
-
 }
