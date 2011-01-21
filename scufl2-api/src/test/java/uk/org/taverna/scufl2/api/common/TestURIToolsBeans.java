@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.ExampleWorkflow;
+import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.BlockingControlLink;
 import uk.org.taverna.scufl2.api.core.ControlLink;
@@ -31,6 +32,37 @@ public class TestURIToolsBeans {
 	public void makeExampleWorkflow() {
 		wfBundle = new ExampleWorkflow().makeWorkflowBundle();
 	}
+
+	@Test
+	public void uriForActivity() throws Exception {
+		Activity activity = wfBundle.getMainProfile().getActivities()
+				.getByName("HelloScript");
+		URI uri = uriTools.uriForBean(activity);
+		assertEquals(BUNDLE_URI + "profile/tavernaWorkbench/"
+				+ "activity/HelloScript/", uri.toASCIIString());
+	}
+
+	@Test
+	public void uriForActivityInput() throws Exception {
+		Activity activity = wfBundle.getMainProfile().getActivities()
+				.getByName("HelloScript");
+		URI uri = uriTools.uriForBean(activity.getInputPorts().getByName(
+				"personName"));
+		assertEquals(BUNDLE_URI + "profile/tavernaWorkbench/"
+				+ "activity/HelloScript/in/personName", uri.toASCIIString());
+	}
+
+	@Test
+	public void uriForActivityOutput() throws Exception {
+		Activity activity = wfBundle.getMainProfile().getActivities()
+				.getByName("HelloScript");
+		URI uri = uriTools.uriForBean(activity.getOutputPorts().getByName(
+				"hello"));
+		assertEquals(BUNDLE_URI + "profile/tavernaWorkbench/"
+				+ "activity/HelloScript/out/hello",
+				uri.toASCIIString());
+	}
+
 
 	@Test
 	public void uriForConditional() throws Exception {
