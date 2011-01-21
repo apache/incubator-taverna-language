@@ -10,6 +10,7 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.IterationStrategy;
 import uk.org.taverna.scufl2.api.core.Processor;
+import uk.org.taverna.scufl2.api.core.BlockingControlLink;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.dispatchstack.DispatchStack;
 import uk.org.taverna.scufl2.api.iterationstrategy.CrossProduct;
@@ -27,14 +28,17 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
 
 public class ExampleWorkflow {
 
-	private Workflow workflow;
-	private Processor processor;
-	private WorkflowBundle workflowBundle;
-	private InputProcessorPort processorName;
-	private OutputProcessorPort processorGreeting;
-	private InputActivityPort personName;
-	private OutputActivityPort hello;
-	private Activity activity;
+	protected Workflow workflow;
+	protected Processor processor;
+	protected WorkflowBundle workflowBundle;
+	protected InputProcessorPort processorName;
+	protected OutputProcessorPort processorGreeting;
+	protected InputActivityPort personName;
+	protected OutputActivityPort hello;
+	protected Activity activity;
+	protected BlockingControlLink condition;
+	protected Processor wait4me;
+	private DataLink nameLink;
 
 	public Activity makeActivity() {
 		activity = new Activity();
@@ -117,6 +121,7 @@ public class ExampleWorkflow {
 		// workflow.getOutputPorts().add(results);
 
 		workflow.getProcessors().add(makeProcessor());
+		workflow.getProcessors().add(makeProcessor2());
 
 		// Make links
 		DataLink directLink = new DataLink(workflow, yourName, results);
@@ -126,7 +131,9 @@ public class ExampleWorkflow {
 				results);
 		greetingLink.setMergePosition(0);
 
-		DataLink nameLink = new DataLink(workflow, yourName, processorName);
+		nameLink = new DataLink(workflow, yourName, processorName);
+
+		condition = new BlockingControlLink(processor, wait4me);
 
 		return workflow;
 	}
@@ -142,6 +149,20 @@ public class ExampleWorkflow {
 		// FIXME: Should not need to make default iteration stack
 		processor
 		.setIterationStrategyStack(makeIterationStrategyStack(processorName));
+
+		return processor;
+	}
+
+	public Processor makeProcessor2() {
+		wait4me = new Processor(workflow, "wait4me");
+
+		// FIXME: Should not need to make default dispatch stack
+		wait4me.setDispatchStack(makeDispatchStack());
+
+		// FIXME: Should not need to make default iteration stack
+		wait4me.setIterationStrategyStack(makeIterationStrategyStack());
+
+
 
 		return processor;
 	}

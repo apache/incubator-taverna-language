@@ -79,7 +79,7 @@ public class Scufl2Tools {
 		@SuppressWarnings("rawtypes")
 		Workflow wf = findParent(Workflow.class, (Child) senderPort);
 		List<DataLink> links = new ArrayList();
-		for (DataLink link : wf.getDatalinks()) {
+		for (DataLink link : wf.getDataLinks()) {
 			if (link.getReceivesFrom().equals(senderPort)) {
 				links.add(link);
 			}
@@ -93,7 +93,7 @@ public class Scufl2Tools {
 		@SuppressWarnings("rawtypes")
 		Workflow wf = findParent(Workflow.class, (Child) receiverPort);
 		List<DataLink> links = new ArrayList<DataLink>();
-		for (DataLink link : wf.getDatalinks()) {
+		for (DataLink link : wf.getDataLinks()) {
 			if (link.getSendsTo().equals(receiverPort)) {
 				links.add(link);
 			}

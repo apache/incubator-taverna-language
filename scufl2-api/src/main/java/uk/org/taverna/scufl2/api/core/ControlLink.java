@@ -7,7 +7,7 @@ import uk.org.taverna.scufl2.api.common.Child;
  * @author Stian Soiland-Reyes
  * 
  */
-public interface Condition extends Child<Workflow> {
+public interface ControlLink extends Child<Workflow> {
 
 
 

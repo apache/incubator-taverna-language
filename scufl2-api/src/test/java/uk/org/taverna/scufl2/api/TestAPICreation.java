@@ -72,13 +72,13 @@ public class TestAPICreation {
 		OutputProcessorPort pNested_o = new OutputProcessorPort(pNested, "O");
 		pNested.getOutputPorts().add(pNested_o);
 
-		wf1.getDatalinks().add(new DataLink(wf1, p1_y2, pNested_i));
+		wf1.getDataLinks().add(new DataLink(wf1, p1_y2, pNested_i));
 
-		wf1.getDatalinks().add(new DataLink(wf1, p1_y2, p4_x2));
+		wf1.getDataLinks().add(new DataLink(wf1, p1_y2, p4_x2));
 
-		wf1.getDatalinks().add(new DataLink(wf1, pNested_o, p1_y1));
+		wf1.getDataLinks().add(new DataLink(wf1, pNested_o, p1_y1));
 
-		wf1.getDatalinks().add(new DataLink(wf1, p4_y, wf1_out1));
+		wf1.getDataLinks().add(new DataLink(wf1, p4_y, wf1_out1));
 
 		Activity activity = new Activity("act0");
 		Profile p = new Profile();

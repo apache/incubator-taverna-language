@@ -88,7 +88,7 @@ public class SillyWriter implements WorkflowBundleWriter {
 			}
 			// We'll need to sort them afterwards
 			List<String> links = new ArrayList<String>();
-			for (DataLink dl : wf.getDatalinks()) {
+			for (DataLink dl : wf.getDataLinks()) {
 				links.add(datalink(dl.getReceivesFrom()) + " -> "
 						+ datalink(dl.getSendsTo()));
 			}
