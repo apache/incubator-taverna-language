@@ -60,7 +60,7 @@
 	a owl:Class ;
 	rdfs:comment """The default Taverna dispatch stack of Parallelise, 
 		ErrorBounce, Failover, Retry, Stop and Invoke.""";
-	rdfs:subClassOf scufl2:DispatcStack, [
+	rdfs:subClassOf scufl2:DispatchStack, [
              a owl:Restriction;
              owl:someValuesFrom :Parallelise;
              owl:onProperty rdf:first 
