@@ -5,23 +5,25 @@ import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyNode;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyParent;
+import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
 
 
 /**
  * @author Alan R Williams
  *
  */
-public class IterationStrategy implements WorkflowBean, Child<Processor>,
+public class IterationStrategy implements WorkflowBean,
+		Child<IterationStrategyStack>,
 IterationStrategyParent {
 
-	private Processor parent;
+	private IterationStrategyStack parent;
 	private IterationStrategyNode rootStrategyNode;
 
 	public IterationStrategy() {
 		super();
 	}
 
-	public Processor getParent() {
+	public IterationStrategyStack getParent() {
 		return parent;
 	}
 
@@ -29,13 +31,13 @@ IterationStrategyParent {
 		return rootStrategyNode;
 	}
 
-	public void setParent(Processor parent) {
+	public void setParent(IterationStrategyStack parent) {
 		if (this.parent != null && this.parent != parent) {
-			this.parent.getIterationStrategyStack().remove(this);
+			this.parent.remove(this);
 		}
 		this.parent = parent;
-		if (parent != null) {
-			parent.getIterationStrategyStack().add(this);
+		if (parent != null && !parent.contains(this)) {
+			parent.add(this);
 		}
 	}
 

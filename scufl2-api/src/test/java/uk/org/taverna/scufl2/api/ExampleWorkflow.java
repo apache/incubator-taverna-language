@@ -11,6 +11,7 @@ import uk.org.taverna.scufl2.api.core.IterationStrategy;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.dispatchstack.DispatchStack;
+import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
 import uk.org.taverna.scufl2.api.iterationstrategy.CrossProduct;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
 import uk.org.taverna.scufl2.api.iterationstrategy.PortNode;
@@ -38,6 +39,8 @@ public class ExampleWorkflow {
 	protected BlockingControlLink condition;
 	protected Processor wait4me;
 	private DataLink nameLink;
+
+	URI TAVERNA_2_2 = URI.create("http://ns.taverna.org.uk/2010/taverna/2.2/");
 
 	public Activity makeActivity() {
 		activity = new Activity();
@@ -68,17 +71,33 @@ public class ExampleWorkflow {
 	}
 
 	public DispatchStack makeDispatchStack() {
-		// TODO: Make dispatch stack
-		return new DispatchStack();
+
+		// See scufl2-rdf/src/main/resources/taverna-2.2.ttl
+
+		DispatchStack dispatchStack = new DispatchStack();
+		new DispatchStackLayer(dispatchStack,
+				TAVERNA_2_2.resolve("Parallelise"));
+		new DispatchStackLayer(dispatchStack,
+				TAVERNA_2_2.resolve("ErrorBounce"));
+		new DispatchStackLayer(dispatchStack, TAVERNA_2_2.resolve("Failover"));
+		new DispatchStackLayer(dispatchStack, TAVERNA_2_2.resolve("Retry"));
+		new DispatchStackLayer(dispatchStack, TAVERNA_2_2.resolve("Stop"));
+		new DispatchStackLayer(dispatchStack, TAVERNA_2_2.resolve("Invoke"));
+
+		// TODO: Should not be included, perhaps.. as it would not be changed
+		// if the stack is modified!
+		dispatchStack.setType(TAVERNA_2_2.resolve("DefaultDispatchStack"));
+
+		return dispatchStack;
 	}
 
 	public IterationStrategyStack makeIterationStrategyStack(
 			InputProcessorPort... inputs) {
 		IterationStrategyStack stack = new IterationStrategyStack();
 		IterationStrategy strategy = new IterationStrategy();
-		stack.add(strategy);
+		strategy.setParent(stack);
 		CrossProduct crossProduct = new CrossProduct();
-		strategy.setRootStrategyNode(crossProduct);
+		crossProduct.setParent(strategy);
 		for (InputProcessorPort inp : inputs) {
 			crossProduct.add(new PortNode(crossProduct, inp));
 		}

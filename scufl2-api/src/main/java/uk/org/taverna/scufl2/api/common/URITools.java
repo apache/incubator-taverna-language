@@ -3,11 +3,17 @@ package uk.org.taverna.scufl2.api.common;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
+import java.util.List;
 
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
-import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.BlockingControlLink;
+import uk.org.taverna.scufl2.api.core.DataLink;
+import uk.org.taverna.scufl2.api.core.IterationStrategy;
 import uk.org.taverna.scufl2.api.core.Workflow;
+import uk.org.taverna.scufl2.api.dispatchstack.DispatchStack;
+import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
+import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyNode;
+import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
 import uk.org.taverna.scufl2.api.port.InputPort;
 import uk.org.taverna.scufl2.api.port.OutputPort;
 import uk.org.taverna.scufl2.api.port.Port;
@@ -96,20 +102,26 @@ public class URITools {
 				relation = "in/";
 			} else if (child instanceof OutputPort) {
 				relation = "out/";
+			} else if (child instanceof IterationStrategyStack) {
+				relation = "iterationstrategy/";
 			} else {
 				// TODO: Get relation by container annotations
 				relation = child.getClass().getSimpleName() + "/";
 				// Stupid fallback
 			}
 
-			URI relationUri = parentUri.resolve(relation.toLowerCase());
+			URI relationURI = parentUri.resolve(relation.toLowerCase());
+			if (parent instanceof List) {
+				int index = ((List) parent).indexOf(child);
+				return parentUri.resolve(index + "/");
+			}
 			if (bean instanceof Named) {
 				Named named = (Named) bean;
 				String name = validFilename(named.getName());
 				if (!(bean instanceof Port)) {
 					name = name + "/";
 				}
-				return relationUri.resolve(name);
+				return relationURI.resolve(name);
 			} else if (bean instanceof DataLink) {
 
 				DataLink dataLink = (DataLink) bean;
@@ -140,6 +152,23 @@ public class URITools {
  "control", "block", start,
 						"untilFinished", after);
 				return wfUri.resolve(conditionUri);
+			} else if (bean instanceof DispatchStack) {
+				return relationURI;
+			} else if (bean instanceof DispatchStackLayer) {
+				DispatchStackLayer dispatchStackLayer = (DispatchStackLayer) bean;
+
+			} else if (bean instanceof IterationStrategyStack) {
+				return relationURI;
+			} else if (bean instanceof IterationStrategyNode) {
+				IterationStrategyNode iterationStrategyNode = (IterationStrategyNode) bean;
+				parent = iterationStrategyNode.getParent();
+				if (parent instanceof IterationStrategy) {
+					return parentUri.resolve("root/");
+				} else {
+					List<IterationStrategyNode> parentList = (List<IterationStrategyNode>) parent;
+					int index = parentList.indexOf(iterationStrategyNode);
+					return parentUri.resolve(index + "/");
+				}
 			} else {
 				throw new IllegalStateException(
 						"Can't create URIs for non-named child: " + bean);

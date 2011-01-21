@@ -21,8 +21,9 @@ public class Processor extends AbstractNamedChild implements Child<Workflow>,
 
 	private NamedSet<OutputProcessorPort> outputPorts = new NamedSet<OutputProcessorPort>();
 	private NamedSet<InputProcessorPort> inputPorts = new NamedSet<InputProcessorPort>();
-	private IterationStrategyStack iterationStrategyStack = new IterationStrategyStack();
-	private DispatchStack dispatchStack = new DispatchStack();
+	private IterationStrategyStack iterationStrategyStack = new IterationStrategyStack(
+			this);
+	private DispatchStack dispatchStack = new DispatchStack(this);
 	private Workflow parent;
 
 	public Processor() {
@@ -60,6 +61,7 @@ public class Processor extends AbstractNamedChild implements Child<Workflow>,
 
 	public void setDispatchStack(DispatchStack dispatchStack) {
 		this.dispatchStack = dispatchStack;
+		dispatchStack.setParent(this);
 	}
 
 	public void setInputPorts(Set<InputProcessorPort> inputPorts) {
@@ -70,6 +72,7 @@ public class Processor extends AbstractNamedChild implements Child<Workflow>,
 	public void setIterationStrategyStack(
 			IterationStrategyStack iterationStrategyStack) {
 		this.iterationStrategyStack = iterationStrategyStack;
+		iterationStrategyStack.setParent(this);
 	}
 
 	public void setOutputPorts(Set<OutputProcessorPort> outputPorts) {
