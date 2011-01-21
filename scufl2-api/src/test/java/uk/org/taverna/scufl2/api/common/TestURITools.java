@@ -95,8 +95,8 @@ public class TestURITools {
 	@Test
 	public void validFileName() {
 		assertEquals(
-				"f%2fsd%5Csdf'asd%20fa%3asd%20%C4%91%C3%BE%E2%80%9D%C2%BB%C3%A6",
-				uriTools.validFilename("f/sd\\sdf'asd fa:sd đþ”»æ"));
+				"f%2fsd%5Csdf'asd%20fa%3as&%3F%3dd%20%C4%91%C3%BE%E2%80%9D%C2%BB%C3%A6",
+				uriTools.validFilename("f/sd\\sdf'asd fa:s&?=d đþ”»æ"));
 	}
 
 	@Test
