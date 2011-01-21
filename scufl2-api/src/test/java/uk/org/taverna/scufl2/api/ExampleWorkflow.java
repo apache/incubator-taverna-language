@@ -112,10 +112,10 @@ public class ExampleWorkflow {
 
 		// FIXME: Can't create recommendsEnvironment/requiresEnvironment
 
-		profile.getActivities().add(makeActivity());
+		makeActivity().setParent(profile);
 
-		profile.getConfigurations().add(makeConfiguration());
-		profile.getProcessorBindings().add(makeProcessorBinding());
+		makeConfiguration().setParent(profile);
+		makeProcessorBinding().setParent(profile);
 
 		// profile.setProfilePosition(0);
 
