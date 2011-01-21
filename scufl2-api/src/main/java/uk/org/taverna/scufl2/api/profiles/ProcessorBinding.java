@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
+import uk.org.taverna.scufl2.api.common.AbstractNamed;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
@@ -27,7 +28,8 @@ import uk.org.taverna.scufl2.api.core.Processor;
  * @author Alan R Williams
  *
  */
-public class ProcessorBinding implements WorkflowBean, Child<Profile> {
+public class ProcessorBinding extends AbstractNamed implements WorkflowBean,
+		Child<Profile> {
 
 	private Processor boundProcessor;
 	private Activity boundActivity;

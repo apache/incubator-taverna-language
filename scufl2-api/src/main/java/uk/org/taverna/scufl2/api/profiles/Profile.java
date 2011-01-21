@@ -1,7 +1,6 @@
 package uk.org.taverna.scufl2.api.profiles;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -30,7 +29,7 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 public class Profile extends AbstractNamedChild implements WorkflowBean,
 Child<WorkflowBundle> {
 
-	private Set<ProcessorBinding> processorBindings = new HashSet<ProcessorBinding>();
+	private NamedSet<ProcessorBinding> processorBindings = new NamedSet<ProcessorBinding>();
 
 	private NamedSet<Configuration> configurations = new NamedSet<Configuration>();
 
@@ -91,7 +90,7 @@ Child<WorkflowBundle> {
 	 */
 	@XmlElementWrapper(name = "processorBindings", nillable = false, required = true)
 	@XmlElement(name = "processorBinding", nillable = false)
-	public Set<ProcessorBinding> getProcessorBindings() {
+	public NamedSet<ProcessorBinding> getProcessorBindings() {
 		return processorBindings;
 	}
 
@@ -137,7 +136,8 @@ Child<WorkflowBundle> {
 	 * @param processorBindings
 	 */
 	public void setProcessorBindings(Set<ProcessorBinding> processorBindings) {
-		this.processorBindings = processorBindings;
+		this.processorBindings.clear();
+		this.processorBindings.addAll(processorBindings);
 	}
 
 	public final void setProfilePosition(int profilePosition) {
