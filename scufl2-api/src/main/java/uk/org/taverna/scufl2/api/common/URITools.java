@@ -19,6 +19,7 @@ import uk.org.taverna.scufl2.api.port.OutputPort;
 import uk.org.taverna.scufl2.api.port.Port;
 import uk.org.taverna.scufl2.api.port.ProcessorPort;
 import uk.org.taverna.scufl2.api.profiles.ProcessorPortBinding;
+import uk.org.taverna.scufl2.api.property.PropertyResource;
 
 public class URITools {
 
@@ -184,6 +185,15 @@ public class URITools {
 						"Can't create URIs for non-named child: " + bean);
 			}
 
+		}
+		if (bean instanceof PropertyResource) {
+			PropertyResource propertyResource = (PropertyResource) bean;
+			URI resourceURI = propertyResource.getResourceURI();
+			if (resourceURI != null) {
+				return resourceURI;
+			}
+			throw new IllegalStateException(
+					"PropertyResource does not have a resourceURI");
 		}
 		throw new IllegalArgumentException("Unsupported type "
 				+ bean.getClass() + " for bean " + bean);
