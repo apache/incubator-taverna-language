@@ -53,6 +53,15 @@
 				</iterationStrategyStack>
 			</Processor>
 		</processor>
+		
+		
+		<processor>
+			<Processor rdf:about="processor/wait4me">
+				<name>wait4me</name>
+				<dispatchStack
+					rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#defaultDispatchStack" />
+			</Processor>
+		</processor>
 
 		<datalink>
 			<DataLink rdf:about="datalink/5">
@@ -70,11 +79,18 @@
 			</DataLink>
 		</datalink>
 		<datalink>
-			<DataLink rdf:about="datalink/5">
+			<DataLink rdf:about="datalink/312">
 				<receivesFrom rdf:resource="in/yourName" />
 				<sendsTo rdf:resource="processor/Hello/in/name" />
 			</DataLink>
 		</datalink>
+
+		<control>
+			<Blocking rdf:about="control?block=processor/Hello/&untilFinished=processor/wait4me/">
+				<block rdf:resource="processor/Hello/" />
+				<untilFinished rdf:resource="processor/wait4me/" />
+			</Blocking>
+		</control>
 
 		<rdfs:seeAlso rdf:resource="../annotation/workflow/HelloWorld.rdf" />
 	</Workflow>
