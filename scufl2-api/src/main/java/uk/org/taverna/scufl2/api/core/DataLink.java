@@ -32,73 +32,6 @@ public class DataLink implements Child<Workflow>, Comparable {
 		setParent(parent);
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public int compareTo(Object o) {
-		if (! (o instanceof DataLink)) {
-			return o.getClass().getCanonicalName().compareTo(getClass().getCanonicalName());
-		}
-		DataLink o1 = this;
-		DataLink o2 = (DataLink) o;
-
-		int senderCompare = o1.getReceivesFrom().compareTo(
-				o2.getReceivesFrom());
-		if (senderCompare != 0) {
-			return senderCompare;
-		}
-
-		int receiverCompare = o1.getSendsTo().compareTo(o2.getSendsTo());
-		if (receiverCompare != 0) {
-			return receiverCompare;
-		}
-
-		if (o1.getMergePosition() == null) {
-			if (o2.getMergePosition() == null) {
-				return 0;
-			}
-		}
-		if (o2.getMergePosition() == null) {
-			return -1;
-		}
-		return o1.getMergePosition().compareTo(o2.getMergePosition());
-	}
-
-	@Override
-	public boolean accept(Visitor visitor) {
-		return visitor.visit(this);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public int compareTo(Object o) {
-		if (! (o instanceof DataLink)) {
-			return o.getClass().getCanonicalName().compareTo(getClass().getCanonicalName());
-		}
-		DataLink o1 = this;
-		DataLink o2 = (DataLink) o;
-
-		int senderCompare = o1.getReceivesFrom().compareTo(
-				o2.getReceivesFrom());
-		if (senderCompare != 0) {
-			return senderCompare;
-		}
-
-		int receiverCompare = o1.getSendsTo().compareTo(o2.getSendsTo());
-		if (receiverCompare != 0) {
-			return receiverCompare;
-		}
-
-		if (o1.getMergePosition() == null) {
-			if (o2.getMergePosition() == null) {
-				return 0;
-			}
-		}
-		if (o2.getMergePosition() == null) {
-			return -1;
-		}
-		return o1.getMergePosition().compareTo(o2.getMergePosition());
-	}
-
 	@Override
 	public boolean accept(Visitor visitor) {
 		return visitor.visit(this);
@@ -168,7 +101,6 @@ public class DataLink implements Child<Workflow>, Comparable {
 	public Integer getMergePosition() {
 		return mergePosition;
 	}
-
 
 	public Workflow getParent() {
 		return parent;
