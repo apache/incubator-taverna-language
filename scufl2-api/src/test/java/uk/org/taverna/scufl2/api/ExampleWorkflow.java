@@ -99,7 +99,7 @@ public class ExampleWorkflow {
 		CrossProduct crossProduct = new CrossProduct();
 		crossProduct.setParent(strategy);
 		for (InputProcessorPort inp : inputs) {
-			crossProduct.add(new PortNode(crossProduct, inp));
+			new PortNode(crossProduct, inp);
 		}
 		return stack;
 	}
