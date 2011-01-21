@@ -6,8 +6,7 @@ import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.common.Typed;
 
-public class DispatchStackLayer implements Typed, Child<DispatchStack>,
-Configurable {
+public class DispatchStackLayer implements Typed, Child<DispatchStack>,Configurable {
 
 	private DispatchStack parent;
 	private URI configurableType;
@@ -31,7 +30,16 @@ Configurable {
 
 	@Override
 	public void setParent(DispatchStack parent) {
+		if (this.parent == parent) {
+			return; // No more to do!
+		}
+		if (this.parent != null) {
+			this.parent.remove(this);
+		}
 		this.parent = parent;
+		if (parent != null && ! parent.contains(this)) {
+			parent.add(this); // Just add to the end
+		}
 	}
 
 }
