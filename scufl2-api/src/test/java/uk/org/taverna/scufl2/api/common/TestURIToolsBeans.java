@@ -11,10 +11,10 @@ import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.ExampleWorkflow;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
-import uk.org.taverna.scufl2.api.core.Condition;
+import uk.org.taverna.scufl2.api.core.ControlLink;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
-import uk.org.taverna.scufl2.api.core.RunAfterCondition;
+import uk.org.taverna.scufl2.api.core.BlockingControlLink;
 
 public class TestURIToolsBeans {
 
@@ -33,9 +33,9 @@ public class TestURIToolsBeans {
 		Processor hello = wfBundle.getMainWorkflow().getProcessors()
 				.getByName("Hello");
 		// We'll add a condition
-		Condition condition = wfBundle.getMainWorkflow().getConditions()
+		ControlLink condition = wfBundle.getMainWorkflow().getControlLinks()
 				.iterator().next();
-		assertTrue(condition instanceof RunAfterCondition);
+		assertTrue(condition instanceof BlockingControlLink);
 		URI uri = uriTools.uriForBean(condition);
 
 		assertEquals(
