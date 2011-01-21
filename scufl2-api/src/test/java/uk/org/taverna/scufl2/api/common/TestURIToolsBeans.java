@@ -279,4 +279,10 @@ public class TestURIToolsBeans {
 		assertEquals(HELLOWORLD_URI + "out/results", uri.toASCIIString());
 	}
 
+	@Test
+	public void uriVisitor() {
+		wfBundle.accept(new Visitor.VisitorAdapter() {
+		});
+	}
+
 }
