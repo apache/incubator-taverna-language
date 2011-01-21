@@ -10,7 +10,7 @@ import uk.org.taverna.scufl2.api.common.Visitor;
  *
  */
 @SuppressWarnings("rawtypes")
-public class BlockingControlLink implements ControlLink, Comparable {
+public class BlockingControlLink implements ControlLink {
 
 	private Workflow parent;
 	private Processor block;

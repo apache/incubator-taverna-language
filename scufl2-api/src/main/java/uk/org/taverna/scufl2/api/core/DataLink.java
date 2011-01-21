@@ -3,7 +3,6 @@ package uk.org.taverna.scufl2.api.core;
 
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Visitor;
-import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.port.ReceiverPort;
 import uk.org.taverna.scufl2.api.port.SenderPort;
 
@@ -12,7 +11,7 @@ import uk.org.taverna.scufl2.api.port.SenderPort;
  * @author Alan R Williams
  *
  */
-public class DataLink implements WorkflowBean, Child<Workflow>, Comparable {
+public class DataLink implements Child<Workflow>, Comparable {
 
 	private ReceiverPort sendsTo;
 

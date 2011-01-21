@@ -5,7 +5,6 @@ import javax.xml.namespace.QName;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openrdf.concepts.owl.Ontology;
 import org.openrdf.elmo.ElmoModule;
 import org.openrdf.elmo.sesame.SesameManager;
 import org.openrdf.elmo.sesame.SesameManagerFactory;

@@ -26,7 +26,7 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
  *
  */
 @XmlType(propOrder = { "profilePosition", "processorBindings", "configurations" })
-public class Profile extends AbstractNamedChild implements WorkflowBean,
+public class Profile extends AbstractNamedChild implements
 Child<WorkflowBundle> {
 
 	private NamedSet<ProcessorBinding> processorBindings = new NamedSet<ProcessorBinding>();

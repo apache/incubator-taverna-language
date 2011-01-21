@@ -5,17 +5,11 @@ package uk.org.taverna.scufl2.translator.t2flow;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.io.FileOutputStream;
 import java.net.URL;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-
 
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
-import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 
 /**
  * @author alanrw

@@ -1,12 +1,9 @@
 package uk.org.taverna.scufl2.usecases;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.ReaderException;

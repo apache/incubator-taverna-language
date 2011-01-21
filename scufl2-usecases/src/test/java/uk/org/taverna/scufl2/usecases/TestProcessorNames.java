@@ -15,7 +15,6 @@ import org.junit.Test;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
-import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 
 public class TestProcessorNames {
 

@@ -29,9 +29,9 @@
 					</execution>
 				</executions>
 				<configuration>
-                    <packageName>uk.org.taverna.scufl2.xml.t2flow.jaxb</packageName>
-            		<schemaDirectory>src/main/resources/uk/org/taverna/scufl2/translator/t2flow/xsd/</schemaDirectory>
-                </configuration>
+					<packageName>uk.org.taverna.scufl2.xml.t2flow.jaxb</packageName>
+					<schemaDirectory>src/main/resources/uk/org/taverna/scufl2/translator/t2flow/xsd/</schemaDirectory>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -46,18 +46,12 @@
 			<artifactId>com.springsource.org.apache.log4j</artifactId>
 			<version>1.2.16</version>
 		</dependency>
-	<!-- Enable for Java 5 
-	    <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>2.0.3</version>
-        </dependency>	
-	 -->	
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>2.2.2</version>
+			<type>jar</type>
+			<optional>true</optional>
+		</dependency>
 	</dependencies>
 </project>

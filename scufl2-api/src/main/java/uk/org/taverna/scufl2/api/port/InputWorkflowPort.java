@@ -1,6 +1,5 @@
 package uk.org.taverna.scufl2.api.port;
 
-import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.core.Workflow;
 
 /**
@@ -8,7 +7,8 @@ import uk.org.taverna.scufl2.api.core.Workflow;
  *
  */
 public class InputWorkflowPort extends AbstractDepthPort implements
-SenderPort, WorkflowPort, InputPort, Child<Workflow> {
+ SenderPort,
+		WorkflowPort, InputPort {
 
 	private Workflow parent;
 
