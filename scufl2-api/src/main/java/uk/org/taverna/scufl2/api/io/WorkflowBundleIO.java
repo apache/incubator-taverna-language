@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -106,6 +107,12 @@ public class WorkflowBundleIO {
 					"Could not find reader for media type " + mediaType);
 		}
 		return reader.readBundle(inputStream, mediaType);
+	}
+
+	public WorkflowBundle readBundle(URL url, String mediaType) throws ReaderException, IOException {
+		// TODO: Pass URL to reader
+		return readBundle(url.openStream(), mediaType);
+
 	}
 
 	public void setReaders(List<WorkflowBundleReader> readers) {
