@@ -55,7 +55,7 @@ Child<Profile> {
 
 	@Override
 	public boolean accept(Visitor visitor) {
-		if (visitor.visitEnter(this)) {
+		if (visitor.visitEnter(this) && getPropertyResource() != null) {
 			getPropertyResource().accept(visitor);
 		}
 		return visitor.visitLeave(this);
