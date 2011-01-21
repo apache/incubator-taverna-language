@@ -23,7 +23,7 @@ IterationStrategyParent {
 
 	@Override
 	public boolean accept(Visitor visitor) {
-		if (visitor.visitEnter(this)) {
+		if (visitor.visitEnter(this) && getRootStrategyNode() != null) {
 			getRootStrategyNode().accept(visitor);
 		}
 		return visitor.visitLeave(this);
