@@ -5,6 +5,7 @@ import java.util.UUID;
 
 /**
  * @author Alan R Williams
+ * @author Stian Soiland-Reyes
  *
  */
 public abstract class AbstractNamed implements Named {
@@ -17,6 +18,46 @@ public abstract class AbstractNamed implements Named {
 
 	public AbstractNamed(String name) {
 		setName(name);
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		if (!(o instanceof AbstractNamed)) {
+			// Other comparables go first
+			return 1;
+		}
+		AbstractNamed other = (AbstractNamed) o;
+		if (other == this) {
+			return 0;
+		}
+		if (this instanceof Child) {
+			if (!(other instanceof Child)) {
+				// He's orphan, he's sorted first
+				return 1;
+			}
+			WorkflowBean parent = ((Child<?>) this).getParent();
+			WorkflowBean otherParent = ((Child<?>) other).getParent();
+			if (parent instanceof Comparable && otherParent instanceof Comparable) {
+				int comparedParents = ((Comparable)parent).compareTo(otherParent);
+				if (comparedParents != 0) {
+					return comparedParents;
+				}
+			}
+		} else {
+			if (other instanceof Child) {
+				// We're orphan, we're first
+				return -1;
+			}
+		}
+		if (getClass() != other.getClass()) {
+			int classCompare = getClass().getCanonicalName().compareTo(other.getClass().getCanonicalName());
+			if (classCompare != 0) {
+				// Allow having say InputPorts and OutputPorts in the same sorted list
+				return classCompare;
+			}
+		}
+		// We're the same class, let's compare the names
+		return getName().compareTo(other.getName());
 	}
 
 	@Override
@@ -55,8 +96,8 @@ public abstract class AbstractNamed implements Named {
 			}
 		}
 		if (this instanceof Identified) {
-			URI myId = ((Identified)this).getIdentifier();
-			URI otherId = ((Identified)obj).getIdentifier();
+			URI myId = ((Identified) this).getIdentifier();
+			URI otherId = ((Identified) obj).getIdentifier();
 			if (myId != null) {
 				return myId.equals(otherId);
 			}
@@ -69,7 +110,7 @@ public abstract class AbstractNamed implements Named {
 
 	/*
 	 * (non-Javadoc)AbstractNamed
-	 * 
+	 *
 	 * @see uk.org.taverna.scufl2.api.common.Named#getName()
 	 */
 	public String getName() {
@@ -91,7 +132,9 @@ public abstract class AbstractNamed implements Named {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see uk.org.taverna.scufl2.api.common.Named#setName(java.lang.String)
 	 */
 	@SuppressWarnings("unchecked")
@@ -118,7 +161,7 @@ public abstract class AbstractNamed implements Named {
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + " \"" + getName()+ '"';
+		return getClass().getSimpleName() + " \"" + getName() + '"';
 	}
 
 }
