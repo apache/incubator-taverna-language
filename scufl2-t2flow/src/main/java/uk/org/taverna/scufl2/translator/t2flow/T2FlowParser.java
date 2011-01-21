@@ -68,6 +68,7 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.Link;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.LinkType;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Map;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Mapping;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.ObjectFactory;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Port;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Processors;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Raven;
@@ -122,9 +123,7 @@ public class T2FlowParser {
 	protected final ThreadLocal<Unmarshaller> unmarshaller;
 
 	public T2FlowParser() throws JAXBException {
-		jaxbContext = JAXBContext.newInstance(
-				"uk.org.taverna.scufl2.xml.t2flow.jaxb", getClass()
-						.getClassLoader());
+		jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
 		unmarshaller = new ThreadLocal<Unmarshaller>() {
 			@Override
 			protected Unmarshaller initialValue() {
