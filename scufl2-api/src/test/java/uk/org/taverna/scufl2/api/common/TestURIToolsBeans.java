@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.ExampleWorkflow;
 import uk.org.taverna.scufl2.api.activity.Activity;
+import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.BlockingControlLink;
 import uk.org.taverna.scufl2.api.core.ControlLink;
@@ -20,6 +21,7 @@ import uk.org.taverna.scufl2.api.iterationstrategy.CrossProduct;
 import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
+import uk.org.taverna.scufl2.api.property.PropertyResource;
 
 public class TestURIToolsBeans {
 
@@ -62,11 +64,35 @@ public class TestURIToolsBeans {
 		URI uri = uriTools.uriForBean(activity.getOutputPorts().getByName(
 				"hello"));
 		assertEquals(BUNDLE_URI + "profile/tavernaWorkbench/"
-				+ "activity/HelloScript/out/hello",
-				uri.toASCIIString());
+				+ "activity/HelloScript/out/hello", uri.toASCIIString());
 	}
 
+	@Test
+	public void uriForConfig() throws Exception {
+		Configuration config = wfBundle.getMainProfile().getConfigurations()
+				.getByName("Hello");
+		URI uri = uriTools.uriForBean(config);
+		assertEquals(BUNDLE_URI + "profile/tavernaWorkbench/"
+				+ "configuration/Hello/" + "", uri.toASCIIString());
+	}
 
+	@Test(expected = IllegalStateException.class)
+	public void uriForConfigPropertyResourceFails() throws Exception {
+		PropertyResource propResource = wfBundle.getMainProfile()
+				.getConfigurations().getByName("Hello")
+				.getPropertyResource();
+		URI uri = uriTools.uriForBean(propResource);
+	}
+
+	@Test
+	public void uriForConfigPropertyResourceWithUri() throws Exception {
+		PropertyResource propResource = wfBundle.getMainProfile()
+				.getConfigurations().getByName("Hello")
+				.getPropertyResource();
+		propResource.setResourceURI(URI.create("http://example.com/fish"));
+		URI uri = uriTools.uriForBean(propResource);
+		assertEquals("http://example.com/fish", uri.toASCIIString());
+	}
 
 	@Test
 	public void uriForControlLink() throws Exception {
@@ -243,16 +269,14 @@ public class TestURIToolsBeans {
 	public void uriForWorkflowInPort() throws Exception {
 		URI uri = uriTools.uriForBean(wfBundle.getMainWorkflow()
 				.getInputPorts().getByName("yourName"));
-		assertEquals(HELLOWORLD_URI + "in/yourName",
-				uri.toASCIIString());
+		assertEquals(HELLOWORLD_URI + "in/yourName", uri.toASCIIString());
 	}
 
 	@Test
 	public void uriForWorkflowOutPort() throws Exception {
 		URI uri = uriTools.uriForBean(wfBundle.getMainWorkflow()
 				.getOutputPorts().getByName("results"));
-		assertEquals(HELLOWORLD_URI + "out/results",
-				uri.toASCIIString());
+		assertEquals(HELLOWORLD_URI + "out/results", uri.toASCIIString());
 	}
 
 }
