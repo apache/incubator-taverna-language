@@ -3,8 +3,8 @@ package uk.org.taverna.scufl2.translator.t2flow.defaultactivities;
 import java.net.URI;
 
 import uk.org.taverna.scufl2.api.configurations.Configuration;
+import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
-import uk.org.taverna.scufl2.translator.t2flow.ParseException;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.WSDLConfig;
@@ -53,7 +53,7 @@ public class WSDLActivityParser extends AbstractActivityParser {
 
 	@Override
 	public Configuration parseActivityConfiguration(T2FlowParser t2FlowParser,
-			ConfigBean configBean) throws ParseException {
+			ConfigBean configBean) throws ReaderException {
 
 		// TODO: XML splitters
 
@@ -68,18 +68,18 @@ public class WSDLActivityParser extends AbstractActivityParser {
 		try {
 			wsdl = URI.create(wsdlConfig.getWsdl());
 			if (!wsdl.isAbsolute()) {
-				throw new ParseException("WSDL URI is not absolute: "
+				throw new ReaderException("WSDL URI is not absolute: "
 						+ wsdlConfig.getWsdl());
 			}
 		} catch (IllegalArgumentException ex) {
-			throw new ParseException("WSDL not a valid URI: "
+			throw new ReaderException("WSDL not a valid URI: "
 					+ wsdlConfig.getWsdl());
 		} catch (NullPointerException ex) {
-			throw new ParseException("WSDL config has no wsdl set");
+			throw new ReaderException("WSDL config has no wsdl set");
 		}
 		String operation = wsdlConfig.getOperation();
 		if (operation == null || operation.equals("")) {
-			throw new ParseException("WSDL config has no operation set");
+			throw new ReaderException("WSDL config has no operation set");
 		}
 
 		PropertyResource wsdlOperation = configuration.getPropertyResource()
