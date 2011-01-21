@@ -27,10 +27,23 @@ public class TestURIToolsBeans {
 
 	@Test
 	public void uriForDatalink() throws Exception {
-		for (DataLink link : wfBundle.getMainWorkflow()
-				.getDatalinks()) {
-			System.out.println(link);
-		}
+		Processor hello = wfBundle.getMainWorkflow().getProcessors()
+				.getByName("Hello");
+		List<DataLink> nameLinks = scufl2Tools.datalinksTo(hello
+				.getInputPorts()
+				.getByName("name"));
+		URI uri = uriTools.uriForBean(nameLinks.get(0));
+		assertEquals(
+				BUNDLE_URI
+						+ "workflow/HelloWorld/datalink?from=in/yourName&to=processor/Hello/in/name",
+				uri.toASCIIString());
+
+		// assertEquals(BUNDLE_URI + "workflow/HelloWorld/out/results/",
+		// uri.toASCIIString());
+	}
+
+	@Test
+	public void uriForDatalinkWithMerge() throws Exception {
 		Processor hello = wfBundle.getMainWorkflow().getProcessors()
 				.getByName("Hello");
 		List<DataLink> greetingLinks = scufl2Tools.datalinksFrom(hello
@@ -39,12 +52,12 @@ public class TestURIToolsBeans {
 		URI uri = uriTools.uriForBean(greetingLinks.get(0));
 		assertEquals(
 				BUNDLE_URI
-						+ "workflow/HelloWorld/datalink?from=processor/Hello/out/greeting/&to=out/results/&mergePosition=0",
+						+ "workflow/HelloWorld/datalink?from=processor/Hello/out/greeting&to=out/results&mergePosition=0",
 				uri.toASCIIString());
 
-		// assertEquals(BUNDLE_URI + "workflow/HelloWorld/out/results/",
-		// uri.toASCIIString());
+
 	}
+
 
 	@Test
 	public void uriForProcessor() throws Exception {
@@ -60,7 +73,7 @@ public class TestURIToolsBeans {
 				.getProcessors().getByName("Hello").getInputPorts()
 				.getByName("name"));
 		assertEquals(BUNDLE_URI
-				+ "workflow/HelloWorld/processor/Hello/in/name/",
+ + "workflow/HelloWorld/processor/Hello/in/name",
 				uri.toASCIIString());
 	}
 
@@ -70,7 +83,7 @@ public class TestURIToolsBeans {
 				.getProcessors().getByName("Hello").getOutputPorts()
 				.getByName("greeting"));
 		assertEquals(BUNDLE_URI
-				+ "workflow/HelloWorld/processor/Hello/out/greeting/",
+				+ "workflow/HelloWorld/processor/Hello/out/greeting",
 				uri.toASCIIString());
 	}
 
@@ -98,7 +111,7 @@ public class TestURIToolsBeans {
 	public void uriForWorkflowInPort() throws Exception {
 		URI uri = uriTools.uriForBean(wfBundle.getMainWorkflow()
 				.getInputPorts().getByName("yourName"));
-		assertEquals(BUNDLE_URI + "workflow/HelloWorld/in/yourName/",
+		assertEquals(BUNDLE_URI + "workflow/HelloWorld/in/yourName",
 				uri.toASCIIString());
 	}
 
@@ -107,7 +120,7 @@ public class TestURIToolsBeans {
 	public void uriForWorkflowOutPort() throws Exception {
 		URI uri = uriTools.uriForBean(wfBundle.getMainWorkflow()
 				.getOutputPorts().getByName("results"));
-		assertEquals(BUNDLE_URI + "workflow/HelloWorld/out/results/",
+		assertEquals(BUNDLE_URI + "workflow/HelloWorld/out/results",
 				uri.toASCIIString());
 	}
 
