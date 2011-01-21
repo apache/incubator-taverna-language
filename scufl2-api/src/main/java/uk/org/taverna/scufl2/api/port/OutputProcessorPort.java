@@ -2,12 +2,11 @@ package uk.org.taverna.scufl2.api.port;
 
 import javax.xml.bind.annotation.XmlTransient;
 
-import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.core.Processor;
 
 
 public class OutputProcessorPort extends AbstractGranularDepthPort implements
-SenderPort, ProcessorPort, OutputPort, Child<Processor> {
+		SenderPort, ProcessorPort, OutputPort {
 
 
 

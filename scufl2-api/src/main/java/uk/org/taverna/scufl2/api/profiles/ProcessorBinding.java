@@ -28,7 +28,7 @@ import uk.org.taverna.scufl2.api.core.Processor;
  * @author Alan R Williams
  *
  */
-public class ProcessorBinding extends AbstractNamed implements WorkflowBean,
+public class ProcessorBinding extends AbstractNamed implements
 		Child<Profile> {
 
 	private Processor boundProcessor;

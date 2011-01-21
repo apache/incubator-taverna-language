@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Set;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
+import uk.org.taverna.scufl2.api.common.Visitor.VisitorWithPath;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
+import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.BlockingControlLink;
 import uk.org.taverna.scufl2.api.core.ControlLink;
 import uk.org.taverna.scufl2.api.core.DataLink;
@@ -248,6 +250,22 @@ public class Scufl2Tools {
 			}
 		}
 		return null;
+	}
+
+	public void setParents(WorkflowBundle bundle) {
+		bundle.accept(new VisitorWithPath() {
+			@Override
+			public boolean visit(WorkflowBean node) {
+				if (node instanceof Child) {
+					Child child = (Child) node;
+					WorkflowBean parent = getCurrentPath().peek();
+					if (child.getParent() != parent) {
+						child.setParent(parent);
+					}
+				}
+				return true;
+			}
+		});
 	}
 
 }

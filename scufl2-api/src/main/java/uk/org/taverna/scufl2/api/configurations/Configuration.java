@@ -8,7 +8,6 @@ import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.common.Visitor;
-import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
@@ -39,7 +38,7 @@ import uk.org.taverna.scufl2.api.property.PropertyResource;
  * @author Stian Soiland-Reyes
  *
  */
-public class Configuration extends AbstractNamedChild implements WorkflowBean,
+public class Configuration extends AbstractNamedChild implements
 Child<Profile> {
 	private Configurable configures;
 	private Profile parent;
@@ -55,7 +54,7 @@ Child<Profile> {
 
 	@Override
 	public boolean accept(Visitor visitor) {
-		if (visitor.visitEnter(this)) {
+		if (visitor.visitEnter(this) && getPropertyResource() != null) {
 			getPropertyResource().accept(visitor);
 		}
 		return visitor.visitLeave(this);

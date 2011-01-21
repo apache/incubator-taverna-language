@@ -1,7 +1,6 @@
 package uk.org.taverna.scufl2.api.port;
 
 import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
-import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.core.Workflow;
 
@@ -10,7 +9,7 @@ import uk.org.taverna.scufl2.api.core.Workflow;
  *
  */
 public class OutputWorkflowPort extends AbstractNamedChild implements ReceiverPort,
- WorkflowPort, OutputPort, Child<Workflow> {
+ WorkflowPort, OutputPort {
 
 	private Workflow parent;
 

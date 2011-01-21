@@ -8,6 +8,7 @@ import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
+import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleReader;
@@ -16,6 +17,7 @@ public class T2FlowReader implements WorkflowBundleReader {
 	public static final String APPLICATION_VND_TAVERNA_T2FLOW_XML = "application/vnd.taverna.t2flow+xml";
 	private T2FlowParser parser;
 	
+	private Scufl2Tools scufl2Tools = new Scufl2Tools();
 	
 	@Override
 	public Set<String> getMediaTypes() {
@@ -26,7 +28,9 @@ public class T2FlowReader implements WorkflowBundleReader {
 	public WorkflowBundle readBundle(File bundleFile, String mediaType)
 			throws ReaderException, IOException {
 		try {
-			return getParser().parseT2Flow(bundleFile);
+			WorkflowBundle bundle = getParser().parseT2Flow(bundleFile);
+			scufl2Tools.setParents(bundle);
+			return bundle;
 		} catch (JAXBException e) {
 			if (e.getCause() instanceof IOException) {
 				IOException ioException = (IOException) e.getCause();
@@ -41,8 +45,9 @@ public class T2FlowReader implements WorkflowBundleReader {
 			throws ReaderException, IOException {
 		T2FlowParser parser;
 		try {
-			parser = new T2FlowParser();
-			return parser.parseT2Flow(inputStream);
+			WorkflowBundle bundle = getParser().parseT2Flow(inputStream);
+			scufl2Tools.setParents(bundle);
+			return bundle;
 		} catch (JAXBException e) {
 			if (e.getCause() instanceof IOException) {
 				IOException ioException = (IOException) e.getCause();

@@ -3,7 +3,6 @@ package uk.org.taverna.scufl2.api.iterationstrategy;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Visitor;
 
 /**
@@ -11,8 +10,8 @@ import uk.org.taverna.scufl2.api.common.Visitor;
  *
  */
 public class DotProduct extends ArrayList<IterationStrategyNode> implements
-List<IterationStrategyNode>, IterationStrategyNode,
-IterationStrategyParent, Child<IterationStrategyParent> {
+		List<IterationStrategyNode>, IterationStrategyNode,
+		IterationStrategyParent {
 
 	private IterationStrategyParent parent;
 
@@ -55,7 +54,7 @@ IterationStrategyParent, Child<IterationStrategyParent> {
 			} else {
 				throw new IllegalArgumentException(
 						"Old parent must be a IterationStrategy, DotProduct or CrossProduct: "
-						+ parent);
+								+ parent);
 			}
 
 		}
@@ -77,7 +76,7 @@ IterationStrategyParent, Child<IterationStrategyParent> {
 		} else {
 			throw new IllegalArgumentException(
 					"Parent must be a IterationStrategy, DotProduct or CrossProduct: "
-					+ parent);
+							+ parent);
 		}
 
 	}

@@ -11,7 +11,6 @@ import java.io.InputStream;
 import org.junit.Before;
 import org.junit.Test;
 
-import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.TestWorkflowBundleIO;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;

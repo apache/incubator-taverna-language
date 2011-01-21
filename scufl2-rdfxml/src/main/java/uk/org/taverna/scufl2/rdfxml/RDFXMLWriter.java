@@ -1,17 +1,16 @@
 package uk.org.taverna.scufl2.rdfxml;
 
+import static uk.org.taverna.scufl2.rdfxml.RDFXMLReader.APPLICATION_RDF_XML;
+import static uk.org.taverna.scufl2.rdfxml.RDFXMLReader.APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.Collections;
 import java.util.Set;
 
 import javax.xml.bind.JAXBException;
-
-import org.w3c.dom.Document;
 
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
@@ -20,7 +19,6 @@ import uk.org.taverna.scufl2.api.io.WorkflowBundleWriter;
 import uk.org.taverna.scufl2.api.io.WriterException;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.ucfpackage.UCFPackage;
-import static uk.org.taverna.scufl2.rdfxml.RDFXMLReader.*;
 
 public class RDFXMLWriter implements WorkflowBundleWriter {
 

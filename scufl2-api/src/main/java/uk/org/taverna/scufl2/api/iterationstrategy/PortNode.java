@@ -2,12 +2,10 @@ package uk.org.taverna.scufl2.api.iterationstrategy;
 
 import java.util.List;
 
-import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
 
-public class PortNode implements IterationStrategyNode,
-Child<IterationStrategyParent> {
+public class PortNode implements IterationStrategyNode {
 	private InputProcessorPort inputProcessorPort;
 
 	private IterationStrategyParent parent;

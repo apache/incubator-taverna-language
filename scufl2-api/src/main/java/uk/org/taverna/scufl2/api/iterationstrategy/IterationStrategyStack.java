@@ -5,11 +5,10 @@ import java.util.List;
 
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Visitor;
-import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.core.Processor;
 
 public class IterationStrategyStack extends ArrayList<IterationStrategy>
-		implements List<IterationStrategy>, Child<Processor>, WorkflowBean {
+		implements List<IterationStrategy>, Child<Processor> {
 
 	private Processor parent;
 

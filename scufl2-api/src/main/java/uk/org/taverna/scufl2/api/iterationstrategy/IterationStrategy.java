@@ -1,18 +1,14 @@
 package uk.org.taverna.scufl2.api.iterationstrategy;
 
-
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Visitor;
-import uk.org.taverna.scufl2.api.common.WorkflowBean;
-
 
 /**
  * @author Alan R Williams
  *
  */
-public class IterationStrategy implements WorkflowBean,
-		Child<IterationStrategyStack>,
-IterationStrategyParent {
+public class IterationStrategy implements Child<IterationStrategyStack>,
+		IterationStrategyParent {
 
 	private IterationStrategyStack parent;
 	private IterationStrategyNode rootStrategyNode;
@@ -23,7 +19,7 @@ IterationStrategyParent {
 
 	@Override
 	public boolean accept(Visitor visitor) {
-		if (visitor.visitEnter(this)) {
+		if (visitor.visitEnter(this) && getRootStrategyNode() != null) {
 			getRootStrategyNode().accept(visitor);
 		}
 		return visitor.visitLeave(this);

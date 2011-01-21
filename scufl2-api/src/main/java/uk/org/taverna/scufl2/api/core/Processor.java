@@ -56,8 +56,12 @@ public class Processor extends AbstractNamedChild implements Child<Workflow>,
 					}
 				}
 			}
-			getIterationStrategyStack().accept(visitor);
-			getDispatchStack().accept(visitor);
+			if (getIterationStrategyStack() != null) {
+				getIterationStrategyStack().accept(visitor);
+			}
+			if (getDispatchStack() != null) {
+				getDispatchStack().accept(visitor);
+			}
 		}
 		return visitor.visitLeave(this);
 	}

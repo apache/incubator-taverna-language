@@ -10,7 +10,7 @@ import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.core.Processor;
 
 public class DispatchStack extends ArrayList<DispatchStackLayer> implements
-		List<DispatchStackLayer>, Child<Processor>, WorkflowBean {
+		List<DispatchStackLayer>, Child<Processor> {
 
 	private URI type;
 
