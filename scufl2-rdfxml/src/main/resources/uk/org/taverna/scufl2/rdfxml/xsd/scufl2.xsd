@@ -257,6 +257,8 @@
 					</xs:element>
 					<xs:element ref="scufl2:datalink" minOccurs="0"
 						maxOccurs="unbounded" />
+					<xs:element ref="scufl2:control" minOccurs="0"
+						maxOccurs="unbounded" />
 				</xs:sequence>
 				<xs:element ref="rdfs:seeAlso" />
 			</xs:sequence>
@@ -384,6 +386,23 @@
 		</xs:sequence>
 		<xs:attributeGroup ref="rdf:about" />
 	</xs:complexType>
+	
+	<xs:element name="control">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Blocking" type="scufl2:Blocking" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="Blocking">
+		<xs:sequence>
+			<xs:element name="block" type="rdf:Resource" />
+			<xs:element name="untilFinished" type="rdf:Resource" />
+		</xs:sequence>
+		<xs:attributeGroup ref="rdf:about" />
+	</xs:complexType>
+	
 
 	<xs:complexType name="integer">
 		<xs:simpleContent>

@@ -30,6 +30,9 @@ public class Workflow extends AbstractNamedChild implements
 	}
 
 	private Set<DataLink> datalinks = new HashSet<DataLink>();
+
+	private Set<Condition> conditions = new HashSet<Condition>();
+
 	private NamedSet<InputWorkflowPort> inputPorts = new NamedSet<InputWorkflowPort>();
 	private NamedSet<OutputWorkflowPort> outputPorts = new NamedSet<OutputWorkflowPort>();
 	private NamedSet<Processor> processors = new NamedSet<Processor>();
@@ -41,6 +44,10 @@ public class Workflow extends AbstractNamedChild implements
 		String workflowId = WORKFLOW_ROOT.relativize(getWorkflowIdentifier())
 		.toASCIIString();
 		setName("wf-" + workflowId);
+	}
+
+	public Set<Condition> getConditions() {
+		return conditions;
 	}
 
 	public Set<DataLink> getDatalinks() {
@@ -66,6 +73,10 @@ public class Workflow extends AbstractNamedChild implements
 
 	public URI getWorkflowIdentifier() {
 		return workflowIdentifier;
+	}
+
+	public void setConditions(Set<Condition> conditions) {
+		this.conditions = conditions;
 	}
 
 	public void setDatalinks(Set<DataLink> datalinks) {
@@ -113,19 +124,19 @@ public class Workflow extends AbstractNamedChild implements
 	public String toString() {
 		final int maxLen = 6;
 		return "Workflow [getName()="
-		+ getName()
-		+ ", getDatalinks()="
-		+ (getDatalinks() != null ? toString(getDatalinks(), maxLen)
-				: null)
+				+ getName()
+				+ ", getDatalinks()="
+				+ (getDatalinks() != null ? toString(getDatalinks(), maxLen)
+						: null)
 				+ ", getInputPorts()="
 				+ (getInputPorts() != null ? toString(getInputPorts(), maxLen)
 						: null)
-						+ ", getOutputPorts()="
-						+ (getOutputPorts() != null ? toString(getOutputPorts(), maxLen)
-								: null)
-								+ ", getProcessors()="
-								+ (getProcessors() != null ? toString(getProcessors(), maxLen)
-										: null) + "]";
+				+ ", getOutputPorts()="
+				+ (getOutputPorts() != null ? toString(getOutputPorts(), maxLen)
+						: null)
+				+ ", getProcessors()="
+				+ (getProcessors() != null ? toString(getProcessors(), maxLen)
+						: null) + "]";
 	}
 
 	private String toString(Collection<?> collection, int maxLen) {
@@ -133,7 +144,7 @@ public class Workflow extends AbstractNamedChild implements
 		builder.append("[");
 		int i = 0;
 		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext()
-		&& i < maxLen; i++) {
+				&& i < maxLen; i++) {
 			if (i > 0) {
 				builder.append(", ");
 			}
