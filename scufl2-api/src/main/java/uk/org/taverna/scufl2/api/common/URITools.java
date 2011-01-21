@@ -3,8 +3,12 @@ package uk.org.taverna.scufl2.api.common;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import uk.org.taverna.scufl2.api.common.Visitor.VisitorWithPath;
+import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.BlockingControlLink;
 import uk.org.taverna.scufl2.api.core.DataLink;
@@ -70,6 +74,25 @@ public class URITools {
 		URI rootUri = uriForBean(relativeToBean);
 		URI beanUri = uriForBean(bean);
 		return relativePath(rootUri, beanUri);
+	}
+
+	public WorkflowBean resolveUri(URI uri, WorkflowBundle wfBundle) {
+		// Naive, super-inefficient reverse-lookup - we could have even returned
+		// early!
+		final Map<URI, WorkflowBean> uriToBean = new HashMap<URI, WorkflowBean>();
+		wfBundle.accept(new VisitorWithPath() {
+			@Override
+			public boolean visit(WorkflowBean node) {
+				URI uri = uriForBean(node);
+				uriToBean.put(uri, node);
+				return !(node instanceof Configuration);
+			}
+		});
+		if (! uri.isAbsolute()) {
+			// Make absolute
+			uri = uriForBean(wfBundle).resolve(uri);
+		}
+		return uriToBean.get(uri);
 	}
 
 	public URI uriForBean(WorkflowBean bean) {
