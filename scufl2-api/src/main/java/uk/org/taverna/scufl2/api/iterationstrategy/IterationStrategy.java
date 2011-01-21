@@ -1,12 +1,9 @@
-package uk.org.taverna.scufl2.api.core;
+package uk.org.taverna.scufl2.api.iterationstrategy;
 
 
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
-import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyNode;
-import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyParent;
-import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
 
 
 /**
