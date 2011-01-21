@@ -4,15 +4,26 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
+import uk.org.taverna.scufl2.api.core.BlockingControlLink;
+import uk.org.taverna.scufl2.api.core.ControlLink;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
+import uk.org.taverna.scufl2.api.port.ActivityPort;
+import uk.org.taverna.scufl2.api.port.InputPort;
+import uk.org.taverna.scufl2.api.port.OutputPort;
+import uk.org.taverna.scufl2.api.port.Port;
+import uk.org.taverna.scufl2.api.port.ProcessorPort;
 import uk.org.taverna.scufl2.api.port.ReceiverPort;
 import uk.org.taverna.scufl2.api.port.SenderPort;
 import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
+import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
+import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
+import uk.org.taverna.scufl2.api.profiles.ProcessorPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 
 /**
@@ -74,6 +85,39 @@ public class Scufl2Tools {
 		return configurations;
 	}
 
+	public List<BlockingControlLink> controlLinksBlocking(Processor blocked) {
+		List<BlockingControlLink> controlLinks = new ArrayList<BlockingControlLink>();
+		for (ControlLink link : blocked.getParent().getControlLinks()) {
+			if (!(link instanceof BlockingControlLink)) {
+				continue;
+			}
+			BlockingControlLink blockingControlLink = (BlockingControlLink) link;
+			if (blockingControlLink.getBlock().equals(blocked)) {
+				controlLinks.add(blockingControlLink);
+			}
+		}
+		Collections.sort(controlLinks);
+		return controlLinks;
+	}
+
+	public List<BlockingControlLink> controlLinksWaitingFor(
+			Processor untilFinished) {
+		List<BlockingControlLink> controlLinks = new ArrayList<BlockingControlLink>();
+		for (ControlLink link : untilFinished.getParent().getControlLinks()) {
+			if (! (link instanceof BlockingControlLink)) {
+				continue;
+			}
+			BlockingControlLink blockingControlLink = (BlockingControlLink) link;
+			if (blockingControlLink.getUntilFinished().equals(untilFinished)) {
+				controlLinks.add(blockingControlLink);
+			}
+		}
+		Collections.sort(controlLinks);
+		return controlLinks;
+
+	}
+
+
 	@SuppressWarnings("unchecked")
 	public List<DataLink> datalinksFrom(SenderPort senderPort) {
 		@SuppressWarnings("rawtypes")
@@ -88,6 +132,8 @@ public class Scufl2Tools {
 		return links;
 	}
 
+
+
 	@SuppressWarnings("unchecked")
 	public List<DataLink> datalinksTo(ReceiverPort receiverPort) {
 		@SuppressWarnings("rawtypes")
@@ -101,8 +147,6 @@ public class Scufl2Tools {
 		Collections.sort(links);
 		return links;
 	}
-
-
 
 	public <T extends WorkflowBean> T findParent(Class<T> parentClass, Child<?> child) {
 		WorkflowBean parent = child.getParent();
@@ -145,8 +189,8 @@ public class Scufl2Tools {
 		return bindings;
 	}
 
-	public List<ProcessorBinding> processorBindingsToActivity(
-			Activity activity, Profile profile) {
+	public List<ProcessorBinding> processorBindingsToActivity(Activity activity) {
+		Profile profile = activity.getParent();
 		List<ProcessorBinding> bindings = new ArrayList<ProcessorBinding>();
 		for (ProcessorBinding pb : profile.getProcessorBindings()) {
 			if (pb.getBoundActivity().equals(activity)) {
@@ -155,6 +199,55 @@ public class Scufl2Tools {
 		}
 		Collections.sort(bindings, new BindingComparator());
 		return bindings;
+	}
+
+	public ProcessorInputPortBinding processorPortBindingForPort(
+			InputPort inputPort, Profile profile) {
+		return (ProcessorInputPortBinding) processorPortBindingForPortInternal(
+				inputPort, profile);
+	}
+
+	public ProcessorOutputPortBinding processorPortBindingForPort(
+			OutputPort outputPort, Profile profile) {
+		return (ProcessorOutputPortBinding)processorPortBindingForPortInternal(outputPort, profile);
+	}
+
+	@SuppressWarnings("rawtypes")
+	protected ProcessorPortBinding processorPortBindingForPortInternal(
+			Port port, Profile profile) {
+
+		List<ProcessorBinding> processorBindings;
+		if (port instanceof ProcessorPort) {
+			ProcessorPort processorPort = (ProcessorPort) port;
+			processorBindings = processorBindingsForProcessor(
+					processorPort.getParent(), profile);
+		} else if (port instanceof ActivityPort) {
+			ActivityPort activityPort = (ActivityPort) port;
+			processorBindings = processorBindingsToActivity(activityPort
+					.getParent());
+		} else {
+			throw new IllegalArgumentException(
+					"Port must be a ProcessorPort or ActivityPort");
+		}
+		for (ProcessorBinding procBinding : processorBindings) {
+			Set<? extends ProcessorPortBinding> portBindings;
+			if (port instanceof InputPort) {
+				portBindings = procBinding.getInputPortBindings();
+			} else {
+				portBindings = procBinding.getOutputPortBindings();
+			}
+			for (ProcessorPortBinding portBinding : portBindings) {
+				if (port instanceof ProcessorPort
+						&& portBinding.getBoundProcessorPort().equals(port)) {
+					return portBinding;
+				}
+				if (port instanceof ActivityPort
+						&& portBinding.getBoundActivityPort().equals(port)) {
+					return portBinding;
+				}
+			}
+		}
+		return null;
 	}
 
 }
