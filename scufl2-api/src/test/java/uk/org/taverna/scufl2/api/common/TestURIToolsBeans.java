@@ -326,7 +326,7 @@ public class TestURIToolsBeans {
 						+ "      iterationstrategy/\n"
 						+ "        0/\n"
 						+ "          root/\n"
-						+ "            0\n"
+						+ "            0/\n"
 						+ "      dispatchstack/\n"
 						+ "        0/\n"
 						+ "        1/\n"
