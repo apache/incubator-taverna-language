@@ -1,7 +1,5 @@
 package uk.org.taverna.scufl2.api.core;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
@@ -9,6 +7,7 @@ import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.Ported;
 import uk.org.taverna.scufl2.api.dispatchstack.DispatchStack;
+import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
 import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
 
@@ -22,7 +21,7 @@ public class Processor extends AbstractNamedChild implements Child<Workflow>,
 
 	private NamedSet<OutputProcessorPort> outputPorts = new NamedSet<OutputProcessorPort>();
 	private NamedSet<InputProcessorPort> inputPorts = new NamedSet<InputProcessorPort>();
-	private List<IterationStrategy> iterationStrategyStack = new ArrayList<IterationStrategy>();
+	private IterationStrategyStack iterationStrategyStack = new IterationStrategyStack();
 	private DispatchStack dispatchStack = new DispatchStack();
 	private Workflow parent;
 
@@ -47,7 +46,7 @@ public class Processor extends AbstractNamedChild implements Child<Workflow>,
 		return inputPorts;
 	}
 
-	public List<IterationStrategy> getIterationStrategyStack() {
+	public IterationStrategyStack getIterationStrategyStack() {
 		return iterationStrategyStack;
 	}
 
@@ -69,7 +68,7 @@ public class Processor extends AbstractNamedChild implements Child<Workflow>,
 	}
 
 	public void setIterationStrategyStack(
-			List<IterationStrategy> iterationStrategyStack) {
+			IterationStrategyStack iterationStrategyStack) {
 		this.iterationStrategyStack = iterationStrategyStack;
 	}
 
