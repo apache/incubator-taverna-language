@@ -22,6 +22,8 @@ import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.Ported;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.core.BlockingControlLink;
+import uk.org.taverna.scufl2.api.core.ControlLink;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
@@ -67,6 +69,7 @@ public class SillyWriter implements WorkflowBundleWriter {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	protected String bundleString(WorkflowBundle wb) {
 		sb = new StringBuffer();
 		append("WorkflowBundle");
@@ -86,6 +89,8 @@ public class SillyWriter implements WorkflowBundleWriter {
 				append(p);
 				appendPorts(3, p);
 			}
+
+			// LINKS
 			// We'll need to sort them afterwards
 			List<String> links = new ArrayList<String>();
 			for (DataLink dl : wf.getDataLinks()) {
@@ -100,6 +105,28 @@ public class SillyWriter implements WorkflowBundleWriter {
 			for (String link : links) {
 				newLine(3);
 				append(link);
+			}
+
+			List<ControlLink> controlLinks = new ArrayList<ControlLink>(
+					wf.getControlLinks());
+			if (!controlLinks.isEmpty()) {
+				newLine(2);
+				append("Controls");
+				Collections.sort(controlLinks);
+				String link = "block {1} until {2} finish";
+				for (ControlLink controlLink : controlLinks) {
+					if (!(controlLink instanceof BlockingControlLink)) {
+						// TODO
+						continue;
+					}
+					BlockingControlLink blockingControlLink = (BlockingControlLink) controlLink;
+					newLine(3);
+					append("block");
+					append(blockingControlLink.getBlock());
+					append(" until");
+					append(blockingControlLink.getUntilFinished());
+					append(" finish");
+				}
 			}
 
 		}

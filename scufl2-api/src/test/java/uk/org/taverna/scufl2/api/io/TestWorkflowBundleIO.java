@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.junit.Test;
 
@@ -40,59 +41,47 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 				.getReaderForMediaType("application/vnd.example.unknownStuff"));
 	}
 
-	public String getSillyFormatWorkflowBundle() {
-		return "WorkflowBundle 'HelloWorld'\n"
-		+ "  MainWorkflow 'HelloWorld'\n"
-		+ "  Workflow 'HelloWorld'\n"
-		+ "    In 'yourName'\n"
-		+ "    Out 'results'\n"
-		+ "    Processor 'Hello'\n"
-		+ "      In 'name'\n"
-		+ "      Out 'greeting'\n"
-				+ "    Processor 'wait4me'\n"
-		+ "    Links\n"
-		+ "      'Hello:greeting' -> 'results'\n"
-		+ "      'yourName' -> 'Hello:name'\n"
-		+ "      'yourName' -> 'results'\n"
-				// TODO: Controls
-		+ "  MainProfile 'tavernaWorkbench'\n"
-		+ "  Profile 'tavernaServer'\n"
-		+ "    Activity 'HelloScript'\n"
-		+ "      Type <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity>\n"
-		+ "      In 'personName'\n"
-		+ "      Out 'hello'\n"
-		+ "    ProcessorBinding\n"
-		+ "      Activity 'HelloScript'\n"
-		+ "      Processor 'HelloWorld:Hello'\n"
-		+ "      InputPortBindings\n"
-		+ "        'name' -> 'personName'\n"
-		+ "      OutputPortBindings\n"
-		+ "        'hello' -> 'greeting'\n"
-		+ "    Configuration 'Hello'\n"
-		+ "      Type <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration>\n"
-		+ "      Configures 'activity/HelloScript'\n"
-		+ "      Property <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#script>\n"
-		+ "        '''hello = \"Hello, \" + personName;\n"
-		+ "System.out.println(\"Server says: \" + hello);'''\n"
-		+ "  Profile 'tavernaWorkbench'\n"
-		+ "    Activity 'HelloScript'\n"
-		+ "      Type <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity>\n"
-		+ "      In 'personName'\n"
-		+ "      Out 'hello'\n"
-		+ "    ProcessorBinding\n"
-		+ "      Activity 'HelloScript'\n"
-		+ "      Processor 'HelloWorld:Hello'\n"
-		+ "      InputPortBindings\n"
-		+ "        'name' -> 'personName'\n"
-		+ "      OutputPortBindings\n"
-		+ "        'hello' -> 'greeting'\n"
-		+ "    Configuration 'Hello'\n"
-		+ "      Type <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration>\n"
-		+ "      Configures 'activity/HelloScript'\n"
-		+ "      Property <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#script>\n"
-		+ "        '''hello = \"Hello, \" + personName;\n"
-		+ "System.out.println(\"Server says: \" + hello);'''\n";
-	}
+	public String getSillyFormatWorkflowBundle() throws IOException {
+		InputStream helloWorldStream = getClass().getResourceAsStream(
+				"HelloWorld.txt");
+		return IOUtils.toString(helloWorldStream);
+
+		/*
+		 * return "WorkflowBundle 'HelloWorld'\n" +
+		 * "  MainWorkflow 'HelloWorld'\n" + "  Workflow 'HelloWorld'\n" +
+		 * "    In 'yourName'\n" + "    Out 'results'\n" +
+		 * "    Processor 'Hello'\n" + "      In 'name'\n" +
+		 * "      Out 'greeting'\n" + "    Processor 'wait4me'\n" +
+		 * "    Links\n" + "      'Hello:greeting' -> 'results'\n" +
+		 * "      'yourName' -> 'Hello:name'\n" +
+		 * "      'yourName' -> 'results'\n" + "    Controls\n" +
+		 * "      block 'Hello' until 'wait4me' finish\n" +
+		 * "  MainProfile 'tavernaWorkbench'\n" + "  Profile 'tavernaServer'\n"
+		 * + "    Activity 'HelloScript'\n" +
+		 * "      Type <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity>\n"
+		 * + "      In 'personName'\n" + "      Out 'hello'\n" +
+		 * "    ProcessorBinding\n" + "      Activity 'HelloScript'\n" +
+		 * "      Processor 'HelloWorld:Hello'\n" + "      InputPortBindings\n"
+		 * + "        'name' -> 'personName'\n" + "      OutputPortBindings\n" +
+		 * "        'hello' -> 'greeting'\n" + "    Configuration 'Hello'\n" +
+		 * "      Type <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration>\n"
+		 * + "      Configures 'activity/HelloScript'\n" +
+		 * "      Property <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#script>\n"
+		 * + "        '''hello = \"Hello, \" + personName;\n" +
+		 * "System.out.println(\"Server says: \" + hello);'''\n" +
+		 * "  Profile 'tavernaWorkbench'\n" + "    Activity 'HelloScript'\n" +
+		 * "      Type <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity>\n"
+		 * + "      In 'personName'\n" + "      Out 'hello'\n" +
+		 * "    ProcessorBinding\n" + "      Activity 'HelloScript'\n" +
+		 * "      Processor 'HelloWorld:Hello'\n" + "      InputPortBindings\n"
+		 * + "        'name' -> 'personName'\n" + "      OutputPortBindings\n" +
+		 * "        'hello' -> 'greeting'\n" + "    Configuration 'Hello'\n" +
+		 * "      Type <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration>\n"
+		 * + "      Configures 'activity/HelloScript'\n" +
+		 * "      Property <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#script>\n"
+		 * + "        '''hello = \"Hello, \" + personName;\n" +
+		 * "System.out.println(\"Server says: \" + hello);'''\n";
+		 */	}
 
 	@Test
 	public void getWorkflowBundleReaders() throws Exception {

@@ -1,0 +1,52 @@
+WorkflowBundle 'HelloWorld'
+  MainWorkflow 'HelloWorld'
+  Workflow 'HelloWorld'
+    In 'yourName'
+    Out 'results'
+    Processor 'Hello'
+      In 'name'
+      Out 'greeting'
+    Processor 'wait4me'
+    Links
+      'Hello:greeting' -> 'results'
+      'yourName' -> 'Hello:name'
+      'yourName' -> 'results'
+    Controls
+      block 'Hello' until 'wait4me' finish
+  MainProfile 'tavernaWorkbench'
+  Profile 'tavernaServer'
+    Activity 'HelloScript'
+      Type <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity>
+      In 'personName'
+      Out 'hello'
+    ProcessorBinding
+      Activity 'HelloScript'
+      Processor 'HelloWorld:Hello'
+      InputPortBindings
+        'name' -> 'personName'
+      OutputPortBindings
+        'hello' -> 'greeting'
+    Configuration 'Hello'
+      Type <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration>
+      Configures 'activity/HelloScript'
+      Property <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#script>
+        '''hello = "Hello, " + personName;
+System.out.println("Server says: " + hello);'''
+  Profile 'tavernaWorkbench'
+    Activity 'HelloScript'
+      Type <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity>
+      In 'personName'
+      Out 'hello'
+    ProcessorBinding
+      Activity 'HelloScript'
+      Processor 'HelloWorld:Hello'
+      InputPortBindings
+        'name' -> 'personName'
+      OutputPortBindings
+        'hello' -> 'greeting'
+    Configuration 'Hello'
+      Type <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration>
+      Configures 'activity/HelloScript'
+      Property <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#script>
+        '''hello = "Hello, " + personName;
+System.out.println("Server says: " + hello);'''
