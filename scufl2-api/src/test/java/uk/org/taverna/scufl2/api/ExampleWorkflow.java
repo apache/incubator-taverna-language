@@ -165,7 +165,7 @@ public class ExampleWorkflow {
 		makeDispatchStack().setParent(processor);
 
 		// FIXME: Should not need to make default iteration stack
-		makeIterationStrategyStack().setParent(processor);
+		makeIterationStrategyStack(processorName).setParent(processor);
 
 		return processor;
 	}
