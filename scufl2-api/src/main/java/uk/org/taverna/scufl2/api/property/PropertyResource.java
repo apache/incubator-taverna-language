@@ -11,7 +11,14 @@ import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.impl.LazyMap;
 
 public class PropertyResource implements PropertyObject {
-	public class PropertyVisit implements Child<PropertyResource>{
+	/**
+	 * A special {@link Child} used by {@link PropertyResource#accept(Visitor)}
+	 * when visiting the map of {@link PropertyResource#getProperties()}
+	 *
+	 * @author Stian Soiland-Reyes
+	 *
+	 */
+	public class PropertyVisit implements Child<PropertyResource> {
 
 		private final URI uri;
 
@@ -23,7 +30,7 @@ public class PropertyResource implements PropertyObject {
 		public boolean accept(Visitor visitor) {
 			if (visitor.visitEnter(this)) {
 				for (PropertyObject po : getPropertyObjects()) {
-					if (! po.accept(visitor)) {
+					if (!po.accept(visitor)) {
 						break;
 					}
 				}
@@ -50,6 +57,7 @@ public class PropertyResource implements PropertyObject {
 		}
 
 	}
+
 	private URI resourceURI;
 	private URI typeURI;
 
@@ -73,7 +81,7 @@ public class PropertyResource implements PropertyObject {
 	public boolean accept(Visitor visitor) {
 		if (visitor.visitEnter(this)) {
 			for (URI uri : getProperties().keySet()) {
-				if (! new PropertyVisit(uri).accept(visitor)) {
+				if (!new PropertyVisit(uri).accept(visitor)) {
 					break;
 				}
 			}
@@ -105,24 +113,24 @@ public class PropertyResource implements PropertyObject {
 	}
 
 	public Set<PropertyLiteral> getPropertiesAsLiterals(URI predicate)
-	throws UnexpectedPropertyException {
+			throws UnexpectedPropertyException {
 		return getPropertiesOfType(predicate, PropertyLiteral.class);
 	}
 
 	public Set<PropertyResource> getPropertiesAsResources(URI predicate)
-	throws UnexpectedPropertyException {
+			throws UnexpectedPropertyException {
 		return getPropertiesOfType(predicate, PropertyResource.class);
 	}
 
 	public Set<URI> getPropertiesAsResourceURIs(URI predicate)
-	throws UnexpectedPropertyException {
+			throws UnexpectedPropertyException {
 		Set<URI> uris = new HashSet<URI>();
 		for (PropertyResource resource : getPropertiesAsResources(predicate)) {
 			URI uri = resource.getResourceURI();
 			if (uri == null) {
 				throw new UnexpectedPropertyException(
 						"Resource property without URI for " + predicate
-						+ " in " + this + ": " + resource, predicate,
+								+ " in " + this + ": " + resource, predicate,
 						this);
 			}
 			uris.add(uri);
@@ -131,7 +139,7 @@ public class PropertyResource implements PropertyObject {
 	}
 
 	public Set<String> getPropertiesAsStrings(URI predicate)
-	throws UnexpectedPropertyException {
+			throws UnexpectedPropertyException {
 		Set<String> strings = new HashSet<String>();
 		for (PropertyLiteral literal : getPropertiesAsLiterals(predicate)) {
 			strings.add(literal.getLiteralValue());
@@ -154,7 +162,7 @@ public class PropertyResource implements PropertyObject {
 	}
 
 	public PropertyObject getProperty(URI predicate)
-	throws PropertyNotFoundException, MultiplePropertiesException {
+			throws PropertyNotFoundException, MultiplePropertiesException {
 		PropertyObject foundProperty = null;
 		// Could have checked set's size() - but it's
 		for (PropertyObject obj : getProperties().get(predicate)) {
@@ -170,16 +178,15 @@ public class PropertyResource implements PropertyObject {
 	}
 
 	public URI getPropertyAsResourceURI(URI predicate)
-	throws UnexpectedPropertyException, PropertyNotFoundException,
-	MultiplePropertiesException {
+			throws UnexpectedPropertyException, PropertyNotFoundException,
+			MultiplePropertiesException {
 		PropertyResource propertyResource = getPropertyOfType(predicate,
 				PropertyResource.class);
 		URI uri = propertyResource.getResourceURI();
 		if (uri == null) {
 			throw new UnexpectedPropertyException(
-					"Resource property without URI for "
-					+ predicate + " in " + this + ": " + propertyResource,
-					predicate, this);
+					"Resource property without URI for " + predicate + " in "
+							+ this + ": " + propertyResource, predicate, this);
 		}
 		return uri;
 	}
@@ -192,13 +199,12 @@ public class PropertyResource implements PropertyObject {
 
 	public <PropertyType extends PropertyObject> PropertyType getPropertyOfType(
 			URI predicate, Class<PropertyType> propertyType)
-	throws UnexpectedPropertyException, PropertyNotFoundException,
-	MultiplePropertiesException {
+			throws UnexpectedPropertyException, PropertyNotFoundException,
+			MultiplePropertiesException {
 		PropertyObject propObj = getProperty(predicate);
 		if (!propertyType.isInstance(propObj)) {
 			throw new UnexpectedPropertyException("Not a " + propertyType
-					+ ": "
-					+ predicate + " in " + this, predicate, this);
+					+ ": " + predicate + " in " + this, predicate, this);
 		}
 		return propertyType.cast(propObj);
 	}

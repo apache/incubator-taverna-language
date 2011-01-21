@@ -25,6 +25,7 @@ package uk.org.taverna.scufl2.ucfpackage.impl.odfdom.pkg;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import javax.xml.transform.stream.StreamSource;
 
 import uk.org.taverna.scufl2.ucfpackage.impl.odfdom.pkg.manifest.OdfFileEntry;

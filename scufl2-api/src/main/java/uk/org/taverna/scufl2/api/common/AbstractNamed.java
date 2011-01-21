@@ -95,16 +95,6 @@ public abstract class AbstractNamed implements Named {
 				return false;
 			}
 		}
-		if (this instanceof Identified) {
-			URI myId = ((Identified) this).getIdentifier();
-			URI otherId = ((Identified) obj).getIdentifier();
-			if (myId != null) {
-				return myId.equals(otherId);
-			}
-			if (myId == null && otherId != null) {
-				return false;
-			}
-		}
 		return true;
 	}
 

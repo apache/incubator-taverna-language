@@ -1,15 +1,14 @@
 package uk.org.taverna.scufl2.translator.t2flow;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.net.URL;
-
 
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.profiles.Profile;
-import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 
 public class TestT2FlowParser {
 

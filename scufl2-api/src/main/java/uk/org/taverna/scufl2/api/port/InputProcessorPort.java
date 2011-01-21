@@ -2,15 +2,14 @@ package uk.org.taverna.scufl2.api.port;
 
 import javax.xml.bind.annotation.XmlTransient;
 
-import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.core.Processor;
 
 /**
  * @author Alan R Williams
- * 
+ *
  */
 public class InputProcessorPort extends AbstractGranularDepthPort implements
-		ReceiverPort, ProcessorPort, InputPort, Child<Processor> {
+		ReceiverPort, ProcessorPort, InputPort {
 
 	private Processor parent;
 
@@ -29,7 +28,7 @@ public class InputProcessorPort extends AbstractGranularDepthPort implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see uk.org.taverna.scufl2.api.common.Child#getParent()
 	 */
 	@XmlTransient
@@ -39,7 +38,7 @@ public class InputProcessorPort extends AbstractGranularDepthPort implements
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * uk.org.taverna.scufl2.api.common.Child#setParent(uk.org.taverna.scufl2
 	 * .api.common.WorkflowBean)

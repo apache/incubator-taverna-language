@@ -1,11 +1,14 @@
 package uk.org.taverna.scufl2.rdfxml;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.io.output.NullOutputStream;
@@ -13,18 +16,14 @@ import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
-import org.jdom.JDOMFactory;
 import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
-import org.jdom.transform.JDOMSource;
 import org.jdom.xpath.XPath;
 import org.junit.Before;
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.ExampleWorkflow;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
-import uk.org.taverna.scufl2.api.io.TestWorkflowBundleIO;
-import uk.org.taverna.scufl2.rdfxml.RDFXMLSerializer;
 
 public class TestRDFXMLSerializer {
 	protected static final String DUMMY_PROFILE_RDF = "profile/PROFILE.rdf";
