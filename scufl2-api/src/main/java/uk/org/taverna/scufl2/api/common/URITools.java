@@ -2,13 +2,20 @@ package uk.org.taverna.scufl2.api.common;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.MessageFormat;
 
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.core.DataLink;
+import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.port.InputPort;
 import uk.org.taverna.scufl2.api.port.OutputPort;
 
 public class URITools {
 
+	private static final String MERGE_POSITION = "mergePosition";
+	private static final String TO = "to";
+	private static final String FROM = "from";
+	private static final String DATALINK = "datalink";
 	private static final URI DOT = URI.create(".");
 
 	public URI relativePath(URI base, URI uri) {
@@ -98,6 +105,24 @@ public class URITools {
 				Named named = (Named) bean;
 				String name = validFilename(named.getName());
 				return relationUri.resolve(name + "/");
+			} else if (bean instanceof DataLink) {
+
+				DataLink dataLink = (DataLink) bean;
+				Workflow wf = dataLink.getParent();
+				URI wfUri = uriForBean(wf);
+				URI receivesFrom = relativePath(wfUri,
+						uriForBean(dataLink.getReceivesFrom()));
+				URI sendsTo = relativePath(wfUri,
+						uriForBean(dataLink.getSendsTo()));
+				String dataLinkUri = MessageFormat.format(
+						"{0}?{1}={2}&{3}={4}", DATALINK, FROM, receivesFrom,
+						TO, sendsTo);
+				if (dataLink.getMergePosition() != null) {
+					dataLinkUri += MessageFormat.format("&{0}={1}",
+							MERGE_POSITION, dataLink.getMergePosition());
+				}
+				return wfUri.resolve(dataLinkUri);
+
 			} else {
 				throw new IllegalStateException(
 						"Can't create URIs for non-named child: " + bean);
@@ -120,8 +145,9 @@ public class URITools {
 		String ascii = uri.toASCIIString();
 		// And escape / and \
 		String escaped = ascii.replace("/", "%2f");
-		escaped = escaped.replace("\\", "%5c");
+		// escaped = escaped.replace("\\", "%5c");
 		escaped = escaped.replace(":", "%3a");
+		escaped = escaped.replace("=", "%3d");
 		return escaped;
 	}
 
