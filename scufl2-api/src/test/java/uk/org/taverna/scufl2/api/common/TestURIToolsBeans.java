@@ -1,6 +1,7 @@
 package uk.org.taverna.scufl2.api.common;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.List;
@@ -8,10 +9,12 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.org.taverna.scufl2.api.ExampleWorkflow;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.core.Condition;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
-import uk.org.taverna.scufl2.api.io.TestWorkflowBundleIO;
+import uk.org.taverna.scufl2.api.core.RunAfterCondition;
 
 public class TestURIToolsBeans {
 
@@ -22,7 +25,23 @@ public class TestURIToolsBeans {
 
 	@Before
 	public void makeExampleWorkflow() {
-		wfBundle = new TestWorkflowBundleIO().makeWorkflowBundle();
+		wfBundle = new ExampleWorkflow().makeWorkflowBundle();
+	}
+
+	@Test
+	public void uriForConditional() throws Exception {
+		Processor hello = wfBundle.getMainWorkflow().getProcessors()
+				.getByName("Hello");
+		// We'll add a condition
+		Condition condition = wfBundle.getMainWorkflow().getConditions()
+				.iterator().next();
+		assertTrue(condition instanceof RunAfterCondition);
+		URI uri = uriTools.uriForBean(condition);
+
+		assertEquals(
+				BUNDLE_URI
+						+ "workflow/HelloWorld/control?block=processor/Hello/&untilFinished=processor/wait4me/",
+				uri.toASCIIString());
 	}
 
 	@Test
@@ -37,9 +56,6 @@ public class TestURIToolsBeans {
 				BUNDLE_URI
 						+ "workflow/HelloWorld/datalink?from=in/yourName&to=processor/Hello/in/name",
 				uri.toASCIIString());
-
-		// assertEquals(BUNDLE_URI + "workflow/HelloWorld/out/results/",
-		// uri.toASCIIString());
 	}
 
 	@Test
@@ -54,8 +70,6 @@ public class TestURIToolsBeans {
 				BUNDLE_URI
 						+ "workflow/HelloWorld/datalink?from=processor/Hello/out/greeting&to=out/results&mergePosition=0",
 				uri.toASCIIString());
-
-
 	}
 
 

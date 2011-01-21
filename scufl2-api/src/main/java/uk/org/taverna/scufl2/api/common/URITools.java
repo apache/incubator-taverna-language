@@ -6,6 +6,7 @@ import java.text.MessageFormat;
 
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.DataLink;
+import uk.org.taverna.scufl2.api.core.RunAfterCondition;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.port.InputPort;
 import uk.org.taverna.scufl2.api.port.OutputPort;
@@ -126,7 +127,19 @@ public class URITools {
 							MERGE_POSITION, dataLink.getMergePosition());
 				}
 				return wfUri.resolve(dataLinkUri);
+			} else if(bean instanceof RunAfterCondition) {
+				RunAfterCondition runAfterCondition = (RunAfterCondition) bean;
+				Workflow wf = runAfterCondition.getParent();
+				URI wfUri = uriForBean(wf);
 
+				URI start = relativePath(wfUri,
+						uriForBean(runAfterCondition.getStart()));
+				URI after = relativePath(wfUri,
+						uriForBean(runAfterCondition.getAfter()));
+				String conditionUri = MessageFormat.format("{0}?{1}={2}&{3}={4}",
+ "control", "block", start,
+						"untilFinished", after);
+				return wfUri.resolve(conditionUri);
 			} else {
 				throw new IllegalStateException(
 						"Can't create URIs for non-named child: " + bean);
