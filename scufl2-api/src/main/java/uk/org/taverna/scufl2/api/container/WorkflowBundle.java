@@ -44,10 +44,10 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 			List<Iterable<? extends WorkflowBean>> children = new ArrayList<Iterable<? extends WorkflowBean>>();
 			children.add(getWorkflows());
 			children.add(getProfiles());
-			for (Iterable<? extends WorkflowBean> it : children) {
+			outer: for (Iterable<? extends WorkflowBean> it : children) {
 				for (WorkflowBean bean : it) {
 					if (!bean.accept(visitor)) {
-						break;
+						break outer;
 					}
 				}
 			}
