@@ -162,11 +162,10 @@ public class ExampleWorkflow {
 		processorGreeting = new OutputProcessorPort(processor, "greeting");
 
 		// FIXME: Should not need to make default dispatch stack
-		processor.setDispatchStack(makeDispatchStack());
+		makeDispatchStack().setParent(processor);
 
 		// FIXME: Should not need to make default iteration stack
-		processor
-		.setIterationStrategyStack(makeIterationStrategyStack(processorName));
+		makeIterationStrategyStack().setParent(processor);
 
 		return processor;
 	}
@@ -175,10 +174,10 @@ public class ExampleWorkflow {
 		wait4me = new Processor(workflow, "wait4me");
 
 		// FIXME: Should not need to make default dispatch stack
-		wait4me.setDispatchStack(makeDispatchStack());
+		makeDispatchStack().setParent(wait4me);
 
 		// FIXME: Should not need to make default iteration stack
-		wait4me.setIterationStrategyStack(makeIterationStrategyStack());
+		makeIterationStrategyStack().setParent(wait4me);
 
 
 
