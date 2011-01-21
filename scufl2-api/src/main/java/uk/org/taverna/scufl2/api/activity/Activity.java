@@ -1,6 +1,8 @@
 package uk.org.taverna.scufl2.api.activity;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
@@ -9,20 +11,22 @@ import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.Ported;
 import uk.org.taverna.scufl2.api.common.Typed;
+import uk.org.taverna.scufl2.api.common.Visitor;
+import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 
 
 /**
- * 
+ *
  * An Activity specifies a way of implementing a Processor within a Workflow.
  * When the Workflow is run, a particular Activity will be specified as bound to
  * the Processor and Configuration information will be specified for the
  * Activity.
- * 
+ *
  * @author Alan R Williams
- * 
+ *
  */
 public class Activity extends AbstractNamedChild implements Configurable,
 Child<Profile>, Typed, Ported {
@@ -39,6 +43,23 @@ Child<Profile>, Typed, Ported {
 
 	public Activity(String name) {
 		super(name);
+	}
+
+	@Override
+	public boolean accept(Visitor visitor) {
+		if (visitor.visitEnter(this)) {
+			List<Iterable<? extends WorkflowBean>> children = new ArrayList<Iterable<? extends WorkflowBean>>();
+			children.add(getInputPorts());
+			children.add(getOutputPorts());
+			for (Iterable<? extends WorkflowBean> it : children) {
+				for (WorkflowBean bean : it) {
+					if (!bean.accept(visitor)) {
+						break;
+					}
+				}
+			}
+		}
+		return visitor.visitLeave(this);
 	}
 
 	@Override
@@ -89,5 +110,4 @@ Child<Profile>, Typed, Ported {
 	public String toString() {
 		return "Activity " + getConfigurableType() + " \"" + getName() + '"';
 	}
-
 }

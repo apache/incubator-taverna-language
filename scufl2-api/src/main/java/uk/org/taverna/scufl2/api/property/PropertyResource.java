@@ -6,11 +6,53 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import uk.org.taverna.scufl2.api.common.Child;
+import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.impl.LazyMap;
 
 public class PropertyResource implements PropertyObject {
+	public class PropertyVisit implements Child<PropertyResource>{
+
+		private final URI uri;
+
+		PropertyVisit(URI uri) {
+			this.uri = uri;
+		}
+
+		@Override
+		public boolean accept(Visitor visitor) {
+			if (visitor.visitEnter(this)) {
+				for (PropertyObject po : getPropertyObjects()) {
+					if (! po.accept(visitor)) {
+						break;
+					}
+				}
+			}
+			return visitor.visitLeave(this);
+		}
+
+		@Override
+		public PropertyResource getParent() {
+			return PropertyResource.this;
+		}
+
+		public Set<PropertyObject> getPropertyObjects() {
+			return getProperties().get(uri);
+		}
+
+		public URI getUri() {
+			return uri;
+		}
+
+		@Override
+		public void setParent(PropertyResource parent) {
+			throw new UnsupportedOperationException();
+		}
+
+	}
 	private URI resourceURI;
 	private URI typeURI;
+
 	private final Map<URI, Set<PropertyObject>> properties = new LazyMap<URI, Set<PropertyObject>>() {
 		private static final long serialVersionUID = 1L;
 
@@ -27,12 +69,20 @@ public class PropertyResource implements PropertyObject {
 		setResourceURI(resourceURI);
 	}
 
-	public void addProperty(URI predicate, PropertyObject object) {
-		getProperties().get(predicate).add(object);
+	@Override
+	public boolean accept(Visitor visitor) {
+		if (visitor.visitEnter(this)) {
+			for (URI uri : getProperties().keySet()) {
+				if (! new PropertyVisit(uri).accept(visitor)) {
+					break;
+				}
+			}
+		}
+		return visitor.visitLeave(this);
 	}
 
-	public void addPropertyAsString(URI predicate, String value) {
-		addProperty(predicate, new PropertyLiteral(value));
+	public void addProperty(URI predicate, PropertyObject object) {
+		getProperties().get(predicate).add(object);
 	}
 
 	public PropertyResource addPropertyAsNewResource(URI predicate, URI typeURI) {
@@ -44,6 +94,10 @@ public class PropertyResource implements PropertyObject {
 
 	public void addPropertyAsResourceURI(URI predicate, URI resourceURI) {
 		addProperty(predicate, new PropertyResource(resourceURI));
+	}
+
+	public void addPropertyAsString(URI predicate, String value) {
+		addProperty(predicate, new PropertyLiteral(value));
 	}
 
 	public final Map<URI, Set<PropertyObject>> getProperties() {

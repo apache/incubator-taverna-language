@@ -2,6 +2,8 @@ package uk.org.taverna.scufl2.api.core;
 
 import java.text.MessageFormat;
 
+import uk.org.taverna.scufl2.api.common.Visitor;
+
 /**
  * @author Alan R Williams
  * @author Stian Soiland-Reyes
@@ -18,6 +20,11 @@ public class BlockingControlLink implements ControlLink, Comparable {
 		setParent(block.getParent());
 		setUntilFinished(untilFinished);
 		setBlock(block);
+	}
+
+	@Override
+	public boolean accept(Visitor visitor) {
+		return visitor.visit(this);
 	}
 
 	@Override

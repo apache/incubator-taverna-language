@@ -2,6 +2,7 @@ package uk.org.taverna.scufl2.api.core;
 
 
 import uk.org.taverna.scufl2.api.common.Child;
+import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.port.ReceiverPort;
 import uk.org.taverna.scufl2.api.port.SenderPort;
@@ -30,6 +31,11 @@ public class DataLink implements WorkflowBean, Child<Workflow>, Comparable {
 		setReceivesFrom(senderPort);
 		setSendsTo(receiverPort);
 		setParent(parent);
+	}
+
+	@Override
+	public boolean accept(Visitor visitor) {
+		return visitor.visit(this);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -92,10 +98,10 @@ public class DataLink implements WorkflowBean, Child<Workflow>, Comparable {
 		return true;
 	}
 
+
 	public Integer getMergePosition() {
 		return mergePosition;
 	}
-
 
 	public Workflow getParent() {
 		return parent;

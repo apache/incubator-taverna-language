@@ -2,11 +2,12 @@ package uk.org.taverna.scufl2.api.port;
 
 import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
 import uk.org.taverna.scufl2.api.common.Child;
+import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.core.Workflow;
 
 /**
  * @author Alan R Williams
- * 
+ *
  */
 public class OutputWorkflowPort extends AbstractNamedChild implements ReceiverPort,
  WorkflowPort, OutputPort, Child<Workflow> {
@@ -20,6 +21,11 @@ public class OutputWorkflowPort extends AbstractNamedChild implements ReceiverPo
 	public OutputWorkflowPort(Workflow parent, String name) {
 		super(name);
 		setParent(parent);
+	}
+
+	@Override
+	public boolean accept(Visitor visitor) {
+		return visitor.visit(this);
 	}
 
 	public Workflow getParent() {
@@ -40,5 +46,4 @@ public class OutputWorkflowPort extends AbstractNamedChild implements ReceiverPo
 	public String toString() {
 		return getParent().getName() + "." + getName();
 	}
-
 }

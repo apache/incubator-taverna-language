@@ -1,25 +1,26 @@
 /**
- * 
+ *
  */
 package uk.org.taverna.scufl2.api.profiles;
 
 
 import uk.org.taverna.scufl2.api.common.Child;
+import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
 
 /**
- * 
+ *
  * A ProcessorOutputPortBinding specifies the OutputActivityPort from which data
  * is received for an OutputProcessorPort.
- * 
+ *
  * Note that the OutputProcessorPort must be a port of the Processor of the
  * parent ProcessorBinding. The OutputActivityPort must be a port of the
  * Activity of the parent ProcessorBinding.
- * 
+ *
  * @author Alan R Williams
  * @author Stian Soiland-Reyes
- * 
+ *
  */
 public class ProcessorOutputPortBinding implements Child<ProcessorBinding> {
 	private ProcessorBinding parent;
@@ -36,8 +37,13 @@ public class ProcessorOutputPortBinding implements Child<ProcessorBinding> {
 		setBoundProcessorPort(processorPort);
 	}
 
+	@Override
+	public boolean accept(Visitor visitor) {
+		return visitor.visit(this);
+	}
+
 	/**
-	 * 
+	 *
 	 * Returns the OutputActivityPort from which data is received for the bound OutputProcessorPort.
 	 * @return
 	 */
@@ -47,7 +53,7 @@ public class ProcessorOutputPortBinding implements Child<ProcessorBinding> {
 
 	/**
 	 * Returns the OutputProcessorPort that the binding is for.
-	 * 
+	 *
 	 * @return
 	 */
 	public OutputProcessorPort getBoundProcessorPort() {
@@ -90,7 +96,8 @@ public class ProcessorOutputPortBinding implements Child<ProcessorBinding> {
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + " " + getBoundActivityPort() + " -> " + getBoundProcessorPort();
+		return getClass().getSimpleName() + " " + getBoundActivityPort()
+				+ " -> " + getBoundProcessorPort();
 	}
 
 }

@@ -6,6 +6,8 @@ import java.util.Calendar;
 import javax.xml.XMLConstants;
 import javax.xml.bind.DatatypeConverter;
 
+import uk.org.taverna.scufl2.api.common.Visitor;
+
 /**
  * A {@link PropertyObject} representing a literal, like a string.
  * <p>
@@ -26,9 +28,9 @@ import javax.xml.bind.DatatypeConverter;
  * #getLiteralValueAsBoolean().
  * </p>
  * <p><p>
- * 
- * 
- * 
+ *
+ *
+ *
  * See {@link DatatypeConverter} to convert other XML types not covered by this
  * class.
  * </p>
@@ -36,10 +38,10 @@ import javax.xml.bind.DatatypeConverter;
  * Values which are XML should have the type #XML_LITERAL set to avoid
  * double-escaped serialisation.
  * </p>
- * 
+ *
  * @see DatatypeConverter
  * @author Stian Soiland-Reyes
- * 
+ *
  */
 public class PropertyLiteral implements PropertyObject {
 
@@ -115,14 +117,14 @@ public class PropertyLiteral implements PropertyObject {
 		setLiteralValue(DatatypeConverter.printDateTime(cal));
 	}
 
-	public PropertyLiteral(float f) {
-		setLiteralValue(DatatypeConverter.printFloat(f));
-		setLiteralType(XSD_FLOAT);
-	}
-
 	public PropertyLiteral(double d) {
 		setLiteralValue(DatatypeConverter.printDouble(d));
 		setLiteralType(XSD_DOUBLE);
+	}
+
+	public PropertyLiteral(float f) {
+		setLiteralValue(DatatypeConverter.printFloat(f));
+		setLiteralType(XSD_FLOAT);
 	}
 
 	public PropertyLiteral(int i) {
@@ -144,6 +146,11 @@ public class PropertyLiteral implements PropertyObject {
 		setLiteralType(literalType);
 	}
 
+	@Override
+	public boolean accept(Visitor visitor) {
+		return visitor.visit(this);
+	}
+
 	public URI getLiteralType() {
 		return literalType;
 	}
@@ -160,12 +167,12 @@ public class PropertyLiteral implements PropertyObject {
 		return DatatypeConverter.parseDateTime(getLiteralValue());
 	}
 
-	public float getLiteralValueAsFloat() {
-		return DatatypeConverter.parseFloat(getLiteralValue());
-	}
-
 	public double getLiteralValueAsDouble() {
 		return DatatypeConverter.parseDouble(getLiteralValue());
+	}
+
+	public float getLiteralValueAsFloat() {
+		return DatatypeConverter.parseFloat(getLiteralValue());
 	}
 
 	public int getLiteralValueAsInt() {

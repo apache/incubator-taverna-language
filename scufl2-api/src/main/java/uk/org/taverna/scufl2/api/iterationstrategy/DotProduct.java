@@ -4,17 +4,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.org.taverna.scufl2.api.common.Child;
+import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.core.IterationStrategy;
 
 /**
  * @author Stian Soiland-Reyes
- * 
+ *
  */
 public class DotProduct extends ArrayList<IterationStrategyNode> implements
 List<IterationStrategyNode>, IterationStrategyNode,
 IterationStrategyParent, Child<IterationStrategyParent> {
 
 	private IterationStrategyParent parent;
+
+	@Override
+	public boolean accept(Visitor visitor) {
+		if (visitor.visitEnter(this)) {
+			for (IterationStrategyNode strategy : this) {
+				if (!visitor.visit(strategy)) {
+					break;
+				}
+			}
+		}
+		return visitor.visitLeave(this);
+	}
 
 	@Override
 	public IterationStrategyParent getParent() {
