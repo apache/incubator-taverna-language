@@ -3,7 +3,7 @@ package uk.org.taverna.scufl2.api.common;
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.ExampleWorkflow;
-import uk.org.taverna.scufl2.api.common.Visitor.VisitorAdapter;
+import uk.org.taverna.scufl2.api.common.Visitor.VisitorWithPath;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 
 public class TestSetParent {
@@ -13,7 +13,7 @@ public class TestSetParent {
 
 	@Test
 	public void checkParents() throws Exception {
-		example.accept(new VisitorAdapter() {
+		example.accept(new VisitorWithPath() {
 			@Override
 			public boolean visit(WorkflowBean node) {
 				if (node instanceof Child) {
@@ -29,11 +29,6 @@ public class TestSetParent {
 				return true;
 			}
 
-			@Override
-			public boolean visitEnter(WorkflowBean node) {
-				visit(node);
-				return super.visitEnter(node);
-			}
 		});
 	}
 

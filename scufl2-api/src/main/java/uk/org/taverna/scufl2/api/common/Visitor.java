@@ -37,9 +37,8 @@ import uk.org.taverna.scufl2.api.property.PropertyLiteral;
  * {@link #visit(WorkflowBean)} and {@link #visitLeave(WorkflowBean)}.
  * <p>
  * The {@link VisitorAdapter} class can be useful for avoiding to implement all
- * Visitor methods, and also provides the
- * {@link VisitorAdapter#getCurrentPath()} if subclasses remembers to call
- * <code>super.visitEnter()</code> and <code>super.visitLeave</code>.
+ * Visitor methods, while {@link VisitorWithPath} provides the
+ * {@link VisitorAdapter#getCurrentPath()} .
  *
  * @see http://c2.com/cgi/wiki?HierarchicalVisitorPattern
  *
@@ -49,20 +48,31 @@ import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 public interface Visitor {
 	public static abstract class VisitorAdapter implements Visitor {
 
+		@Override
+		public boolean visit(WorkflowBean node) {
+			return true;
+		}
+
+		@Override
+		public boolean visitEnter(WorkflowBean node) {
+			return true;
+		}
+
+		@Override
+		public boolean visitLeave(WorkflowBean node) {
+			return true;
+		}
+	}
+
+	public static abstract class VisitorWithPath implements Visitor {
+
 		private final Stack<WorkflowBean> currentPath = new Stack<WorkflowBean>();
 
 		/**
 		 * Return the current path of {@link WorkflowBean}s.
 		 * <p>
-		 * This method only works correctly if subclasses overriding
-		 * {@link #visitEnter(WorkflowBean)} call super.visitEnter() and vice
-		 * versa for {@link #visitLeave(WorkflowBean)}.
-		 * <p>
 		 * The list will not contain the current node for calls to
-		 * {@link #visit(WorkflowBean)} - it will contain the current node or
-		 * not for {@link #visitEnter(WorkflowBean)}/
-		 * {@link #visitLeave(WorkflowBean)} depends on when the super call is
-		 * made.
+		 * {@link #visit(WorkflowBean)}.
 		 * <p>
 		 * The first object of the stack will be the initial object where
 		 * {@link WorkflowBean#accept(Visitor)} was called, not necessarily the
@@ -86,19 +96,29 @@ public interface Visitor {
 			return currentPath;
 		}
 
+		/**
+		 * Different to {@link Visitor#visit(WorkflowBean)} - in VisitorWithPath
+		 * visit() is called also for nodes with children.
+		 * <p>
+		 * {@link #visitEnter(WorkflowBean)} and
+		 * {@link #visitLeave(WorkflowBean)} are <code>final</code> as they
+		 * maintain the stack in {@link #getCurrentPath()}.
+		 * <p>
+		 * Note - when visit() is called - the current node will <b>not</b> be
+		 * present in {@link #getCurrentPath()}.
+		 */
 		@Override
-		public boolean visit(WorkflowBean node) {
-			return true;
-		}
+		public abstract boolean visit(WorkflowBean node);
 
 		@Override
-		public boolean visitEnter(WorkflowBean node) {
+		public final boolean visitEnter(WorkflowBean node) {
+			boolean recurse = visit(node);
 			currentPath.add(node);
-			return true;
+			return recurse;
 		}
 
 		@Override
-		public boolean visitLeave(WorkflowBean node) {
+		public final boolean visitLeave(WorkflowBean node) {
 			currentPath.pop();
 			return true;
 		}
