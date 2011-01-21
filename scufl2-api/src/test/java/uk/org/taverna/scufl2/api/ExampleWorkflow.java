@@ -186,6 +186,7 @@ public class ExampleWorkflow {
 
 	public ProcessorBinding makeProcessorBinding() {
 		ProcessorBinding processorBinding = new ProcessorBinding();
+		processorBinding.setName("Hello");
 		processorBinding.setBoundProcessor(processor);
 		processorBinding.setBoundActivity(activity);
 
