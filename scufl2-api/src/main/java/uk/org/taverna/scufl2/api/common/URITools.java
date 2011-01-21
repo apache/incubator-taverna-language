@@ -84,7 +84,12 @@ public class URITools {
 			@Override
 			public boolean visit(WorkflowBean node) {
 				URI uri = uriForBean(node);
-				uriToBean.put(uri, node);
+				WorkflowBean existing = uriToBean.put(uri, node);
+				if (existing != null) {
+					String msg = "Multiple nodes with same URI {0}: {1} {2}";
+					throw new IllegalStateException(MessageFormat.format(msg,
+							uri, existing, node));
+				}
 				return !(node instanceof Configuration);
 			}
 		});
