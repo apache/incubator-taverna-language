@@ -86,7 +86,7 @@
 		</datalink>
 
 		<control>
-			<Blocking rdf:about="control?block=processor/Hello/&untilFinished=processor/wait4me/">
+			<Blocking rdf:about="control?block=processor/Hello/&amp;untilFinished=processor/wait4me/">
 				<block rdf:resource="processor/Hello/" />
 				<untilFinished rdf:resource="processor/wait4me/" />
 			</Blocking>
