@@ -1,19 +1,18 @@
 package uk.org.taverna.scufl2.api;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.core.BlockingControlLink;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.IterationStrategy;
 import uk.org.taverna.scufl2.api.core.Processor;
-import uk.org.taverna.scufl2.api.core.BlockingControlLink;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.dispatchstack.DispatchStack;
 import uk.org.taverna.scufl2.api.iterationstrategy.CrossProduct;
+import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
 import uk.org.taverna.scufl2.api.iterationstrategy.PortNode;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
@@ -73,9 +72,9 @@ public class ExampleWorkflow {
 		return new DispatchStack();
 	}
 
-	public List<IterationStrategy> makeIterationStrategyStack(
+	public IterationStrategyStack makeIterationStrategyStack(
 			InputProcessorPort... inputs) {
-		ArrayList<IterationStrategy> stack = new ArrayList<IterationStrategy>();
+		IterationStrategyStack stack = new IterationStrategyStack();
 		IterationStrategy strategy = new IterationStrategy();
 		stack.add(strategy);
 		CrossProduct crossProduct = new CrossProduct();
