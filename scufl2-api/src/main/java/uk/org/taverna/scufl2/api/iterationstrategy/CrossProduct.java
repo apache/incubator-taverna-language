@@ -5,7 +5,6 @@ import java.util.List;
 
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Visitor;
-import uk.org.taverna.scufl2.api.core.IterationStrategy;
 
 /**
  * @author Stian Soiland-Reyes
@@ -21,7 +20,7 @@ public class CrossProduct extends ArrayList<IterationStrategyNode> implements
 	public boolean accept(Visitor visitor) {
 		if (visitor.visitEnter(this)) {
 			for (IterationStrategyNode strategy : this) {
-				if (!visitor.visit(strategy)) {
+				if (!strategy.accept(visitor)) {
 					break;
 				}
 			}
