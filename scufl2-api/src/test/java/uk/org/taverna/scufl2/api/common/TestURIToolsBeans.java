@@ -17,6 +17,9 @@ import uk.org.taverna.scufl2.api.core.ControlLink;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.iterationstrategy.CrossProduct;
+import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
+import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
+import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 
 public class TestURIToolsBeans {
 
@@ -64,8 +67,9 @@ public class TestURIToolsBeans {
 	}
 
 
+
 	@Test
-	public void uriForConditional() throws Exception {
+	public void uriForControlLink() throws Exception {
 		Processor hello = wfBundle.getMainWorkflow().getProcessors()
 				.getByName("Hello");
 		ControlLink condition = wfBundle.getMainWorkflow().getControlLinks()
@@ -164,6 +168,38 @@ public class TestURIToolsBeans {
 		URI uri = uriTools.uriForBean(wfBundle.getMainWorkflow()
 				.getProcessors().getByName("Hello"));
 		assertEquals(HELLO_URI, uri.toASCIIString());
+	}
+
+	@Test
+	public void uriForProcessorBinding() throws Exception {
+		ProcessorBinding processorBinding = wfBundle.getMainProfile()
+				.getProcessorBindings().getByName("Hello");
+		URI uri = uriTools.uriForBean(processorBinding);
+		assertEquals(BUNDLE_URI + "profile/tavernaWorkbench/"
+				+ "processorbinding/Hello/", uri.toASCIIString());
+	}
+
+	@Test
+	public void uriForProcessorBindingIn() throws Exception {
+		ProcessorBinding processorBinding = wfBundle.getMainProfile()
+				.getProcessorBindings().getByName("Hello");
+		ProcessorInputPortBinding inputPortBinding = processorBinding
+				.getInputPortBindings().iterator().next();
+		URI uri = uriTools.uriForBean(inputPortBinding);
+		assertEquals(BUNDLE_URI + "profile/tavernaWorkbench/"
+				+ "processorbinding/Hello/in/name" + "", uri.toASCIIString());
+	}
+
+	@Test
+	public void uriForProcessorBindingOut() throws Exception {
+		ProcessorBinding processorBinding = wfBundle.getMainProfile()
+				.getProcessorBindings().getByName("Hello");
+		ProcessorOutputPortBinding outputPortBinding = processorBinding
+				.getOutputPortBindings().iterator().next();
+		URI uri = uriTools.uriForBean(outputPortBinding);
+		assertEquals(BUNDLE_URI + "profile/tavernaWorkbench/"
+				+ "processorbinding/Hello/out/greeting" + "",
+				uri.toASCIIString());
 	}
 
 	@Test

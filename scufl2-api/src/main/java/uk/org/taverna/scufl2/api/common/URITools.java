@@ -17,6 +17,8 @@ import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
 import uk.org.taverna.scufl2.api.port.InputPort;
 import uk.org.taverna.scufl2.api.port.OutputPort;
 import uk.org.taverna.scufl2.api.port.Port;
+import uk.org.taverna.scufl2.api.port.ProcessorPort;
+import uk.org.taverna.scufl2.api.profiles.ProcessorPortBinding;
 
 public class URITools {
 
@@ -169,6 +171,14 @@ public class URITools {
 					int index = parentList.indexOf(iterationStrategyNode);
 					return parentUri.resolve(index + "/");
 				}
+			} else if (bean instanceof ProcessorPortBinding) {
+				// Named after the processor port, extract in/blah part.
+				ProcessorPortBinding<?, ?> processorPortBinding = (ProcessorPortBinding<?, ?>) bean;
+				ProcessorPort procPort = processorPortBinding
+						.getBoundProcessorPort();
+				URI procPortUri = relativeUriForBean(procPort,
+						processorPortBinding.getParent().getBoundProcessor());
+				return parentUri.resolve(procPortUri);
 			} else {
 				throw new IllegalStateException(
 						"Can't create URIs for non-named child: " + bean);
