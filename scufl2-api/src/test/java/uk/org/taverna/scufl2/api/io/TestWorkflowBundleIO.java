@@ -49,10 +49,12 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 		+ "    Processor 'Hello'\n"
 		+ "      In 'name'\n"
 		+ "      Out 'greeting'\n"
+				+ "    Processor 'wait4me'\n"
 		+ "    Links\n"
 		+ "      'Hello:greeting' -> 'results'\n"
 		+ "      'yourName' -> 'Hello:name'\n"
 		+ "      'yourName' -> 'results'\n"
+				// TODO: Controls
 		+ "  MainProfile 'tavernaWorkbench'\n"
 		+ "  Profile 'tavernaServer'\n"
 		+ "    Activity 'HelloScript'\n"
