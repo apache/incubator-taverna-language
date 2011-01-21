@@ -2,15 +2,9 @@ package uk.org.taverna.scufl2.translator.t2flow.defaultactivities;
 
 import java.net.URI;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
-import org.w3c.dom.Element;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
-import uk.org.taverna.scufl2.translator.t2flow.ParseException;
+import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
-import uk.org.taverna.scufl2.translator.t2flow.T2Parser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.DataflowConfig;
 
@@ -38,7 +32,7 @@ public class DataflowActivityParser extends AbstractActivityParser {
 
 	@Override
 	public Configuration parseActivityConfiguration(T2FlowParser t2FlowParser,
-			ConfigBean configBean) throws ParseException {
+			ConfigBean configBean) throws ReaderException {
 		DataflowConfig dataflowConfig = unmarshallConfig(t2FlowParser,
 				configBean, "dataflow", DataflowConfig.class);
 		String dataflowReference = dataflowConfig.getRef();

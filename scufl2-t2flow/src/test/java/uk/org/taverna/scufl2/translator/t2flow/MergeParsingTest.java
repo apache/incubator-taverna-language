@@ -1,14 +1,13 @@
 package uk.org.taverna.scufl2.translator.t2flow;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 import java.net.URL;
-
 
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
-import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
+import uk.org.taverna.scufl2.api.io.ReaderException;
 
 public class MergeParsingTest {
 
@@ -26,7 +25,7 @@ public class MergeParsingTest {
 		WorkflowBundle researchObj = parser.parseT2Flow(wfResource.openStream());		
 	}
 	
-	@Test(expected=ParseException.class)
+	@Test(expected=ReaderException.class)
 	public void mergeThenDataflow() throws Exception {
 		URL wfResource = getClass().getResource(MERGE_THEN_DATAFLOW);
 		assertNotNull("Could not find workflow " + MERGE_THEN_DATAFLOW, wfResource);
@@ -35,7 +34,7 @@ public class MergeParsingTest {
 		parser.parseT2Flow(wfResource.openStream());
 	}
 	
-	@Test(expected=ParseException.class)
+	@Test(expected=ReaderException.class)
 	public void dataflowThenMerge() throws Exception {
 		URL wfResource = getClass().getResource(DATAFLOW_THEN_MERGE);
 		assertNotNull("Could not find workflow " + DATAFLOW_THEN_MERGE, wfResource);
@@ -44,7 +43,7 @@ public class MergeParsingTest {
 		parser.parseT2Flow(wfResource.openStream());
 	}
 	
-	@Test(expected=ParseException.class)
+	@Test(expected=ReaderException.class)
 	public void missingMerge() throws Exception {
 		URL wfResource = getClass().getResource(MISSING_MERGE);
 		assertNotNull("Could not find workflow " + MISSING_MERGE, wfResource);
