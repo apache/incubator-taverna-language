@@ -9,6 +9,7 @@ import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.port.InputPort;
 import uk.org.taverna.scufl2.api.port.OutputPort;
+import uk.org.taverna.scufl2.api.port.Port;
 
 public class URITools {
 
@@ -104,7 +105,10 @@ public class URITools {
 			if (bean instanceof Named) {
 				Named named = (Named) bean;
 				String name = validFilename(named.getName());
-				return relationUri.resolve(name + "/");
+				if (!(bean instanceof Port)) {
+					name = name + "/";
+				}
+				return relationUri.resolve(name);
 			} else if (bean instanceof DataLink) {
 
 				DataLink dataLink = (DataLink) bean;
