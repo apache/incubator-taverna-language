@@ -4,7 +4,6 @@
 package uk.org.taverna.scufl2.api.profiles;
 
 
-import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
@@ -22,7 +21,8 @@ import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
  * @author Stian Soiland-Reyes
  *
  */
-public class ProcessorOutputPortBinding implements Child<ProcessorBinding> {
+public class ProcessorOutputPortBinding implements
+		ProcessorPortBinding<OutputActivityPort, OutputProcessorPort> {
 	private ProcessorBinding parent;
 	private OutputProcessorPort boundProcessorPort;
 	private OutputActivityPort boundActivityPort;
@@ -47,6 +47,7 @@ public class ProcessorOutputPortBinding implements Child<ProcessorBinding> {
 	 * Returns the OutputActivityPort from which data is received for the bound OutputProcessorPort.
 	 * @return
 	 */
+	@Override
 	public OutputActivityPort getBoundActivityPort() {
 		return boundActivityPort;
 	}
@@ -56,6 +57,7 @@ public class ProcessorOutputPortBinding implements Child<ProcessorBinding> {
 	 *
 	 * @return
 	 */
+	@Override
 	public OutputProcessorPort getBoundProcessorPort() {
 		return boundProcessorPort;
 	}
@@ -70,6 +72,7 @@ public class ProcessorOutputPortBinding implements Child<ProcessorBinding> {
 	/**
 	 * @param boundActivityPort
 	 */
+	@Override
 	public void setBoundActivityPort(OutputActivityPort boundActivityPort) {
 		this.boundActivityPort = boundActivityPort;
 	}
@@ -77,6 +80,7 @@ public class ProcessorOutputPortBinding implements Child<ProcessorBinding> {
 	/**
 	 * @param boundProcessorPort
 	 */
+	@Override
 	public void setBoundProcessorPort(OutputProcessorPort boundProcessorPort) {
 		this.boundProcessorPort = boundProcessorPort;
 	}
