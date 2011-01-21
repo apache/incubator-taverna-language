@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.ExampleWorkflow;
 import uk.org.taverna.scufl2.api.activity.Activity;
+import uk.org.taverna.scufl2.api.common.Visitor.VisitorWithPath;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.BlockingControlLink;
@@ -79,16 +80,14 @@ public class TestURIToolsBeans {
 	@Test(expected = IllegalStateException.class)
 	public void uriForConfigPropertyResourceFails() throws Exception {
 		PropertyResource propResource = wfBundle.getMainProfile()
-				.getConfigurations().getByName("Hello")
-				.getPropertyResource();
+				.getConfigurations().getByName("Hello").getPropertyResource();
 		URI uri = uriTools.uriForBean(propResource);
 	}
 
 	@Test
 	public void uriForConfigPropertyResourceWithUri() throws Exception {
 		PropertyResource propResource = wfBundle.getMainProfile()
-				.getConfigurations().getByName("Hello")
-				.getPropertyResource();
+				.getConfigurations().getByName("Hello").getPropertyResource();
 		propResource.setResourceURI(URI.create("http://example.com/fish"));
 		URI uri = uriTools.uriForBean(propResource);
 		assertEquals("http://example.com/fish", uri.toASCIIString());
@@ -281,8 +280,77 @@ public class TestURIToolsBeans {
 
 	@Test
 	public void uriVisitor() {
-		wfBundle.accept(new Visitor.VisitorAdapter() {
+		final StringBuffer paths = new StringBuffer();
+		wfBundle.accept(new VisitorWithPath() {
+			@Override
+			public boolean visit(WorkflowBean node) {
+				URI uri;
+				if (getCurrentPath().isEmpty()) {
+					uri = uriTools.uriForBean(node);
+				} else {
+					uri = uriTools.relativeUriForBean(node, getCurrentPath()
+							.peek());
+				}
+				String indent = "";
+				for (int i = 0; i < getCurrentPath().size(); i++) {
+					indent += "  ";
+				}
+				paths.append(indent);
+				paths.append(uri);
+				paths.append("\n");
+				// we won't recurse into Configuration as PropertyResource's
+				// don't have URIs
+				return !(node instanceof Configuration);
+			}
 		});
+		// System.out.println(paths);
+		assertEquals(
+				"http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/\n"
+						+ "  workflow/HelloWorld/\n"
+						+ "    in/yourName\n"
+						+ "    out/results\n"
+						+ "    processor/wait4me/\n"
+						+ "      iterationstrategy/\n"
+						+ "        0/\n"
+						+ "      dispatchstack/\n"
+						+ "        0/\n"
+						+ "        1/\n"
+						+ "        2/\n"
+						+ "        3/\n"
+						+ "        4/\n"
+						+ "        5/\n"
+						+ "    processor/Hello/\n"
+						+ "      in/name\n"
+						+ "      out/greeting\n"
+						+ "      iterationstrategy/\n"
+						+ "        0/\n"
+						+ "      dispatchstack/\n"
+						+ "        0/\n"
+						+ "        1/\n"
+						+ "        2/\n"
+						+ "        3/\n"
+						+ "        4/\n"
+						+ "        5/\n"
+						+ "    datalink?from=processor/Hello/out/greeting&to=out/results&mergePosition=0\n"
+						+ "    datalink?from=in/yourName&to=out/results&mergePosition=1\n"
+						+ "    datalink?from=in/yourName&to=processor/Hello/in/name\n"
+						+ "    control?block=processor/Hello/&untilFinished=processor/wait4me/\n"
+						+ "  profile/tavernaWorkbench/\n"
+						+ "    activity/HelloScript/\n"
+						+ "      in/personName\n"
+						+ "      out/hello\n"
+						+ "    processorbinding/Hello/\n"
+						+ "      in/name\n"
+						+ "      out/greeting\n"
+						+ "    configuration/Hello/\n"
+						+ "  profile/tavernaServer/\n"
+						+ "    activity/HelloScript/\n"
+						+ "      in/personName\n"
+						+ "      out/hello\n"
+						+ "    processorbinding/Hello/\n"
+						+ "      in/name\n"
+						+ "      out/greeting\n" + "    configuration/Hello/\n",
+				paths.toString());
 	}
 
 }
