@@ -16,11 +16,13 @@
 	<name>Taverna Scufl 2</name>
 	<description>Taverna SCUFL 2 workflow language</description>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
 	<dependencies>
-		<!--
-			Common dependencies - keep these to a minimum as we want to reduce
-			scufl2-api's dependencies
-		-->
+		<!-- Common dependencies - keep these to a minimum as we want to reduce 
+			scufl2-api's dependencies -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -30,15 +32,15 @@
 	</dependencies>
 
 	<build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.felix</groupId>
-                    <artifactId>maven-bundle-plugin</artifactId>
-                    <version>2.1.0</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.felix</groupId>
+					<artifactId>maven-bundle-plugin</artifactId>
+					<version>2.1.0</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 	<url>http://www.mygrid.org.uk/dev/wiki/display/developer/SCUFL2</url>
@@ -82,12 +84,10 @@
 	</dependencyManagement>
 	<modules>
 		<module>scufl2-api</module>
-		<!-- 
-		<module>scufl2-rdf</module>
-		 -->
+		<!-- <module>scufl2-rdf</module> -->
 		<module>scufl2-t2flow</module>
 		<module>scufl2-usecases</module>
-        <module>scufl2-ucfpackage</module>
+		<module>scufl2-ucfpackage</module>
 		<module>scufl2-rdfxml</module>
 	</modules>
 </project>
