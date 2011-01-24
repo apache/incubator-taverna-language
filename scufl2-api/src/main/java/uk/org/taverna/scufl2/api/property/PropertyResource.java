@@ -147,7 +147,7 @@ public class PropertyResource implements PropertyObject {
 		return strings;
 	}
 
-	protected <PropertyType extends PropertyObject> Set<PropertyType> getPropertiesOfType(
+	public <PropertyType extends PropertyObject> Set<PropertyType> getPropertiesOfType(
 			URI predicate, Class<PropertyType> propertyType)
 			throws UnexpectedPropertyException {
 		Set<PropertyType> properties = new HashSet<PropertyType>();
