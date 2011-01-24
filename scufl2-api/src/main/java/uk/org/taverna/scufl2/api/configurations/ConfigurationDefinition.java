@@ -55,6 +55,10 @@ public class ConfigurationDefinition {
 		this.configurableType = configurableType;
 		propertyResourceDefinition = new PropertyResourceDefinition();
 		propertyResourceDefinition.setTypeURI(configurableType.resolve("#ConfigType"));
+		propertyResourceDefinition.setDescription("");
+		propertyResourceDefinition.setRequired(true);
+		propertyResourceDefinition.setMultiple(false);
+		propertyResourceDefinition.setOrdered(false);
 	}
 
 	/**

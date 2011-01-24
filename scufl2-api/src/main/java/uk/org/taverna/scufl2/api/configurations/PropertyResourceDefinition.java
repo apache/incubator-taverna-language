@@ -197,7 +197,7 @@ public class PropertyResourceDefinition extends PropertyDefinition {
 		sb.append("\n");
 		sb.append(indent);
 		sb.append(" label=" + getLabel() + ", description=" + getDescription() + ", required="
-				+ isRequired() + ", multiple=" + isMultiple() + ", options="
+				+ isRequired() + ", multiple=" + isMultiple() + ", ordered=" + isOrdered() + ", options="
 				+ Arrays.toString(getOptions()) + ", typeURI=" + getTypeURI() + "\n");
 		for (PropertyDefinition propertyDefinition : getPropertyDefinitions()) {
 			sb.append(propertyDefinition.toString("  "));

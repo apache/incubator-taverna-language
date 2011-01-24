@@ -146,7 +146,7 @@ public class PropertyLiteralDefinition extends PropertyDefinition {
 		sb.append("\n");
 		sb.append(indent);
 		sb.append(" label=" + getLabel() + ", description=" + getDescription() + ", required="
-				+ isRequired() + ", multiple=" + isMultiple() + ", options="
+				+ isRequired() + ", multiple=" + isMultiple() + ", ordered=" + isOrdered() + ", options="
 				+ Arrays.toString(getOptions()) + ", literalType=" + getLiteralType() + "\n");
 		return sb.toString();
 	}
