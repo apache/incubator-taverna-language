@@ -11,7 +11,7 @@
     <rdf:Description rdf:about="../">
 		<dcterms:created>2010-07-29T14:12:14+01:00</dcterms:created>
 		<dcterms:modified>2010-07-29T14:12:14+01:00</dcterms:modified>
-        <dc:creator>Stian Soiland-Reyes</creator>
-        <dc:description>An example workflow to illustrate SCUFL2</description>
+        <dc:creator>Stian Soiland-Reyes</dc:creator>
+        <dc:description>An example workflow to illustrate SCUFL2</dc:description>
     </rdf:Description>
 </rdf:RDF>
