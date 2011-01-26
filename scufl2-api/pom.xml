@@ -11,6 +11,10 @@
 	<packaging>bundle</packaging>
 	<name>Taverna Scufl 2 API</name>
 	<description>Taverna workflow language API</description>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
 	<build>
 		<plugins>
 			<plugin>
