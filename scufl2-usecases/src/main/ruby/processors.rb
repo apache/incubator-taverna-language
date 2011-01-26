@@ -1,19 +1,19 @@
 
 require 'rubygems'
 require 'rdf'
-require 'rdf/raptor'
+#require 'rdf/raptor'
 require 'zip/zipfilesystem'
 
 scufl2 = RDF::Vocabulary.new("http://ns.taverna.org.uk/2010/scufl2#")
 dc = RDF::Vocabulary.new("http://purl.org/dc/elements/1.1/")
 
-#graph = RDF::Graph.load("../resources/workflows/example.ttl")
+graph = RDF::Graph.load("../../../../scufl2-rdfxml/src/test/resources/uk/org/taverna/scufl2/rdfxml/example/workflowBundle.rdf")
 
 graph = RDF::Graph.new()
-Zip::ZipFile.open("../resources/workflows/example.scufl2") {
+Zip::ZipFile.open("../../../../scufl2-rdfxml/src/test/resources/uk/org/taverna/scufl2/rdfxml/example.scufl2") {
     |zipfile|
-    a = "@base <http://example.org/> .\n" + zipfile.file.read("workflowBundle.ttl")
-    RDF::Reader.for(:turtle).new(a) do |reader|
+    a = zipfile.file.read("workflowBundle.rdf")
+    RDF::Reader.for(:rdfxml).new(a) do |reader|
       reader.each_statement do |statement|
         graph << statement
       end
@@ -23,22 +23,22 @@ Zip::ZipFile.open("../resources/workflows/example.scufl2") {
     graph.query([nil,scufl2.sameBaseAs,nil]) do |s,p,base|
     end 
 
-    a = "@base <" + base + "workflowBundle.ttl> .\n" + zipfile.file.read("workflowBundle.ttl")
-    RDF::Reader.for(:turtle).new(a) do |reader|
+    a = zipfile.file.read("workflowBundle.rdf")
+    RDF::Reader.for(:rdfxml).new(a) do |reader|
       reader.each_statement do |statement|
         graph << statement
       end
     end
     # TODO: FOR-loop like in Python
 
-    a = "@base <" + base + "workflow/HelloWorld.ttl> .\n" + zipfile.file.read("workflow/HelloWorld.ttl")
-    RDF::Reader.for(:turtle).new(a) do |reader|
+    a = zipfile.file.read("workflow/HelloWorld.rdf")
+    RDF::Reader.for(:rdfxml).new(a) do |reader|
       reader.each_statement do |statement|
         graph << statement
       end
     end
-    a = "@base <" + base + "annotation/workflow/HelloWorld.ttl> .\n" + zipfile.file.read("annotation/workflow/HelloWorld.ttl")
-    RDF::Reader.for(:turtle).new(a) do |reader|
+    a = zipfile.file.read("annotation/workflow/HelloWorld.rdf")
+    RDF::Reader.for(:rdfxml).new(a) do |reader|
       reader.each_statement do |statement|
         graph << statement
       end
