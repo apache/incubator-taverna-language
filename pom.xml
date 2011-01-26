@@ -16,6 +16,10 @@
 	<name>Taverna Scufl 2</name>
 	<description>Taverna SCUFL 2 workflow language</description>
 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
 	<dependencies>
 		<!-- Common dependencies - keep these to a minimum as we want to reduce 
 			scufl2-api's dependencies -->
