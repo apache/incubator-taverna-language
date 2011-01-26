@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>parent</artifactId>
 		<groupId>net.sf.taverna</groupId>
-		<version>0.2.2011-01-21</version>
+		<version>0.2.2011-01-24</version>
 	</parent>
 
 	<groupId>uk.org.taverna.scufl2</groupId>
@@ -16,10 +16,6 @@
 	<name>Taverna Scufl 2</name>
 	<description>Taverna SCUFL 2 workflow language</description>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-	</properties>
 	<dependencies>
 		<!-- Common dependencies - keep these to a minimum as we want to reduce 
 			scufl2-api's dependencies -->
