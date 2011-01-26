@@ -96,8 +96,9 @@ class Scufl2Error(Exception):
 
 def main(prg="processorNames.py", filename=None):
     if filename is None:
-        filename = os.path.join(os.path.dirname(prg), "..", "resources",
-        "workflows", "example.scufl2")
+        filename = os.path.join(os.path.dirname(prg), "..", "..", "..", "..", 
+        "scufl2-rdfxml", "src", "test", "resources",
+        "uk", "org", "taverna","scufl2","rdfxml", "example.scufl2")
     
     scufl2 = Scufl2(filename)
     
