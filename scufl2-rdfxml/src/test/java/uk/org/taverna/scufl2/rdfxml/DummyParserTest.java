@@ -1,7 +1,8 @@
-package uk.org.taverna.scufl2.rdfxml.jaxb;
+package uk.org.taverna.scufl2.rdfxml;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URL;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -11,21 +12,28 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.org.taverna.scufl2.rdfxml.jaxb.ObjectFactory;
+import uk.org.taverna.scufl2.rdfxml.jaxb.ProfileDocument;
+import uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowBundle;
+import uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowBundleDocument;
+import uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowDocument;
+import uk.org.taverna.scufl2.rdfxml.jaxb.Profile;
+import uk.org.taverna.scufl2.rdfxml.jaxb.Workflow;
+
 public class DummyParserTest {
 
 	private JAXBContext jaxbContext;
 	private Unmarshaller unmarshaller;
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void parse() throws Exception {
-
-		File file = new File(
-				"../scufl2-usecases/src/main/resources/workflows/example/workflowBundle.rdf");
-		URI baseUri = file.toURI();
+		URL resource = getClass().getResource("example/workflowBundle.rdf");
+		URI baseUri = resource.toURI();
 
 		@SuppressWarnings("rawtypes")
 		JAXBElement<WorkflowBundleDocument> workflowBundle = (JAXBElement<WorkflowBundleDocument>) unmarshaller
-				.unmarshal(file);
+				.unmarshal(resource);
 		WorkflowBundleDocument bundleDoc = workflowBundle.getValue();
 		WorkflowBundle wfBundle = (WorkflowBundle) bundleDoc.getAny().get(0);
 
