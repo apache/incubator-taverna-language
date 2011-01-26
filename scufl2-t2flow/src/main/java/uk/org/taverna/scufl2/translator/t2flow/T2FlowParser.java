@@ -27,6 +27,7 @@ import javax.xml.validation.SchemaFactory;
 import org.xml.sax.SAXException;
 
 import uk.org.taverna.scufl2.api.common.Named;
+import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.DataLink;
@@ -101,6 +102,8 @@ public class T2FlowParser {
 			return new ParserState();
 		};
 	};
+
+	private static Scufl2Tools scufl2Tools = new Scufl2Tools();
 
 	protected Set<T2Parser> t2Parsers = null;
 	protected final JAXBContext jaxbContext;
@@ -674,6 +677,8 @@ public class T2FlowParser {
 			if (isStrict() && ro.getMainWorkflow() == null) {
 				throw new ReaderException("No main workflow");
 			}
+			scufl2Tools.setParents(ro);
+
 			return ro;
 		} finally {
 			parserState.remove();
