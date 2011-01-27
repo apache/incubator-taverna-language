@@ -833,7 +833,7 @@ public class OdfPackage {
 			// http://xerces.apache.org/xerces2-j/features.html#xmlns-uris
 			xmlReader.setFeature("http://xml.org/sax/features/xmlns-uris", true);
 		} catch (SAXException ex) {
-			mLog.log(Level.INFO, "Can't set XML reader feature xmlns-uris", ex);
+			mLog.log(Level.FINE, "Can't set XML reader feature xmlns-uris", ex);
 		}
 
 		String uri = mBaseURI + OdfPackage.OdfFile.MANIFEST.packagePath;

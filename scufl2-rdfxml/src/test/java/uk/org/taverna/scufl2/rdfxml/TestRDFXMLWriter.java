@@ -82,8 +82,8 @@ public class TestRDFXMLWriter {
 
 	public File tempFile() throws IOException {
 		File bundleFile = File.createTempFile("test", ".scufl2");
-		//bundleFile.deleteOnExit();
-		System.out.println(bundleFile);
+		bundleFile.deleteOnExit();
+		//System.out.println(bundleFile);
 		return bundleFile;
 	}
 

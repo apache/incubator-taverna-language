@@ -67,7 +67,7 @@ public class TestRDFXMLSerializer {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		// To test that seeAlso URIs are stored
 		serializer.workflowDoc(outStream, workflowBundle.getMainWorkflow(), URI.create(DUMMY_WORKFLOW_RDF));
-		System.out.write(outStream.toByteArray());
+		//System.out.write(outStream.toByteArray());
 		Document doc = parseXml(outStream);
 		Element root = doc.getRootElement();
 		
