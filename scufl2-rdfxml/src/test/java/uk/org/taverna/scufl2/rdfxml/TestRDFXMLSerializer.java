@@ -72,7 +72,7 @@ public class TestRDFXMLSerializer {
 		Element root = doc.getRootElement();
 		
 		checkRoot(root);
-		//checkWorkflowDocument(root);
+		checkWorkflowDocument(root);
 		
 	}
 
@@ -81,11 +81,19 @@ public class TestRDFXMLSerializer {
 	protected void checkWorkflowDocument(Element root) throws JDOMException {
 		assertEquals("WorkflowDocument", root.getAttributeValue("type", XSI_NS));
 
+
+		
+		assertXpathEquals("HelloWorld/", root, "./@xml:base");
+		
+		
 		Element wf = root.getChild("Workflow", SCUFL2_NS);
 		assertSame(wf, root.getChildren().get(0));
 		
+
 		
-		assertXpathEquals("HelloWorld/", wf, "./@rdf:about");
+		
+		
+		assertXpathEquals("", wf, "./@rdf:about");
 		
 		
 		assertXpathEquals("HelloWorld", wf, "./s:name");		
@@ -152,10 +160,14 @@ public class TestRDFXMLSerializer {
 	protected void checkWorkflowBundleDocument(Element root) throws JDOMException {
 		assertEquals("WorkflowBundleDocument", root.getAttributeValue("type", XSI_NS));
 
+		assertXpathEquals("./", root, "./@xml:base");
+
 		Element wbundle = root.getChild("WorkflowBundle", SCUFL2_NS);
 		assertSame(wbundle, root.getChildren().get(0));
 		
-		assertXpathEquals("./", wbundle, "./@rdf:about");		
+
+		
+		assertXpathEquals("", wbundle, "./@rdf:about");		
 		
 		assertXpathEquals("HelloWorld", wbundle, "./s:name");		
 		assertXpathEquals("http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/", 
