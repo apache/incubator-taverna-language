@@ -1,5 +1,6 @@
 package uk.org.taverna.scufl2.ucfpackage;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -24,6 +25,13 @@ import java.util.zip.ZipFile;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.jdom.Attribute;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.Namespace;
+import org.jdom.input.SAXBuilder;
+import org.jdom.xpath.XPath;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,7 +41,44 @@ public class TestUCFPackage {
 
 	private static final int MIME_OFFSET = 30;
 	private static final boolean DELETE_FILES = true;
+	private static final Namespace MANIFEST_NS = Namespace.getNamespace("manifest", 
+			"urn:oasis:names:tc:opendocument:xmlns:manifest:1.0");
+	private static final Namespace EXAMPLE_NS = Namespace.getNamespace("ex", "http://example.com/");
+	private static final Namespace CONTAINER_NS = Namespace.getNamespace("c", "urn:oasis:names:tc:opendocument:xmlns:container");
 	private File tmpFile;
+	
+
+	protected Document parseXml(InputStream stream)
+			throws JDOMException, IOException {
+		SAXBuilder saxBuilder = new SAXBuilder();
+		return saxBuilder.build(stream);
+	}
+
+	protected void assertXpathEquals(String expected, Element element,
+			String xpath) throws JDOMException {
+		Object o = xpathSelectElement(element, xpath);
+		if (o == null) {
+			fail("Can't find " + xpath  + " in " + element);
+			return;
+		}
+		String text;
+		if (o instanceof Attribute) {
+			text = ((Attribute)o).getValue();
+		} else {
+			text = ((Element)o).getValue();
+		}
+		assertEquals(expected, text);		
+	}
+
+
+	protected Object xpathSelectElement(Element element, String xpath) throws JDOMException {
+		XPath x = XPath.newInstance(xpath);
+		x.addNamespace(MANIFEST_NS);
+		x.addNamespace(CONTAINER_NS);
+		x.addNamespace(EXAMPLE_NS);
+
+		return x.selectSingleNode(element);
+	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void mimeTypeInvalidCharset() throws Exception {
@@ -129,12 +174,21 @@ public class TestUCFPackage {
 		ZipFile zipFile = new ZipFile(tmpFile);
 		ZipEntry manifestEntry = zipFile.getEntry("META-INF/manifest.xml");
 		InputStream manifestStream = zipFile.getInputStream(manifestEntry);
-		assertEquals(
-				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-						+ "<manifest:manifest xmlns:manifest=\"urn:oasis:names:tc:opendocument:xmlns:manifest:1.0\">\n"
-						+ " <manifest:file-entry manifest:media-type=\"text/plain\" manifest:full-path=\"helloworld.txt\" manifest:size=\"18\"/>\n"
-						+ "</manifest:manifest>",
-				IOUtils.toString(manifestStream, "UTF-8"));
+		//System.out.println(IOUtils.toString(manifestStream, "UTF-8"));
+		/*
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest:manifest xmlns:manifest="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0">
+ <manifest:file-entry manifest:media-type="text/plain" manifest:full-path="helloworld.txt" manifest:size="18"/>
+</manifest:manifest>
+		 */
+		Document doc = parseXml(manifestStream);
+		assertEquals(MANIFEST_NS, doc.getRootElement().getNamespace());
+		assertEquals("manifest", doc.getRootElement().getNamespacePrefix());
+		assertEquals("manifest:manifest", doc.getRootElement().getQualifiedName());
+		assertXpathEquals("text/plain", doc.getRootElement(), "/manifest:manifest/manifest:file-entry/@manifest:media-type");
+		assertXpathEquals("helloworld.txt", doc.getRootElement(), "/manifest:manifest/manifest:file-entry/@manifest:full-path");
+		assertXpathEquals("18", doc.getRootElement(), "/manifest:manifest/manifest:file-entry/@manifest:size");
+		
 		InputStream io = zipFile.getInputStream(zipFile
 				.getEntry("helloworld.txt"));
 		assertEquals("Hello there þĸł", IOUtils.toString(io, "UTF-8"));
@@ -249,12 +303,22 @@ public class TestUCFPackage {
 		ZipFile zipFile = new ZipFile(tmpFile);
 		ZipEntry manifestEntry = zipFile.getEntry("META-INF/manifest.xml");
 		InputStream manifestStream = zipFile.getInputStream(manifestEntry);
-		assertEquals(
-				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-						+ "<manifest:manifest xmlns:manifest=\"urn:oasis:names:tc:opendocument:xmlns:manifest:1.0\">\n"
-						+ " <manifest:file-entry manifest:media-type=\"application/octet-stream\" manifest:full-path=\"binary\" manifest:size=\"1024\"/>\n"
-						+ "</manifest:manifest>",
-				IOUtils.toString(manifestStream, "UTF-8"));
+
+		//System.out.println(IOUtils.toString(manifestStream, "UTF-8"));
+		/*
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest:manifest xmlns:manifest="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0">
+ <manifest:file-entry manifest:media-type="application/octet-stream" manifest:full-path="binary" manifest:size="1024"/>
+</manifest:manifest>
+		 */
+		Document doc = parseXml(manifestStream);
+		assertEquals(MANIFEST_NS, doc.getRootElement().getNamespace());
+		assertEquals("manifest", doc.getRootElement().getNamespacePrefix());
+		assertEquals("manifest:manifest", doc.getRootElement().getQualifiedName());
+		assertXpathEquals("application/octet-stream", doc.getRootElement(), "/manifest:manifest/manifest:file-entry/@manifest:media-type");
+		assertXpathEquals("binary", doc.getRootElement(), "/manifest:manifest/manifest:file-entry/@manifest:full-path");
+		assertXpathEquals("1024", doc.getRootElement(), "/manifest:manifest/manifest:file-entry/@manifest:size");
+
 		InputStream io = zipFile.getInputStream(zipFile.getEntry("binary"));
 		assertArrayEquals(bytes, IOUtils.toByteArray(io));
 	}
@@ -493,11 +557,19 @@ public class TestUCFPackage {
 		ZipFile zipFile = new ZipFile(tmpFile);
 		ZipEntry manifestEntry = zipFile.getEntry("META-INF/manifest.xml");
 		InputStream manifestStream = zipFile.getInputStream(manifestEntry);
-		assertEquals(
-				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-						+ "<manifest:manifest xmlns:manifest=\"urn:oasis:names:tc:opendocument:xmlns:manifest:1.0\">\n"
-						+ "</manifest:manifest>",
-				IOUtils.toString(manifestStream, "UTF-8"));
+		
+		//System.out.println(IOUtils.toString(manifestStream, "UTF-8"));
+		/*
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest:manifest xmlns:manifest="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0">
+</manifest:manifest>		 
+*/
+		Document doc = parseXml(manifestStream);
+		assertEquals(MANIFEST_NS, doc.getRootElement().getNamespace());
+		assertEquals("manifest", doc.getRootElement().getNamespacePrefix());
+		assertEquals("manifest:manifest", doc.getRootElement().getQualifiedName());
+		assertNull(xpathSelectElement(doc.getRootElement(), "/manifest:manifest/*"));
+		
 	}
 
 	@Test
@@ -536,15 +608,25 @@ public class TestUCFPackage {
 		container.save(tmpFile);
 
 		ZipFile zipFile = new ZipFile(tmpFile);
-		ZipEntry manifestEntry = zipFile.getEntry("META-INF/container.xml");
+		ZipEntry manifestEntry = zipFile.getEntry("META-INF/container.xml");		
 		InputStream manifestStream = zipFile.getInputStream(manifestEntry);
-		assertEquals(
-				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-						+ "<container xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\" xmlns:ns2=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:ns3=\"http://www.w3.org/2001/04/xmlenc#\">\n"
-						+ "    <rootFiles>\n"
-						+ "        <rootFile media-type=\"text/plain\" full-path=\"helloworld.txt\"/>\n"
-						+ "    </rootFiles>\n" + "</container>\n",
-				IOUtils.toString(manifestStream, "UTF-8"));
+		
+
+		//System.out.println(IOUtils.toString(manifestStream, "UTF-8"));
+		/*
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<container xmlns="urn:oasis:names:tc:opendocument:xmlns:container" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="http://www.w3.org/2001/04/xmlenc#">
+    <rootFiles>
+        <rootFile full-path="helloworld.txt" media-type="text/plain"/>
+    </rootFiles>
+</container>
+		 */
+		Document doc = parseXml(manifestStream);
+		assertEquals(CONTAINER_NS, doc.getRootElement().getNamespace());
+		assertEquals("", doc.getRootElement().getNamespacePrefix());
+		assertEquals("container", doc.getRootElement().getQualifiedName());
+		assertXpathEquals("helloworld.txt", doc.getRootElement(), "/c:container/c:rootFiles/c:rootFile/@full-path");
+		assertXpathEquals("text/plain", doc.getRootElement(), "/c:container/c:rootFiles/c:rootFile/@media-type");
 
 	}
 
@@ -578,9 +660,43 @@ public class TestUCFPackage {
 		ZipFile zipFile = new ZipFile(tmpFile);
 		ZipEntry manifestEntry = zipFile.getEntry("META-INF/container.xml");
 		InputStream manifestStream = zipFile.getInputStream(manifestEntry);
-		// NOTE: This test is sensitive to namespace prefix reshuffling
-		assertEquals(containerXml, IOUtils.toString(manifestStream, "UTF-8"));
+		
+		//System.out.println(IOUtils.toString(manifestStream, "UTF-8"));
+		/*
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<container xmlns="urn:oasis:names:tc:opendocument:xmlns:container" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="http://www.w3.org/2001/04/xmlenc#">
+    <ex:example xmlns:ex="http://example.com/">first example</ex:example>
+    <rootFiles>
+        <rootFile xmlns:ex="http://example.com/" full-path="soup.txt" media-type="text/plain" ex:extraAnnotation="hello"/>
+    </rootFiles>
+    <ex:example xmlns:ex="http://example.com/">second example</ex:example>
+    <ex:example xmlns:ex="http://example.com/">third example</ex:example>
+</container>
+		 */
+		Document doc = parseXml(manifestStream);
+		assertEquals(CONTAINER_NS, doc.getRootElement().getNamespace());
+		assertEquals("", doc.getRootElement().getNamespacePrefix());
+		assertEquals("container", doc.getRootElement().getQualifiedName());
+		assertXpathEquals("soup.txt", doc.getRootElement(), "/c:container/c:rootFiles/c:rootFile[1]/@full-path");
+		assertXpathEquals("text/plain", doc.getRootElement(), "/c:container/c:rootFiles/c:rootFile[1]/@media-type");
+		assertXpathEquals("hello", doc.getRootElement(), "/c:container/c:rootFiles/c:rootFile[1]/@ex:extraAnnotation");
 
+		assertXpathEquals("first example", doc.getRootElement(), "/c:container/ex:example[1]");
+		assertXpathEquals("second example", doc.getRootElement(), "/c:container/ex:example[2]");
+		assertXpathEquals("third example", doc.getRootElement(), "/c:container/ex:example[3]");
+		
+		// Check order
+		Element first = (Element) xpathSelectElement(doc.getRootElement(), "/c:container/*[1]");
+		assertEquals("ex:example", first.getQualifiedName());
+		Element second = (Element) xpathSelectElement(doc.getRootElement(), "/c:container/*[2]");
+		assertEquals("rootFiles", second.getQualifiedName());
+		Element third = (Element) xpathSelectElement(doc.getRootElement(), "/c:container/*[3]");
+		assertEquals("ex:example", third.getQualifiedName());
+		Element fourth = (Element) xpathSelectElement(doc.getRootElement(), "/c:container/*[4]");
+		assertEquals("ex:example", fourth.getQualifiedName());
+		
+		
+		
 	}
 
 	@Test
@@ -624,9 +740,38 @@ public class TestUCFPackage {
 		ZipFile zipFile = new ZipFile(tmpFile);
 		ZipEntry manifestEntry = zipFile.getEntry("META-INF/container.xml");
 		InputStream manifestStream = zipFile.getInputStream(manifestEntry);
-		assertEquals(expectedContainerXml,
-				IOUtils.toString(manifestStream, "UTF-8"));
+		
+		//System.out.println(IOUtils.toString(manifestStream, "UTF-8"));
+		/*
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<container xmlns="urn:oasis:names:tc:opendocument:xmlns:container" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="http://www.w3.org/2001/04/xmlenc#">
+    <rootFiles>
+        <rootFile xmlns:ex="http://example.com/" full-path="helloworld.html" media-type="text/html" ex:extraAnnotation="hello"/>
+        <rootFile full-path="helloworld.txt" media-type="text/plain"/>
+    </rootFiles>
+    <ex:example xmlns:ex="http://example.com/">more example</ex:example>
+</container>
+		 */
+		Document doc = parseXml(manifestStream);
+		assertEquals(CONTAINER_NS, doc.getRootElement().getNamespace());
+		assertEquals("", doc.getRootElement().getNamespacePrefix());
+		assertEquals("container", doc.getRootElement().getQualifiedName());
+		assertXpathEquals("helloworld.html", doc.getRootElement(), "/c:container/c:rootFiles/c:rootFile[1]/@full-path");
+		assertXpathEquals("text/html", doc.getRootElement(), "/c:container/c:rootFiles/c:rootFile[1]/@media-type");
+		assertXpathEquals("hello", doc.getRootElement(), "/c:container/c:rootFiles/c:rootFile[1]/@ex:extraAnnotation");
 
+		
+		assertXpathEquals("helloworld.txt", doc.getRootElement(), "/c:container/c:rootFiles/c:rootFile[2]/@full-path");
+		assertXpathEquals("text/plain", doc.getRootElement(), "/c:container/c:rootFiles/c:rootFile[2]/@media-type");
+
+		assertXpathEquals("more example", doc.getRootElement(), "/c:container/ex:example");
+		
+		// Check order
+		Element first = (Element) xpathSelectElement(doc.getRootElement(), "/c:container/*[1]");
+		assertEquals("rootFiles", first.getQualifiedName());
+		Element second = (Element) xpathSelectElement(doc.getRootElement(), "/c:container/*[2]");
+		assertEquals("ex:example", second.getQualifiedName());
+		
 	}
 
 	@Test(expected = IllegalArgumentException.class)
