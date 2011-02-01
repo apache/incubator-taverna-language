@@ -98,9 +98,9 @@ public class ConfigurationDefinition {
 		StringBuilder sb = new StringBuilder();
 		sb.append("ConfigurationDefinition for ");
 		sb.append(configurableType);
-		sb.append("[\n");
+		sb.append("\n");
 		sb.append(propertyResourceDefinition);
-		sb.append("]\n");
+		sb.append("\n");
 		return sb.toString();
 	}
 

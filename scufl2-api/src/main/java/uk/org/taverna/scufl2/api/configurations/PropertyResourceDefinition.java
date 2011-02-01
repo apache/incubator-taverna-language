@@ -200,7 +200,7 @@ public class PropertyResourceDefinition extends PropertyDefinition {
 				+ isRequired() + ", multiple=" + isMultiple() + ", ordered=" + isOrdered() + ", options="
 				+ Arrays.toString(getOptions()) + ", typeURI=" + getTypeURI() + "\n");
 		for (PropertyDefinition propertyDefinition : getPropertyDefinitions()) {
-			sb.append(propertyDefinition.toString("  "));
+			sb.append(propertyDefinition.toString(indent + "  "));
 		}
 		return sb.toString();
 	}
