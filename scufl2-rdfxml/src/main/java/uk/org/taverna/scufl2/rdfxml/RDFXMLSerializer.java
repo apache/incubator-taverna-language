@@ -347,7 +347,7 @@ public class RDFXMLSerializer {
 				.createWorkflowBundleDocument();
 		doc.getAny().add(bundle);
 
-		doc.setBase(uriTools.relativePath(path, URI.create("./")).toASCIIString());
+		doc.setBase(path.relativize(URI.create("./")).toASCIIString());
 		JAXBElement<RDF> element = new org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory()
 				.createRDF(doc);
 
