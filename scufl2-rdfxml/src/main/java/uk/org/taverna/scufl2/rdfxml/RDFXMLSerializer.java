@@ -348,6 +348,8 @@ public class RDFXMLSerializer {
 		WorkflowBundleDocument doc = objectFactory
 				.createWorkflowBundleDocument();
 		doc.getAny().add(bundle);
+
+		doc.setBase(uriTools.relativePath(path, URI.create("./")).toASCIIString());
 		JAXBElement<RDF> element = new org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory()
 				.createRDF(doc);
 
@@ -489,7 +491,7 @@ public class RDFXMLSerializer {
 		WorkflowDocument doc = objectFactory.createWorkflowDocument();
 		doc.getAny().add(wfElem);
 		
-		URI wfUri = uriTools.relativeUriForBean(wf, wfBundle);		
+		URI wfUri = uriTools.relativeUriForBean(wf, wfBundle);
 		doc.setBase(uriTools.relativePath(path, wfUri).toASCIIString());
 		
 		JAXBElement<RDF> element = new org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory()

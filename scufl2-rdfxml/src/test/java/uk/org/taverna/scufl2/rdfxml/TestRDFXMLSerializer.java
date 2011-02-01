@@ -271,7 +271,7 @@ public class TestRDFXMLSerializer {
 		
 
 		
-		assertXpathEquals("", wbundle, "./@rdf:about");		
+		assertXpathEquals("./", wbundle, "./@rdf:about");		
 		
 		assertXpathEquals("HelloWorld", wbundle, "./s:name");		
 		assertXpathEquals("http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/", 
