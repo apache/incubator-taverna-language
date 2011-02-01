@@ -7,8 +7,9 @@ import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.core.Processor;
 
-public class IterationStrategyStack extends ArrayList<IterationStrategy>
-		implements List<IterationStrategy>, Child<Processor> {
+public class IterationStrategyStack extends ArrayList<IterationStrategyTopNode>
+		implements List<IterationStrategyTopNode>, Child<Processor>,
+		IterationStrategyParent {
 
 	private Processor parent;
 
@@ -22,7 +23,7 @@ public class IterationStrategyStack extends ArrayList<IterationStrategy>
 	@Override
 	public boolean accept(Visitor visitor) {
 		if (visitor.visitEnter(this)) {
-			for (IterationStrategy strategy : this) {
+			for (IterationStrategyTopNode strategy : this) {
 				if (!strategy.accept(visitor)) {
 					break;
 				}

@@ -15,7 +15,6 @@ import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.dispatchstack.DispatchStack;
 import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
-import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategy;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyNode;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
 import uk.org.taverna.scufl2.api.port.InputPort;
@@ -193,13 +192,9 @@ public class URITools {
 			} else if (bean instanceof IterationStrategyNode) {
 				IterationStrategyNode iterationStrategyNode = (IterationStrategyNode) bean;
 				parent = iterationStrategyNode.getParent();
-				if (parent instanceof IterationStrategy) {
-					return parentUri;
-				} else {
-					List<IterationStrategyNode> parentList = (List<IterationStrategyNode>) parent;
-					int index = parentList.indexOf(iterationStrategyNode);
-					return parentUri.resolve(index + "/");
-				}
+				List<IterationStrategyNode> parentList = (List<IterationStrategyNode>) parent;
+				int index = parentList.indexOf(iterationStrategyNode);
+				return parentUri.resolve(index + "/");
 			} else if (bean instanceof ProcessorPortBinding) {
 				// Named after the processor port, extract in/blah part.
 				ProcessorPortBinding<?, ?> processorPortBinding = (ProcessorPortBinding<?, ?>) bean;
