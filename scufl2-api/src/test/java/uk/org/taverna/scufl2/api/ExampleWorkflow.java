@@ -162,6 +162,8 @@ public class ExampleWorkflow {
 		processorName = new InputProcessorPort(processor, "name");
 		processorName.setDepth(0);
 		processorGreeting = new OutputProcessorPort(processor, "greeting");
+		processorGreeting.setDepth(0);
+		processorGreeting.setGranularDepth(0);
 
 		// FIXME: Should not need to make default dispatch stack
 		makeDispatchStack().setParent(processor);

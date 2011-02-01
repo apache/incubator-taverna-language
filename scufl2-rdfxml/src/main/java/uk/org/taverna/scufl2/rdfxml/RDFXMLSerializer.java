@@ -1,5 +1,6 @@
 package uk.org.taverna.scufl2.rdfxml;
 
+import java.awt.DisplayMode;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.URI;
@@ -44,10 +45,12 @@ import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
 import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.rdfxml.impl.NamespacePrefixMapperJAXB_RI;
+import uk.org.taverna.scufl2.rdfxml.jaxb.DispatchStack.DispatchStackLayers;
 import uk.org.taverna.scufl2.rdfxml.jaxb.GranularPortDepth;
 import uk.org.taverna.scufl2.rdfxml.jaxb.IterationStrategyStack.IterationStrategies;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ObjectFactory;
 import uk.org.taverna.scufl2.rdfxml.jaxb.PortDepth;
+import uk.org.taverna.scufl2.rdfxml.jaxb.ProductOf;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ProfileDocument;
 import uk.org.taverna.scufl2.rdfxml.jaxb.SeeAlsoType;
 import uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowBundleDocument;
@@ -161,7 +164,9 @@ public class RDFXMLSerializer {
 					type.setResource(stack.getType().toASCIIString());
 					dispatchStack.setType(type);
 				}
-				dispatchStack.setDispatchStackLayers(objectFactory.createDispatchStackDispatchStackLayers());
+				DispatchStackLayers dispatchStackLayers = objectFactory.createDispatchStackDispatchStackLayers();
+				dispatchStackLayers.setParseType(dispatchStackLayers.getParseType());
+				dispatchStack.setDispatchStackLayers(dispatchStackLayers);
 			}
 			if (node instanceof DispatchStackLayer) {
 				DispatchStackLayer dispatchStackLayer = (DispatchStackLayer) node;
@@ -180,12 +185,13 @@ public class RDFXMLSerializer {
 				iterationStrategyStack.setAbout(uri.toASCIIString());
 				uk.org.taverna.scufl2.rdfxml.jaxb.Processor.IterationStrategyStack processorIterationStrategyStack = objectFactory.createProcessorIterationStrategyStack();
 				processorIterationStrategyStack.setIterationStrategyStack(iterationStrategyStack);
-				proc.setIterationStrategyStack(processorIterationStrategyStack);
+				proc.setIterationStrategyStack(processorIterationStrategyStack);				
 				productStack = new Stack<List<Object>>();
 			}
 			if (node instanceof IterationStrategy) {
 				iterationStrategies = objectFactory.createIterationStrategyStackIterationStrategies();				
-				iterationStrategyStack.setIterationStrategies(iterationStrategies);				
+				iterationStrategyStack.setIterationStrategies(iterationStrategies);
+				iterationStrategies.setParseType(iterationStrategies.getParseType());
 				List<Object> dotProductOrCrossProduct = iterationStrategies.getDotProductOrCrossProduct();
 				productStack.add(dotProductOrCrossProduct);
 			}
@@ -193,14 +199,18 @@ public class RDFXMLSerializer {
 				uk.org.taverna.scufl2.rdfxml.jaxb.CrossProduct crossProduct = objectFactory.createCrossProduct();
 				crossProduct.setAbout(uri.toASCIIString());
 				productStack.peek().add(crossProduct);
-				crossProduct.setProductOf(objectFactory.createProductOf());				
+				ProductOf productOf = objectFactory.createProductOf();
+				productOf.setParseType(productOf.getParseType());
+				crossProduct.setProductOf(productOf);				
 				productStack.add(crossProduct.getProductOf().getCrossProductOrDotProductOrInputProcessorPort());				
 			}
 			if (node instanceof DotProduct) {
 				uk.org.taverna.scufl2.rdfxml.jaxb.DotProduct dotProduct = objectFactory.createDotProduct();
 				dotProduct.setAbout(uri.toASCIIString());
 				productStack.peek().add(dotProduct);
-				dotProduct.setProductOf(objectFactory.createProductOf());				
+				ProductOf productOf = objectFactory.createProductOf();
+				productOf.setParseType(productOf.getParseType());
+				dotProduct.setProductOf(productOf);				
 				productStack.add(dotProduct.getProductOf().getCrossProductOrDotProductOrInputProcessorPort());				
 			}
 			if (node instanceof PortNode) {
