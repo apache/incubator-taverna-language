@@ -88,12 +88,12 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 
 			URI portUri = new URITools().relativeUriForBean(inputPort,
 					configuration);
-			portConfig.addPropertyAsResourceURI(
+			portConfig.addPropertyReference(
 					ACTIVITY_URI.resolve("#definesInputPort"), portUri);
 
 			if (portBean.getTranslatedElementType() != null) {
 				// As "translated element type" is confusing, we'll instead use "dataType"
-				portConfig.addPropertyAsResourceURI(
+				portConfig.addPropertyReference(
 						ACTIVITY_URI.resolve("#dataType"),
 						URI.create("java:" + portBean.getTranslatedElementType()));
 
@@ -121,7 +121,7 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 
 			URI portUri = new URITools().relativeUriForBean(outputPort, configuration);
 
-			portConfig.addPropertyAsResourceURI(
+			portConfig.addPropertyReference(
 					ACTIVITY_URI.resolve("#definesOutputPort"), portUri);
 
 			MimeTypes mimeTypes = portBean.getMimeTypes();
@@ -133,7 +133,7 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 					if (s.contains("'")) {
 						s = s.split("'")[1];
 					}
-					portConfig.addPropertyAsResourceURI(mimeType,
+					portConfig.addPropertyReference(mimeType,
 							MEDIATYPES_URI.resolve(s));
 				}
 				if (mimeTypes.getString() != null) {
@@ -141,7 +141,7 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 						if (s.contains("'")) {
 							s = s.split("'")[1];
 						}
-						portConfig.addPropertyAsResourceURI(mimeType,
+						portConfig.addPropertyReference(mimeType,
 								MEDIATYPES_URI.resolve(s));
 					}
 				}

@@ -1,8 +1,6 @@
 package uk.org.taverna.scufl2.api.property;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.Set;
@@ -44,16 +42,14 @@ public class TestAddProperty {
 	@Test
 	public void addPropertyAsResourceURI() throws Exception {
 		PropertyResource propertyResource = new PropertyResource();
-		propertyResource.addPropertyAsResourceURI(PROPERTY, CONSTANT);
+		propertyResource.addPropertyReference(PROPERTY, CONSTANT);
 
 		Set<PropertyObject> properties = propertyResource.getProperties().get(
 				PROPERTY);
 		assertEquals(1, properties.size());
-		PropertyResource propRes = (PropertyResource) properties.iterator()
+		PropertyReference propRes = (PropertyReference) properties.iterator()
 		.next();
 		assertEquals(CONSTANT, propRes.getResourceURI());
-		assertNull(propRes.getTypeURI());
-		assertTrue(propRes.getProperties().isEmpty());
 	}
 
 	@Test

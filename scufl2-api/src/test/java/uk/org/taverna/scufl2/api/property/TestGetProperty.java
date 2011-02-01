@@ -25,16 +25,25 @@ public class TestGetProperty {
 	@Test
 	public void getProperty() throws Exception {
 		PropertyResource resource = new PropertyResource();
-		PropertyResource propertyResource = new PropertyResource(CONSTANT);
+		PropertyReference propertyResource = new PropertyReference(CONSTANT);
 		resource.getProperties().get(PROPERTY).add(propertyResource);
 		assertSame(propertyResource, resource.getProperty(PROPERTY));
+	}
+
+	@Test
+	public void getPropertyAsReference() throws Exception {
+		PropertyResource resource = new PropertyResource();
+		resource.getProperties().get(PROPERTY)
+				.add(new PropertyReference(CONSTANT));
+		PropertyReference resolvedRef = resource.getPropertyAsReference(PROPERTY);
+		assertEquals(CONSTANT, resolvedRef.getResourceURI());
 	}
 
 	@Test
 	public void getPropertyAsResourceURI() throws Exception {
 		PropertyResource resource = new PropertyResource();
 		resource.getProperties().get(PROPERTY)
-		.add(new PropertyResource(CONSTANT));
+				.add(new PropertyReference(CONSTANT));
 		assertEquals(CONSTANT, resource.getPropertyAsResourceURI(PROPERTY));
 	}
 
@@ -42,9 +51,9 @@ public class TestGetProperty {
 	public void getPropertyAsResourceURIMultiple() throws Exception {
 		PropertyResource resource = new PropertyResource();
 		resource.getProperties().get(PROPERTY)
-		.add(new PropertyResource(EXAMPLE_COM.resolve("#constant1")));
+				.add(new PropertyReference(EXAMPLE_COM.resolve("#constant1")));
 		resource.getProperties().get(PROPERTY)
-		.add(new PropertyResource(EXAMPLE_COM.resolve("#constant2")));
+				.add(new PropertyReference(EXAMPLE_COM.resolve("#constant2")));
 
 		assertEquals(1, resource.getProperties().size());
 		assertEquals(2, resource.getProperties().get(PROPERTY).size());
@@ -127,7 +136,7 @@ public class TestGetProperty {
 	public void getPropertyMultiple() throws Exception {
 		PropertyResource resource = new PropertyResource();
 		resource.getProperties().get(PROPERTY)
-		.add(new PropertyResource(EXAMPLE_COM.resolve("#constant1")));
+				.add(new PropertyReference(EXAMPLE_COM.resolve("#constant1")));
 		resource.getProperties().get(PROPERTY)
 		.add(new PropertyLiteral("string2"));
 		assertEquals(1, resource.getProperties().size());
@@ -145,9 +154,9 @@ public class TestGetProperty {
 	public void getPropertyOfTypeMultiple() throws Exception {
 		PropertyResource resource = new PropertyResource();
 		resource.getProperties().get(PROPERTY)
-		.add(new PropertyResource(EXAMPLE_COM.resolve("#constant1")));
+				.add(new PropertyReference(EXAMPLE_COM.resolve("#constant1")));
 		resource.getProperties().get(PROPERTY)
-		.add(new PropertyResource(EXAMPLE_COM.resolve("#constant2")));
+				.add(new PropertyReference(EXAMPLE_COM.resolve("#constant2")));
 		assertEquals(1, resource.getProperties().size());
 		assertEquals(2, resource.getProperties().get(PROPERTY).size());
 		resource.getPropertyOfType(PROPERTY, PropertyResource.class);
@@ -160,12 +169,20 @@ public class TestGetProperty {
 	}
 
 	@Test
-	public void resourceConstructor() throws Exception {
-		PropertyResource resource = new PropertyResource(
+	public void propertyResourceIsReference() throws Exception {
+		PropertyResource resource = new PropertyResource();
+		resource.setResourceURI(EXAMPLE_COM.resolve("#resourceURI"));
+
+		assertEquals(EXAMPLE_COM.resolve("#resourceURI"),
+				((PropertyReference)resource).getResourceURI());
+	}
+
+	@Test
+	public void referenceConstructor() throws Exception {
+		PropertyReference resource = new PropertyReference(
 				EXAMPLE_COM.resolve("#resourceURI"));
 		assertEquals(EXAMPLE_COM.resolve("#resourceURI"),
 				resource.getResourceURI());
-		assertNull(resource.getTypeURI());
 	}
 
 }

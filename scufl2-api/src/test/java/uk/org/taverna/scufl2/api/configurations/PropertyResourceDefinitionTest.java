@@ -20,7 +20,6 @@
  ******************************************************************************/
 package uk.org.taverna.scufl2.api.configurations;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -57,6 +56,34 @@ public class PropertyResourceDefinitionTest {
 	}
 
 	/**
+	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.PropertyResourceDefinition#getPropertyDefinition(java.net.URI)}.
+	 */
+	@Test
+	public void testGetPropertyDefinition() {
+		assertNotNull(propertyResourceDefinition.getPropertyDefinition(activityURI.resolve("#testProperty")));
+		assertEquals(activityURI.resolve("#testProperty"), propertyResourceDefinition.getPropertyDefinition(activityURI.resolve("#testProperty")).getPredicate());
+		assertEquals(activityURI.resolve("#testProperty"), propertyResourceDefinition.getPropertyDefinition(activityURI.resolve("#testProperty")).getPredicate());
+	}
+
+	/**
+	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.PropertyResourceDefinition#getPropertyDefinitions()}.
+	 */
+	@Test
+	public void testGetPropertyDefinitions() {
+		assertEquals(propertyDefinitions, propertyResourceDefinition.getPropertyDefinitions());
+		assertEquals(propertyDefinitions, propertyResourceDefinition.getPropertyDefinitions());
+	}
+
+	/**
+	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.ObjectDefinition#getTypeURI()}.
+	 */
+	@Test
+	public void testGetTypeURI() {
+		assertEquals(PropertyLiteral.XSD_STRING, propertyResourceDefinition.getTypeURI());
+		assertEquals(PropertyLiteral.XSD_STRING, propertyResourceDefinition.getTypeURI());
+	}
+
+	/**
 	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.PropertyResourceDefinition#PropertyResourceDefinition(java.net.URI, java.net.URI, java.lang.String, java.lang.String, boolean, boolean)}.
 	 */
 	@Test
@@ -70,7 +97,6 @@ public class PropertyResourceDefinitionTest {
 		assertFalse(propertyResourceDefinition.isRequired());
 		assertTrue(propertyResourceDefinition.isMultiple());
 		assertTrue(propertyResourceDefinition.isOrdered());
-		assertArrayEquals(new String[0], propertyResourceDefinition.getOptions());
 		assertEquals(new ArrayList<PropertyDefinition>(), propertyResourceDefinition.getPropertyDefinitions());
 	}
 
@@ -88,35 +114,6 @@ public class PropertyResourceDefinitionTest {
 		assertFalse(propertyResourceDefinition.isRequired());
 		assertTrue(propertyResourceDefinition.isMultiple());
 		assertFalse(propertyResourceDefinition.isOrdered());
-		assertArrayEquals(new String[0], propertyResourceDefinition.getOptions());
-		assertEquals(propertyDefinitions, propertyResourceDefinition.getPropertyDefinitions());
-	}
-
-	/**
-	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.ObjectDefinition#getTypeURI()}.
-	 */
-	@Test
-	public void testGetTypeURI() {
-		assertEquals(PropertyLiteral.XSD_STRING, propertyResourceDefinition.getTypeURI());
-		assertEquals(PropertyLiteral.XSD_STRING, propertyResourceDefinition.getTypeURI());
-	}
-
-	/**
-	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.ObjectDefinition#setTypeURI(java.net.URI)}.
-	 */
-	@Test
-	public void testSetTypeURI() {
-		assertEquals(PropertyLiteral.XSD_STRING, propertyResourceDefinition.getTypeURI());
-		propertyResourceDefinition.setTypeURI(PropertyLiteral.XSD_DOUBLE);
-		assertEquals(PropertyLiteral.XSD_DOUBLE, propertyResourceDefinition.getTypeURI());
-	}
-
-	/**
-	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.PropertyResourceDefinition#getPropertyDefinitions()}.
-	 */
-	@Test
-	public void testGetPropertyDefinitions() {
-		assertEquals(propertyDefinitions, propertyResourceDefinition.getPropertyDefinitions());
 		assertEquals(propertyDefinitions, propertyResourceDefinition.getPropertyDefinitions());
 	}
 
@@ -130,13 +127,13 @@ public class PropertyResourceDefinitionTest {
 	}
 
 	/**
-	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.PropertyResourceDefinition#getPropertyDefinition(java.net.URI)}.
+	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.ObjectDefinition#setTypeURI(java.net.URI)}.
 	 */
 	@Test
-	public void testGetPropertyDefinition() {
-		assertNotNull(propertyResourceDefinition.getPropertyDefinition(activityURI.resolve("#testProperty")));
-		assertEquals(activityURI.resolve("#testProperty"), propertyResourceDefinition.getPropertyDefinition(activityURI.resolve("#testProperty")).getPredicate());
-		assertEquals(activityURI.resolve("#testProperty"), propertyResourceDefinition.getPropertyDefinition(activityURI.resolve("#testProperty")).getPredicate());
+	public void testSetTypeURI() {
+		assertEquals(PropertyLiteral.XSD_STRING, propertyResourceDefinition.getTypeURI());
+		propertyResourceDefinition.setTypeURI(PropertyLiteral.XSD_DOUBLE);
+		assertEquals(PropertyLiteral.XSD_DOUBLE, propertyResourceDefinition.getTypeURI());
 	}
 
 }
