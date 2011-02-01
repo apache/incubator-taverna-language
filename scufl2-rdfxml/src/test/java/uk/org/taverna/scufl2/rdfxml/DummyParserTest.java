@@ -37,9 +37,9 @@ public class DummyParserTest {
 		WorkflowBundleDocument bundleDoc = workflowBundle.getValue();
 		WorkflowBundle wfBundle = (WorkflowBundle) bundleDoc.getAny().get(0);
 
-		System.out.println(wfBundle.getName());
-		System.out.println(wfBundle.getMainWorkflow());
-		System.out.println(wfBundle.getSameBaseAs().getResource());
+		//System.out.println(wfBundle.getName());
+		//System.out.println(wfBundle.getMainWorkflow());
+		//System.out.println(wfBundle.getSameBaseAs().getResource());
 		for (WorkflowBundle.Workflow wfLink : wfBundle.getWorkflow()) {
 			String about = wfLink.getWorkflow().getAbout();
 			String seeAlso = wfLink.getWorkflow().getSeeAlso().getResource();
@@ -49,7 +49,7 @@ public class DummyParserTest {
 					.unmarshal(wfResource.toURL());
 			WorkflowDocument wfDoc = unmarshalled.getValue();
 			Workflow wf = (Workflow) wfDoc.getAny().get(0);
-			System.out.println(about + " " + wf.getName());
+			//System.out.println(about + " " + wf.getName());
 		}
 
 		for (WorkflowBundle.Profile profileLink : wfBundle.getProfile()) {
@@ -63,7 +63,7 @@ public class DummyParserTest {
 			ProfileDocument profileDoc = (ProfileDocument) unmarshalled
 					.getValue();
 			Profile profile = (Profile) profileDoc.getAny().get(0);
-			System.out.println(about + " " + profile.getName());
+			//System.out.println(about + " " + profile.getName());
 		}
 	}
 
