@@ -10,7 +10,7 @@ import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.impl.LazyMap;
 
-public class PropertyResource implements PropertyObject {
+public class PropertyResource extends PropertyReference implements PropertyObject {
 	/**
 	 * A special {@link Child} used by {@link PropertyResource#accept(Visitor)}
 	 * when visiting the map of {@link PropertyResource#getProperties()}
@@ -20,16 +20,16 @@ public class PropertyResource implements PropertyObject {
 	 */
 	public class PropertyVisit implements Child<PropertyResource> {
 
-		private final URI uri;
+		private final URI predicateUri;
 
 		PropertyVisit(URI uri) {
-			this.uri = uri;
+			predicateUri = uri;
 		}
 
 		@Override
 		public boolean accept(Visitor visitor) {
 			if (visitor.visitEnter(this)) {
-				for (PropertyObject po : getPropertyObjects()) {
+				for (PropertyObject po : getPropertiesForPredicate()) {
 					if (!po.accept(visitor)) {
 						break;
 					}
@@ -43,12 +43,12 @@ public class PropertyResource implements PropertyObject {
 			return PropertyResource.this;
 		}
 
-		public Set<PropertyObject> getPropertyObjects() {
-			return getProperties().get(uri);
+		public URI getPredicateUri() {
+			return predicateUri;
 		}
 
-		public URI getUri() {
-			return uri;
+		public Set<PropertyObject> getPropertiesForPredicate() {
+			return getProperties().get(predicateUri);
 		}
 
 		@Override
@@ -58,7 +58,6 @@ public class PropertyResource implements PropertyObject {
 
 	}
 
-	private URI resourceURI;
 	private URI typeURI;
 
 	private final Map<URI, Set<PropertyObject>> properties = new LazyMap<URI, Set<PropertyObject>>() {
@@ -71,10 +70,6 @@ public class PropertyResource implements PropertyObject {
 	};
 
 	public PropertyResource() {
-	}
-
-	public PropertyResource(URI resourceURI) {
-		setResourceURI(resourceURI);
 	}
 
 	@Override
@@ -100,12 +95,12 @@ public class PropertyResource implements PropertyObject {
 		return resource;
 	}
 
-	public void addPropertyAsResourceURI(URI predicate, URI resourceURI) {
-		addProperty(predicate, new PropertyResource(resourceURI));
-	}
-
 	public void addPropertyAsString(URI predicate, String value) {
 		addProperty(predicate, new PropertyLiteral(value));
+	}
+
+	public void addPropertyReference(URI predicate, URI resourceURI) {
+		addProperty(predicate, new PropertyReference(resourceURI));
 	}
 
 	public final Map<URI, Set<PropertyObject>> getProperties() {
@@ -117,6 +112,11 @@ public class PropertyResource implements PropertyObject {
 		return getPropertiesOfType(predicate, PropertyLiteral.class);
 	}
 
+	public Set<PropertyReference> getPropertiesAsReferences(URI predicate)
+	throws UnexpectedPropertyException {
+		return getPropertiesOfType(predicate, PropertyReference.class);
+}
+
 	public Set<PropertyResource> getPropertiesAsResources(URI predicate)
 			throws UnexpectedPropertyException {
 		return getPropertiesOfType(predicate, PropertyResource.class);
@@ -125,7 +125,7 @@ public class PropertyResource implements PropertyObject {
 	public Set<URI> getPropertiesAsResourceURIs(URI predicate)
 			throws UnexpectedPropertyException {
 		Set<URI> uris = new HashSet<URI>();
-		for (PropertyResource resource : getPropertiesAsResources(predicate)) {
+		for (PropertyReference resource : getPropertiesAsReferences(predicate)) {
 			URI uri = resource.getResourceURI();
 			if (uri == null) {
 				throw new UnexpectedPropertyException(
@@ -177,11 +177,19 @@ public class PropertyResource implements PropertyObject {
 		return foundProperty;
 	}
 
+	public PropertyReference getPropertyAsReference(URI predicate)
+			throws UnexpectedPropertyException, PropertyNotFoundException,
+			MultiplePropertiesException {
+		PropertyReference propertyResource = getPropertyOfType(predicate,
+				PropertyReference.class);
+		return propertyResource;
+	}
+
 	public URI getPropertyAsResourceURI(URI predicate)
 			throws UnexpectedPropertyException, PropertyNotFoundException,
 			MultiplePropertiesException {
-		PropertyResource propertyResource = getPropertyOfType(predicate,
-				PropertyResource.class);
+		PropertyReference propertyResource = getPropertyOfType(predicate,
+				PropertyReference.class);
 		URI uri = propertyResource.getResourceURI();
 		if (uri == null) {
 			throw new UnexpectedPropertyException(
@@ -209,10 +217,6 @@ public class PropertyResource implements PropertyObject {
 		return propertyType.cast(propObj);
 	}
 
-	public final URI getResourceURI() {
-		return resourceURI;
-	}
-
 	public final URI getTypeURI() {
 		return typeURI;
 	}
@@ -220,10 +224,6 @@ public class PropertyResource implements PropertyObject {
 	public final void setProperties(Map<URI, Set<PropertyObject>> properties) {
 		this.properties.clear();
 		this.properties.putAll(properties);
-	}
-
-	public final void setResourceURI(URI resourceURI) {
-		this.resourceURI = resourceURI;
 	}
 
 	public final void setTypeURI(URI typeURI) {
