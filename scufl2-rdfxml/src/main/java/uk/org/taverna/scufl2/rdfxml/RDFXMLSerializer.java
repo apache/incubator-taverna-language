@@ -359,7 +359,7 @@ public class RDFXMLSerializer {
 		uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowBundle bundle = objectFactory
 				.createWorkflowBundle();
 		// FIXME: Support other URIs
-		bundle.setAbout("./");
+		bundle.setAbout("");
 		bundle.setName(wfBundle.getName());
 
 		if (wfBundle.getSameBaseAs() != null) {
