@@ -3,10 +3,10 @@ package uk.org.taverna.scufl2.api.core;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.UUID;
 
 import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
@@ -33,9 +33,9 @@ public class Workflow extends AbstractNamedChild implements
 		return WORKFLOW_ROOT.resolve(UUID.randomUUID().toString() + "/");
 	}
 
-	private Set<DataLink> dataLinks = new HashSet<DataLink>();
+	private TreeSet<DataLink> dataLinks = new TreeSet<DataLink>();
 
-	private Set<ControlLink> controlLinks = new HashSet<ControlLink>();
+	private TreeSet<ControlLink> controlLinks = new TreeSet<ControlLink>();
 
 	private NamedSet<InputWorkflowPort> inputPorts = new NamedSet<InputWorkflowPort>();
 	private NamedSet<OutputWorkflowPort> outputPorts = new NamedSet<OutputWorkflowPort>();
@@ -100,11 +100,13 @@ public class Workflow extends AbstractNamedChild implements
 	}
 
 	public void setControlLinks(Set<ControlLink> controlLinks) {
-		this.controlLinks = controlLinks;
+		this.controlLinks.clear();
+		this.controlLinks.addAll(controlLinks);
 	}
 
 	public void setDataLinks(Set<DataLink> datalinks) {
-		dataLinks = datalinks;
+		dataLinks.clear();
+		dataLinks.addAll(datalinks);
 	}
 
 	public void setInputPorts(Set<InputWorkflowPort> inputPorts) {
