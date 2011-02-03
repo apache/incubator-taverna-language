@@ -145,7 +145,7 @@ public class TestRDFXMLSerializer {
 				wf, "./s:processor[1]/s:Processor/@rdf:about");
 		assertXpathEquals("wait4me", 
 				wf, "./s:processor[1]/s:Processor/s:name");
-		
+			
 
 		assertXpathEquals("processor/Hello/", 
 				wf, "./s:processor[2]/s:Processor/@rdf:about");
@@ -189,25 +189,22 @@ public class TestRDFXMLSerializer {
 		assertXpathEquals("Collection", wf, "./s:processor[2]/s:Processor/s:iterationStrategyStack/s:IterationStrategyStack/s:iterationStrategies/s:CrossProduct/s:productOf/@rdf:parseType");
 		assertXpathEquals("processor/Hello/in/name", wf, "./s:processor[2]/s:Processor/s:iterationStrategyStack/s:IterationStrategyStack/s:iterationStrategies/s:CrossProduct/s:productOf/s:InputProcessorPort/@rdf:about");
 		
-		
-		assertXpathEquals("datalink?from=in/yourName&to=out/results&mergePosition=1", 
-				wf, "./s:datalink[1]/s:DataLink/@rdf:about");
-		assertXpathEquals("in/yourName", 
-				wf, "./s:datalink[1]/s:DataLink/s:receivesFrom/@rdf:resource");
-		assertXpathEquals("out/results", 
-				wf, "./s:datalink[1]/s:DataLink/s:sendsTo/@rdf:resource");
-		assertXpathEquals("1", 
-				wf, "./s:datalink[1]/s:DataLink/s:mergePosition");
-		assertXpathEquals("http://www.w3.org/2001/XMLSchema#integer", 
-				wf, "./s:datalink[1]/s:DataLink/s:mergePosition/@rdf:datatype");
-
-
 		assertXpathEquals("datalink?from=processor/Hello/out/greeting&to=out/results&mergePosition=0", 
-				wf, "./s:datalink[2]/s:DataLink/@rdf:about");
+				wf, "./s:datalink[1]/s:DataLink/@rdf:about");
 
 		assertXpathEquals("datalink?from=in/yourName&to=processor/Hello/in/name", 
-				wf, "./s:datalink[3]/s:DataLink/@rdf:about");
+				wf, "./s:datalink[2]/s:DataLink/@rdf:about");
 	
+		assertXpathEquals("datalink?from=in/yourName&to=out/results&mergePosition=1", 
+				wf, "./s:datalink[3]/s:DataLink/@rdf:about");
+		assertXpathEquals("in/yourName", 
+				wf, "./s:datalink[3]/s:DataLink/s:receivesFrom/@rdf:resource");
+		assertXpathEquals("out/results", 
+				wf, "./s:datalink[3]/s:DataLink/s:sendsTo/@rdf:resource");
+		assertXpathEquals("1", 
+				wf, "./s:datalink[3]/s:DataLink/s:mergePosition");
+		assertXpathEquals("http://www.w3.org/2001/XMLSchema#integer", 
+				wf, "./s:datalink[3]/s:DataLink/s:mergePosition/@rdf:datatype");
 
 		assertXpathEquals("control?block=processor/Hello/&untilFinished=processor/wait4me/", 
 				wf, "./s:control/s:Blocking/@rdf:about");
@@ -218,31 +215,39 @@ public class TestRDFXMLSerializer {
 		assertXpathEquals("processor/wait4me/", 
 				wf, "./s:control/s:Blocking/s:untilFinished/@rdf:resource");
 		
-		
-
-		assertXpathEquals("processor/wait4me/", 
-				wf, "./s:processor[2]/s:Processor/@rdf:about");
-		assertXpathEquals("wait4me", 
-				wf, "./s:processor[2]/s:Processor/s:name");
-		
-		assertXpathEquals("datalink?from=in/yourName&to=out/results&mergePosition=1", 
+		assertXpathEquals("datalink?from=processor/Hello/out/greeting&to=out/results&mergePosition=0", 
 				wf, "./s:datalink[1]/s:DataLink/@rdf:about");
-		assertXpathEquals("in/yourName", 
+		assertXpathEquals("processor/Hello/out/greeting", 
 				wf, "./s:datalink[1]/s:DataLink/s:receivesFrom/@rdf:resource");
 		assertXpathEquals("out/results", 
 				wf, "./s:datalink[1]/s:DataLink/s:sendsTo/@rdf:resource");
-		assertXpathEquals("1", 
+		assertXpathEquals("0", 
 				wf, "./s:datalink[1]/s:DataLink/s:mergePosition");
 		assertXpathEquals("http://www.w3.org/2001/XMLSchema#integer", 
 				wf, "./s:datalink[1]/s:DataLink/s:mergePosition/@rdf:datatype");
+		
 
-
-		assertXpathEquals("datalink?from=processor/Hello/out/greeting&to=out/results&mergePosition=0", 
-				wf, "./s:datalink[2]/s:DataLink/@rdf:about");
 
 		assertXpathEquals("datalink?from=in/yourName&to=processor/Hello/in/name", 
-				wf, "./s:datalink[3]/s:DataLink/@rdf:about");
+				wf, "./s:datalink[2]/s:DataLink/@rdf:about");
+		assertXpathEquals("in/yourName", 
+				wf, "./s:datalink[2]/s:DataLink/s:receivesFrom/@rdf:resource");
+		assertXpathEquals("processor/Hello/in/name", 
+				wf, "./s:datalink[2]/s:DataLink/s:sendsTo/@rdf:resource");
+		assertNull(xpathSelectElement(wf, "./s:datalink[2]/s:DataLink/s:mergePosition"));
 		
+
+		
+		assertXpathEquals("datalink?from=in/yourName&to=out/results&mergePosition=1", 
+				wf, "./s:datalink[3]/s:DataLink/@rdf:about");
+		assertXpathEquals("in/yourName", 
+				wf, "./s:datalink[3]/s:DataLink/s:receivesFrom/@rdf:resource");
+		assertXpathEquals("out/results", 
+				wf, "./s:datalink[3]/s:DataLink/s:sendsTo/@rdf:resource");
+		assertXpathEquals("1", 
+				wf, "./s:datalink[3]/s:DataLink/s:mergePosition");
+		assertXpathEquals("http://www.w3.org/2001/XMLSchema#integer", 
+				wf, "./s:datalink[3]/s:DataLink/s:mergePosition/@rdf:datatype");
 
 		assertXpathEquals("control?block=processor/Hello/&untilFinished=processor/wait4me/", 
 				wf, "./s:control/s:Blocking/@rdf:about");
