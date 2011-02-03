@@ -21,15 +21,21 @@ import org.w3._2000._01.rdf_schema_.SeeAlso;
 import org.xml.sax.SAXException;
 
 import uk.org.taverna.scufl2.api.common.URITools;
+import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
+import uk.org.taverna.scufl2.api.dispatchstack.DispatchStack;
 import uk.org.taverna.scufl2.api.io.WriterException;
+import uk.org.taverna.scufl2.api.port.InputProcessorPort;
 import uk.org.taverna.scufl2.api.port.InputWorkflowPort;
+import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
 import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
+import uk.org.taverna.scufl2.api.port.ProcessorPort;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.rdfxml.impl.NamespacePrefixMapperJAXB_RI;
+import uk.org.taverna.scufl2.rdfxml.jaxb.GranularPortDepth;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ObjectFactory;
 import uk.org.taverna.scufl2.rdfxml.jaxb.PortDepth;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ProfileDocument;
@@ -38,6 +44,146 @@ import uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowBundleDocument;
 import uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowDocument;
 
 public class RDFXMLSerializer {
+
+	public class WorkflowSerialisationVisitor implements Visitor {
+
+		private final uk.org.taverna.scufl2.rdfxml.jaxb.Workflow workflow;
+		private uk.org.taverna.scufl2.rdfxml.jaxb.Processor proc;
+		private Workflow wf;
+		private uk.org.taverna.scufl2.rdfxml.jaxb.DispatchStack dispatchStack;
+
+		public WorkflowSerialisationVisitor(
+				uk.org.taverna.scufl2.rdfxml.jaxb.Workflow workflow) {
+					this.workflow = workflow;
+		}
+
+		@Override
+		public boolean visit(WorkflowBean node) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean visitEnter(WorkflowBean node) {
+			if (node instanceof Workflow) {
+				wf = (Workflow)node;
+				workflow.setAbout("");
+				workflow.setName(wf.getName());
+		
+				if (wf.getWorkflowIdentifier() != null) {
+					Resource wfId = rdfObjectFactory.createResource();
+					wfId.setResource(wf.getWorkflowIdentifier().toASCIIString());
+					workflow.setWorkflowIdentifier(wfId);
+				}
+			}
+			URI uri = uriTools.relativeUriForBean(node, wf);
+
+			if (node instanceof InputWorkflowPort) {
+				InputWorkflowPort ip = (InputWorkflowPort) node;
+				uk.org.taverna.scufl2.rdfxml.jaxb.Workflow.InputWorkflowPort inP = objectFactory.createWorkflowInputWorkflowPort();
+				uk.org.taverna.scufl2.rdfxml.jaxb.InputWorkflowPort inPort = objectFactory.createInputWorkflowPort();
+				inP.setInputWorkflowPort(inPort);
+				inPort.setName(ip.getName());
+				
+				URI portURI = uriTools.relativeUriForBean(ip, ip.getParent());
+				inPort.setAbout(portURI.toASCIIString());				
+
+				PortDepth portDepth = makePortDepth(ip.getDepth());
+				inPort.setPortDepth(portDepth);
+				workflow.getInputWorkflowPort().add(inP);
+			}
+			if (node instanceof InputWorkflowPort) {
+				OutputWorkflowPort op = (OutputWorkflowPort) node;
+				uk.org.taverna.scufl2.rdfxml.jaxb.Workflow.OutputWorkflowPort inP = objectFactory.createWorkflowOutputWorkflowPort();
+				uk.org.taverna.scufl2.rdfxml.jaxb.OutputWorkflowPort outPort = objectFactory.createOutputWorkflowPort();
+				inP.setOutputWorkflowPort(outPort);
+				outPort.setName(op.getName());
+				
+				URI portURI = uriTools.relativeUriForBean(op, op.getParent());
+				outPort.setAbout(portURI.toASCIIString());			
+				workflow.getOutputWorkflowPort().add(inP);			
+			}
+			if (node instanceof Processor) {
+				Processor processor = (Processor) node;
+				uk.org.taverna.scufl2.rdfxml.jaxb.Workflow.Processor wfProc = objectFactory.createWorkflowProcessor();
+				proc = objectFactory.createProcessor();
+				wfProc.setProcessor(proc);			
+				proc.setName(processor.getName());				
+				URI procUri = uriTools.relativeUriForBean(processor, wf);
+				proc.setAbout(procUri.toASCIIString());
+				wfProc.setProcessor(proc);			
+				workflow.getProcessor().add(wfProc);				
+			}
+			if (node instanceof InputProcessorPort) {
+				InputProcessorPort inPort = (InputProcessorPort) node;
+				uk.org.taverna.scufl2.rdfxml.jaxb.InputProcessorPort port = objectFactory.createInputProcessorPort();
+				port.setAbout(uri.toASCIIString());
+				port.setName(inPort.getName());				
+				port.setPortDepth(makePortDepth(inPort.getDepth()));
+				uk.org.taverna.scufl2.rdfxml.jaxb.Processor.InputProcessorPort inputProcessorPort = objectFactory.createProcessorInputProcessorPort();
+				inputProcessorPort.setInputProcessorPort(port);
+				proc.getInputProcessorPort().add(inputProcessorPort);
+			}
+			if (node instanceof OutputProcessorPort) {
+				uk.org.taverna.scufl2.rdfxml.jaxb.OutputProcessorPort port;
+				OutputProcessorPort outPort = (OutputProcessorPort) node;
+				port = objectFactory.createOutputProcessorPort();
+				port.setAbout(uri.toASCIIString());
+				port.setName(outPort.getName());				
+				port.setPortDepth(makePortDepth(outPort.getDepth()));
+				port.setGranularPortDepth(makeGranularPortDepth(outPort.getGranularDepth()));
+				
+				uk.org.taverna.scufl2.rdfxml.jaxb.Processor.OutputProcessorPort outputProcessorPort = objectFactory.createProcessorOutputProcessorPort();
+				outputProcessorPort.setOutputProcessorPort(port);
+				proc.getOutputProcessorPort().add(outputProcessorPort);
+			}
+			if (node instanceof DispatchStack) {
+				DispatchStack dispatchStack2 = (DispatchStack) node;
+				dispatchStack = objectFactory.createDispatchStack();
+				proc.setDispatchStack(dispatchStack);
+				dispatchStack2.getType();
+				dispatchStack.getResource()
+				
+				
+			}
+			
+			
+			// TODO: dispatchStack
+			// TODO: iteration strategy
+			
+			// TODO: Datalinks
+			
+			return true;
+			
+		}
+
+		private GranularPortDepth makeGranularPortDepth(Integer granularDepth) {
+			if (granularDepth == null) {
+				return null;
+			}
+			GranularPortDepth portDepth = objectFactory.createGranularPortDepth();
+			portDepth.setValue(BigInteger.valueOf(granularDepth));
+			portDepth.setDatatype("http://www.w3.org/2001/XMLSchema#integer");
+			return portDepth;
+		}
+
+		private PortDepth makePortDepth(Integer depth) {
+			if (depth == null) {
+				return null;
+			}
+			PortDepth portDepth = objectFactory.createPortDepth();
+			portDepth.setValue(BigInteger.valueOf(depth));
+			portDepth.setDatatype("http://www.w3.org/2001/XMLSchema#integer");
+			return portDepth;
+		}
+
+		@Override
+		public boolean visitLeave(WorkflowBean node) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+	}
 
 	protected synchronized static JAXBContext getJAxbContextStatic()
 			throws JAXBException {
@@ -234,63 +380,12 @@ public class RDFXMLSerializer {
 
 	protected uk.org.taverna.scufl2.rdfxml.jaxb.Workflow makeWorkflow(
 			Workflow wf, URI documentPath) {
+		
+		
 		uk.org.taverna.scufl2.rdfxml.jaxb.Workflow workflow = objectFactory
 				.createWorkflow();
-		workflow.setAbout("");
-		workflow.setName(wf.getName());
-	
-		if (wf.getWorkflowIdentifier() != null) {
-			Resource wfId = rdfObjectFactory.createResource();
-			wfId.setResource(wf.getWorkflowIdentifier().toASCIIString());
-			workflow.setWorkflowIdentifier(wfId);
-		}
-	
-		for (InputWorkflowPort ip : wf.getInputPorts()) {
-			uk.org.taverna.scufl2.rdfxml.jaxb.Workflow.InputWorkflowPort inP = objectFactory.createWorkflowInputWorkflowPort();
-			uk.org.taverna.scufl2.rdfxml.jaxb.InputWorkflowPort inPort = objectFactory.createInputWorkflowPort();
-			inP.setInputWorkflowPort(inPort);
-			inPort.setName(ip.getName());
-			
-			URI portURI = uriTools.relativeUriForBean(ip, wf);
-			inPort.setAbout(portURI.toASCIIString());
-			// FIXME: Add xml:base - no need for relativePath here!
-			if (ip.getDepth() != null) {
-				PortDepth portDepth = objectFactory.createPortDepth();
-				portDepth.setValue(BigInteger.valueOf(ip.getDepth()));			
-				inPort.setPortDepth(portDepth);
-			}
-			workflow.getInputWorkflowPort().add(inP);			
-		}
+		wf.accept(new WorkflowSerialisationVisitor(workflow) {});
 		
-		for (OutputWorkflowPort op : wf.getOutputPorts()) {
-			uk.org.taverna.scufl2.rdfxml.jaxb.Workflow.OutputWorkflowPort inP = objectFactory.createWorkflowOutputWorkflowPort();
-			uk.org.taverna.scufl2.rdfxml.jaxb.OutputWorkflowPort outPort = objectFactory.createOutputWorkflowPort();
-			inP.setOutputWorkflowPort(outPort);
-			outPort.setName(op.getName());
-			
-			URI portURI = uriTools.relativeUriForBean(op, wf);
-			outPort.setAbout(portURI.toASCIIString());			
-			workflow.getOutputWorkflowPort().add(inP);			
-		}
-		
-		for (Processor p : wf.getProcessors()) {
-			uk.org.taverna.scufl2.rdfxml.jaxb.Workflow.Processor wfProc = objectFactory.createWorkflowProcessor();
-			uk.org.taverna.scufl2.rdfxml.jaxb.Processor proc = objectFactory.createProcessor();
-			wfProc.setProcessor(proc);			
-			proc.setName(p.getName());
-			
-			URI procUri = uriTools.relativeUriForBean(p, wf);
-			proc.setAbout(procUri.toASCIIString());
-			wfProc.setProcessor(proc);			
-			workflow.getProcessor().add(wfProc);
-			
-			// TODO: Input/Output
-
-			// TODO: dispatchStack
-			// TODO: iteration strategy
-		}
-		
-		// TODO: Datalinks
 		
 		return workflow;
 	}
