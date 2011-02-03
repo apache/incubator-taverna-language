@@ -4,7 +4,9 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.logging.Logger;
 
 import javax.xml.XMLConstants;
@@ -30,15 +32,20 @@ import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.dispatchstack.DispatchStack;
 import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
 import uk.org.taverna.scufl2.api.io.WriterException;
+import uk.org.taverna.scufl2.api.iterationstrategy.CrossProduct;
+import uk.org.taverna.scufl2.api.iterationstrategy.DotProduct;
+import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategy;
+import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyParent;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
+import uk.org.taverna.scufl2.api.iterationstrategy.PortNode;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
 import uk.org.taverna.scufl2.api.port.InputWorkflowPort;
 import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
 import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
-import uk.org.taverna.scufl2.api.port.ProcessorPort;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.rdfxml.impl.NamespacePrefixMapperJAXB_RI;
 import uk.org.taverna.scufl2.rdfxml.jaxb.GranularPortDepth;
+import uk.org.taverna.scufl2.rdfxml.jaxb.IterationStrategyStack.IterationStrategies;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ObjectFactory;
 import uk.org.taverna.scufl2.rdfxml.jaxb.PortDepth;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ProfileDocument;
@@ -55,6 +62,8 @@ public class RDFXMLSerializer {
 		private Workflow wf;
 		private uk.org.taverna.scufl2.rdfxml.jaxb.DispatchStack dispatchStack;
 		private uk.org.taverna.scufl2.rdfxml.jaxb.IterationStrategyStack iterationStrategyStack;
+		private IterationStrategies iterationStrategies;
+		private Stack<List<Object>> productStack;
 
 		public WorkflowSerialisationVisitor(
 				uk.org.taverna.scufl2.rdfxml.jaxb.Workflow workflow) {
@@ -62,13 +71,12 @@ public class RDFXMLSerializer {
 		}
 
 		@Override
-		public boolean visit(WorkflowBean node) {
-			// TODO Auto-generated method stub
-			return false;
+		public boolean visitEnter(WorkflowBean node) {
+			return visit(node);
 		}
 
 		@Override
-		public boolean visitEnter(WorkflowBean node) {
+		public boolean visit(WorkflowBean node) {
 			if (node instanceof Workflow) {
 				wf = (Workflow)node;
 				workflow.setAbout("");
@@ -96,7 +104,7 @@ public class RDFXMLSerializer {
 				inPort.setPortDepth(portDepth);
 				workflow.getInputWorkflowPort().add(inP);
 			}
-			if (node instanceof InputWorkflowPort) {
+			if (node instanceof OutputWorkflowPort) {
 				OutputWorkflowPort op = (OutputWorkflowPort) node;
 				uk.org.taverna.scufl2.rdfxml.jaxb.Workflow.OutputWorkflowPort inP = objectFactory.createWorkflowOutputWorkflowPort();
 				uk.org.taverna.scufl2.rdfxml.jaxb.OutputWorkflowPort outPort = objectFactory.createOutputWorkflowPort();
@@ -142,9 +150,9 @@ public class RDFXMLSerializer {
 				proc.getOutputProcessorPort().add(outputProcessorPort);
 			}
 			if (node instanceof DispatchStack) {
-				DispatchStack stack = (DispatchStack) node;
-				
+				DispatchStack stack = (DispatchStack) node;			
 				dispatchStack = objectFactory.createDispatchStack();
+				dispatchStack.setAbout(uri.toASCIIString());
 				uk.org.taverna.scufl2.rdfxml.jaxb.Processor.DispatchStack procDisStack = objectFactory.createProcessorDispatchStack();
 				proc.setDispatchStack(procDisStack);				
 				procDisStack.setDispatchStack(dispatchStack);
@@ -153,24 +161,56 @@ public class RDFXMLSerializer {
 					type.setResource(stack.getType().toASCIIString());
 					dispatchStack.setType(type);
 				}
-				dispatchStack.setSameAs(owlObjectFactory.createSameAs());
+				dispatchStack.setDispatchStackLayers(objectFactory.createDispatchStackDispatchStackLayers());
 			}
 			if (node instanceof DispatchStackLayer) {
 				DispatchStackLayer dispatchStackLayer = (DispatchStackLayer) node;
-				uk.org.taverna.scufl2.rdfxml.jaxb.DispatchStackLayer layer = objectFactory.createDispatchStackLayer();				
+				uk.org.taverna.scufl2.rdfxml.jaxb.DispatchStackLayer layer = objectFactory.createDispatchStackLayer();
+				layer.setAbout(uri.toASCIIString());
 				if (dispatchStackLayer.getConfigurableType() != null) {
 					Type type = rdfObjectFactory.createType();
 					type.setResource(dispatchStackLayer.getConfigurableType().toASCIIString());
 					layer.setType(type);
 				}
-				dispatchStack.getSameAs().getDispatchStackLayer().add(layer);				
+				dispatchStack.getDispatchStackLayers().getDispatchStackLayer().add(layer);				
 			}
 			if (node instanceof IterationStrategyStack) {
 				IterationStrategyStack stack = (IterationStrategyStack) node;				
 				iterationStrategyStack = objectFactory.createIterationStrategyStack();
-				proc.setIterationStrategyStack(iterationStrategyStack);
+				iterationStrategyStack.setAbout(uri.toASCIIString());
+				uk.org.taverna.scufl2.rdfxml.jaxb.Processor.IterationStrategyStack processorIterationStrategyStack = objectFactory.createProcessorIterationStrategyStack();
+				processorIterationStrategyStack.setIterationStrategyStack(iterationStrategyStack);
+				proc.setIterationStrategyStack(processorIterationStrategyStack);
+				productStack = new Stack<List<Object>>();
 			}
-			// TODO: iteration strategy
+			if (node instanceof IterationStrategy) {
+				iterationStrategies = objectFactory.createIterationStrategyStackIterationStrategies();				
+				iterationStrategyStack.setIterationStrategies(iterationStrategies);				
+				List<Object> dotProductOrCrossProduct = iterationStrategies.getDotProductOrCrossProduct();
+				productStack.add(dotProductOrCrossProduct);
+			}
+			if (node instanceof CrossProduct) {
+				uk.org.taverna.scufl2.rdfxml.jaxb.CrossProduct crossProduct = objectFactory.createCrossProduct();
+				crossProduct.setAbout(uri.toASCIIString());
+				productStack.peek().add(crossProduct);
+				crossProduct.setProductOf(objectFactory.createProductOf());				
+				productStack.add(crossProduct.getProductOf().getCrossProductOrDotProductOrInputProcessorPort());				
+			}
+			if (node instanceof DotProduct) {
+				uk.org.taverna.scufl2.rdfxml.jaxb.DotProduct dotProduct = objectFactory.createDotProduct();
+				dotProduct.setAbout(uri.toASCIIString());
+				productStack.peek().add(dotProduct);
+				dotProduct.setProductOf(objectFactory.createProductOf());				
+				productStack.add(dotProduct.getProductOf().getCrossProductOrDotProductOrInputProcessorPort());				
+			}
+			if (node instanceof PortNode) {
+				PortNode portNode = (PortNode) node;
+				InputProcessorPort inPort = portNode.getInputProcessorPort();
+				URI portUri = uriTools.relativeUriForBean(inPort, wf);
+				uk.org.taverna.scufl2.rdfxml.jaxb.ProductOf.InputProcessorPort port = objectFactory.createProductOfInputProcessorPort();
+				port.setAbout(portUri.toASCIIString());
+				productStack.peek().add(port);
+			}
 			
 			// TODO: Datalinks
 			
@@ -200,8 +240,10 @@ public class RDFXMLSerializer {
 
 		@Override
 		public boolean visitLeave(WorkflowBean node) {
-			// TODO Auto-generated method stub
-			return false;
+			if (node instanceof IterationStrategyParent) {
+				productStack.pop();
+			}
+			return true;
 		}
 
 	}
@@ -393,9 +435,9 @@ public class RDFXMLSerializer {
 		
 		URI wfUri = uriTools.relativeUriForBean(wf, wfBundle);		
 		doc.setBase(uriTools.relativePath(path, wfUri).toASCIIString());
-
+		
 		JAXBElement<RDF> element = new org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory()
-				.createRDF(doc);
+				.createRDF(doc);		
 		getMarshaller().marshal(element, outputStream);
 		seeAlsoUris.put(wf, path);
 	}
