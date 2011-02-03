@@ -35,7 +35,6 @@
 			<InputActivityPort rdf:about="activity/HelloScript/in/personName">
 				<name>personName</name>
 				<portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
-				<granularPortDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</granularPortDepth>
 			</InputActivityPort>
 		</inputActivityPort>
 		<outputActivityPort>

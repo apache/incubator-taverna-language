@@ -17,6 +17,7 @@ import javax.xml.validation.SchemaFactory;
 
 import org.w3._1999._02._22_rdf_syntax_ns_.RDF;
 import org.w3._1999._02._22_rdf_syntax_ns_.Resource;
+import org.w3._1999._02._22_rdf_syntax_ns_.Type;
 import org.w3._2000._01.rdf_schema_.SeeAlso;
 import org.xml.sax.SAXException;
 
@@ -27,7 +28,9 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.dispatchstack.DispatchStack;
+import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
 import uk.org.taverna.scufl2.api.io.WriterException;
+import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
 import uk.org.taverna.scufl2.api.port.InputWorkflowPort;
 import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
@@ -51,6 +54,7 @@ public class RDFXMLSerializer {
 		private uk.org.taverna.scufl2.rdfxml.jaxb.Processor proc;
 		private Workflow wf;
 		private uk.org.taverna.scufl2.rdfxml.jaxb.DispatchStack dispatchStack;
+		private uk.org.taverna.scufl2.rdfxml.jaxb.IterationStrategyStack iterationStrategyStack;
 
 		public WorkflowSerialisationVisitor(
 				uk.org.taverna.scufl2.rdfxml.jaxb.Workflow workflow) {
@@ -138,17 +142,34 @@ public class RDFXMLSerializer {
 				proc.getOutputProcessorPort().add(outputProcessorPort);
 			}
 			if (node instanceof DispatchStack) {
-				DispatchStack dispatchStack2 = (DispatchStack) node;
+				DispatchStack stack = (DispatchStack) node;
+				
 				dispatchStack = objectFactory.createDispatchStack();
-				proc.setDispatchStack(dispatchStack);
-				dispatchStack2.getType();
-				dispatchStack.getResource()
-				
-				
+				uk.org.taverna.scufl2.rdfxml.jaxb.Processor.DispatchStack procDisStack = objectFactory.createProcessorDispatchStack();
+				proc.setDispatchStack(procDisStack);				
+				procDisStack.setDispatchStack(dispatchStack);
+				if (stack.getType() != null) {
+					Type type = rdfObjectFactory.createType();
+					type.setResource(stack.getType().toASCIIString());
+					dispatchStack.setType(type);
+				}
+				dispatchStack.setSameAs(owlObjectFactory.createSameAs());
 			}
-			
-			
-			// TODO: dispatchStack
+			if (node instanceof DispatchStackLayer) {
+				DispatchStackLayer dispatchStackLayer = (DispatchStackLayer) node;
+				uk.org.taverna.scufl2.rdfxml.jaxb.DispatchStackLayer layer = objectFactory.createDispatchStackLayer();				
+				if (dispatchStackLayer.getConfigurableType() != null) {
+					Type type = rdfObjectFactory.createType();
+					type.setResource(dispatchStackLayer.getConfigurableType().toASCIIString());
+					layer.setType(type);
+				}
+				dispatchStack.getSameAs().getDispatchStackLayer().add(layer);				
+			}
+			if (node instanceof IterationStrategyStack) {
+				IterationStrategyStack stack = (IterationStrategyStack) node;				
+				iterationStrategyStack = objectFactory.createIterationStrategyStack();
+				proc.setIterationStrategyStack(iterationStrategyStack);
+			}
 			// TODO: iteration strategy
 			
 			// TODO: Datalinks
@@ -202,7 +223,8 @@ public class RDFXMLSerializer {
 	private ObjectFactory objectFactory = new ObjectFactory();
 	private org.w3._2000._01.rdf_schema_.ObjectFactory rdfsObjectFactory = new org.w3._2000._01.rdf_schema_.ObjectFactory();
 	private org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory rdfObjectFactory = new org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory();
-
+	private org.w3._2002._07.owl_.ObjectFactory owlObjectFactory = new org.w3._2002._07.owl_.ObjectFactory();
+	
 	private URITools uriTools = new URITools();
 
 	private boolean usingSchema = false;
