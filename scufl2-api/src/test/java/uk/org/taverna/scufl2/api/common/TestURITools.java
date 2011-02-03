@@ -93,6 +93,21 @@ public class TestURITools {
 	}
 
 	@Test
+	public void relatizeSame() throws Exception {
+		URI base = URI.create("workflow/HelloWorld.rdf");
+		URI uri = URI.create("workflow/HelloWorld/");
+		assertEquals("HelloWorld/", uriTools.relativePath(base, uri).toASCIIString());
+	}
+
+	@Test
+	public void relatizeToFragment() throws Exception {
+		URI base = URI.create("filename.txt");
+		URI fragment = URI.create("./#sd");
+		assertEquals(".#sd", uriTools.relativePath(base, fragment)
+				.toASCIIString());
+	}
+
+	@Test
 	public void validFileName() {
 		assertEquals(
 				"f%2fsd%5Csdf'asd%20fa%3as&%3F%3dd%20%C4%91%C3%BE%E2%80%9D%C2%BB%C3%A6",
