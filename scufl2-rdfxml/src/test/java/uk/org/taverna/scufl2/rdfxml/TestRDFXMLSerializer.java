@@ -108,6 +108,46 @@ public class TestRDFXMLSerializer {
 		checkWorkflowDocument(root);
 		
 	}
+	
+
+	@Test
+	public void usecaseProfileXml() throws Exception {
+		URL workflowURL = getClass().getResource("example/profile/tavernaWorkbench.rdf");
+		SAXBuilder saxBuilder = new SAXBuilder();
+		Document doc = saxBuilder.build(workflowURL);
+		
+		Element root = doc.getRootElement();
+		
+		checkRoot(root);
+		checkProfileDocument(root);
+		
+	}
+
+
+	private void checkProfileDocument(Element root) throws JDOMException {
+		assertEquals("ProfileDocument", root.getAttributeValue("type", XSI_NS));
+		assertXpathEquals("tavernaWorkbench/", root, "./@xml:base");
+
+		Element profile = root.getChild("Profile", SCUFL2_NS);
+		assertSame(profile, root.getChildren().get(0));		
+		assertXpathEquals("", profile, "./@rdf:about");
+		
+		
+		assertXpathEquals("tavernaWorkbench", profile, "./s:name");	
+		
+
+		assertXpathEquals("binding/Hello/", profile, "./s:processorBinding/@rdf:resource");	
+		assertXpathEquals("configuration/Hello/", profile, "./s:activatesConfiguration/@rdf:resource");
+
+		assertSame(xpathSelectElement(profile, "./s:name"), profile.getChildren().get(0));
+		assertSame(xpathSelectElement(profile, "./s:Profile"), profile.getChildren().get(0));
+		assertSame(xpathSelectElement(profile, "./s:Activity"), profile.getChildren().get(1));
+		assertSame(xpathSelectElement(profile, "./s:ProcessorBinding"), profile.getChildren().get(2));
+		assertSame(xpathSelectElement(profile, "./s:Configuration"), profile.getChildren().get(3));
+		
+		assertXpathEquals("activity/HelloScript/", root, "./s:activateConfiguration/@rdf:resource");
+		
+	}
 
 
 	protected void checkWorkflowDocument(Element root) throws JDOMException {
@@ -203,9 +243,9 @@ public class TestRDFXMLSerializer {
 		assertXpathEquals("datalink?from=in/yourName&to=out/results&mergePosition=1", 
 				wf, "./s:datalink[3]/s:DataLink/@rdf:about");
 		assertXpathEquals("in/yourName", 
-				wf, "./s:datalink[3]/s:DataLink/s:receivesFrom/@rdf:resource");
+				wf, "./s:datalink[3]/s:DataLink/s:receiveFrom/@rdf:resource");
 		assertXpathEquals("out/results", 
-				wf, "./s:datalink[3]/s:DataLink/s:sendsTo/@rdf:resource");
+				wf, "./s:datalink[3]/s:DataLink/s:sendTo/@rdf:resource");
 		assertXpathEquals("1", 
 				wf, "./s:datalink[3]/s:DataLink/s:mergePosition");
 		assertXpathEquals("http://www.w3.org/2001/XMLSchema#integer", 
@@ -223,9 +263,9 @@ public class TestRDFXMLSerializer {
 		assertXpathEquals("datalink?from=processor/Hello/out/greeting&to=out/results&mergePosition=0", 
 				wf, "./s:datalink[1]/s:DataLink/@rdf:about");
 		assertXpathEquals("processor/Hello/out/greeting", 
-				wf, "./s:datalink[1]/s:DataLink/s:receivesFrom/@rdf:resource");
+				wf, "./s:datalink[1]/s:DataLink/s:receiveFrom/@rdf:resource");
 		assertXpathEquals("out/results", 
-				wf, "./s:datalink[1]/s:DataLink/s:sendsTo/@rdf:resource");
+				wf, "./s:datalink[1]/s:DataLink/s:sendTo/@rdf:resource");
 		assertXpathEquals("0", 
 				wf, "./s:datalink[1]/s:DataLink/s:mergePosition");
 		assertXpathEquals("http://www.w3.org/2001/XMLSchema#integer", 
@@ -236,9 +276,9 @@ public class TestRDFXMLSerializer {
 		assertXpathEquals("datalink?from=in/yourName&to=processor/Hello/in/name", 
 				wf, "./s:datalink[2]/s:DataLink/@rdf:about");
 		assertXpathEquals("in/yourName", 
-				wf, "./s:datalink[2]/s:DataLink/s:receivesFrom/@rdf:resource");
+				wf, "./s:datalink[2]/s:DataLink/s:receiveFrom/@rdf:resource");
 		assertXpathEquals("processor/Hello/in/name", 
-				wf, "./s:datalink[2]/s:DataLink/s:sendsTo/@rdf:resource");
+				wf, "./s:datalink[2]/s:DataLink/s:sendTo/@rdf:resource");
 		assertNull(xpathSelectElement(wf, "./s:datalink[2]/s:DataLink/s:mergePosition"));
 		
 
@@ -246,9 +286,9 @@ public class TestRDFXMLSerializer {
 		assertXpathEquals("datalink?from=in/yourName&to=out/results&mergePosition=1", 
 				wf, "./s:datalink[3]/s:DataLink/@rdf:about");
 		assertXpathEquals("in/yourName", 
-				wf, "./s:datalink[3]/s:DataLink/s:receivesFrom/@rdf:resource");
+				wf, "./s:datalink[3]/s:DataLink/s:receiveFrom/@rdf:resource");
 		assertXpathEquals("out/results", 
-				wf, "./s:datalink[3]/s:DataLink/s:sendsTo/@rdf:resource");
+				wf, "./s:datalink[3]/s:DataLink/s:sendTo/@rdf:resource");
 		assertXpathEquals("1", 
 				wf, "./s:datalink[3]/s:DataLink/s:mergePosition");
 		assertXpathEquals("http://www.w3.org/2001/XMLSchema#integer", 

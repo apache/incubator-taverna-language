@@ -98,21 +98,21 @@
 		<datalink>
 			<DataLink
 				rdf:about="datalink?from=processor/Hello/out/greeting&#38;to=out/results&#38;mergePosition=0">
-				<receivesFrom rdf:resource="processor/Hello/out/greeting" />
-				<sendsTo rdf:resource="out/results" />
+				<receiveFrom rdf:resource="processor/Hello/out/greeting" />
+				<sendTo rdf:resource="out/results" />
 				<mergePosition rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</mergePosition>
 			</DataLink>
 		</datalink>
 		<datalink>
 			<DataLink rdf:about="datalink?from=in/yourName&#38;to=processor/Hello/in/name">
-				<receivesFrom rdf:resource="in/yourName" />
-				<sendsTo rdf:resource="processor/Hello/in/name" />
+				<receiveFrom rdf:resource="in/yourName" />
+				<sendTo rdf:resource="processor/Hello/in/name" />
 			</DataLink>
 		</datalink>
 		<datalink>
 			<DataLink rdf:about="datalink?from=in/yourName&#38;to=out/results&#38;mergePosition=1">
-				<receivesFrom rdf:resource="in/yourName" />
-				<sendsTo rdf:resource="out/results" />
+				<receiveFrom rdf:resource="in/yourName" />
+				<sendTo rdf:resource="out/results" />
 				<mergePosition rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</mergePosition>
 			</DataLink>
 		</datalink>
