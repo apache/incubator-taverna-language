@@ -28,6 +28,9 @@ import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.core.BlockingControlLink;
+import uk.org.taverna.scufl2.api.core.ControlLink;
+import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.dispatchstack.DispatchStack;
@@ -45,6 +48,9 @@ import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
 import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.rdfxml.impl.NamespacePrefixMapperJAXB_RI;
+import uk.org.taverna.scufl2.rdfxml.jaxb.Blocking;
+import uk.org.taverna.scufl2.rdfxml.jaxb.Control;
+import uk.org.taverna.scufl2.rdfxml.jaxb.DataLinkEntry;
 import uk.org.taverna.scufl2.rdfxml.jaxb.DispatchStack.DispatchStackLayers;
 import uk.org.taverna.scufl2.rdfxml.jaxb.GranularPortDepth;
 import uk.org.taverna.scufl2.rdfxml.jaxb.IterationStrategyStack.IterationStrategies;
@@ -221,11 +227,51 @@ public class RDFXMLSerializer {
 				port.setAbout(portUri.toASCIIString());
 				productStack.peek().add(port);
 			}
+			if (node instanceof DataLink) {
+				DataLink dataLink = (DataLink) node;
+				uk.org.taverna.scufl2.rdfxml.jaxb.DataLink link = objectFactory.createDataLink();
+				link.setAbout(uri.toASCIIString());
+				URI fromUri = uriTools.relativeUriForBean(dataLink.getReceivesFrom(), wf);
+				URI toUri = uriTools.relativeUriForBean(dataLink.getSendsTo(), wf);
+				link.setReceivesFrom(makeResource(fromUri));
+				link.setSendsTo(makeResource(toUri));
+				
+				if (dataLink.getMergePosition() != null) {
+					uk.org.taverna.scufl2.rdfxml.jaxb.Integer value = objectFactory.createInteger();					
+					value.setValue(BigInteger.valueOf(dataLink.getMergePosition()));
+					value.setDatatype(value.getDatatype());
+					link.setMergePosition(value);
+				}
+				
+				DataLinkEntry linkEntry = objectFactory.createDataLinkEntry();
+				linkEntry.setDataLink(link);
+				workflow.getDatalink().add(linkEntry);
+			}
+			if (node instanceof BlockingControlLink) {
+				BlockingControlLink controlLink = (BlockingControlLink) node;
+				URI blockUri = uriTools.relativeUriForBean(controlLink.getBlock(), wf);
+				URI untilUri = uriTools.relativeUriForBean(controlLink.getUntilFinished(), wf);
+				
+				Blocking blocking = objectFactory.createBlocking();
+				blocking.setAbout(uri.toASCIIString());
+				blocking.setBlock(makeResource(blockUri));
+				blocking.setUntilFinished(makeResource(untilUri));
+				
+				Control control = objectFactory.createControl();
+				control.setBlocking(blocking);
+				workflow.getControl().add(control);				
+			}
 			
 			// TODO: Datalinks
 			
 			return true;
 			
+		}
+
+		private Resource makeResource(URI uri) {
+			Resource resource = rdfObjectFactory.createResource();
+			resource.setResource(uri.toASCIIString());			
+			return resource;
 		}
 
 		private GranularPortDepth makeGranularPortDepth(Integer granularDepth) {
@@ -234,7 +280,7 @@ public class RDFXMLSerializer {
 			}
 			GranularPortDepth portDepth = objectFactory.createGranularPortDepth();
 			portDepth.setValue(BigInteger.valueOf(granularDepth));
-			portDepth.setDatatype("http://www.w3.org/2001/XMLSchema#integer");
+			portDepth.setDatatype(portDepth.getDatatype());
 			return portDepth;
 		}
 
@@ -244,7 +290,7 @@ public class RDFXMLSerializer {
 			}
 			PortDepth portDepth = objectFactory.createPortDepth();
 			portDepth.setValue(BigInteger.valueOf(depth));
-			portDepth.setDatatype("http://www.w3.org/2001/XMLSchema#integer");
+			portDepth.setDatatype(portDepth.getDatatype());
 			return portDepth;
 		}
 
