@@ -194,7 +194,7 @@ public class URITools {
 				IterationStrategyNode iterationStrategyNode = (IterationStrategyNode) bean;
 				parent = iterationStrategyNode.getParent();
 				if (parent instanceof IterationStrategy) {
-					return parentUri.resolve("root/");
+					return parentUri;
 				} else {
 					List<IterationStrategyNode> parentList = (List<IterationStrategyNode>) parent;
 					int index = parentList.indexOf(iterationStrategyNode);
