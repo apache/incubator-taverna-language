@@ -42,59 +42,41 @@
 				</outputProcessorPort>
 
 				<dispatchStack>
-                    <DispatchStack rdf:about="processor/Hello/dispatchStack/">
+                    <DispatchStack rdf:about="processor/Hello/dispatchstack/">
+                    	<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/taverna/2.2/DefaultDispatchStack" />
                         <dispatchStackLayers rdf:parseType="Collection">
-                            <DispatchStackLayer rdf:about="processor/Hello/dispatchStack/0/">
+                            <DispatchStackLayer rdf:about="processor/Hello/dispatchstack/0/">
                                 <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#Parallelise" />
                             </DispatchStackLayer>
-                            <DispatchStackLayer rdf:about="processor/Hello/dispatchStack/1/">
+                            <DispatchStackLayer rdf:about="processor/Hello/dispatchstack/1/">
                                 <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#Loop" />
                             </DispatchStackLayer>
-                            <DispatchStackLayer rdf:about="processor/Hello/dispatchStack/2/">
+                            <DispatchStackLayer rdf:about="processor/Hello/dispatchstack/2/">
                                 <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#ErrorBounce" />
                             </DispatchStackLayer>
-                            <DispatchStackLayer rdf:about="processor/Hello/dispatchStack/3/">
+                            <DispatchStackLayer rdf:about="processor/Hello/dispatchstack/3/">
                                 <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#Failover" />
                             </DispatchStackLayer>
-                            <DispatchStackLayer rdf:about="processor/Hello/dispatchStack/4/">
+                            <DispatchStackLayer rdf:about="processor/Hello/dispatchstack/4/">
                                 <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#Retry" />
                             </DispatchStackLayer>
-                            <DispatchStackLayer rdf:about="processor/Hello/dispatchStack/5/">
+                            <DispatchStackLayer rdf:about="processor/Hello/dispatchstack/5/">
                                 <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#Stop" />
                             </DispatchStackLayer>
-                            <DispatchStackLayer rdf:about="processor/Hello/dispatchStack/6/">
+                            <DispatchStackLayer rdf:about="processor/Hello/dispatchstack/6/">
                                 <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#Invoke" />
                             </DispatchStackLayer>
                         </dispatchStackLayers>
                     </DispatchStack>
 				</dispatchStack>
 				<iterationStrategyStack>
-                    <IterationStrategyStack rdf:about="processor/Hello/iterationStrategy/">
+                    <IterationStrategyStack rdf:about="processor/Hello/iterationstrategy/">
                         <iterationStrategies rdf:parseType="Collection">
-                            <CrossProduct rdf:about="processor/Hello/iterationStrategy/0/">
+                            <CrossProduct rdf:about="processor/Hello/iterationstrategy/0/">
                                 <productOf rdf:parseType="Collection">
                                     <InputProcessorPort rdf:about="processor/Hello/in/name" />
-                                    <DotProduct rdf:about="processor/Hello/iterationStrategy/0/2/">
-                                    	<productOf rdf:parseType="Collection">
-                                    		<InputProcessorPort rdf:about="processor/Hello/in/wrong" />
-                                    		<InputProcessorPort rdf:about="processor/Hello/in/wrong" />                                    		
-                                    	</productOf>
-                                    </DotProduct>
-                                    <InputProcessorPort rdf:about="processor/Hello/in/wrong" />
                                 </productOf>
                             </CrossProduct>
-                            <DotProduct rdf:about="processor/Hello/iterationStrategy/1/">
-                                <productOf rdf:parseType="Collection">
-                                    <InputProcessorPort rdf:about="processor/Hello/in/name" />
-                                    <InputProcessorPort rdf:about="processor/Hello/in/wrong" />
-                                    <DotProduct rdf:about="processor/Hello/iterationStrategy/1/2/">
-                                    	<productOf rdf:parseType="Collection">
-                                    		<InputProcessorPort rdf:about="processor/Hello/in/wrong" />
-                                    		<InputProcessorPort rdf:about="processor/Hello/in/wrong" />                                    		
-                                    	</productOf>
-                                    </DotProduct>
-								</productOf>
-							</DotProduct>                            
                         </iterationStrategies>
                     </IterationStrategyStack>
                 </iterationStrategyStack>
@@ -114,13 +96,6 @@
 		</processor>
 
 		<datalink>
-			<DataLink rdf:about="datalink?from=in/yourName&#38;to=out/results&#38;mergePosition=1">
-				<receivesFrom rdf:resource="in/yourName" />
-				<sendsTo rdf:resource="out/results" />
-				<mergePosition rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</mergePosition>
-			</DataLink>
-		</datalink>
-		<datalink>
 			<DataLink
 				rdf:about="datalink?from=processor/Hello/out/greeting&#38;to=out/results&#38;mergePosition=0">
 				<receivesFrom rdf:resource="processor/Hello/out/greeting" />
@@ -132,6 +107,13 @@
 			<DataLink rdf:about="datalink?from=in/yourName&#38;to=processor/Hello/in/name">
 				<receivesFrom rdf:resource="in/yourName" />
 				<sendsTo rdf:resource="processor/Hello/in/name" />
+			</DataLink>
+		</datalink>
+		<datalink>
+			<DataLink rdf:about="datalink?from=in/yourName&#38;to=out/results&#38;mergePosition=1">
+				<receivesFrom rdf:resource="in/yourName" />
+				<sendsTo rdf:resource="out/results" />
+				<mergePosition rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</mergePosition>
 			</DataLink>
 		</datalink>
 
