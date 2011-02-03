@@ -33,21 +33,6 @@
 		</xs:complexType>
 	</xs:element>
 
-	<xs:group name="sameAsDispatchStackLayer">
-		<xs:sequence>
-			
-		</xs:sequence>
-	</xs:group>
-	
-	<xs:element name="sadfsfd" >
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="scufl2:DispatchStackLayer" minOccurs="0"
-					maxOccurs="unbounded" />
-			</xs:sequence>
-			<xs:attribute ref="rdf:parseType" fixed="Collection" />
-		</xs:complexType>
-	</xs:element>
 	<xs:element name="DatatypeProperty">
 		<xs:complexType>
 			<xs:sequence>
