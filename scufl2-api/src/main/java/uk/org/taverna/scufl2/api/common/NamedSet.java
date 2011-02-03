@@ -1,10 +1,14 @@
 package uk.org.taverna.scufl2.api.common;
 
+import java.util.AbstractSet;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeMap;
 
 /**
  * A {@link Set} of {@link Named} objects.
@@ -24,15 +28,16 @@ import java.util.TreeSet;
  * @param <T>
  *            Subclass of {@link Named} to keep in this set.
  */
-public class NamedSet<T extends Named> extends TreeSet<T> implements Set<T> {
+public class NamedSet<T extends Named> extends AbstractSet<T> implements
+		SortedSet<T> {
 
-	protected transient HashMap<String, T> namedMap;
+	protected transient SortedMap<String, T> namedMap;
 
 	/**
 	 * Construct an empty NamedSet.
 	 */
 	public NamedSet() {
-		namedMap = new HashMap<String, T>();
+		namedMap = new TreeMap<String, T>();
 	}
 
 	/**
@@ -46,8 +51,7 @@ public class NamedSet<T extends Named> extends TreeSet<T> implements Set<T> {
 	 *            Collection which elements are to be added to the set.
 	 */
 	public NamedSet(Collection<? extends T> collection) {
-		namedMap = new HashMap<String, T>(Math.max(
-				(int) (collection.size() / .75f) + 1, 16));
+		namedMap = new TreeMap<String, T>();
 		addAll(collection);
 	}
 
@@ -64,9 +68,23 @@ public class NamedSet<T extends Named> extends TreeSet<T> implements Set<T> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public NamedSet<T> clone() {
-		NamedSet<T> copy = (NamedSet<T>) super.clone();
-		copy.namedMap = (HashMap<String, T>) this.namedMap.clone();
+		NamedSet<T> copy;
+		try {
+			copy = (NamedSet<T>) super.clone();
+		} catch (CloneNotSupportedException e) {
+			throw new IllegalStateException(e);
+		}
+		if (!(this.namedMap instanceof TreeMap)) {
+			throw new IllegalStateException("Can't clone submap");
+		}
+		copy.namedMap = (SortedMap<String, T>) ((TreeMap) this.namedMap)
+				.clone();
 		return copy;
+	}
+
+	@Override
+	public Comparator<? super T> comparator() {
+		return null;
 	}
 
 	/**
@@ -102,6 +120,11 @@ public class NamedSet<T extends Named> extends TreeSet<T> implements Set<T> {
 		return namedMap.containsKey(name);
 	}
 
+	@Override
+	public T first() {
+		return namedMap.get(namedMap.firstKey());
+	}
+
 	/**
 	 * Return the element with the given name from the set.
 	 *
@@ -117,6 +140,14 @@ public class NamedSet<T extends Named> extends TreeSet<T> implements Set<T> {
 	}
 
 	@Override
+	public SortedSet<T> headSet(T toElement) {
+		// FIXME: Return a view instead of a copy
+		NamedSet<T> headSet = new NamedSet<T>();
+		headSet.namedMap = namedMap.headMap(toElement.getName());
+		return headSet;
+	}
+
+	@Override
 	public boolean isEmpty() {
 		return namedMap.isEmpty();
 	}
@@ -124,6 +155,11 @@ public class NamedSet<T extends Named> extends TreeSet<T> implements Set<T> {
 	@Override
 	public Iterator<T> iterator() {
 		return namedMap.values().iterator();
+	}
+
+	@Override
+	public T last() {
+		return namedMap.get(namedMap.lastKey());
 	}
 
 	public Iterator<String> nameIterator() {
@@ -151,6 +187,21 @@ public class NamedSet<T extends Named> extends TreeSet<T> implements Set<T> {
 	@Override
 	public int size() {
 		return namedMap.size();
+	}
+
+	@Override
+	public SortedSet<T> subSet(T fromElement, T toElement) {
+		NamedSet<T> headSet = new NamedSet<T>();
+		headSet.namedMap = namedMap.subMap(fromElement.getName(),
+				toElement.getName());
+		return headSet;
+	}
+
+	@Override
+	public SortedSet<T> tailSet(T fromElement) {
+		NamedSet<T> headSet = new NamedSet<T>();
+		headSet.namedMap = namedMap.tailMap(fromElement.getName());
+		return headSet;
 	}
 
 }
