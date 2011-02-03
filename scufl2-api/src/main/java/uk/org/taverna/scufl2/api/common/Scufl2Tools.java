@@ -83,7 +83,7 @@ public class Scufl2Tools {
 				configurations.add(config);
 			}
 		}
-		Collections.sort(configurations);
+		// Collections.sort(configurations);
 		return configurations;
 	}
 
