@@ -341,7 +341,7 @@
 	<xs:element name="DispatchStack">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="rdf:type" minOccurs="0" />
+				<xs:element ref="rdf:type" minOccurs="0"/>
 				<xs:element name="dispatchStackLayers" minOccurs="0">
 					<xs:complexType>
 						<xs:sequence>
