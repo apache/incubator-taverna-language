@@ -204,8 +204,7 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="scufl2:name" />
-				<xs:element ref="scufl2:portDepth" />
-				<xs:element ref="scufl2:granularPortDepth" />
+				<xs:element ref="scufl2:portDepth" />				
 			</xs:sequence>
 			<xs:attributeGroup ref="rdf:about" />
 		</xs:complexType>
@@ -343,7 +342,7 @@
 			<xs:sequence>
 				<xs:element ref="scufl2:CrossProduct" />
 			</xs:sequence>
-			<xs:attribute ref="rdf:parseType" use="required" />
+			<xs:attribute ref="rdf:parseType" use="required" fixed="Collection" />
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="CrossProduct">
@@ -358,7 +357,7 @@
 		<xs:complexType>
 			<xs:complexContent>
 				<xs:extension base="scufl2:scufl2.InputProcessorPort">
-					<xs:attribute ref="rdf:parseType" use="required" />
+					<xs:attribute ref="rdf:parseType" use="required" fixed="Collection" />
 				</xs:extension>
 			</xs:complexContent>
 		</xs:complexType>
