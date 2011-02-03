@@ -133,6 +133,7 @@ public class ExampleWorkflow {
 				.create("http://ns.taverna.org.uk/2010/workflow/00626652-55ae-4a9e-80d4-c8e9ac84e2ca/"));
 
 		InputWorkflowPort yourName = new InputWorkflowPort(workflow, "yourName");
+		yourName.setDepth(0);
 		OutputWorkflowPort results = new OutputWorkflowPort(workflow, "results");
 		// Not needed:
 		// workflow.getInputPorts().add(yourName);
@@ -159,6 +160,7 @@ public class ExampleWorkflow {
 	public Processor makeProcessor() {
 		processor = new Processor(workflow, "Hello");
 		processorName = new InputProcessorPort(processor, "name");
+		processorName.setDepth(0);
 		processorGreeting = new OutputProcessorPort(processor, "greeting");
 
 		// FIXME: Should not need to make default dispatch stack
