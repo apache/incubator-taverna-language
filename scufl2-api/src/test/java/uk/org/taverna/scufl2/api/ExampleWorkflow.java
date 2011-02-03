@@ -12,7 +12,6 @@ import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.dispatchstack.DispatchStack;
 import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
 import uk.org.taverna.scufl2.api.iterationstrategy.CrossProduct;
-import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategy;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
 import uk.org.taverna.scufl2.api.iterationstrategy.PortNode;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
@@ -94,10 +93,8 @@ public class ExampleWorkflow {
 	public IterationStrategyStack makeIterationStrategyStack(
 			InputProcessorPort... inputs) {
 		IterationStrategyStack stack = new IterationStrategyStack();
-		IterationStrategy strategy = new IterationStrategy();
-		strategy.setParent(stack);
 		CrossProduct crossProduct = new CrossProduct();
-		crossProduct.setParent(strategy);
+		crossProduct.setParent(stack);
 		for (InputProcessorPort inp : inputs) {
 			new PortNode(crossProduct, inp);
 		}

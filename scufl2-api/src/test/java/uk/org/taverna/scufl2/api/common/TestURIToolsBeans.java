@@ -149,21 +149,13 @@ public class TestURIToolsBeans {
 	}
 
 	@Test
-	public void uriForIterationStrategy() throws Exception {
-		Processor hello = wfBundle.getMainWorkflow().getProcessors()
-				.getByName("Hello");
-		URI uri = uriTools.uriForBean(hello.getIterationStrategyStack().get(0));
-		assertEquals(HELLO_URI + "iterationstrategy/0/", uri.toASCIIString());
-	}
-
-	@Test
 	public void uriForIterationStrategyCross() throws Exception {
 		Processor hello = wfBundle.getMainWorkflow().getProcessors()
 				.getByName("Hello");
 		CrossProduct crossProduct = (CrossProduct) hello
-				.getIterationStrategyStack().get(0).getRootStrategyNode();
+				.getIterationStrategyStack().get(0);
 		URI uri = uriTools.uriForBean(crossProduct.get(0));
-		assertEquals(HELLO_URI + "iterationstrategy/0/root/0/",
+		assertEquals(HELLO_URI + "iterationstrategy/0/0/",
 				uri.toASCIIString());
 	}
 
@@ -171,10 +163,9 @@ public class TestURIToolsBeans {
 	public void uriForIterationStrategyRoot() throws Exception {
 		Processor hello = wfBundle.getMainWorkflow().getProcessors()
 				.getByName("Hello");
-		URI uri = uriTools.uriForBean(hello.getIterationStrategyStack().get(0)
-				.getRootStrategyNode());
+		URI uri = uriTools.uriForBean(hello.getIterationStrategyStack().get(0));
 
-		assertEquals(HELLO_URI + "iterationstrategy/0/root/",
+		assertEquals(HELLO_URI + "iterationstrategy/0/",
 				uri.toASCIIString());
 	}
 
@@ -312,7 +303,6 @@ public class TestURIToolsBeans {
 						+ "    processor/wait4me/\n"
 						+ "      iterationstrategy/\n"
 						+ "        0/\n"
-						+ "          root/\n"
 						+ "      dispatchstack/\n"
 						+ "        0/\n"
 						+ "        1/\n"
@@ -325,8 +315,7 @@ public class TestURIToolsBeans {
 						+ "      out/greeting\n"
 						+ "      iterationstrategy/\n"
 						+ "        0/\n"
-						+ "          root/\n"
-						+ "            0/\n"
+						+ "          0/\n"
 						+ "      dispatchstack/\n"
 						+ "        0/\n"
 						+ "        1/\n"
@@ -335,8 +324,8 @@ public class TestURIToolsBeans {
 						+ "        4/\n"
 						+ "        5/\n"
 						+ "    datalink?from=processor/Hello/out/greeting&to=out/results&mergePosition=0\n"
-						+ "    datalink?from=in/yourName&to=out/results&mergePosition=1\n"
 						+ "    datalink?from=in/yourName&to=processor/Hello/in/name\n"
+						+ "    datalink?from=in/yourName&to=out/results&mergePosition=1\n"
 						+ "    control?block=processor/Hello/&untilFinished=processor/wait4me/\n"
 						+ "  profile/tavernaWorkbench/\n"
 						+ "    activity/HelloScript/\n"

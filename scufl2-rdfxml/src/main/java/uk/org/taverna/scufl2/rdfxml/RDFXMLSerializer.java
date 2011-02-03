@@ -1,6 +1,5 @@
 package uk.org.taverna.scufl2.rdfxml;
 
-import java.awt.DisplayMode;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.URI;
@@ -29,7 +28,6 @@ import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.BlockingControlLink;
-import uk.org.taverna.scufl2.api.core.ControlLink;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
@@ -38,9 +36,9 @@ import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
 import uk.org.taverna.scufl2.api.io.WriterException;
 import uk.org.taverna.scufl2.api.iterationstrategy.CrossProduct;
 import uk.org.taverna.scufl2.api.iterationstrategy.DotProduct;
-import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategy;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyParent;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
+import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyTopNode;
 import uk.org.taverna.scufl2.api.iterationstrategy.PortNode;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
 import uk.org.taverna.scufl2.api.port.InputWorkflowPort;
@@ -194,7 +192,7 @@ public class RDFXMLSerializer {
 				proc.setIterationStrategyStack(processorIterationStrategyStack);				
 				productStack = new Stack<List<Object>>();
 			}
-			if (node instanceof IterationStrategy) {
+			if (node instanceof IterationStrategyTopNode && productStack.isEmpty()) {
 				iterationStrategies = objectFactory.createIterationStrategyStackIterationStrategies();				
 				iterationStrategyStack.setIterationStrategies(iterationStrategies);
 				iterationStrategies.setParseType(iterationStrategies.getParseType());

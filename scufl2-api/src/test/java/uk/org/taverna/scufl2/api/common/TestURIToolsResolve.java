@@ -208,10 +208,10 @@ HELLO_URI.resolve("iterationstrategy/0/"),
 		Processor hello = wfBundle.getMainWorkflow().getProcessors()
 				.getByName("Hello");
 		CrossProduct rootStrategyNode = (CrossProduct) hello
-				.getIterationStrategyStack().get(0).getRootStrategyNode();
+				.getIterationStrategyStack().get(0);
 		assertSame(rootStrategyNode.get(0),
 				uriTools.resolveUri(
-				HELLO_URI.resolve("iterationstrategy/0/root/0/"),
+				HELLO_URI.resolve("iterationstrategy/0/0/"),
 						wfBundle));
 	}
 
@@ -219,9 +219,9 @@ HELLO_URI.resolve("iterationstrategy/0/"),
 	public void resolveProcessorIterationStrategyRoot() throws Exception {
 		Processor hello = wfBundle.getMainWorkflow().getProcessors()
 				.getByName("Hello");
-		assertSame(hello.getIterationStrategyStack().get(0)
-				.getRootStrategyNode(), uriTools.resolveUri(
-				HELLO_URI.resolve("iterationstrategy/0/root/"), wfBundle));
+		assertSame(hello.getIterationStrategyStack().get(0),
+				uriTools.resolveUri(HELLO_URI.resolve("iterationstrategy/0/"),
+						wfBundle));
 	}
 
 	@Test
