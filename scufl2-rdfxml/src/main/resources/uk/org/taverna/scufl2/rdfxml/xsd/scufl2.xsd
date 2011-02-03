@@ -310,7 +310,13 @@
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
-				<xs:element ref="scufl2:iterationStrategyStack" minOccurs="0" />
+				<xs:element name="iterationStrategyStack" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="scufl2:IterationStrategyStack" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
 			</xs:sequence>
 			<xs:attributeGroup ref="rdf:about" />
 		</xs:complexType>
@@ -341,14 +347,15 @@
 	<xs:element name="DispatchStack">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="rdf:type" minOccurs="0"/>
+				<xs:element ref="rdf:type" minOccurs="0" />
 				<xs:element name="dispatchStackLayers" minOccurs="0">
 					<xs:complexType>
 						<xs:sequence>
-							<xs:element ref="scufl2:DispatchStackLayer"
-								minOccurs="0" maxOccurs="unbounded" />
+							<xs:element ref="scufl2:DispatchStackLayer" minOccurs="0"
+								maxOccurs="unbounded" />
 						</xs:sequence>
-						<xs:attribute ref="rdf:parseType" use="required" fixed="Collection" />
+						<xs:attribute ref="rdf:parseType" use="required"
+							fixed="Collection" />
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
@@ -364,13 +371,7 @@
 			<xs:attributeGroup ref="rdf:about" />
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="iterationStrategyStack">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="scufl2:IterationStrategyStack" />
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
+
 
 	<xs:element name="IterationStrategyStack">
 		<xs:complexType>
@@ -383,7 +384,8 @@
 								<xs:element ref="scufl2:CrossProduct" />
 							</xs:choice>
 						</xs:sequence>
-						<xs:attribute ref="rdf:parseType" use="required" fixed="Collection" />
+						<xs:attribute ref="rdf:parseType" use="required"
+							fixed="Collection" />
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
