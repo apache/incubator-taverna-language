@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rdf:RDF xmlns="http://ns.taverna.org.uk/2010/scufl2#"
-	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://ns.taverna.org.uk/2010/scufl2# http://ns.taverna.org.uk/2010/scufl2/scufl2.xsd http://www.w3.org/1999/02/22-rdf-syntax-ns# http://ns.taverna.org.uk/2010/scufl2/rdf.xsd"
 	xsi:type="WorkflowDocument" xml:base="HelloWorld/">
@@ -41,39 +42,62 @@
 				</outputProcessorPort>
 
 				<dispatchStack>
-					<DispatchStack rdf:about="processor/Hello/dispatchStack/" rdf:parseType="Collection">
-						<DispatchStackLayer>
-							<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#Parallelise" />
-						</DispatchStackLayer>
-						<DispatchStackLayer>
-							<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#Loop" />
-						</DispatchStackLayer>
-						<DispatchStackLayer>
-							<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#ErrorBounce" />
-						</DispatchStackLayer>
-						<DispatchStackLayer>
-							<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#Failover" />
-						</DispatchStackLayer>
-						<DispatchStackLayer>
-							<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#Retry" />
-						</DispatchStackLayer>
-						<DispatchStackLayer>
-							<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#Stop" />
-						</DispatchStackLayer>
-						<DispatchStackLayer>
-							<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#Invoke" />
-						</DispatchStackLayer>
-						
-					</DispatchStack>
+                    <DispatchStack rdf:about="processor/Hello/dispatchStack/">
+                        <dispatchStackLayers rdf:parseType="Collection">
+                            <DispatchStackLayer rdf:about="processor/Hello/dispatchStack/0/">
+                                <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#Parallelise" />
+                            </DispatchStackLayer>
+                            <DispatchStackLayer rdf:about="processor/Hello/dispatchStack/1/">
+                                <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#Loop" />
+                            </DispatchStackLayer>
+                            <DispatchStackLayer rdf:about="processor/Hello/dispatchStack/2/">
+                                <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#ErrorBounce" />
+                            </DispatchStackLayer>
+                            <DispatchStackLayer rdf:about="processor/Hello/dispatchStack/3/">
+                                <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#Failover" />
+                            </DispatchStackLayer>
+                            <DispatchStackLayer rdf:about="processor/Hello/dispatchStack/4/">
+                                <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#Retry" />
+                            </DispatchStackLayer>
+                            <DispatchStackLayer rdf:about="processor/Hello/dispatchStack/5/">
+                                <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#Stop" />
+                            </DispatchStackLayer>
+                            <DispatchStackLayer rdf:about="processor/Hello/dispatchStack/6/">
+                                <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#Invoke" />
+                            </DispatchStackLayer>
+                        </dispatchStackLayers>
+                    </DispatchStack>
 				</dispatchStack>
-				<iterationStrategyStack rdf:parseType="Collection">
-					<CrossProduct rdf:about="processor/Hello/iterationStrategy/0">
-						<iterationStrategyChildren
-							rdf:parseType="Collection">
-							<InputProcessorPort rdf:about="processor/Hello/in/name" />
-						</iterationStrategyChildren>
-					</CrossProduct>
-				</iterationStrategyStack>
+				<iterationStrategyStack>
+                    <IterationStrategyStack rdf:about="processor/Hello/iterationStrategy/">
+                        <iterationStrategies rdf:parseType="Collection">
+                            <CrossProduct rdf:about="processor/Hello/iterationStrategy/0/">
+                                <productOf rdf:parseType="Collection">
+                                    <InputProcessorPort rdf:about="processor/Hello/in/name" />
+                                    <DotProduct rdf:about="processor/Hello/iterationStrategy/0/2/">
+                                    	<productOf rdf:parseType="Collection">
+                                    		<InputProcessorPort rdf:about="processor/Hello/in/wrong" />
+                                    		<InputProcessorPort rdf:about="processor/Hello/in/wrong" />                                    		
+                                    	</productOf>
+                                    </DotProduct>
+                                    <InputProcessorPort rdf:about="processor/Hello/in/wrong" />
+                                </productOf>
+                            </CrossProduct>
+                            <DotProduct rdf:about="processor/Hello/iterationStrategy/1/">
+                                <productOf rdf:parseType="Collection">
+                                    <InputProcessorPort rdf:about="processor/Hello/in/name" />
+                                    <InputProcessorPort rdf:about="processor/Hello/in/wrong" />
+                                    <DotProduct rdf:about="processor/Hello/iterationStrategy/1/2/">
+                                    	<productOf rdf:parseType="Collection">
+                                    		<InputProcessorPort rdf:about="processor/Hello/in/wrong" />
+                                    		<InputProcessorPort rdf:about="processor/Hello/in/wrong" />                                    		
+                                    	</productOf>
+                                    </DotProduct>
+								</productOf>
+							</DotProduct>                            
+                        </iterationStrategies>
+                    </IterationStrategyStack>
+                </iterationStrategyStack>
 			</Processor>
 		</processor>
 		

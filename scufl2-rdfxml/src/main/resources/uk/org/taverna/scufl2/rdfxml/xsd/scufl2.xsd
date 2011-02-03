@@ -8,11 +8,10 @@
 
 	<xs:annotation>
 		<xs:appinfo>
-			<!-- See http://docs.rakeshv.org/java/jaxb/users-guide/jaxb-custom.html 
-			 -->
-			<jxb:globalBindings/>
+			<!-- See http://docs.rakeshv.org/java/jaxb/users-guide/jaxb-custom.html -->
+			<jxb:globalBindings />
 			<jxb:schemaBindings>
-				<jxb:package name="uk.org.taverna.scufl2.rdfxml.jaxb" />				
+				<jxb:package name="uk.org.taverna.scufl2.rdfxml.jaxb" />
 			</jxb:schemaBindings>
 		</xs:appinfo>
 	</xs:annotation>
@@ -24,7 +23,7 @@
 		schemaLocation="http://dublincore.org/schemas/xmls/qdc/dcterms.xsd" />
 
 	<xs:import namespace="http://www.w3.org/XML/1998/namespace"
-             schemaLocation="http://www.w3.org/2001/03/xml.xsd" /> 
+		schemaLocation="http://www.w3.org/2001/03/xml.xsd" />
 
 	<xs:import namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 		schemaLocation="rdf.xsd" />
@@ -204,7 +203,7 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="scufl2:name" />
-				<xs:element ref="scufl2:portDepth" />				
+				<xs:element ref="scufl2:portDepth" />
 			</xs:sequence>
 			<xs:attributeGroup ref="rdf:about" />
 		</xs:complexType>
@@ -304,8 +303,14 @@
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
-				<xs:element ref="scufl2:dispatchStack" />
-				<xs:element ref="scufl2:iterationStrategyStack" />
+				<xs:element name="dispatchStack" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="scufl2:DispatchStack" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="scufl2:iterationStrategyStack" minOccurs="0" />
 			</xs:sequence>
 			<xs:attributeGroup ref="rdf:about" />
 		</xs:complexType>
@@ -332,44 +337,104 @@
 		</xs:complexType>
 	</xs:element>
 
-	<xs:element name="dispatchStack">
+
+	<xs:element name="DispatchStack">
 		<xs:complexType>
-			<xs:attributeGroup ref="rdf:resource" />
+			<xs:sequence>
+				<xs:element ref="rdf:type" minOccurs="0" />
+				<xs:element name="dispatchStackLayers" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="scufl2:DispatchStackLayer"
+								minOccurs="0" maxOccurs="unbounded" />
+						</xs:sequence>
+						<xs:attribute ref="rdf:parseType" use="required" fixed="Collection" />
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attributeGroup ref="rdf:about" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="DispatchStackLayer">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="rdf:type" />
+			</xs:sequence>
+			<xs:attributeGroup ref="rdf:about" />
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="iterationStrategyStack">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="scufl2:CrossProduct" />
+				<xs:element ref="scufl2:IterationStrategyStack" />
 			</xs:sequence>
-			<xs:attribute ref="rdf:parseType" use="required" fixed="Collection" />
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="CrossProduct">
+
+	<xs:element name="IterationStrategyStack">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="scufl2:iterationStrategyChildren" />
+				<xs:element name="iterationStrategies">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:choice minOccurs="1" maxOccurs="unbounded">
+								<xs:element ref="scufl2:DotProduct" />
+								<xs:element ref="scufl2:CrossProduct" />
+							</xs:choice>
+						</xs:sequence>
+						<xs:attribute ref="rdf:parseType" use="required" fixed="Collection" />
+					</xs:complexType>
+				</xs:element>
 			</xs:sequence>
 			<xs:attributeGroup ref="rdf:about" />
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="iterationStrategyChildren">
+
+
+
+	<xs:element name="CrossProduct">
 		<xs:complexType>
-			<xs:complexContent>
-				<xs:extension base="scufl2:scufl2.InputProcessorPort">
-					<xs:attribute ref="rdf:parseType" use="required" fixed="Collection" />
-				</xs:extension>
-			</xs:complexContent>
+			<xs:sequence>
+				<xs:element ref="scufl2:productOf" />
+			</xs:sequence>
+			<xs:attributeGroup ref="rdf:about" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="DotProduct">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="scufl2:productOf" />
+			</xs:sequence>
+			<xs:attributeGroup ref="rdf:about" />
+		</xs:complexType>
+	</xs:element>
+
+
+	<xs:element name="productOf">
+		<xs:complexType>
+			<xs:choice maxOccurs="unbounded">
+				<xs:element ref="scufl2:CrossProduct" />
+				<xs:element ref="scufl2:DotProduct" />
+				<xs:element name="InputProcessorPort">
+					<xs:complexType>
+						<xs:attributeGroup ref="rdf:about" />
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+			<xs:attribute ref="rdf:parseType" use="required" fixed="Collection" />
+
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="datalink">
 		<xs:complexType>
-		<xs:annotation>
-		<xs:appinfo>
-			<jxb:class name="DataLinkEntry">
-			</jxb:class>
-		</xs:appinfo>
-		</xs:annotation>
+			<xs:annotation>
+				<xs:appinfo>
+					<jxb:class name="DataLinkEntry">
+					</jxb:class>
+				</xs:appinfo>
+			</xs:annotation>
 			<xs:sequence>
 				<xs:element name="DataLink" type="scufl2:DataLink" />
 			</xs:sequence>
@@ -385,7 +450,7 @@
 		</xs:sequence>
 		<xs:attributeGroup ref="rdf:about" />
 	</xs:complexType>
-	
+
 	<xs:element name="control">
 		<xs:complexType>
 			<xs:sequence>
@@ -401,7 +466,7 @@
 		</xs:sequence>
 		<xs:attributeGroup ref="rdf:about" />
 	</xs:complexType>
-	
+
 
 	<xs:complexType name="integer">
 		<xs:simpleContent>
@@ -485,11 +550,6 @@
 			</xs:simpleContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:complexType name="scufl2.InputProcessorPort">
-		<xs:sequence>
-			<xs:element ref="scufl2:InputProcessorPort" />
-		</xs:sequence>
-	</xs:complexType>
 
 
 </xs:schema>
