@@ -8,7 +8,7 @@ import uk.org.taverna.scufl2.api.core.Processor;
  * @author Alan R Williams
  *
  */
-public class InputProcessorPort extends AbstractGranularDepthPort implements
+public class InputProcessorPort extends AbstractDepthPort implements
 		ReceiverPort, ProcessorPort, InputPort {
 
 	private Processor parent;
