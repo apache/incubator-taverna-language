@@ -7,6 +7,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
@@ -26,8 +27,8 @@ import uk.org.taverna.scufl2.api.ExampleWorkflow;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 
 public class TestRDFXMLSerializer {
-	protected static final String DUMMY_PROFILE_RDF = "profile/PROFILE.rdf";
-	protected static final String DUMMY_WORKFLOW_RDF = "workflow/WORKFLOW.rdf";
+	protected static final String TAVERNAWORKBENCH_RDF = "profile/tavernaWorkbench.rdf";
+	protected static final String HELLOWORLD_RDF = "workflow/HelloWorld.rdf";
 	RDFXMLSerializer serializer = new RDFXMLSerializer();
 	ExampleWorkflow exampleWf = new ExampleWorkflow();	
 	WorkflowBundle workflowBundle;
@@ -49,8 +50,8 @@ public class TestRDFXMLSerializer {
 	public void workflowBundleXml() throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		// To test that seeAlso URIs are stored
-		serializer.workflowDoc(new NullOutputStream(), workflowBundle.getMainWorkflow(), URI.create(DUMMY_WORKFLOW_RDF));		
-		serializer.profileDoc(new NullOutputStream(), workflowBundle.getMainProfile(), URI.create(DUMMY_PROFILE_RDF));
+		serializer.workflowDoc(new NullOutputStream(), workflowBundle.getMainWorkflow(), URI.create(HELLOWORLD_RDF));		
+		serializer.profileDoc(new NullOutputStream(), workflowBundle.getMainProfile(), URI.create(TAVERNAWORKBENCH_RDF));
 		
 		serializer.workflowBundleDoc(outStream, URI.create("workflowBundle.rdf"));
 		//System.out.write(outStream.toByteArray());
@@ -66,9 +67,39 @@ public class TestRDFXMLSerializer {
 	public void workflowXml() throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		// To test that seeAlso URIs are stored
-		serializer.workflowDoc(outStream, workflowBundle.getMainWorkflow(), URI.create(DUMMY_WORKFLOW_RDF));
+		serializer.workflowDoc(outStream, workflowBundle.getMainWorkflow(), URI.create(HELLOWORLD_RDF));
 		//System.out.write(outStream.toByteArray());
 		Document doc = parseXml(outStream);
+		Element root = doc.getRootElement();
+		
+		checkRoot(root);
+		checkWorkflowDocument(root);
+	}
+
+
+
+
+	@Test
+	public void usecaseWorkflowBundleXml() throws Exception {
+		File f = new File("../scufl2-usecases/src/main/resources/workflows/example/workflowBundle.rdf");
+
+		SAXBuilder saxBuilder = new SAXBuilder();
+		Document doc = saxBuilder.build(f);
+		
+		Element root = doc.getRootElement();
+		
+		checkRoot(root);
+		checkWorkflowBundleDocument(root);
+		
+	}
+	
+	@Test
+	public void usecaseWorkflowXml() throws Exception {
+		File f = new File("../scufl2-usecases/src/main/resources/workflows/example/workflow/HelloWorld.rdf");
+
+		SAXBuilder saxBuilder = new SAXBuilder();
+		Document doc = saxBuilder.build(f);
+		
 		Element root = doc.getRootElement();
 		
 		checkRoot(root);
@@ -76,7 +107,6 @@ public class TestRDFXMLSerializer {
 		
 	}
 
-	
 
 	protected void checkWorkflowDocument(Element root) throws JDOMException {
 		assertEquals("WorkflowDocument", root.getAttributeValue("type", XSI_NS));
@@ -89,10 +119,6 @@ public class TestRDFXMLSerializer {
 		Element wf = root.getChild("Workflow", SCUFL2_NS);
 		assertSame(wf, root.getChildren().get(0));
 		
-
-		
-		
-		
 		assertXpathEquals("", wf, "./@rdf:about");
 		
 		
@@ -103,7 +129,7 @@ public class TestRDFXMLSerializer {
 		assertXpathEquals("in/yourName", 
 				wf, "./s:inputWorkflowPort/s:InputWorkflowPort/@rdf:about");
 		assertXpathEquals("yourName", 
-				wf, "./s:inputWorkflowPort/s:InputWorkflowPort/name");
+				wf, "./s:inputWorkflowPort/s:InputWorkflowPort/s:name");
 		assertXpathEquals("0", 
 				wf, "./s:inputWorkflowPort/s:InputWorkflowPort/s:portDepth");
 		assertXpathEquals("http://www.w3.org/2001/XMLSchema#integer", 
@@ -112,47 +138,87 @@ public class TestRDFXMLSerializer {
 		
 		assertXpathEquals("out/results", 
 				wf, "./s:outputWorkflowPort/s:OutputWorkflowPort/@rdf:about");
-		assertXpathEquals("yourName", 
-				wf, "./s:outputWorkflowPort/s:OutputWorkflowPort/name");
+		assertXpathEquals("results", 
+				wf, "./s:outputWorkflowPort/s:OutputWorkflowPort/s:name");
 		
 		
-		assertXpathEquals("processor/Hello", 
-				wf, "./s:processor/s:Processor/@rdf:about");
+		assertXpathEquals("processor/Hello/", 
+				wf, "./s:processor[1]/s:Processor/@rdf:about");
 		assertXpathEquals("Hello", 
-				wf, "./s:processor/s:Processor/name");
+				wf, "./s:processor[1]/s:Processor/s:name");
 		
 		assertXpathEquals("processor/Hello/in/name", 
-				wf, "./s:processor/s:Processor/inputProcessorPort/InputProcessorPort/@rdf:about");
+				wf, "./s:processor[1]/s:Processor/s:inputProcessorPort/s:InputProcessorPort/@rdf:about");
 		assertXpathEquals("name", 
-				wf, "./s:processor/s:Processor/inputProcessorPort/InputProcessorPort/name");
+				wf, "./s:processor[1]/s:Processor/s:inputProcessorPort/s:InputProcessorPort/s:name");
 		assertXpathEquals("0", 
-				wf, "./s:processor/s:Processor/inputProcessorPort/InputProcessorPort/s:portDepth");
+				wf, "./s:processor[1]/s:Processor/s:inputProcessorPort/s:InputProcessorPort/s:portDepth");
 		assertXpathEquals("http://www.w3.org/2001/XMLSchema#integer", 
-				wf, "./s:processor/s:Processor/inputProcessorPort/InputProcessorPort/s:portDepth/@rdf:datatype");
+				wf, "./s:processor[1]/s:Processor/s:inputProcessorPort/s:InputProcessorPort/s:portDepth/@rdf:datatype");
 		
 		
 
 		assertXpathEquals("processor/Hello/out/greeting", 
-				wf, "./s:processor/s:Processor/outputProcessorPort/OutputProcessorPort/@rdf:about");
+				wf, "./s:processor[1]/s:Processor/s:outputProcessorPort/s:OutputProcessorPort/@rdf:about");
 
-		assertXpathEquals("name", 
-				wf, "./s:processor/s:Processor/outputProcessorPort/OutputProcessorPort/name");
+		assertXpathEquals("greeting", 
+				wf, "./s:processor[1]/s:Processor/s:outputProcessorPort/s:OutputProcessorPort/s:name");
 		assertXpathEquals("0", 
-				wf, "./s:processor/s:Processor/outputProcessorPort/OutputProcessorPort/s:portDepth");
+				wf, "./s:processor[1]/s:Processor/s:outputProcessorPort/s:OutputProcessorPort/s:portDepth");
 		assertXpathEquals("http://www.w3.org/2001/XMLSchema#integer", 
-				wf, "./s:processor/s:Processor/outputProcessorPort/OutputProcessorPort/s:portDepth/@rdf:datatype");
+				wf, "./s:processor[1]/s:Processor/s:outputProcessorPort/s:OutputProcessorPort/s:portDepth/@rdf:datatype");
 		assertXpathEquals("0", 
-				wf, "./s:processor/s:Processor/outputProcessorPort/OutputProcessorPort/s:granularPortDepth");
+				wf, "./s:processor[1]/s:Processor/s:outputProcessorPort/s:OutputProcessorPort/s:granularPortDepth");
 		assertXpathEquals("http://www.w3.org/2001/XMLSchema#integer", 
-				wf, "./s:processor/s:Processor/outputProcessorPort/OutputProcessorPort/s:granularPortDepth/@rdf:datatype");
+				wf, "./s:processor[1]/s:Processor/s:outputProcessorPort/s:OutputProcessorPort/s:granularPortDepth/@rdf:datatype");
 		
 		// FIXME: probably not what we want - at least we should say it's an *instance* of the default dispatch stack
 		assertXpathEquals("http://ns.taverna.org.uk/2010/scufl2/taverna#defaultDispatchStack", 
-				wf, "./s:dispatchStack/rdf:type");
-		assertXpathEquals("Resource", 
-				wf, "./s:dispatchStack/@rdf:parseType");
+				wf, "./s:processor[1]/s:Processor/s:dispatchStack/s:DispatchStack/rdf:type/@rdf:resource");
+		assertXpathEquals("processor/Hello/dispatchStack/", 
+				wf, "./s:processor[1]/s:Processor/s:dispatchStack/s:DispatchStack/@rdf:about");		
+		
+		assertXpathEquals("Collection", wf, "./s:processor[1]/s:Processor/s:iterationStrategyStack/@rdf:parseType");
+		assertXpathEquals("processor/Hello/iterationStrategy/0", wf, "./s:processor[1]/s:Processor/s:iterationStrategyStack/s:CrossProduct/@rdf:about");
+		assertXpathEquals("processor/Hello/iterationStrategy/0", wf, "./s:processor[1]/s:Processor/s:iterationStrategyStack/s:CrossProduct/@rdf:about");
+		assertXpathEquals("Collection", wf, "./s:processor[1]/s:Processor/s:iterationStrategyStack/s:CrossProduct/s:iterationStrategyChildren/@rdf:parseType");
+		assertXpathEquals("processor/Hello/in/name", wf, "./s:processor[1]/s:Processor/s:iterationStrategyStack/s:CrossProduct/s:iterationStrategyChildren/s:InputProcessorPort/@rdf:about");
 		
 		
+		
+
+		assertXpathEquals("processor/wait4me/", 
+				wf, "./s:processor[2]/s:Processor/@rdf:about");
+		assertXpathEquals("wait4me", 
+				wf, "./s:processor[2]/s:Processor/s:name");
+		
+		assertXpathEquals("datalink?from=in/yourName&to=out/results&mergePosition=1", 
+				wf, "./s:datalink[1]/s:DataLink/@rdf:about");
+		assertXpathEquals("in/yourName", 
+				wf, "./s:datalink[1]/s:DataLink/s:receivesFrom/@rdf:resource");
+		assertXpathEquals("out/results", 
+				wf, "./s:datalink[1]/s:DataLink/s:sendsTo/@rdf:resource");
+		assertXpathEquals("1", 
+				wf, "./s:datalink[1]/s:DataLink/s:mergePosition");
+		assertXpathEquals("http://www.w3.org/2001/XMLSchema#integer", 
+				wf, "./s:datalink[1]/s:DataLink/s:mergePosition/@rdf:datatype");
+
+
+		assertXpathEquals("datalink?from=processor/Hello/out/greeting&to=out/results&mergePosition=0", 
+				wf, "./s:datalink[2]/s:DataLink/@rdf:about");
+
+		assertXpathEquals("datalink?from=in/yourName&to=processor/Hello/in/name", 
+				wf, "./s:datalink[3]/s:DataLink/@rdf:about");
+		
+
+		assertXpathEquals("control?block=processor/Hello/&untilFinished=processor/wait4me/", 
+				wf, "./s:control/s:Blocking/@rdf:about");
+		
+
+		assertXpathEquals("processor/Hello/", 
+				wf, "./s:control/s:Blocking/s:block/@rdf:resource");
+		assertXpathEquals("processor/wait4me/", 
+				wf, "./s:control/s:Blocking/s:untilFinished/@rdf:resource");
 		
 	}
 
@@ -177,7 +243,7 @@ public class TestRDFXMLSerializer {
 				wbundle, "./s:mainWorkflow/@rdf:resource");
 		assertXpathEquals("workflow/HelloWorld/", 
 				wbundle, "./s:workflow/s:Workflow/@rdf:about");
-		assertXpathEquals(DUMMY_WORKFLOW_RDF, 
+		assertXpathEquals(HELLOWORLD_RDF, 
 				wbundle, "./s:workflow/s:Workflow/rdfs:seeAlso/@rdf:resource");
 
 		assertXpathEquals("profile/tavernaWorkbench/", 
@@ -186,13 +252,13 @@ public class TestRDFXMLSerializer {
 		
 		assertXpathEquals("profile/tavernaWorkbench/", 
 				wbundle, "./s:profile[1]/s:Profile/@rdf:about");
-		assertXpathEquals(DUMMY_PROFILE_RDF, 
+		assertXpathEquals(TAVERNAWORKBENCH_RDF, 
 				wbundle, "./s:profile[1]/s:Profile/rdfs:seeAlso/@rdf:resource");
 		
 		
 		assertXpathEquals("profile/tavernaServer/", 
 				wbundle, "./s:profile[2]/s:Profile/@rdf:about");
-		assertNull(xpathSelectElement(wbundle, "./s:profile[2]/s:Profile/rdfs:seeAlso"));
+		assertXpathEquals("profile/tavernaServer.rdf", wbundle, "./s:profile[2]/s:Profile/rdfs:seeAlso/@rdf:resource");
 
 	}
 
@@ -219,6 +285,8 @@ public class TestRDFXMLSerializer {
 		x.addNamespace(SCUFL2_NS);
 		x.addNamespace(RDF_NS);
 		x.addNamespace(RDSF_NS);
+		//x.addNamespace(XML_NS);
+
 		return x.selectSingleNode(element);
 	}
 

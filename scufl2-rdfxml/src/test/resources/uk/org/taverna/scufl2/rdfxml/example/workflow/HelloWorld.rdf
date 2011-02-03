@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rdf:RDF xmlns="http://ns.taverna.org.uk/2010/scufl2#"
-	xmlns:scufl2="http://ns.taverna.org.uk/2010/scufl2#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://ns.taverna.org.uk/2010/scufl2# http://ns.taverna.org.uk/2010/scufl2/scufl2.xsd 
-						http://www.w3.org/1999/02/22-rdf-syntax-ns# http://ns.taverna.org.uk/2010/scufl2/rdf.xsd"
-	xsi:type="scufl2:WorkflowDocument" xml:base="HelloWorld/">
+	xsi:schemaLocation="http://ns.taverna.org.uk/2010/scufl2# http://ns.taverna.org.uk/2010/scufl2/scufl2.xsd http://www.w3.org/1999/02/22-rdf-syntax-ns# http://ns.taverna.org.uk/2010/scufl2/rdf.xsd"
+	xsi:type="WorkflowDocument" xml:base="HelloWorld/">
 	<Workflow rdf:about="">
 		<name>HelloWorld</name>
 		<workflowIdentifier
@@ -24,7 +23,7 @@
 		</outputWorkflowPort>
 
 		<processor>
-			<Processor rdf:about="processor/Hello">
+			<Processor rdf:about="processor/Hello/">
 				<name>Hello</name>
 
 				<inputProcessorPort>
@@ -41,8 +40,12 @@
 					</OutputProcessorPort>
 				</outputProcessorPort>
 
-				<dispatchStack
-					rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#defaultDispatchStack" />
+				<dispatchStack>
+					<DispatchStack rdf:about="processor/Hello/dispatchStack/">
+						<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#defaultDispatchStack" />
+					</DispatchStack>
+				</dispatchStack>
+					 />
 				<iterationStrategyStack rdf:parseType="Collection">
 					<CrossProduct rdf:about="processor/Hello/iterationStrategy/0">
 						<iterationStrategyChildren
@@ -56,15 +59,18 @@
 		
 		
 		<processor>
-			<Processor rdf:about="processor/wait4me">
-				<name>wait4me</name>
-				<dispatchStack
-					rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#defaultDispatchStack" />
+			<Processor rdf:about="processor/wait4me/">
+				<name>wait4me</name>				
+				<dispatchStack>
+					<DispatchStack rdf:about="processor/wait4me/dispatchStack/">
+						<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#defaultDispatchStack" />
+					</DispatchStack>
+				</dispatchStack>
 			</Processor>
 		</processor>
 
 		<datalink>
-			<DataLink rdf:about="datalink/5">
+			<DataLink rdf:about="datalink?from=in/yourName&#38;to=out/results&#38;mergePosition=1">
 				<receivesFrom rdf:resource="in/yourName" />
 				<sendsTo rdf:resource="out/results" />
 				<mergePosition rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</mergePosition>
@@ -79,7 +85,7 @@
 			</DataLink>
 		</datalink>
 		<datalink>
-			<DataLink rdf:about="datalink/312">
+			<DataLink rdf:about="datalink?from=in/yourName&#38;to=processor/Hello/in/name">
 				<receivesFrom rdf:resource="in/yourName" />
 				<sendsTo rdf:resource="processor/Hello/in/name" />
 			</DataLink>
