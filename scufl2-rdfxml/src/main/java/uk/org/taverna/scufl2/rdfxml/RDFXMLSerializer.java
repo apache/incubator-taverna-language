@@ -222,6 +222,9 @@ public class RDFXMLSerializer {
 				path);
 		WorkflowDocument doc = objectFactory.createWorkflowDocument();
 		doc.getAny().add(wfElem);
+		
+		URI wfUri = uriTools.relativeUriForBean(wf, wfBundle);		
+		doc.setBase(uriTools.relativePath(path, wfUri).toASCIIString());
 
 		JAXBElement<RDF> element = new org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory()
 				.createRDF(doc);
@@ -233,9 +236,7 @@ public class RDFXMLSerializer {
 			Workflow wf, URI documentPath) {
 		uk.org.taverna.scufl2.rdfxml.jaxb.Workflow workflow = objectFactory
 				.createWorkflow();
-		URI wfUri = uriTools.relativeUriForBean(wf, wfBundle);		
-		workflow.setAbout(uriTools.relativePath(documentPath, wfUri).toASCIIString());
-		
+		workflow.setAbout("");
 		workflow.setName(wf.getName());
 	
 		if (wf.getWorkflowIdentifier() != null) {
@@ -251,7 +252,7 @@ public class RDFXMLSerializer {
 			inPort.setName(ip.getName());
 			
 			URI portURI = uriTools.relativeUriForBean(ip, wf);
-			inPort.setAbout(uriTools.relativePath(documentPath, portURI).toASCIIString());
+			inPort.setAbout(portURI.toASCIIString());
 			// FIXME: Add xml:base - no need for relativePath here!
 			if (ip.getDepth() != null) {
 				PortDepth portDepth = objectFactory.createPortDepth();
@@ -268,7 +269,7 @@ public class RDFXMLSerializer {
 			outPort.setName(op.getName());
 			
 			URI portURI = uriTools.relativeUriForBean(op, wf);
-			outPort.setAbout(uriTools.relativePath(documentPath, portURI).toASCIIString());			
+			outPort.setAbout(portURI.toASCIIString());			
 			workflow.getOutputWorkflowPort().add(inP);			
 		}
 		
@@ -279,7 +280,7 @@ public class RDFXMLSerializer {
 			proc.setName(p.getName());
 			
 			URI procUri = uriTools.relativeUriForBean(p, wf);
-			proc.setAbout(uriTools.relativePath(documentPath, procUri).toASCIIString());
+			proc.setAbout(procUri.toASCIIString());
 			wfProc.setProcessor(proc);			
 			workflow.getProcessor().add(wfProc);
 			
