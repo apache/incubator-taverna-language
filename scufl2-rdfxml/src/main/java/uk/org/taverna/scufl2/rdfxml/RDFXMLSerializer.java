@@ -294,7 +294,8 @@ public class RDFXMLSerializer {
 
 		@Override
 		public boolean visitLeave(WorkflowBean node) {
-			if (node instanceof IterationStrategyParent) {
+			if (node instanceof IterationStrategyTopNode) {
+				// Actually for any Cross/Dot product
 				productStack.pop();
 			}
 			return true;
