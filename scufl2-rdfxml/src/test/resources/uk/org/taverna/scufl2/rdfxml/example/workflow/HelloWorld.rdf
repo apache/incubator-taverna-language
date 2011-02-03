@@ -41,11 +41,31 @@
 				</outputProcessorPort>
 
 				<dispatchStack>
-					<DispatchStack rdf:about="processor/Hello/dispatchStack/">
-						<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#defaultDispatchStack" />
+					<DispatchStack rdf:about="processor/Hello/dispatchStack/" rdf:parseType="Collection">
+						<DispatchStackLayer>
+							<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#Parallelise" />
+						</DispatchStackLayer>
+						<DispatchStackLayer>
+							<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#Loop" />
+						</DispatchStackLayer>
+						<DispatchStackLayer>
+							<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#ErrorBounce" />
+						</DispatchStackLayer>
+						<DispatchStackLayer>
+							<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#Failover" />
+						</DispatchStackLayer>
+						<DispatchStackLayer>
+							<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#Retry" />
+						</DispatchStackLayer>
+						<DispatchStackLayer>
+							<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#Stop" />
+						</DispatchStackLayer>
+						<DispatchStackLayer>
+							<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/scufl2/taverna#Invoke" />
+						</DispatchStackLayer>
+						
 					</DispatchStack>
 				</dispatchStack>
-					 />
 				<iterationStrategyStack rdf:parseType="Collection">
 					<CrossProduct rdf:about="processor/Hello/iterationStrategy/0">
 						<iterationStrategyChildren
