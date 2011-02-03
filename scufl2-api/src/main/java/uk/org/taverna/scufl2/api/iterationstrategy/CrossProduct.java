@@ -10,7 +10,7 @@ import uk.org.taverna.scufl2.api.common.Visitor;
  *
  */
 public class CrossProduct extends ArrayList<IterationStrategyNode> implements
-		List<IterationStrategyNode>, IterationStrategyNode,
+		List<IterationStrategyNode>, IterationStrategyTopNode,
 		IterationStrategyParent {
 
 	private IterationStrategyParent parent;
@@ -41,11 +41,9 @@ public class CrossProduct extends ArrayList<IterationStrategyNode> implements
 		if (parent != null) {
 			// Remove from old parent
 
-			if (parent instanceof IterationStrategy) {
-				IterationStrategy iterationStrategy = (IterationStrategy) parent;
-				if (iterationStrategy.getRootStrategyNode() == this) {
-					iterationStrategy.setRootStrategyNode(null);
-				}
+			if (parent instanceof IterationStrategyStack) {
+				IterationStrategyStack stack = (IterationStrategyStack) parent;
+				stack.remove(this);
 			} else if (parent instanceof DotProduct
 					|| parent instanceof CrossProduct) {
 				@SuppressWarnings("unchecked")
@@ -61,10 +59,10 @@ public class CrossProduct extends ArrayList<IterationStrategyNode> implements
 
 		parent = newParent;
 
-		if (parent instanceof IterationStrategy) {
-			IterationStrategy iterationStrategy = (IterationStrategy) parent;
-			if (iterationStrategy.getRootStrategyNode() != this) {
-				iterationStrategy.setRootStrategyNode(this);
+		if (parent instanceof IterationStrategyStack) {
+			IterationStrategyStack stack = (IterationStrategyStack) parent;
+			if (!stack.contains(this)) {
+				stack.add(this);
 			}
 		} else if (parent instanceof DotProduct
 				|| parent instanceof CrossProduct) {
