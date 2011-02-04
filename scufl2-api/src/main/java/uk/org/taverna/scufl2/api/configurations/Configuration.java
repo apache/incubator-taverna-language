@@ -3,10 +3,13 @@
  */
 package uk.org.taverna.scufl2.api.configurations;
 
+import java.net.URI;
+
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Configurable;
+import uk.org.taverna.scufl2.api.common.Typed;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
@@ -39,7 +42,7 @@ import uk.org.taverna.scufl2.api.property.PropertyResource;
  *
  */
 public class Configuration extends AbstractNamedChild implements
-Child<Profile> {
+		Child<Profile>, Typed {
 	private Configurable configures;
 	private Profile parent;
 	private PropertyResource propertyResource = new PropertyResource();
@@ -58,6 +61,11 @@ Child<Profile> {
 			getPropertyResource().accept(visitor);
 		}
 		return visitor.visitLeave(this);
+	}
+
+	@Override
+	public URI getConfigurableType() {
+		return getPropertyResource().getTypeURI();
 	}
 
 	/**
@@ -88,6 +96,11 @@ Child<Profile> {
 	 */
 	public PropertyResource getPropertyResource() {
 		return propertyResource;
+	}
+
+	@Override
+	public void setConfigurableType(URI type) {
+		getPropertyResource().setTypeURI(type);
 	}
 
 	/**
