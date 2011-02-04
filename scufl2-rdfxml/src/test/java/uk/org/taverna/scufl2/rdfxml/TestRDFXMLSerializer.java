@@ -124,29 +124,29 @@ public class TestRDFXMLSerializer {
 	}
 
 
-	private void checkProfileDocument(Element root) throws JDOMException {
+	protected void checkProfileDocument(Element root) throws JDOMException {
+
 		assertEquals("ProfileDocument", root.getAttributeValue("type", XSI_NS));
 		assertXpathEquals("tavernaWorkbench/", root, "./@xml:base");
 
-		Element profile = root.getChild("Profile", SCUFL2_NS);
-		assertSame(profile, root.getChildren().get(0));		
-		assertXpathEquals("", profile, "./@rdf:about");
+		Element profile = (Element) root.getChildren().get(0);
+		Element activity = (Element) root.getChildren().get(1);
+		Element processorBinding = (Element) root.getChildren().get(2);
+		Element configuration = (Element) root.getChildren().get(3);
 		
 		
-		assertXpathEquals("tavernaWorkbench", profile, "./s:name");	
-		
+		assertSame(xpathSelectElement(root, "./s:Profile"), profile);
+		assertSame(xpathSelectElement(root, "./s:Activity"), activity);
+		assertSame(xpathSelectElement(root, "./s:ProcessorBinding"), processorBinding);
+		assertSame(xpathSelectElement(root, "./s:Configuration"), configuration);
 
+		assertXpathEquals("", profile, "./@rdf:about");
+		assertXpathEquals("tavernaWorkbench", profile, "./s:name");	
 		assertXpathEquals("binding/Hello/", profile, "./s:processorBinding/@rdf:resource");	
 		assertXpathEquals("configuration/Hello/", profile, "./s:activatesConfiguration/@rdf:resource");
-
-		assertSame(xpathSelectElement(profile, "./s:name"), profile.getChildren().get(0));
-		assertSame(xpathSelectElement(profile, "./s:Profile"), profile.getChildren().get(0));
-		assertSame(xpathSelectElement(profile, "./s:Activity"), profile.getChildren().get(1));
-		assertSame(xpathSelectElement(profile, "./s:ProcessorBinding"), profile.getChildren().get(2));
-		assertSame(xpathSelectElement(profile, "./s:Configuration"), profile.getChildren().get(3));
 		
-		assertXpathEquals("activity/HelloScript/", root, "./s:activateConfiguration/@rdf:resource");
-		
+		assertXpathEquals("activity/HelloScript/", activity, "./@rdf:about");	
+					
 	}
 
 

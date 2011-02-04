@@ -58,8 +58,7 @@
 		<xs:complexContent>
 			<xs:restriction base="rdf:RDF">
 				<xs:sequence>
-					<xs:element ref="scufl2:Profile" />
-					
+					<xs:element ref="scufl2:Profile" />					
                                    <xs:element name="Activity" type="scufl2:Activity"
                                            minOccurs="0" maxOccurs="unbounded" />
 
@@ -168,10 +167,6 @@
 						minOccurs="0" maxOccurs="unbounded" />
 					
 					<xs:element name="processorBinding" type="rdf:Resource"
-						minOccurs="0" maxOccurs="unbounded" />
-					<xs:element name="recommendedEnvironment" type="scufl2:scufl2.Environment"
-						minOccurs="0" maxOccurs="unbounded" />
-					<xs:element name="requiredEnvironment" type="scufl2:scufl2.Environment"
 						minOccurs="0" maxOccurs="unbounded" />
 					<xs:element name="activateConfiguration" type="rdf:Resource"
 						minOccurs="0" maxOccurs="unbounded" />
@@ -455,8 +450,8 @@
 
 	<xs:complexType name="DataLink">
 		<xs:sequence>
-			<xs:element name="receivesFrom" type="rdf:Resource" />
-			<xs:element name="sendsTo" type="rdf:Resource" />
+			<xs:element name="receiveFrom" type="rdf:Resource" />
+			<xs:element name="sendTo" type="rdf:Resource" />
 			<xs:element name="mergePosition" minOccurs="0"
 				type="scufl2:integer" />
 		</xs:sequence>
@@ -504,44 +499,6 @@
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="name" type="xs:NCName" />
-	<xs:complexType name="scufl2.Environment">
-		<xs:sequence>
-			<xs:element ref="scufl2:Environment" />
-		</xs:sequence>
-	</xs:complexType>
-	<xs:element name="Environment">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element minOccurs="0" ref="scufl2:os" />
-				<xs:sequence minOccurs="0">
-					<xs:element name="architecture" type="rdf:Resource" />
-					<xs:element name="plugin" type="rdf:Resource" />
-					<xs:element name="product" type="rdf:Resource" />
-					<xs:element maxOccurs="unbounded" name="software" type="rdf:Resource" />
-					<xs:element ref="dc:description" />
-				</xs:sequence>
-				<xs:element minOccurs="0" name="workflowPlugin" type="rdf:Resource" />
-				<xs:element minOccurs="0" name="workflowProduct" type="rdf:Resource" />
-				<xs:element minOccurs="0" ref="dc:title" />
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="os">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="scufl2:OperatingSystem" />
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="OperatingSystem">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element name="version" minOccurs="0" />
-				<xs:element ref="dc:title" />
-			</xs:sequence>
-			<xs:attributeGroup ref="rdf:about" />
-		</xs:complexType>
-	</xs:element>
 	<xs:element name="granularPortDepth">
 		<xs:complexType>
 			<xs:simpleContent>

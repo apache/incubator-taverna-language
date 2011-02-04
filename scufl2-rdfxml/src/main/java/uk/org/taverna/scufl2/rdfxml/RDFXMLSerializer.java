@@ -231,8 +231,8 @@ public class RDFXMLSerializer {
 				link.setAbout(uri.toASCIIString());
 				URI fromUri = uriTools.relativeUriForBean(dataLink.getReceivesFrom(), wf);
 				URI toUri = uriTools.relativeUriForBean(dataLink.getSendsTo(), wf);
-				link.setReceivesFrom(makeResource(fromUri));
-				link.setSendsTo(makeResource(toUri));
+				link.setReceiveFrom(makeResource(fromUri));
+				link.setSendTo(makeResource(toUri));
 				
 				if (dataLink.getMergePosition() != null) {
 					uk.org.taverna.scufl2.rdfxml.jaxb.Integer value = objectFactory.createInteger();					
