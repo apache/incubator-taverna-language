@@ -9,39 +9,14 @@
 	xsi:type="ProfileDocument" xml:base="tavernaServer/">
 
 	<Profile rdf:about="">
-		<name>tavernaWorkbench</name>
-		<recommendedEnvironment>
-			<Environment>
-				<os>
-					<OperatingSystem rdf:about="http://releases.ubuntu.com/maverick/">
-						<version>10.10</version>
-						<dc:title>Ubuntu Linux Maverick</dc:title>
-					</OperatingSystem>
-				</os>
-				<workflowProduct rdf:resource="http://ns.taverna.org.uk/2010/taverna/server/" />
-				<dc:title>Taverna server installed on Ubuntu</dc:title>
-			</Environment>
-		</recommendedEnvironment>
-		<requiredEnvironment>
-			<Environment>
-				<architecture rdf:resource="http://www.intel.org/x64" />
-				<plugin
-					rdf:resource="http://ns.taverna.org.uk/2010/taverna/activities/beanshell#plugin" />
-				<product rdf:resource="http://ns.taverna.org.uk/2010/taverna/" />
-				<software rdf:resource="http://www.bioconductor.org/" />
-				<software rdf:resource="http://www.r-project.org/#2.11" />
-				<software rdf:resource="http://www.rforge.net/Rserve/" />
-				<dc:description>
-					BioConductor installed in R, and Rserve running
-					on port 1234. x64 architecture.
-       			 </dc:description>
-			</Environment>
-		</requiredEnvironment>
-		<activateConfiguration rdf:resource="configuration/Hello" />
+		<name>tavernaServer</name>
+		<processorBinding rdf:resource="binding/Hello/" />
+		<activateConfiguration rdf:resource="configuration/Hello/" />
 	</Profile>
 
 	<Activity rdf:about="activity/HelloScript/">
-		<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity" />
+		<rdf:type
+			rdf:resource="http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity" />
 		<inputActivityPort>
 			<InputActivityPort rdf:about="activity/HelloScript/in/personName">
 				<name>personName</name>
@@ -53,36 +28,35 @@
 			<OutputActivityPort rdf:about="activity/HelloScript/out/hello">
 				<name>hello</name>
 				<portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
-				<granularPortDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0
-				</granularPortDepth>
+				<granularPortDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</granularPortDepth>
 			</OutputActivityPort>
 		</outputActivityPort>
 	</Activity>
 
-	<ProcessorBinding rdf:about="binding/Hello">
+	<ProcessorBinding rdf:about="binding/Hello/">
 		<bindActivity rdf:resource="activity/HelloScript/" />
 		<bindProcessor rdf:resource="../workflow/HelloWorld/processor/Hello/" />
 		<inputPortBinding rdf:parseType="Resource">
-			<bindInputActivityPort
-				rdf:resource="activity/HelloScript/in/personName" />
+			<bindInputActivityPort rdf:resource="activity/HelloScript/in/personName" />
 			<bindInputProcessorPort
 				rdf:resource="../workflow/HelloWorld/processor/Hello/in/name" />
 		</inputPortBinding>
 		<outputPortBinding rdf:parseType="Resource">
-			<bindOutputActivityPort
-				rdf:resource="activity/HelloScript/out/hello" />
+			<bindOutputActivityPort rdf:resource="activity/HelloScript/out/hello" />
 			<bindOutputProcessorPort
 				rdf:resource="../workflow/HelloWorld/processor/Hello/out/greeting" />
 		</outputPortBinding>
 	</ProcessorBinding>
 
 	<Configuration rdf:about="configuration/Hello">
-		<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration" />
+		<rdf:type
+			rdf:resource="http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration" />
 		<configure rdf:resource="activity/HelloScript/" />
 		<beanshell:script>
 			hello = "Hello, " + personName;
 			System.out.println("Server says: " + hello);
     	</beanshell:script>
 	</Configuration>
+
 
 </rdf:RDF>

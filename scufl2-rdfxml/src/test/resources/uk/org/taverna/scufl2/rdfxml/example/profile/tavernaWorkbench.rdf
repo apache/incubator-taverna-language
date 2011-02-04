@@ -9,22 +9,8 @@
 	xsi:type="ProfileDocument" xml:base="tavernaWorkbench/">
 	<Profile rdf:about="">
 		<name>tavernaWorkbench</name>
-		<processorBinding rdf:resource="binding/Hello" />
-		<!--
-		<recommendsEnvironment>
-			<Environment>
-				<workflowProduct rdf:resource="http://ns.taverna.org.uk/2010/taverna/workbench/" />
-			</Environment>
-		</recommendsEnvironment>
-		<requiresEnvironment>
-			<Environment>
-				<workflowPlugin
-					rdf:resource="http://ns.taverna.org.uk/2010/taverna/activities/beanshell#plugin" />
-				<workflowProduct rdf:resource="http://ns.taverna.org.uk/2010/taverna/" />
-			</Environment>
-		</requiresEnvironment> 
-		-->
-		<activateConfiguration rdf:resource="configuration/Hello" />
+		<processorBinding rdf:resource="binding/Hello/" />
+		<activateConfiguration rdf:resource="configuration/Hello/" />
 	</Profile>
 
 	<Activity rdf:about="activity/HelloScript/">	
@@ -44,7 +30,7 @@
 		</outputActivityPort>
 	</Activity>
 
-	<ProcessorBinding rdf:about="binding/Hello">
+	<ProcessorBinding rdf:about="binding/Hello/">
 		<bindActivity rdf:resource="activity/HelloScript/" />
 		<bindProcessor rdf:resource="../workflow/HelloWorld/processor/Hello/" />
 		<inputPortBinding rdf:parseType="Resource">
@@ -59,7 +45,7 @@
 		</outputPortBinding>
 	</ProcessorBinding>
 
-	<Configuration rdf:about="configuration/Hello">
+	<Configuration rdf:about="configuration/Hello/">
 		<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration" />
 		<configure rdf:resource="activity/HelloScript/" />
 		<beanshell:script>
