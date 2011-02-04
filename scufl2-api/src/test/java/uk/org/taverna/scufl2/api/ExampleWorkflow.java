@@ -48,7 +48,10 @@ public class ExampleWorkflow {
 				.create("http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity"));
 
 		personName = new InputActivityPort(activity, "personName");
+		personName.setDepth(0);
 		hello = new OutputActivityPort(activity, "hello");
+		hello.setDepth(0);
+		hello.setGranularDepth(0);
 		return activity;
 
 	}
