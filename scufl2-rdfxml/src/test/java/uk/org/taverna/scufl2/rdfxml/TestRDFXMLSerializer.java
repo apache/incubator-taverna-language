@@ -84,13 +84,13 @@ public class TestRDFXMLSerializer {
 	public void profile() throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		// To test that seeAlso URIs are stored
-		serializer.workflowDoc(outStream, workflowBundle.getMainWorkflow(), URI.create(HELLOWORLD_RDF));
-		//System.out.write(outStream.toByteArray());
+		serializer.profileDoc(outStream, workflowBundle.getMainProfile(), URI.create(TAVERNAWORKBENCH_RDF));
+		System.out.write(outStream.toByteArray());
 		Document doc = parseXml(outStream);
 		Element root = doc.getRootElement();
 		
 		checkRoot(root);
-		checkWorkflowDocument(root);
+		checkProfileDocument(root, true);
 	}
 
 
@@ -166,7 +166,7 @@ public class TestRDFXMLSerializer {
 
 		assertXpathEquals("", profile, "./@rdf:about");
 		assertXpathEquals(isWorkbench ? "tavernaWorkbench" : "tavernaServer", profile, "./s:name");	
-		assertXpathEquals("binding/Hello/", profile, "./s:processorBinding/@rdf:resource");	
+		assertXpathEquals("processorbinding/Hello/", profile, "./s:processorBinding/@rdf:resource");	
 		assertXpathEquals("configuration/Hello/", profile, "./s:activateConfiguration/@rdf:resource");
 		
 		// activity
@@ -187,18 +187,18 @@ public class TestRDFXMLSerializer {
 		assertXpathEquals("http://www.w3.org/2001/XMLSchema#integer", activity, "./s:outputActivityPort/s:OutputActivityPort/s:granularPortDepth/@rdf:datatype");	
 
 		// processor binding
-		assertXpathEquals("binding/Hello/", binding, "./@rdf:about");	
+		assertXpathEquals("processorbinding/Hello/", binding, "./@rdf:about");	
 		assertXpathEquals("Hello", binding, "./s:name");	
 		assertXpathEquals("activity/HelloScript/", binding, "./s:bindActivity/@rdf:resource");	
-		assertXpathEquals("../workflow/HelloWorld/processor/Hello/", binding, "./s:bindProcessor/@rdf:resource");	
+		assertXpathEquals("../../workflow/HelloWorld/processor/Hello/", binding, "./s:bindProcessor/@rdf:resource");	
 		// input port binding
-		assertXpathEquals("binding/Hello/in/name", binding, "./s:inputPortBinding/s:InputPortBinding/@rdf:about");
+		assertXpathEquals("processorbinding/Hello/in/name", binding, "./s:inputPortBinding/s:InputPortBinding/@rdf:about");
 		assertXpathEquals("activity/HelloScript/in/personName", binding, "./s:inputPortBinding/s:InputPortBinding/s:bindInputActivityPort/@rdf:resource");	
-		assertXpathEquals("../workflow/HelloWorld/processor/Hello/in/name", binding, "./s:inputPortBinding/s:InputPortBinding/s:bindInputProcessorPort/@rdf:resource");	
+		assertXpathEquals("../../workflow/HelloWorld/processor/Hello/in/name", binding, "./s:inputPortBinding/s:InputPortBinding/s:bindInputProcessorPort/@rdf:resource");	
 		// output port binding	
-		assertXpathEquals("binding/Hello/out/greeting", binding, "./s:outputPortBinding/s:OutputPortBinding/@rdf:about");
+		assertXpathEquals("processorbinding/Hello/out/greeting", binding, "./s:outputPortBinding/s:OutputPortBinding/@rdf:about");
 		assertXpathEquals("activity/HelloScript/out/hello", binding, "./s:outputPortBinding/s:OutputPortBinding/s:bindOutputActivityPort/@rdf:resource");	
-		assertXpathEquals("../workflow/HelloWorld/processor/Hello/out/greeting", binding, "./s:outputPortBinding/s:OutputPortBinding/s:bindOutputProcessorPort/@rdf:resource");	
+		assertXpathEquals("../../workflow/HelloWorld/processor/Hello/out/greeting", binding, "./s:outputPortBinding/s:OutputPortBinding/s:bindOutputProcessorPort/@rdf:resource");	
 
 		
 		assertXpathEquals("configuration/Hello/", configuration, "./@rdf:about");	
