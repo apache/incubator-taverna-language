@@ -59,13 +59,15 @@
 			<xs:restriction base="rdf:RDF">
 				<xs:sequence>
 					<xs:element ref="scufl2:Profile" />
-					<xs:element name="Activity" type="scufl2:Activity"
-						minOccurs="0" maxOccurs="unbounded" />
+					
+                                   <xs:element name="Activity" type="scufl2:Activity"
+                                           minOccurs="0" maxOccurs="unbounded" />
 
-					<xs:element ref="scufl2:ProcessorBinding" minOccurs="0"
-						maxOccurs="unbounded" />
-					<xs:element name="Configuration" type="scufl2:Configuration"
-						minOccurs="0" maxOccurs="unbounded" />
+                                   <xs:element ref="scufl2:ProcessorBinding" minOccurs="0"
+                                           maxOccurs="unbounded" />
+                                   <xs:element name="Configuration" type="scufl2:Configuration"
+                                           minOccurs="0" maxOccurs="unbounded" />
+					
 					<xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"
 						processContents="lax" />
 				</xs:sequence>
@@ -108,7 +110,7 @@
 	<xs:complexType name="Configuration">
 		<xs:sequence>
 			<xs:element ref="rdf:type" />
-			<xs:element name="configures" type="rdf:Resource" />
+			<xs:element name="configure" type="rdf:Resource" />
 			<xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"
 				processContents="lax" />
 		</xs:sequence>
@@ -153,17 +155,25 @@
 				<xs:element ref="rdfs:seeAlso" />
 				<xs:sequence>
 					<xs:element ref="scufl2:name" />
+					<!-- 
 					<xs:element ref="dc:creator" minOccurs="0" maxOccurs="unbounded" />
 					<xs:element ref="dc:date" minOccurs="0" maxOccurs="1" />
 					<xs:element ref="dc:description" minOccurs="0"
 						maxOccurs="1" />
+					 -->
+					
+					<xs:element ref="scufl2:ProcessorBinding" minOccurs="0"
+						maxOccurs="unbounded" />
+					<xs:element name="Configuration" type="scufl2:Configuration"
+						minOccurs="0" maxOccurs="unbounded" />
+					
 					<xs:element name="processorBinding" type="rdf:Resource"
 						minOccurs="0" maxOccurs="unbounded" />
-					<xs:element name="recommendsEnvironment" type="scufl2:scufl2.Environment"
+					<xs:element name="recommendedEnvironment" type="scufl2:scufl2.Environment"
 						minOccurs="0" maxOccurs="unbounded" />
-					<xs:element name="requiresEnvironment" type="scufl2:scufl2.Environment"
+					<xs:element name="requiredEnvironment" type="scufl2:scufl2.Environment"
 						minOccurs="0" maxOccurs="unbounded" />
-					<xs:element name="activatesConfiguration" type="rdf:Resource"
+					<xs:element name="activateConfiguration" type="rdf:Resource"
 						minOccurs="0" maxOccurs="unbounded" />
 				</xs:sequence>
 			</xs:choice>
@@ -173,8 +183,8 @@
 	<xs:element name="ProcessorBinding">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="boundActivity" type="rdf:Resource" />
-				<xs:element name="boundProcessor" type="rdf:Resource" />
+				<xs:element name="bindActivity" type="rdf:Resource" />
+				<xs:element name="bindProcessor" type="rdf:Resource" />
 				<xs:element name="inputPortBinding" type="scufl2:InputPortBinding" />
 				<xs:element name="outputPortBinding" type="scufl2:OutputPortBinding" />
 			</xs:sequence>
@@ -185,15 +195,15 @@
 
 	<xs:complexType name="InputPortBinding">
 		<xs:sequence>
-			<xs:element name="bindsInputActivityPort" type="rdf:Resource" />
-			<xs:element name="bindsInputProcessorPort" type="rdf:Resource" />
+			<xs:element name="bindInputActivityPort" type="rdf:Resource" />
+			<xs:element name="bindInputProcessorPort" type="rdf:Resource" />
 		</xs:sequence>
 		<xs:attribute ref="rdf:parseType" use="required" fixed="Resource" />
 	</xs:complexType>
 	<xs:complexType name="OutputPortBinding">
 		<xs:sequence>
-			<xs:element name="bindsOutputActivityPort" type="rdf:Resource" />
-			<xs:element name="bindsOutputProcessorPort" type="rdf:Resource" />
+			<xs:element name="bindOutputActivityPort" type="rdf:Resource" />
+			<xs:element name="bindOutputProcessorPort" type="rdf:Resource" />
 		</xs:sequence>
 		<xs:attribute ref="rdf:parseType" use="required" fixed="Resource" />
 	</xs:complexType>
