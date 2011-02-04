@@ -49,4 +49,4 @@ System.out.println("Server says: " + hello);'''
       Configures 'activity/HelloScript'
       Property <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#script>
         '''hello = "Hello, " + personName;
-System.out.println("Server says: " + hello);'''
+JOptionPane.showMessageDialog(null, hello);'''

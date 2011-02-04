@@ -48,7 +48,10 @@ public class ExampleWorkflow {
 				.create("http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity"));
 
 		personName = new InputActivityPort(activity, "personName");
+		personName.setDepth(0);
 		hello = new OutputActivityPort(activity, "hello");
+		hello.setDepth(0);
+		hello.setGranularDepth(0);
 		return activity;
 
 	}
@@ -56,16 +59,17 @@ public class ExampleWorkflow {
 	public Configuration makeConfiguration() {
 		Configuration configuration = new Configuration("Hello");
 		configuration.setConfigures(activity);
+
 		configuration
-		.getPropertyResource()
-		.setTypeURI(
-				URI.create("http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration"));
+				.getPropertyResource()
+				.setTypeURI(
+						URI.create("http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration"));
 		configuration
-		.getPropertyResource()
-		.addPropertyAsString(
-				URI.create("http://ns.taverna.org.uk/2010/taverna/activities/beanshell#script"),
-				"hello = \"Hello, \" + personName;\n"
-				+ "System.out.println(\"Server says: \" + hello);");
+				.getPropertyResource()
+				.addPropertyAsString(
+						URI.create("http://ns.taverna.org.uk/2010/taverna/activities/beanshell#script"),
+						"hello = \"Hello, \" + personName;\n"
+								+ "JOptionPane.showMessageDialog(null, hello);");
 		return configuration;
 	}
 
@@ -180,8 +184,6 @@ public class ExampleWorkflow {
 		// FIXME: Should not need to make default iteration stack
 		makeIterationStrategyStack().setParent(wait4me);
 
-
-
 		return processor;
 	}
 
@@ -206,10 +208,10 @@ public class ExampleWorkflow {
 		config.getPropertyResource().getProperties().clear();
 		// FIXME: Need removeProperty!
 		config.getPropertyResource()
-		.addPropertyAsString(
-				URI.create("http://ns.taverna.org.uk/2010/taverna/activities/beanshell#script"),
-				"hello = \"Hello, \" + personName;\n"
-				+ "System.out.println(\"Server says: \" + hello);");
+				.addPropertyAsString(
+						URI.create("http://ns.taverna.org.uk/2010/taverna/activities/beanshell#script"),
+						"hello = \"Hello, \" + personName;\n"
+								+ "System.out.println(\"Server says: \" + hello);");
 		return profile;
 	}
 

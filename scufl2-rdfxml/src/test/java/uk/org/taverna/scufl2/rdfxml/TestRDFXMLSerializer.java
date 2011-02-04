@@ -38,6 +38,7 @@ public class TestRDFXMLSerializer {
 	Namespace RDF_NS = Namespace.getNamespace("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
 	Namespace RDSF_NS = Namespace.getNamespace("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
 	Namespace SCUFL2_NS = Namespace.getNamespace("s", "http://ns.taverna.org.uk/2010/scufl2#");
+	Namespace BEANSHELL_NS = Namespace.getNamespace("beanshell", "http://ns.taverna.org.uk/2010/taverna/activities/beanshell#");
 
 
 	@Before
@@ -48,7 +49,7 @@ public class TestRDFXMLSerializer {
 
 	
 	@Test
-	public void workflowBundleXml() throws Exception {
+	public void workflowBundle() throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		// To test that seeAlso URIs are stored
 		serializer.workflowDoc(new NullOutputStream(), workflowBundle.getMainWorkflow(), URI.create(HELLOWORLD_RDF));		
@@ -66,7 +67,7 @@ public class TestRDFXMLSerializer {
 	}
 
 	@Test
-	public void workflowXml() throws Exception {
+	public void workflow() throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		// To test that seeAlso URIs are stored
 		serializer.workflowDoc(outStream, workflowBundle.getMainWorkflow(), URI.create(HELLOWORLD_RDF));
@@ -79,10 +80,22 @@ public class TestRDFXMLSerializer {
 	}
 
 
+	@Test
+	public void profile() throws Exception {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		// To test that seeAlso URIs are stored
+		serializer.profileDoc(outStream, workflowBundle.getMainProfile(), URI.create(TAVERNAWORKBENCH_RDF));
+		System.out.write(outStream.toByteArray());
+		Document doc = parseXml(outStream);
+		Element root = doc.getRootElement();
+		
+		checkRoot(root);
+		checkProfileDocument(root, true);
+	}
 
 
 	@Test
-	public void usecaseWorkflowBundleXml() throws Exception {
+	public void exampleWorkflowBundle() throws Exception {
 		URL workflowBundleURL = getClass().getResource("example/workflowBundle.rdf");
 		
 		
@@ -97,7 +110,7 @@ public class TestRDFXMLSerializer {
 	}
 	
 	@Test
-	public void usecaseWorkflowXml() throws Exception {
+	public void exampleWorkflow() throws Exception {
 		URL workflowURL = getClass().getResource("example/workflow/HelloWorld.rdf");
 		SAXBuilder saxBuilder = new SAXBuilder();
 		Document doc = saxBuilder.build(workflowURL);
@@ -106,6 +119,94 @@ public class TestRDFXMLSerializer {
 		
 		checkRoot(root);
 		checkWorkflowDocument(root);
+		
+	}
+	
+
+	@Test
+	public void exampleProfileTavernaWorkbench() throws Exception {
+		URL tavernaWorkbenc = getClass().getResource("example/profile/tavernaWorkbench.rdf");
+		SAXBuilder saxBuilder = new SAXBuilder();
+		Document doc = saxBuilder.build(tavernaWorkbenc);		
+		Element root = doc.getRootElement();
+		
+		checkRoot(root);
+		checkProfileDocument(root, true);
+		
+	}
+
+	@Test
+	public void exampleProfileTavernaServer() throws Exception {
+		URL tavernaWorkbenc = getClass().getResource("example/profile/tavernaServer.rdf");
+		SAXBuilder saxBuilder = new SAXBuilder();
+		Document doc = saxBuilder.build(tavernaWorkbenc);		
+		Element root = doc.getRootElement();
+		
+		checkRoot(root);
+		checkProfileDocument(root, false);
+		
+	}
+
+
+	protected void checkProfileDocument(Element root, boolean isWorkbench) throws JDOMException {
+
+		assertEquals("ProfileDocument", root.getAttributeValue("type", XSI_NS));
+		assertXpathEquals(isWorkbench ? "tavernaWorkbench/" : "tavernaServer/", root, "./@xml:base");
+
+		Element profile = (Element) root.getChildren().get(0);
+		Element activity = (Element) root.getChildren().get(1);
+		Element binding = (Element) root.getChildren().get(2);
+		Element configuration = (Element) root.getChildren().get(3);
+		
+		
+		assertSame(xpathSelectElement(root, "./s:Profile"), profile);
+		assertSame(xpathSelectElement(root, "./s:Activity"), activity);
+		assertSame(xpathSelectElement(root, "./s:ProcessorBinding"), binding);
+		assertSame(xpathSelectElement(root, "./s:Configuration"), configuration);
+
+		assertXpathEquals("", profile, "./@rdf:about");
+		assertXpathEquals(isWorkbench ? "tavernaWorkbench" : "tavernaServer", profile, "./s:name");	
+		assertXpathEquals("processorbinding/Hello/", profile, "./s:processorBinding/@rdf:resource");	
+		assertXpathEquals("configuration/Hello/", profile, "./s:activateConfiguration/@rdf:resource");
+		
+		// activity
+		assertXpathEquals("activity/HelloScript/", activity, "./@rdf:about");	
+		assertXpathEquals("HelloScript", activity, "./s:name");	
+		assertXpathEquals("http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity", activity, "./rdf:type/@rdf:resource");	
+		// activity input
+		assertXpathEquals("activity/HelloScript/in/personName", activity, "./s:inputActivityPort/s:InputActivityPort/@rdf:about");	
+		assertXpathEquals("personName", activity, "./s:inputActivityPort/s:InputActivityPort/s:name");	
+		assertXpathEquals("0", activity, "./s:inputActivityPort/s:InputActivityPort/s:portDepth");	
+		assertXpathEquals("http://www.w3.org/2001/XMLSchema#integer", activity, "./s:inputActivityPort/s:InputActivityPort/s:portDepth/@rdf:datatype");	
+		// activity output		
+		assertXpathEquals("activity/HelloScript/out/hello", activity, "./s:outputActivityPort/s:OutputActivityPort/@rdf:about");	
+		assertXpathEquals("hello", activity, "./s:outputActivityPort/s:OutputActivityPort/s:name");	
+		assertXpathEquals("0", activity, "./s:outputActivityPort/s:OutputActivityPort/s:portDepth");	
+		assertXpathEquals("http://www.w3.org/2001/XMLSchema#integer", activity, "./s:outputActivityPort/s:OutputActivityPort/s:portDepth/@rdf:datatype");	
+		assertXpathEquals("0", activity, "./s:outputActivityPort/s:OutputActivityPort/s:granularPortDepth");	
+		assertXpathEquals("http://www.w3.org/2001/XMLSchema#integer", activity, "./s:outputActivityPort/s:OutputActivityPort/s:granularPortDepth/@rdf:datatype");	
+
+		// processor binding
+		assertXpathEquals("processorbinding/Hello/", binding, "./@rdf:about");	
+		assertXpathEquals("Hello", binding, "./s:name");	
+		assertXpathEquals("activity/HelloScript/", binding, "./s:bindActivity/@rdf:resource");	
+		assertXpathEquals("../../workflow/HelloWorld/processor/Hello/", binding, "./s:bindProcessor/@rdf:resource");	
+		// input port binding
+		assertXpathEquals("processorbinding/Hello/in/name", binding, "./s:inputPortBinding/s:InputPortBinding/@rdf:about");
+		assertXpathEquals("activity/HelloScript/in/personName", binding, "./s:inputPortBinding/s:InputPortBinding/s:bindInputActivityPort/@rdf:resource");	
+		assertXpathEquals("../../workflow/HelloWorld/processor/Hello/in/name", binding, "./s:inputPortBinding/s:InputPortBinding/s:bindInputProcessorPort/@rdf:resource");	
+		// output port binding	
+		assertXpathEquals("processorbinding/Hello/out/greeting", binding, "./s:outputPortBinding/s:OutputPortBinding/@rdf:about");
+		assertXpathEquals("activity/HelloScript/out/hello", binding, "./s:outputPortBinding/s:OutputPortBinding/s:bindOutputActivityPort/@rdf:resource");	
+		assertXpathEquals("../../workflow/HelloWorld/processor/Hello/out/greeting", binding, "./s:outputPortBinding/s:OutputPortBinding/s:bindOutputProcessorPort/@rdf:resource");	
+
+		
+		assertXpathEquals("configuration/Hello/", configuration, "./@rdf:about");	
+		assertXpathEquals("http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration", configuration, "./rdf:type/@rdf:resource");	
+		assertXpathEquals("Hello", configuration, "./s:name");			
+		assertXpathEquals("activity/HelloScript/", configuration, "./s:configure/@rdf:resource");	
+		assertXpathEquals("hello = \"Hello, \" + personName;\n" + 
+				(isWorkbench ? "JOptionPane.showMessageDialog(null, hello);" : "System.out.println(\"Server says: \" + hello);"), configuration, "./beanshell:script");	
 		
 	}
 
@@ -203,9 +304,9 @@ public class TestRDFXMLSerializer {
 		assertXpathEquals("datalink?from=in/yourName&to=out/results&mergePosition=1", 
 				wf, "./s:datalink[3]/s:DataLink/@rdf:about");
 		assertXpathEquals("in/yourName", 
-				wf, "./s:datalink[3]/s:DataLink/s:receivesFrom/@rdf:resource");
+				wf, "./s:datalink[3]/s:DataLink/s:receiveFrom/@rdf:resource");
 		assertXpathEquals("out/results", 
-				wf, "./s:datalink[3]/s:DataLink/s:sendsTo/@rdf:resource");
+				wf, "./s:datalink[3]/s:DataLink/s:sendTo/@rdf:resource");
 		assertXpathEquals("1", 
 				wf, "./s:datalink[3]/s:DataLink/s:mergePosition");
 		assertXpathEquals("http://www.w3.org/2001/XMLSchema#integer", 
@@ -223,9 +324,9 @@ public class TestRDFXMLSerializer {
 		assertXpathEquals("datalink?from=processor/Hello/out/greeting&to=out/results&mergePosition=0", 
 				wf, "./s:datalink[1]/s:DataLink/@rdf:about");
 		assertXpathEquals("processor/Hello/out/greeting", 
-				wf, "./s:datalink[1]/s:DataLink/s:receivesFrom/@rdf:resource");
+				wf, "./s:datalink[1]/s:DataLink/s:receiveFrom/@rdf:resource");
 		assertXpathEquals("out/results", 
-				wf, "./s:datalink[1]/s:DataLink/s:sendsTo/@rdf:resource");
+				wf, "./s:datalink[1]/s:DataLink/s:sendTo/@rdf:resource");
 		assertXpathEquals("0", 
 				wf, "./s:datalink[1]/s:DataLink/s:mergePosition");
 		assertXpathEquals("http://www.w3.org/2001/XMLSchema#integer", 
@@ -236,9 +337,9 @@ public class TestRDFXMLSerializer {
 		assertXpathEquals("datalink?from=in/yourName&to=processor/Hello/in/name", 
 				wf, "./s:datalink[2]/s:DataLink/@rdf:about");
 		assertXpathEquals("in/yourName", 
-				wf, "./s:datalink[2]/s:DataLink/s:receivesFrom/@rdf:resource");
+				wf, "./s:datalink[2]/s:DataLink/s:receiveFrom/@rdf:resource");
 		assertXpathEquals("processor/Hello/in/name", 
-				wf, "./s:datalink[2]/s:DataLink/s:sendsTo/@rdf:resource");
+				wf, "./s:datalink[2]/s:DataLink/s:sendTo/@rdf:resource");
 		assertNull(xpathSelectElement(wf, "./s:datalink[2]/s:DataLink/s:mergePosition"));
 		
 
@@ -246,9 +347,9 @@ public class TestRDFXMLSerializer {
 		assertXpathEquals("datalink?from=in/yourName&to=out/results&mergePosition=1", 
 				wf, "./s:datalink[3]/s:DataLink/@rdf:about");
 		assertXpathEquals("in/yourName", 
-				wf, "./s:datalink[3]/s:DataLink/s:receivesFrom/@rdf:resource");
+				wf, "./s:datalink[3]/s:DataLink/s:receiveFrom/@rdf:resource");
 		assertXpathEquals("out/results", 
-				wf, "./s:datalink[3]/s:DataLink/s:sendsTo/@rdf:resource");
+				wf, "./s:datalink[3]/s:DataLink/s:sendTo/@rdf:resource");
 		assertXpathEquals("1", 
 				wf, "./s:datalink[3]/s:DataLink/s:mergePosition");
 		assertXpathEquals("http://www.w3.org/2001/XMLSchema#integer", 
@@ -330,6 +431,7 @@ public class TestRDFXMLSerializer {
 		x.addNamespace(SCUFL2_NS);
 		x.addNamespace(RDF_NS);
 		x.addNamespace(RDSF_NS);
+		x.addNamespace(BEANSHELL_NS);
 		//x.addNamespace(XML_NS);
 
 		return x.selectSingleNode(element);
