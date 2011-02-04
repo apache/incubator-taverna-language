@@ -49,7 +49,7 @@ public class TestRDFXMLSerializer {
 
 	
 	@Test
-	public void workflowBundleXml() throws Exception {
+	public void workflowBundle() throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		// To test that seeAlso URIs are stored
 		serializer.workflowDoc(new NullOutputStream(), workflowBundle.getMainWorkflow(), URI.create(HELLOWORLD_RDF));		
@@ -67,7 +67,7 @@ public class TestRDFXMLSerializer {
 	}
 
 	@Test
-	public void workflowXml() throws Exception {
+	public void workflow() throws Exception {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		// To test that seeAlso URIs are stored
 		serializer.workflowDoc(outStream, workflowBundle.getMainWorkflow(), URI.create(HELLOWORLD_RDF));
@@ -80,10 +80,22 @@ public class TestRDFXMLSerializer {
 	}
 
 
+	@Test
+	public void profile() throws Exception {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		// To test that seeAlso URIs are stored
+		serializer.workflowDoc(outStream, workflowBundle.getMainWorkflow(), URI.create(HELLOWORLD_RDF));
+		//System.out.write(outStream.toByteArray());
+		Document doc = parseXml(outStream);
+		Element root = doc.getRootElement();
+		
+		checkRoot(root);
+		checkWorkflowDocument(root);
+	}
 
 
 	@Test
-	public void usecaseWorkflowBundleXml() throws Exception {
+	public void exampleWorkflowBundle() throws Exception {
 		URL workflowBundleURL = getClass().getResource("example/workflowBundle.rdf");
 		
 		
@@ -98,7 +110,7 @@ public class TestRDFXMLSerializer {
 	}
 	
 	@Test
-	public void usecaseWorkflowXml() throws Exception {
+	public void exampleWorkflow() throws Exception {
 		URL workflowURL = getClass().getResource("example/workflow/HelloWorld.rdf");
 		SAXBuilder saxBuilder = new SAXBuilder();
 		Document doc = saxBuilder.build(workflowURL);
@@ -112,7 +124,7 @@ public class TestRDFXMLSerializer {
 	
 
 	@Test
-	public void usecaseProfileTavernaWorkbenchXml() throws Exception {
+	public void exampleProfileTavernaWorkbench() throws Exception {
 		URL tavernaWorkbenc = getClass().getResource("example/profile/tavernaWorkbench.rdf");
 		SAXBuilder saxBuilder = new SAXBuilder();
 		Document doc = saxBuilder.build(tavernaWorkbenc);		
@@ -124,7 +136,7 @@ public class TestRDFXMLSerializer {
 	}
 
 	@Test
-	public void usecaseProfileTavernaServerXml() throws Exception {
+	public void exampleProfileTavernaServer() throws Exception {
 		URL tavernaWorkbenc = getClass().getResource("example/profile/tavernaServer.rdf");
 		SAXBuilder saxBuilder = new SAXBuilder();
 		Document doc = saxBuilder.build(tavernaWorkbenc);		
