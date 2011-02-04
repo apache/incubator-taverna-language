@@ -9,7 +9,7 @@
 	xsi:type="ProfileDocument" xml:base="tavernaWorkbench/">
 	<Profile rdf:about="">
 		<name>tavernaWorkbench</name>
-		<processorBinding rdf:resource="binding/Hello/" />
+		<processorBinding rdf:resource="processorbinding/Hello/" />
 		<activateConfiguration rdf:resource="configuration/Hello/" />
 	</Profile>
 
@@ -32,22 +32,22 @@
 		</outputActivityPort>
 	</Activity>
 
-	<ProcessorBinding rdf:about="binding/Hello/">
+	<ProcessorBinding rdf:about="processorbinding/Hello/">
 		<name>Hello</name>
 		<bindActivity rdf:resource="activity/HelloScript/" />
-		<bindProcessor rdf:resource="../workflow/HelloWorld/processor/Hello/" />
+		<bindProcessor rdf:resource="../../workflow/HelloWorld/processor/Hello/" />
 		<inputPortBinding>
-			<InputPortBinding rdf:about="binding/Hello/in/name">
+			<InputPortBinding rdf:about="processorbinding/Hello/in/name">
 				<bindInputActivityPort rdf:resource="activity/HelloScript/in/personName" />
 				<bindInputProcessorPort
-					rdf:resource="../workflow/HelloWorld/processor/Hello/in/name" />
+					rdf:resource="../../workflow/HelloWorld/processor/Hello/in/name" />
 			</InputPortBinding>
 		</inputPortBinding> 
 		<outputPortBinding>
-			<OutputPortBinding rdf:about="binding/Hello/out/greeting">
+			<OutputPortBinding rdf:about="processorbinding/Hello/out/greeting">
 				<bindOutputActivityPort rdf:resource="activity/HelloScript/out/hello" />
 				<bindOutputProcessorPort
-					rdf:resource="../workflow/HelloWorld/processor/Hello/out/greeting" />
+					rdf:resource="../../workflow/HelloWorld/processor/Hello/out/greeting" />
 			</OutputPortBinding>
 		</outputPortBinding>
 	</ProcessorBinding>
