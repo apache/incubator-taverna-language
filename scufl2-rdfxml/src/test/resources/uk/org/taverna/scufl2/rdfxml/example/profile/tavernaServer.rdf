@@ -17,6 +17,7 @@
 	<Activity rdf:about="activity/HelloScript/">
 		<rdf:type
 			rdf:resource="http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity" />
+		<name>HelloScript</name>
 		<inputActivityPort>
 			<InputActivityPort rdf:about="activity/HelloScript/in/personName">
 				<name>personName</name>
@@ -34,29 +35,32 @@
 	</Activity>
 
 	<ProcessorBinding rdf:about="binding/Hello/">
+		<name>Hello</name>
 		<bindActivity rdf:resource="activity/HelloScript/" />
 		<bindProcessor rdf:resource="../workflow/HelloWorld/processor/Hello/" />
-		<inputPortBinding rdf:parseType="Resource">
-			<bindInputActivityPort rdf:resource="activity/HelloScript/in/personName" />
-			<bindInputProcessorPort
-				rdf:resource="../workflow/HelloWorld/processor/Hello/in/name" />
+		<inputPortBinding>
+			<InputPortBinding rdf:about="binding/Hello/in/name">
+				<bindInputActivityPort rdf:resource="activity/HelloScript/in/personName" />
+				<bindInputProcessorPort
+					rdf:resource="../workflow/HelloWorld/processor/Hello/in/name" />
+			</InputPortBinding>
 		</inputPortBinding>
-		<outputPortBinding rdf:parseType="Resource">
-			<bindOutputActivityPort rdf:resource="activity/HelloScript/out/hello" />
-			<bindOutputProcessorPort
-				rdf:resource="../workflow/HelloWorld/processor/Hello/out/greeting" />
+		<outputPortBinding>
+			<OutputPortBinding rdf:about="binding/Hello/out/greeting">
+				<bindOutputActivityPort rdf:resource="activity/HelloScript/out/hello" />
+				<bindOutputProcessorPort
+					rdf:resource="../workflow/HelloWorld/processor/Hello/out/greeting" />
+			</OutputPortBinding>
 		</outputPortBinding>
 	</ProcessorBinding>
 
-	<Configuration rdf:about="configuration/Hello">
+	<Configuration rdf:about="configuration/Hello/">
 		<rdf:type
 			rdf:resource="http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration" />
+		<name>Hello</name>
 		<configure rdf:resource="activity/HelloScript/" />
-		<beanshell:script>
-			hello = "Hello, " + personName;
-			System.out.println("Server says: " + hello);
-    	</beanshell:script>
+		<beanshell:script>hello = "Hello, " + personName;
+System.out.println("Server says: " + hello);</beanshell:script>
 	</Configuration>
-
 
 </rdf:RDF>
