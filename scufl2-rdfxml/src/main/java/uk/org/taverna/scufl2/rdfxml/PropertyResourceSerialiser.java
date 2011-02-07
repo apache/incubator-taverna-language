@@ -1,5 +1,8 @@
 package uk.org.taverna.scufl2.rdfxml;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.net.URI;
 import java.util.List;
 import java.util.Stack;
@@ -20,6 +23,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.TypeInfo;
 import org.w3c.dom.UserDataHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import uk.org.taverna.scufl2.api.common.Visitor.VisitorAdapter;
 import uk.org.taverna.scufl2.api.common.Visitor.VisitorWithPath;
@@ -40,6 +45,7 @@ public class PropertyResourceSerialiser extends VisitorAdapter {
 	public PropertyResourceSerialiser(List<Object> elements, URI baseUri) {
 		this.elements = elements;
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setNamespaceAware(true);
 		try {
 			docBuilder = factory.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
@@ -48,7 +54,7 @@ public class PropertyResourceSerialiser extends VisitorAdapter {
 		doc = docBuilder.newDocument();
 
 	}
-	
+
 	@Override
 	public boolean visitEnter(WorkflowBean node) {
 		process(node);
@@ -60,8 +66,7 @@ public class PropertyResourceSerialiser extends VisitorAdapter {
 		process(node);
 		return visitLeave(node);
 	}
-	
-	
+
 	public void process(WorkflowBean node) {
 		if (node instanceof PropertyList) {
 			list((PropertyList) node);
@@ -86,7 +91,7 @@ public class PropertyResourceSerialiser extends VisitorAdapter {
 		elementStack.pop();
 		return true;
 	}
-	
+
 	private void property(PropertyVisit node) {
 		QName qname = uriToQName(node.getPredicateUri());
 		Element element = doc.createElementNS(qname.getNamespaceURI(),
@@ -99,17 +104,18 @@ public class PropertyResourceSerialiser extends VisitorAdapter {
 		String uriStr = uri.toASCIIString();
 		// \\u10000-\\uEFFFF not included
 		String NMTOKEN = " \\xC0-\\xD6\\xD8-\\xF6\\xF8-\\u02FF\\u0370-\\u037D\\u037F-\\u1FFF\\u200C-\\u200D\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFFD";
-		String ncNameRegex = "[_A-Za-z" + NMTOKEN + "][-._A-Za-z0-9"
-				+ NMTOKEN + "]*$";
+		String ncNameRegex = "[_A-Za-z" + NMTOKEN + "][-._A-Za-z0-9" + NMTOKEN
+				+ "]*$";
 		Pattern ncPattern = Pattern.compile(ncNameRegex);
 		Matcher m = ncPattern.matcher(uriStr);
-		if (! (m.find())) {
-			throw new IllegalArgumentException("End of URI not valid in QName: " + uri);
+		if (!(m.find())) {
+			throw new IllegalArgumentException(
+					"End of URI not valid in QName: " + uri);
 		}
 
 		String ns = uriStr.substring(0, m.start());
 		String name = m.group();
-		
+
 		m = ncPattern.matcher(ns);
 		// TODO: Suggest prefix
 		return new QName(ns, name);
@@ -127,14 +133,38 @@ public class PropertyResourceSerialiser extends VisitorAdapter {
 
 	private void literal(PropertyLiteral node) {
 		Element element = elementStack.peek();
-		element.setTextContent(node.getLiteralValue());
-		if (! node.getLiteralType().equals(PropertyLiteral.XSD_STRING)) {
-			element.setAttributeNS("http://www.w3.org/1999/02/22-rdf-syntax-ns#", "datatype", node.getLiteralType().toASCIIString());
+
+		if (node.getLiteralType().equals(PropertyLiteral.XML_LITERAL)) {
+			StringReader reader = new StringReader(node.getLiteralValue());
+			Document valueDoc;
+			try {
+				valueDoc = docBuilder.parse(new InputSource(reader));
+			} catch (SAXException e) {
+				String literalValue = node.getLiteralValue();
+				throw new IllegalStateException("Can't parse literal XML:\n"
+						+ literalValue, e);
+			} catch (IOException e) {
+				String literalValue = node.getLiteralValue();
+				throw new IllegalStateException("Can't parse literal XML:\n"
+						+ literalValue, e);
+			}
+			element.setAttributeNS(
+					"http://www.w3.org/1999/02/22-rdf-syntax-ns#", "parseType",
+					"Literal");
+			// TODO: Copy element..
+			element.appendChild(doc.importNode(valueDoc.getDocumentElement(),
+					true));
+		} else {
+			element.setTextContent(node.getLiteralValue());
+			if (!node.getLiteralType().equals(PropertyLiteral.XSD_STRING)) {
+				element.setAttributeNS(
+						"http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+						"datatype", node.getLiteralType().toASCIIString());
+			}
 		}
 	}
 
-	private void list(PropertyList node) {
-		// TODO Auto-generated method stub
+	private void list(PropertyList node) {		
 
 	}
 
