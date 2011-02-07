@@ -1,8 +1,5 @@
 package uk.org.taverna.scufl2.rdfxml;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
 import java.net.URI;
 import java.util.List;
 import java.util.Stack;
@@ -14,20 +11,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.w3c.dom.Attr;
-import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.TypeInfo;
-import org.w3c.dom.UserDataHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import uk.org.taverna.scufl2.api.common.Visitor.VisitorAdapter;
-import uk.org.taverna.scufl2.api.common.Visitor.VisitorWithPath;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.property.PropertyList;
 import uk.org.taverna.scufl2.api.property.PropertyLiteral;
@@ -37,7 +24,7 @@ import uk.org.taverna.scufl2.api.property.PropertyResource.PropertyVisit;
 
 public class PropertyResourceSerialiser extends VisitorAdapter {
 
-	private Stack<Element> elementStack = new Stack();
+	private Stack<Element> elementStack = new Stack<Element>();
 	private final List<Object> elements;
 	private DocumentBuilder docBuilder;
 	private Document doc;
@@ -135,25 +122,12 @@ public class PropertyResourceSerialiser extends VisitorAdapter {
 		Element element = elementStack.peek();
 
 		if (node.getLiteralType().equals(PropertyLiteral.XML_LITERAL)) {
-			StringReader reader = new StringReader(node.getLiteralValue());
-			Document valueDoc;
-			try {
-				valueDoc = docBuilder.parse(new InputSource(reader));
-			} catch (SAXException e) {
-				String literalValue = node.getLiteralValue();
-				throw new IllegalStateException("Can't parse literal XML:\n"
-						+ literalValue, e);
-			} catch (IOException e) {
-				String literalValue = node.getLiteralValue();
-				throw new IllegalStateException("Can't parse literal XML:\n"
-						+ literalValue, e);
-			}
+			Element nodeElement = node.getLiteralValueAsElement();
+			// TODO: Copy element..
+			element.appendChild(doc.importNode(nodeElement, true));
 			element.setAttributeNS(
 					"http://www.w3.org/1999/02/22-rdf-syntax-ns#", "parseType",
-					"Literal");
-			// TODO: Copy element..
-			element.appendChild(doc.importNode(valueDoc.getDocumentElement(),
-					true));
+			"Literal");
 		} else {
 			element.setTextContent(node.getLiteralValue());
 			if (!node.getLiteralType().equals(PropertyLiteral.XSD_STRING)) {
