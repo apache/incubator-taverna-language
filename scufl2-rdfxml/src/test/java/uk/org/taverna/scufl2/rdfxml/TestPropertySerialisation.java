@@ -99,7 +99,7 @@ public class TestPropertySerialisation {
 	
 	@Test
 	public void literalXml() throws Exception {
-		String innerXml = "<example xmlns:ns1='http://example.com/ns1'><soup attrib='asda' ns1:attrib='somethingelse'>  some  \n  whitespaced text\n</soup></example>";
+		String innerXml = "<example xmlns:ns1='http://example.com/ns1'><soup xmlns='http://example.com/different' attrib='attribValue' ns1:attrib='otherValue'>  some  \n  whitespaced text\n</soup></example>";
 		PropertyLiteral literal = new PropertyLiteral(innerXml, PropertyLiteral.XML_LITERAL);
 		propResource.addProperty(property.resolve("#xmlValue"), literal);
 		propResource.accept(serialiser);
@@ -122,10 +122,12 @@ public class TestPropertySerialisation {
 
 		Element exampleElem = (Element)elem.getElementsByTagName("example").item(0);
 		Element soupElem = (Element) exampleElem.getElementsByTagName("soup").item(0);
-		assertEquals("asda", soupElem.getAttribute("attrib"));
+		assertEquals("http://example.com/different", soupElem.getNamespaceURI());
+		assertEquals("attribValue", soupElem.getAttribute("attrib"));
 		assertEquals("  some  \n  whitespaced text\n", soupElem.getTextContent());
+		assertEquals("attrib", soupElem.getAttributes().item(0).getNodeName());
 		assertEquals("ns1:attrib", soupElem.getAttributes().item(1).getNodeName());
-		assertEquals("somethingelse", soupElem.getAttributeNS("http://example.com/ns1", "attrib"));		
+		assertEquals("otherValue", soupElem.getAttributeNS("http://example.com/ns1", "attrib"));		
 	}
 	
 	
