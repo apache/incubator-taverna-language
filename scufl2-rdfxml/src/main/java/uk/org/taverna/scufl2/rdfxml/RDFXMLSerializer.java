@@ -24,8 +24,6 @@ import org.w3._2000._01.rdf_schema_.SeeAlso;
 import org.xml.sax.SAXException;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
-import uk.org.taverna.scufl2.api.common.Configurable;
-import uk.org.taverna.scufl2.api.common.Named;
 import uk.org.taverna.scufl2.api.common.Typed;
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.common.Visitor;
@@ -44,7 +42,6 @@ import uk.org.taverna.scufl2.api.iterationstrategy.DotProduct;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyTopNode;
 import uk.org.taverna.scufl2.api.iterationstrategy.PortNode;
-import uk.org.taverna.scufl2.api.port.ActivityPort;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
 import uk.org.taverna.scufl2.api.port.InputWorkflowPort;
@@ -241,6 +238,9 @@ public class RDFXMLSerializer {
 	}
 
 	private Type type(Typed typed) {
+		if (typed.getConfigurableType() == null) {
+			return null;
+		}
 		Type t = rdfObjectFactory.createType();
 		t.setResource(typed.getConfigurableType().toASCIIString());
 		return t;
