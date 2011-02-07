@@ -24,6 +24,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
+import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import uk.org.taverna.scufl2.api.common.Named;
@@ -361,9 +362,11 @@ public class T2FlowParser {
 
 			java.util.Map<URI, Set<PropertyObject>> properties = configuration
 					.getPropertyResource().getProperties();
-			PropertyLiteral literal = new PropertyLiteral();
-			literal.setLiteralValue(configBean.getAny().toString());
-			literal.setLiteralType(PropertyLiteral.XML_LITERAL);
+			Object any = configBean.getAny();
+			Element element = (Element) configBean.getAny();			
+			PropertyLiteral literal = new PropertyLiteral(element);			
+			//literal.setLiteralValue(configBean.getAny().toString());
+			//literal.setLiteralType(PropertyLiteral.XML_LITERAL);
 			properties.get(fallBackURI).add(literal);
 
 		}
