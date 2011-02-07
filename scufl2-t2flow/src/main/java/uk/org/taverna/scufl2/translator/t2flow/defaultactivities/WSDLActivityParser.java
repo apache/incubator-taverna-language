@@ -20,10 +20,10 @@ public class WSDLActivityParser extends AbstractActivityParser {
 	private static String outputSplitterClassName = "net.sf.taverna.t2.activities.wsdl.xmlsplitter.XMLOutputSplitterActivity";
 
 	public static URI WSDL = URI
-			.create("http://ns.taverna.org.uk/2010/activity/wsdl/");
-	public static URI XML_INPUT_SPLITTER = WSDL.resolve("xmlinputsplitter/");
-	public static URI SECURITY = WSDL.resolve("security/");
-	public static URI XML_OUTPUT_SPLITTER = WSDL.resolve("xmloutputsplitter/");
+			.create("http://ns.taverna.org.uk/2010/activity/wsdl");
+	public static URI XML_INPUT_SPLITTER = WSDL.resolve("wsdl/xmlinputsplitter");
+	public static URI SECURITY = WSDL.resolve("wsdl/security");
+	public static URI XML_OUTPUT_SPLITTER = WSDL.resolve("wsdl/xmloutputsplitter");
 
 	@Override
 	public boolean canHandlePlugin(URI activityURI) {
@@ -62,7 +62,7 @@ public class WSDLActivityParser extends AbstractActivityParser {
 
 		Configuration configuration = new Configuration();
 		configuration.getPropertyResource().setTypeURI(
-				WSDL.resolve("ConfigType"));
+				WSDL.resolve("#ConfigType"));
 
 		URI wsdl;
 		try {
@@ -83,17 +83,17 @@ public class WSDLActivityParser extends AbstractActivityParser {
 		}
 
 		PropertyResource wsdlOperation = configuration.getPropertyResource()
-				.addPropertyAsNewResource(WSDL.resolve("operation"),
-						WSDL.resolve("Operation"));
-		wsdlOperation.addPropertyReference(WSDL.resolve("wsdl"), wsdl);
-		wsdlOperation.addPropertyAsString(WSDL.resolve("operationName"), operation);
+				.addPropertyAsNewResource(WSDL.resolve("#operation"),
+						WSDL.resolve("#Operation"));
+		wsdlOperation.addPropertyReference(WSDL.resolve("#wsdl"), wsdl);
+		wsdlOperation.addPropertyAsString(WSDL.resolve("#operationName"), operation);
 
 		if (wsdlConfig.getSecurityProfile() != null
 				&& !wsdlConfig.getSecurityProfile().isEmpty()) {
 			URI securityProfileURI = SECURITY.resolve(wsdlConfig
 					.getSecurityProfile());
 			configuration.getPropertyResource().addPropertyReference(
-					WSDL.resolve("securityProfile"), securityProfileURI);
+					WSDL.resolve("#securityProfile"), securityProfileURI);
 		}
 
 		// TODO: Security stuff
