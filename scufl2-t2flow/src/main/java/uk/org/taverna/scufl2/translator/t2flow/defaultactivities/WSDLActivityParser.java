@@ -90,7 +90,7 @@ public class WSDLActivityParser extends AbstractActivityParser {
 
 		if (wsdlConfig.getSecurityProfile() != null
 				&& !wsdlConfig.getSecurityProfile().isEmpty()) {
-			URI securityProfileURI = SECURITY.resolve(wsdlConfig
+			URI securityProfileURI = SECURITY.resolve("#" + wsdlConfig
 					.getSecurityProfile());
 			configuration.getPropertyResource().addPropertyReference(
 					WSDL.resolve("#securityProfile"), securityProfileURI);
