@@ -1,4 +1,4 @@
-package uk.org.taverna.scufl2.api.io;
+package uk.org.taverna.scufl2.api.io.structure;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +20,8 @@ import uk.org.taverna.scufl2.api.core.BlockingControlLink;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
+import uk.org.taverna.scufl2.api.io.ReaderException;
+import uk.org.taverna.scufl2.api.io.WorkflowBundleReader;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
 import uk.org.taverna.scufl2.api.port.InputWorkflowPort;
@@ -33,7 +35,7 @@ import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 
-public class SillyReader implements WorkflowBundleReader {
+public class StructureReader implements WorkflowBundleReader {
 
 	public enum Level {
 		WorkflowBundle, Workflow, Processor, Activity, Links, Profile, Configuration, ProcessorBinding, OutputPortBindings, InputPortBindings, Property, Controls
@@ -42,7 +44,7 @@ public class SillyReader implements WorkflowBundleReader {
 
 	private static final String ACTIVITY_SLASH = "activity/";
 
-	public static final String APPLICATION_VND_EXAMPLE_SILLY = "application/vnd.example.silly";
+	public static final String TEXT_VND_TAVERNA_SCUFL2_STRUCTURE = "text/vnd.taverna.scufl2.structure";
 
 	private WorkflowBundle wb;
 
@@ -78,7 +80,7 @@ public class SillyReader implements WorkflowBundleReader {
 
 	@Override
 	public Set<String> getMediaTypes() {
-		return Collections.singleton(APPLICATION_VND_EXAMPLE_SILLY);
+		return Collections.singleton(TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
 	}
 
 	protected WorkflowBundle parse(String bundleString) throws ReaderException {

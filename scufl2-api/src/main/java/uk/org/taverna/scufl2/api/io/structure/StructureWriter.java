@@ -1,6 +1,6 @@
-package uk.org.taverna.scufl2.api.io;
+package uk.org.taverna.scufl2.api.io.structure;
 
-import static uk.org.taverna.scufl2.api.io.SillyReader.APPLICATION_VND_EXAMPLE_SILLY;
+import static uk.org.taverna.scufl2.api.io.structure.StructureReader.TEXT_VND_TAVERNA_SCUFL2_STRUCTURE;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +27,7 @@ import uk.org.taverna.scufl2.api.core.ControlLink;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
+import uk.org.taverna.scufl2.api.io.WorkflowBundleWriter;
 import uk.org.taverna.scufl2.api.port.Port;
 import uk.org.taverna.scufl2.api.port.ProcessorPort;
 import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
@@ -36,7 +37,7 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.api.property.PropertyObject;
 
-public class SillyWriter implements WorkflowBundleWriter {
+public class StructureWriter implements WorkflowBundleWriter {
 
 	private StringBuffer sb;
 
@@ -271,7 +272,7 @@ public class SillyWriter implements WorkflowBundleWriter {
 
 	@Override
 	public Set<String> getMediaTypes() {
-		return Collections.singleton(APPLICATION_VND_EXAMPLE_SILLY);
+		return Collections.singleton(TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
 	}
 
 	private void newLine(int indentLevel) {
