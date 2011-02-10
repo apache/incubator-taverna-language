@@ -19,7 +19,7 @@ WorkflowBundle 'HelloWorld'
       Type <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity>
       In 'personName'
       Out 'hello'
-    ProcessorBinding
+    ProcessorBinding 'Hello'
       Activity 'HelloScript'
       Processor 'HelloWorld:Hello'
       InputPortBindings
@@ -37,7 +37,7 @@ System.out.println("Server says: " + hello);'''
       Type <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity>
       In 'personName'
       Out 'hello'
-    ProcessorBinding
+    ProcessorBinding 'Hello'
       Activity 'HelloScript'
       Processor 'HelloWorld:Hello'
       InputPortBindings

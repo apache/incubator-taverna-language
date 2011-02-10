@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static uk.org.taverna.scufl2.translator.t2flow.T2FlowReader.APPLICATION_VND_TAVERNA_T2FLOW_XML;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.net.URL;
 
 import org.junit.Test;
@@ -33,8 +32,8 @@ public class TestT2FlowReader {
 		
 		String report = "";
 		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-		//io.writeBundle(researchObj, byteStream, StructureReader.TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
-		
+		io.writeBundle(researchObj, byteStream, StructureReader.TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
+		assertEquals(report, byteStream.toString("utf-8"));
 		
 		
 	}
