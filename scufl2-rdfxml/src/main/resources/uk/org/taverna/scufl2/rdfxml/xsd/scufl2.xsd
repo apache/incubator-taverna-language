@@ -434,7 +434,7 @@
 						<xs:simpleContent>
 							<xs:extension base="xs:int">
 								<xs:attribute ref="rdf:datatype" use="required"
-									fixed="http://www.w3.org/2001/XMLSchema#int" />
+									fixed="http://www.w3.org/2001/XMLSchema#integer" />
 							</xs:extension>
 						</xs:simpleContent>
 					</xs:complexType>
@@ -479,7 +479,7 @@
 					<xs:simpleContent>
 						<xs:extension base="xs:int">
 							<xs:attribute ref="rdf:datatype" use="required"
-								fixed="http://www.w3.org/2001/XMLSchema#int" />
+								fixed="http://www.w3.org/2001/XMLSchema#integer" />
 						</xs:extension>
 					</xs:simpleContent>
 				</xs:complexType>
@@ -526,7 +526,7 @@
 			<xs:simpleContent>
 				<xs:extension base="xs:int">
 					<xs:attribute ref="rdf:datatype" use="required"
-						fixed="http://www.w3.org/2001/XMLSchema#int" />
+						fixed="http://www.w3.org/2001/XMLSchema#integer" />
 				</xs:extension>
 			</xs:simpleContent>
 		</xs:complexType>
@@ -536,7 +536,7 @@
 			<xs:simpleContent>
 				<xs:extension base="xs:int">
 					<xs:attribute ref="rdf:datatype" use="required"
-						fixed="http://www.w3.org/2001/XMLSchema#int" />
+						fixed="http://www.w3.org/2001/XMLSchema#integer" />
 				</xs:extension>
 			</xs:simpleContent>
 		</xs:complexType>
