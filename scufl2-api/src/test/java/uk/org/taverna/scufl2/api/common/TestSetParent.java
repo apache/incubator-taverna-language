@@ -15,7 +15,8 @@ public class TestSetParent {
 	public void checkParents() throws Exception {
 		example.accept(new VisitorWithPath() {
 			@Override
-			public boolean visit(WorkflowBean node) {
+			public boolean visit() {
+				WorkflowBean node = getCurrentNode();
 				if (node instanceof Child) {
 					Child child = (Child) node;
 					WorkflowBean parent = child.getParent();

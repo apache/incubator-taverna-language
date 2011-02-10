@@ -274,7 +274,8 @@ public class TestURIToolsBeans {
 		final StringBuffer paths = new StringBuffer();
 		wfBundle.accept(new VisitorWithPath() {
 			@Override
-			public boolean visit(WorkflowBean node) {
+			public boolean visit() {
+				WorkflowBean node = getCurrentNode();
 				URI uri;
 				if (getCurrentPath().isEmpty()) {
 					uri = uriTools.uriForBean(node);

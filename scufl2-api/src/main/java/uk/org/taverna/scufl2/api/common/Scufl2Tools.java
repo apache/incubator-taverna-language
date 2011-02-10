@@ -255,7 +255,8 @@ public class Scufl2Tools {
 	public void setParents(WorkflowBundle bundle) {
 		bundle.accept(new VisitorWithPath() {
 			@Override
-			public boolean visit(WorkflowBean node) {
+			public boolean visit() {
+				WorkflowBean node = getCurrentNode();
 				if (node instanceof Child) {
 					Child child = (Child) node;
 					WorkflowBean parent = getCurrentPath().peek();
@@ -265,6 +266,7 @@ public class Scufl2Tools {
 				}
 				return true;
 			}
+
 		});
 	}
 
