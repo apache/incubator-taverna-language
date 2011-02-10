@@ -31,6 +31,12 @@
 			<artifactId>commons-io</artifactId>
 			<scope>compile</scope>
 		</dependency>
+				<dependency>
+			<groupId>uk.org.taverna.scufl2</groupId>
+			<artifactId>scufl2-api</artifactId>
+			<version>0.1-SNAPSHOT</version>			
+			<type>test-jar</type>
+		</dependency>
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-impl</artifactId>
