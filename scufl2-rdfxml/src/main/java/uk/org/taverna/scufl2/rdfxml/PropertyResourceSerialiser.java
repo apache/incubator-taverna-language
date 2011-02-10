@@ -1,6 +1,7 @@
 package uk.org.taverna.scufl2.rdfxml;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -32,12 +33,11 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 	private static final String COLLECTION = "Collection";
 	public static final String RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 	protected Stack<Element> elementStack = new Stack<Element>();
-	protected final List<Object> elements;
 	protected DocumentBuilder docBuilder;
 	protected Document doc;
+	private Element rootElement;
 
-	public PropertyResourceSerialiser(List<Object> elements, URI baseUri) {
-		this.elements = elements;
+	public PropertyResourceSerialiser(URI baseUri) {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(true);
 		try {
@@ -92,7 +92,7 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 		Element element = elementStack.pop();
 		if (elementStack.isEmpty()) {
 			// Top level
-			elements.add(element);
+			setRootElement(element);
 		} else {
 			elementStack.peek().appendChild(element);
 		}
@@ -166,6 +166,14 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 	protected void list(PropertyList node) {
 		Element element = elementStack.peek();
 		element.setAttributeNS(RDF, PARSE_TYPE, COLLECTION);
+	}
+	
+	public void setRootElement(Element rootElement) {
+		this.rootElement = rootElement;
+	}
+
+	public Element getRootElement() {
+		return rootElement;
 	}
 
 }

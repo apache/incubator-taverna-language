@@ -21,6 +21,7 @@ import org.w3._1999._02._22_rdf_syntax_ns_.RDF;
 import org.w3._1999._02._22_rdf_syntax_ns_.Resource;
 import org.w3._1999._02._22_rdf_syntax_ns_.Type;
 import org.w3._2000._01.rdf_schema_.SeeAlso;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
@@ -140,21 +141,29 @@ public class RDFXMLSerializer {
 		}
 
 		private void processorOutputPortBinding(ProcessorOutputPortBinding node) {
-			uk.org.taverna.scufl2.rdfxml.jaxb.OutputPortBinding outputBinding = objectFactory.createOutputPortBinding();
+			uk.org.taverna.scufl2.rdfxml.jaxb.OutputPortBinding outputBinding = objectFactory
+					.createOutputPortBinding();
 			outputBinding.setAbout(uri(node));
-			outputBinding.setBindOutputActivityPort(resource(uri(node.getBoundActivityPort())));
-			outputBinding.setBindOutputProcessorPort(resource(uri(node.getBoundProcessorPort())));
-			OutputPortBinding b = objectFactory.createProcessorBindingOutputPortBinding();
+			outputBinding.setBindOutputActivityPort(resource(uri(node
+					.getBoundActivityPort())));
+			outputBinding.setBindOutputProcessorPort(resource(uri(node
+					.getBoundProcessorPort())));
+			OutputPortBinding b = objectFactory
+					.createProcessorBindingOutputPortBinding();
 			b.setOutputPortBinding(outputBinding);
 			processorBindingElem.getOutputPortBinding().add(b);
 		}
 
 		private void processorInputPortBinding(ProcessorInputPortBinding node) {
-			uk.org.taverna.scufl2.rdfxml.jaxb.InputPortBinding inputBinding = objectFactory.createInputPortBinding();
+			uk.org.taverna.scufl2.rdfxml.jaxb.InputPortBinding inputBinding = objectFactory
+					.createInputPortBinding();
 			inputBinding.setAbout(uri(node));
-			inputBinding.setBindInputActivityPort(resource(uri(node.getBoundActivityPort())));
-			inputBinding.setBindInputProcessorPort(resource(uri(node.getBoundProcessorPort())));
-			InputPortBinding b = objectFactory.createProcessorBindingInputPortBinding();
+			inputBinding.setBindInputActivityPort(resource(uri(node
+					.getBoundActivityPort())));
+			inputBinding.setBindInputProcessorPort(resource(uri(node
+					.getBoundProcessorPort())));
+			InputPortBinding b = objectFactory
+					.createProcessorBindingInputPortBinding();
 			b.setInputPortBinding(inputBinding);
 			processorBindingElem.getInputPortBinding().add(b);
 
@@ -176,14 +185,24 @@ public class RDFXMLSerializer {
 		}
 
 		private void configuration(Configuration node) {
-			uk.org.taverna.scufl2.rdfxml.jaxb.Configuration configuration = objectFactory.createConfiguration();
+			uk.org.taverna.scufl2.rdfxml.jaxb.Configuration configuration = objectFactory
+					.createConfiguration();
 			configuration.setAbout(uri(node));
 			configuration.setConfigure(resource(uri(node.getConfigures())));
 			configuration.setName(node.getName());
 			configuration.setType(type(node));
-			
+
 			URI baseUri = uriTools.uriForBean(profile);
-			node.getPropertyResource().accept(new PropertyResourceSerialiser(configuration.getAny(), baseUri));
+			PropertyResourceSerialiser visitor = new PropertyResourceSerialiser(
+					baseUri);
+			node.getPropertyResource().accept(visitor);
+			// We don't want the root element (eg. beanshell:Configuration) again, as we're
+			// already inside the general Configuration element which rdf:type is set
+			NodeList childNodes = visitor.getRootElement().getChildNodes();
+			for (int i = 0; i < childNodes.getLength(); i++) {
+				configuration.getAny().add(childNodes.item(i));
+			}
+
 			// TODO: No way in API to mark non-activated configurations
 			profileElem.getActivateConfiguration().add(resource(uri(node)));
 			doc.getAny().add(configuration);
@@ -193,8 +212,10 @@ public class RDFXMLSerializer {
 			processorBindingElem = objectFactory.createProcessorBinding();
 			processorBindingElem.setAbout(uri(node));
 			processorBindingElem.setName(node.getName());
-			processorBindingElem.setBindActivity(resource(uri(node.getBoundActivity())));
-			processorBindingElem.setBindProcessor(resource(uri(node.getBoundProcessor())));
+			processorBindingElem.setBindActivity(resource(uri(node
+					.getBoundActivity())));
+			processorBindingElem.setBindProcessor(resource(uri(node
+					.getBoundProcessor())));
 			profileElem.getProcessorBinding().add(resource(uri(node)));
 			doc.getAny().add(processorBindingElem);
 		}
