@@ -34,6 +34,7 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
+import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
 import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
@@ -59,6 +60,7 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.Dataflow;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Datalinks;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.DepthPort;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.DepthPorts;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.DispatchLayer;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.DispatchStack;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.GranularDepthPort;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.GranularDepthPorts;
@@ -265,7 +267,7 @@ public class T2FlowParser {
 				+ "/" + raven.getVersion() + "/" + className);
 	}
 
-	private URI mapActivityFromRaven(Raven raven, String activityClass)
+	private URI mapTypeFromRaven(Raven raven, String activityClass)
 			throws ReaderException {
 		URI classURI = makeRavenURI(raven, activityClass);
 		parserState.get().setCurrentT2Parser(null);
@@ -282,14 +284,14 @@ public class T2FlowParser {
 		}
 		t2Parser.setParserState(parserState.get());
 		parserState.get().setCurrentT2Parser(t2Parser);
-		return t2Parser.mapT2flowActivityToURI(classURI);
+		return t2Parser.mapT2flowRavenIdToScufl2URI(classURI);
 	}
 
 	protected uk.org.taverna.scufl2.api.activity.Activity parseActivity(
 			Activity origActivity) throws ReaderException {
 		Raven raven = origActivity.getRaven();
 		String activityClass = origActivity.getClazz();
-		URI activityId = mapActivityFromRaven(raven, activityClass);
+		URI activityId = mapTypeFromRaven(raven, activityClass);
 		uk.org.taverna.scufl2.api.activity.Activity newActivity = new uk.org.taverna.scufl2.api.activity.Activity();
 		newActivity.setConfigurableType(activityId);
 		newActivity.setParent(parserState.get().getCurrentProfile());
@@ -342,7 +344,7 @@ public class T2FlowParser {
 
 		try {
 			configuration = parserState.get().getCurrentT2Parser()
-					.parseActivityConfiguration(this, configBean);
+					.parseConfiguration(this, configBean);
 		} catch (ReaderException e) {
 			if (isStrict()) {
 				throw e;
@@ -363,10 +365,10 @@ public class T2FlowParser {
 			java.util.Map<URI, Set<PropertyObject>> properties = configuration
 					.getPropertyResource().getProperties();
 			Object any = configBean.getAny();
-			Element element = (Element) configBean.getAny();			
-			PropertyLiteral literal = new PropertyLiteral(element);			
-			//literal.setLiteralValue(configBean.getAny().toString());
-			//literal.setLiteralType(PropertyLiteral.XML_LITERAL);
+			Element element = (Element) configBean.getAny();
+			PropertyLiteral literal = new PropertyLiteral(element);
+			// literal.setLiteralValue(configBean.getAny().toString());
+			// literal.setLiteralType(PropertyLiteral.XML_LITERAL);
 			properties.get(fallBackURI).add(literal);
 
 		}
@@ -544,8 +546,25 @@ public class T2FlowParser {
 	}
 
 	protected uk.org.taverna.scufl2.api.dispatchstack.DispatchStack parseDispatchStack(
-			DispatchStack dispatchStack) {
-		return null;
+			DispatchStack dispatchStack) throws ReaderException {
+		uk.org.taverna.scufl2.api.dispatchstack.DispatchStack newStack = new uk.org.taverna.scufl2.api.dispatchstack.DispatchStack();
+
+		for (DispatchLayer dispatchLayer : dispatchStack.getDispatchLayer()) {
+			DispatchStackLayer layer = parseDispatchStack(dispatchLayer);
+			newStack.add(layer);
+		}
+		return newStack;
+	}
+
+	protected DispatchStackLayer parseDispatchStack(DispatchLayer dispatchLayer) throws ReaderException {
+		DispatchStackLayer dispatchStackLayer = new DispatchStackLayer();
+		URI typeUri = mapTypeFromRaven(dispatchLayer.getRaven(), dispatchLayer.getClazz());
+		dispatchStackLayer.setConfigurableType(typeUri);
+
+
+		//parseActivityConfiguration(dispatchLayer.getConfigBean());
+		
+		return dispatchStackLayer;
 	}
 
 	@SuppressWarnings("boxing")

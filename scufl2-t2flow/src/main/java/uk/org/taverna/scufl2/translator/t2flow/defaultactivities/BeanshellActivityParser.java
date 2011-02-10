@@ -48,12 +48,12 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 	}
 
 	@Override
-	public URI mapT2flowActivityToURI(URI t2flowActivity) {
+	public URI mapT2flowRavenIdToScufl2URI(URI t2flowActivity) {
 		return ACTIVITY_URI;
 	}
 
 	@Override
-	public Configuration parseActivityConfiguration(T2FlowParser t2FlowParser,
+	public Configuration parseConfiguration(T2FlowParser t2FlowParser,
 			ConfigBean configBean) throws ReaderException {
 		BeanshellConfig beanshellConfig = unmarshallConfig(t2FlowParser,
 				configBean, "xstream", BeanshellConfig.class);

@@ -10,9 +10,9 @@ public interface T2Parser {
 
 	boolean canHandlePlugin(URI pluginURI);
 
-	URI mapT2flowActivityToURI(URI t2flowActivity);
+	URI mapT2flowRavenIdToScufl2URI(URI t2flowActivity);
 
-	Configuration parseActivityConfiguration(T2FlowParser t2FlowParser,
+	Configuration parseConfiguration(T2FlowParser t2FlowParser,
 			ConfigBean configBean) throws ReaderException;
 
 	public void setParserState(ParserState parserState);
