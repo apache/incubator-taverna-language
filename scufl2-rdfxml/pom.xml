@@ -7,6 +7,7 @@
 		<version>0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>scufl2-rdfxml</artifactId>
+	<packaging>bundle</packaging>
 	<name>Taverna Scufl 2 RDF/XML</name>
 	<description>XSD based XML serialisation which is RDF/XML compatible</description>
 	<properties>

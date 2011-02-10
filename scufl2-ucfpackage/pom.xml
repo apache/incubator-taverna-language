@@ -6,8 +6,8 @@
 		<artifactId>scufl2</artifactId>
 		<version>0.1-SNAPSHOT</version>
 	</parent>
-	<groupId>uk.org.taverna.scufl2</groupId>
 	<artifactId>scufl2-ucfpackage</artifactId>
+	<packaging>bundle</packaging>
 	<name>Taverna Scufl 2 UCF Package</name>
 	<description>Adobe UCF compatible Package API, making a structured ZIP file with manifest</description>
 	<dependencies>
