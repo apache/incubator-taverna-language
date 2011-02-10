@@ -22,15 +22,13 @@ import uk.org.taverna.scufl2.api.property.PropertyResource;
 public class TestPropertySerialisation {
 
 	private PropertyResourceSerialiser serialiser;
-	private List<Object> elements;
 	private PropertyResource propResource;
 
 	private URI property = URI.create("http://example.com/property");
 
 	@Before
 	public void makeVisitor() {
-		elements = new ArrayList<Object>();
-		serialiser = new PropertyResourceSerialiser(elements, URI.create("/"));
+		serialiser = new PropertyResourceSerialiser(URI.create("/"));
 	}
 
 	@Before
@@ -44,7 +42,8 @@ public class TestPropertySerialisation {
 				property.resolve("#object"));
 
 		propResource.accept(serialiser);
-		Element elem = (Element) elements.get(0);
+		Element elem = serialiser.getRootElement();
+		serialiser.getRootElement();
 		elem = (Element) elem.getChildNodes().item(0);
 		assertEquals("reference", elem.getTagName());
 		assertEquals("http://example.com/property#", elem.getNamespaceURI());
@@ -65,7 +64,7 @@ public class TestPropertySerialisation {
 
 		Set<String> values = new HashSet<String>();
 
-		Element rootElem = (Element) elements.get(0);		
+		Element rootElem = serialiser.getRootElement();		
 
 		for (int i = 0; i < rootElem.getChildNodes().getLength(); i++) {
 			Element elem = (Element) rootElem.getChildNodes().item(i);
@@ -91,7 +90,7 @@ public class TestPropertySerialisation {
 		p.addPropertyAsString(property.resolve("#str"), "Some String");
 
 		propResource.accept(serialiser);
-		Element elem = (Element) elements.get(0);
+		Element elem = serialiser.getRootElement();
 		elem = (Element) elem.getChildNodes().item(0);
 		assertEquals("prop", elem.getTagName());
 		assertEquals("http://example.com/property#", elem.getNamespaceURI());
@@ -114,7 +113,7 @@ public class TestPropertySerialisation {
 		p.setResourceURI(property.resolve("#id"));
 		
 		propResource.accept(serialiser);
-		Element elem = (Element) elements.get(0);
+		Element elem = serialiser.getRootElement();
 		elem = (Element) elem.getChildNodes().item(0);
 		assertEquals("prop", elem.getTagName());
 		assertEquals("http://example.com/property#", elem.getNamespaceURI());
@@ -132,7 +131,7 @@ public class TestPropertySerialisation {
 	public void propertyAnonymous() throws Exception {
 		
 		propResource.accept(serialiser);
-		Element elem = (Element) elements.get(0);
+		Element elem = serialiser.getRootElement();
 		assertEquals("Description", elem.getTagName());
 		assertEquals(PropertyResourceSerialiser.RDF, elem.getNamespaceURI());
 		assertEquals(0, elem.getAttributes().getLength());
@@ -144,7 +143,7 @@ public class TestPropertySerialisation {
 		propResource.setResourceURI(property.resolve("#id"));
 		
 		propResource.accept(serialiser);
-		Element elem = (Element) elements.get(0);
+		Element elem = serialiser.getRootElement();
 		assertEquals("Description", elem.getTagName());
 		assertEquals(PropertyResourceSerialiser.RDF, elem.getNamespaceURI());
 		assertEquals(1, elem.getAttributes().getLength());
@@ -165,7 +164,7 @@ public class TestPropertySerialisation {
 		propResource.addProperty(property.resolve("#somelist"), pList);
 		propResource.accept(serialiser);
 
-		Element elem = (Element) elements.get(0);
+		Element elem = serialiser.getRootElement();
 		elem = (Element) elem.getChildNodes().item(0);
 
 		assertEquals("somelist", elem.getTagName());
@@ -184,7 +183,7 @@ public class TestPropertySerialisation {
 				"Simple string");
 
 		propResource.accept(serialiser);
-		Element elem = (Element) elements.get(0);
+		Element elem = serialiser.getRootElement();
 		elem = (Element) elem.getChildNodes().item(0);
 
 		assertEquals("simple", elem.getTagName());
@@ -204,7 +203,7 @@ public class TestPropertySerialisation {
 		propResource.accept(serialiser);
 		Set<String> values = new HashSet<String>();
 
-		Element rootElem = (Element) elements.get(0);
+		Element rootElem = serialiser.getRootElement();
 
 		for (int i = 0; i < rootElem.getChildNodes().getLength(); i++) {
 			Element elem = (Element) rootElem.getChildNodes().item(i);
@@ -226,7 +225,7 @@ public class TestPropertySerialisation {
 		PropertyLiteral literal = new PropertyLiteral(1337);
 		propResource.addProperty(property.resolve("#number"), literal);
 		propResource.accept(serialiser);
-		Element elem = (Element) elements.get(0);
+		Element elem = serialiser.getRootElement();
 		elem = (Element) elem.getChildNodes().item(0);
 		assertEquals("number", elem.getTagName());
 		assertEquals("http://example.com/property#", elem.getNamespaceURI());
@@ -248,7 +247,7 @@ public class TestPropertySerialisation {
 		PropertyLiteral literal = new PropertyLiteral(cal);
 		propResource.addProperty(property.resolve("#when"), literal);
 		propResource.accept(serialiser);
-		Element elem = (Element) elements.get(0);
+		Element elem = serialiser.getRootElement();
 		elem = (Element) elem.getChildNodes().item(0);
 		assertEquals("when", elem.getTagName());
 		assertEquals("http://example.com/property#", elem.getNamespaceURI());
@@ -267,7 +266,7 @@ public class TestPropertySerialisation {
 				PropertyLiteral.XML_LITERAL);
 		propResource.addProperty(property.resolve("#xmlValue"), literal);
 		propResource.accept(serialiser);
-		Element elem = (Element) elements.get(0);
+		Element elem = serialiser.getRootElement();
 		elem = (Element) elem.getChildNodes().item(0);
 		assertEquals("xmlValue", elem.getTagName());
 		assertEquals("http://example.com/property#", elem.getNamespaceURI());
