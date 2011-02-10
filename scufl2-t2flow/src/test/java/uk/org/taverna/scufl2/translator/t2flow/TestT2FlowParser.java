@@ -24,6 +24,8 @@ public class TestT2FlowParser {
 		Profile profile = researchObj.getMainProfile();
 		assertEquals(1, researchObj.getProfiles().size());
 		assertEquals(profile, researchObj.getProfiles().getByName("taverna-2.1.0"));
+		
 	}
 
+	
 }
