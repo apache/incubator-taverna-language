@@ -683,8 +683,9 @@ public class T2FlowParser {
 
 	public WorkflowBundle parseT2Flow(
 			uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow wf)
-			throws ReaderException, JAXBException {
+			throws ReaderException, JAXBException {		
 		try {
+			parserState.get().setT2FlowParser(this);
 			WorkflowBundle ro = new WorkflowBundle();
 			parserState.get().setCurrentResearchObject(ro);
 			makeProfile(wf);
@@ -710,5 +711,7 @@ public class T2FlowParser {
 	public void setStrict(boolean strict) {
 		this.strict = strict;
 	}
+
+
 
 }
