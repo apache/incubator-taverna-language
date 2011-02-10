@@ -76,6 +76,18 @@ public class URITools {
 	}
 
 	public WorkflowBean resolveUri(URI uri, WorkflowBundle wfBundle) {
+
+		// Check if it's a workflow URI
+		String rel = Workflow.WORKFLOW_ROOT.relativize(uri).toASCIIString();
+		if (rel.matches("[0-9a-f-]+/")) {
+			for (Workflow wf : wfBundle.getWorkflows()) {
+				if (wf.getWorkflowIdentifier().equals(uri)) {
+					return wf;
+				}
+			}
+			return null;
+		}
+
 		// Naive, super-inefficient reverse-lookup - we could have even returned
 		// early!
 		final Map<URI, WorkflowBean> uriToBean = new HashMap<URI, WorkflowBean>();
