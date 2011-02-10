@@ -1,7 +1,6 @@
 package uk.org.taverna.scufl2.rdfxml;
 
 import java.io.OutputStream;
-import java.math.BigInteger;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
@@ -56,12 +55,14 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.rdfxml.impl.NamespacePrefixMapperJAXB_RI;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Blocking;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Control;
+import uk.org.taverna.scufl2.rdfxml.jaxb.DataLink.MergePosition;
 import uk.org.taverna.scufl2.rdfxml.jaxb.DataLinkEntry;
 import uk.org.taverna.scufl2.rdfxml.jaxb.DispatchStack.DispatchStackLayers;
 import uk.org.taverna.scufl2.rdfxml.jaxb.GranularPortDepth;
 import uk.org.taverna.scufl2.rdfxml.jaxb.IterationStrategyStack.IterationStrategies;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ObjectFactory;
 import uk.org.taverna.scufl2.rdfxml.jaxb.PortDepth;
+import uk.org.taverna.scufl2.rdfxml.jaxb.PortNode.DesiredDepth;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ProcessorBinding.InputPortBinding;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ProcessorBinding.OutputPortBinding;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ProductOf;
@@ -126,7 +127,7 @@ public class RDFXMLSerializer {
 			if (integer == null)
 				return null;
 			PortDepth p = objectFactory.createPortDepth();
-			p.setValue(BigInteger.valueOf(integer.longValue()));
+			p.setValue(integer);
 			p.setDatatype(p.getDatatype());
 			return p;
 		}
@@ -135,7 +136,7 @@ public class RDFXMLSerializer {
 			if (integer == null)
 				return null;
 			GranularPortDepth p = objectFactory.createGranularPortDepth();
-			p.setValue(BigInteger.valueOf(integer.longValue()));
+			p.setValue(integer);
 			p.setDatatype(p.getDatatype());
 			return p;
 		}
@@ -435,8 +436,7 @@ public class RDFXMLSerializer {
 				ProductOf productOf = objectFactory.createProductOf();
 				productOf.setParseType(productOf.getParseType());
 				crossProduct.setProductOf(productOf);
-				productStack.add(crossProduct.getProductOf()
-						.getCrossProductOrDotProductOrInputProcessorPort());
+				productStack.add(crossProduct.getProductOf().getCrossProductOrDotProductOrPortNode());
 			}
 			if (node instanceof DotProduct) {
 				uk.org.taverna.scufl2.rdfxml.jaxb.DotProduct dotProduct = objectFactory
@@ -447,15 +447,20 @@ public class RDFXMLSerializer {
 				productOf.setParseType(productOf.getParseType());
 				dotProduct.setProductOf(productOf);
 				productStack.add(dotProduct.getProductOf()
-						.getCrossProductOrDotProductOrInputProcessorPort());
+						.getCrossProductOrDotProductOrPortNode());
 			}
 			if (node instanceof PortNode) {
 				PortNode portNode = (PortNode) node;
 				InputProcessorPort inPort = portNode.getInputProcessorPort();
 				URI portUri = uriTools.relativeUriForBean(inPort, wf);
-				uk.org.taverna.scufl2.rdfxml.jaxb.ProductOf.InputProcessorPort port = objectFactory
-						.createProductOfInputProcessorPort();
+				uk.org.taverna.scufl2.rdfxml.jaxb.PortNode port = objectFactory.createPortNode();
 				port.setAbout(portUri.toASCIIString());
+				if (portNode.getDesiredDepth() != null) {
+					DesiredDepth value = objectFactory.createPortNodeDesiredDepth();
+					value.setDatatype(value.getDatatype());
+					value.setValue(portNode.getDesiredDepth());
+				}
+				port.setIterateOverInputPort(makeResource(portUri));
 				productStack.peek().add(port);
 			}
 			if (node instanceof DataLink) {
@@ -471,10 +476,9 @@ public class RDFXMLSerializer {
 				link.setSendTo(makeResource(toUri));
 
 				if (dataLink.getMergePosition() != null) {
-					uk.org.taverna.scufl2.rdfxml.jaxb.Integer value = objectFactory
-							.createInteger();
-					value.setValue(BigInteger.valueOf(dataLink
-							.getMergePosition()));
+					MergePosition value = objectFactory.createDataLinkMergePosition();
+					value.setValue(dataLink
+							.getMergePosition());
 					value.setDatatype(value.getDatatype());
 					link.setMergePosition(value);
 				}
@@ -518,7 +522,7 @@ public class RDFXMLSerializer {
 			}
 			GranularPortDepth portDepth = objectFactory
 					.createGranularPortDepth();
-			portDepth.setValue(BigInteger.valueOf(granularDepth));
+			portDepth.setValue(granularDepth);
 			portDepth.setDatatype(portDepth.getDatatype());
 			return portDepth;
 		}
@@ -528,7 +532,7 @@ public class RDFXMLSerializer {
 				return null;
 			}
 			PortDepth portDepth = objectFactory.createPortDepth();
-			portDepth.setValue(BigInteger.valueOf(depth));
+			portDepth.setValue(depth);
 			portDepth.setDatatype(portDepth.getDatatype());
 			return portDepth;
 		}

@@ -425,17 +425,32 @@
 		</xs:complexType>
 	</xs:element>
 
+	<xs:element name="PortNode">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="iterateOverInputPort" type="rdf:Resource" />
+				<xs:element name="desiredDepth" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:int">
+								<xs:attribute ref="rdf:datatype" use="required"
+									fixed="http://www.w3.org/2001/XMLSchema#int" />
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attributeGroup ref="rdf:about" />
+		</xs:complexType>
+	</xs:element>
+
 
 	<xs:element name="productOf">
 		<xs:complexType>
 			<xs:choice maxOccurs="unbounded">
 				<xs:element ref="scufl2:CrossProduct" />
 				<xs:element ref="scufl2:DotProduct" />
-				<xs:element name="InputProcessorPort">
-					<xs:complexType>
-						<xs:attributeGroup ref="rdf:about" />
-					</xs:complexType>
-				</xs:element>
+				<xs:element ref="scufl2:PortNode" />
 			</xs:choice>
 			<xs:attribute ref="rdf:parseType" use="required" fixed="Collection" />
 
@@ -459,8 +474,16 @@
 		<xs:sequence>
 			<xs:element name="receiveFrom" type="rdf:Resource" />
 			<xs:element name="sendTo" type="rdf:Resource" />
-			<xs:element name="mergePosition" minOccurs="0"
-				type="scufl2:integer" />
+			<xs:element name="mergePosition" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:int">
+							<xs:attribute ref="rdf:datatype" use="required"
+								fixed="http://www.w3.org/2001/XMLSchema#int" />
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
 		</xs:sequence>
 		<xs:attributeGroup ref="rdf:about" />
 	</xs:complexType>
@@ -482,14 +505,6 @@
 	</xs:complexType>
 
 
-	<xs:complexType name="integer">
-		<xs:simpleContent>
-			<xs:extension base="xs:integer">
-				<xs:attribute ref="rdf:datatype" use="required"
-					fixed="http://www.w3.org/2001/XMLSchema#integer" />
-			</xs:extension>
-		</xs:simpleContent>
-	</xs:complexType>
 	<xs:element name="configurationType">
 		<xs:complexType>
 			<xs:attributeGroup ref="rdf:resource" />
@@ -509,9 +524,9 @@
 	<xs:element name="granularPortDepth">
 		<xs:complexType>
 			<xs:simpleContent>
-				<xs:extension base="xs:integer">
+				<xs:extension base="xs:int">
 					<xs:attribute ref="rdf:datatype" use="required"
-						fixed="http://www.w3.org/2001/XMLSchema#integer" />
+						fixed="http://www.w3.org/2001/XMLSchema#int" />
 				</xs:extension>
 			</xs:simpleContent>
 		</xs:complexType>
@@ -519,9 +534,9 @@
 	<xs:element name="portDepth">
 		<xs:complexType>
 			<xs:simpleContent>
-				<xs:extension base="xs:integer">
+				<xs:extension base="xs:int">
 					<xs:attribute ref="rdf:datatype" use="required"
-						fixed="http://www.w3.org/2001/XMLSchema#integer" />
+						fixed="http://www.w3.org/2001/XMLSchema#int" />
 				</xs:extension>
 			</xs:simpleContent>
 		</xs:complexType>
