@@ -81,7 +81,8 @@ public class URITools {
 		final Map<URI, WorkflowBean> uriToBean = new HashMap<URI, WorkflowBean>();
 		wfBundle.accept(new VisitorWithPath() {
 			@Override
-			public boolean visit(WorkflowBean node) {
+			public boolean visit() {
+				WorkflowBean node = getCurrentNode();
 				URI uri = uriForBean(node);
 				WorkflowBean existing = uriToBean.put(uri, node);
 				if (existing != null) {

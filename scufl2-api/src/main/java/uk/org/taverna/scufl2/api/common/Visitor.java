@@ -67,12 +67,24 @@ public interface Visitor {
 	public static abstract class VisitorWithPath implements Visitor {
 
 		private final Stack<WorkflowBean> currentPath = new Stack<WorkflowBean>();
+		private WorkflowBean currentNode;
+
+		/**
+		 * Get the currently visited node.
+		 *
+		 * @return {@link WorkflowBean} currently visited
+		 */
+		public WorkflowBean getCurrentNode() {
+			return currentNode;
+		}
 
 		/**
 		 * Return the current path of {@link WorkflowBean}s.
 		 * <p>
-		 * The list will not contain the current node for calls to
-		 * {@link #visit(WorkflowBean)}.
+		 * The list will never contain the current node, which can instead be
+		 * found in {@link #getCurrentNode()}. That means that
+		 * {@link Stack#peek()} will be the intermediate parent of the current
+		 * node.
 		 * <p>
 		 * The first object of the stack will be the initial object where
 		 * {@link WorkflowBean#accept(Visitor)} was called, not necessarily the
@@ -97,30 +109,72 @@ public interface Visitor {
 		}
 
 		/**
-		 * Different to {@link Visitor#visit(WorkflowBean)} - in VisitorWithPath
-		 * visit() is called also for nodes with children.
+		 * Similar to {@link Visitor#visit(WorkflowBean)} - but called for every
+		 * node, even if it can have children.
 		 * <p>
-		 * {@link #visitEnter(WorkflowBean)} and
-		 * {@link #visitLeave(WorkflowBean)} are <code>final</code> as they
-		 * maintain the stack in {@link #getCurrentPath()}.
+		 * The current node is available in {@link #getCurrentNode()}.
 		 * <p>
-		 * Note - when visit() is called - the current node will <b>not</b> be
-		 * present in {@link #getCurrentPath()}.
+		 *
+		 * @return <code>true</code> if this node's children should be visited.
+		 *         (return value is ignored for nodes which can't have children)
+		 */
+		public abstract boolean visit();
+
+		/**
+		 * Final to maintain current path. Override {@link #visit()} instead.
+		 *
+		 * @see #visit()
 		 */
 		@Override
-		public abstract boolean visit(WorkflowBean node);
+		public final boolean visit(WorkflowBean node) {
+			visitEnter(node);
+			return visitLeave(node);
+		}
 
+		/**
+		 * Final to maintain current path. Override {@link #visit()} instead.
+		 *
+		 * @see #visit()
+		 */
 		@Override
 		public final boolean visitEnter(WorkflowBean node) {
-			boolean recurse = visit(node);
+			currentNode = node;
+			boolean recurse = visit();
 			currentPath.add(node);
 			return recurse;
 		}
 
+		/**
+		 * Override this method to be informed when leaving a node.
+		 *
+		 * Similar to {@link Visitor#visitLeave(WorkflowBean)}, but also called
+		 * for nodes which can't have children.
+		 * <p>
+		 * The current node is present in {@link #getCurrentPath()} and can be
+		 * retrieved using {@link #getCurrentNode()}.
+		 * 
+		 * @return <code>true</code> if the visits over the current beans'
+		 *         siblings should continue, <code>false</code> to immediately
+		 *         leave the parent.
+		 */
+		public boolean visitLeave() {
+			return true;
+		};
+
+		/**
+		 * Final to maintain current path. Override {@link #visitLeave()}
+		 * instead.
+		 *
+		 * @see #visitLeave()
+		 */
 		@Override
 		public final boolean visitLeave(WorkflowBean node) {
-			currentPath.pop();
-			return true;
+			currentNode = currentPath.pop();
+			if (currentNode != node) {
+				throw new IllegalStateException("Unexpected visit to node "
+						+ node + " expected " + currentNode);
+			}
+			return visitLeave();
 		}
 	}
 
