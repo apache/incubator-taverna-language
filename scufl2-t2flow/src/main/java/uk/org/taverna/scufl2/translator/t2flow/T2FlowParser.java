@@ -359,6 +359,8 @@ public class T2FlowParser {
 			}
 			// We'll have to fake it
 			configuration = new Configuration();
+			configuration.setConfigurableType(configBeanURI
+					.resolve("Config"));
 
 			URI fallBackURI = configBeanURI.resolve(configBean.getEncoding());
 
@@ -556,14 +558,15 @@ public class T2FlowParser {
 		return newStack;
 	}
 
-	protected DispatchStackLayer parseDispatchStack(DispatchLayer dispatchLayer) throws ReaderException {
+	protected DispatchStackLayer parseDispatchStack(DispatchLayer dispatchLayer)
+			throws ReaderException {
 		DispatchStackLayer dispatchStackLayer = new DispatchStackLayer();
-		URI typeUri = mapTypeFromRaven(dispatchLayer.getRaven(), dispatchLayer.getClazz());
+		URI typeUri = mapTypeFromRaven(dispatchLayer.getRaven(),
+				dispatchLayer.getClazz());
 		dispatchStackLayer.setConfigurableType(typeUri);
 
+		// parseActivityConfiguration(dispatchLayer.getConfigBean());
 
-		//parseActivityConfiguration(dispatchLayer.getConfigBean());
-		
 		return dispatchStackLayer;
 	}
 
@@ -683,7 +686,7 @@ public class T2FlowParser {
 
 	public WorkflowBundle parseT2Flow(
 			uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow wf)
-			throws ReaderException, JAXBException {		
+			throws ReaderException, JAXBException {
 		try {
 			parserState.get().setT2FlowParser(this);
 			WorkflowBundle ro = new WorkflowBundle();
@@ -711,7 +714,5 @@ public class T2FlowParser {
 	public void setStrict(boolean strict) {
 		this.strict = strict;
 	}
-
-
 
 }
