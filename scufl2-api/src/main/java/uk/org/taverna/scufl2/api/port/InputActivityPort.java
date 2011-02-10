@@ -4,7 +4,6 @@
 package uk.org.taverna.scufl2.api.port;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
-import uk.org.taverna.scufl2.api.common.ParentProperty;
 
 
 /**
@@ -30,7 +29,6 @@ public class InputActivityPort extends AbstractDepthPort implements
 		setName(portName);
 	}
 
-	@ParentProperty(property = "inputPorts", uri = "inputs/")
 	public Activity getParent() {
 		return parent;
 	}
