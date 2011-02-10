@@ -26,12 +26,12 @@ public class StringConstantActivityParser extends AbstractActivityParser {
 	}
 
 	@Override
-	public URI mapT2flowActivityToURI(URI t2flowActivity) {
+	public URI mapT2flowRavenIdToScufl2URI(URI t2flowActivity) {
 		return CONSTANT;
 	}
 
 	@Override
-	public Configuration parseActivityConfiguration(T2FlowParser t2FlowParser,
+	public Configuration parseConfiguration(T2FlowParser t2FlowParser,
 			ConfigBean configBean) throws ReaderException {
 		StringConstantConfig strConfig = unmarshallConfig(t2FlowParser,
 				configBean, "xstream", StringConstantConfig.class);

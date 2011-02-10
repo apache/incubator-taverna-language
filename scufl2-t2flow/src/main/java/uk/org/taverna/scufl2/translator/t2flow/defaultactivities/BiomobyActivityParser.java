@@ -35,7 +35,7 @@ public class BiomobyActivityParser extends AbstractActivityParser {
 	}
 
 	@Override
-	public URI mapT2flowActivityToURI(URI t2flowActivity) {
+	public URI mapT2flowRavenIdToScufl2URI(URI t2flowActivity) {
 		String activityUriStr = t2flowActivity.toASCIIString();
 		if (activityUriStr.endsWith(mobyObjectClassName)) {
 			return mobyObjectScufl2Uri;
@@ -45,7 +45,7 @@ public class BiomobyActivityParser extends AbstractActivityParser {
 	}
 
 	@Override
-	public Configuration parseActivityConfiguration(T2FlowParser t2FlowParser,
+	public Configuration parseConfiguration(T2FlowParser t2FlowParser,
 			ConfigBean configBean) {
 		// TODO Auto-generated method stub
 		return null;
