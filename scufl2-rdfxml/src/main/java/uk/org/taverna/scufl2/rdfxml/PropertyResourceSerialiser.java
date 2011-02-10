@@ -23,6 +23,7 @@ import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.api.property.PropertyResource.PropertyVisit;
 
 public class PropertyResourceSerialiser extends VisitorWithPath {
+	private static final String DESCRIPTION = "Description";
 	private static final String RESOURCE = "resource";
 	private static final String LITERAL = "Literal";
 	private static final String DATATYPE = "datatype";
@@ -49,15 +50,13 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 	}
 
 	@Override
-	public boolean visit() {		
+	public boolean visit() {
 		WorkflowBean node = getCurrentNode();
-		if (! getCurrentPath().isEmpty()) {
+		if (!getCurrentPath().isEmpty()) {
 			WorkflowBean parent = getCurrentPath().peek();
 			if (parent instanceof PropertyVisit) {
 				PropertyVisit propertyVisit = (PropertyVisit) parent;
-				QName propertyQname = uriToQName(propertyVisit.getPredicateUri());	
-				Element element = doc.createElementNS(propertyQname.getNamespaceURI(),
-						propertyQname.getLocalPart());		
+				Element element = uriToElement(propertyVisit.getPredicateUri());
 				elementStack.push(element);
 			} else if (parent instanceof PropertyList) {
 				elementStack.push(doc.createElementNS(RDF, LI));
@@ -79,6 +78,12 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 		return true;
 	}
 
+	protected Element uriToElement(URI uri) {
+		QName propertyQname = uriToQName(uri);
+		return doc.createElementNS(propertyQname.getNamespaceURI(),
+				propertyQname.getLocalPart());
+	}
+
 	@Override
 	public boolean visitLeave() {
 		if (elementStack.isEmpty()) {
@@ -95,7 +100,8 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 	}
 
 	protected void property(PropertyVisit node) {
-		
+		// Handled by individual visits further down (as we'll need to create
+		// multiple elements if there's several values of a property)
 	}
 
 	protected QName uriToQName(URI uri) {
@@ -121,12 +127,24 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 
 	protected void reference(PropertyReference node) {
 		Element element = elementStack.peek();
-		element.setAttributeNS(RDF, RESOURCE, node.getResourceURI().toASCIIString());
+		element.setAttributeNS(RDF, RESOURCE, node.getResourceURI()
+				.toASCIIString());
 	}
 
 	protected void resource(PropertyResource node) {
-		// TODO Auto-generated method stub
-
+		URI typeUri = node.getTypeURI();
+		Element element;
+		if (typeUri != null) {
+			element = uriToElement(typeUri);
+		} else {
+			// Anonymous - give warning?
+			element = doc.createElementNS(RDF, DESCRIPTION);
+		}
+		if (node.getResourceURI() != null) {
+			element.setAttributeNS(RDF, "about", node.getResourceURI()
+					.toASCIIString());
+		}
+		elementStack.push(element);
 	}
 
 	protected void literal(PropertyLiteral node) {
@@ -147,7 +165,7 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 
 	protected void list(PropertyList node) {
 		Element element = elementStack.peek();
-		element.setAttributeNS(RDF, PARSE_TYPE, COLLECTION);		
+		element.setAttributeNS(RDF, PARSE_TYPE, COLLECTION);
 	}
 
 }
