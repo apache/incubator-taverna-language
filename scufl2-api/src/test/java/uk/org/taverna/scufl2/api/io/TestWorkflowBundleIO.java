@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static uk.org.taverna.scufl2.api.io.SillyReader.APPLICATION_VND_EXAMPLE_SILLY;
+import static uk.org.taverna.scufl2.api.io.structure.StructureReader.TEXT_VND_TAVERNA_SCUFL2_STRUCTURE;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -21,6 +21,8 @@ import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.ExampleWorkflow;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.io.structure.StructureReader;
+import uk.org.taverna.scufl2.api.io.structure.StructureWriter;
 
 public class TestWorkflowBundleIO extends ExampleWorkflow {
 
@@ -31,8 +33,8 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 	@Test
 	public void getReaderForMediaType() throws Exception {
 		WorkflowBundleReader Reader = bundleIO
-		.getReaderForMediaType(APPLICATION_VND_EXAMPLE_SILLY);
-		assertTrue(Reader instanceof SillyReader);
+		.getReaderForMediaType(TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
+		assertTrue(Reader instanceof StructureReader);
 	}
 
 	@Test
@@ -41,7 +43,7 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 				.getReaderForMediaType("application/vnd.example.unknownStuff"));
 	}
 
-	public String getSillyFormatWorkflowBundle() throws IOException {
+	public String getStructureFormatWorkflowBundle() throws IOException {
 		InputStream helloWorldStream = getClass().getResourceAsStream(
 				"HelloWorld.txt");
 		return IOUtils.toString(helloWorldStream);
@@ -51,7 +53,7 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 	public void getWorkflowBundleReaders() throws Exception {
 		assertEquals(1, bundleIO.getReaders().size());
 		WorkflowBundleReader Reader = bundleIO.getReaders().get(0);
-		assertTrue(Reader instanceof SillyReader);
+		assertTrue(Reader instanceof StructureReader);
 	}
 
 	@Test
@@ -59,14 +61,14 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 
 		assertEquals(1, bundleIO.getWriters().size());
 		WorkflowBundleWriter writer = bundleIO.getWriters().get(0);
-		assertTrue(writer instanceof SillyWriter);
+		assertTrue(writer instanceof StructureWriter);
 	}
 
 	@Test
 	public void getWriterForMediaType() throws Exception {
 		WorkflowBundleWriter writer = bundleIO
-		.getWriterForMediaType(APPLICATION_VND_EXAMPLE_SILLY);
-		assertTrue(writer instanceof SillyWriter);
+		.getWriterForMediaType(TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
+		assertTrue(writer instanceof StructureWriter);
 	}
 
 	@Test
@@ -78,10 +80,11 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 	@Test
 	public void readBundleFile() throws Exception {
 		File bundleFile = tempFile();
-		FileUtils.writeStringToFile(bundleFile, getSillyFormatWorkflowBundle(),
+		FileUtils.writeStringToFile(bundleFile,
+				getStructureFormatWorkflowBundle(),
 				UTF_8);
 		WorkflowBundle wfBundle = bundleIO.readBundle(bundleFile,
-				APPLICATION_VND_EXAMPLE_SILLY);
+				TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
 		assertEquals("HelloWorld", wfBundle.getName());
 		assertEquals("HelloWorld", wfBundle.getMainWorkflow().getName());
 		assertTrue(wfBundle.getMainWorkflow().getProcessors()
@@ -91,9 +94,9 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 	@Test
 	public void readBundleStream() throws Exception {
 		InputStream inputStream = new ByteArrayInputStream(
-				getSillyFormatWorkflowBundle().getBytes("utf-8"));
+				getStructureFormatWorkflowBundle().getBytes("utf-8"));
 		WorkflowBundle wfBundle = bundleIO.readBundle(inputStream,
-				APPLICATION_VND_EXAMPLE_SILLY);
+				TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
 		assertEquals("HelloWorld", wfBundle.getName());
 		assertEquals("HelloWorld", wfBundle.getMainWorkflow().getName());
 		assertTrue(wfBundle.getMainWorkflow().getProcessors()
@@ -103,14 +106,14 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 	@Test
 	public void readToWriteRoundTrip() throws Exception {
 		InputStream inputStream = new ByteArrayInputStream(
-				getSillyFormatWorkflowBundle().getBytes("utf-8"));
+				getStructureFormatWorkflowBundle().getBytes("utf-8"));
 		WorkflowBundle readBundle = bundleIO.readBundle(inputStream,
-				APPLICATION_VND_EXAMPLE_SILLY);
+				TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
 
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		bundleIO.writeBundle(readBundle, output, APPLICATION_VND_EXAMPLE_SILLY);
+		bundleIO.writeBundle(readBundle, output, TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
 		String bundleTxt = new String(output.toByteArray(), UTF_8);
-		assertEquals(getSillyFormatWorkflowBundle(), bundleTxt);
+		assertEquals(getStructureFormatWorkflowBundle(), bundleTxt);
 	}
 
 	@Test
@@ -139,7 +142,7 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 
 		// Should now be null
 		assertNull(bundleIO
-				.getReaderForMediaType(APPLICATION_VND_EXAMPLE_SILLY));
+				.getReaderForMediaType(TEXT_VND_TAVERNA_SCUFL2_STRUCTURE));
 	}
 
 	@Test
@@ -167,7 +170,7 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 
 		// Should now be null
 		assertNull(bundleIO
-				.getWriterForMediaType(APPLICATION_VND_EXAMPLE_SILLY));
+				.getWriterForMediaType(TEXT_VND_TAVERNA_SCUFL2_STRUCTURE));
 	}
 
 	public File tempFile() throws IOException {
@@ -180,17 +183,17 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 	public void writeBundleFile() throws Exception {
 		File bundleFile = tempFile();
 		bundleIO.writeBundle(wfBundle, bundleFile,
-				APPLICATION_VND_EXAMPLE_SILLY);
+				TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
 		String bundleTxt = FileUtils.readFileToString(bundleFile, UTF_8);
-		assertEquals(getSillyFormatWorkflowBundle(), bundleTxt);
+		assertEquals(getStructureFormatWorkflowBundle(), bundleTxt);
 	}
 
 	@Test
 	public void writeBundleStream() throws Exception {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		bundleIO.writeBundle(wfBundle, output, APPLICATION_VND_EXAMPLE_SILLY);
+		bundleIO.writeBundle(wfBundle, output, TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
 		String bundleTxt = new String(output.toByteArray(), UTF_8);
-		assertEquals(getSillyFormatWorkflowBundle(), bundleTxt);
+		assertEquals(getStructureFormatWorkflowBundle(), bundleTxt);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -206,7 +209,7 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 		bundleDir.delete();
 		File bundleFile = new File(bundleDir, "nonExistingDir");
 		bundleIO.writeBundle(wfBundle, bundleFile,
-				APPLICATION_VND_EXAMPLE_SILLY);
+				TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
 	}
 
 }
