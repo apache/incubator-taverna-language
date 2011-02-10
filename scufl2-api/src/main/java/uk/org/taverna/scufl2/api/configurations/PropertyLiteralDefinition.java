@@ -191,14 +191,15 @@ public class PropertyLiteralDefinition extends PropertyDefinition {
 		StringBuilder sb = new StringBuilder();
 		sb.append(indent);
 		sb.append("PropertyLiteralDefinition ");
-		sb.append(getPredicate());
+		if (getPredicate() != null) sb.append(getPredicate());
 		sb.append("\n");
-		sb.append(indent);
-		sb.append(" label=" + getLabel() + ", description=" + getDescription()
-				+ ", required=" + isRequired() + ", multiple=" + isMultiple()
-				+ ", ordered=" + isOrdered() + ", options=" + getOptions()
-				+ ", literalType=" + getLiteralType() + "\n");
+		sb.append(indent + "  label=" + getLabel() + ", description=" + getDescription() + "\n");
+		sb.append(indent + "  required=" + isRequired() + ", multiple=" + isMultiple()+ ", ordered=" + isOrdered() + "\n");
+		if (getOptions().size() > 0) {
+			sb.append(indent + "  options=" + getOptions() + "\n");
+		}
+		sb.append(indent + "  literalType=" + getLiteralType() + "\n");
 		return sb.toString();
 	}
-
+	
 }

@@ -219,15 +219,13 @@ public class PropertyResourceDefinition extends PropertyDefinition {
 		StringBuilder sb = new StringBuilder();
 		sb.append(indent);
 		sb.append("PropertyResourceDefinition ");
-		sb.append(getPredicate());
+		if (getPredicate() != null) sb.append(getPredicate());
 		sb.append("\n");
-		sb.append(indent);
-		sb.append(" label=" + getLabel() + ", description=" + getDescription()
-				+ ", required=" + isRequired() + ", multiple=" + isMultiple()
-				+ ", ordered=" + isOrdered() + ", typeURI=" + getTypeURI()
-				+ "\n");
+		sb.append(indent + "  label=" + getLabel() + ", description=" + getDescription() + "\n");
+		sb.append(indent + "  required=" + isRequired() + ", multiple=" + isMultiple()+ ", ordered=" + isOrdered() + "\n");
+		sb.append(indent + "  typeURI=" + getTypeURI() + "\n");
 		for (PropertyDefinition propertyDefinition : getPropertyDefinitions()) {
-			sb.append(propertyDefinition.toString(indent + "  "));
+			sb.append(propertyDefinition.toString(indent + "    "));
 		}
 		return sb.toString();
 	}
