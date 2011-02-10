@@ -8,3 +8,10 @@ uk.org.taverna.scufl2.translator.t2flow.defaultactivities.SoaplabActivityParser
 uk.org.taverna.scufl2.translator.t2flow.defaultactivities.WSDLActivityParser
 uk.org.taverna.scufl2.translator.t2flow.defaultactivities.BiomartActivityParser
 uk.org.taverna.scufl2.translator.t2flow.defaultactivities.ApiConsomerActivityParser
+
+uk.org.taverna.scufl2.translator.t2flow.defaultdispatchstack.ParallelizeParser
+uk.org.taverna.scufl2.translator.t2flow.defaultdispatchstack.ErrorBounceParser
+uk.org.taverna.scufl2.translator.t2flow.defaultdispatchstack.FailoverParser
+uk.org.taverna.scufl2.translator.t2flow.defaultdispatchstack.RetryParser
+uk.org.taverna.scufl2.translator.t2flow.defaultdispatchstack.LoopParser
+uk.org.taverna.scufl2.translator.t2flow.defaultdispatchstack.InvokeParser
