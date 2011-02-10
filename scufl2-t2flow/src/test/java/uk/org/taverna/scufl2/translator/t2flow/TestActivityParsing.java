@@ -70,7 +70,7 @@ public class TestActivityParsing {
 		Activity concatAct = (Activity) concatConfig.getConfigures();
 		assertEquals(BeanshellActivityParser.ACTIVITY_URI,
 				concatAct.getConfigurableType());
-		assertEquals(ACTIVITY_URI.resolve("#ConfigType"), concatConfig
+		assertEquals(ACTIVITY_URI.resolve("#Config"), concatConfig
 				.getPropertyResource().getTypeURI());
 		String script = concatConfig.getPropertyResource().getPropertyAsString(
 				ACTIVITY_URI.resolve("#script"));
