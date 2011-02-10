@@ -17,16 +17,16 @@ import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 
-
 /**
- *
+ * 
  * An Activity specifies a way of implementing a Processor within a Workflow.
  * When the Workflow is run, a particular Activity will be specified as bound to
  * the Processor and Configuration information will be specified for the
  * Activity.
- *
+ * 
  * @author Alan R Williams
- *
+ * @author Stian Soiland-Reyes
+ * 
  */
 public class Activity extends AbstractNamedChild implements Configurable,
 Child<Profile>, Typed, Ported {
