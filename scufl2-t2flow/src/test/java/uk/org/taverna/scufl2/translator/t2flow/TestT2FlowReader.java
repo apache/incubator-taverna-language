@@ -7,6 +7,7 @@ import static uk.org.taverna.scufl2.translator.t2flow.T2FlowReader.APPLICATION_V
 import java.io.ByteArrayOutputStream;
 import java.net.URL;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
@@ -30,11 +31,9 @@ public class TestT2FlowReader {
 		assertEquals(profile,
 				researchObj.getProfiles().getByName("taverna-2.1.0"));
 		
-		String report = "";
+		String report = IOUtils.toString(getClass().getResourceAsStream("/as.txt"));
 		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 		io.writeBundle(researchObj, byteStream, StructureReader.TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
-		assertEquals(report, byteStream.toString("utf-8"));
-		
-		
+		assertEquals(report, byteStream.toString("utf-8"));		
 	}
 }
