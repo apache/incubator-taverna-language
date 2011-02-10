@@ -19,13 +19,12 @@ import org.w3c.dom.NodeList;
 
 import com.ibm.icu.util.Calendar;
 
+import uk.org.taverna.scufl2.api.property.PropertyList;
 import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.api.property.PropertyObject;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
 
 public class TestPropertySerialisation {
-	
-	
 
 	private PropertyResourceSerialiser serialiser;
 	private List<Object> elements;
@@ -44,6 +43,66 @@ public class TestPropertySerialisation {
 	public void makePropResource() {
 		propResource = new PropertyResource();
 	}
+	
+	@Test
+	public void reference() throws Exception {
+		propResource.addPropertyReference(property.resolve("#reference"), property.resolve("#object"));
+		
+		propResource.accept(serialiser);
+		Element elem = (Element) elements.get(0);
+		assertEquals("reference", elem.getTagName());
+		assertEquals("http://example.com/property#", elem.getNamespaceURI());
+		assertEquals(1, elem.getAttributes().getLength());
+		assertEquals(0, elem.getChildNodes().getLength());		
+		assertEquals("http://example.com/property#object", 
+				elem.getAttributeNS(PropertyResourceSerialiser.RDF, "resource"));
+	}
+	
+	@Test
+	public void twoReferences() throws Exception {
+		propResource.addPropertyReference(property.resolve("#reference"), property.resolve("#object"));
+		propResource.addPropertyReference(property.resolve("#reference"), property.resolve("#secondObject"));
+		
+		propResource.accept(serialiser);
+		Element elem = (Element) elements.get(0);
+		assertEquals("reference", elem.getTagName());
+		assertEquals("http://example.com/property#", elem.getNamespaceURI());
+		assertEquals(1, elem.getAttributes().getLength());
+		assertEquals(0, elem.getChildNodes().getLength());		
+		assertEquals("http://example.com/property#object", 
+				elem.getAttributeNS(PropertyResourceSerialiser.RDF, "resource"));
+		
+		elem = (Element) elements.get(1);
+		assertEquals("reference", elem.getTagName());
+		assertEquals("http://example.com/property#", elem.getNamespaceURI());
+		assertEquals(1, elem.getAttributes().getLength());
+		assertEquals(0, elem.getChildNodes().getLength());		
+		assertEquals("http://example.com/property#secondObject", 
+				elem.getAttributeNS(PropertyResourceSerialiser.RDF, "resource"));
+	}
+	
+
+	
+	@Test
+	public void propertyListLiterals() throws Exception {
+		PropertyList pList = new PropertyList();
+		pList.add(new PropertyLiteral("First"));
+		pList.add(new PropertyLiteral("Second"));
+		pList.add(new PropertyLiteral("Third"));
+		
+		propResource.addProperty(property.resolve("#somelist"), pList);		
+		propResource.accept(serialiser);
+		
+		Element elem = (Element) elements.get(0);
+		assertEquals("somelist", elem.getTagName());
+		assertEquals("http://example.com/property#", elem.getNamespaceURI());
+		assertEquals("Collection", elem.getAttributeNS(PropertyResourceSerialiser.RDF, "parseType"));
+		assertEquals(1, elem.getAttributes().getLength());
+		System.out.println(elem.getChildNodes().item(0).getNodeName());
+		assertEquals(3, elem.getChildNodes().getLength());
+		
+	}
+	
 	
 	
 	@Test
