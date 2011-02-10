@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -66,7 +67,6 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.GranularDepthPort;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.GranularDepthPorts;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Link;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.LinkType;
-import uk.org.taverna.scufl2.xml.t2flow.jaxb.Map;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Mapping;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ObjectFactory;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Port;
@@ -257,8 +257,8 @@ public class T2FlowParser {
 
 	protected void makeProfile(uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow wf) {
 		Profile profile = new Profile(wf.getProducedBy());
-		profile.setParent(parserState.get().getCurrentResearchObject());
-		parserState.get().getCurrentResearchObject().setMainProfile(profile);
+		profile.setParent(parserState.get().getCurrentWorkflowBundle());
+		parserState.get().getCurrentWorkflowBundle().setMainProfile(profile);
 		parserState.get().setCurrentProfile(profile);
 	}
 
@@ -294,6 +294,10 @@ public class T2FlowParser {
 		URI activityId = mapTypeFromRaven(raven, activityClass);
 		uk.org.taverna.scufl2.api.activity.Activity newActivity = new uk.org.taverna.scufl2.api.activity.Activity();
 		newActivity.setConfigurableType(activityId);
+		newActivity.setName(parserState.get().getCurrentProcessorBinding()
+				.getName());
+		parserState.get().getCurrentProfile().getActivities()
+				.addWithUniqueName(newActivity);
 		newActivity.setParent(parserState.get().getCurrentProfile());
 		return newActivity;
 	}
@@ -301,13 +305,18 @@ public class T2FlowParser {
 	protected void parseActivityBinding(Activity origActivity,
 			int activityPosition) throws ReaderException, JAXBException {
 		ProcessorBinding processorBinding = new ProcessorBinding();
+
+		processorBinding.setName(parserState.get().getCurrentProcessor()
+				.getName());
+		parserState.get().getCurrentProfile().getProcessorBindings()
+				.addWithUniqueName(processorBinding);
+
 		processorBinding.setBoundProcessor(parserState.get()
 				.getCurrentProcessor());
 		parserState.get().setCurrentProcessorBinding(processorBinding);
 		uk.org.taverna.scufl2.api.activity.Activity newActivity = parseActivity(origActivity);
 		parserState.get().setCurrentActivity(newActivity);
-		parserState.get().getCurrentProfile().getProcessorBindings()
-				.add(processorBinding);
+
 		parserState.get().getCurrentProfile().getActivities().add(newActivity);
 		processorBinding.setBoundActivity(newActivity);
 		processorBinding.setActivityPosition(activityPosition);
@@ -359,8 +368,7 @@ public class T2FlowParser {
 			}
 			// We'll have to fake it
 			configuration = new Configuration();
-			configuration.setConfigurableType(configBeanURI
-					.resolve("Config"));
+			configuration.setConfigurableType(configBeanURI.resolve("Config"));
 
 			URI fallBackURI = configBeanURI.resolve(configBean.getEncoding());
 
@@ -375,9 +383,11 @@ public class T2FlowParser {
 
 		}
 
-		configuration.setConfigures(parserState.get().getCurrentActivity());
+		configuration.setName(parserState.get().getCurrentActivity().getName());
 		parserState.get().getCurrentProfile().getConfigurations()
-				.add(configuration);
+				.addWithUniqueName(configuration);
+		configuration.setParent(parserState.get().getCurrentProfile());
+		configuration.setConfigures(parserState.get().getCurrentActivity());
 	}
 
 	public Unmarshaller getUnmarshaller() {
@@ -411,7 +421,9 @@ public class T2FlowParser {
 		return u;
 	}
 
-	protected void parseActivityInputMap(Map inputMap) throws ReaderException {
+	protected void parseActivityInputMap(
+			uk.org.taverna.scufl2.xml.t2flow.jaxb.Map inputMap)
+			throws ReaderException {
 		for (Mapping mapping : inputMap.getMap()) {
 			String fromProcessorOutput = mapping.getFrom();
 			String toActivityOutput = mapping.getTo();
@@ -446,7 +458,9 @@ public class T2FlowParser {
 
 	}
 
-	protected void parseActivityOutputMap(Map outputMap) throws ReaderException {
+	protected void parseActivityOutputMap(
+			uk.org.taverna.scufl2.xml.t2flow.jaxb.Map outputMap)
+			throws ReaderException {
 		for (Mapping mapping : outputMap.getMap()) {
 			String fromActivityOutput = mapping.getFrom();
 			String toProcessorOutput = mapping.getTo();
@@ -484,12 +498,9 @@ public class T2FlowParser {
 
 	}
 
-	protected Workflow parseDataflow(Dataflow df) throws ReaderException,
-			JAXBException {
-		Workflow wf = new Workflow();
+	protected Workflow parseDataflow(Dataflow df, Workflow wf)
+			throws ReaderException, JAXBException {
 		parserState.get().setCurrentWorkflow(wf);
-		wf.setName(df.getId());
-		// wf.setId(df.getId());
 		wf.setInputPorts(parseInputPorts(df.getInputPorts()));
 		wf.setOutputPorts(parseOutputPorts(df.getOutputPorts()));
 		wf.setProcessors(parseProcessors(df.getProcessors()));
@@ -502,7 +513,7 @@ public class T2FlowParser {
 	protected Set<DataLink> parseDatalinks(Datalinks origLinks)
 			throws ReaderException {
 		HashSet<DataLink> newLinks = new HashSet<DataLink>();
-		java.util.Map<ReceiverPort, AtomicInteger> mergeCounts = new HashMap<ReceiverPort, AtomicInteger>();
+		Map<ReceiverPort, AtomicInteger> mergeCounts = new HashMap<ReceiverPort, AtomicInteger>();
 		for (uk.org.taverna.scufl2.xml.t2flow.jaxb.DataLink origLink : origLinks
 				.getDatalink()) {
 			try {
@@ -689,26 +700,44 @@ public class T2FlowParser {
 			throws ReaderException, JAXBException {
 		try {
 			parserState.get().setT2FlowParser(this);
-			WorkflowBundle ro = new WorkflowBundle();
-			parserState.get().setCurrentResearchObject(ro);
+			WorkflowBundle wfBundle = new WorkflowBundle();
+			parserState.get().setCurrentWorkflowBundle(wfBundle);
 			makeProfile(wf);
 
+			// First a skeleton scan of workflows (for nested workflow configs)
+			Map<Dataflow, Workflow> dataflowMap = new HashMap<Dataflow, Workflow>();
 			for (Dataflow df : wf.getDataflow()) {
-				Workflow workflow = parseDataflow(df);
+				Workflow workflow = skeletonDataflow(df);
+				dataflowMap.put(df, workflow);
+				wfBundle.getWorkflows().addWithUniqueName(workflow);
+				workflow.setParent(wfBundle);
 				if (df.getRole().equals(Role.TOP)) {
-					ro.setMainWorkflow(workflow);
+					wfBundle.setMainWorkflow(workflow);
 				}
-				ro.getWorkflows().add(workflow);
 			}
-			if (isStrict() && ro.getMainWorkflow() == null) {
+			// Second stage
+			for (Dataflow df : wf.getDataflow()) {
+				Workflow workflow = dataflowMap.get(df);
+				parseDataflow(df, workflow);
+			}
+			if (isStrict() && wfBundle.getMainWorkflow() == null) {
 				throw new ReaderException("No main workflow");
 			}
-			scufl2Tools.setParents(ro);
+			scufl2Tools.setParents(wfBundle);
 
-			return ro;
+			return wfBundle;
 		} finally {
 			parserState.remove();
 		}
+	}
+
+	protected Workflow skeletonDataflow(Dataflow df) {
+		Workflow wf = new Workflow();
+		parserState.get().setCurrentWorkflow(wf);
+		wf.setName(df.getName());
+		wf.setWorkflowIdentifier(Workflow.WORKFLOW_ROOT.resolve(df.getId()
+				+ "/"));
+		return wf;
 	}
 
 	public void setStrict(boolean strict) {
