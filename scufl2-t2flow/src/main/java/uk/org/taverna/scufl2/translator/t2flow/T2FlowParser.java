@@ -6,9 +6,13 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.text.Format;
+import java.text.MessageFormat;
+import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -30,6 +34,7 @@ import org.xml.sax.SAXException;
 
 import uk.org.taverna.scufl2.api.common.Named;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
+import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.DataLink;
@@ -37,7 +42,11 @@ import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
 import uk.org.taverna.scufl2.api.io.ReaderException;
+import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyNode;
+import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyParent;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
+import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyTopNode;
+import uk.org.taverna.scufl2.api.iterationstrategy.PortNode;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
 import uk.org.taverna.scufl2.api.port.InputWorkflowPort;
@@ -57,22 +66,28 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedGranularDepthPort;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedGranularDepthPorts;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedPorts;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.CrossProduct;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Dataflow;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Datalinks;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.DepthPort;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.DepthPorts;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.DispatchLayer;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.DispatchStack;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.DotProduct;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.GranularDepthPort;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.GranularDepthPorts;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.IterationNode;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.IterationNodeParent;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Link;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.LinkType;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Mapping;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ObjectFactory;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Port;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.PortProduct;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Processors;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Raven;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Role;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.TopIterationNode;
 
 public class T2FlowParser {
 
@@ -607,10 +622,57 @@ public class T2FlowParser {
 	}
 
 	protected IterationStrategyStack parseIterationStrategyStack(
-			uk.org.taverna.scufl2.xml.t2flow.jaxb.IterationStrategyStack originalStack) {
+			uk.org.taverna.scufl2.xml.t2flow.jaxb.IterationStrategyStack originalStack) throws ReaderException {
 		IterationStrategyStack newStack = new IterationStrategyStack();
-		// TODO: Copy iteration strategy
+		
+		List<TopIterationNode> strategies = originalStack.getIteration().getStrategy();
+		for (TopIterationNode strategy : strategies) {
+			IterationNode topNode = strategy.getCross();
+			if (topNode == null) {
+				topNode = strategy.getDot();
+			}			
+			if (topNode == null) {
+				continue;
+			}
+			try {
+				newStack.add((IterationStrategyTopNode)parseIterationStrategyNode(topNode));
+			} catch (ReaderException e) {
+				logger.warning(e.getMessage());
+				if (isStrict()) {
+					throw e;
+				}
+			}
+		}
+		
 		return newStack;
+	}
+
+	protected IterationStrategyNode parseIterationStrategyNode(IterationNode topNode) throws ReaderException {
+		if (topNode instanceof PortProduct) {			
+			PortProduct portProduct = (PortProduct) topNode;
+			PortNode portNode = new PortNode();
+			portNode.setDesiredDepth(portProduct.getDepth().intValue());			
+			String name = portProduct.getName();
+			Processor processor = parserState.get().getCurrentProcessor();
+			InputProcessorPort inputProcessorPort = processor.getInputPorts().getByName(name);
+			portNode.setInputProcessorPort(inputProcessorPort);			
+			return portNode;
+		}
+		
+		IterationStrategyNode node;
+		if (topNode instanceof DotProduct) {
+			node = new uk.org.taverna.scufl2.api.iterationstrategy.DotProduct();			
+		} else if (topNode instanceof CrossProduct) {
+			node = new uk.org.taverna.scufl2.api.iterationstrategy.CrossProduct();
+		} else {
+			throw new ReaderException("Invalid node " + topNode);
+		}
+		List<IterationStrategyNode> children = (List<IterationStrategyNode>) node;
+		IterationNodeParent parent = (IterationNodeParent) topNode;
+		for (IterationNode child : parent.getCrossOrDotOrPort()) {
+			children.add(parseIterationStrategyNode(child));
+		}		
+		return node;
 	}
 
 	protected Set<OutputWorkflowPort> parseOutputPorts(
