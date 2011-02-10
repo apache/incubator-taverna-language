@@ -9,6 +9,10 @@ public class PortNode implements IterationStrategyNode {
 	private InputProcessorPort inputProcessorPort;
 
 	private IterationStrategyParent parent;
+	private Integer desiredDepth;
+
+	public PortNode() {
+	}
 
 	public PortNode(IterationStrategyParent parent,
 			InputProcessorPort inputProcessorPort) {
@@ -21,6 +25,10 @@ public class PortNode implements IterationStrategyNode {
 		return visitor.visit(this);
 	}
 
+	public Integer getDesiredDepth() {
+		return desiredDepth;
+	}
+
 	public InputProcessorPort getInputProcessorPort() {
 		return inputProcessorPort;
 	}
@@ -30,7 +38,8 @@ public class PortNode implements IterationStrategyNode {
 		return parent;
 	}
 
-	public void PortNode() {
+	public void setDesiredDepth(Integer desiredDepth) {
+		this.desiredDepth = desiredDepth;
 	}
 
 	public void setInputProcessorPort(InputProcessorPort inputProcessorPort) {

@@ -253,6 +253,8 @@ public class StructureReader implements WorkflowBundleReader {
 		if (next.equals("ProcessorBinding")) {
 			level = Level.ProcessorBinding;
 			processorBinding = new ProcessorBinding();
+			String bindingName = parseName(scanner);
+			processorBinding.setName(bindingName);
 			profile.getProcessorBindings().add(processorBinding);
 			return;
 		}
