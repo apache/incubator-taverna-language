@@ -2,9 +2,12 @@ package uk.org.taverna.scufl2.api.io.structure;
 
 import static uk.org.taverna.scufl2.api.io.structure.StructureReader.TEXT_VND_TAVERNA_SCUFL2_STRUCTURE;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,9 +15,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.Named;
@@ -298,13 +298,20 @@ public class StructureWriter implements WorkflowBundleWriter {
 	public synchronized void writeBundle(WorkflowBundle wb, File destination,
 			String mediaType) throws IOException {
 		destination.createNewFile();
-		FileUtils.write(destination, bundleString(wb), "utf-8");
+
+		BufferedOutputStream outputStream = new BufferedOutputStream(
+				new FileOutputStream(destination));
+		writeBundle(wb, outputStream, mediaType);
+		outputStream.close();
+
 	}
 
 	@Override
 	public void writeBundle(WorkflowBundle wfBundle, OutputStream output,
 			String mediaType) throws IOException {
-		IOUtils.write(bundleString(wfBundle), output, "utf-8");
+		OutputStreamWriter writer = new OutputStreamWriter(output, "utf-8");
+		writer.write(bundleString(wfBundle));
+		writer.close();
 	}
 
 }

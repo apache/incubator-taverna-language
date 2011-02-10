@@ -1,6 +1,8 @@
 package uk.org.taverna.scufl2.api.io.structure;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -9,9 +11,6 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
@@ -83,10 +82,10 @@ public class StructureReader implements WorkflowBundleReader {
 		return Collections.singleton(TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
 	}
 
-	protected WorkflowBundle parse(String bundleString) throws ReaderException {
-		System.out.println(bundleString);
+	protected WorkflowBundle parse(InputStream is) throws ReaderException {
+
 		wb = new WorkflowBundle();
-		Scanner scanner = new Scanner(bundleString);
+		Scanner scanner = new Scanner(is);
 		try {
 			while (scanner.hasNextLine()) {
 				parseLine(scanner.nextLine());
@@ -376,15 +375,19 @@ public class StructureReader implements WorkflowBundleReader {
 	@Override
 	public WorkflowBundle readBundle(File bundleFile, String mediaType)
 			throws IOException, ReaderException {
-		String bundleString = FileUtils.readFileToString(bundleFile, "utf-8");
-		return parse(bundleString);
+		BufferedInputStream is = new BufferedInputStream(new FileInputStream(
+				bundleFile));
+		try {
+			return parse(is);
+		} finally {
+			is.close();
+		}
 	}
 
 	@Override
 	public WorkflowBundle readBundle(InputStream inputStream, String mediaType)
 			throws IOException, ReaderException {
-		String bundleString = IOUtils.toString(inputStream, "utf-8");
-		return parse(bundleString);
+		return parse(inputStream);
 
 	}
 
