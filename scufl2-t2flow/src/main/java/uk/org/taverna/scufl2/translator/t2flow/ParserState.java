@@ -52,12 +52,12 @@ public class ParserState {
 		this.currentProcessorBinding = currentProcessorBinding;
 	}
 
-	public WorkflowBundle getCurrentResearchObject() {
-		return currentResearchObject;
+	public WorkflowBundle getCurrentWorkflowBundle() {
+		return workflowBundle;
 	}
 
-	public void setCurrentResearchObject(WorkflowBundle currentResearchObject) {
-		this.currentResearchObject = currentResearchObject;
+	public void setCurrentWorkflowBundle(WorkflowBundle workflowBundle) {
+		this.workflowBundle = workflowBundle;
 	}
 
 	public T2Parser getCurrentT2Parser() {
@@ -77,7 +77,7 @@ public class ParserState {
 	}
 
 	private ProcessorBinding currentProcessorBinding;
-	private WorkflowBundle currentResearchObject;
+	private WorkflowBundle workflowBundle;
 	private T2Parser currentT2Parser;
 	private Workflow currentWorkflow;
 	private T2FlowParser t2FlowParser;
