@@ -78,13 +78,13 @@ public class URITools {
 	public WorkflowBean resolveUri(URI uri, WorkflowBundle wfBundle) {
 
 		// Check if it's a workflow URI
+		for (Workflow wf : wfBundle.getWorkflows()) {
+			if (wf.getWorkflowIdentifier().equals(uri)) {
+				return wf;
+			}
+		}
 		String rel = Workflow.WORKFLOW_ROOT.relativize(uri).toASCIIString();
 		if (rel.matches("[0-9a-f-]+/")) {
-			for (Workflow wf : wfBundle.getWorkflows()) {
-				if (wf.getWorkflowIdentifier().equals(uri)) {
-					return wf;
-				}
-			}
 			return null;
 		}
 
