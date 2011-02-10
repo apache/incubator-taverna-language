@@ -12,6 +12,9 @@ public class DispatchStackLayer implements Typed, Child<DispatchStack>,Configura
 	private DispatchStack parent;
 	private URI configurableType;
 
+	public DispatchStackLayer() {
+	}
+
 	public DispatchStackLayer(DispatchStack parent, URI configurableType) {
 		setParent(parent);
 		setConfigurableType(configurableType);
