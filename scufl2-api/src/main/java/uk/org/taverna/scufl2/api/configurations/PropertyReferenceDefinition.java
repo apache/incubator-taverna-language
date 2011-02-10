@@ -95,12 +95,13 @@ public class PropertyReferenceDefinition extends PropertyDefinition {
 		StringBuilder sb = new StringBuilder();
 		sb.append(indent);
 		sb.append("PropertyReferenceDefinition ");
-		sb.append(getPredicate());
+		if (getPredicate() != null) sb.append(getPredicate());
 		sb.append("\n");
-		sb.append(indent);
-		sb.append(" label=" + getLabel() + ", description=" + getDescription()
-				+ ", required=" + isRequired() + ", multiple=" + isMultiple()
-				+ ", ordered=" + isOrdered());
+		sb.append(indent + "  label=" + getLabel() + ", description=" + getDescription() + "\n");
+		sb.append(indent + "  required=" + isRequired() + ", multiple=" + isMultiple()+ ", ordered=" + isOrdered() + "\n");
+		if (getOptions().size() > 0) {
+			sb.append("  options=" + getOptions());			
+		}
 		return sb.toString();
 	}
 
