@@ -62,7 +62,7 @@ public class WSDLActivityParser extends AbstractActivityParser {
 
 		Configuration configuration = new Configuration();
 		configuration.getPropertyResource().setTypeURI(
-				WSDL.resolve("#ConfigType"));
+				WSDL.resolve("#Config"));
 
 		URI wsdl;
 		try {
