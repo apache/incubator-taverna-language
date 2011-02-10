@@ -10,8 +10,7 @@ import uk.org.taverna.scufl2.api.common.Visitor;
  *
  */
 public class DotProduct extends ArrayList<IterationStrategyNode> implements
-		List<IterationStrategyNode>, IterationStrategyTopNode,
-		IterationStrategyParent {
+		IterationStrategyTopNode {
 
 	private IterationStrategyParent parent;
 

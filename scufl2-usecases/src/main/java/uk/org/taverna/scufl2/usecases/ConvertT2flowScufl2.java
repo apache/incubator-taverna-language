@@ -21,7 +21,7 @@ public class ConvertT2flowScufl2 {
 			File scufl2File = new File(t2File.getParentFile(), filename);
 			WorkflowBundle wfBundle = io.readBundle(t2File, "application/vnd.taverna.t2flow+xml");
 			io.writeBundle(wfBundle, scufl2File, "application/vnd.taverna.scufl2.workflow-bundle");
-			io.writeBundle(wfBundle, System.out, "text/vnd.taverna.scufl2.structure");
+			//io.writeBundle(wfBundle, System.out, "text/vnd.taverna.scufl2.structure");
 		}
 	}
 

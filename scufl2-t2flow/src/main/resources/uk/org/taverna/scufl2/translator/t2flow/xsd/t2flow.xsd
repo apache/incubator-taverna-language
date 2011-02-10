@@ -7,9 +7,12 @@
 		<documentation>
 			<p xmlns='http://www.w3.org/1999/xhtml'>
 				This is a descriptive, informative XML Schema
-				describing the serialisation format of Taverna 2 workflows, as of
-				Taverna 2.0. Such workflows are commonly served with the extension
-				.t2flow and served using the content-type
+				describing
+				the serialisation format of Taverna 2 workflows, as of
+				Taverna 2.0.
+				Such workflows are commonly served with the extension
+				.t2flow and
+				served using the content-type
 				application/vnd.taverna.t2flow+xml
 	</p>			<p xmlns='http://www.w3.org/1999/xhtml'>				Stable as of 2009-09-11 by Stian Soiland-Reyes, should correctly				describe workflows as saved from Taverna 2.0, 2.1 b1 and 2.1 b2, but				as this schema has been made in retrospect no guarantees are made.				To test the schema against the examples, try xmllint:				<code>xmllint --noout --schema t2flow.xsd examples/*t2flow</code>			</p>		</documentation>	</annotation>
 	<element name="workflow" type="tav:Workflow">
@@ -53,10 +56,14 @@
 
 					Example: taverna-2.1-beta-1
 
-					Introduced in Taverna 2.1 Beta 1 - if the value is missing it's safe to
-					assume 'taverna-2.0' - although it might also be a workflow saved
-					through another application using the pre 2.1 APIs, such as the
-					Taverna Platform.</documentation>
+					Introduced in Taverna 2.1 Beta
+					1 - if the value is missing it's safe to
+					assume 'taverna-2.0' -
+					although it might also be a workflow saved
+					through another
+					application using the pre 2.1 APIs, such as the
+					Taverna Platform.
+				</documentation>
 			</annotation>
 		</attribute>
 	</complexType>
@@ -504,17 +511,46 @@
 
 	<complexType name="Iteration">
 		<sequence>
-			<element name="strategy" type="tav:IterationNode"></element>
+			<element name="strategy" type="tav:TopIterationNode"
+				minOccurs="0" maxOccurs="unbounded" />
 		</sequence>
 	</complexType>
 
-	<complexType name="IterationNode">
-		<choice maxOccurs="unbounded" minOccurs="0">
-			<element name="cross" type="tav:IterationNode"></element>
-			<element name="dot" type="tav:IterationNode"></element>
-			<element name="port" type="tav:PortProduct"></element>
+	<complexType name="TopIterationNode">
+		<choice maxOccurs="1" minOccurs="0">
+			<element name="cross" type="tav:CrossProduct" />
+			<element name="dot" type="tav:DotProduct" />
 		</choice>
 	</complexType>
+
+	<complexType name="IterationNode">
+	</complexType>
+
+
+	<complexType name="IterationNodeParent">
+		<complexContent>
+			<extension base="tav:IterationNode">
+				<choice maxOccurs="unbounded" minOccurs="0">
+					<element name="cross" type="tav:CrossProduct" />
+					<element name="dot" type="tav:DotProduct" />
+					<element name="port" type="tav:PortProduct" />
+				</choice>
+			</extension>
+		</complexContent>
+	</complexType>
+
+	<complexType name="CrossProduct">
+		<complexContent>
+			<extension base="tav:IterationNodeParent" />
+		</complexContent>
+	</complexType>
+
+	<complexType name="DotProduct">
+		<complexContent>
+			<extension base="tav:IterationNodeParent" />
+		</complexContent>
+	</complexType>
+
 
 	<complexType name="DepthPort">
 		<complexContent>
@@ -571,7 +607,8 @@
 	</complexType>
 	<complexType name="AnnotatedGranularDepthPorts">
 		<annotation>
-			<documentation>List of annotated ports that have both depth and granular depth.
+			<documentation>List of annotated ports that have both depth and
+				granular depth.
 			</documentation>
 		</annotation>
 		<sequence>
@@ -604,8 +641,8 @@
 			</documentation>
 		</annotation>
 		<sequence>
-			<element name="port" type="tav:AnnotatedPort"
-				maxOccurs="unbounded" minOccurs="0"></element>
+			<element name="port" type="tav:AnnotatedPort" maxOccurs="unbounded"
+				minOccurs="0"></element>
 		</sequence>
 	</complexType>
 
@@ -706,23 +743,14 @@
 		</sequence>
 	</complexType>
 
-	<complexType name="CrossProduct">
-		<sequence>
-			<element name="cross" type="tav:Products"></element>
-		</sequence>
-	</complexType>
-
-	<complexType name="Products">
-		<sequence>
-			<element name="port" type="tav:PortProduct" maxOccurs="unbounded"
-				minOccurs="0">
-			</element>
-		</sequence>
-	</complexType>
-
 	<complexType name="PortProduct">
-		<attribute use="required" name="name" type="tav:PortName"></attribute>
-		<attribute use="required" name="depth" type="nonNegativeInteger"></attribute>
+
+		<complexContent>
+			<extension base="tav:IterationNode">
+				<attribute use="required" name="name" type="tav:PortName"></attribute>
+				<attribute use="required" name="depth" type="nonNegativeInteger"></attribute>
+			</extension>
+		</complexContent>
 	</complexType>
 
 	<complexType name="AnnotationChain">
