@@ -36,6 +36,11 @@
 			<artifactId>commons-io</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>scufl2-ucfpackage</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 
 </project>

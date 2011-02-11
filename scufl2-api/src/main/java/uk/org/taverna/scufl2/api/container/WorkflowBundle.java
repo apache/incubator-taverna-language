@@ -1,5 +1,6 @@
 package uk.org.taverna.scufl2.api.container;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,6 +17,7 @@ import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.profiles.Profile;
+import uk.org.taverna.scufl2.ucfpackage.UCFPackage;
 
 /**
  * @author Alan R Williams
@@ -37,6 +39,7 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 	private NamedSet<Workflow> workflows = new NamedSet<Workflow>();
 	private Workflow mainWorkflow;
 	private Profile mainProfile;
+	private UCFPackage resources;
 
 	@Override
 	public boolean accept(Visitor visitor) {
@@ -70,6 +73,18 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 		return profiles;
 	}
 
+	public UCFPackage getResources() {
+		if (resources == null) {
+			try {
+				resources = new UCFPackage();
+			} catch (IOException e) {
+				throw new IllegalStateException(
+						"Can't create new UCF package, no access to tmpdir?", e);
+			}
+		}
+		return resources;
+	}
+
 	@Override
 	public URI getSameBaseAs() {
 		return sameBaseAs;
@@ -92,6 +107,10 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 	public void setProfiles(Set<Profile> profiles) {
 		this.profiles.clear();
 		this.profiles.addAll(profiles);
+	}
+
+	public void setResources(UCFPackage resources) {
+		this.resources = resources;
 	}
 
 	@Override
