@@ -44,9 +44,12 @@ public class RDFXMLWriter implements WorkflowBundleWriter {
 
 	protected UCFPackage makeUCFPackage(WorkflowBundle wfBundle)
 			throws IOException, WriterException {
-		UCFPackage ucfPackage = new UCFPackage();
-		ucfPackage
+		//UCFPackage ucfPackage = new UCFPackage();
+		UCFPackage ucfPackage = wfBundle.getResources();		
+		if (ucfPackage.getPackageMediaType() == null) {
+			ucfPackage
 				.setPackageMediaType(APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE);
+		}
 
 		RDFXMLSerializer serializer = new RDFXMLSerializer(wfBundle);
 		
@@ -86,7 +89,10 @@ public class RDFXMLWriter implements WorkflowBundleWriter {
 					e);
 		}
 		outputStream.close();
-		ucfPackage.setRootFile(WORKFLOW_BUNDLE_RDF);
+		
+		if (ucfPackage.getPackageMediaType().equals(APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE)) {
+			ucfPackage.setRootFile(WORKFLOW_BUNDLE_RDF);
+		}
 
 		return ucfPackage;
 
