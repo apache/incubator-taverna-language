@@ -454,11 +454,12 @@ public class RDFXMLSerializer {
 				InputProcessorPort inPort = portNode.getInputProcessorPort();
 				URI portUri = uriTools.relativeUriForBean(inPort, wf);
 				uk.org.taverna.scufl2.rdfxml.jaxb.PortNode port = objectFactory.createPortNode();
-				port.setAbout(portUri.toASCIIString());
+				port.setAbout(uri.toASCIIString());
 				if (portNode.getDesiredDepth() != null) {
 					DesiredDepth value = objectFactory.createPortNodeDesiredDepth();
 					value.setDatatype(value.getDatatype());
 					value.setValue(portNode.getDesiredDepth());
+					port.setDesiredDepth(value);
 				}
 				port.setIterateOverInputPort(makeResource(portUri));
 				productStack.peek().add(port);
