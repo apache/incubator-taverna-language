@@ -285,9 +285,11 @@ public class TestRDFXMLSerializer {
 		assertXpathEquals("Collection", wf, "./s:processor[1]/s:Processor/s:iterationStrategyStack/s:IterationStrategyStack/s:iterationStrategies/@rdf:parseType");
 		assertXpathEquals("processor/Hello/iterationstrategy/0/", wf, "./s:processor[1]/s:Processor/s:iterationStrategyStack/s:IterationStrategyStack/s:iterationStrategies/s:CrossProduct/@rdf:about");		
 		assertXpathEquals("Collection", wf, "./s:processor[1]/s:Processor/s:iterationStrategyStack/s:IterationStrategyStack/s:iterationStrategies/s:CrossProduct/s:productOf/@rdf:parseType");
-		assertXpathEquals("processor/Hello/in/name", wf, "./s:processor[1]/s:Processor/s:iterationStrategyStack/s:IterationStrategyStack/s:iterationStrategies/s:CrossProduct/s:productOf/s:InputProcessorPort/@rdf:about");
-		
-		
+		assertXpathEquals("processor/Hello/iterationstrategy/0/0/", wf, "./s:processor[1]/s:Processor/s:iterationStrategyStack/s:IterationStrategyStack/s:iterationStrategies/s:CrossProduct/s:productOf/s:PortNode/@rdf:about");
+		assertXpathEquals("processor/Hello/in/name", wf, "./s:processor[1]/s:Processor/s:iterationStrategyStack/s:IterationStrategyStack/s:iterationStrategies/s:CrossProduct/s:productOf/s:PortNode/s:iterateOverInputPort/@rdf:resource");
+		assertXpathEquals("0", wf, "./s:processor[1]/s:Processor/s:iterationStrategyStack/s:IterationStrategyStack/s:iterationStrategies/s:CrossProduct/s:productOf/s:PortNode/s:desiredDepth");
+		assertXpathEquals("http://www.w3.org/2001/XMLSchema#integer", wf, "./s:processor[1]/s:Processor/s:iterationStrategyStack/s:IterationStrategyStack/s:iterationStrategies/s:CrossProduct/s:productOf/s:PortNode/s:desiredDepth/@rdf:datatype");
+				
 
 		assertXpathEquals("processor/wait4me/", 
 				wf, "./s:processor[2]/s:Processor/@rdf:about");
