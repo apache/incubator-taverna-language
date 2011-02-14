@@ -1,6 +1,5 @@
 package uk.org.taverna.scufl2.rdfxml;
 
-import java.io.File;
 import java.net.URI;
 import java.net.URL;
 
@@ -13,12 +12,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.rdfxml.jaxb.ObjectFactory;
+import uk.org.taverna.scufl2.rdfxml.jaxb.Profile;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ProfileDocument;
+import uk.org.taverna.scufl2.rdfxml.jaxb.Workflow;
 import uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowBundle;
 import uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowBundleDocument;
 import uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowDocument;
-import uk.org.taverna.scufl2.rdfxml.jaxb.Profile;
-import uk.org.taverna.scufl2.rdfxml.jaxb.Workflow;
 
 public class DummyParserTest {
 
