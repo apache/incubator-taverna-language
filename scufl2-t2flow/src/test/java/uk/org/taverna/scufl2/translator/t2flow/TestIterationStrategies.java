@@ -1,11 +1,11 @@
 package uk.org.taverna.scufl2.translator.t2flow;
 
-import java.io.File;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static uk.org.taverna.scufl2.translator.t2flow.T2FlowReader.APPLICATION_VND_TAVERNA_T2FLOW_XML;
+
 import java.io.IOException;
 import java.io.InputStream;
-
-import static org.junit.Assert.*;
-import static uk.org.taverna.scufl2.translator.t2flow.T2FlowReader.APPLICATION_VND_TAVERNA_T2FLOW_XML;
 
 import org.junit.Before;
 import org.junit.Test;

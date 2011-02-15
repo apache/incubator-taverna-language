@@ -2,7 +2,6 @@ package uk.org.taverna.scufl2.rdfxml;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static uk.org.taverna.scufl2.rdfxml.TestRDFXMLWriter.APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE;
 
 import java.io.File;
