@@ -1,6 +1,7 @@
 package uk.org.taverna.scufl2.translator.t2flow.defaultactivities;
 
 import java.io.StringReader;
+import java.net.URI;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -10,14 +11,28 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Element;
 
+import uk.org.taverna.scufl2.api.activity.Activity;
+import uk.org.taverna.scufl2.api.common.URITools;
+import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
+import uk.org.taverna.scufl2.api.port.InputActivityPort;
+import uk.org.taverna.scufl2.api.port.OutputActivityPort;
+import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.T2Parser;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityPortDefinitionBean;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityPortDefinitionBean.MimeTypes;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 
 public abstract class AbstractActivityParser implements T2Parser {
 
+	public static URI MEDIATYPES_URI = URI.create("http://purl.org/NET/mediatypes/");
+	
+
+	public static URI PORT_DEFINITION = URI
+			.create("http://ns.taverna.org.uk/2010/scufl2/portDefinition");
+	
 	private ParserState parserState;
 
 	public ParserState getParserState() {
@@ -75,5 +90,87 @@ public abstract class AbstractActivityParser implements T2Parser {
 
 		return configElemElem.getValue();
 	}
+
+	protected void parseAndAddOutputPortDefinition(ActivityPortDefinitionBean portBean, Configuration configuration,
+			Activity activity) {
+				PropertyResource configResource = configuration.getPropertyResource();
+				OutputActivityPort outputPort = new OutputActivityPort();
+				outputPort.setName(portBean.getName());
+				outputPort.setParent(activity);
+				if (portBean.getDepth() != null) {
+					outputPort.setDepth(portBean.getDepth().intValue());
+				}
+				if (portBean.getGranularDepth() != null) {
+					outputPort.setGranularDepth(portBean.getGranularDepth().intValue());
+				}
+			
+				PropertyResource portConfig = configResource.addPropertyAsNewResource(
+						PORT_DEFINITION.resolve("#outputPortDefinition"),
+						PORT_DEFINITION.resolve("#OutputPortDefinition"));
+			
+				URI portUri = new URITools().relativeUriForBean(outputPort, configuration);
+			
+				portConfig.addPropertyReference(
+						PORT_DEFINITION.resolve("#definesOutputPort"), portUri);
+			
+				MimeTypes mimeTypes = portBean.getMimeTypes();
+				if (mimeTypes != null) {
+					// FIXME: Do as annotation as this is not configuration
+					URI mimeType = PORT_DEFINITION.resolve("#expectedMimeType");
+					if (mimeTypes.getElement() != null) {
+						String s = mimeTypes.getElement();
+						if (s.contains("'")) {
+							s = s.split("'")[1];
+						}
+						portConfig.addPropertyReference(mimeType,
+								MEDIATYPES_URI.resolve(s));
+					}
+					if (mimeTypes.getString() != null) {
+						for (String s : mimeTypes.getString()) {
+							if (s.contains("'")) {
+								s = s.split("'")[1];
+							}
+							portConfig.addPropertyReference(mimeType,
+									MEDIATYPES_URI.resolve(s));
+						}
+					}
+				}
+				outputPort.setParent(activity);
+				
+			}
+
+	protected void parseAndAddInputPortDefinition(ActivityPortDefinitionBean portBean, Configuration configuration,
+			Activity activity) {
+				PropertyResource configResource = configuration.getPropertyResource();
+				
+				InputActivityPort inputPort = new InputActivityPort();
+				inputPort.setName(portBean.getName());
+				inputPort.setParent(activity);
+			
+				if (portBean.getDepth() != null) {
+					inputPort.setDepth(portBean.getDepth().intValue());
+				}
+			
+				PropertyResource portConfig = configResource.addPropertyAsNewResource(
+						PORT_DEFINITION.resolve("#inputPortDefinition"),
+						PORT_DEFINITION.resolve("#InputPortDefinition"));
+			
+				URI portUri = new URITools().relativeUriForBean(inputPort,
+						configuration);
+				portConfig.addPropertyReference(
+						PORT_DEFINITION.resolve("#definesInputPort"), portUri);
+			
+				if (portBean.getTranslatedElementType() != null) {
+					// As "translated element type" is confusing, we'll instead use "dataType"
+					portConfig.addPropertyReference(
+							PORT_DEFINITION.resolve("#dataType"),
+							URI.create("java:" + portBean.getTranslatedElementType()));
+			
+					// TODO: Include mapping to XSD types like xsd:string
+				}
+				// T2-1681: Ignoring isAllowsLiteralValues and handledReferenceScheme
+				// TODO: Mime types, etc
+				
+			}
 
 }
