@@ -15,6 +15,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedSet;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.Named;
@@ -222,7 +223,7 @@ public class StructureWriter implements WorkflowBundleWriter {
 				cName = cName + "/" + escapeName(c.getName()) + "'";
 				append(" " + cName);
 
-				for (Entry<URI, Set<PropertyObject>> prop : config
+				for (Entry<URI, SortedSet<PropertyObject>> prop : config
 						.getPropertyResource().getProperties().entrySet()) {
 					newLine(3);
 					append("Property");

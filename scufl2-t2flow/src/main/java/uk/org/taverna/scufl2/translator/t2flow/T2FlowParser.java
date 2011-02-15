@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -382,7 +383,7 @@ public class T2FlowParser {
 
 			URI fallBackURI = configBeanURI.resolve(configBean.getEncoding());
 
-			java.util.Map<URI, Set<PropertyObject>> properties = configuration
+			java.util.Map<URI, SortedSet<PropertyObject>> properties = configuration
 					.getPropertyResource().getProperties();
 			Object any = configBean.getAny();
 			Element element = (Element) configBean.getAny();
