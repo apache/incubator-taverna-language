@@ -31,7 +31,7 @@ public abstract class AbstractActivityParser implements T2Parser {
 	
 
 	public static URI PORT_DEFINITION = URI
-			.create("http://ns.taverna.org.uk/2010/scufl2/portDefinition");
+			.create("http://ns.taverna.org.uk/2010/scufl2#portDefinition");
 	
 	private ParserState parserState;
 
