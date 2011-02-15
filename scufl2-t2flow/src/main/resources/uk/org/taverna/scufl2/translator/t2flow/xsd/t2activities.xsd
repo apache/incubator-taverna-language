@@ -61,8 +61,6 @@
 		</xsd:sequence>
 	</xsd:complexType>
 
-
-
 	<xsd:complexType name="BeanshellConfig">
 		<xsd:annotation>
 			<xsd:documentation>Configuration for the Beanshell activity.
@@ -158,9 +156,9 @@
 
 	<xsd:complexType name="XMLSplitterConfig">
 		<xsd:sequence>
-			<xsd:element name="wrappedTypeXML" />
-			<xsd:element name="inputs" />
-			<xsd:element name="outputs" />
+			<xsd:element name="wrappedTypeXML" type="xsd:string" />
+			<xsd:element name="inputs" type="activities:ActivityInputPorts" />
+			<xsd:element name="outputs" type="activities:ActivityOutputPorts" />
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="BioMartConfig">
@@ -392,21 +390,25 @@
 	</xsd:complexType>
 	<xsd:complexType name="ActivityPortDefinitionBean">
 		<xsd:sequence>
-			<xsd:element name="granularDepth" type="xsd:nonNegativeInteger" minOccurs="0" />
+			<xsd:element name="granularDepth" type="xsd:nonNegativeInteger"
+				minOccurs="0" />
 			<xsd:element name="handledReferenceSchemes" minOccurs="0"
 				maxOccurs="unbounded" />
-			<xsd:element name="translatedElementType" type="xsd:string"  minOccurs="0" />
-			<xsd:element name="allowsLiteralValues" type="xsd:boolean"  minOccurs="0" />
+			<xsd:element name="translatedElementType" type="xsd:string"
+				minOccurs="0" />
+			<xsd:element name="allowsLiteralValues" type="xsd:boolean"
+				minOccurs="0" />
 			<xsd:element name="name" type="xsd:string" />
 			<xsd:element name="depth" type="xsd:nonNegativeInteger" />
 			<xsd:element name="mimeTypes">
 				<xsd:complexType>
 					<xsd:choice>
-							<xsd:element name="string" type="xsd:string"
-								minOccurs="0" maxOccurs="unbounded" />
-						<xsd:element name="element" type="xsd:string" />
+						<xsd:element name="string" type="xsd:string"
+							minOccurs="0" maxOccurs="unbounded" />
+						<xsd:element name="element" type="activities:DependencyElement" />
 					</xsd:choice>
-				</xsd:complexType>
+				<xsd:attribute name="class" type="xsd:string" use="optional" />
+				</xsd:complexType>		
 			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>

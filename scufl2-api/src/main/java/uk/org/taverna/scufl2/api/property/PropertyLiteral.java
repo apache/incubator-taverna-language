@@ -41,9 +41,6 @@ import uk.org.taverna.scufl2.api.common.Visitor;
  * {@link #PropertyLiteral(double)} and {@link #PropertyLiteral(boolean)}, and
  * retrieved using methods like {@link #getLiteralValueAsDouble() and
  * #getLiteralValueAsBoolean().
- * <p><p>
- * 
- * 
  * See {@link DatatypeConverter} to convert other XML types not covered by this
  * class.
  * <p>

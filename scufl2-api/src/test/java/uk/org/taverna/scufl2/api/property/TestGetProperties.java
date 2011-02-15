@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.junit.Test;
@@ -17,15 +18,21 @@ public class TestGetProperties {
 	@Test
 	public void getProperties() throws Exception {
 		PropertyResource resource = new PropertyResource();
-		PropertyReference constant1 = new PropertyResource();
-		PropertyReference constant2 = new PropertyResource();
-		resource.getProperties().get(PROPERTY).add(constant1);
-		resource.getProperties().get(PROPERTY).add(constant2);
-		assertEquals(1, resource.getProperties().size());
-		assertEquals(2, resource.getProperties().get(PROPERTY).size());
+		PropertyReference last = new PropertyReference(
+				EXAMPLE_COM.resolve("#xx-last"));
+		PropertyReference middle = new PropertyReference(
+				EXAMPLE_COM.resolve("#mm-middle"));
+		PropertyReference first = new PropertyReference(
+				EXAMPLE_COM.resolve("#aa-first"));
+		resource.getProperties().get(PROPERTY).add(last);
+		resource.getProperties().get(PROPERTY).add(first);
+		resource.getProperties().get(PROPERTY).add(middle);
 
-		Set<PropertyReference> expectedProperties = new HashSet<PropertyReference>(
-				Arrays.asList(constant1, constant2));
+		assertEquals(1, resource.getProperties().size());
+		assertEquals(3, resource.getProperties().get(PROPERTY).size());
+
+		Set<PropertyReference> expectedProperties = new LinkedHashSet<PropertyReference>(
+				Arrays.asList(first, middle, last));
 
 		Set<PropertyReference> propertyReferences = resource
 				.getPropertiesAsReferences(PROPERTY);
