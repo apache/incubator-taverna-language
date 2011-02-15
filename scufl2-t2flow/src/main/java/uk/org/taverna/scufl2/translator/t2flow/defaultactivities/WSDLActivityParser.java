@@ -16,14 +16,9 @@ public class WSDLActivityParser extends AbstractActivityParser {
 
 	private static String wsdlActivityClassName = "net.sf.taverna.t2.activities.wsdl.WSDLActivity";
 
-	private static String inputSplitterClassName = "net.sf.taverna.t2.activities.wsdl.xmlsplitter.XMLInputSplitterActivity";
-	private static String outputSplitterClassName = "net.sf.taverna.t2.activities.wsdl.xmlsplitter.XMLOutputSplitterActivity";
-
 	public static URI WSDL = URI
 			.create("http://ns.taverna.org.uk/2010/activity/wsdl");
-	public static URI XML_INPUT_SPLITTER = WSDL.resolve("wsdl/xmlinputsplitter");
 	public static URI SECURITY = WSDL.resolve("wsdl/security");
-	public static URI XML_OUTPUT_SPLITTER = WSDL.resolve("wsdl/xmloutputsplitter");
 
 	@Override
 	public boolean canHandlePlugin(URI activityURI) {
@@ -31,31 +26,20 @@ public class WSDLActivityParser extends AbstractActivityParser {
 		if (!activityUriStr.startsWith(wsdlActivityRavenURI.toASCIIString())) {
 			return false;
 		}
-		if (activityUriStr.endsWith(wsdlActivityClassName)
-				|| activityUriStr.endsWith(inputSplitterClassName)
-				|| activityUriStr.endsWith(outputSplitterClassName)) {
+		if (activityUriStr.endsWith(wsdlActivityClassName)) {
 			return true;
 		}
 		return false;
 	}
 
 	@Override
-	public URI mapT2flowRavenIdToScufl2URI(URI t2flowActivity) {
-		String activityUriStr = t2flowActivity.toASCIIString();
-		if (activityUriStr.endsWith(inputSplitterClassName)) {
-			return XML_INPUT_SPLITTER;
-		} else if (activityUriStr.endsWith(outputSplitterClassName)) {
-			return XML_OUTPUT_SPLITTER;
-		} else {
-			return WSDL;
-		}
+	public URI mapT2flowRavenIdToScufl2URI(URI t2flowActivity) {		
+		return WSDL;
 	}
 
 	@Override
 	public Configuration parseConfiguration(T2FlowParser t2FlowParser,
 			ConfigBean configBean) throws ReaderException {
-
-		// TODO: XML splitters
 
 		WSDLConfig wsdlConfig = unmarshallConfig(t2FlowParser, configBean,
 				"xstream", WSDLConfig.class);
@@ -95,8 +79,6 @@ public class WSDLActivityParser extends AbstractActivityParser {
 			configuration.getPropertyResource().addPropertyReference(
 					WSDL.resolve("#securityProfile"), securityProfileURI);
 		}
-
-		// TODO: Security stuff
 		return configuration;
 	}
 
