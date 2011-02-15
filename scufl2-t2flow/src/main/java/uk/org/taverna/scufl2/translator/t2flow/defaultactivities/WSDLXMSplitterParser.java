@@ -59,6 +59,8 @@ public class WSDLXMSplitterParser extends AbstractActivityParser {
 				"xstream", XMLSplitterConfig.class);		
 
 		Configuration configuration = new Configuration();
+		configuration.setParent(getParserState().getCurrentProfile());
+		
 		PropertyResource resource = configuration.getPropertyResource();		
 		resource.setTypeURI(
 				SPLITTER.resolve("#Config"));

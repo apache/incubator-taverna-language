@@ -405,9 +405,10 @@
 					<xsd:choice>
 						<xsd:element name="string" type="xsd:string"
 							minOccurs="0" maxOccurs="unbounded" />
-						<xsd:element name="element" type="xsd:string" />
+						<xsd:element name="element" type="activities:DependencyElement" />
 					</xsd:choice>
-				</xsd:complexType>
+				<xsd:attribute name="class" type="xsd:string" use="optional" />
+				</xsd:complexType>		
 			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>

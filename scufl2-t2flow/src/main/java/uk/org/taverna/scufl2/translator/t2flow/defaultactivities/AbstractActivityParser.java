@@ -117,8 +117,8 @@ public abstract class AbstractActivityParser implements T2Parser {
 				if (mimeTypes != null) {
 					// FIXME: Do as annotation as this is not configuration
 					URI mimeType = PORT_DEFINITION.resolve("#expectedMimeType");
-					if (mimeTypes.getElement() != null) {
-						String s = mimeTypes.getElement();
+					if (mimeTypes.getElement() != null) {						
+						String s = mimeTypes.getElement().getValue();
 						if (s.contains("'")) {
 							s = s.split("'")[1];
 						}
