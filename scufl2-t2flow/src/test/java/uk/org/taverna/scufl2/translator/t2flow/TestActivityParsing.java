@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static uk.org.taverna.scufl2.translator.t2flow.defaultactivities.BeanshellActivityParser.ACTIVITY_URI;
+import static uk.org.taverna.scufl2.translator.t2flow.defaultactivities.AbstractActivityParser.PORT_DEFINITION;
 
 import java.net.URI;
 import java.net.URL;
@@ -86,7 +87,7 @@ public class TestActivityParsing {
 
 		Set<PropertyResource> inputDef = concatConfig.getPropertyResource()
 				.getPropertiesAsResources(
-						ACTIVITY_URI.resolve("#inputPortDefinition"));
+						PORT_DEFINITION.resolve("#inputPortDefinition"));
 		assertEquals(2, inputDef.size());
 
 		Set<URI> expectedPortUris = new HashSet<URI>();
@@ -97,17 +98,17 @@ public class TestActivityParsing {
 		assertEquals(2, expectedPortUris.size());
 		assertEquals(2, inputDef.size());
 		for (PropertyResource portDef : inputDef) {
-			assertEquals(ACTIVITY_URI.resolve("#InputPortDefinition"),
+			assertEquals(PORT_DEFINITION.resolve("#InputPortDefinition"),
 					portDef.getTypeURI());
 			assertNull(portDef.getResourceURI());
-			URI dataType = portDef.getPropertyAsResourceURI(ACTIVITY_URI
+			URI dataType = portDef.getPropertyAsResourceURI(PORT_DEFINITION
 					.resolve("#dataType"));
 
 			assertEquals("java", dataType.getScheme());
 			assertEquals("java.lang.String", dataType
 					.getSchemeSpecificPart());
 
-			URI portURI = portDef.getPropertyAsResourceURI(ACTIVITY_URI
+			URI portURI = portDef.getPropertyAsResourceURI(PORT_DEFINITION
 					.resolve("#definesInputPort"));
 			assertTrue("Unknown port " + portURI,
 					expectedPortUris.contains(portURI));
@@ -123,14 +124,14 @@ public class TestActivityParsing {
 
 		Set<PropertyResource> outputDef = concatConfig.getPropertyResource()
 				.getPropertiesAsResources(
-						ACTIVITY_URI.resolve("#outputPortDefinition"));
+						PORT_DEFINITION.resolve("#outputPortDefinition"));
 		assertEquals(1, outputDef.size());
 		PropertyResource out1Def = outputDef.iterator().next();
 
-		assertEquals(ACTIVITY_URI.resolve("#OutputPortDefinition"),
+		assertEquals(PORT_DEFINITION.resolve("#OutputPortDefinition"),
 				out1Def.getTypeURI());
 
-		Set<URI> mimeTypes = out1Def.getPropertiesAsResourceURIs(ACTIVITY_URI
+		Set<URI> mimeTypes = out1Def.getPropertiesAsResourceURIs(PORT_DEFINITION
 				.resolve("#expectedMimeType"));
 		assertEquals(1, mimeTypes.size());
 
