@@ -3,15 +3,11 @@ package uk.org.taverna.scufl2.translator.t2flow.defaultactivities;
 import java.net.URI;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
-import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
-import uk.org.taverna.scufl2.api.port.InputActivityPort;
-import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityPortDefinitionBean;
-import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityPortDefinitionBean.MimeTypes;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.BeanshellConfig;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 
@@ -30,7 +26,6 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 	public static URI ACTIVITY_URI = URI
 			.create("http://ns.taverna.org.uk/2010/activity/beanshell");
 
-	public static URI MEDIATYPES_URI = URI.create("http://purl.org/NET/mediatypes/");
 
 	@Override
 	public boolean canHandlePlugin(URI activityURI) {
@@ -55,6 +50,8 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 	@Override
 	public Configuration parseConfiguration(T2FlowParser t2FlowParser,
 			ConfigBean configBean) throws ReaderException {
+		
+		// FIXME: Test with local workers
 		BeanshellConfig beanshellConfig = unmarshallConfig(t2FlowParser,
 				configBean, "xstream", BeanshellConfig.class);
 
@@ -63,6 +60,7 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 
 		PropertyResource configResource = configuration.getPropertyResource();
 		configResource.setTypeURI(ACTIVITY_URI.resolve("#Config"));
+		
 		String script = beanshellConfig.getScript();
 		configResource.addPropertyAsString(ACTIVITY_URI.resolve("#script"), script);
 
@@ -74,79 +72,13 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 		for (ActivityPortDefinitionBean portBean : beanshellConfig
 				.getInputs()
 				.getNetSfTavernaT2WorkflowmodelProcessorActivityConfigActivityInputPortDefinitionBean()) {
-			InputActivityPort inputPort = new InputActivityPort();
-			inputPort.setName(portBean.getName());
-			inputPort.setParent(activity);
-
-			if (portBean.getDepth() != null) {
-				inputPort.setDepth(portBean.getDepth().intValue());
-			}
-
-			PropertyResource portConfig = configResource.addPropertyAsNewResource(
-					ACTIVITY_URI.resolve("#inputPortDefinition"),
-					ACTIVITY_URI.resolve("#InputPortDefinition"));
-
-			URI portUri = new URITools().relativeUriForBean(inputPort,
-					configuration);
-			portConfig.addPropertyReference(
-					ACTIVITY_URI.resolve("#definesInputPort"), portUri);
-
-			if (portBean.getTranslatedElementType() != null) {
-				// As "translated element type" is confusing, we'll instead use "dataType"
-				portConfig.addPropertyReference(
-						ACTIVITY_URI.resolve("#dataType"),
-						URI.create("java:" + portBean.getTranslatedElementType()));
-
-				// TODO: Include mapping to XSD types like xsd:string
-			}
-			// T2-1681: Ignoring isAllowsLiteralValues and handledReferenceScheme
-			// TODO: Mime types, etc
+			parseAndAddInputPortDefinition(portBean, configuration, activity);
 		}
 		for (ActivityPortDefinitionBean portBean : beanshellConfig
 				.getOutputs()
 				.getNetSfTavernaT2WorkflowmodelProcessorActivityConfigActivityOutputPortDefinitionBean()) {
-			OutputActivityPort outputPort = new OutputActivityPort();
-			outputPort.setName(portBean.getName());
-			outputPort.setParent(activity);
-			if (portBean.getDepth() != null) {
-				outputPort.setDepth(portBean.getDepth().intValue());
-			}
-			if (portBean.getGranularDepth() != null) {
-				outputPort.setGranularDepth(portBean.getGranularDepth().intValue());
-			}
-
-			PropertyResource portConfig = configResource.addPropertyAsNewResource(
-					ACTIVITY_URI.resolve("#outputPortDefinition"),
-					ACTIVITY_URI.resolve("#OutputPortDefinition"));
-
-			URI portUri = new URITools().relativeUriForBean(outputPort, configuration);
-
-			portConfig.addPropertyReference(
-					ACTIVITY_URI.resolve("#definesOutputPort"), portUri);
-
-			MimeTypes mimeTypes = portBean.getMimeTypes();
-			if (mimeTypes != null) {
-				// FIXME: Do as annotation as this is not configuration
-				URI mimeType = ACTIVITY_URI.resolve("#expectedMimeType");
-				if (mimeTypes.getElement() != null) {
-					String s = mimeTypes.getElement();
-					if (s.contains("'")) {
-						s = s.split("'")[1];
-					}
-					portConfig.addPropertyReference(mimeType,
-							MEDIATYPES_URI.resolve(s));
-				}
-				if (mimeTypes.getString() != null) {
-					for (String s : mimeTypes.getString()) {
-						if (s.contains("'")) {
-							s = s.split("'")[1];
-						}
-						portConfig.addPropertyReference(mimeType,
-								MEDIATYPES_URI.resolve(s));
-					}
-				}
-			}
-			outputPort.setParent(activity);
+			parseAndAddOutputPortDefinition(portBean, configuration, activity);
+			
 		}
 		return configuration;
 	}
