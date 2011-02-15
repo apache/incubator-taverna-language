@@ -9,7 +9,6 @@ import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
 
 import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.translator.t2flow.ParserState;

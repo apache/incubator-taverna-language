@@ -10,8 +10,6 @@ import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.impl.LazyMap;
 import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
-import uk.org.taverna.scufl2.translator.t2flow.ParserState.ParseLaterCallback;
-import uk.org.taverna.scufl2.xml.t2flow.jaxb.Activity;
 
 public class ParserState {
 	private uk.org.taverna.scufl2.api.activity.Activity currentActivity;
