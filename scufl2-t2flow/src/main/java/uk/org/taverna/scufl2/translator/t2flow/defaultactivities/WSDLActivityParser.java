@@ -19,6 +19,7 @@ public class WSDLActivityParser extends AbstractActivityParser {
 	public static URI WSDL = URI
 			.create("http://ns.taverna.org.uk/2010/activity/wsdl");
 	public static URI SECURITY = WSDL.resolve("wsdl/security");
+	public static URI OPERATION = WSDL.resolve("wsdl/operation");
 
 	@Override
 	public boolean canHandlePlugin(URI activityURI) {
@@ -68,16 +69,16 @@ public class WSDLActivityParser extends AbstractActivityParser {
 
 		PropertyResource wsdlOperation = configuration.getPropertyResource()
 				.addPropertyAsNewResource(WSDL.resolve("#operation"),
-						WSDL.resolve("#Operation"));
-		wsdlOperation.addPropertyReference(WSDL.resolve("#wsdl"), wsdl);
-		wsdlOperation.addPropertyAsString(WSDL.resolve("#operationName"), operation);
+						OPERATION);
+		wsdlOperation.addPropertyReference(OPERATION.resolve("#wsdl"), wsdl);
+		wsdlOperation.addPropertyAsString(OPERATION.resolve("#name"), operation);
 
 		if (wsdlConfig.getSecurityProfile() != null
 				&& !wsdlConfig.getSecurityProfile().isEmpty()) {
 			URI securityProfileURI = SECURITY.resolve("#" + wsdlConfig
 					.getSecurityProfile());
 			configuration.getPropertyResource().addPropertyReference(
-					WSDL.resolve("#securityProfile"), securityProfileURI);
+					SECURITY.resolve("#profile"), securityProfileURI);
 		}
 		return configuration;
 	}
