@@ -63,6 +63,15 @@ public class ConfigurationDefinitionTest {
 	}
 
 	/**
+	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.ConfigurationDefinition#getPropertyResourceDefinition()}.
+	 */
+	@Test
+	public void testGetPropertyDefinitions() {
+		assertNotNull(configurationDefinition.getPropertyResourceDefinition());
+		assertEquals(configurableType.resolve("#Config"), configurationDefinition.getPropertyResourceDefinition().getTypeURI());
+	}
+
+	/**
 	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.ConfigurationDefinition#setConfigurableType(java.net.URI)}.
 	 */
 	@Test
@@ -70,15 +79,6 @@ public class ConfigurationDefinitionTest {
 		assertEquals(configurableType, configurationDefinition.getConfigurableType());
 		configurationDefinition.setConfigurableType(URI.create("test:test"));
 		assertEquals(URI.create("test:test"), configurationDefinition.getConfigurableType());
-	}
-
-	/**
-	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.ConfigurationDefinition#getPropertyResourceDefinition()}.
-	 */
-	@Test
-	public void testGetPropertyDefinitions() {
-		assertNotNull(configurationDefinition.getPropertyResourceDefinition());
-		assertEquals(configurableType.resolve("#ConfigType"), configurationDefinition.getPropertyResourceDefinition().getTypeURI());
 	}
 
 	/**
