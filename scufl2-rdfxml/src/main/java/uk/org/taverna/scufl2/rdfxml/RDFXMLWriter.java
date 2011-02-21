@@ -22,13 +22,21 @@ import uk.org.taverna.scufl2.ucfpackage.UCFPackage;
 
 public class RDFXMLWriter implements WorkflowBundleWriter {
 
-	private static final String RDF = ".rdf";
-	private static final String WORKFLOW = "workflow/";
-	private static final String PROFILE = "profile/";
-	private static final String WORKFLOW_BUNDLE_RDF = "workflowBundle.rdf";
+	protected static final String RDF = ".rdf";
+	protected static final String WORKFLOW = "workflow/";
+	protected static final String PROFILE = "profile/";
+	protected static final String WORKFLOW_BUNDLE_RDF = "workflowBundle.rdf";
 
 	private static URITools uriTools = new URITools();
 	
+	public static final URITools getUriTools() {
+		return uriTools;
+	}
+
+	public static final void setUriTools(URITools uriTools) {
+		RDFXMLWriter.uriTools = uriTools;
+	}
+
 	@Override
 	public Set<String> getMediaTypes() {
 		return Collections
