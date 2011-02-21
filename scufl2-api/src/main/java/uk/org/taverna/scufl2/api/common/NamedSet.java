@@ -3,7 +3,6 @@ package uk.org.taverna.scufl2.api.common;
 import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.SortedMap;
@@ -21,10 +20,10 @@ import java.util.TreeMap;
  * The names can also be found in {@link #getNames()} and
  * {@link #nameIterator()}
  * <p>
- * Internally this set is backed by a {@link HashMap}.
- *
+ * Internally this set is backed by a {@link TreeMap}.
+ * 
  * @author Stian Soiland-Reyes
- *
+ * 
  * @param <T>
  *            Subclass of {@link Named} to keep in this set.
  */
