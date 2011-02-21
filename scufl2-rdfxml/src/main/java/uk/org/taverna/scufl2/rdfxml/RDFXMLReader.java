@@ -29,7 +29,7 @@ public class RDFXMLReader implements WorkflowBundleReader {
 			throws ReaderException, IOException {
 		UCFPackage ucfPackage = new UCFPackage(bundleFile);
 		RDFXMLDeserializer deserializer = new RDFXMLDeserializer(ucfPackage);
-		return deserializer.parseWorkflowBundle(bundleFile.toURI());
+		return deserializer.readWorkflowBundle(bundleFile.toURI());
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class RDFXMLReader implements WorkflowBundleReader {
 			throws ReaderException, IOException {		// 
 		UCFPackage ucfPackage = new UCFPackage(inputStream);
 		RDFXMLDeserializer deserializer = new RDFXMLDeserializer(ucfPackage);
-		return deserializer.parseWorkflowBundle(URI.create(""));
+		return deserializer.readWorkflowBundle(URI.create(""));
 	}
 
 }
