@@ -77,9 +77,11 @@ public class StructureWriter implements WorkflowBundleWriter {
 		append("WorkflowBundle");
 		append(wb);
 
-		newLine(1);
-		append("MainWorkflow");
-		append(wb.getMainWorkflow());
+		if (wb.getMainWorkflow() != null) {
+			newLine(1);
+			append("MainWorkflow");
+			append(wb.getMainWorkflow());
+		}
 		for (Workflow wf : sorted(wb.getWorkflows())) {
 			newLine(1);
 			append("Workflow");
@@ -133,8 +135,8 @@ public class StructureWriter implements WorkflowBundleWriter {
 
 		}
 
-		newLine(1);
 		if (wb.getMainProfile() != null) {
+			newLine(1);
 			append("MainProfile");
 			append(wb.getMainProfile());
 		}
