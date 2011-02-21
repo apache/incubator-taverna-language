@@ -134,8 +134,10 @@ public class StructureWriter implements WorkflowBundleWriter {
 		}
 
 		newLine(1);
-		append("MainProfile");
-		append(wb.getMainProfile());
+		if (wb.getMainProfile() != null) {
+			append("MainProfile");
+			append(wb.getMainProfile());
+		}
 
 		for (Profile p : sorted(wb.getProfiles())) {
 			newLine(1);
