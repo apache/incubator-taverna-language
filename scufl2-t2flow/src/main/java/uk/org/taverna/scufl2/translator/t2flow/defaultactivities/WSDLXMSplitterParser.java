@@ -22,9 +22,9 @@ public class WSDLXMSplitterParser extends AbstractActivityParser {
 	private static String inputSplitterClassName = "net.sf.taverna.t2.activities.wsdl.xmlsplitter.XMLInputSplitterActivity";
 	private static String outputSplitterClassName = "net.sf.taverna.t2.activities.wsdl.xmlsplitter.XMLOutputSplitterActivity";
 
-	public static URI SPLITTER = WSDL.resolve("wsdl/xml-splitter");
-	public static URI XML_INPUT_SPLITTER = WSDL.resolve("xml-splitter/in");
-	public static URI XML_OUTPUT_SPLITTER = WSDL.resolve("xml-splitter/out");
+	public static URI SPLITTER = WSDL.resolve("xml-splitter");
+	public static URI XML_INPUT_SPLITTER = SPLITTER.resolve("xml-splitter/in");
+	public static URI XML_OUTPUT_SPLITTER = SPLITTER.resolve("xml-splitter/out");
 
 	@Override
 	public boolean canHandlePlugin(URI activityURI) {
