@@ -14,7 +14,7 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityPortDefinitionBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.XMLSplitterConfig;
 
-public class WSDLXMSplitterParser extends AbstractActivityParser {
+public class WSDLXMLSplitterParser extends AbstractActivityParser {
 
 	private static URI wsdlActivityRavenURI = T2FlowParser.ravenURI
 			.resolve("net.sf.taverna.t2.activities/wsdl-activity/");
