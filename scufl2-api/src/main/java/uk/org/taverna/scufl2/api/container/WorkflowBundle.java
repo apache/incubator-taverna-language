@@ -63,9 +63,6 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 	}
 
 	public Workflow getMainWorkflow() {
-		if (mainWorkflow == null) {
-			mainWorkflow = new Workflow();
-		}
 		return mainWorkflow;
 	}
 
