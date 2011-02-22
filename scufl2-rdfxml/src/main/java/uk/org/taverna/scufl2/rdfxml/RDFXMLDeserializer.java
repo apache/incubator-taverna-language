@@ -206,7 +206,7 @@ public class RDFXMLDeserializer {
 		
 		URI base = location.resolve(source);
 		if (elem.getValue().getBase() != null) {
-			base = location.resolve(elem.getValue().getBase());
+			base = base.resolve(elem.getValue().getBase());
 		}
 		
 		if (elem.getValue().getAny().size() != 1) {
