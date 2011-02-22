@@ -12,8 +12,15 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
+import uk.org.taverna.scufl2.api.port.InputProcessorPort;
 import uk.org.taverna.scufl2.api.port.OutputActivityPort;
+import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
+import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
+import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
+import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Configuration;
+import uk.org.taverna.scufl2.rdfxml.jaxb.ProcessorBinding.InputPortBinding;
+import uk.org.taverna.scufl2.rdfxml.jaxb.ProcessorBinding.OutputPortBinding;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Profile;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ProfileDocument;
 
@@ -64,9 +71,10 @@ public class ProfileParser extends AbstractParser {
 
 	}
 
-	private void parseInputActivityPort(
+	protected void parseInputActivityPort(
 			uk.org.taverna.scufl2.rdfxml.jaxb.InputActivityPort original) {
 		InputActivityPort port = new InputActivityPort();
+		mapBean(original.getAbout(), port);
 		port.setParent(getParserState().getCurrent(Activity.class));
 
 		port.setName(original.getName());
@@ -75,9 +83,26 @@ public class ProfileParser extends AbstractParser {
 		}
 	}
 
-	private void parseOutputActivityPort(
+	protected void parseInputPortBinding(
+			uk.org.taverna.scufl2.rdfxml.jaxb.InputPortBinding original)
+			throws ReaderException {
+		ProcessorInputPortBinding binding = new ProcessorInputPortBinding();
+		mapBean(original.getAbout(), binding);
+		binding.setParent(getParserState().getCurrent(ProcessorBinding.class));
+
+		binding.setBoundActivityPort(resolveBeanUri(original
+				.getBindInputActivityPort().getResource(),
+				InputActivityPort.class));
+		binding.setBoundProcessorPort(resolveBeanUri(original
+				.getBindInputProcessorPort().getResource(),
+				InputProcessorPort.class));
+
+	}
+
+	protected void parseOutputActivityPort(
 			uk.org.taverna.scufl2.rdfxml.jaxb.OutputActivityPort original) {
 		OutputActivityPort port = new OutputActivityPort();
+		mapBean(original.getAbout(), port);
 		port.setParent(getParserState().getCurrent(Activity.class));
 
 		port.setName(original.getName());
@@ -89,8 +114,25 @@ public class ProfileParser extends AbstractParser {
 		}
 	}
 
+	protected void parseOutputPortBinding(
+			uk.org.taverna.scufl2.rdfxml.jaxb.OutputPortBinding original)
+			throws ReaderException {
+		ProcessorOutputPortBinding binding = new ProcessorOutputPortBinding();
+		mapBean(original.getAbout(), binding);
+		binding.setParent(getParserState().getCurrent(ProcessorBinding.class));
+
+		binding.setBoundActivityPort(resolveBeanUri(original
+				.getBindOutputActivityPort().getResource(),
+				OutputActivityPort.class));
+		binding.setBoundProcessorPort(resolveBeanUri(original
+				.getBindOutputProcessorPort().getResource(),
+				OutputProcessorPort.class));
+
+	}
+
 	protected void parseProcessorBinding(
-			uk.org.taverna.scufl2.rdfxml.jaxb.ProcessorBinding original) {
+			uk.org.taverna.scufl2.rdfxml.jaxb.ProcessorBinding original)
+			throws ReaderException {
 		uk.org.taverna.scufl2.api.profiles.ProcessorBinding binding = new uk.org.taverna.scufl2.api.profiles.ProcessorBinding();
 		mapBean(original.getAbout(), binding);
 		getParserState().push(binding);
@@ -108,6 +150,15 @@ public class ProfileParser extends AbstractParser {
 
 		binding.setBoundProcessor((Processor) resolveBeanUri(processorUri));
 		binding.setBoundActivity((Activity) resolveBeanUri(activityUri));
+
+		for (InputPortBinding inputPortBinding : original.getInputPortBinding()) {
+			parseInputPortBinding(inputPortBinding.getInputPortBinding());
+		}
+		for (OutputPortBinding outputPortBinding : original
+				.getOutputPortBinding()) {
+			parseOutputPortBinding(outputPortBinding.getOutputPortBinding());
+		}
+
 
 		getParserState().pop();
 
