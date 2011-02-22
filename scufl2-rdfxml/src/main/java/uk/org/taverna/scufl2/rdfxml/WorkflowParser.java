@@ -179,14 +179,6 @@ public class WorkflowParser extends AbstractParser {
 
 	}
 
-	protected WorkflowBean resolveBeanUri(URI uri) {
-		WorkflowBean workflowBean = getParserState().getUriToBean().get(uri);
-		if (workflowBean != null) {
-			return workflowBean;
-		}
-		return uriTools.resolveUri(uri, getParserState().getWorkflowBundle());
-	}
-
 	protected void readProfile(URI profileUri, URI source)
 			throws ReaderException {
 		if (source.isAbsolute()) {
@@ -497,11 +489,6 @@ public class WorkflowParser extends AbstractParser {
 		port.setParent(getParserState().getCurrentWorkflow());
 		mapBean(getParserState().getCurrentBase().resolve(original.getAbout()),
 				port);
-	}
-
-	protected void mapBean(URI uri, WorkflowBean bean) {
-		getParserState().getUriToBean().put(uri, bean);
-		getParserState().getBeanToUri().put(bean, uri);
 	}
 
 	protected String findWorkflowBundlePath() {

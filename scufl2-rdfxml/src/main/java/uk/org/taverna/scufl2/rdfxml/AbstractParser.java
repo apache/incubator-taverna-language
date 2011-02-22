@@ -136,4 +136,17 @@ public class AbstractParser {
 		return parserState.get();
 	}
 
+	protected WorkflowBean resolveBeanUri(URI uri) {
+		WorkflowBean workflowBean = getParserState().getUriToBean().get(uri);
+		if (workflowBean != null) {
+			return workflowBean;
+		}
+		return uriTools.resolveUri(uri, getParserState().getWorkflowBundle());
+	}
+
+	protected void mapBean(URI uri, WorkflowBean bean) {
+		getParserState().getUriToBean().put(uri, bean);
+		getParserState().getBeanToUri().put(bean, uri);
+	}
+
 }
