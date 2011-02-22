@@ -20,10 +20,12 @@ import uk.org.taverna.scufl2.ucfpackage.UCFPackage.ResourceEntry;
 public class WorkflowBundleParser extends AbstractParser {
 
 	private WorkflowParser workflowParser;
+	private ProfileParser profileParser;
 
 	public WorkflowBundleParser() {
 		super();
 		workflowParser = new WorkflowParser(parserState);
+		profileParser = new ProfileParser(parserState);
 	}
 
 	protected String findWorkflowBundlePath() {
@@ -69,7 +71,7 @@ public class WorkflowBundleParser extends AbstractParser {
 			String resource = pfEntry.getProfile().getSeeAlso().getResource();
 			URI source = uriTools.relativePath(getParserState().getLocation(),
 					base.resolve(resource));
-			workflowParser.readProfile(wfUri, source);
+			profileParser.readProfile(wfUri, source);
 		}
 
 		if (wb.getMainWorkflow() != null

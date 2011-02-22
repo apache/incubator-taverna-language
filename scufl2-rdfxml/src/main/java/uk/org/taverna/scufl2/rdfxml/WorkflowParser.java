@@ -306,17 +306,6 @@ public class WorkflowParser extends AbstractParser {
 				port);
 	}
 
-	protected void readProfile(URI profileUri, URI source)
-			throws ReaderException {
-		if (source.isAbsolute()) {
-			throw new ReaderException("Can't read external profile source "
-					+ source);
-		}
-
-		uk.org.taverna.scufl2.api.profiles.Profile p = new uk.org.taverna.scufl2.api.profiles.Profile();
-		p.setParent(getParserState().getWorkflowBundle());
-		mapBean(profileUri, p);
-	}
 
 	protected void readWorkflow(URI wfUri, URI source) throws ReaderException,
 			IOException {
