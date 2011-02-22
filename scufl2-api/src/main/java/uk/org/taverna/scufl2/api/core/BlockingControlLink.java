@@ -16,6 +16,9 @@ public class BlockingControlLink implements ControlLink {
 	private Processor block;
 	private Processor untilFinished;
 
+	public BlockingControlLink() {
+	}
+
 	public BlockingControlLink(Processor block, Processor untilFinished) {
 		setParent(block.getParent());
 		setUntilFinished(untilFinished);
