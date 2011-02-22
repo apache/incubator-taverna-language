@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -21,18 +23,23 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.BlockingControlLink;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.io.ReaderException;
+import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyParent;
 import uk.org.taverna.scufl2.api.port.ReceiverPort;
 import uk.org.taverna.scufl2.api.port.SenderPort;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Blocking;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Control;
+import uk.org.taverna.scufl2.rdfxml.jaxb.CrossProduct;
 import uk.org.taverna.scufl2.rdfxml.jaxb.DataLink;
 import uk.org.taverna.scufl2.rdfxml.jaxb.DataLinkEntry;
 import uk.org.taverna.scufl2.rdfxml.jaxb.DispatchStack;
 import uk.org.taverna.scufl2.rdfxml.jaxb.DispatchStackLayer;
+import uk.org.taverna.scufl2.rdfxml.jaxb.DotProduct;
 import uk.org.taverna.scufl2.rdfxml.jaxb.IterationStrategyStack;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ObjectFactory;
+import uk.org.taverna.scufl2.rdfxml.jaxb.PortNode;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Processor.InputProcessorPort;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Processor.OutputProcessorPort;
+import uk.org.taverna.scufl2.rdfxml.jaxb.ProductOf;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Workflow.InputWorkflowPort;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Workflow.OutputWorkflowPort;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Workflow.Processor;
@@ -231,7 +238,7 @@ public class RDFXMLDeserializer {
 	}
 
 	protected void parseWorkflow(
-			uk.org.taverna.scufl2.rdfxml.jaxb.Workflow workflow, URI wfUri) {
+			uk.org.taverna.scufl2.rdfxml.jaxb.Workflow workflow, URI wfUri) throws ReaderException {
 		Workflow wf = new Workflow();
 		wf.setParent(workflowBundle);
 
@@ -274,7 +281,7 @@ public class RDFXMLDeserializer {
 	}
 
 	protected void parseProcessor(
-			uk.org.taverna.scufl2.rdfxml.jaxb.Processor processor) {
+			uk.org.taverna.scufl2.rdfxml.jaxb.Processor processor) throws ReaderException {
 		uk.org.taverna.scufl2.api.core.Processor p = new uk.org.taverna.scufl2.api.core.Processor();
 		currentProcessor = p;
 		p.setParent(currentWorkflow);
@@ -323,9 +330,72 @@ public class RDFXMLDeserializer {
 	}
 
 	protected void parseIterationStrategyStack(
-			IterationStrategyStack iterationStrategyStack) {
-		// TODO Auto-generated method stub
+			IterationStrategyStack original) throws ReaderException {
+		uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack iterationStrategyStack = new uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack();
+		iterationStrategyStack.setParent(currentProcessor);
+		currentIterationStrategyNode.clear();
+		currentIterationStrategyNode.push(iterationStrategyStack);		
+		mapBean(currentBase.resolve(original.getAbout()), iterationStrategyStack);
+		if (original.getIterationStrategies() != null) {
+			parseCrossDotOrPortNodeList(original.getIterationStrategies().getDotProductOrCrossProduct());
+		}		
+	}
+	
+	private void parseCrossDotOrPortNodeList(
+			List<Object> nodeList) throws ReaderException {
+		for (Object node : nodeList) {
+			if (node instanceof DotProduct) {
+				parseDotProduct((DotProduct)node);
+			} else if (node instanceof CrossProduct) {
+				parseCrossProduct((CrossProduct)node);
+			} else if (node instanceof PortNode) {
+				parsePortNode((PortNode)node);
+			} else {
+				throw new ReaderException("Unexpected node " + node);
+			}
+		}
+	}
 
+	protected void parsePortNode(PortNode original) {
+		uk.org.taverna.scufl2.api.iterationstrategy.PortNode node = new uk.org.taverna.scufl2.api.iterationstrategy.PortNode();
+		node.setParent(currentIterationStrategyNode.peek());
+		if (original.getDesiredDepth() != null) {
+			node.setDesiredDepth(original.getDesiredDepth().getValue());
+		}
+		mapBean(currentBase.resolve(original.getAbout()), node);
+		URI inputPortUri = currentBase.resolve(original.getIterateOverInputPort().getResource());
+		uk.org.taverna.scufl2.api.port.InputProcessorPort inputPort = (uk.org.taverna.scufl2.api.port.InputProcessorPort) resolveBeanUri(inputPortUri);
+		node.setInputProcessorPort(inputPort);
+	}
+
+	Stack<IterationStrategyParent> currentIterationStrategyNode = new Stack<IterationStrategyParent>();
+
+	protected void parseCrossProduct(CrossProduct original) throws ReaderException {
+		uk.org.taverna.scufl2.api.iterationstrategy.CrossProduct cross = new uk.org.taverna.scufl2.api.iterationstrategy.CrossProduct();
+		mapBean(currentBase.resolve(original.getAbout()), cross);
+		cross.setParent(currentIterationStrategyNode.peek());
+		currentIterationStrategyNode.push(cross);
+		parseProductOf(original.getProductOf());
+		currentIterationStrategyNode.pop();
+	}
+
+	
+
+	protected void parseProductOf(ProductOf productOf) throws ReaderException {
+		if (productOf == null) { 
+			return;
+		}
+		parseCrossDotOrPortNodeList(productOf.getCrossProductOrDotProductOrPortNode());
+		
+	}
+
+	protected void parseDotProduct(DotProduct original) throws ReaderException {
+		uk.org.taverna.scufl2.api.iterationstrategy.DotProduct dot = new uk.org.taverna.scufl2.api.iterationstrategy.DotProduct();
+		mapBean(currentBase.resolve(original.getAbout()), dot);
+		dot.setParent(currentIterationStrategyNode.peek());
+		currentIterationStrategyNode.push(dot);
+		parseProductOf(original.getProductOf());
+		currentIterationStrategyNode.pop();
 	}
 
 	protected void processorOutputProcessorPort(
