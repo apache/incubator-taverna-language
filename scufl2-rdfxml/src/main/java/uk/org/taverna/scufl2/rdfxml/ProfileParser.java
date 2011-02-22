@@ -1,0 +1,170 @@
+package uk.org.taverna.scufl2.rdfxml;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+
+import uk.org.taverna.scufl2.api.activity.Activity;
+import uk.org.taverna.scufl2.api.io.ReaderException;
+import uk.org.taverna.scufl2.api.port.InputActivityPort;
+import uk.org.taverna.scufl2.api.port.OutputActivityPort;
+import uk.org.taverna.scufl2.rdfxml.jaxb.Configuration;
+import uk.org.taverna.scufl2.rdfxml.jaxb.ProcessorBinding;
+import uk.org.taverna.scufl2.rdfxml.jaxb.Profile;
+import uk.org.taverna.scufl2.rdfxml.jaxb.ProfileDocument;
+
+public class ProfileParser extends AbstractParser {
+
+	public ProfileParser() {
+		super();
+	}
+
+	public ProfileParser(ThreadLocal<ParserState> parserState) {
+		super(parserState);
+	}
+
+	protected void parseActivity(
+			uk.org.taverna.scufl2.rdfxml.jaxb.Activity original) {
+		Activity activity = new Activity();
+
+		getParserState().push(activity);
+
+		mapBean(original.getAbout(), activity);
+		if (original.getName() != null) {
+			activity.setName(original.getName());
+		}
+		activity.setParent(getParserState().getCurrentProfile());
+		if (original.getType() != null) {
+			activity.setConfigurableType(resolve(original.getType()
+					.getResource()));
+		}
+		for (uk.org.taverna.scufl2.rdfxml.jaxb.Activity.InputActivityPort inputActivityPort : original
+				.getInputActivityPort()) {
+			parseInputActivityPort(inputActivityPort.getInputActivityPort());
+		}
+		for (uk.org.taverna.scufl2.rdfxml.jaxb.Activity.OutputActivityPort outputActivityPort : original
+				.getOutputActivityPort()) {
+			parseOutputActivityPort(outputActivityPort.getOutputActivityPort());
+		}
+		getParserState().pop();
+
+	}
+
+	protected void parseConfiguration(Configuration original) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void parseInputActivityPort(
+			uk.org.taverna.scufl2.rdfxml.jaxb.InputActivityPort original) {
+		InputActivityPort port = new InputActivityPort();
+		port.setParent(getParserState().peek(Activity.class));
+
+		port.setName(original.getName());
+		if (original.getPortDepth() != null) {
+			port.setDepth(original.getPortDepth().getValue());
+		}
+	}
+
+	private void parseOutputActivityPort(
+			uk.org.taverna.scufl2.rdfxml.jaxb.OutputActivityPort original) {
+		OutputActivityPort port = new OutputActivityPort();
+		port.setParent(getParserState().peek(Activity.class));
+
+		port.setName(original.getName());
+		if (original.getPortDepth() != null) {
+			port.setDepth(original.getPortDepth().getValue());
+		}
+		if (original.getGranularPortDepth() != null) {
+			port.setGranularDepth(original.getGranularPortDepth().getValue());
+		}
+	}
+
+	protected void parseProcessorBinding(ProcessorBinding original) {
+		// TODO Auto-generated method stub
+
+	}
+
+	protected void parseProfile(Profile original, URI profileUri) {
+		uk.org.taverna.scufl2.api.profiles.Profile p = new uk.org.taverna.scufl2.api.profiles.Profile();
+		p.setParent(getParserState().getWorkflowBundle());
+
+		getParserState().setCurrentProfile(p);
+
+		if (original.getAbout() != null) {
+			URI about = getParserState().getCurrentBase().resolve(
+					original.getAbout());
+			mapBean(about, p);
+		} else {
+			mapBean(profileUri, p);
+		}
+
+		if (original.getName() != null) {
+			p.setName(original.getName());
+		}
+
+	}
+
+	protected void parseProfileSecond(Profile profileElem) {
+		// TODO Auto-generated method stub
+
+	}
+
+	protected void readProfile(URI profileUri, URI source)
+			throws ReaderException, IOException {
+		if (source.isAbsolute()) {
+			throw new ReaderException("Can't read external profile source "
+					+ source);
+		}
+		InputStream bundleStream = getParserState().getUcfPackage()
+				.getResourceAsInputStream(source.getPath());
+
+		JAXBElement<ProfileDocument> elem;
+		try {
+			elem = (JAXBElement<ProfileDocument>) unmarshaller
+					.unmarshal(bundleStream);
+		} catch (JAXBException e) {
+			throw new ReaderException("Can't parse profile document " + source,
+					e);
+		}
+
+		URI base = getParserState().getLocation().resolve(source);
+		if (elem.getValue().getBase() != null) {
+			base = base.resolve(elem.getValue().getBase());
+		}
+
+		getParserState().setCurrentBase(base);
+
+		uk.org.taverna.scufl2.rdfxml.jaxb.Profile profileElem = null;
+		for (Object any : elem.getValue().getAny()) {
+			if (any instanceof uk.org.taverna.scufl2.rdfxml.jaxb.Profile) {
+				if (profileElem != null) {
+					throw new ReaderException("More than one <Profile> found");
+				}
+				profileElem = (uk.org.taverna.scufl2.rdfxml.jaxb.Profile) any;
+				parseProfile(profileElem, profileUri);
+			} else if (any instanceof uk.org.taverna.scufl2.rdfxml.jaxb.Activity) {
+				if (profileElem == null) {
+					throw new ReaderException("No <Profile> found");
+				}
+				parseActivity((uk.org.taverna.scufl2.rdfxml.jaxb.Activity) any);
+
+			} else if (any instanceof uk.org.taverna.scufl2.rdfxml.jaxb.ProcessorBinding) {
+				if (profileElem == null) {
+					throw new ReaderException("No <Profile> found");
+				}
+
+				parseProcessorBinding((uk.org.taverna.scufl2.rdfxml.jaxb.ProcessorBinding) any);
+			} else if (any instanceof uk.org.taverna.scufl2.rdfxml.jaxb.Configuration) {
+				if (profileElem == null) {
+					throw new ReaderException("No <Profile> found");
+				}
+				parseConfiguration((uk.org.taverna.scufl2.rdfxml.jaxb.Configuration) any);
+			}
+		}
+		parseProfileSecond(profileElem);
+	}
+}
