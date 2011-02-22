@@ -154,6 +154,9 @@ public class RDFXMLDeserializer {
 				&& wb.getMainWorkflow().getResource() != null) {
 			URI mainWfUri = base.resolve(wb.getMainWorkflow().getResource());
 			Workflow mainWorkflow = (Workflow) resolveBeanUri(mainWfUri);
+			if (mainWorkflow == null) {
+				throw new ReaderException("Unknown main workflow " + mainWfUri +", got" + uriToBean.keySet());
+			}
 			workflowBundle.setMainWorkflow(mainWorkflow);
 		}
 		if (wb.getMainProfile() != null
@@ -269,8 +272,12 @@ public class RDFXMLDeserializer {
 		for (OutputProcessorPort outputProcessorPort : processor.getOutputProcessorPort()) {
 			processorOutputProcessorPort(outputProcessorPort.getOutputProcessorPort());
 		}
-		parseDispatchStack(processor.getDispatchStack().getDispatchStack());
-		parseIterationStrategyStack(processor.getIterationStrategyStack().getIterationStrategyStack());
+		if (processor.getDispatchStack() != null) {
+			parseDispatchStack(processor.getDispatchStack().getDispatchStack());
+		}
+		if (processor.getIterationStrategyStack() != null) {
+			parseIterationStrategyStack(processor.getIterationStrategyStack().getIterationStrategyStack());
+		}
 	}
 
 	private void parseDispatchStack(DispatchStack dispatchStack) {
