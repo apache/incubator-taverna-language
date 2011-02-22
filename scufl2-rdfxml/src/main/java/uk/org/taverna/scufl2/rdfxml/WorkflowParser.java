@@ -48,7 +48,7 @@ import uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowDocument;
 import uk.org.taverna.scufl2.ucfpackage.UCFPackage;
 import uk.org.taverna.scufl2.ucfpackage.UCFPackage.ResourceEntry;
 
-public class RDFXMLDeserializer {
+public class WorkflowParser {
 
 	public static class ParserState {
 		private UCFPackage ucfPackage;
@@ -151,7 +151,7 @@ public class RDFXMLDeserializer {
 	protected Scufl2Tools scufl2Tools = new Scufl2Tools();
 	protected URITools uriTools = new URITools();
 
-	public RDFXMLDeserializer() {
+	public WorkflowParser() {
 
 		try {
 			jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
