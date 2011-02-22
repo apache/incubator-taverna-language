@@ -13,6 +13,7 @@ import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.core.BlockingControlLink;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.io.ReaderException;
+import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyParent;
 import uk.org.taverna.scufl2.api.port.ReceiverPort;
 import uk.org.taverna.scufl2.api.port.SenderPort;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Blocking;
@@ -80,11 +81,10 @@ public class WorkflowParser extends AbstractParser {
 		uk.org.taverna.scufl2.api.iterationstrategy.CrossProduct cross = new uk.org.taverna.scufl2.api.iterationstrategy.CrossProduct();
 		mapBean(getParserState().getCurrentBase().resolve(original.getAbout()),
 				cross);
-		cross.setParent(getParserState().getCurrentIterationStrategyNode()
-				.peek());
-		getParserState().getCurrentIterationStrategyNode().push(cross);
+		cross.setParent(getParserState().peek(IterationStrategyParent.class));
+		getParserState().getStack().push(cross);
 		parseProductOf(original.getProductOf());
-		getParserState().getCurrentIterationStrategyNode().pop();
+		getParserState().getStack().pop();
 	}
 
 	protected void parseDataLink(DataLink original) {
@@ -137,10 +137,11 @@ public class WorkflowParser extends AbstractParser {
 		uk.org.taverna.scufl2.api.iterationstrategy.DotProduct dot = new uk.org.taverna.scufl2.api.iterationstrategy.DotProduct();
 		mapBean(getParserState().getCurrentBase().resolve(original.getAbout()),
 				dot);
-		dot.setParent(getParserState().getCurrentIterationStrategyNode().peek());
-		getParserState().getCurrentIterationStrategyNode().push(dot);
+		dot.setParent(getParserState().peek(IterationStrategyParent.class));
+
+		getParserState().getStack().push(dot);
 		parseProductOf(original.getProductOf());
-		getParserState().getCurrentIterationStrategyNode().pop();
+		getParserState().getStack().pop();
 	}
 
 	protected void parseInputWorkflowPort(
@@ -160,8 +161,8 @@ public class WorkflowParser extends AbstractParser {
 		uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack iterationStrategyStack = new uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack();
 		iterationStrategyStack
 				.setParent(getParserState().getCurrentProcessor());
-		getParserState().getCurrentIterationStrategyNode().clear();
-		getParserState().getCurrentIterationStrategyNode().push(
+		getParserState().getStack().clear();
+		getParserState().getStack().push(
 				iterationStrategyStack);
 		mapBean(getParserState().getCurrentBase().resolve(original.getAbout()),
 				iterationStrategyStack);
@@ -182,8 +183,7 @@ public class WorkflowParser extends AbstractParser {
 
 	protected void parsePortNode(PortNode original) {
 		uk.org.taverna.scufl2.api.iterationstrategy.PortNode node = new uk.org.taverna.scufl2.api.iterationstrategy.PortNode();
-		node.setParent(getParserState().getCurrentIterationStrategyNode()
-				.peek());
+		node.setParent(getParserState().peek(IterationStrategyParent.class));
 		if (original.getDesiredDepth() != null) {
 			node.setDesiredDepth(original.getDesiredDepth().getValue());
 		}

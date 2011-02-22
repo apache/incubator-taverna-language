@@ -14,23 +14,24 @@ import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Workflow;
-import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyParent;
+import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ObjectFactory;
 import uk.org.taverna.scufl2.ucfpackage.UCFPackage;
 
 public class AbstractParser {
 
 	public static class ParserState {
-		private UCFPackage ucfPackage;
-		private WorkflowBundle workflowBundle;
-		private Workflow currentWorkflow;
-		private uk.org.taverna.scufl2.api.core.Processor currentProcessor;
-		private URI currentBase;
-		private uk.org.taverna.scufl2.api.dispatchstack.DispatchStack currentStack;
-		private Stack<IterationStrategyParent> currentIterationStrategyNode = new Stack<IterationStrategyParent>();
-		private Map<URI, WorkflowBean> uriToBean = new HashMap<URI, WorkflowBean>();
 		private Map<WorkflowBean, URI> beanToUri = new HashMap<WorkflowBean, URI>();
+		private URI currentBase;
+		private uk.org.taverna.scufl2.api.core.Processor currentProcessor;
+		private Profile currentProfile;
+		private uk.org.taverna.scufl2.api.dispatchstack.DispatchStack currentStack;
+		private Workflow currentWorkflow;
 		private URI location;
+		private Stack<WorkflowBean> stack = new Stack<WorkflowBean>();
+		private UCFPackage ucfPackage;
+		private Map<URI, WorkflowBean> uriToBean = new HashMap<URI, WorkflowBean>();
+		private WorkflowBundle workflowBundle;
 
 		public Map<WorkflowBean, URI> getBeanToUri() {
 			return beanToUri;
@@ -40,12 +41,12 @@ public class AbstractParser {
 			return currentBase;
 		}
 
-		public Stack<IterationStrategyParent> getCurrentIterationStrategyNode() {
-			return currentIterationStrategyNode;
-		}
-
 		public uk.org.taverna.scufl2.api.core.Processor getCurrentProcessor() {
 			return currentProcessor;
+		}
+
+		public final Profile getCurrentProfile() {
+			return currentProfile;
 		}
 
 		public uk.org.taverna.scufl2.api.dispatchstack.DispatchStack getCurrentStack() {
@@ -60,6 +61,10 @@ public class AbstractParser {
 			return location;
 		}
 
+		public Stack<WorkflowBean> getStack() {
+			return stack;
+		}
+
 		public UCFPackage getUcfPackage() {
 			return ucfPackage;
 		}
@@ -72,6 +77,22 @@ public class AbstractParser {
 			return workflowBundle;
 		}
 
+		public WorkflowBean peek() {
+			return getStack().peek();
+		}
+
+		public <T extends WorkflowBean> T peek(Class<T> beanType) {
+			return beanType.cast(getStack().peek());
+		}
+
+		public WorkflowBean pop() {
+			return getStack().pop();
+		}
+
+		public void push(WorkflowBean workflowBean) {
+			getStack().push(workflowBean);
+		}
+
 		public void setBeanToUri(Map<WorkflowBean, URI> beanToUri) {
 			this.beanToUri = beanToUri;
 		}
@@ -80,14 +101,13 @@ public class AbstractParser {
 			this.currentBase = currentBase;
 		}
 
-		public void setCurrentIterationStrategyNode(
-				Stack<IterationStrategyParent> currentIterationStrategyNode) {
-			this.currentIterationStrategyNode = currentIterationStrategyNode;
-		}
-
 		public void setCurrentProcessor(
 				uk.org.taverna.scufl2.api.core.Processor currentProcessor) {
 			this.currentProcessor = currentProcessor;
+		}
+
+		public void setCurrentProfile(Profile currentProfile) {
+			this.currentProfile = currentProfile;
 		}
 
 		public void setCurrentStack(
@@ -103,6 +123,10 @@ public class AbstractParser {
 			this.location = location;
 		}
 
+		public void setStack(Stack<WorkflowBean> currentIterationStrategyNode) {
+			stack = currentIterationStrategyNode;
+		}
+
 		public void setUcfPackage(UCFPackage ucfPackage) {
 			this.ucfPackage = ucfPackage;
 		}
@@ -114,15 +138,17 @@ public class AbstractParser {
 		public void setWorkflowBundle(WorkflowBundle workflowBundle) {
 			this.workflowBundle = workflowBundle;
 		}
+
 	}
 
 	protected JAXBContext jaxbContext;
 
-	protected Unmarshaller unmarshaller;
+	protected final ThreadLocal<ParserState> parserState;
 
 	protected Scufl2Tools scufl2Tools = new Scufl2Tools();
+	protected Unmarshaller unmarshaller;
 	protected URITools uriTools = new URITools();
-	protected final ThreadLocal<ParserState> parserState;
+
 	public AbstractParser() {
 		parserState = new ThreadLocal<ParserState>() {
 			@Override
@@ -156,9 +182,21 @@ public class AbstractParser {
 		return parserState.get();
 	}
 
+	protected void mapBean(String about, WorkflowBean bean) {
+		if (about == null) {
+			return;
+		}
+		URI aboutUri = getParserState().getCurrentBase().resolve(about);
+		mapBean(aboutUri, bean);
+	}
+
 	protected void mapBean(URI uri, WorkflowBean bean) {
 		getParserState().getUriToBean().put(uri, bean);
 		getParserState().getBeanToUri().put(bean, uri);
+	}
+
+	protected URI resolve(String uri) {
+		return getParserState().getCurrentBase().resolve(uri);
 	}
 
 	protected WorkflowBean resolveBeanUri(URI uri) {
