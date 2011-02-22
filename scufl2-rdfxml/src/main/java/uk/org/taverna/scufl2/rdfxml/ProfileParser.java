@@ -8,6 +8,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
+import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.OutputActivityPort;
@@ -31,25 +32,30 @@ public class ProfileParser extends AbstractParser {
 		Activity activity = new Activity();
 
 		getParserState().push(activity);
+		try {
 
-		mapBean(original.getAbout(), activity);
-		if (original.getName() != null) {
-			activity.setName(original.getName());
+			mapBean(original.getAbout(), activity);
+			if (original.getName() != null) {
+				activity.setName(original.getName());
+			}
+			activity.setParent(getParserState().getCurrent(
+					uk.org.taverna.scufl2.api.profiles.Profile.class));
+			if (original.getType() != null) {
+				activity.setConfigurableType(resolve(original.getType()
+						.getResource()));
+			}
+			for (uk.org.taverna.scufl2.rdfxml.jaxb.Activity.InputActivityPort inputActivityPort : original
+					.getInputActivityPort()) {
+				parseInputActivityPort(inputActivityPort.getInputActivityPort());
+			}
+			for (uk.org.taverna.scufl2.rdfxml.jaxb.Activity.OutputActivityPort outputActivityPort : original
+					.getOutputActivityPort()) {
+				parseOutputActivityPort(outputActivityPort
+						.getOutputActivityPort());
+			}
+		} finally {
+			getParserState().pop();
 		}
-		activity.setParent(getParserState().getCurrentProfile());
-		if (original.getType() != null) {
-			activity.setConfigurableType(resolve(original.getType()
-					.getResource()));
-		}
-		for (uk.org.taverna.scufl2.rdfxml.jaxb.Activity.InputActivityPort inputActivityPort : original
-				.getInputActivityPort()) {
-			parseInputActivityPort(inputActivityPort.getInputActivityPort());
-		}
-		for (uk.org.taverna.scufl2.rdfxml.jaxb.Activity.OutputActivityPort outputActivityPort : original
-				.getOutputActivityPort()) {
-			parseOutputActivityPort(outputActivityPort.getOutputActivityPort());
-		}
-		getParserState().pop();
 
 	}
 
@@ -61,7 +67,7 @@ public class ProfileParser extends AbstractParser {
 	private void parseInputActivityPort(
 			uk.org.taverna.scufl2.rdfxml.jaxb.InputActivityPort original) {
 		InputActivityPort port = new InputActivityPort();
-		port.setParent(getParserState().peek(Activity.class));
+		port.setParent(getParserState().getCurrent(Activity.class));
 
 		port.setName(original.getName());
 		if (original.getPortDepth() != null) {
@@ -72,7 +78,7 @@ public class ProfileParser extends AbstractParser {
 	private void parseOutputActivityPort(
 			uk.org.taverna.scufl2.rdfxml.jaxb.OutputActivityPort original) {
 		OutputActivityPort port = new OutputActivityPort();
-		port.setParent(getParserState().peek(Activity.class));
+		port.setParent(getParserState().getCurrent(Activity.class));
 
 		port.setName(original.getName());
 		if (original.getPortDepth() != null) {
@@ -90,9 +96,9 @@ public class ProfileParser extends AbstractParser {
 
 	protected void parseProfile(Profile original, URI profileUri) {
 		uk.org.taverna.scufl2.api.profiles.Profile p = new uk.org.taverna.scufl2.api.profiles.Profile();
-		p.setParent(getParserState().getWorkflowBundle());
+		p.setParent(getParserState().getCurrent(WorkflowBundle.class));
 
-		getParserState().setCurrentProfile(p);
+		getParserState().push(p);
 
 		if (original.getAbout() != null) {
 			URI about = getParserState().getCurrentBase().resolve(
@@ -105,11 +111,13 @@ public class ProfileParser extends AbstractParser {
 		if (original.getName() != null) {
 			p.setName(original.getName());
 		}
+		// Note - we'll pop() in profileSecond() instead
 
 	}
 
 	protected void parseProfileSecond(Profile profileElem) {
-		// TODO Auto-generated method stub
+		// TODO: Parse activates config etc.
+		getParserState().pop();
 
 	}
 

@@ -1,6 +1,5 @@
 package uk.org.taverna.scufl2.rdfxml;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -10,17 +9,17 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
+import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.BlockingControlLink;
+import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyParent;
 import uk.org.taverna.scufl2.api.port.ReceiverPort;
 import uk.org.taverna.scufl2.api.port.SenderPort;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Blocking;
-import uk.org.taverna.scufl2.rdfxml.jaxb.Control;
 import uk.org.taverna.scufl2.rdfxml.jaxb.CrossProduct;
 import uk.org.taverna.scufl2.rdfxml.jaxb.DataLink;
-import uk.org.taverna.scufl2.rdfxml.jaxb.DataLinkEntry;
 import uk.org.taverna.scufl2.rdfxml.jaxb.DispatchStack;
 import uk.org.taverna.scufl2.rdfxml.jaxb.DispatchStackLayer;
 import uk.org.taverna.scufl2.rdfxml.jaxb.DotProduct;
@@ -29,9 +28,6 @@ import uk.org.taverna.scufl2.rdfxml.jaxb.PortNode;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Processor.InputProcessorPort;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Processor.OutputProcessorPort;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ProductOf;
-import uk.org.taverna.scufl2.rdfxml.jaxb.Workflow.InputWorkflowPort;
-import uk.org.taverna.scufl2.rdfxml.jaxb.Workflow.OutputWorkflowPort;
-import uk.org.taverna.scufl2.rdfxml.jaxb.Workflow.Processor;
 import uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowDocument;
 
 public class WorkflowParser extends AbstractParser {
@@ -55,7 +51,7 @@ public class WorkflowParser extends AbstractParser {
 		blocking.setBlock((uk.org.taverna.scufl2.api.core.Processor) block);
 		blocking.setUntilFinished((uk.org.taverna.scufl2.api.core.Processor) untilFinished);
 
-		blocking.setParent(getParserState().getCurrentWorkflow());
+		blocking.setParent(getParserState().getCurrent(Workflow.class));
 		mapBean(getParserState().getCurrentBase().resolve(original.getAbout()),
 				blocking);
 
@@ -81,10 +77,14 @@ public class WorkflowParser extends AbstractParser {
 		uk.org.taverna.scufl2.api.iterationstrategy.CrossProduct cross = new uk.org.taverna.scufl2.api.iterationstrategy.CrossProduct();
 		mapBean(getParserState().getCurrentBase().resolve(original.getAbout()),
 				cross);
-		cross.setParent(getParserState().peek(IterationStrategyParent.class));
-		getParserState().getStack().push(cross);
-		parseProductOf(original.getProductOf());
-		getParserState().getStack().pop();
+		cross.setParent(getParserState().getCurrent(
+				IterationStrategyParent.class));
+		getParserState().push(cross);
+		try {
+			parseProductOf(original.getProductOf());
+		} finally {
+			getParserState().pop();
+		}
 	}
 
 	protected void parseDataLink(DataLink original) {
@@ -101,7 +101,7 @@ public class WorkflowParser extends AbstractParser {
 		if (original.getMergePosition() != null) {
 			link.setMergePosition(original.getMergePosition().getValue());
 		}
-		link.setParent(getParserState().getCurrentWorkflow());
+		link.setParent(getParserState().getCurrent(Workflow.class));
 		mapBean(getParserState().getCurrentBase().resolve(original.getAbout()),
 				link);
 	}
@@ -112,15 +112,20 @@ public class WorkflowParser extends AbstractParser {
 			stack.setType(getParserState().getCurrentBase().resolve(
 					original.getType().getResource()));
 		}
-		stack.setParent(getParserState().getCurrentProcessor());
+		stack.setParent(getParserState().getCurrent(
+				uk.org.taverna.scufl2.api.core.Processor.class));
 		mapBean(getParserState().getCurrentBase().resolve(original.getAbout()),
 				stack);
-		getParserState().setCurrentStack(stack);
-		if (original.getDispatchStackLayers() != null) {
-			for (DispatchStackLayer dispatchStackLayer : original
-					.getDispatchStackLayers().getDispatchStackLayer()) {
-				parseDispatchStackLayer(dispatchStackLayer);
+		getParserState().push(stack);
+		try {
+			if (original.getDispatchStackLayers() != null) {
+				for (DispatchStackLayer dispatchStackLayer : original
+						.getDispatchStackLayers().getDispatchStackLayer()) {
+					parseDispatchStackLayer(dispatchStackLayer);
+				}
 			}
+		} finally {
+			getParserState().pop();
 		}
 	}
 
@@ -128,7 +133,8 @@ public class WorkflowParser extends AbstractParser {
 		uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer layer = new uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer();
 		layer.setConfigurableType(getParserState().getCurrentBase().resolve(
 				original.getType().getResource()));
-		layer.setParent(getParserState().getCurrentStack());
+		layer.setParent(getParserState().getCurrent(
+				uk.org.taverna.scufl2.api.dispatchstack.DispatchStack.class));
 		mapBean(getParserState().getCurrentBase().resolve(original.getAbout()),
 				layer);
 	}
@@ -137,11 +143,15 @@ public class WorkflowParser extends AbstractParser {
 		uk.org.taverna.scufl2.api.iterationstrategy.DotProduct dot = new uk.org.taverna.scufl2.api.iterationstrategy.DotProduct();
 		mapBean(getParserState().getCurrentBase().resolve(original.getAbout()),
 				dot);
-		dot.setParent(getParserState().peek(IterationStrategyParent.class));
+		dot.setParent(getParserState()
+				.getCurrent(IterationStrategyParent.class));
 
-		getParserState().getStack().push(dot);
-		parseProductOf(original.getProductOf());
-		getParserState().getStack().pop();
+		getParserState().push(dot);
+		try {
+			parseProductOf(original.getProductOf());
+		} finally {
+			getParserState().pop();
+		}
 	}
 
 	protected void parseInputWorkflowPort(
@@ -151,7 +161,7 @@ public class WorkflowParser extends AbstractParser {
 		if (original.getPortDepth() != null) {
 			port.setDepth(original.getPortDepth().getValue());
 		}
-		port.setParent(getParserState().getCurrentWorkflow());
+		port.setParent(getParserState().getCurrent(Workflow.class));
 		mapBean(getParserState().getCurrentBase().resolve(original.getAbout()),
 				port);
 	}
@@ -159,16 +169,19 @@ public class WorkflowParser extends AbstractParser {
 	protected void parseIterationStrategyStack(IterationStrategyStack original)
 			throws ReaderException {
 		uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack iterationStrategyStack = new uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack();
-		iterationStrategyStack
-				.setParent(getParserState().getCurrentProcessor());
-		getParserState().getStack().clear();
-		getParserState().getStack().push(
-				iterationStrategyStack);
+		iterationStrategyStack.setParent(getParserState().getCurrent(
+				Processor.class));
+
 		mapBean(getParserState().getCurrentBase().resolve(original.getAbout()),
 				iterationStrategyStack);
 		if (original.getIterationStrategies() != null) {
-			parseCrossDotOrPortNodeList(original.getIterationStrategies()
-					.getDotProductOrCrossProduct());
+			getParserState().push(iterationStrategyStack);
+			try {
+				parseCrossDotOrPortNodeList(original.getIterationStrategies()
+						.getDotProductOrCrossProduct());
+			} finally {
+				getParserState().pop();
+			}
 		}
 	}
 
@@ -176,14 +189,15 @@ public class WorkflowParser extends AbstractParser {
 			uk.org.taverna.scufl2.rdfxml.jaxb.OutputWorkflowPort original) {
 		uk.org.taverna.scufl2.api.port.OutputWorkflowPort port = new uk.org.taverna.scufl2.api.port.OutputWorkflowPort();
 		port.setName(original.getName());
-		port.setParent(getParserState().getCurrentWorkflow());
+		port.setParent(getParserState().getCurrent(Workflow.class));
 		mapBean(getParserState().getCurrentBase().resolve(original.getAbout()),
 				port);
 	}
 
 	protected void parsePortNode(PortNode original) {
 		uk.org.taverna.scufl2.api.iterationstrategy.PortNode node = new uk.org.taverna.scufl2.api.iterationstrategy.PortNode();
-		node.setParent(getParserState().peek(IterationStrategyParent.class));
+		node.setParent(getParserState().getCurrent(
+				IterationStrategyParent.class));
 		if (original.getDesiredDepth() != null) {
 			node.setDesiredDepth(original.getDesiredDepth().getValue());
 		}
@@ -199,29 +213,35 @@ public class WorkflowParser extends AbstractParser {
 			uk.org.taverna.scufl2.rdfxml.jaxb.Processor processor)
 			throws ReaderException {
 		uk.org.taverna.scufl2.api.core.Processor p = new uk.org.taverna.scufl2.api.core.Processor();
-		getParserState().setCurrentProcessor(p);
-		p.setParent(getParserState().getCurrentWorkflow());
-		mapBean(getParserState().getCurrentBase().resolve(processor.getAbout()),
-				p);
-		if (processor.getName() != null) {
-			p.setName(processor.getName());
-		}
-		for (InputProcessorPort inputProcessorPort : processor
-				.getInputProcessorPort()) {
-			processorInputProcessorPort(inputProcessorPort
-					.getInputProcessorPort());
-		}
-		for (OutputProcessorPort outputProcessorPort : processor
-				.getOutputProcessorPort()) {
-			processorOutputProcessorPort(outputProcessorPort
-					.getOutputProcessorPort());
-		}
-		if (processor.getDispatchStack() != null) {
-			parseDispatchStack(processor.getDispatchStack().getDispatchStack());
-		}
-		if (processor.getIterationStrategyStack() != null) {
-			parseIterationStrategyStack(processor.getIterationStrategyStack()
-					.getIterationStrategyStack());
+		getParserState().push(p);
+		try {
+			p.setParent(getParserState().getCurrent(Workflow.class));
+			mapBean(getParserState().getCurrentBase().resolve(
+					processor.getAbout()), p);
+			if (processor.getName() != null) {
+				p.setName(processor.getName());
+			}
+			for (InputProcessorPort inputProcessorPort : processor
+					.getInputProcessorPort()) {
+				processorInputProcessorPort(inputProcessorPort
+						.getInputProcessorPort());
+			}
+			for (OutputProcessorPort outputProcessorPort : processor
+					.getOutputProcessorPort()) {
+				processorOutputProcessorPort(outputProcessorPort
+						.getOutputProcessorPort());
+			}
+			if (processor.getDispatchStack() != null) {
+				parseDispatchStack(processor.getDispatchStack()
+						.getDispatchStack());
+			}
+			if (processor.getIterationStrategyStack() != null) {
+				parseIterationStrategyStack(processor
+						.getIterationStrategyStack()
+						.getIterationStrategyStack());
+			}
+		} finally {
+			getParserState().pop();
 		}
 	}
 
@@ -238,7 +258,7 @@ public class WorkflowParser extends AbstractParser {
 			uk.org.taverna.scufl2.rdfxml.jaxb.Workflow workflow, URI wfUri)
 			throws ReaderException {
 		Workflow wf = new Workflow();
-		wf.setParent(getParserState().getWorkflowBundle());
+		wf.setParent(getParserState().getCurrent(WorkflowBundle.class));
 
 		if (workflow.getAbout() != null) {
 			mapBean(getParserState().getCurrentBase().resolve(
@@ -248,35 +268,44 @@ public class WorkflowParser extends AbstractParser {
 			mapBean(wfUri, wf);
 		}
 
-		getParserState().setCurrentWorkflow(wf);
+		getParserState().push(wf);
+		try {
 
-		if (workflow.getName() != null) {
-			wf.setName(workflow.getName());
-		}
-		if (workflow.getWorkflowIdentifier() != null
-				&& workflow.getWorkflowIdentifier().getResource() != null) {
-			wf.setWorkflowIdentifier(getParserState().getCurrentBase().resolve(
-					workflow.getWorkflowIdentifier().getResource()));
-		}
+			if (workflow.getName() != null) {
+				wf.setName(workflow.getName());
+			}
+			if (workflow.getWorkflowIdentifier() != null
+					&& workflow.getWorkflowIdentifier().getResource() != null) {
+				wf.setWorkflowIdentifier(getParserState()
+						.getCurrentBase()
+						.resolve(workflow.getWorkflowIdentifier().getResource()));
+			}
 
-		for (InputWorkflowPort inputWorkflowPort : workflow
-				.getInputWorkflowPort()) {
-			parseInputWorkflowPort(inputWorkflowPort.getInputWorkflowPort());
-		}
-		for (OutputWorkflowPort outputWorkflowPort : workflow
-				.getOutputWorkflowPort()) {
-			parseOutputWorkflowPort(outputWorkflowPort.getOutputWorkflowPort());
-		}
-		for (Processor processor : workflow.getProcessor()) {
-			parseProcessor(processor.getProcessor());
-		}
-		for (DataLinkEntry dataLinkEntry : workflow.getDatalink()) {
-			parseDataLink(dataLinkEntry.getDataLink());
-		}
-		for (Control c : workflow.getControl()) {
-			parseControlLink(c.getBlocking());
-		}
+			for (uk.org.taverna.scufl2.rdfxml.jaxb.Workflow.InputWorkflowPort inputWorkflowPort : workflow
+					.getInputWorkflowPort()) {
+				parseInputWorkflowPort(inputWorkflowPort.getInputWorkflowPort());
+			}
+			for (uk.org.taverna.scufl2.rdfxml.jaxb.Workflow.OutputWorkflowPort outputWorkflowPort : workflow
+					.getOutputWorkflowPort()) {
+				parseOutputWorkflowPort(outputWorkflowPort
+						.getOutputWorkflowPort());
+			}
+			for (uk.org.taverna.scufl2.rdfxml.jaxb.Workflow.Processor processor : workflow
+					.getProcessor()) {
+				parseProcessor(processor.getProcessor());
+			}
+			for (uk.org.taverna.scufl2.rdfxml.jaxb.DataLinkEntry dataLinkEntry : workflow
+					.getDatalink()) {
+				parseDataLink(dataLinkEntry.getDataLink());
+			}
+			for (uk.org.taverna.scufl2.rdfxml.jaxb.Control c : workflow
+					.getControl()) {
+				parseControlLink(c.getBlocking());
+			}
 
+		} finally {
+			getParserState().pop();
+		}
 	}
 
 	protected void processorInputProcessorPort(
@@ -286,7 +315,7 @@ public class WorkflowParser extends AbstractParser {
 		if (original.getPortDepth() != null) {
 			port.setDepth(original.getPortDepth().getValue());
 		}
-		port.setParent(getParserState().getCurrentProcessor());
+		port.setParent(getParserState().getCurrent(Processor.class));
 		mapBean(getParserState().getCurrentBase().resolve(original.getAbout()),
 				port);
 	}
@@ -301,11 +330,11 @@ public class WorkflowParser extends AbstractParser {
 		if (original.getGranularPortDepth() != null) {
 			port.setGranularDepth(original.getGranularPortDepth().getValue());
 		}
-		port.setParent(getParserState().getCurrentProcessor());
+		port.setParent(getParserState().getCurrent(
+				uk.org.taverna.scufl2.api.core.Processor.class));
 		mapBean(getParserState().getCurrentBase().resolve(original.getAbout()),
 				port);
 	}
-
 
 	protected void readWorkflow(URI wfUri, URI source) throws ReaderException,
 			IOException {

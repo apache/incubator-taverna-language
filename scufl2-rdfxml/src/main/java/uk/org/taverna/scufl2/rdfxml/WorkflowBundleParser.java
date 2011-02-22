@@ -41,55 +41,65 @@ public class WorkflowBundleParser extends AbstractParser {
 		return RDFXMLWriter.WORKFLOW_BUNDLE_RDF;
 	}
 
-	protected void parseWorkflowBundle(
+	protected WorkflowBundle parseWorkflowBundle(
 			uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowBundle wb, URI base)
 			throws ReaderException, IOException {
-		getParserState().setWorkflowBundle(new WorkflowBundle());
-		getParserState().getWorkflowBundle().setResources(
-				getParserState().getUcfPackage());
-		if (wb.getName() != null) {
-			getParserState().getWorkflowBundle().setName(wb.getName());
-		}
-		if (wb.getSameBaseAs() != null
-				&& wb.getSameBaseAs().getResource() != null) {
-			getParserState().getWorkflowBundle().setSameBaseAs(
-					base.resolve(wb.getSameBaseAs().getResource()));
-		}
-		mapBean(base.resolve(wb.getAbout()), getParserState()
-				.getWorkflowBundle());
-		for (uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowBundle.Workflow wfEntry : wb
-				.getWorkflow()) {
-			URI wfUri = base.resolve(wfEntry.getWorkflow().getAbout());
-			String resource = wfEntry.getWorkflow().getSeeAlso().getResource();
-			URI source = uriTools.relativePath(getParserState().getLocation(),
-					base.resolve(resource));
-			workflowParser.readWorkflow(wfUri, source);
-		}
-		for (uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowBundle.Profile pfEntry : wb
-				.getProfile()) {
-			URI wfUri = base.resolve(pfEntry.getProfile().getAbout());
-			String resource = pfEntry.getProfile().getSeeAlso().getResource();
-			URI source = uriTools.relativePath(getParserState().getLocation(),
-					base.resolve(resource));
-			profileParser.readProfile(wfUri, source);
-		}
-
-		if (wb.getMainWorkflow() != null
-				&& wb.getMainWorkflow().getResource() != null) {
-			URI mainWfUri = base.resolve(wb.getMainWorkflow().getResource());
-			Workflow mainWorkflow = (Workflow) resolveBeanUri(mainWfUri);
-			if (mainWorkflow == null) {
-				throw new ReaderException("Unknown main workflow " + mainWfUri
-						+ ", got" + getParserState().getUriToBean().keySet());
+		WorkflowBundle workflowBundle = new WorkflowBundle();
+		getParserState().push(workflowBundle);
+		try {
+			workflowBundle.setResources(getParserState().getUcfPackage());
+			if (wb.getName() != null) {
+				workflowBundle.setName(wb.getName());
 			}
-			getParserState().getWorkflowBundle().setMainWorkflow(mainWorkflow);
+			if (wb.getSameBaseAs() != null
+					&& wb.getSameBaseAs().getResource() != null) {
+				workflowBundle.setSameBaseAs(base.resolve(wb.getSameBaseAs()
+						.getResource()));
+			}
+			mapBean(base.resolve(wb.getAbout()), workflowBundle);
+			for (uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowBundle.Workflow wfEntry : wb
+					.getWorkflow()) {
+				URI wfUri = base.resolve(wfEntry.getWorkflow().getAbout());
+				String resource = wfEntry.getWorkflow().getSeeAlso()
+						.getResource();
+				URI source = uriTools.relativePath(getParserState()
+						.getLocation(), base.resolve(resource));
+				workflowParser.readWorkflow(wfUri, source);
+			}
+			for (uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowBundle.Profile pfEntry : wb
+					.getProfile()) {
+				URI wfUri = base.resolve(pfEntry.getProfile().getAbout());
+				String resource = pfEntry.getProfile().getSeeAlso()
+						.getResource();
+				URI source = uriTools.relativePath(getParserState()
+						.getLocation(), base.resolve(resource));
+				profileParser.readProfile(wfUri, source);
+			}
+
+			if (wb.getMainWorkflow() != null
+					&& wb.getMainWorkflow().getResource() != null) {
+				URI mainWfUri = base
+						.resolve(wb.getMainWorkflow().getResource());
+				Workflow mainWorkflow = (Workflow) resolveBeanUri(mainWfUri);
+				if (mainWorkflow == null) {
+					throw new ReaderException("Unknown main workflow "
+							+ mainWfUri + ", got"
+							+ getParserState().getUriToBean().keySet());
+				}
+				workflowBundle.setMainWorkflow(mainWorkflow);
+			}
+			if (wb.getMainProfile() != null
+					&& wb.getMainProfile().getResource() != null) {
+				URI profileUri = base
+						.resolve(wb.getMainProfile().getResource());
+				uk.org.taverna.scufl2.api.profiles.Profile mainWorkflow = (uk.org.taverna.scufl2.api.profiles.Profile) resolveBeanUri(profileUri);
+				workflowBundle.setMainProfile(mainWorkflow);
+			}
+		} finally {
+			getParserState().pop();
+
 		}
-		if (wb.getMainProfile() != null
-				&& wb.getMainProfile().getResource() != null) {
-			URI profileUri = base.resolve(wb.getMainProfile().getResource());
-			uk.org.taverna.scufl2.api.profiles.Profile mainWorkflow = (uk.org.taverna.scufl2.api.profiles.Profile) resolveBeanUri(profileUri);
-			getParserState().getWorkflowBundle().setMainProfile(mainWorkflow);
-		}
+		return workflowBundle;
 
 	}
 
@@ -157,10 +167,10 @@ public class WorkflowBundleParser extends AbstractParser {
 
 			uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowBundle wb = (uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowBundle) workflowBundleDocument
 					.getAny().get(0);
-			parseWorkflowBundle(wb, base);
+			WorkflowBundle workflowBundle = parseWorkflowBundle(wb, base);
 
-			scufl2Tools.setParents(getParserState().getWorkflowBundle());
-			return getParserState().getWorkflowBundle();
+			scufl2Tools.setParents(workflowBundle);
+			return workflowBundle;
 		} finally {
 			clearParserState();
 		}

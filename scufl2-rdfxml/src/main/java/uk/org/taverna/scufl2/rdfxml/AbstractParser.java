@@ -9,6 +9,7 @@ import javax.xml.bind.Unmarshaller;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
+import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ObjectFactory;
 
 public class AbstractParser {
@@ -76,7 +77,8 @@ public class AbstractParser {
 		if (workflowBean != null) {
 			return workflowBean;
 		}
-		return uriTools.resolveUri(uri, getParserState().getWorkflowBundle());
+		return uriTools.resolveUri(uri,
+				getParserState().getCurrent(WorkflowBundle.class));
 	}
 
 }
