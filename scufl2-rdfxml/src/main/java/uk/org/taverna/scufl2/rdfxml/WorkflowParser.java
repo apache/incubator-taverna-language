@@ -231,8 +231,12 @@ public class WorkflowParser {
 			scufl2Tools.setParents(getParserState().getWorkflowBundle());
 			return getParserState().getWorkflowBundle();
 		} finally {
-			parserState.remove();
+			clearParserState();
 		}
+	}
+
+	protected void clearParserState() {
+		parserState.remove();
 	}
 
 	protected void parseWorkflowBundle(
@@ -631,7 +635,7 @@ public class WorkflowParser {
 		return RDFXMLWriter.WORKFLOW_BUNDLE_RDF;
 	}
 
-	public ParserState getParserState() {
+	protected ParserState getParserState() {
 		return parserState.get();
 	}
 
