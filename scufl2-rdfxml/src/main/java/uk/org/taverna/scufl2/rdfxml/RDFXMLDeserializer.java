@@ -18,18 +18,21 @@ import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.core.BlockingControlLink;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.io.ReaderException;
+import uk.org.taverna.scufl2.api.port.ReceiverPort;
+import uk.org.taverna.scufl2.api.port.SenderPort;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Blocking;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Control;
 import uk.org.taverna.scufl2.rdfxml.jaxb.DataLink;
 import uk.org.taverna.scufl2.rdfxml.jaxb.DataLinkEntry;
 import uk.org.taverna.scufl2.rdfxml.jaxb.DispatchStack;
+import uk.org.taverna.scufl2.rdfxml.jaxb.DispatchStackLayer;
 import uk.org.taverna.scufl2.rdfxml.jaxb.IterationStrategyStack;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ObjectFactory;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Processor.InputProcessorPort;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Processor.OutputProcessorPort;
-import uk.org.taverna.scufl2.rdfxml.jaxb.Profile;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Workflow.InputWorkflowPort;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Workflow.OutputWorkflowPort;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Workflow.Processor;
@@ -49,6 +52,7 @@ public class RDFXMLDeserializer {
 	private Workflow currentWorkflow;
 	private uk.org.taverna.scufl2.api.core.Processor currentProcessor;
 	private URI currentBase;
+	private uk.org.taverna.scufl2.api.dispatchstack.DispatchStack currentStack;
 
 	public RDFXMLDeserializer(UCFPackage ucfPackage) {
 		this.ucfPackage = ucfPackage;
@@ -63,8 +67,8 @@ public class RDFXMLDeserializer {
 	}
 
 	@SuppressWarnings("unchecked")
-	public WorkflowBundle readWorkflowBundle(URI suggestedLocation) throws IOException,
-			ReaderException {
+	public WorkflowBundle readWorkflowBundle(URI suggestedLocation)
+			throws IOException, ReaderException {
 
 		location = suggestedLocation;
 		if (location == null) {
@@ -111,7 +115,7 @@ public class RDFXMLDeserializer {
 			throw new ReaderException(
 					"Invalid WorkflowBundleDocument, expected only one <WorkflowBundle>");
 		}
-		
+
 		uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowBundle wb = (uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowBundle) workflowBundleDocument
 				.getAny().get(0);
 		parseWorkflowBundle(wb, base);
@@ -121,7 +125,8 @@ public class RDFXMLDeserializer {
 	}
 
 	protected void parseWorkflowBundle(
-			uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowBundle wb, URI base) throws ReaderException, IOException {
+			uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowBundle wb, URI base)
+			throws ReaderException, IOException {
 		workflowBundle = new WorkflowBundle();
 		workflowBundle.setResources(ucfPackage);
 		if (wb.getName() != null) {
@@ -155,7 +160,8 @@ public class RDFXMLDeserializer {
 			URI mainWfUri = base.resolve(wb.getMainWorkflow().getResource());
 			Workflow mainWorkflow = (Workflow) resolveBeanUri(mainWfUri);
 			if (mainWorkflow == null) {
-				throw new ReaderException("Unknown main workflow " + mainWfUri +", got" + uriToBean.keySet());
+				throw new ReaderException("Unknown main workflow " + mainWfUri
+						+ ", got" + uriToBean.keySet());
 			}
 			workflowBundle.setMainWorkflow(mainWorkflow);
 		}
@@ -166,7 +172,6 @@ public class RDFXMLDeserializer {
 			workflowBundle.setMainProfile(mainWorkflow);
 		}
 
-		
 	}
 
 	protected WorkflowBean resolveBeanUri(URI uri) {
@@ -177,9 +182,11 @@ public class RDFXMLDeserializer {
 		return uriTools.resolveUri(uri, workflowBundle);
 	}
 
-	protected void readProfile(URI profileUri, URI source) throws ReaderException {
+	protected void readProfile(URI profileUri, URI source)
+			throws ReaderException {
 		if (source.isAbsolute()) {
-			throw new ReaderException("Can't read external profile source " + source);
+			throw new ReaderException("Can't read external profile source "
+					+ source);
 		}
 
 		uk.org.taverna.scufl2.api.profiles.Profile p = new uk.org.taverna.scufl2.api.profiles.Profile();
@@ -187,44 +194,47 @@ public class RDFXMLDeserializer {
 		mapBean(profileUri, p);
 	}
 
-	protected void readWorkflow(URI wfUri, URI source) throws ReaderException, IOException {
+	protected void readWorkflow(URI wfUri, URI source) throws ReaderException,
+			IOException {
 		if (source.isAbsolute()) {
-			throw new ReaderException("Can't read external workflow source " + source);
+			throw new ReaderException("Can't read external workflow source "
+					+ source);
 		}
 
-		InputStream bundleStream = ucfPackage
-				.getResourceAsInputStream(source.getPath());
+		InputStream bundleStream = ucfPackage.getResourceAsInputStream(source
+				.getPath());
 
 		JAXBElement<WorkflowDocument> elem;
 		try {
 			elem = (JAXBElement<WorkflowDocument>) unmarshaller
 					.unmarshal(bundleStream);
 		} catch (JAXBException e) {
-			throw new ReaderException("Can't parse workflow document "
-					+ source, e);
+			throw new ReaderException(
+					"Can't parse workflow document " + source, e);
 		}
-		
+
 		URI base = location.resolve(source);
 		if (elem.getValue().getBase() != null) {
 			base = base.resolve(elem.getValue().getBase());
 		}
-		
+
 		if (elem.getValue().getAny().size() != 1) {
-			throw new ReaderException("Expects only a <Workflow> element in " + source);
+			throw new ReaderException("Expects only a <Workflow> element in "
+					+ source);
 		}
-		uk.org.taverna.scufl2.rdfxml.jaxb.Workflow workflow = (uk.org.taverna.scufl2.rdfxml.jaxb.Workflow) elem.getValue().getAny().get(0);
+		uk.org.taverna.scufl2.rdfxml.jaxb.Workflow workflow = (uk.org.taverna.scufl2.rdfxml.jaxb.Workflow) elem
+				.getValue().getAny().get(0);
 
 		currentBase = base;
 		parseWorkflow(workflow, wfUri);
-		
-		
+
 	}
 
 	protected void parseWorkflow(
 			uk.org.taverna.scufl2.rdfxml.jaxb.Workflow workflow, URI wfUri) {
 		Workflow wf = new Workflow();
 		wf.setParent(workflowBundle);
-		
+
 		if (workflow.getAbout() != null) {
 			mapBean(currentBase.resolve(workflow.getAbout()), wf);
 			// TODO: Compare resolved URI with desired wfUri
@@ -233,18 +243,22 @@ public class RDFXMLDeserializer {
 		}
 
 		currentWorkflow = wf;
-		
+
 		if (workflow.getName() != null) {
 			wf.setName(workflow.getName());
-		}		
-		if (workflow.getWorkflowIdentifier() != null && workflow.getWorkflowIdentifier().getResource() != null) {
-			wf.setWorkflowIdentifier(currentBase.resolve(workflow.getWorkflowIdentifier().getResource()));
 		}
-		
-		for (InputWorkflowPort inputWorkflowPort : workflow.getInputWorkflowPort()) {
+		if (workflow.getWorkflowIdentifier() != null
+				&& workflow.getWorkflowIdentifier().getResource() != null) {
+			wf.setWorkflowIdentifier(currentBase.resolve(workflow
+					.getWorkflowIdentifier().getResource()));
+		}
+
+		for (InputWorkflowPort inputWorkflowPort : workflow
+				.getInputWorkflowPort()) {
 			parseInputWorkflowPort(inputWorkflowPort.getInputWorkflowPort());
 		}
-		for (OutputWorkflowPort outputWorkflowPort : workflow.getOutputWorkflowPort()) {
+		for (OutputWorkflowPort outputWorkflowPort : workflow
+				.getOutputWorkflowPort()) {
 			parseOutputWorkflowPort(outputWorkflowPort.getOutputWorkflowPort());
 		}
 		for (Processor processor : workflow.getProcessor()) {
@@ -256,71 +270,139 @@ public class RDFXMLDeserializer {
 		for (Control c : workflow.getControl()) {
 			parseControlLink(c.getBlocking());
 		}
-		
+
 	}
 
-	private void parseProcessor(uk.org.taverna.scufl2.rdfxml.jaxb.Processor processor) {
+	protected void parseProcessor(
+			uk.org.taverna.scufl2.rdfxml.jaxb.Processor processor) {
 		uk.org.taverna.scufl2.api.core.Processor p = new uk.org.taverna.scufl2.api.core.Processor();
 		currentProcessor = p;
+		p.setParent(currentWorkflow);
 		mapBean(currentBase.resolve(processor.getAbout()), p);
 		if (processor.getName() != null) {
-			p.setName(processor.getName());		
+			p.setName(processor.getName());
 		}
-		for (InputProcessorPort inputProcessorPort : processor.getInputProcessorPort()) {
-			processorInputProcessorPort(inputProcessorPort.getInputProcessorPort());
+		for (InputProcessorPort inputProcessorPort : processor
+				.getInputProcessorPort()) {
+			processorInputProcessorPort(inputProcessorPort
+					.getInputProcessorPort());
 		}
-		for (OutputProcessorPort outputProcessorPort : processor.getOutputProcessorPort()) {
-			processorOutputProcessorPort(outputProcessorPort.getOutputProcessorPort());
+		for (OutputProcessorPort outputProcessorPort : processor
+				.getOutputProcessorPort()) {
+			processorOutputProcessorPort(outputProcessorPort
+					.getOutputProcessorPort());
 		}
 		if (processor.getDispatchStack() != null) {
 			parseDispatchStack(processor.getDispatchStack().getDispatchStack());
 		}
 		if (processor.getIterationStrategyStack() != null) {
-			parseIterationStrategyStack(processor.getIterationStrategyStack().getIterationStrategyStack());
+			parseIterationStrategyStack(processor.getIterationStrategyStack()
+					.getIterationStrategyStack());
 		}
 	}
 
-	private void parseDispatchStack(DispatchStack dispatchStack) {
+	protected void parseDispatchStack(DispatchStack original) {
+		uk.org.taverna.scufl2.api.dispatchstack.DispatchStack stack = new uk.org.taverna.scufl2.api.dispatchstack.DispatchStack();
+		if (original.getType() != null) {
+			stack.setType(currentBase.resolve(original.getType().getResource()));
+		}
+		stack.setParent(currentProcessor);
+		currentStack = stack;
+		if (original.getDispatchStackLayers() != null) {
+			for (DispatchStackLayer dispatchStackLayer : original.getDispatchStackLayers().getDispatchStackLayer()) {
+				parseDispatchStackLayer(dispatchStackLayer);
+			}
+		}
+		
+		
+	}
+
+	protected void parseDispatchStackLayer(DispatchStackLayer dispatchStackLayer) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void parseIterationStrategyStack(
+	protected void parseIterationStrategyStack(
 			IterationStrategyStack iterationStrategyStack) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	private void processorOutputProcessorPort(
-			uk.org.taverna.scufl2.rdfxml.jaxb.OutputProcessorPort outputProcessorPort) {
-		// TODO Auto-generated method stub
-		
+	protected void processorOutputProcessorPort(
+			uk.org.taverna.scufl2.rdfxml.jaxb.OutputProcessorPort original) {
+		uk.org.taverna.scufl2.api.port.OutputProcessorPort port = new uk.org.taverna.scufl2.api.port.OutputProcessorPort();
+		port.setName(original.getName());
+		if (original.getPortDepth() != null) {
+			port.setDepth(original.getPortDepth().getValue());
+		}
+		if (original.getGranularPortDepth() != null) {
+			port.setGranularDepth(original.getGranularPortDepth().getValue());
+		}
+		port.setParent(currentProcessor);
+		mapBean(currentBase.resolve(original.getAbout()), port);
 	}
 
-	private void processorInputProcessorPort(
-			uk.org.taverna.scufl2.rdfxml.jaxb.InputProcessorPort inputProcessorPort) {
-		// TODO Auto-generated method stub
-		
+	protected void processorInputProcessorPort(
+			uk.org.taverna.scufl2.rdfxml.jaxb.InputProcessorPort original) {
+		uk.org.taverna.scufl2.api.port.InputProcessorPort port = new uk.org.taverna.scufl2.api.port.InputProcessorPort();
+		port.setName(original.getName());
+		if (original.getPortDepth() != null) {
+			port.setDepth(original.getPortDepth().getValue());
+		}
+		port.setParent(currentProcessor);
+		mapBean(currentBase.resolve(original.getAbout()), port);
 	}
 
-	private void parseDataLink(DataLink dataLink) {
-		// TODO Auto-generated method stub
-		
+	protected void parseDataLink(DataLink original) {
+		URI fromUri = currentBase.resolve(original.getReceiveFrom()
+				.getResource());
+		URI toUri = currentBase.resolve(original.getSendTo().getResource());
+		WorkflowBean from = resolveBeanUri(fromUri);
+		WorkflowBean to = resolveBeanUri(toUri);
+
+		uk.org.taverna.scufl2.api.core.DataLink link = new uk.org.taverna.scufl2.api.core.DataLink();
+		link.setReceivesFrom((SenderPort) from);
+		link.setSendsTo((ReceiverPort) to);
+		if (original.getMergePosition() != null) {
+			link.setMergePosition(original.getMergePosition().getValue());
+		}
+		link.setParent(currentWorkflow);
+		mapBean(currentBase.resolve(original.getAbout()), link);
 	}
 
-	private void parseControlLink(Blocking blocking) {
-		// TODO Auto-generated method stub
+	protected void parseControlLink(Blocking original) {
+		URI blockUri = currentBase.resolve(original.getBlock()
+				.getResource());
+		URI untilFinishedUri = currentBase.resolve(original.getUntilFinished().getResource());
+		WorkflowBean block = resolveBeanUri(blockUri);
+		WorkflowBean untilFinished = resolveBeanUri(untilFinishedUri);
+
+		BlockingControlLink blocking = new BlockingControlLink();
+		blocking.setBlock((uk.org.taverna.scufl2.api.core.Processor) block);
+		blocking.setUntilFinished((uk.org.taverna.scufl2.api.core.Processor) untilFinished);
 		
+		blocking.setParent(currentWorkflow);
+		mapBean(currentBase.resolve(original.getAbout()), blocking);
+
 	}
 
-	private void parseOutputWorkflowPort(uk.org.taverna.scufl2.rdfxml.jaxb.OutputWorkflowPort outputWorkflowPort) {
-		// TODO Auto-generated method stub
-		
+	protected void parseOutputWorkflowPort(
+			uk.org.taverna.scufl2.rdfxml.jaxb.OutputWorkflowPort original) {
+		uk.org.taverna.scufl2.api.port.OutputWorkflowPort port = new uk.org.taverna.scufl2.api.port.OutputWorkflowPort();
+		port.setName(original.getName());
+		port.setParent(currentWorkflow);
+		mapBean(currentBase.resolve(original.getAbout()), port);
 	}
 
-	private void parseInputWorkflowPort(uk.org.taverna.scufl2.rdfxml.jaxb.InputWorkflowPort inputWorkflowPort) {
-		// TODO Auto-generated method stub
-		
+	protected void parseInputWorkflowPort(
+			uk.org.taverna.scufl2.rdfxml.jaxb.InputWorkflowPort original) {
+		uk.org.taverna.scufl2.api.port.InputWorkflowPort port = new uk.org.taverna.scufl2.api.port.InputWorkflowPort();
+		port.setName(original.getName());
+		if (original.getPortDepth() != null) {
+			port.setDepth(original.getPortDepth().getValue());
+		}
+		port.setParent(currentWorkflow);
+		mapBean(currentBase.resolve(original.getAbout()), port);
 	}
 
 	protected Map<URI, WorkflowBean> uriToBean = new HashMap<URI, WorkflowBean>();
