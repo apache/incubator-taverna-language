@@ -9,11 +9,11 @@ import javax.xml.bind.JAXBException;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Configuration;
-import uk.org.taverna.scufl2.rdfxml.jaxb.ProcessorBinding;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Profile;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ProfileDocument;
 
@@ -89,8 +89,27 @@ public class ProfileParser extends AbstractParser {
 		}
 	}
 
-	protected void parseProcessorBinding(ProcessorBinding original) {
-		// TODO Auto-generated method stub
+	protected void parseProcessorBinding(
+			uk.org.taverna.scufl2.rdfxml.jaxb.ProcessorBinding original) {
+		uk.org.taverna.scufl2.api.profiles.ProcessorBinding binding = new uk.org.taverna.scufl2.api.profiles.ProcessorBinding();
+		mapBean(original.getAbout(), binding);
+		getParserState().push(binding);
+
+		if (original.getName() != null) {
+			binding.setName(original.getName());
+		}
+		if (original.getActivityPosition() != null) {
+			binding.setActivityPosition(original.getActivityPosition()
+					.getValue());
+		}
+
+		URI processorUri = resolve(original.getBindProcessor().getResource());
+		URI activityUri = resolve(original.getBindActivity().getResource());
+
+		binding.setBoundProcessor((Processor) resolveBeanUri(processorUri));
+		binding.setBoundActivity((Activity) resolveBeanUri(activityUri));
+
+		getParserState().pop();
 
 	}
 
