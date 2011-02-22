@@ -10,6 +10,7 @@ import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ObjectFactory;
 
 public class AbstractParser {
@@ -80,5 +81,18 @@ public class AbstractParser {
 		return uriTools.resolveUri(uri,
 				getParserState().getCurrent(WorkflowBundle.class));
 	}
+
+	protected <T extends WorkflowBean> T resolveBeanUri(String resource,
+			Class<T> beanType) throws ReaderException {
+				URI uri = resolve(resource);
+				WorkflowBean bean = resolveBeanUri(uri);
+				if (bean == null) {
+					throw new ReaderException("Can't find workflow bean for resource " + resource);
+				}
+				if (! beanType.isInstance(bean)) {
+					throw new ReaderException("Wrong type for workflow bean " + resource + ", expected " + beanType.getSimpleName() + " but was " + bean.getClass().getSimpleName());
+				}
+				return beanType.cast(bean);
+			}
 
 }
