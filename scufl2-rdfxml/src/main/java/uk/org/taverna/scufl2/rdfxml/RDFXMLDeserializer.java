@@ -325,7 +325,8 @@ public class RDFXMLDeserializer {
 
 	protected void parseDispatchStackLayer(DispatchStackLayer original) {
 		uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer layer = new uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer();		
-		layer.setConfigurableType(currentBase.resolve(original.getType().getResource()));		
+		layer.setConfigurableType(currentBase.resolve(original.getType().getResource()));	
+		layer.setParent(currentStack);
 		mapBean(currentBase.resolve(original.getAbout()), layer);		
 	}
 
