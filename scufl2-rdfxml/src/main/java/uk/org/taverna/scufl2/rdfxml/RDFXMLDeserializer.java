@@ -307,19 +307,19 @@ public class RDFXMLDeserializer {
 			stack.setType(currentBase.resolve(original.getType().getResource()));
 		}
 		stack.setParent(currentProcessor);
+		mapBean(currentBase.resolve(original.getAbout()), stack);
 		currentStack = stack;
 		if (original.getDispatchStackLayers() != null) {
 			for (DispatchStackLayer dispatchStackLayer : original.getDispatchStackLayers().getDispatchStackLayer()) {
 				parseDispatchStackLayer(dispatchStackLayer);
 			}
 		}
-		
-		
 	}
 
-	protected void parseDispatchStackLayer(DispatchStackLayer dispatchStackLayer) {
-		// TODO Auto-generated method stub
-		
+	protected void parseDispatchStackLayer(DispatchStackLayer original) {
+		uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer layer = new uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer();		
+		layer.setConfigurableType(currentBase.resolve(original.getType().getResource()));		
+		mapBean(currentBase.resolve(original.getAbout()), layer);		
 	}
 
 	protected void parseIterationStrategyStack(
