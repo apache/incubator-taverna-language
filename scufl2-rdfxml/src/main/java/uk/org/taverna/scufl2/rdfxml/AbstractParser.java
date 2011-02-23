@@ -73,15 +73,6 @@ public class AbstractParser {
 		return getParserState().getCurrentBase().resolve(uri);
 	}
 
-	protected WorkflowBean resolveBeanUri(URI uri) {
-		WorkflowBean workflowBean = getParserState().getUriToBean().get(uri);
-		if (workflowBean != null) {
-			return workflowBean;
-		}
-		return uriTools.resolveUri(uri,
-				getParserState().getCurrent(WorkflowBundle.class));
-	}
-
 	protected <T extends WorkflowBean> T resolveBeanUri(String resource,
 			Class<T> beanType) throws ReaderException {
 				URI uri = resolve(resource);
@@ -94,5 +85,15 @@ public class AbstractParser {
 				}
 				return beanType.cast(bean);
 			}
+
+	protected WorkflowBean resolveBeanUri(URI uri) {
+		WorkflowBean workflowBean = getParserState().getUriToBean().get(uri);
+		if (workflowBean != null) {
+			return workflowBean;
+		}
+		uri = getParserState().getCurrentBase().resolve(uri);
+		return uriTools.resolveUri(uri,
+				getParserState().getCurrent(WorkflowBundle.class));
+	}
 
 }
