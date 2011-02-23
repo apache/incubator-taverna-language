@@ -92,12 +92,16 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 	}
 
 	public void setMainProfile(Profile mainProfile) {
-		getProfiles().add(mainProfile);
+		if (mainProfile != null) {
+			getProfiles().add(mainProfile);
+		}
 		this.mainProfile = mainProfile;
 	}
 
 	public void setMainWorkflow(Workflow mainWorkflow) {
-		getWorkflows().add(mainWorkflow);
+		if (mainWorkflow != null) {
+			getWorkflows().add(mainWorkflow);
+		}
 		this.mainWorkflow = mainWorkflow;
 	}
 
