@@ -106,7 +106,8 @@ public class URITools {
 			}
 		});
 		if (! uri.isAbsolute()) {
-			// Make absolute
+			// Make absolute, but remove / first
+			uri = URI.create("/").relativize(uri);
 			uri = uriForBean(wfBundle).resolve(uri);
 		}
 		return uriToBean.get(uri);
