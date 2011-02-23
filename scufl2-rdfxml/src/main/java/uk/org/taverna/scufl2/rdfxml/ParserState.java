@@ -21,6 +21,9 @@ public class ParserState {
 	}
 
 	public <T extends WorkflowBean> T getCurrent(Class<T> beanType) {
+		if (getStack().isEmpty()) {
+			throw new IllegalStateException("Parser stack is empty");
+		}
 		if (beanType.isInstance(getStack().peek())) {
 			return beanType.cast(getStack().peek());
 		}
