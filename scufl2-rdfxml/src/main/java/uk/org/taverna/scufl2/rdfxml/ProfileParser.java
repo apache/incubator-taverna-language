@@ -200,6 +200,11 @@ public class ProfileParser extends AbstractParser {
 		InputStream bundleStream = getParserState().getUcfPackage()
 				.getResourceAsInputStream(source.getPath());
 
+		readProfile(profileUri, source, bundleStream);
+	}
+
+	protected void readProfile(URI profileUri, URI source,
+			InputStream bundleStream) throws ReaderException, IOException {
 		JAXBElement<ProfileDocument> elem;
 		try {
 			elem = (JAXBElement<ProfileDocument>) unmarshaller
@@ -245,4 +250,5 @@ public class ProfileParser extends AbstractParser {
 		}
 		parseProfileSecond(profileElem);
 	}
+
 }
