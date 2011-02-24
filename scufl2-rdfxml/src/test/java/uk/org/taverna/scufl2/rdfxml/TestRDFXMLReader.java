@@ -1,6 +1,5 @@
 package uk.org.taverna.scufl2.rdfxml;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -14,7 +13,6 @@ import java.util.Set;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.common.NamedSet;
@@ -39,24 +37,8 @@ public class TestRDFXMLReader {
 	uk.org.taverna.scufl2.api.io.TestWorkflowBundleIO testWorkflowBundleIO = new uk.org.taverna.scufl2.api.io.TestWorkflowBundleIO();
 
 	@Test
-	public void sameBaseAs() throws Exception {
-		assertEquals("http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/", workflowBundle.getSameBaseAs().toASCIIString());
-	}
-
-	@Test
 	public void bundleName() throws Exception {
 		assertEquals("HelloWorld", workflowBundle.getName());
-	}
-
-	
-	@Before
-	public void exampleBundle() throws ReaderException, IOException {
-		String name = "example.scufl2";
-		exampleBundle = getClass().getResource(name);
-		assertNotNull("Can't find example workflow bundle " + name,
-				exampleBundle);
-		workflowBundle = bundleIO.readBundle(exampleBundle,
-				APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE);
 	}
 
 	@Test
@@ -72,6 +54,7 @@ public class TestRDFXMLReader {
 						.toASCIIString());
 	}
 
+
 	@Test
 	public void dispatchStackWait4Me() throws Exception {
 		Processor wait4me = workflowBundle.getMainWorkflow().getProcessors()
@@ -82,88 +65,14 @@ public class TestRDFXMLReader {
 		assertEquals(0, wait4me.getDispatchStack().size());
 	}
 
-	@Test
-	public void processors() throws Exception {
-		Set<String> expected = new HashSet<String>();
-		expected.add("Hello");
-		expected.add("wait4me");
-		assertEquals(expected, workflowBundle.getMainWorkflow().getProcessors()
-				.getNames());
-	}
-
-	@Test
-	public void workflows() throws Exception {
-		assertEquals(1, workflowBundle.getWorkflows().size());
-		Workflow helloWorld = workflowBundle.getWorkflows().getByName(
-				"HelloWorld");
-		assertEquals("HelloWorld", helloWorld.getName());
-		assertEquals(workflowBundle.getMainWorkflow(), helloWorld);
-	}
-
-	@Test
-	public void profiles() throws Exception {
-		assertEquals(2, workflowBundle.getProfiles().size());
-		Profile tavernaWorkbench = workflowBundle.getProfiles().getByName(
-				"tavernaWorkbench");
-		assertEquals("tavernaWorkbench", tavernaWorkbench.getName());
-		assertEquals(workflowBundle.getMainProfile(), tavernaWorkbench);		
-		assertEquals("tavernaServer", workflowBundle.getProfiles().getByName("tavernaServer").getName());
-	}
-	
-	@Test
-	public void workflowIdentifier() throws Exception {
-		assertEquals(
-				"http://ns.taverna.org.uk/2010/workflow/00626652-55ae-4a9e-80d4-c8e9ac84e2ca/",
-				workflowBundle.getMainWorkflow().getWorkflowIdentifier()
-						.toASCIIString());
-	}
-
-	@Test
-	public void processorInputPorts() throws Exception {
-		Processor hello = workflowBundle.getMainWorkflow().getProcessors()
-				.getByName("Hello");
-		assertEquals(1, hello.getInputPorts().size());
-		assertEquals("name", hello.getInputPorts().getByName("name").getName());
-		assertEquals(0, hello.getInputPorts().getByName("name").getDepth()
-				.intValue());
-	}
-
-	@Test
-	public void workflowInputPorts() throws Exception {
-		NamedSet<InputWorkflowPort> inputPorts = workflowBundle
-				.getMainWorkflow().getInputPorts();
-		assertEquals(1, inputPorts.size());
-		assertEquals("yourName", inputPorts.getByName("yourName").getName());
-		assertEquals(0, inputPorts.getByName("yourName").getDepth().intValue());
-	}
-
-	@Test
-	public void workflowOutputPorts() throws Exception {
-		NamedSet<OutputWorkflowPort> outputPorts = workflowBundle
-				.getMainWorkflow().getOutputPorts();
-		assertEquals(1, outputPorts.size());
-		assertEquals("results", outputPorts.getByName("results").getName());
-	}
-
-	@Test
-	public void processorPortsWait4Me() throws Exception {
-		Processor wait4me = workflowBundle.getMainWorkflow().getProcessors()
-				.getByName("wait4me");
-		assertEquals(0, wait4me.getInputPorts().size());
-		assertEquals(0, wait4me.getOutputPorts().size());
-	}
-
-	@Test
-	public void processorOutputPorts() throws Exception {
-		Processor hello = workflowBundle.getMainWorkflow().getProcessors()
-				.getByName("Hello");
-		assertEquals(1, hello.getOutputPorts().size());
-		assertEquals("greeting", hello.getOutputPorts().getByName("greeting")
-				.getName());
-		assertEquals(0, hello.getOutputPorts().getByName("greeting").getDepth()
-				.intValue());
-		assertEquals(0, hello.getOutputPorts().getByName("greeting")
-				.getGranularDepth().intValue());
+	@Before
+	public void exampleBundle() throws ReaderException, IOException {
+		String name = "example.scufl2";
+		exampleBundle = getClass().getResource(name);
+		assertNotNull("Can't find example workflow bundle " + name,
+				exampleBundle);
+		workflowBundle = bundleIO.readBundle(exampleBundle,
+				APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE);
 	}
 
 	@Test
@@ -190,6 +99,61 @@ public class TestRDFXMLReader {
 	}
 
 	@Test
+	public void processorInputPorts() throws Exception {
+		Processor hello = workflowBundle.getMainWorkflow().getProcessors()
+				.getByName("Hello");
+		assertEquals(1, hello.getInputPorts().size());
+		assertEquals("name", hello.getInputPorts().getByName("name").getName());
+		assertEquals(0, hello.getInputPorts().getByName("name").getDepth()
+				.intValue());
+	}
+
+	@Test
+	public void processorOutputPorts() throws Exception {
+		Processor hello = workflowBundle.getMainWorkflow().getProcessors()
+				.getByName("Hello");
+		assertEquals(1, hello.getOutputPorts().size());
+		assertEquals("greeting", hello.getOutputPorts().getByName("greeting")
+				.getName());
+		assertEquals(0, hello.getOutputPorts().getByName("greeting").getDepth()
+				.intValue());
+		assertEquals(0, hello.getOutputPorts().getByName("greeting")
+				.getGranularDepth().intValue());
+	}
+
+	@Test
+	public void processorPortsWait4Me() throws Exception {
+		Processor wait4me = workflowBundle.getMainWorkflow().getProcessors()
+				.getByName("wait4me");
+		assertEquals(0, wait4me.getInputPorts().size());
+		assertEquals(0, wait4me.getOutputPorts().size());
+	}
+
+	@Test
+	public void processors() throws Exception {
+		Set<String> expected = new HashSet<String>();
+		expected.add("Hello");
+		expected.add("wait4me");
+		assertEquals(expected, workflowBundle.getMainWorkflow().getProcessors()
+				.getNames());
+	}
+
+	@Test
+	public void profiles() throws Exception {
+		assertEquals(2, workflowBundle.getProfiles().size());
+		Profile tavernaWorkbench = workflowBundle.getProfiles().getByName(
+				"tavernaWorkbench");
+		assertEquals("tavernaWorkbench", tavernaWorkbench.getName());
+		assertEquals(workflowBundle.getMainProfile(), tavernaWorkbench);
+		assertEquals("tavernaServer", workflowBundle.getProfiles().getByName("tavernaServer").getName());
+	}
+
+	@Test
+	public void sameBaseAs() throws Exception {
+		assertEquals("http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/", workflowBundle.getSameBaseAs().toASCIIString());
+	}
+
+	@Test
 	public void testParsedWorkflow() throws Exception {
 		assertEquals("HelloWorld", workflowBundle.getName());
 
@@ -204,7 +168,41 @@ public class TestRDFXMLReader {
 
 	}
 
-	@Ignore
+	@Test
+	public void workflowIdentifier() throws Exception {
+		assertEquals(
+				"http://ns.taverna.org.uk/2010/workflow/00626652-55ae-4a9e-80d4-c8e9ac84e2ca/",
+				workflowBundle.getMainWorkflow().getWorkflowIdentifier()
+						.toASCIIString());
+	}
+
+	@Test
+	public void workflowInputPorts() throws Exception {
+		NamedSet<InputWorkflowPort> inputPorts = workflowBundle
+				.getMainWorkflow().getInputPorts();
+		assertEquals(1, inputPorts.size());
+		assertEquals("yourName", inputPorts.getByName("yourName").getName());
+		assertEquals(0, inputPorts.getByName("yourName").getDepth().intValue());
+	}
+
+	@Test
+	public void workflowOutputPorts() throws Exception {
+		NamedSet<OutputWorkflowPort> outputPorts = workflowBundle
+				.getMainWorkflow().getOutputPorts();
+		assertEquals(1, outputPorts.size());
+		assertEquals("results", outputPorts.getByName("results").getName());
+	}
+
+	@Test
+	public void workflows() throws Exception {
+		assertEquals(1, workflowBundle.getWorkflows().size());
+		Workflow helloWorld = workflowBundle.getWorkflows().getByName(
+				"HelloWorld");
+		assertEquals("HelloWorld", helloWorld.getName());
+		assertEquals(workflowBundle.getMainWorkflow(), helloWorld);
+	}
+
+	// @Ignore
 	@Test
 	public void xmlOutput() throws Exception {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
