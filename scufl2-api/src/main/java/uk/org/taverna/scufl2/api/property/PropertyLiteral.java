@@ -278,4 +278,10 @@ public class PropertyLiteral implements PropertyObject {
 		this.literalValue = literalValue;
 	}
 
+	@Override
+	public String toString() {
+		return "PropertyLiteral [getLiteralType()=" + getLiteralType()
+				+ ", getLiteralValue()=" + getLiteralValue() + "]";
+	}
+
 }

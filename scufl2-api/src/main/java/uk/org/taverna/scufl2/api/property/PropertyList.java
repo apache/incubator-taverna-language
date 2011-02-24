@@ -20,4 +20,9 @@ PropertyObject, List<PropertyObject> {
 		return visitor.visitLeave(this);
 	}
 
+	@Override
+	public String toString() {
+		return "PropertyList [" + super.toString() + "]";
+	}
+
 }

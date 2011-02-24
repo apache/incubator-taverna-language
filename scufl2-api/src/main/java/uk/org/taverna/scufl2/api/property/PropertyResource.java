@@ -194,6 +194,11 @@ public class PropertyResource extends PropertyReference implements
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
+		public String toString() {
+			return "PropertyVisit " + getPredicateUri();
+		}
+
 	}
 
 	private URI typeURI;
@@ -375,6 +380,12 @@ public class PropertyResource extends PropertyReference implements
 
 	public final void setTypeURI(URI typeURI) {
 		this.typeURI = typeURI;
+	}
+
+	@Override
+	public String toString() {
+		return "PropertyResource [getTypeURI()=" + getTypeURI()
+				+ ", getResourceURI()=" + getResourceURI() + "]";
 	}
 
 
