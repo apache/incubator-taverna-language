@@ -181,8 +181,10 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 	public boolean visitLeave() {
 		Stack<WorkflowBean> currentPath = getCurrentPath();
 		if (currentPath.size() > 1
-				&& currentPath.get(currentPath.size() - 2) instanceof PropertyVisit) {
-			// System.out.println("Skipping " + getCurrentNode() + "\n");
+				&& currentPath.get(currentPath.size() - 2) instanceof PropertyVisit
+				&& !(currentPath.get(currentPath.size() - 1) instanceof PropertyList)) {
+			// TODO: This seems to work, but uncertain if it's general enough,
+			// or why.
 			return true;
 		}
 		if (getCurrentNode() instanceof PropertyResource) {
