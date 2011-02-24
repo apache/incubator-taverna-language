@@ -329,7 +329,7 @@
         <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/xml-splitter#Config"/>
         <name>Content_list</name>
         <configure rdf:resource="activity/Content_list/"/>
-        <wrappedType:wrappedType xmlns:wrappedType="http://ns.taverna.org.uk/2010/activity/xml-splitter#" xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://ns.taverna.org.uk/2010/activity/xml-splitter#" ns0:parseType="Literal">
+        <wrappedType:wrappedType xmlns:wrappedType="http://ns.taverna.org.uk/2010/activity/xml-splitter#" rdf:parseType="Literal">
             <s:extensions xmlns:s="http://org.embl.ebi.escience/xscufl/0.1alpha">
                 <s:arraytype name="content" optional="false" qname="{http://www.ebi.ac.uk/WSInterProScan}WSArrayofData" typename="WSArrayofData" unbounded="false" wrapped="false">
                     <s:elementtype>
@@ -345,15 +345,15 @@
         </wrappedType:wrappedType>
         <inputPortDefinition>
             <InputPortDefinition>
-                <dataType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="java:java.lang.String"/>
-                <definesInputPort xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="../../activity/Content_list/in/WSArrayofData"/>
-                <expectedMimeType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="http://purl.org/NET/mediatypes/text/xml"/>
+                <dataType rdf:resource="java:java.lang.String"/>
+                <definesInputPort rdf:resource="../../activity/Content_list/in/WSArrayofData"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/xml"/>
             </InputPortDefinition>
         </inputPortDefinition>
         <outputPortDefinition>
             <OutputPortDefinition>
-                <definesOutputPort xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="../../activity/Content_list/out/output"/>
-                <expectedMimeType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="http://purl.org/NET/mediatypes/text/xml"/>
+                <definesOutputPort rdf:resource="../../activity/Content_list/out/output"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/xml"/>
             </OutputPortDefinition>
         </outputPortDefinition>
     </Configuration>
@@ -361,7 +361,7 @@
         <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/beanshell#Config"/>
         <name>Format_as_GFF</name>
         <configure rdf:resource="activity/Format_as_GFF/"/>
-        <script:script xmlns:script="http://ns.taverna.org.uk/2010/activity/beanshell#" xmlns="http://ns.taverna.org.uk/2010/activity/beanshell#">import java.util.StringTokenizer;
+        <script:script xmlns:script="http://ns.taverna.org.uk/2010/activity/beanshell#">import java.util.StringTokenizer;
 
 interproscan_gff = &quot;&quot;;
 
@@ -408,15 +408,15 @@ while(tok1.hasMoreElements()) {
 }</script:script>
         <inputPortDefinition>
             <InputPortDefinition>
-                <dataType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="java:java.lang.String"/>
-                <definesInputPort xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="../../activity/Format_as_GFF/in/interproscan_text"/>
-                <expectedMimeType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="http://purl.org/NET/mediatypes/text/plain"/>
+                <dataType rdf:resource="java:java.lang.String"/>
+                <definesInputPort rdf:resource="../../activity/Format_as_GFF/in/interproscan_text"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
             </InputPortDefinition>
         </inputPortDefinition>
         <outputPortDefinition>
             <OutputPortDefinition>
-                <definesOutputPort xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="../../activity/Format_as_GFF/out/interproscan_gff"/>
-                <expectedMimeType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="http://purl.org/NET/mediatypes/text/plain"/>
+                <definesOutputPort rdf:resource="../../activity/Format_as_GFF/out/interproscan_gff"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
             </OutputPortDefinition>
         </outputPortDefinition>
     </Configuration>
@@ -424,41 +424,41 @@ while(tok1.hasMoreElements()) {
         <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/wsdl#Config"/>
         <name>Get_XML_result</name>
         <configure rdf:resource="activity/Get_XML_result/"/>
-        <operation:operation xmlns:operation="http://ns.taverna.org.uk/2010/activity/wsdl#" xmlns="http://ns.taverna.org.uk/2010/activity/wsdl#">
-            <ns10:operation xmlns:ns10="http://ns.taverna.org.uk/2010/activity/wsdl/" xmlns="http://ns.taverna.org.uk/2010/activity/wsdl/">
-                <name:name xmlns:name="http://ns.taverna.org.uk/2010/activity/wsdl/operation#" xmlns="http://ns.taverna.org.uk/2010/activity/wsdl/operation#">poll</name:name>
-                <wsdl:wsdl xmlns:wsdl="http://ns.taverna.org.uk/2010/activity/wsdl/operation#" xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://ns.taverna.org.uk/2010/activity/wsdl/operation#" ns0:resource="http://www.ebi.ac.uk/Tools/webservices/wsdl/WSInterProScan.wsdl"/>
-            </ns10:operation>
+        <operation:operation xmlns:operation="http://ns.taverna.org.uk/2010/activity/wsdl#">
+            <ns9:operation xmlns:ns9="http://ns.taverna.org.uk/2010/activity/wsdl/">
+                <name:name xmlns:name="http://ns.taverna.org.uk/2010/activity/wsdl/operation#">poll</name:name>
+                <wsdl:wsdl xmlns:wsdl="http://ns.taverna.org.uk/2010/activity/wsdl/operation#" rdf:resource="http://www.ebi.ac.uk/Tools/webservices/wsdl/WSInterProScan.wsdl"/>
+            </ns9:operation>
         </operation:operation>
     </Configuration>
     <Configuration rdf:about="configuration/Get_XML_result_type_defaultValue/">
         <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/constant#Config"/>
         <name>Get_XML_result_type_defaultValue</name>
         <configure rdf:resource="activity/Get_XML_result_type_defaultValue/"/>
-        <string:string xmlns:string="http://ns.taverna.org.uk/2010/activity/constant#" xmlns="http://ns.taverna.org.uk/2010/activity/constant#">toolxml</string:string>
+        <string:string xmlns:string="http://ns.taverna.org.uk/2010/activity/constant#">toolxml</string:string>
     </Configuration>
     <Configuration rdf:about="configuration/Get_text_result/">
         <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/wsdl#Config"/>
         <name>Get_text_result</name>
         <configure rdf:resource="activity/Get_text_result/"/>
-        <operation:operation xmlns:operation="http://ns.taverna.org.uk/2010/activity/wsdl#" xmlns="http://ns.taverna.org.uk/2010/activity/wsdl#">
-            <ns10:operation xmlns:ns10="http://ns.taverna.org.uk/2010/activity/wsdl/" xmlns="http://ns.taverna.org.uk/2010/activity/wsdl/">
-                <name:name xmlns:name="http://ns.taverna.org.uk/2010/activity/wsdl/operation#" xmlns="http://ns.taverna.org.uk/2010/activity/wsdl/operation#">poll</name:name>
-                <wsdl:wsdl xmlns:wsdl="http://ns.taverna.org.uk/2010/activity/wsdl/operation#" xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://ns.taverna.org.uk/2010/activity/wsdl/operation#" ns0:resource="http://www.ebi.ac.uk/Tools/webservices/wsdl/WSInterProScan.wsdl"/>
-            </ns10:operation>
+        <operation:operation xmlns:operation="http://ns.taverna.org.uk/2010/activity/wsdl#">
+            <ns9:operation xmlns:ns9="http://ns.taverna.org.uk/2010/activity/wsdl/">
+                <name:name xmlns:name="http://ns.taverna.org.uk/2010/activity/wsdl/operation#">poll</name:name>
+                <wsdl:wsdl xmlns:wsdl="http://ns.taverna.org.uk/2010/activity/wsdl/operation#" rdf:resource="http://www.ebi.ac.uk/Tools/webservices/wsdl/WSInterProScan.wsdl"/>
+            </ns9:operation>
         </operation:operation>
     </Configuration>
     <Configuration rdf:about="configuration/Get_text_result_type_defaultValue/">
         <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/constant#Config"/>
         <name>Get_text_result_type_defaultValue</name>
         <configure rdf:resource="activity/Get_text_result_type_defaultValue/"/>
-        <string:string xmlns:string="http://ns.taverna.org.uk/2010/activity/constant#" xmlns="http://ns.taverna.org.uk/2010/activity/constant#">toolraw</string:string>
+        <string:string xmlns:string="http://ns.taverna.org.uk/2010/activity/constant#">toolraw</string:string>
     </Configuration>
     <Configuration rdf:about="configuration/Input_data/">
         <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/xml-splitter#Config"/>
         <name>Input_data</name>
         <configure rdf:resource="activity/Input_data/"/>
-        <wrappedType:wrappedType xmlns:wrappedType="http://ns.taverna.org.uk/2010/activity/xml-splitter#" xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://ns.taverna.org.uk/2010/activity/xml-splitter#" ns0:parseType="Literal">
+        <wrappedType:wrappedType xmlns:wrappedType="http://ns.taverna.org.uk/2010/activity/xml-splitter#" rdf:parseType="Literal">
             <s:extensions xmlns:s="http://org.embl.ebi.escience/xscufl/0.1alpha">
                 <s:complextype name="" optional="false" qname="{http://www.ebi.ac.uk/WSInterProScan}data" typename="data" unbounded="false">
                     <s:elements>
@@ -470,22 +470,22 @@ while(tok1.hasMoreElements()) {
         </wrappedType:wrappedType>
         <inputPortDefinition>
             <InputPortDefinition>
-                <dataType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="java:java.lang.String"/>
-                <definesInputPort xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="../../activity/Input_data/in/content"/>
-                <expectedMimeType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="http://purl.org/NET/mediatypes/text/plain"/>
+                <dataType rdf:resource="java:java.lang.String"/>
+                <definesInputPort rdf:resource="../../activity/Input_data/in/content"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
             </InputPortDefinition>
         </inputPortDefinition>
         <inputPortDefinition>
             <InputPortDefinition>
-                <dataType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="java:java.lang.String"/>
-                <definesInputPort xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="../../activity/Input_data/in/type"/>
-                <expectedMimeType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="http://purl.org/NET/mediatypes/text/plain"/>
+                <dataType rdf:resource="java:java.lang.String"/>
+                <definesInputPort rdf:resource="../../activity/Input_data/in/type"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
             </InputPortDefinition>
         </inputPortDefinition>
         <outputPortDefinition>
             <OutputPortDefinition>
-                <definesOutputPort xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="../../activity/Input_data/out/output"/>
-                <expectedMimeType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="http://purl.org/NET/mediatypes/text/xml"/>
+                <definesOutputPort rdf:resource="../../activity/Input_data/out/output"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/xml"/>
             </OutputPortDefinition>
         </outputPortDefinition>
     </Configuration>
@@ -493,13 +493,13 @@ while(tok1.hasMoreElements()) {
         <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/constant#Config"/>
         <name>Input_data_type_defaultValue</name>
         <configure rdf:resource="activity/Input_data_type_defaultValue/"/>
-        <string:string xmlns:string="http://ns.taverna.org.uk/2010/activity/constant#" xmlns="http://ns.taverna.org.uk/2010/activity/constant#">sequence</string:string>
+        <string:string xmlns:string="http://ns.taverna.org.uk/2010/activity/constant#">sequence</string:string>
     </Configuration>
     <Configuration rdf:about="configuration/Job_params/">
         <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/xml-splitter#Config"/>
         <name>Job_params</name>
         <configure rdf:resource="activity/Job_params/"/>
-        <wrappedType:wrappedType xmlns:wrappedType="http://ns.taverna.org.uk/2010/activity/xml-splitter#" xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://ns.taverna.org.uk/2010/activity/xml-splitter#" ns0:parseType="Literal">
+        <wrappedType:wrappedType xmlns:wrappedType="http://ns.taverna.org.uk/2010/activity/xml-splitter#" rdf:parseType="Literal">
             <s:extensions xmlns:s="http://org.embl.ebi.escience/xscufl/0.1alpha">
                 <s:complextype name="params" optional="false" qname="{http://www.ebi.ac.uk/WSInterProScan}inputParams" typename="inputParams" unbounded="false">
                     <s:elements>
@@ -518,71 +518,71 @@ while(tok1.hasMoreElements()) {
         </wrappedType:wrappedType>
         <inputPortDefinition>
             <InputPortDefinition>
-                <dataType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="java:java.lang.String"/>
-                <definesInputPort xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="../../activity/Job_params/in/email"/>
-                <expectedMimeType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="http://purl.org/NET/mediatypes/text/plain"/>
+                <dataType rdf:resource="java:java.lang.String"/>
+                <definesInputPort rdf:resource="../../activity/Job_params/in/app"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
             </InputPortDefinition>
         </inputPortDefinition>
         <inputPortDefinition>
             <InputPortDefinition>
-                <dataType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="java:java.lang.String"/>
-                <definesInputPort xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="../../activity/Job_params/in/outformat"/>
-                <expectedMimeType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="http://purl.org/NET/mediatypes/text/plain"/>
+                <dataType rdf:resource="java:java.lang.String"/>
+                <definesInputPort rdf:resource="../../activity/Job_params/in/async"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
             </InputPortDefinition>
         </inputPortDefinition>
         <inputPortDefinition>
             <InputPortDefinition>
-                <dataType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="java:java.lang.String"/>
-                <definesInputPort xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="../../activity/Job_params/in/async"/>
-                <expectedMimeType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="http://purl.org/NET/mediatypes/text/plain"/>
+                <dataType rdf:resource="java:java.lang.String"/>
+                <definesInputPort rdf:resource="../../activity/Job_params/in/crc"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
             </InputPortDefinition>
         </inputPortDefinition>
         <inputPortDefinition>
             <InputPortDefinition>
-                <dataType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="java:java.lang.String"/>
-                <definesInputPort xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="../../activity/Job_params/in/goterms"/>
-                <expectedMimeType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="http://purl.org/NET/mediatypes/text/plain"/>
+                <dataType rdf:resource="java:java.lang.String"/>
+                <definesInputPort rdf:resource="../../activity/Job_params/in/email"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
             </InputPortDefinition>
         </inputPortDefinition>
         <inputPortDefinition>
             <InputPortDefinition>
-                <dataType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="java:java.lang.String"/>
-                <definesInputPort xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="../../activity/Job_params/in/trtable"/>
-                <expectedMimeType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="http://purl.org/NET/mediatypes/text/plain"/>
+                <dataType rdf:resource="java:java.lang.String"/>
+                <definesInputPort rdf:resource="../../activity/Job_params/in/goterms"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
             </InputPortDefinition>
         </inputPortDefinition>
         <inputPortDefinition>
             <InputPortDefinition>
-                <dataType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="java:java.lang.String"/>
-                <definesInputPort xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="../../activity/Job_params/in/trlen"/>
-                <expectedMimeType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="http://purl.org/NET/mediatypes/text/plain"/>
+                <dataType rdf:resource="java:java.lang.String"/>
+                <definesInputPort rdf:resource="../../activity/Job_params/in/outformat"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
             </InputPortDefinition>
         </inputPortDefinition>
         <inputPortDefinition>
             <InputPortDefinition>
-                <dataType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="java:java.lang.String"/>
-                <definesInputPort xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="../../activity/Job_params/in/seqtype"/>
-                <expectedMimeType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="http://purl.org/NET/mediatypes/text/plain"/>
+                <dataType rdf:resource="java:java.lang.String"/>
+                <definesInputPort rdf:resource="../../activity/Job_params/in/seqtype"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
             </InputPortDefinition>
         </inputPortDefinition>
         <inputPortDefinition>
             <InputPortDefinition>
-                <dataType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="java:java.lang.String"/>
-                <definesInputPort xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="../../activity/Job_params/in/crc"/>
-                <expectedMimeType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="http://purl.org/NET/mediatypes/text/plain"/>
+                <dataType rdf:resource="java:java.lang.String"/>
+                <definesInputPort rdf:resource="../../activity/Job_params/in/trlen"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
             </InputPortDefinition>
         </inputPortDefinition>
         <inputPortDefinition>
             <InputPortDefinition>
-                <dataType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="java:java.lang.String"/>
-                <definesInputPort xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="../../activity/Job_params/in/app"/>
-                <expectedMimeType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="http://purl.org/NET/mediatypes/text/plain"/>
+                <dataType rdf:resource="java:java.lang.String"/>
+                <definesInputPort rdf:resource="../../activity/Job_params/in/trtable"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
             </InputPortDefinition>
         </inputPortDefinition>
         <outputPortDefinition>
             <OutputPortDefinition>
-                <definesOutputPort xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="../../activity/Job_params/out/output"/>
-                <expectedMimeType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="http://purl.org/NET/mediatypes/text/xml"/>
+                <definesOutputPort rdf:resource="../../activity/Job_params/out/output"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/xml"/>
             </OutputPortDefinition>
         </outputPortDefinition>
     </Configuration>
@@ -590,43 +590,43 @@ while(tok1.hasMoreElements()) {
         <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/constant#Config"/>
         <name>Job_params_async_defaultValue</name>
         <configure rdf:resource="activity/Job_params_async_defaultValue/"/>
-        <string:string xmlns:string="http://ns.taverna.org.uk/2010/activity/constant#" xmlns="http://ns.taverna.org.uk/2010/activity/constant#">1</string:string>
+        <string:string xmlns:string="http://ns.taverna.org.uk/2010/activity/constant#">1</string:string>
     </Configuration>
     <Configuration rdf:about="configuration/Job_params_crc_defaultValue/">
         <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/constant#Config"/>
         <name>Job_params_crc_defaultValue</name>
         <configure rdf:resource="activity/Job_params_crc_defaultValue/"/>
-        <string:string xmlns:string="http://ns.taverna.org.uk/2010/activity/constant#" xmlns="http://ns.taverna.org.uk/2010/activity/constant#">1</string:string>
+        <string:string xmlns:string="http://ns.taverna.org.uk/2010/activity/constant#">1</string:string>
     </Configuration>
     <Configuration rdf:about="configuration/Job_params_goterms_defaultValue/">
         <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/constant#Config"/>
         <name>Job_params_goterms_defaultValue</name>
         <configure rdf:resource="activity/Job_params_goterms_defaultValue/"/>
-        <string:string xmlns:string="http://ns.taverna.org.uk/2010/activity/constant#" xmlns="http://ns.taverna.org.uk/2010/activity/constant#">1</string:string>
+        <string:string xmlns:string="http://ns.taverna.org.uk/2010/activity/constant#">1</string:string>
     </Configuration>
     <Configuration rdf:about="configuration/Job_params_seqtype_defaultValue/">
         <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/constant#Config"/>
         <name>Job_params_seqtype_defaultValue</name>
         <configure rdf:resource="activity/Job_params_seqtype_defaultValue/"/>
-        <string:string xmlns:string="http://ns.taverna.org.uk/2010/activity/constant#" xmlns="http://ns.taverna.org.uk/2010/activity/constant#">p</string:string>
+        <string:string xmlns:string="http://ns.taverna.org.uk/2010/activity/constant#">p</string:string>
     </Configuration>
     <Configuration rdf:about="configuration/Unpack_XML_result/">
         <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/beanshell#Config"/>
         <name>Unpack_XML_result</name>
         <configure rdf:resource="activity/Unpack_XML_result/"/>
-        <script:script xmlns:script="http://ns.taverna.org.uk/2010/activity/beanshell#" xmlns="http://ns.taverna.org.uk/2010/activity/beanshell#">string = new String(bytes);
+        <script:script xmlns:script="http://ns.taverna.org.uk/2010/activity/beanshell#">string = new String(bytes);
 </script:script>
         <inputPortDefinition>
             <InputPortDefinition>
-                <dataType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="java:[B"/>
-                <definesInputPort xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="../../activity/Unpack_XML_result/in/bytes"/>
-                <expectedMimeType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="http://purl.org/NET/mediatypes/application/octet-stream"/>
+                <dataType rdf:resource="java:[B"/>
+                <definesInputPort rdf:resource="../../activity/Unpack_XML_result/in/bytes"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/application/octet-stream"/>
             </InputPortDefinition>
         </inputPortDefinition>
         <outputPortDefinition>
             <OutputPortDefinition>
-                <definesOutputPort xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="../../activity/Unpack_XML_result/out/string"/>
-                <expectedMimeType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="http://purl.org/NET/mediatypes/text/plain"/>
+                <definesOutputPort rdf:resource="../../activity/Unpack_XML_result/out/string"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
             </OutputPortDefinition>
         </outputPortDefinition>
     </Configuration>
@@ -634,19 +634,19 @@ while(tok1.hasMoreElements()) {
         <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/beanshell#Config"/>
         <name>Unpack_text_result</name>
         <configure rdf:resource="activity/Unpack_text_result/"/>
-        <script:script xmlns:script="http://ns.taverna.org.uk/2010/activity/beanshell#" xmlns="http://ns.taverna.org.uk/2010/activity/beanshell#">string = new String(bytes);
+        <script:script xmlns:script="http://ns.taverna.org.uk/2010/activity/beanshell#">string = new String(bytes);
 </script:script>
         <inputPortDefinition>
             <InputPortDefinition>
-                <dataType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="java:[B"/>
-                <definesInputPort xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="../../activity/Unpack_text_result/in/bytes"/>
-                <expectedMimeType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="http://purl.org/NET/mediatypes/application/octet-stream"/>
+                <dataType rdf:resource="java:[B"/>
+                <definesInputPort rdf:resource="../../activity/Unpack_text_result/in/bytes"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/application/octet-stream"/>
             </InputPortDefinition>
         </inputPortDefinition>
         <outputPortDefinition>
             <OutputPortDefinition>
-                <definesOutputPort xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="../../activity/Unpack_text_result/out/string"/>
-                <expectedMimeType xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" ns0:resource="http://purl.org/NET/mediatypes/text/plain"/>
+                <definesOutputPort rdf:resource="../../activity/Unpack_text_result/out/string"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
             </OutputPortDefinition>
         </outputPortDefinition>
     </Configuration>
@@ -654,22 +654,22 @@ while(tok1.hasMoreElements()) {
         <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/wsdl#Config"/>
         <name>checkStatus</name>
         <configure rdf:resource="activity/checkStatus/"/>
-        <operation:operation xmlns:operation="http://ns.taverna.org.uk/2010/activity/wsdl#" xmlns="http://ns.taverna.org.uk/2010/activity/wsdl#">
-            <ns10:operation xmlns:ns10="http://ns.taverna.org.uk/2010/activity/wsdl/" xmlns="http://ns.taverna.org.uk/2010/activity/wsdl/">
-                <name:name xmlns:name="http://ns.taverna.org.uk/2010/activity/wsdl/operation#" xmlns="http://ns.taverna.org.uk/2010/activity/wsdl/operation#">checkStatus</name:name>
-                <wsdl:wsdl xmlns:wsdl="http://ns.taverna.org.uk/2010/activity/wsdl/operation#" xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://ns.taverna.org.uk/2010/activity/wsdl/operation#" ns0:resource="http://www.ebi.ac.uk/Tools/webservices/wsdl/WSInterProScan.wsdl"/>
-            </ns10:operation>
+        <operation:operation xmlns:operation="http://ns.taverna.org.uk/2010/activity/wsdl#">
+            <ns9:operation xmlns:ns9="http://ns.taverna.org.uk/2010/activity/wsdl/">
+                <name:name xmlns:name="http://ns.taverna.org.uk/2010/activity/wsdl/operation#">checkStatus</name:name>
+                <wsdl:wsdl xmlns:wsdl="http://ns.taverna.org.uk/2010/activity/wsdl/operation#" rdf:resource="http://www.ebi.ac.uk/Tools/webservices/wsdl/WSInterProScan.wsdl"/>
+            </ns9:operation>
         </operation:operation>
     </Configuration>
     <Configuration rdf:about="configuration/runInterProScan/">
         <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/wsdl#Config"/>
         <name>runInterProScan</name>
         <configure rdf:resource="activity/runInterProScan/"/>
-        <operation:operation xmlns:operation="http://ns.taverna.org.uk/2010/activity/wsdl#" xmlns="http://ns.taverna.org.uk/2010/activity/wsdl#">
-            <ns10:operation xmlns:ns10="http://ns.taverna.org.uk/2010/activity/wsdl/" xmlns="http://ns.taverna.org.uk/2010/activity/wsdl/">
-                <name:name xmlns:name="http://ns.taverna.org.uk/2010/activity/wsdl/operation#" xmlns="http://ns.taverna.org.uk/2010/activity/wsdl/operation#">runInterProScan</name:name>
-                <wsdl:wsdl xmlns:wsdl="http://ns.taverna.org.uk/2010/activity/wsdl/operation#" xmlns:ns0="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://ns.taverna.org.uk/2010/activity/wsdl/operation#" ns0:resource="http://www.ebi.ac.uk/Tools/webservices/wsdl/WSInterProScan.wsdl"/>
-            </ns10:operation>
+        <operation:operation xmlns:operation="http://ns.taverna.org.uk/2010/activity/wsdl#">
+            <ns9:operation xmlns:ns9="http://ns.taverna.org.uk/2010/activity/wsdl/">
+                <name:name xmlns:name="http://ns.taverna.org.uk/2010/activity/wsdl/operation#">runInterProScan</name:name>
+                <wsdl:wsdl xmlns:wsdl="http://ns.taverna.org.uk/2010/activity/wsdl/operation#" rdf:resource="http://www.ebi.ac.uk/Tools/webservices/wsdl/WSInterProScan.wsdl"/>
+            </ns9:operation>
         </operation:operation>
     </Configuration>
 </rdf:RDF>
