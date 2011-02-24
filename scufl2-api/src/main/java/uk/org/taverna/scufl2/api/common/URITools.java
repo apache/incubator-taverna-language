@@ -95,7 +95,12 @@ public class URITools {
 			@Override
 			public boolean visit() {
 				WorkflowBean node = getCurrentNode();
-				URI uri = uriForBean(node);
+				URI uri;
+				try {
+					uri = uriForBean(node);
+				} catch (IllegalStateException ex) {
+					return false;
+				}
 				WorkflowBean existing = uriToBean.put(uri, node);
 				if (existing != null) {
 					String msg = "Multiple nodes with same URI {0}: {1} {2}";
@@ -105,8 +110,9 @@ public class URITools {
 				return !(node instanceof Configuration);
 			}
 		});
-		if (! uri.isAbsolute()) {
-			// Make absolute
+		if (!uri.isAbsolute()) {
+			// Make absolute, but remove / first
+			uri = URI.create("/").relativize(uri);
 			uri = uriForBean(wfBundle).resolve(uri);
 		}
 		return uriToBean.get(uri);
@@ -182,7 +188,7 @@ public class URITools {
 							MERGE_POSITION, dataLink.getMergePosition());
 				}
 				return wfUri.resolve(dataLinkUri);
-			} else if(bean instanceof BlockingControlLink) {
+			} else if (bean instanceof BlockingControlLink) {
 				BlockingControlLink runAfterCondition = (BlockingControlLink) bean;
 				Workflow wf = runAfterCondition.getParent();
 				URI wfUri = uriForBean(wf);
@@ -191,8 +197,8 @@ public class URITools {
 						uriForBean(runAfterCondition.getBlock()));
 				URI after = relativePath(wfUri,
 						uriForBean(runAfterCondition.getUntilFinished()));
-				String conditionUri = MessageFormat.format("{0}?{1}={2}&{3}={4}",
- "control", "block", start,
+				String conditionUri = MessageFormat.format(
+						"{0}?{1}={2}&{3}={4}", "control", "block", start,
 						"untilFinished", after);
 				return wfUri.resolve(conditionUri);
 			} else if (bean instanceof DispatchStack) {
@@ -213,6 +219,11 @@ public class URITools {
 				ProcessorPortBinding<?, ?> processorPortBinding = (ProcessorPortBinding<?, ?>) bean;
 				ProcessorPort procPort = processorPortBinding
 						.getBoundProcessorPort();
+				if (procPort == null) {
+					throw new IllegalStateException(
+							"ProcessorPortBinding has no bound processor port: "
+									+ bean);
+				}
 				URI procPortUri = relativeUriForBean(procPort,
 						processorPortBinding.getParent().getBoundProcessor());
 				return parentUri.resolve(procPortUri);
