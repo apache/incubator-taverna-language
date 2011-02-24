@@ -88,7 +88,6 @@ public class ProfileParser extends AbstractParser {
 			throws ReaderException {
 		ProcessorInputPortBinding binding = new ProcessorInputPortBinding();
 		mapBean(original.getAbout(), binding);
-		binding.setParent(getParserState().getCurrent(ProcessorBinding.class));
 
 		binding.setBoundActivityPort(resolveBeanUri(original
 				.getBindInputActivityPort().getResource(),
@@ -96,6 +95,7 @@ public class ProfileParser extends AbstractParser {
 		binding.setBoundProcessorPort(resolveBeanUri(original
 				.getBindInputProcessorPort().getResource(),
 				InputProcessorPort.class));
+		binding.setParent(getParserState().getCurrent(ProcessorBinding.class));
 
 	}
 
@@ -119,7 +119,6 @@ public class ProfileParser extends AbstractParser {
 			throws ReaderException {
 		ProcessorOutputPortBinding binding = new ProcessorOutputPortBinding();
 		mapBean(original.getAbout(), binding);
-		binding.setParent(getParserState().getCurrent(ProcessorBinding.class));
 
 		binding.setBoundActivityPort(resolveBeanUri(original
 				.getBindOutputActivityPort().getResource(),
@@ -127,6 +126,7 @@ public class ProfileParser extends AbstractParser {
 		binding.setBoundProcessorPort(resolveBeanUri(original
 				.getBindOutputProcessorPort().getResource(),
 				OutputProcessorPort.class));
+		binding.setParent(getParserState().getCurrent(ProcessorBinding.class));
 
 	}
 
@@ -134,6 +134,8 @@ public class ProfileParser extends AbstractParser {
 			uk.org.taverna.scufl2.rdfxml.jaxb.ProcessorBinding original)
 			throws ReaderException {
 		uk.org.taverna.scufl2.api.profiles.ProcessorBinding binding = new uk.org.taverna.scufl2.api.profiles.ProcessorBinding();
+		binding.setParent(getParserState().getCurrent(
+				uk.org.taverna.scufl2.api.profiles.Profile.class));
 		mapBean(original.getAbout(), binding);
 		getParserState().push(binding);
 
