@@ -8,6 +8,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
+import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.io.ReaderException;
@@ -66,8 +67,31 @@ public class ProfileParser extends AbstractParser {
 
 	}
 
-	protected void parseConfiguration(Configuration original) {
-		// TODO Auto-generated method stub
+	protected void parseConfiguration(Configuration original)
+			throws ReaderException {
+		uk.org.taverna.scufl2.api.configurations.Configuration config = new uk.org.taverna.scufl2.api.configurations.Configuration();
+		mapBean(original.getAbout(), config);
+		config.setParent(getParserState().getCurrent(
+				uk.org.taverna.scufl2.api.profiles.Profile.class));
+
+		if (original.getName() != null) {
+			config.setName(original.getName());
+		}
+
+		if (original.getType() != null) {
+			config.setConfigurableType(resolve(original.getType().getResource()));
+		}
+		if (original.getConfigure() != null) {
+			Configurable configurable = resolveBeanUri(original.getConfigure()
+					.getResource(), Configurable.class);
+			config.setConfigures(configurable);
+		}
+
+		getParserState().push(config);
+		for (Object o : original.getAny()) {
+			parseProperty(o);
+		}
+		getParserState().pop();
 
 	}
 
@@ -161,7 +185,6 @@ public class ProfileParser extends AbstractParser {
 			parseOutputPortBinding(outputPortBinding.getOutputPortBinding());
 		}
 
-
 		getParserState().pop();
 
 	}
@@ -191,6 +214,10 @@ public class ProfileParser extends AbstractParser {
 		// TODO: Parse activates config etc.
 		getParserState().pop();
 
+	}
+
+	protected void parseProperty(Object o) {
+		System.out.println("Property " + o);
 	}
 
 	protected void readProfile(URI profileUri, URI source)

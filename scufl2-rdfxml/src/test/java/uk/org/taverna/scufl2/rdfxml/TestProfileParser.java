@@ -2,16 +2,21 @@ package uk.org.taverna.scufl2.rdfxml;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Stack;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.ExampleWorkflow;
 import uk.org.taverna.scufl2.api.activity.Activity;
+import uk.org.taverna.scufl2.api.common.WorkflowBean;
+import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
@@ -21,6 +26,7 @@ import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
+import uk.org.taverna.scufl2.api.property.PropertyResource;
 
 public class TestProfileParser {
 	private static final String PROFILE_RDF = "example/profile/tavernaWorkbench.rdf";
@@ -56,10 +62,29 @@ public class TestProfileParser {
 
 	}
 
+	@Test
+	public void configuration() throws Exception {
+		assertEquals(1, profile.getConfigurations().size());
+		Configuration hello = profile.getConfigurations().getByName("Hello");
+		assertEquals("Hello", hello.getName());
+		assertEquals(profile.getActivities().getByName("HelloScript"),
+				hello.getConfigures());
+		assertEquals(
+				"http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration",
+				hello.getConfigurableType().toASCIIString());
+	}
+
 	public void loadProfileDocument() {
 		profileUrl = getClass().getResource(PROFILE_RDF);
 		assertNotNull("Could not find profile document " + PROFILE_RDF,
 				profileUrl);
+	}
+
+	@Test
+	public void parserStackEmpty() throws Exception {
+		Stack<WorkflowBean> stack = profileParser.getParserState().getStack();
+		assertEquals(1, stack.size());
+		assertEquals(bundle, stack.peek());
 	}
 
 	@Test
@@ -87,8 +112,7 @@ public class TestProfileParser {
 				.getByName("HelloScript").getOutputPorts().getByName("hello");
 		assertEquals(outputActivityPort, output.getBoundActivityPort());
 
-		OutputProcessorPort outputProcessorPort = bundle
-				.getMainWorkflow()
+		OutputProcessorPort outputProcessorPort = bundle.getMainWorkflow()
 				.getProcessors().getByName("Hello").getOutputPorts()
 				.getByName("greeting");
 		assertEquals(outputProcessorPort, output.getBoundProcessorPort());
@@ -120,6 +144,21 @@ public class TestProfileParser {
 	@Test
 	public void profileName() throws Exception {
 		assertEquals("tavernaWorkbench", profile.getName());
+	}
+
+	@Ignore
+	@Test
+	public void propertyResource() throws Exception {
+		Configuration hello = profile.getConfigurations().getByName("Hello");
+		PropertyResource propResource = hello.getPropertyResource();
+		assertEquals(
+				"http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration",
+				propResource.getTypeURI().toASCIIString());
+		assertNull(propResource.getResourceURI());
+		assertEquals(1, propResource.getProperties().size());
+		String script = propResource.getPropertyAsString(URI.create("http://ns.taverna.org.uk/2010/taverna/activities/beanshell#script"));
+		assertEquals("hello = \"Hello, \" + personName;\n" +
+				"System.out.println(\"Server says: \" + hello);", script);
 	}
 
 	@Before
