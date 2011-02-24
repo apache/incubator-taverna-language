@@ -9,6 +9,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Stack;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,7 +22,6 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.api.profiles.Profile;
-import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
 
 public class TestPropertyParsing {
@@ -36,22 +37,23 @@ public class TestPropertyParsing {
 
 	@Test
 	public void activity() throws Exception {
-		assertEquals(1, profile.getActivities().size());
-		Activity helloScript = profile.getActivities().getByName("HelloScript");
-		assertEquals("HelloScript", helloScript.getName());
+		assertEquals(17, profile.getActivities().size());
+		Activity contentList = profile.getActivities()
+				.getByName("Content_list");
+		assertEquals("Content_list", contentList.getName());
 		assertEquals(
-				"http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity",
-				helloScript.getConfigurableType().toASCIIString());
-		assertEquals(1, helloScript.getInputPorts().size());
-		InputActivityPort personName = helloScript.getInputPorts().getByName(
-				"personName");
-		assertEquals("personName", personName.getName());
-		assertEquals(0, personName.getDepth().intValue());
+"http://ns.taverna.org.uk/2010/activity/xml-splitter/in",
+				contentList.getConfigurableType().toASCIIString());
+		assertEquals(1, contentList.getInputPorts().size());
+		InputActivityPort personName = contentList.getInputPorts().getByName(
+				"WSArrayofData");
+		assertEquals("WSArrayofData", personName.getName());
+		assertEquals(1, personName.getDepth().intValue());
 
-		assertEquals(1, helloScript.getOutputPorts().size());
-		OutputActivityPort hello = helloScript.getOutputPorts().getByName(
-				"hello");
-		assertEquals("hello", hello.getName());
+		assertEquals(1, contentList.getOutputPorts().size());
+		OutputActivityPort hello = contentList.getOutputPorts().getByName(
+				"output");
+		assertEquals("output", hello.getName());
 		assertEquals(0, hello.getDepth().intValue());
 		assertEquals(0, hello.getGranularDepth().intValue());
 
@@ -59,14 +61,15 @@ public class TestPropertyParsing {
 
 	@Test
 	public void configuration() throws Exception {
-		assertEquals(1, profile.getConfigurations().size());
-		Configuration hello = profile.getConfigurations().getByName("Hello");
-		assertEquals("Hello", hello.getName());
-		assertEquals(profile.getActivities().getByName("HelloScript"),
-				hello.getConfigures());
+		assertEquals(17, profile.getConfigurations().size());
+		Configuration get_XML_result = profile.getConfigurations().getByName(
+				"Get_XML_result");
+		assertEquals("Get_XML_result", get_XML_result.getName());
+		assertEquals(profile.getActivities().getByName("Get_XML_result"),
+				get_XML_result.getConfigures());
 		assertEquals(
-				"http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration",
-				hello.getConfigurableType().toASCIIString());
+"http://ns.taverna.org.uk/2010/activity/wsdl#Config",
+				get_XML_result.getConfigurableType().toASCIIString());
 	}
 
 	public void loadProfileDocument() {
@@ -91,24 +94,33 @@ public class TestPropertyParsing {
 		profileParser.getParserState().push(bundle);
 	}
 
-
 	@Test
 	public void propertyResource() throws Exception {
-		Configuration hello = profile.getConfigurations().getByName("Hello");
-		PropertyResource propResource = hello.getPropertyResource();
+		Configuration get_XML_result = profile.getConfigurations().getByName(
+				"Get_XML_result");
+		PropertyResource propResource = get_XML_result.getPropertyResource();
 		assertEquals(
-				"http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration",
+"http://ns.taverna.org.uk/2010/activity/wsdl#Config",
 				propResource.getTypeURI().toASCIIString());
 		assertNull(propResource.getResourceURI());
 		assertEquals(1, propResource.getProperties().size());
-		URI scriptUri = URI
-				.create("http://ns.taverna.org.uk/2010/taverna/activities/beanshell#script");
-		String script = propResource.getPropertyAsString(scriptUri);
-		assertEquals("hello = \"Hello, \" + personName;\n"
-				+ "JOptionPane.showMessageDialog(null, hello);", script);
-		PropertyLiteral literal = propResource.getPropertyAsLiteral(scriptUri);
-		assertEquals(PropertyLiteral.XSD_STRING, literal.getLiteralType());
+		URI wsdlOperation = URI
+				.create("http://ns.taverna.org.uk/2010/activity/wsdl#operation");
+		PropertyResource operation = (PropertyResource) propResource
+				.getProperty(wsdlOperation);
+
+		URI wsdl = URI
+				.create("http://ns.taverna.org.uk/2010/activity/wsdl/operation");
+		assertEquals(wsdl, operation.getTypeURI());
+		assertEquals("poll",
+				operation.getPropertyAsString(wsdl.resolve("#name")));
+		assertEquals(
+				"http://www.ebi.ac.uk/Tools/webservices/wsdl/WSInterProScan.wsdl",
+				operation.getPropertyAsReference(wsdl.resolve("#wsdl"))
+						.getResourceURI().toASCIIString());
+
 	}
+
 
 	@Before
 	public void readProfile() throws Exception {
@@ -117,8 +129,23 @@ public class TestPropertyParsing {
 		profileParser.readProfile(URI.create("/profile/tavernaWorkbench/"),
 				URI.create("profile/tavernaWorkbench.rdf"),
 				profileUrl.openStream());
-		profile = bundle.getProfiles().getByName("tavernaWorkbench");
+		profile = bundle.getProfiles().getByName("taverna-2.2.0");
 		assertNotNull(profile);
+	}
+
+	@Test
+	public void xmlOutput() throws Exception {
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		new RDFXMLSerializer(bundle).profileDoc(output,
+				profile,
+				URI.create("profile/profile.rdf"));
+		String profileStr = new String(output.toByteArray(), "UTF-8");
+
+		String expectedProfile = IOUtils.toString(profileUrl.openStream(),
+				"UTF-8");
+		assertEquals(expectedProfile, profileStr);
+		// System.out.println(profileStr);
+
 	}
 
 }
