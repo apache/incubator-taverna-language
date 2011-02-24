@@ -33,9 +33,10 @@
 	</Activity>
 
 	<ProcessorBinding rdf:about="processorbinding/Hello/">
-		<name>Hello</name>
-		<bindActivity rdf:resource="activity/HelloScript/" />
+		<name>Hello</name>		
+		<bindActivity rdf:resource="activity/HelloScript/" />		
 		<bindProcessor rdf:resource="../../workflow/HelloWorld/processor/Hello/" />
+		<activityPosition rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</activityPosition>
 		<inputPortBinding>
 			<InputPortBinding rdf:about="processorbinding/Hello/in/name">
 				<bindInputActivityPort rdf:resource="activity/HelloScript/in/personName" />
@@ -49,7 +50,7 @@
 				<bindOutputProcessorPort
 					rdf:resource="../../workflow/HelloWorld/processor/Hello/out/greeting" />
 			</OutputPortBinding>
-		</outputPortBinding>
+		</outputPortBinding>		
 	</ProcessorBinding>
 
 	<Configuration rdf:about="configuration/Hello/">
