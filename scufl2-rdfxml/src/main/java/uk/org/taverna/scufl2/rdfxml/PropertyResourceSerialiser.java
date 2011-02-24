@@ -22,13 +22,13 @@ import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.api.property.PropertyResource.PropertyVisit;
 
 public class PropertyResourceSerialiser extends VisitorWithPath {
-	private static final String DESCRIPTION = "Description";
-	private static final String RESOURCE = "resource";
-	private static final String LITERAL = "Literal";
-	private static final String DATATYPE = "datatype";
-	private static final String LI = "li";
-	private static final String PARSE_TYPE = "parseType";
-	private static final String COLLECTION = "Collection";
+	public static final String DESCRIPTION = "Description";
+	public static final String RESOURCE = "resource";
+	public static final String LITERAL = "Literal";
+	public static final String DATATYPE = "datatype";
+	public static final String LI = "li";
+	public static final String PARSE_TYPE = "parseType";
+	public static final String COLLECTION = "Collection";
 	public static final String RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 	protected Stack<Element> elementStack = new Stack<Element>();
 	protected DocumentBuilder docBuilder;
@@ -47,59 +47,84 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 
 	}
 
-	@Override
-	public boolean visit() {
-		WorkflowBean node = getCurrentNode();
-		if (!getCurrentPath().isEmpty()) {
-			WorkflowBean parent = getCurrentPath().peek();
-			if (parent instanceof PropertyVisit) {
-				PropertyVisit propertyVisit = (PropertyVisit) parent;
-				Element element = uriToElement(propertyVisit.getPredicateUri());
-				elementStack.push(element);
-			} else if (parent instanceof PropertyList) {
-				elementStack.push(doc.createElementNS(RDF, LI));
+	private void addElement(Element element) {
+		if (elementStack.isEmpty()) {
+			// Top level
+			if (getRootElement() == null) {
+				setRootElement(element);
+			} else {
+				if (getRootElement() != element) {
+					throw new IllegalStateException("Unexpected root element "
+							+ element + " has: " + getRootElement());
+				}
+			}
+		} else {
+			// System.out.println("Appending to " + elementStack.peek());
+			elementStack.peek().appendChild(element);
+		}
+
+		elementStack.push(element);
+	}
+
+	public Element getRootElement() {
+		return rootElement;
+	}
+
+	protected void list(PropertyList node) {
+		Element element = elementStack.peek();
+		element.setAttributeNS(RDF, PARSE_TYPE, COLLECTION);
+	}
+
+	protected void literal(PropertyLiteral node) {
+		Element element = elementStack.peek();
+		if (node.getLiteralType().equals(PropertyLiteral.XML_LITERAL)) {
+			Element nodeElement = node.getLiteralValueAsElement();
+			element.appendChild(doc.importNode(nodeElement, true));
+			element.setAttributeNS(RDF, PARSE_TYPE, LITERAL);
+		} else {
+			element.setTextContent(node.getLiteralValue());
+			if (!node.getLiteralType().equals(PropertyLiteral.XSD_STRING)) {
+				element.setAttributeNS(RDF, DATATYPE, node.getLiteralType()
+						.toASCIIString());
 			}
 		}
-		if (node instanceof PropertyList) {
-			list((PropertyList) node);
-		} else if (node instanceof PropertyLiteral) {
-			literal((PropertyLiteral) node);
-		} else if (node instanceof PropertyResource) {
-			resource((PropertyResource) node);
-		} else if (node instanceof PropertyReference) {
-			reference((PropertyReference) node);
-		} else if (node instanceof PropertyVisit) {
-			property((PropertyVisit) node);
+	}
+
+	protected void property(PropertyVisit node) {
+		// Handled by individual visits further down (as we'll need to create
+		// multiple elements if there's several values of a property)
+	}
+
+	protected void reference(PropertyReference node) {
+		Element element = elementStack.peek();
+		element.setAttributeNS(RDF, RESOURCE, node.getResourceURI()
+				.toASCIIString());
+	}
+
+	protected void resource(PropertyResource node) {
+		URI typeUri = node.getTypeURI();
+		Element element;
+		if (typeUri != null) {
+			element = uriToElement(typeUri);
 		} else {
-			throw new IllegalStateException("Did not expect " + node);
+			// Anonymous - give warning?
+			element = doc.createElementNS(RDF, DESCRIPTION);
 		}
-		return true;
+		if (node.getResourceURI() != null) {
+			element.setAttributeNS(RDF, "about", node.getResourceURI()
+					.toASCIIString());
+		}
+		addElement(element);
+	}
+
+	public void setRootElement(Element rootElement) {
+		this.rootElement = rootElement;
 	}
 
 	protected Element uriToElement(URI uri) {
 		QName propertyQname = uriToQName(uri);
 		return doc.createElementNS(propertyQname.getNamespaceURI(),
 				propertyQname.getLocalPart());
-	}
-
-	@Override
-	public boolean visitLeave() {
-		if (elementStack.isEmpty()) {
-			return true;
-		}
-		Element element = elementStack.pop();
-		if (elementStack.isEmpty()) {
-			// Top level
-			setRootElement(element);
-		} else {
-			elementStack.peek().appendChild(element);
-		}
-		return true;
-	}
-
-	protected void property(PropertyVisit node) {
-		// Handled by individual visits further down (as we'll need to create
-		// multiple elements if there's several values of a property)
 	}
 
 	protected QName uriToQName(URI uri) {
@@ -123,55 +148,63 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 		return new QName(ns, name);
 	}
 
-	protected void reference(PropertyReference node) {
-		Element element = elementStack.peek();
-		element.setAttributeNS(RDF, RESOURCE, node.getResourceURI()
-				.toASCIIString());
-	}
-
-	protected void resource(PropertyResource node) {
-		URI typeUri = node.getTypeURI();
-		Element element;
-		if (typeUri != null) {
-			element = uriToElement(typeUri);
-		} else {
-			// Anonymous - give warning?
-			element = doc.createElementNS(RDF, DESCRIPTION);
-		}
-		if (node.getResourceURI() != null) {
-			element.setAttributeNS(RDF, "about", node.getResourceURI()
-					.toASCIIString());
-		}
-		elementStack.push(element);
-	}
-
-	protected void literal(PropertyLiteral node) {
-		Element element = elementStack.peek();
-		if (node.getLiteralType().equals(PropertyLiteral.XML_LITERAL)) {
-			Element nodeElement = node.getLiteralValueAsElement();
-			// TODO: Copy element..
-			element.appendChild(doc.importNode(nodeElement, true));
-			element.setAttributeNS(RDF, PARSE_TYPE, LITERAL);
-		} else {
-			element.setTextContent(node.getLiteralValue());
-			if (!node.getLiteralType().equals(PropertyLiteral.XSD_STRING)) {
-				element.setAttributeNS(RDF, DATATYPE, node.getLiteralType()
-						.toASCIIString());
+	@Override
+	public boolean visit() {
+		WorkflowBean node = getCurrentNode();
+		if (!getCurrentPath().isEmpty()) {
+			WorkflowBean parent = getCurrentPath().peek();
+			if (parent instanceof PropertyVisit) {
+				PropertyVisit propertyVisit = (PropertyVisit) parent;
+				Element element = uriToElement(propertyVisit.getPredicateUri());
+				addElement(element);
+			} else if (parent instanceof PropertyList) {
+				addElement(doc.createElementNS(RDF, LI));
 			}
 		}
+		if (node instanceof PropertyList) {
+			list((PropertyList) node);
+		} else if (node instanceof PropertyLiteral) {
+			literal((PropertyLiteral) node);
+		} else if (node instanceof PropertyResource) {
+			resource((PropertyResource) node);
+		} else if (node instanceof PropertyReference) {
+			reference((PropertyReference) node);
+		} else if (node instanceof PropertyVisit) {
+			property((PropertyVisit) node);
+		} else {
+			throw new IllegalStateException("Did not expect " + node);
+		}
+		return true;
 	}
 
-	protected void list(PropertyList node) {
-		Element element = elementStack.peek();
-		element.setAttributeNS(RDF, PARSE_TYPE, COLLECTION);
-	}
-	
-	public void setRootElement(Element rootElement) {
-		this.rootElement = rootElement;
-	}
+	@Override
+	public boolean visitLeave() {
+		Stack<WorkflowBean> currentPath = getCurrentPath();
+		if (currentPath.size() > 1
+				&& currentPath.get(currentPath.size() - 2) instanceof PropertyVisit
+				&& !(currentPath.get(currentPath.size() - 1) instanceof PropertyList)) {
+			// TODO: This seems to work, but uncertain if it's general enough,
+			// or why.
+			return true;
+		}
+		if (getCurrentNode() instanceof PropertyResource) {
+			// We need to pop the <Class> before <predicate>
+			elementStack.pop();
+		}
 
-	public Element getRootElement() {
-		return rootElement;
+		if (elementStack.isEmpty()) {
+			// System.out.println("Stack empty! " + getCurrentNode());
+			return true;
+		}
+		Element element = elementStack.pop();
+		// System.out.println("Popping " + element + " current:"
+		// + getCurrentNode());
+
+		if (elementStack.isEmpty()) {
+			elementStack.push(element);
+		}
+		// System.out.println();
+		return true;
 	}
 
 }

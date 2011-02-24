@@ -16,7 +16,7 @@ WorkflowBundle 'HelloWorld'
   MainProfile 'tavernaWorkbench'
   Profile 'tavernaServer'
     Activity 'HelloScript'
-      Type <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity>
+      Type <http://ns.taverna.org.uk/2010/activity/beanshell>
       In 'personName'
       Out 'hello'
     ProcessorBinding 'Hello'
@@ -27,14 +27,14 @@ WorkflowBundle 'HelloWorld'
       OutputPortBindings
         'hello' -> 'greeting'
     Configuration 'Hello'
-      Type <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration>
+      Type <http://ns.taverna.org.uk/2010/activity/beanshell#Config>
       Configures 'activity/HelloScript'
-      Property <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#script>
+      Property <http://ns.taverna.org.uk/2010/activity/beanshell#script>
         '''hello = "Hello, " + personName;
 System.out.println("Server says: " + hello);'''
   Profile 'tavernaWorkbench'
     Activity 'HelloScript'
-      Type <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity>
+      Type <http://ns.taverna.org.uk/2010/activity/beanshell>
       In 'personName'
       Out 'hello'
     ProcessorBinding 'Hello'
@@ -45,8 +45,8 @@ System.out.println("Server says: " + hello);'''
       OutputPortBindings
         'hello' -> 'greeting'
     Configuration 'Hello'
-      Type <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration>
+      Type <http://ns.taverna.org.uk/2010/activity/beanshell#Config>
       Configures 'activity/HelloScript'
-      Property <http://ns.taverna.org.uk/2010/taverna/activities/beanshell#script>
+      Property <http://ns.taverna.org.uk/2010/activity/beanshell#script>
         '''hello = "Hello, " + personName;
 JOptionPane.showMessageDialog(null, hello);'''
