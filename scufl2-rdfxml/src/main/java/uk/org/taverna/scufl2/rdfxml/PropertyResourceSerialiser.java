@@ -47,6 +47,89 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 
 	}
 
+	public Element getRootElement() {
+		return rootElement;
+	}
+
+	protected void list(PropertyList node) {
+		Element element = elementStack.peek();
+		element.setAttributeNS(RDF, PARSE_TYPE, COLLECTION);
+	}
+
+	protected void literal(PropertyLiteral node) {
+		Element element = elementStack.peek();
+		if (node.getLiteralType().equals(PropertyLiteral.XML_LITERAL)) {
+			Element nodeElement = node.getLiteralValueAsElement();
+			// TODO: Copy element..
+			element.appendChild(doc.importNode(nodeElement, true));
+			element.setAttributeNS(RDF, PARSE_TYPE, LITERAL);
+		} else {
+			element.setTextContent(node.getLiteralValue());
+			if (!node.getLiteralType().equals(PropertyLiteral.XSD_STRING)) {
+				element.setAttributeNS(RDF, DATATYPE, node.getLiteralType()
+						.toASCIIString());
+			}
+		}
+	}
+
+	protected void property(PropertyVisit node) {
+		// Handled by individual visits further down (as we'll need to create
+		// multiple elements if there's several values of a property)
+	}
+
+	protected void reference(PropertyReference node) {
+		Element element = elementStack.peek();
+		element.setAttributeNS(RDF, RESOURCE, node.getResourceURI()
+				.toASCIIString());
+	}
+
+	protected void resource(PropertyResource node) {
+		URI typeUri = node.getTypeURI();
+		Element element;
+		if (typeUri != null) {
+			element = uriToElement(typeUri);
+		} else {
+			// Anonymous - give warning?
+			element = doc.createElementNS(RDF, DESCRIPTION);
+		}
+		if (node.getResourceURI() != null) {
+			element.setAttributeNS(RDF, "about", node.getResourceURI()
+					.toASCIIString());
+		}
+		elementStack.push(element);
+	}
+
+	public void setRootElement(Element rootElement) {
+		this.rootElement = rootElement;
+	}
+
+	protected Element uriToElement(URI uri) {
+		QName propertyQname = uriToQName(uri);
+		return doc.createElementNS(propertyQname.getNamespaceURI(),
+				propertyQname.getLocalPart());
+	}
+
+	protected QName uriToQName(URI uri) {
+		String uriStr = uri.toASCIIString();
+		// \\u10000-\\uEFFFF not included
+		String NMTOKEN = " \\xC0-\\xD6\\xD8-\\xF6\\xF8-\\u02FF\\u0370-\\u037D\\u037F-\\u1FFF\\u200C-\\u200D\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFFD";
+		String ncNameRegex = "[_A-Za-z" + NMTOKEN + "][-._A-Za-z0-9" + NMTOKEN
+				+ "]*$";
+		Pattern ncPattern = Pattern.compile(ncNameRegex);
+		Matcher m = ncPattern.matcher(uriStr);
+		if (!(m.find())) {
+			throw new IllegalArgumentException(
+					"End of URI not valid in QName: " + uri);
+		}
+
+		String ns = uriStr.substring(0, m.start());
+		String name = m.group();
+
+		m = ncPattern.matcher(ns);
+		// TODO: Suggest prefix
+		return new QName(ns, name);
+	}
+
 	@Override
 	public boolean visit() {
 		WorkflowBean node = getCurrentNode();
@@ -76,14 +159,12 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 		return true;
 	}
 
-	protected Element uriToElement(URI uri) {
-		QName propertyQname = uriToQName(uri);
-		return doc.createElementNS(propertyQname.getNamespaceURI(),
-				propertyQname.getLocalPart());
-	}
-
 	@Override
 	public boolean visitLeave() {
+		if (getCurrentNode() instanceof PropertyVisit) {
+			// Insertion done already
+			return true;
+		}
 		if (elementStack.isEmpty()) {
 			return true;
 		}
@@ -95,83 +176,6 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 			elementStack.peek().appendChild(element);
 		}
 		return true;
-	}
-
-	protected void property(PropertyVisit node) {
-		// Handled by individual visits further down (as we'll need to create
-		// multiple elements if there's several values of a property)
-	}
-
-	protected QName uriToQName(URI uri) {
-		String uriStr = uri.toASCIIString();
-		// \\u10000-\\uEFFFF not included
-		String NMTOKEN = " \\xC0-\\xD6\\xD8-\\xF6\\xF8-\\u02FF\\u0370-\\u037D\\u037F-\\u1FFF\\u200C-\\u200D\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFFD";
-		String ncNameRegex = "[_A-Za-z" + NMTOKEN + "][-._A-Za-z0-9" + NMTOKEN
-				+ "]*$";
-		Pattern ncPattern = Pattern.compile(ncNameRegex);
-		Matcher m = ncPattern.matcher(uriStr);
-		if (!(m.find())) {
-			throw new IllegalArgumentException(
-					"End of URI not valid in QName: " + uri);
-		}
-
-		String ns = uriStr.substring(0, m.start());
-		String name = m.group();
-
-		m = ncPattern.matcher(ns);
-		// TODO: Suggest prefix
-		return new QName(ns, name);
-	}
-
-	protected void reference(PropertyReference node) {
-		Element element = elementStack.peek();
-		element.setAttributeNS(RDF, RESOURCE, node.getResourceURI()
-				.toASCIIString());
-	}
-
-	protected void resource(PropertyResource node) {
-		URI typeUri = node.getTypeURI();
-		Element element;
-		if (typeUri != null) {
-			element = uriToElement(typeUri);
-		} else {
-			// Anonymous - give warning?
-			element = doc.createElementNS(RDF, DESCRIPTION);
-		}
-		if (node.getResourceURI() != null) {
-			element.setAttributeNS(RDF, "about", node.getResourceURI()
-					.toASCIIString());
-		}
-		elementStack.push(element);
-	}
-
-	protected void literal(PropertyLiteral node) {
-		Element element = elementStack.peek();
-		if (node.getLiteralType().equals(PropertyLiteral.XML_LITERAL)) {
-			Element nodeElement = node.getLiteralValueAsElement();
-			// TODO: Copy element..
-			element.appendChild(doc.importNode(nodeElement, true));
-			element.setAttributeNS(RDF, PARSE_TYPE, LITERAL);
-		} else {
-			element.setTextContent(node.getLiteralValue());
-			if (!node.getLiteralType().equals(PropertyLiteral.XSD_STRING)) {
-				element.setAttributeNS(RDF, DATATYPE, node.getLiteralType()
-						.toASCIIString());
-			}
-		}
-	}
-
-	protected void list(PropertyList node) {
-		Element element = elementStack.peek();
-		element.setAttributeNS(RDF, PARSE_TYPE, COLLECTION);
-	}
-	
-	public void setRootElement(Element rootElement) {
-		this.rootElement = rootElement;
-	}
-
-	public Element getRootElement() {
-		return rootElement;
 	}
 
 }
