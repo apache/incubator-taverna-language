@@ -317,6 +317,12 @@ public class PropertyResource extends PropertyReference implements
 		return foundProperty;
 	}
 
+	public PropertyLiteral getPropertyAsLiteral(URI predicate) throws UnexpectedPropertyException, PropertyNotFoundException, MultiplePropertiesException {
+		PropertyLiteral propertyResource = getPropertyOfType(predicate,
+				PropertyLiteral.class);
+		return propertyResource;
+	}
+
 	public PropertyReference getPropertyAsReference(URI predicate)
 			throws UnexpectedPropertyException, PropertyNotFoundException,
 			MultiplePropertiesException {
@@ -370,5 +376,6 @@ public class PropertyResource extends PropertyReference implements
 	public final void setTypeURI(URI typeURI) {
 		this.typeURI = typeURI;
 	}
+
 
 }
