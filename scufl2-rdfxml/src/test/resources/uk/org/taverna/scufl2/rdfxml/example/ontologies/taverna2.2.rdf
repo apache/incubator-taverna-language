@@ -6,17 +6,17 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://ns.taverna.org.uk/2010/scufl2# http://ns.taverna.org.uk/2010/scufl2/scufl2.xsd 
 						http://www.w3.org/1999/02/22-rdf-syntax-ns# http://ns.taverna.org.uk/2010/scufl2/rdf.xsd"
-	xsi:type="OntologyDocument" xml:base="http://ns.taverna.org.uk/2010/taverna/activities/" >
+	xsi:type="OntologyDocument" xml:base="http://ns.taverna.org.uk/2010/activity/" >
 
 	<owl:Class
-		rdf:about="beanshell#Activity">
+		rdf:about="beanshell">
 		<configurationType
 			rdf:resource="beanshell#Configuration" />
 		<rdfs:subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2#Activity" />
 	</owl:Class>
 
 	<owl:Class
-		rdf:about="beanshell#Configuration">
+		rdf:about="beanshell#Config">
 		<rdfs:subClassOf rdf:resource="http://ns.taverna.org.uk/2010/scufl2#Configuration" />
 	</owl:Class>
 

@@ -45,7 +45,7 @@ public class ExampleWorkflow {
 		activity = new Activity();
 		activity.setName("HelloScript");
 		activity.setConfigurableType(URI
-				.create("http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity"));
+				.create("http://ns.taverna.org.uk/2010/activity/beanshell"));
 
 		personName = new InputActivityPort(activity, "personName");
 		personName.setDepth(0);
@@ -63,11 +63,11 @@ public class ExampleWorkflow {
 		configuration
 				.getPropertyResource()
 				.setTypeURI(
-						URI.create("http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration"));
+						URI.create("http://ns.taverna.org.uk/2010/activity/beanshell#Config"));
 		configuration
 				.getPropertyResource()
 				.addPropertyAsString(
-						URI.create("http://ns.taverna.org.uk/2010/taverna/activities/beanshell#script"),
+						URI.create("http://ns.taverna.org.uk/2010/activity/beanshell#script"),
 						"hello = \"Hello, \" + personName;\n"
 								+ "JOptionPane.showMessageDialog(null, hello);");
 		return configuration;
@@ -210,7 +210,7 @@ public class ExampleWorkflow {
 		// FIXME: Need removeProperty!
 		config.getPropertyResource()
 				.addPropertyAsString(
-						URI.create("http://ns.taverna.org.uk/2010/taverna/activities/beanshell#script"),
+						URI.create("http://ns.taverna.org.uk/2010/activity/beanshell#script"),
 						"hello = \"Hello, \" + personName;\n"
 								+ "System.out.println(\"Server says: \" + hello);");
 		return profile;
