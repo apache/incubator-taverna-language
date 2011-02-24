@@ -29,4 +29,9 @@ public class PropertyReference implements PropertyObject {
 		this.resourceURI = resourceURI;
 	}
 
+	@Override
+	public String toString() {
+		return "PropertyReference [getResourceURI()=" + getResourceURI() + "]";
+	}
+
 }
