@@ -124,6 +124,14 @@ public class TestURIToolsResolve {
 	}
 
 	@Test
+	public void resolveNonAbsolute() throws Exception {
+		InputWorkflowPort yourName = wfBundle.getMainWorkflow().getInputPorts()
+				.getByName("yourName");
+		assertSame(yourName, uriTools.resolveUri(
+				URI.create("/workflow/HelloWorld/in/yourName"), wfBundle));
+	}
+
+	@Test
 	public void resolveProcessor() throws Exception {
 		Processor hello = wfBundle.getMainWorkflow().getProcessors()
 				.getByName("Hello");
@@ -247,6 +255,14 @@ HELLO_URI.resolve("iterationstrategy/0/"),
 	@Test
 	public void resolveProfile() throws Exception {
 		assertSame(wfBundle.getMainProfile(), uriTools.resolveUri(PROFILE_URI, wfBundle));
+	}
+
+	@Test
+	public void resolveRelative() throws Exception {
+		InputWorkflowPort yourName = wfBundle.getMainWorkflow().getInputPorts()
+				.getByName("yourName");
+		assertSame(yourName, uriTools.resolveUri(
+				URI.create("workflow/HelloWorld/in/yourName"), wfBundle));
 	}
 
 	@Test
