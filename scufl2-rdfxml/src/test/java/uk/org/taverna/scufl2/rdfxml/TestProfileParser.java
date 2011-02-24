@@ -1,5 +1,6 @@
 package uk.org.taverna.scufl2.rdfxml;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.net.URI;
@@ -10,7 +11,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.ExampleWorkflow;
+import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.port.InputActivityPort;
+import uk.org.taverna.scufl2.api.port.InputProcessorPort;
+import uk.org.taverna.scufl2.api.port.OutputActivityPort;
+import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
+import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
+import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
+import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
+import uk.org.taverna.scufl2.api.profiles.Profile;
 
 public class TestProfileParser {
 	private static final String PROFILE_RDF = "example/profile/tavernaWorkbench.rdf";
@@ -21,15 +31,70 @@ public class TestProfileParser {
 
 	private WorkflowBundle bundle;
 
-	@Before
+	private Profile profile;
+
+	@Test
+	public void activity() throws Exception {
+		assertEquals(1, profile.getActivities().size());
+		Activity helloScript = profile.getActivities().getByName("HelloScript");
+		assertEquals("HelloScript", helloScript.getName());
+		assertEquals(
+				"http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity",
+				helloScript.getConfigurableType().toASCIIString());
+		assertEquals(1, helloScript.getInputPorts().size());
+		InputActivityPort personName = helloScript.getInputPorts().getByName(
+				"personName");
+		assertEquals("personName", personName.getName());
+		assertEquals(0, personName.getDepth().intValue());
+
+		assertEquals(1, helloScript.getOutputPorts().size());
+		OutputActivityPort hello = helloScript.getOutputPorts().getByName(
+				"hello");
+		assertEquals("hello", hello.getName());
+		assertEquals(0, hello.getDepth().intValue());
+		assertEquals(0, hello.getGranularDepth().intValue());
+
+	}
+
 	public void loadProfileDocument() {
 		profileUrl = getClass().getResource(PROFILE_RDF);
 		assertNotNull("Could not find profile document " + PROFILE_RDF,
 				profileUrl);
 	}
 
+	@Test
+	public void portBindings() throws Exception {
+		ProcessorBinding hello = profile.getProcessorBindings().getByName(
+				"Hello");
+		assertEquals(1, hello.getInputPortBindings().size());
+		assertEquals(1, hello.getOutputPortBindings().size());
 
-	@Before
+		ProcessorInputPortBinding input = hello.getInputPortBindings()
+				.iterator().next();
+		InputActivityPort inputActivityPort = profile.getActivities()
+				.getByName("HelloScript").getInputPorts()
+				.getByName("personName");
+		assertEquals(inputActivityPort, input.getBoundActivityPort());
+
+		InputProcessorPort inputProcessorPort = bundle.getMainWorkflow()
+				.getProcessors().getByName("Hello").getInputPorts()
+				.getByName("name");
+		assertEquals(inputProcessorPort, input.getBoundProcessorPort());
+
+		ProcessorOutputPortBinding output = hello.getOutputPortBindings()
+				.iterator().next();
+		OutputActivityPort outputActivityPort = profile.getActivities()
+				.getByName("HelloScript").getOutputPorts().getByName("hello");
+		assertEquals(outputActivityPort, output.getBoundActivityPort());
+
+		OutputProcessorPort outputProcessorPort = bundle
+				.getMainWorkflow()
+				.getProcessors().getByName("Hello").getOutputPorts()
+				.getByName("greeting");
+		assertEquals(outputProcessorPort, output.getBoundProcessorPort());
+
+	}
+
 	public void prepareParserState() throws URISyntaxException {
 		bundle = new ExampleWorkflow().makeWorkflowBundle();
 		bundle.getProfiles().clear();
@@ -40,9 +105,32 @@ public class TestProfileParser {
 	}
 
 	@Test
-	public void testname() throws Exception {
+	public void processorBinding() throws Exception {
+		assertEquals(1, profile.getProcessorBindings().size());
+		ProcessorBinding hello = profile.getProcessorBindings().getByName(
+				"Hello");
+		assertEquals(profile.getActivities().getByName("HelloScript"),
+				hello.getBoundActivity());
+		assertEquals(bundle.getMainWorkflow().getProcessors()
+				.getByName("Hello"), hello.getBoundProcessor());
+		assertEquals("Hello", hello.getName());
+		assertEquals(10, hello.getActivityPosition().intValue());
+	}
+
+	@Test
+	public void profileName() throws Exception {
+		assertEquals("tavernaWorkbench", profile.getName());
+	}
+
+	@Before
+	public void readProfile() throws Exception {
+		loadProfileDocument();
+		prepareParserState();
 		profileParser.readProfile(URI.create("/profile/tavernaWorkbench/"),
 				URI.create("profile/tavernaWorkbench.rdf"),
 				profileUrl.openStream());
+		profile = bundle.getProfiles().getByName("tavernaWorkbench");
+		assertNotNull(profile);
 	}
+
 }
