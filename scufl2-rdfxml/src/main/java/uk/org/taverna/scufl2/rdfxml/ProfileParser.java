@@ -7,6 +7,10 @@ import java.net.URI;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
@@ -19,6 +23,9 @@ import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
 import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
+import uk.org.taverna.scufl2.api.property.PropertyLiteral;
+import uk.org.taverna.scufl2.api.property.PropertyObject;
+import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Configuration;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ProcessorBinding.InputPortBinding;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ProcessorBinding.OutputPortBinding;
@@ -33,6 +40,17 @@ public class ProfileParser extends AbstractParser {
 
 	public ProfileParser(ThreadLocal<ParserState> parserState) {
 		super(parserState);
+	}
+
+	private Element getChildElement(Element element) {
+		NodeList childNodes = element.getChildNodes();
+		for (int i=0; i<childNodes.getLength(); i++) {
+			Node node = childNodes.item(i);
+			if (node instanceof Element) {
+				return (Element)node;
+			}
+		}
+		return null;
 	}
 
 	protected void parseActivity(
@@ -88,11 +106,12 @@ public class ProfileParser extends AbstractParser {
 		}
 
 		getParserState().push(config);
+		getParserState().push(config.getPropertyResource());
 		for (Object o : original.getAny()) {
 			parseProperty(o);
 		}
 		getParserState().pop();
-
+		getParserState().pop();
 	}
 
 	protected void parseInputActivityPort(
@@ -216,8 +235,26 @@ public class ProfileParser extends AbstractParser {
 
 	}
 
-	protected void parseProperty(Object o) {
-		System.out.println("Property " + o);
+	protected void parseProperty(Object o) throws ReaderException {
+		if (!(o instanceof Element)) {
+			throw new ReaderException("Unexpected property element " + o);
+		}
+		Element element = (Element) o;
+		URI predicate = URI.create(element.getNamespaceURI()
+				+ element.getLocalName());
+		Element childElement = getChildElement(element);
+		PropertyObject property = null;
+		if (childElement == null) {
+			String text = element.getTextContent();
+			property = new PropertyLiteral(text);
+			// TODO: Set data type
+
+		} else {
+			throw new ReaderException("Not yet implemented: Child elements");
+			// Do magic
+		}
+		PropertyResource propResource = getParserState().getCurrent(PropertyResource.class);
+		propResource.addProperty(predicate, property);
 	}
 
 	protected void readProfile(URI profileUri, URI source)

@@ -10,7 +10,6 @@ import java.net.URL;
 import java.util.Stack;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.ExampleWorkflow;
@@ -26,6 +25,7 @@ import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
+import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
 
 public class TestProfileParser {
@@ -146,7 +146,6 @@ public class TestProfileParser {
 		assertEquals("tavernaWorkbench", profile.getName());
 	}
 
-	@Ignore
 	@Test
 	public void propertyResource() throws Exception {
 		Configuration hello = profile.getConfigurations().getByName("Hello");
@@ -156,9 +155,13 @@ public class TestProfileParser {
 				propResource.getTypeURI().toASCIIString());
 		assertNull(propResource.getResourceURI());
 		assertEquals(1, propResource.getProperties().size());
-		String script = propResource.getPropertyAsString(URI.create("http://ns.taverna.org.uk/2010/taverna/activities/beanshell#script"));
-		assertEquals("hello = \"Hello, \" + personName;\n" +
-				"System.out.println(\"Server says: \" + hello);", script);
+		URI scriptUri = URI
+				.create("http://ns.taverna.org.uk/2010/taverna/activities/beanshell#script");
+		String script = propResource.getPropertyAsString(scriptUri);
+		assertEquals("hello = \"Hello, \" + personName;\n"
+				+ "JOptionPane.showMessageDialog(null, hello);", script);
+		PropertyLiteral literal = propResource.getPropertyAsLiteral(scriptUri);
+		assertEquals(PropertyLiteral.XSD_STRING, literal.getLiteralType());
 	}
 
 	@Before
