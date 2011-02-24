@@ -45,7 +45,7 @@ public class TestProfileParser {
 		Activity helloScript = profile.getActivities().getByName("HelloScript");
 		assertEquals("HelloScript", helloScript.getName());
 		assertEquals(
-				"http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity",
+"http://ns.taverna.org.uk/2010/activity/beanshell",
 				helloScript.getConfigurableType().toASCIIString());
 		assertEquals(1, helloScript.getInputPorts().size());
 		InputActivityPort personName = helloScript.getInputPorts().getByName(
@@ -70,7 +70,7 @@ public class TestProfileParser {
 		assertEquals(profile.getActivities().getByName("HelloScript"),
 				hello.getConfigures());
 		assertEquals(
-				"http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration",
+"http://ns.taverna.org.uk/2010/activity/beanshell#Config",
 				hello.getConfigurableType().toASCIIString());
 	}
 
@@ -151,12 +151,12 @@ public class TestProfileParser {
 		Configuration hello = profile.getConfigurations().getByName("Hello");
 		PropertyResource propResource = hello.getPropertyResource();
 		assertEquals(
-				"http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration",
+"http://ns.taverna.org.uk/2010/activity/beanshell#Config",
 				propResource.getTypeURI().toASCIIString());
 		assertNull(propResource.getResourceURI());
 		assertEquals(1, propResource.getProperties().size());
 		URI scriptUri = URI
-				.create("http://ns.taverna.org.uk/2010/taverna/activities/beanshell#script");
+				.create("http://ns.taverna.org.uk/2010/activity/beanshell#script");
 		String script = propResource.getPropertyAsString(scriptUri);
 		assertEquals("hello = \"Hello, \" + personName;\n"
 				+ "JOptionPane.showMessageDialog(null, hello);", script);

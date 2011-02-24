@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rdf:RDF xmlns="http://ns.taverna.org.uk/2010/scufl2#"
-	xmlns:beanshell="http://ns.taverna.org.uk/2010/taverna/activities/beanshell#"
+	xmlns:beanshell="http://ns.taverna.org.uk/2010/activity/beanshell#"
 	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:owl="http://www.w3.org/2002/07/owl#"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -16,7 +16,7 @@
 
 	<Activity rdf:about="activity/HelloScript/">
 		<rdf:type
-			rdf:resource="http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Activity" />
+			rdf:resource="http://ns.taverna.org.uk/2010/activity/beanshell" />
 		<name>HelloScript</name>
 		<inputActivityPort>
 			<InputActivityPort rdf:about="activity/HelloScript/in/personName">
@@ -56,7 +56,7 @@
 
 	<Configuration rdf:about="configuration/Hello/">
 		<rdf:type
-			rdf:resource="http://ns.taverna.org.uk/2010/taverna/activities/beanshell#Configuration" />
+			rdf:resource="http://ns.taverna.org.uk/2010/activity/beanshell#Config" />
 		<name>Hello</name>
 		<configure rdf:resource="activity/HelloScript/" />
 		<beanshell:script>hello = "Hello, " + personName;
