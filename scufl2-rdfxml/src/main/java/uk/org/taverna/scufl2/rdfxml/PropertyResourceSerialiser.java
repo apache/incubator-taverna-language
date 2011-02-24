@@ -47,6 +47,25 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 
 	}
 
+	private void addElement(Element element) {
+		if (elementStack.isEmpty()) {
+			// Top level
+			if (getRootElement() == null) {
+				setRootElement(element);
+			} else {
+				if (getRootElement() != element) {
+					throw new IllegalStateException("Unexpected root element "
+							+ element + " has: " + getRootElement());
+				}
+			}
+		} else {
+			// System.out.println("Appending to " + elementStack.peek());
+			elementStack.peek().appendChild(element);
+		}
+
+		elementStack.push(element);
+	}
+
 	public Element getRootElement() {
 		return rootElement;
 	}
@@ -60,7 +79,6 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 		Element element = elementStack.peek();
 		if (node.getLiteralType().equals(PropertyLiteral.XML_LITERAL)) {
 			Element nodeElement = node.getLiteralValueAsElement();
-			// TODO: Copy element..
 			element.appendChild(doc.importNode(nodeElement, true));
 			element.setAttributeNS(RDF, PARSE_TYPE, LITERAL);
 		} else {
@@ -96,7 +114,7 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 			element.setAttributeNS(RDF, "about", node.getResourceURI()
 					.toASCIIString());
 		}
-		elementStack.push(element);
+		addElement(element);
 	}
 
 	public void setRootElement(Element rootElement) {
@@ -138,9 +156,9 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 			if (parent instanceof PropertyVisit) {
 				PropertyVisit propertyVisit = (PropertyVisit) parent;
 				Element element = uriToElement(propertyVisit.getPredicateUri());
-				elementStack.push(element);
+				addElement(element);
 			} else if (parent instanceof PropertyList) {
-				elementStack.push(doc.createElementNS(RDF, LI));
+				addElement(doc.createElementNS(RDF, LI));
 			}
 		}
 		if (node instanceof PropertyList) {
@@ -161,20 +179,29 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 
 	@Override
 	public boolean visitLeave() {
-		if (getCurrentNode() instanceof PropertyVisit) {
-			// Insertion done already
+		Stack<WorkflowBean> currentPath = getCurrentPath();
+		if (currentPath.size() > 1
+				&& currentPath.get(currentPath.size() - 2) instanceof PropertyVisit) {
+			// System.out.println("Skipping " + getCurrentNode() + "\n");
 			return true;
 		}
+		if (getCurrentNode() instanceof PropertyResource) {
+			// We need to pop the <Class> before <predicate>
+			elementStack.pop();
+		}
+
 		if (elementStack.isEmpty()) {
+			// System.out.println("Stack empty! " + getCurrentNode());
 			return true;
 		}
 		Element element = elementStack.pop();
+		// System.out.println("Popping " + element + " current:"
+		// + getCurrentNode());
+
 		if (elementStack.isEmpty()) {
-			// Top level
-			setRootElement(element);
-		} else {
-			elementStack.peek().appendChild(element);
+			elementStack.push(element);
 		}
+		// System.out.println();
 		return true;
 	}
 
