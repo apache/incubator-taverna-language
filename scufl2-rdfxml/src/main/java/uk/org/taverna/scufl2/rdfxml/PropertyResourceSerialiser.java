@@ -22,13 +22,13 @@ import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.api.property.PropertyResource.PropertyVisit;
 
 public class PropertyResourceSerialiser extends VisitorWithPath {
-	private static final String DESCRIPTION = "Description";
-	private static final String RESOURCE = "resource";
-	private static final String LITERAL = "Literal";
-	private static final String DATATYPE = "datatype";
-	private static final String LI = "li";
-	private static final String PARSE_TYPE = "parseType";
-	private static final String COLLECTION = "Collection";
+	public static final String DESCRIPTION = "Description";
+	public static final String RESOURCE = "resource";
+	public static final String LITERAL = "Literal";
+	public static final String DATATYPE = "datatype";
+	public static final String LI = "li";
+	public static final String PARSE_TYPE = "parseType";
+	public static final String COLLECTION = "Collection";
 	public static final String RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 	protected Stack<Element> elementStack = new Stack<Element>();
 	protected DocumentBuilder docBuilder;
