@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/osgi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<service ref="rdfXMLReader" interface="uk.org.taverna.scufl2.api.io.WorkflowBundleReader" />
+
+	<service ref="rdfXMLWriter" interface="uk.org.taverna.scufl2.api.io.WorkflowBundleWriter" />
+
+</beans:beans>
