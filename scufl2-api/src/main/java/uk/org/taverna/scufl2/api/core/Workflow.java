@@ -43,6 +43,9 @@ public class Workflow extends AbstractNamedChild implements Child<WorkflowBundle
 	private URI workflowIdentifier;
 	private WorkflowBundle parent;
 
+	/**
+	 * Constructs a <code>Workflow</code> with a name based on a random UUID.
+	 */
 	public Workflow() {
 		setWorkflowIdentifier(generateIdentifier());
 		String workflowId = WORKFLOW_ROOT.relativize(getWorkflowIdentifier()).toASCIIString();
@@ -69,19 +72,47 @@ public class Workflow extends AbstractNamedChild implements Child<WorkflowBundle
 		return visitor.visitLeave(this);
 	}
 
+	/**
+	 * Returns the <code>ControlLink</code>s.
+	 * 
+	 * If there are no <code>ControlLink</code>s an empty set is returned.
+	 * 
+	 * @return the <code>ControlLink</code>s
+	 */
 	public Set<ControlLink> getControlLinks() {
 		return controlLinks;
 	}
 
+	/**
+	 * Returns the <code>DataLink</code>s.
+	 * 
+	 * If there are no <code>DataLink</code>s an empty set is returned.
+	 * 
+	 * @return the <code>DataLink</code>s.
+	 */
 	public Set<DataLink> getDataLinks() {
 		return dataLinks;
 	}
 
+	/**
+	 * Returns the <code>InputWorkflowPort</code>s.
+	 * 
+	 * If there are no <code>InputWorkflowPort</code>s an empty set is returned.
+	 * 
+	 * @return the <code>InputWorkflowPort</code>s.
+	 */
 	@Override
 	public NamedSet<InputWorkflowPort> getInputPorts() {
 		return inputPorts;
 	}
 
+	/**
+	 * Returns the <code>OutputWorkflowPort</code>s.
+	 * 
+	 * If there are no <code>OutputWorkflowPort</code>s an empty set is returned.
+	 * 
+	 * @return the <code>OutputWorkflowPort</code>s.
+	 */
 	@Override
 	public NamedSet<OutputWorkflowPort> getOutputPorts() {
 		return outputPorts;
@@ -92,24 +123,60 @@ public class Workflow extends AbstractNamedChild implements Child<WorkflowBundle
 		return parent;
 	}
 
+	/**
+	 * Returns the <code>Processor</code>s.
+	 * 
+	 * If there are no <code>Processor</code>s an empty set is returned.
+	 * 
+	 * @return the <code>Processor</code>s.
+	 */
 	public NamedSet<Processor> getProcessors() {
 		return processors;
 	}
 
+	/**
+	 * Returns the workflow identifier.
+	 * <p>
+	 * The the default identifier is {@value #WORKFLOW_ROOT} plus a random UUID.
+	 * @see {@link #setWorkflowIdentifier(URI)}
+	 * 
+	 * @return the workflow identifier
+	 */
 	public URI getWorkflowIdentifier() {
 		return workflowIdentifier;
 	}
 
+	/**
+	 * Set the <code>ControlLink</code>s to be the contents of the specified set.
+	 * <p>
+	 * <code>ControlLink</code>s can be added by using {@link #getControlLinks()}.add(controlLink).
+	 * 
+	 * @param controlLinks the <code>ControlLink</code>s. <strong>Must not</strong> be null
+	 */
 	public void setControlLinks(Set<ControlLink> controlLinks) {
 		this.controlLinks.clear();
 		this.controlLinks.addAll(controlLinks);
 	}
 
-	public void setDataLinks(Set<DataLink> datalinks) {
+	/**
+	 * Set the <code>DataLink</code>s to be the contents of the specified set.
+	 * <p>
+	 * <code>DataLink</code>s can be added by using {@link #getDataLinks()}.add(dataLink).
+	 * 
+	 * @param dataLinks the <code>DataLink</code>s. <strong>Must not</strong> be null
+	 */
+	public void setDataLinks(Set<DataLink> dataLinks) {
 		dataLinks.clear();
-		dataLinks.addAll(datalinks);
+		dataLinks.addAll(dataLinks);
 	}
 
+	/**
+	 * Set the <code>InputWorkflowPort</code>s to be the contents of the specified set.
+	 * <p>
+	 * <code>InputWorkflowPort</code>s can be added by using {@link #getInputWorkflowPorts()}.add(inputPort).
+	 * 
+	 * @param inputPorts the <code>InputWorkflowPort</code>s. <strong>Must not</strong> be null
+	 */
 	public void setInputPorts(Set<InputWorkflowPort> inputPorts) {
 		this.inputPorts.clear();
 		for (InputWorkflowPort inputPort : inputPorts) {
@@ -117,6 +184,13 @@ public class Workflow extends AbstractNamedChild implements Child<WorkflowBundle
 		}
 	}
 
+	/**
+	 * Set the <code>OutputWorkflowPort</code>s to be the contents of the specified set.
+	 * <p>
+	 * <code>OutputWorkflowPort</code>s can be added by using {@link #getOutputWorkflowPorts()}.add(outputPort).
+	 * 
+	 * @param outputPorts the <code>OutputWorkflowPort</code>s. <strong>Must not</strong> be null
+	 */
 	public void setOutputPorts(Set<OutputWorkflowPort> outputPorts) {
 		this.outputPorts.clear();
 		for (OutputWorkflowPort outputPort : outputPorts) {
@@ -136,6 +210,13 @@ public class Workflow extends AbstractNamedChild implements Child<WorkflowBundle
 
 	}
 
+	/**
+	 * Set the <code>Processor</code>s to be the contents of the specified set.
+	 * <p>
+	 * <code>Processor</code>s can be added by using {@link #getProcessors()}.add(processor).
+	 * 
+	 * @param processors the <code>Processor</code>s. <strong>Must not</strong> be null
+	 */
 	public void setProcessors(Set<Processor> processors) {
 		this.processors.clear();
 		for (Processor processor : processors) {
@@ -143,6 +224,11 @@ public class Workflow extends AbstractNamedChild implements Child<WorkflowBundle
 		}
 	}
 
+	/**
+	 * Sets the workflow identifier.
+	 * 
+	 * @param workflowIdentifier the workflow identifier
+	 */
 	public void setWorkflowIdentifier(URI workflowIdentifier) {
 		this.workflowIdentifier = workflowIdentifier;
 	}
