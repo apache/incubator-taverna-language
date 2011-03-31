@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/osgi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xsi:schemaLocation="http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<service ref="dataflowActivityParser" interface="uk.org.taverna.scufl2.translator.t2flow.T2Parser" />
+	<service ref="beanshellActivityParser" interface="uk.org.taverna.scufl2.translator.t2flow.T2Parser" />
+	<service ref="rshellActivityParser" interface="uk.org.taverna.scufl2.translator.t2flow.T2Parser" />
+	<service ref="spreadsheetActivityParser" interface="uk.org.taverna.scufl2.translator.t2flow.T2Parser" />
+	<service ref="stringConstantActivityParser" interface="uk.org.taverna.scufl2.translator.t2flow.T2Parser" />
+	<service ref="biomobyActivityParser" interface="uk.org.taverna.scufl2.translator.t2flow.T2Parser" />
+	<service ref="soaplabActivityParser" interface="uk.org.taverna.scufl2.translator.t2flow.T2Parser" />
+	<service ref="wsdlActivityParser" interface="uk.org.taverna.scufl2.translator.t2flow.T2Parser" />
+	<service ref="wsdlXMLSplitterParser" interface="uk.org.taverna.scufl2.translator.t2flow.T2Parser" />
+	<service ref="biomartActivityParser" interface="uk.org.taverna.scufl2.translator.t2flow.T2Parser" />
+	<service ref="apiConsomerActivityParser" interface="uk.org.taverna.scufl2.translator.t2flow.T2Parser" />
+	
+	<service ref="parallelizeParser" interface="uk.org.taverna.scufl2.translator.t2flow.T2Parser" />
+	<service ref="errorBounceParser" interface="uk.org.taverna.scufl2.translator.t2flow.T2Parser" />
+	<service ref="failoverParser" interface="uk.org.taverna.scufl2.translator.t2flow.T2Parser" />
+	<service ref="retryParser" interface="uk.org.taverna.scufl2.translator.t2flow.T2Parser" />
+	<service ref="loopParser" interface="uk.org.taverna.scufl2.translator.t2flow.T2Parser" />
+	<service ref="invokeParser" interface="uk.org.taverna.scufl2.translator.t2flow.T2Parser" />
+
+	<set id="t2Parsers" interface="uk.org.taverna.scufl2.translator.t2flow.T2Parser" cardinality="0..N" />
+
+	<service ref="t2FlowReader" interface="uk.org.taverna.scufl2.api.io.WorkflowBundleReader" />
+
+</beans:beans>
