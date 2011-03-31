@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.NamedSet;
@@ -14,29 +15,45 @@ import uk.org.taverna.scufl2.api.dispatchstack.DispatchStack;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
 import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
-
+import uk.org.taverna.scufl2.api.profiles.Profile;
 
 /**
+ * A <code>Processor</code> is a {@link Workflow} component that controls the invocation of
+ * activities.
+ * <p>
+ * When a <code>Workflow</code> is run, a particular {@link Activity} will be specified as bound to
+ * the <code>Processor</code> by the {@link Profile}.
+ * <p>
+ * A <code>Processor</code> contains an {@link IterationStrategyStack} and a {@link DispatchStack}
+ * and may have {@link InputProcessorPort input} and {@link OutputProcessorPort output} ports.
+ * 
  * @author Alan R Williams
- *
  */
-public class Processor extends AbstractNamedChild implements Child<Workflow>,
-		Ported {
+public class Processor extends AbstractNamedChild implements Child<Workflow>, Ported {
 
-	private NamedSet<OutputProcessorPort> outputPorts = new NamedSet<OutputProcessorPort>();
-	private NamedSet<InputProcessorPort> inputPorts = new NamedSet<InputProcessorPort>();
-	private IterationStrategyStack iterationStrategyStack = new IterationStrategyStack(
-			this);
+	private final NamedSet<OutputProcessorPort> outputPorts = new NamedSet<OutputProcessorPort>();
+	private final NamedSet<InputProcessorPort> inputPorts = new NamedSet<InputProcessorPort>();
+	private IterationStrategyStack iterationStrategyStack = new IterationStrategyStack(this);
 	private DispatchStack dispatchStack = new DispatchStack(this);
 	private Workflow parent;
 
+	/**
+	 * Constructs a <code>Processor</code> with a random UUID as the name and no parent
+	 * {@link Workflow}.
+	 */
 	public Processor() {
 		super();
 	}
 
 	/**
+	 * Constructs a <code>Processor</code> with the specified parent {@link Workflow} and name.
+	 * 
 	 * @param parent
+	 *            the <code>Workflow</code> to set as the <code>Processor</code>'s parent. Can be
+	 *            <code>null</code>.
 	 * @param name
+	 *            the name of the <code>Processor</code>. <strong>Must not</strong> be
+	 *            <code>null</code> or an empty String.
 	 */
 	public Processor(Workflow parent, String name) {
 		super(name);
@@ -66,45 +83,102 @@ public class Processor extends AbstractNamedChild implements Child<Workflow>,
 		return visitor.visitLeave(this);
 	}
 
+	/**
+	 * Returns the <code>DispatchStack</code> or <code>null</code> if there is no
+	 * <code>DispatchStack</code>.
+	 * 
+	 * @return the <code>DispatchStack</code> or <code>null</code> if there is no
+	 *         <code>DispatchStack</code>
+	 */
 	public DispatchStack getDispatchStack() {
 		return dispatchStack;
 	}
 
+	/**
+	 * Returns the <code>NamedSet</code> of input ports.
+	 * 
+	 * Returns an empty <code>NamedSet</code> if there are no input ports.
+	 * 
+	 * @return the input ports
+	 */
+	@Override
 	public NamedSet<InputProcessorPort> getInputPorts() {
 		return inputPorts;
 	}
 
+	/**
+	 * Returns the <code>IterationStrategyStack</code> or <code>null</code> if there is no
+	 * <code>IterationStrategyStack</code>.
+	 * 
+	 * @return the <code>IterationStrategyStack</code> or <code>null</code> if there is no
+	 *         <code>IterationStrategyStack</code>
+	 */
 	public IterationStrategyStack getIterationStrategyStack() {
 		return iterationStrategyStack;
 	}
 
+	/**
+	 * Returns the <code>NamedSet</code> of output ports.
+	 * 
+	 * Returns an empty <code>NamedSet</code> if there are no output ports.
+	 * 
+	 * @return the output ports
+	 */
+	@Override
 	public NamedSet<OutputProcessorPort> getOutputPorts() {
 		return outputPorts;
 	}
 
+	/**
+	 * Returns the parent <code>Workflow</code> of null if this <code>Processor</code> is an orphan.
+	 * 
+	 * @return the parent <code>Workflow</code> of null if this <code>Processor</code> is an orphan
+	 */
+	@Override
 	public Workflow getParent() {
 		return parent;
 	}
 
+	/**
+	 * Sets the <code>DispatchStack</code>.
+	 * 
+	 * @param dispatchStack
+	 *            the <code>DispatchStack</code>. Can be <code>null</code>
+	 */
 	public void setDispatchStack(DispatchStack dispatchStack) {
 		this.dispatchStack = dispatchStack;
 	}
 
+	/**
+	 * Sets the input ports.
+	 * 
+	 * @return the input ports. <strong>Must not</strong> be <code>null</code>
+	 */
 	public void setInputPorts(Set<InputProcessorPort> inputPorts) {
 		this.inputPorts.clear();
 		this.inputPorts.addAll(inputPorts);
 	}
 
-	public void setIterationStrategyStack(
-			IterationStrategyStack iterationStrategyStack) {
+	/**
+	 * Sets the <code>IterationStrategyStack</code>.
+	 * 
+	 * @param iterationStrategyStack the <code>IterationStrategyStack</code>. Can be <code>null</code>
+	 */
+	public void setIterationStrategyStack(IterationStrategyStack iterationStrategyStack) {
 		this.iterationStrategyStack = iterationStrategyStack;
 	}
 
+	/**
+	 * Sets the output ports.
+	 * 
+	 * @return the output ports. <strong>Must not</strong> be <code>null</code>
+	 */
 	public void setOutputPorts(Set<OutputProcessorPort> outputPorts) {
 		this.outputPorts.clear();
 		this.outputPorts.addAll(outputPorts);
 	}
 
+	@Override
 	public void setParent(Workflow parent) {
 		if (this.parent != null && this.parent != parent) {
 			this.parent.getProcessors().remove(this);
@@ -117,9 +191,8 @@ public class Processor extends AbstractNamedChild implements Child<Workflow>,
 
 	@Override
 	public String toString() {
-		return super.toString() + "[" + "getInputPorts()=" + getInputPorts()
-				+ ", " + "getOutputPorts()=" + getOutputPorts() + ", " + "]";
+		return super.toString() + "[" + "getInputPorts()=" + getInputPorts() + ", "
+		+ "getOutputPorts()=" + getOutputPorts() + ", " + "]";
 	}
 
 }
-

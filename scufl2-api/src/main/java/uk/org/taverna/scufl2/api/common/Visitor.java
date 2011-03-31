@@ -3,6 +3,8 @@ package uk.org.taverna.scufl2.api.common;
 import java.util.List;
 import java.util.Stack;
 
+import uk.org.taverna.scufl2.api.common.Visitor.VisitorAdapter;
+import uk.org.taverna.scufl2.api.common.Visitor.VisitorWithPath;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
@@ -70,16 +72,16 @@ public interface Visitor {
 		private WorkflowBean currentNode;
 
 		/**
-		 * Get the currently visited node.
+		 * Returns the {@link WorkflowBean} currently visited.
 		 *
-		 * @return {@link WorkflowBean} currently visited
+		 * @return the <code>WorkflowBean</code> currently visited
 		 */
 		public WorkflowBean getCurrentNode() {
 			return currentNode;
 		}
 
 		/**
-		 * Return the current path of {@link WorkflowBean}s.
+		 * Return the current path of {@link WorkflowBean WorkflowBeans}.
 		 * <p>
 		 * The list will never contain the current node, which can instead be
 		 * found in {@link #getCurrentNode()}. That means that

@@ -24,6 +24,9 @@ import uk.org.taverna.scufl2.api.port.ProcessorPort;
 import uk.org.taverna.scufl2.api.profiles.ProcessorPortBinding;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
 
+/**
+ * Utility methods for dealing with URIs.
+ */
 public class URITools {
 
 	private static final String MERGE_POSITION = "mergePosition";

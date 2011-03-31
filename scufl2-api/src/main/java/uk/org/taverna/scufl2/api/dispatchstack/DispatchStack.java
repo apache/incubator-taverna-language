@@ -9,16 +9,31 @@ import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.core.Processor;
 
+/**
+ * A <code>DispatchStack</code> controls how a {@link Processor} invokes an
+ * {@link uk.org.taverna.scufl2.api.activity.Activity Activity}.
+ * <p>
+ * A <code>DispatchStack</code> consists of a list of <code>DispatchStackLayer</code>s. A typical
+ * <code>DispatchStack</code> will contain <code>DispatchStackLayer</code>s for parallelization,
+ * retry, failover and invocation. The order of the layers controls the behavior of the
+ * <code>Processor</code>.
+ */
 public class DispatchStack extends ArrayList<DispatchStackLayer> implements
-		List<DispatchStackLayer>, Child<Processor> {
+List<DispatchStackLayer>, Child<Processor> {
 
 	private URI type;
 
 	private Processor parent;
 
+	/**
+	 * Constructs a <code>DispatchStack</code>.
+	 */
 	public DispatchStack() {
 	}
 
+	/**
+	 * Constructs a <code>DispatchStack</code> for the specified <code>Processor</code>.
+	 */
 	public DispatchStack(Processor parent) {
 		setParent(parent);
 	}
@@ -40,10 +55,14 @@ public class DispatchStack extends ArrayList<DispatchStackLayer> implements
 		return parent;
 	}
 
+	/**
+	 * TODO find out what this is for
+	 * 
+	 * @return
+	 */
 	public URI getType() {
 		return type;
 	}
-
 
 	@Override
 	public void setParent(Processor parent) {
@@ -59,6 +78,11 @@ public class DispatchStack extends ArrayList<DispatchStackLayer> implements
 		}
 	}
 
+	/**
+	 * TODO find out what this is for
+	 * 
+	 * @param type
+	 */
 	public void setType(URI type) {
 		this.type = type;
 	}

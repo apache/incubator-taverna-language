@@ -18,18 +18,17 @@ import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 
 /**
- * 
- * An Activity specifies a way of implementing a Processor within a Workflow.
- * When the Workflow is run, a particular Activity will be specified as bound to
- * the Processor and Configuration information will be specified for the
- * Activity.
+ * An Activity specifies a way of implementing a {@link uk.org.taverna.scufl2.api.core.Processor Processor}
+ * within a {@link uk.org.taverna.scufl2.api.core.Workflow Workflow}.
+ * <p>
+ * When the Workflow is run, a particular Activity will be specified as bound to the Processor and
+ * {@link uk.org.taverna.scufl2.api.configurations.Configuration Configuration} information will be specified for the Activity.
  * 
  * @author Alan R Williams
  * @author Stian Soiland-Reyes
- * 
  */
-public class Activity extends AbstractNamedChild implements Configurable,
-Child<Profile>, Typed, Ported {
+public class Activity extends AbstractNamedChild implements Configurable, Child<Profile>, Typed,
+		Ported {
 
 	private NamedSet<InputActivityPort> inputPorts = new NamedSet<InputActivityPort>();
 	private NamedSet<OutputActivityPort> outputPorts = new NamedSet<OutputActivityPort>();
@@ -37,10 +36,20 @@ Child<Profile>, Typed, Ported {
 	private URI type;
 	private Profile parent;
 
+	/**
+	 * Constructs an <code>Activity</code> with a random UUID as the name.
+	 */
 	public Activity() {
 		super();
 	}
 
+	/**
+	 * Constructs an <code>Activity</code> with the specified name.
+	 * 
+	 * @param name
+	 *            the name of the Activity. <strong>Must not</strong> be <code>null</code>
+	 *            or an empty String.
+	 */
 	public Activity(String name) {
 		super(name);
 	}

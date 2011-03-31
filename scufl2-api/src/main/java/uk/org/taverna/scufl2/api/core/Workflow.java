@@ -20,33 +20,32 @@ import uk.org.taverna.scufl2.api.port.InputWorkflowPort;
 import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
 
 /**
+ * A <code>Workflow</code> is a set of {@link Processor}s and {@link DataLink}s between the
+ * <code>Processor</code>s. <code>Workflow</code>s may also have input and output ports.
+ * 
  * @author Alan R Williams
- *
  */
-public class Workflow extends AbstractNamedChild implements
-		Child<WorkflowBundle>, Ported {
+public class Workflow extends AbstractNamedChild implements Child<WorkflowBundle>, Ported {
 
-	public static final URI WORKFLOW_ROOT = URI
-			.create("http://ns.taverna.org.uk/2010/workflow/");
+	public static final URI WORKFLOW_ROOT = URI.create("http://ns.taverna.org.uk/2010/workflow/");
 
 	public static URI generateIdentifier() {
 		return WORKFLOW_ROOT.resolve(UUID.randomUUID().toString() + "/");
 	}
 
-	private TreeSet<DataLink> dataLinks = new TreeSet<DataLink>();
+	private final TreeSet<DataLink> dataLinks = new TreeSet<DataLink>();
 
-	private TreeSet<ControlLink> controlLinks = new TreeSet<ControlLink>();
+	private final TreeSet<ControlLink> controlLinks = new TreeSet<ControlLink>();
 
-	private NamedSet<InputWorkflowPort> inputPorts = new NamedSet<InputWorkflowPort>();
-	private NamedSet<OutputWorkflowPort> outputPorts = new NamedSet<OutputWorkflowPort>();
-	private NamedSet<Processor> processors = new NamedSet<Processor>();
+	private final NamedSet<InputWorkflowPort> inputPorts = new NamedSet<InputWorkflowPort>();
+	private final NamedSet<OutputWorkflowPort> outputPorts = new NamedSet<OutputWorkflowPort>();
+	private final NamedSet<Processor> processors = new NamedSet<Processor>();
 	private URI workflowIdentifier;
 	private WorkflowBundle parent;
 
 	public Workflow() {
 		setWorkflowIdentifier(generateIdentifier());
-		String workflowId = WORKFLOW_ROOT.relativize(getWorkflowIdentifier())
-				.toASCIIString();
+		String workflowId = WORKFLOW_ROOT.relativize(getWorkflowIdentifier()).toASCIIString();
 		setName("wf-" + workflowId);
 	}
 
@@ -78,10 +77,12 @@ public class Workflow extends AbstractNamedChild implements
 		return dataLinks;
 	}
 
+	@Override
 	public NamedSet<InputWorkflowPort> getInputPorts() {
 		return inputPorts;
 	}
 
+	@Override
 	public NamedSet<OutputWorkflowPort> getOutputPorts() {
 		return outputPorts;
 	}
@@ -149,28 +150,21 @@ public class Workflow extends AbstractNamedChild implements
 	@Override
 	public String toString() {
 		final int maxLen = 6;
-		return "Workflow [getName()="
-				+ getName()
-				+ ", getDatalinks()="
-				+ (getDataLinks() != null ? toString(getDataLinks(), maxLen)
-						: null)
-				+ ", getInputPorts()="
-				+ (getInputPorts() != null ? toString(getInputPorts(), maxLen)
-						: null)
-				+ ", getOutputPorts()="
-				+ (getOutputPorts() != null ? toString(getOutputPorts(), maxLen)
-						: null)
-				+ ", getProcessors()="
-				+ (getProcessors() != null ? toString(getProcessors(), maxLen)
-						: null) + "]";
+		return "Workflow [getName()=" + getName() + ", getDatalinks()="
+		+ (getDataLinks() != null ? toString(getDataLinks(), maxLen) : null)
+		+ ", getInputPorts()="
+		+ (getInputPorts() != null ? toString(getInputPorts(), maxLen) : null)
+		+ ", getOutputPorts()="
+		+ (getOutputPorts() != null ? toString(getOutputPorts(), maxLen) : null)
+		+ ", getProcessors()="
+		+ (getProcessors() != null ? toString(getProcessors(), maxLen) : null) + "]";
 	}
 
 	private String toString(Collection<?> collection, int maxLen) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("[");
 		int i = 0;
-		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext()
-				&& i < maxLen; i++) {
+		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext() && i < maxLen; i++) {
 			if (i > 0) {
 				builder.append(", ");
 			}

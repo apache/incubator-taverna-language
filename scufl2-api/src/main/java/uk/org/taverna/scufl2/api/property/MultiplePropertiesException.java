@@ -23,8 +23,7 @@ package uk.org.taverna.scufl2.api.property;
 import java.net.URI;
 
 /**
- * Thrown when more than one {@link PropertyObject} was found, buy only one
- * property was expected.
+ * Thrown when more than one {@link PropertyObject} was found, buy only one property was expected.
  * 
  * @see PropertyResource#getProperty(java.net.URI)
  * @see PropertyResource#getPropertyAsString(java.net.URI)

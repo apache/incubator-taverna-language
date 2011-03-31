@@ -4,18 +4,29 @@ import java.net.URI;
 import java.util.UUID;
 
 /**
+ * Abstract implementation of a {@link Named} {@link WorkflowBean}.
+ * 
  * @author Alan R Williams
  * @author Stian Soiland-Reyes
- *
  */
 public abstract class AbstractNamed implements Named {
 
 	private String name;
 
+	/**
+	 * Constructs a {@link Named} {@link WorkflowBean} with a random UUID as the name.
+	 */
 	public AbstractNamed() {
 		setName(UUID.randomUUID().toString());
 	}
 
+	/**
+	 * Constructs a {@link Named} {@link WorkflowBean} with the specified name.
+	 * 
+	 * @param name
+	 *            the name of the <code>Named</code> <code>WorkflowBean</code>. <strong>Must not</strong> be <code>null</code>
+	 *            or an empty String.
+	 */
 	public AbstractNamed(String name) {
 		setName(name);
 	}
@@ -38,7 +49,7 @@ public abstract class AbstractNamed implements Named {
 			WorkflowBean parent = ((Child<?>) this).getParent();
 			WorkflowBean otherParent = ((Child<?>) other).getParent();
 			if (parent instanceof Comparable && otherParent instanceof Comparable) {
-				int comparedParents = ((Comparable)parent).compareTo(otherParent);
+				int comparedParents = ((Comparable) parent).compareTo(otherParent);
 				if (comparedParents != 0) {
 					return comparedParents;
 				}
@@ -50,7 +61,8 @@ public abstract class AbstractNamed implements Named {
 			}
 		}
 		if (getClass() != other.getClass()) {
-			int classCompare = getClass().getCanonicalName().compareTo(other.getClass().getCanonicalName());
+			int classCompare = getClass().getCanonicalName().compareTo(
+					other.getClass().getCanonicalName());
 			if (classCompare != 0) {
 				// Allow having say InputPorts and OutputPorts in the same sorted list
 				return classCompare;
@@ -100,7 +112,7 @@ public abstract class AbstractNamed implements Named {
 
 	/*
 	 * (non-Javadoc)AbstractNamed
-	 *
+	 * 
 	 * @see uk.org.taverna.scufl2.api.common.Named#getName()
 	 */
 	public String getName() {
@@ -124,7 +136,7 @@ public abstract class AbstractNamed implements Named {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see uk.org.taverna.scufl2.api.common.Named#setName(java.lang.String)
 	 */
 	@SuppressWarnings("unchecked")
@@ -153,6 +165,5 @@ public abstract class AbstractNamed implements Named {
 	public String toString() {
 		return getClass().getSimpleName() + " \"" + getName() + '"';
 	}
-
 
 }
