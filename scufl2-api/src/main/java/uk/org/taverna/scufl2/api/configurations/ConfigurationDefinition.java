@@ -27,7 +27,7 @@ import uk.org.taverna.scufl2.api.property.PropertyResource;
 /**
  * Definition of the {@link Configuration} required to configure a
  * {@link uk.org.taverna.scufl2.api.common.Configurable Configurable}.
- *
+ * 
  * @author David Withers
  */
 public class ConfigurationDefinition {
@@ -47,15 +47,14 @@ public class ConfigurationDefinition {
 	 * Creates the definition of the {@link Configuration} required to configure the
 	 * {@link uk.org.taverna.scufl2.api.common.Configurable Configurable} specified by the
 	 * configurableType.
-	 *
+	 * 
 	 * @param configurableType
 	 *            the URI that identifies the <code>Configurable</code> type
 	 */
 	public ConfigurationDefinition(URI configurableType) {
 		this.configurableType = configurableType;
 		propertyResourceDefinition = new PropertyResourceDefinition();
-		propertyResourceDefinition.setTypeURI(configurableType
-				.resolve("#Config"));
+		propertyResourceDefinition.setTypeURI(configurableType.resolve("#Config"));
 		propertyResourceDefinition.setDescription("");
 		propertyResourceDefinition.setRequired(true);
 		propertyResourceDefinition.setMultiple(false);
@@ -65,7 +64,7 @@ public class ConfigurationDefinition {
 	/**
 	 * Returns the URI that identifies the {@link uk.org.taverna.scufl2.api.common.Configurable
 	 * Configurable} type.
-	 *
+	 * 
 	 * @return the URI that identifies the <code>Configurable</code> type
 	 */
 	public URI getConfigurableType() {
@@ -75,7 +74,7 @@ public class ConfigurationDefinition {
 	/**
 	 * Returns the definition of the {@link PropertyResource} required by the
 	 * <code>Configuration</code>.
-	 *
+	 * 
 	 * @return the definition of the {@link PropertyResource} required by the
 	 *         <code>Configuration</code>
 	 */
@@ -86,7 +85,7 @@ public class ConfigurationDefinition {
 	/**
 	 * Sets the URI that identifies the {@link uk.org.taverna.scufl2.api.common.Configurable
 	 * Configurable} type.
-	 *
+	 * 
 	 * @param configurableType
 	 *            the URI that identifies the <code>Configurable</code> type
 	 */

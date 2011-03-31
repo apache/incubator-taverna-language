@@ -30,24 +30,19 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
 
 /**
  * Utility methods for dealing with SCUFL2 models
- *
+ * 
  * @author Stian Soiland-Reyes
- *
  */
 public class Scufl2Tools {
 
 	/**
-	 * Compare {@link ProcessorBinding}s by their
-	 * {@link ProcessorBinding#getActivityPosition()}.
-	 *
-	 * Note: this comparator imposes orderings that are inconsistent with
-	 * equals.
-	 *
+	 * Compare {@link ProcessorBinding}s by their {@link ProcessorBinding#getActivityPosition()}.
+	 * 
+	 * Note: this comparator imposes orderings that are inconsistent with equals.
+	 * 
 	 * @author Stian Soiland-Reyes
-	 *
 	 */
-	public static class BindingComparator implements
-			Comparator<ProcessorBinding> {
+	public static class BindingComparator implements Comparator<ProcessorBinding> {
 
 		@Override
 		public int compare(ProcessorBinding o1, ProcessorBinding o2) {
@@ -56,6 +51,16 @@ public class Scufl2Tools {
 
 	}
 
+	/**
+	 * Returns the {@link Configuration} for a {@link Configurable} in the given {@link Profile}.
+	 * 
+	 * @param configurable
+	 *            the <code>Configurable</code> to find a <code>Configuration</code> for
+	 * @param profile
+	 *            the <code>Profile</code> to look for the <code>Configuration</code> in
+	 * @return the <code>Configuration</code> for a <code>Configurable</code> in the given
+	 *         <code>Profile</code>
+	 */
 	public Configuration configurationFor(Configurable configurable, Profile profile) {
 		List<Configuration> configurations = configurationsFor(configurable, profile);
 		if (configurations.isEmpty()) {
@@ -67,14 +72,23 @@ public class Scufl2Tools {
 		return configurations.get(0);
 	}
 
-	public Configuration configurationForActivityBoundToProcessor(Processor concat,
-			Profile profile) {
+	public Configuration configurationForActivityBoundToProcessor(Processor concat, Profile profile) {
 		ProcessorBinding binding = processorBindingForProcessor(concat, profile);
 		Configuration config = configurationFor(binding.getBoundActivity(), profile);
 		return config;
 	}
 
-
+	/**
+	 * Returns the list of {@link Configuration Configurations} for a {@link Configurable} in the
+	 * given {@link Profile}.
+	 * 
+	 * @param configurable
+	 *            the <code>Configurable</code> to find a <code>Configuration</code> for
+	 * @param profile
+	 *            the <code>Profile</code> to look for the <code>Configuration</code> in
+	 * @return the list of <code>Configurations</code> for a <code>Configurable</code> in the given
+	 *         <code>Profile</code>
+	 */
 	@SuppressWarnings("unchecked")
 	public List<Configuration> configurationsFor(Configurable configurable, Profile profile) {
 		List<Configuration> configurations = new ArrayList<Configuration>();
@@ -102,11 +116,10 @@ public class Scufl2Tools {
 		return controlLinks;
 	}
 
-	public List<BlockingControlLink> controlLinksWaitingFor(
-			Processor untilFinished) {
+	public List<BlockingControlLink> controlLinksWaitingFor(Processor untilFinished) {
 		List<BlockingControlLink> controlLinks = new ArrayList<BlockingControlLink>();
 		for (ControlLink link : untilFinished.getParent().getControlLinks()) {
-			if (! (link instanceof BlockingControlLink)) {
+			if (!(link instanceof BlockingControlLink)) {
 				continue;
 			}
 			BlockingControlLink blockingControlLink = (BlockingControlLink) link;
@@ -118,7 +131,6 @@ public class Scufl2Tools {
 		return controlLinks;
 
 	}
-
 
 	@SuppressWarnings("unchecked")
 	public List<DataLink> datalinksFrom(SenderPort senderPort) {
@@ -133,8 +145,6 @@ public class Scufl2Tools {
 		Collections.sort(links);
 		return links;
 	}
-
-
 
 	@SuppressWarnings("unchecked")
 	public List<DataLink> datalinksTo(ReceiverPort receiverPort) {
@@ -167,8 +177,7 @@ public class Scufl2Tools {
 
 	}
 
-	public ProcessorBinding processorBindingForProcessor(Processor processor,
-			Profile profile) {
+	public ProcessorBinding processorBindingForProcessor(Processor processor, Profile profile) {
 		List<ProcessorBinding> bindings = processorBindingsForProcessor(processor, profile);
 		if (bindings.isEmpty()) {
 			throw new IndexOutOfBoundsException("Could not find bindings for " + processor);
@@ -179,8 +188,7 @@ public class Scufl2Tools {
 		return bindings.get(0);
 	}
 
-	public List<ProcessorBinding> processorBindingsForProcessor(
-			Processor processor, Profile profile) {
+	public List<ProcessorBinding> processorBindingsForProcessor(Processor processor, Profile profile) {
 		List<ProcessorBinding> bindings = new ArrayList<ProcessorBinding>();
 		for (ProcessorBinding pb : profile.getProcessorBindings()) {
 			if (pb.getBoundProcessor().equals(processor)) {
@@ -203,33 +211,28 @@ public class Scufl2Tools {
 		return bindings;
 	}
 
-	public ProcessorInputPortBinding processorPortBindingForPort(
-			InputPort inputPort, Profile profile) {
-		return (ProcessorInputPortBinding) processorPortBindingForPortInternal(
-				inputPort, profile);
+	public ProcessorInputPortBinding processorPortBindingForPort(InputPort inputPort,
+			Profile profile) {
+		return (ProcessorInputPortBinding) processorPortBindingForPortInternal(inputPort, profile);
 	}
 
-	public ProcessorOutputPortBinding processorPortBindingForPort(
-			OutputPort outputPort, Profile profile) {
-		return (ProcessorOutputPortBinding)processorPortBindingForPortInternal(outputPort, profile);
+	public ProcessorOutputPortBinding processorPortBindingForPort(OutputPort outputPort,
+			Profile profile) {
+		return (ProcessorOutputPortBinding) processorPortBindingForPortInternal(outputPort, profile);
 	}
 
 	@SuppressWarnings("rawtypes")
-	protected ProcessorPortBinding processorPortBindingForPortInternal(
-			Port port, Profile profile) {
+	protected ProcessorPortBinding processorPortBindingForPortInternal(Port port, Profile profile) {
 
 		List<ProcessorBinding> processorBindings;
 		if (port instanceof ProcessorPort) {
 			ProcessorPort processorPort = (ProcessorPort) port;
-			processorBindings = processorBindingsForProcessor(
-					processorPort.getParent(), profile);
+			processorBindings = processorBindingsForProcessor(processorPort.getParent(), profile);
 		} else if (port instanceof ActivityPort) {
 			ActivityPort activityPort = (ActivityPort) port;
-			processorBindings = processorBindingsToActivity(activityPort
-					.getParent());
+			processorBindings = processorBindingsToActivity(activityPort.getParent());
 		} else {
-			throw new IllegalArgumentException(
-					"Port must be a ProcessorPort or ActivityPort");
+			throw new IllegalArgumentException("Port must be a ProcessorPort or ActivityPort");
 		}
 		for (ProcessorBinding procBinding : processorBindings) {
 			Set<? extends ProcessorPortBinding> portBindings;
@@ -243,8 +246,7 @@ public class Scufl2Tools {
 						&& portBinding.getBoundProcessorPort().equals(port)) {
 					return portBinding;
 				}
-				if (port instanceof ActivityPort
-						&& portBinding.getBoundActivityPort().equals(port)) {
+				if (port instanceof ActivityPort && portBinding.getBoundActivityPort().equals(port)) {
 					return portBinding;
 				}
 			}

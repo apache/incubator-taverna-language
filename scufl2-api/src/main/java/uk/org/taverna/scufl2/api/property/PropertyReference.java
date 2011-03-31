@@ -4,6 +4,9 @@ import java.net.URI;
 
 import uk.org.taverna.scufl2.api.common.Visitor;
 
+/**
+ * A {@link PropertyObject} representing a reference to a value.
+ */
 public class PropertyReference implements PropertyObject {
 
 	private URI resourceURI;

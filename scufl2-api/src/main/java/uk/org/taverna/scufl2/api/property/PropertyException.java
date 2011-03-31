@@ -3,7 +3,7 @@ package uk.org.taverna.scufl2.api.property;
 import java.net.URI;
 
 /**
- * Thrown when an error occured when trying to retrieve a property.
+ * Thrown when an error occurs while trying to retrieve a property.
  * 
  * @see PropertyNotFoundException
  * @see MultiplePropertiesException

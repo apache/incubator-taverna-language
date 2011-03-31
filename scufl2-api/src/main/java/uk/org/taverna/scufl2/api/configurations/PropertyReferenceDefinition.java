@@ -7,8 +7,6 @@ import uk.org.taverna.scufl2.api.property.PropertyReference;
 
 /**
  * The definition of a {@link PropertyReference}.
- * <p>
- *
  *
  * @author Stian Soiland-Reyes
  *

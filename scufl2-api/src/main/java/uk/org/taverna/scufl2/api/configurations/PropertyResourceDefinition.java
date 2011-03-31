@@ -27,7 +27,7 @@ import java.util.List;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
 
 /**
- * The definition of an {@link PropertyResource}.
+ * The definition of a {@link PropertyResource}.
  *
  * @author David Withers
  */

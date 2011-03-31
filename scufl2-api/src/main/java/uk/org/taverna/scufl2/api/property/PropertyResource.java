@@ -14,14 +14,17 @@ import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.impl.LazyMap;
 
+/**
+ * A {@link PropertyObject} representing a compound property that contains {@link PropertyObject}s.
+ */
 public class PropertyResource extends PropertyReference implements
-		PropertyObject {
+PropertyObject {
 
 	public static class PropertyComparator implements
-			Comparator<PropertyObject> {
+	Comparator<PropertyObject> {
 		private static final List<Class<?>> CLASSORDERING = Arrays
-				.<Class<?>> asList(PropertyLiteral.class, PropertyList.class,
-						PropertyReference.class, PropertyResource.class);
+		.<Class<?>> asList(PropertyLiteral.class, PropertyList.class,
+				PropertyReference.class, PropertyResource.class);
 
 		@Override
 		public int compare(PropertyObject o1, PropertyObject o2) {
@@ -30,7 +33,7 @@ public class PropertyResource extends PropertyReference implements
 			}
 			if (o1.getClass() != o2.getClass()) {
 				return CLASSORDERING.indexOf(o1.getClass())
-						- CLASSORDERING.indexOf(o2.getClass());
+				- CLASSORDERING.indexOf(o2.getClass());
 			}
 			if (o1 instanceof PropertyLiteral) {
 				return compareLiteral((PropertyLiteral) o1,
@@ -228,10 +231,23 @@ public class PropertyResource extends PropertyReference implements
 		return visitor.visitLeave(this);
 	}
 
+	/**
+	 * Adds a property
+	 * 
+	 * @param predicate
+	 * @param object
+	 */
 	public void addProperty(URI predicate, PropertyObject object) {
 		getProperties().get(predicate).add(object);
 	}
 
+	/**
+	 * 
+	 * 
+	 * @param predicate
+	 * @param typeURI
+	 * @return
+	 */
 	public PropertyResource addPropertyAsNewResource(URI predicate, URI typeURI) {
 		PropertyResource resource = new PropertyResource();
 		resource.setTypeURI(typeURI);
@@ -239,10 +255,22 @@ public class PropertyResource extends PropertyReference implements
 		return resource;
 	}
 
+	/**
+	 * 
+	 * 
+	 * @param predicate
+	 * @param value
+	 */
 	public void addPropertyAsString(URI predicate, String value) {
 		addProperty(predicate, new PropertyLiteral(value));
 	}
 
+	/**
+	 * 
+	 * 
+	 * @param predicate
+	 * @param resourceURI
+	 */
 	public void addPropertyReference(URI predicate, URI resourceURI) {
 		addProperty(predicate, new PropertyReference(resourceURI));
 	}
@@ -252,29 +280,29 @@ public class PropertyResource extends PropertyReference implements
 	}
 
 	public SortedSet<PropertyLiteral> getPropertiesAsLiterals(URI predicate)
-			throws UnexpectedPropertyException {
+	throws UnexpectedPropertyException {
 		return getPropertiesOfType(predicate, PropertyLiteral.class);
 	}
 
 	public SortedSet<PropertyReference> getPropertiesAsReferences(URI predicate)
-			throws UnexpectedPropertyException {
+	throws UnexpectedPropertyException {
 		return getPropertiesOfType(predicate, PropertyReference.class);
 	}
 
 	public SortedSet<PropertyResource> getPropertiesAsResources(URI predicate)
-			throws UnexpectedPropertyException {
+	throws UnexpectedPropertyException {
 		return getPropertiesOfType(predicate, PropertyResource.class);
 	}
 
 	public SortedSet<URI> getPropertiesAsResourceURIs(URI predicate)
-			throws UnexpectedPropertyException {
+	throws UnexpectedPropertyException {
 		SortedSet<URI> uris = new TreeSet<URI>();
 		for (PropertyReference resource : getPropertiesAsReferences(predicate)) {
 			URI uri = resource.getResourceURI();
 			if (uri == null) {
 				throw new UnexpectedPropertyException(
 						"Resource property without URI for " + predicate
-								+ " in " + this + ": " + resource, predicate,
+						+ " in " + this + ": " + resource, predicate,
 						this);
 			}
 			uris.add(uri);
@@ -283,7 +311,7 @@ public class PropertyResource extends PropertyReference implements
 	}
 
 	public SortedSet<String> getPropertiesAsStrings(URI predicate)
-			throws UnexpectedPropertyException {
+	throws UnexpectedPropertyException {
 		SortedSet<String> strings = new TreeSet<String>();
 		for (PropertyLiteral literal : getPropertiesAsLiterals(predicate)) {
 			strings.add(literal.getLiteralValue());
@@ -307,7 +335,7 @@ public class PropertyResource extends PropertyReference implements
 	}
 
 	public PropertyObject getProperty(URI predicate)
-			throws PropertyNotFoundException, MultiplePropertiesException {
+	throws PropertyNotFoundException, MultiplePropertiesException {
 		PropertyObject foundProperty = null;
 		// Could have checked set's size() - but it's
 		for (PropertyObject obj : getProperties().get(predicate)) {
@@ -329,23 +357,23 @@ public class PropertyResource extends PropertyReference implements
 	}
 
 	public PropertyReference getPropertyAsReference(URI predicate)
-			throws UnexpectedPropertyException, PropertyNotFoundException,
-			MultiplePropertiesException {
+	throws UnexpectedPropertyException, PropertyNotFoundException,
+	MultiplePropertiesException {
 		PropertyReference propertyResource = getPropertyOfType(predicate,
 				PropertyReference.class);
 		return propertyResource;
 	}
 
 	public URI getPropertyAsResourceURI(URI predicate)
-			throws UnexpectedPropertyException, PropertyNotFoundException,
-			MultiplePropertiesException {
+	throws UnexpectedPropertyException, PropertyNotFoundException,
+	MultiplePropertiesException {
 		PropertyReference propertyResource = getPropertyOfType(predicate,
 				PropertyReference.class);
 		URI uri = propertyResource.getResourceURI();
 		if (uri == null) {
 			throw new UnexpectedPropertyException(
 					"Resource property without URI for " + predicate + " in "
-							+ this + ": " + propertyResource, predicate, this);
+					+ this + ": " + propertyResource, predicate, this);
 		}
 		return uri;
 	}
@@ -358,8 +386,8 @@ public class PropertyResource extends PropertyReference implements
 
 	public <PropertyType extends PropertyObject> PropertyType getPropertyOfType(
 			URI predicate, Class<PropertyType> propertyType)
-			throws UnexpectedPropertyException, PropertyNotFoundException,
-			MultiplePropertiesException {
+	throws UnexpectedPropertyException, PropertyNotFoundException,
+	MultiplePropertiesException {
 		PropertyObject propObj = getProperty(predicate);
 		if (!propertyType.isInstance(propObj)) {
 			throw new UnexpectedPropertyException("Not a " + propertyType
@@ -385,7 +413,7 @@ public class PropertyResource extends PropertyReference implements
 	@Override
 	public String toString() {
 		return "PropertyResource [getTypeURI()=" + getTypeURI()
-				+ ", getResourceURI()=" + getResourceURI() + "]";
+		+ ", getResourceURI()=" + getResourceURI() + "]";
 	}
 
 
