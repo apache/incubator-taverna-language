@@ -28,10 +28,10 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
  * @author Stian Soiland-Reyes
  */
 public class Activity extends AbstractNamedChild implements Configurable, Child<Profile>, Typed,
-		Ported {
+Ported {
 
-	private NamedSet<InputActivityPort> inputPorts = new NamedSet<InputActivityPort>();
-	private NamedSet<OutputActivityPort> outputPorts = new NamedSet<OutputActivityPort>();
+	private final NamedSet<InputActivityPort> inputPorts = new NamedSet<InputActivityPort>();
+	private final NamedSet<OutputActivityPort> outputPorts = new NamedSet<OutputActivityPort>();
 
 	private URI type;
 	private Profile parent;
@@ -71,15 +71,36 @@ public class Activity extends AbstractNamedChild implements Configurable, Child<
 		return visitor.visitLeave(this);
 	}
 
+	/**
+	 * Returns the type of the <code>Activity</code>.
+	 * 
+	 * @return the type of the <code>Activity</code>
+	 */
 	@Override
 	public URI getConfigurableType() {
 		return type;
 	}
 
+	/**
+	 * Returns the <code>InputActivityPort</code>s.
+	 * 
+	 * If there are no <code>InputActivityPort</code>s an empty set is returned.
+	 * 
+	 * @return the <code>InputActivityPort</code>s.
+	 */
+	@Override
 	public NamedSet<InputActivityPort> getInputPorts() {
 		return inputPorts;
 	}
 
+	/**
+	 * Returns the <code>OutputActivityPort</code>s.
+	 * 
+	 * If there are no <code>OutputActivityPort</code>s an empty set is returned.
+	 * 
+	 * @return the <code>OutputActivityPort</code>s.
+	 */
+	@Override
 	public NamedSet<OutputActivityPort> getOutputPorts() {
 		return outputPorts;
 	}
@@ -89,16 +110,35 @@ public class Activity extends AbstractNamedChild implements Configurable, Child<
 		return parent;
 	}
 
+	/**
+	 * Sets the type of the <code>Activity</code>.
+	 * 
+	 * @param type the type of the <code>Activity</code>
+	 */
 	@Override
 	public void setConfigurableType(URI type) {
 		this.type = type;
 	}
 
+	/**
+	 * Set the <code>InputActivityPort</code>s to be the contents of the specified set.
+	 * <p>
+	 * <code>InputActivityPort</code>s can be added by using {@link #getInputPorts()}.add(inputPort).
+	 * 
+	 * @param inputPorts the <code>InputActivityPort</code>s. <strong>Must not</strong> be null
+	 */
 	public void setInputPorts(Set<InputActivityPort> inputPorts) {
 		this.inputPorts.clear();
 		this.inputPorts.addAll(inputPorts);
 	}
 
+	/**
+	 * Set the <code>OutputActivityPort</code>s to be the contents of the specified set.
+	 * <p>
+	 * <code>OutputActivityPort</code>s can be added by using {@link #getOutputPorts()}.add(outputPort).
+	 * 
+	 * @param outputPorts the <code>OutputActivityPort</code>s. <strong>Must not</strong> be null
+	 */
 	public void setOutputPorts(Set<OutputActivityPort> outputPorts) {
 		this.outputPorts.clear();
 		this.outputPorts.addAll(outputPorts);
