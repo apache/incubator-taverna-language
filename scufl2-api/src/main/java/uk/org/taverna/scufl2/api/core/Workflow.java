@@ -20,33 +20,35 @@ import uk.org.taverna.scufl2.api.port.InputWorkflowPort;
 import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
 
 /**
+ * A <code>Workflow</code> is a set of {@link Processor}s and {@link DataLink}s between the
+ * <code>Processor</code>s. <code>Workflow</code>s may also have input and output ports.
+ * 
  * @author Alan R Williams
- *
  */
-public class Workflow extends AbstractNamedChild implements
-		Child<WorkflowBundle>, Ported {
+public class Workflow extends AbstractNamedChild implements Child<WorkflowBundle>, Ported {
 
-	public static final URI WORKFLOW_ROOT = URI
-			.create("http://ns.taverna.org.uk/2010/workflow/");
+	public static final URI WORKFLOW_ROOT = URI.create("http://ns.taverna.org.uk/2010/workflow/");
 
 	public static URI generateIdentifier() {
 		return WORKFLOW_ROOT.resolve(UUID.randomUUID().toString() + "/");
 	}
 
-	private TreeSet<DataLink> dataLinks = new TreeSet<DataLink>();
+	private final TreeSet<DataLink> dataLinks = new TreeSet<DataLink>();
 
-	private TreeSet<ControlLink> controlLinks = new TreeSet<ControlLink>();
+	private final TreeSet<ControlLink> controlLinks = new TreeSet<ControlLink>();
 
-	private NamedSet<InputWorkflowPort> inputPorts = new NamedSet<InputWorkflowPort>();
-	private NamedSet<OutputWorkflowPort> outputPorts = new NamedSet<OutputWorkflowPort>();
-	private NamedSet<Processor> processors = new NamedSet<Processor>();
+	private final NamedSet<InputWorkflowPort> inputPorts = new NamedSet<InputWorkflowPort>();
+	private final NamedSet<OutputWorkflowPort> outputPorts = new NamedSet<OutputWorkflowPort>();
+	private final NamedSet<Processor> processors = new NamedSet<Processor>();
 	private URI workflowIdentifier;
 	private WorkflowBundle parent;
 
+	/**
+	 * Constructs a <code>Workflow</code> with a name based on a random UUID.
+	 */
 	public Workflow() {
 		setWorkflowIdentifier(generateIdentifier());
-		String workflowId = WORKFLOW_ROOT.relativize(getWorkflowIdentifier())
-				.toASCIIString();
+		String workflowId = WORKFLOW_ROOT.relativize(getWorkflowIdentifier()).toASCIIString();
 		setName("wf-" + workflowId);
 	}
 
@@ -70,18 +72,48 @@ public class Workflow extends AbstractNamedChild implements
 		return visitor.visitLeave(this);
 	}
 
+	/**
+	 * Returns the <code>ControlLink</code>s.
+	 * 
+	 * If there are no <code>ControlLink</code>s an empty set is returned.
+	 * 
+	 * @return the <code>ControlLink</code>s
+	 */
 	public Set<ControlLink> getControlLinks() {
 		return controlLinks;
 	}
 
+	/**
+	 * Returns the <code>DataLink</code>s.
+	 * 
+	 * If there are no <code>DataLink</code>s an empty set is returned.
+	 * 
+	 * @return the <code>DataLink</code>s.
+	 */
 	public Set<DataLink> getDataLinks() {
 		return dataLinks;
 	}
 
+	/**
+	 * Returns the <code>InputWorkflowPort</code>s.
+	 * 
+	 * If there are no <code>InputWorkflowPort</code>s an empty set is returned.
+	 * 
+	 * @return the <code>InputWorkflowPort</code>s.
+	 */
+	@Override
 	public NamedSet<InputWorkflowPort> getInputPorts() {
 		return inputPorts;
 	}
 
+	/**
+	 * Returns the <code>OutputWorkflowPort</code>s.
+	 * 
+	 * If there are no <code>OutputWorkflowPort</code>s an empty set is returned.
+	 * 
+	 * @return the <code>OutputWorkflowPort</code>s.
+	 */
+	@Override
 	public NamedSet<OutputWorkflowPort> getOutputPorts() {
 		return outputPorts;
 	}
@@ -91,24 +123,60 @@ public class Workflow extends AbstractNamedChild implements
 		return parent;
 	}
 
+	/**
+	 * Returns the <code>Processor</code>s.
+	 * 
+	 * If there are no <code>Processor</code>s an empty set is returned.
+	 * 
+	 * @return the <code>Processor</code>s.
+	 */
 	public NamedSet<Processor> getProcessors() {
 		return processors;
 	}
 
+	/**
+	 * Returns the workflow identifier.
+	 * <p>
+	 * The the default identifier is {@value #WORKFLOW_ROOT} plus a random UUID.
+	 * @see {@link #setWorkflowIdentifier(URI)}
+	 * 
+	 * @return the workflow identifier
+	 */
 	public URI getWorkflowIdentifier() {
 		return workflowIdentifier;
 	}
 
+	/**
+	 * Set the <code>ControlLink</code>s to be the contents of the specified set.
+	 * <p>
+	 * <code>ControlLink</code>s can be added by using {@link #getControlLinks()}.add(controlLink).
+	 * 
+	 * @param controlLinks the <code>ControlLink</code>s. <strong>Must not</strong> be null
+	 */
 	public void setControlLinks(Set<ControlLink> controlLinks) {
 		this.controlLinks.clear();
 		this.controlLinks.addAll(controlLinks);
 	}
 
-	public void setDataLinks(Set<DataLink> datalinks) {
+	/**
+	 * Set the <code>DataLink</code>s to be the contents of the specified set.
+	 * <p>
+	 * <code>DataLink</code>s can be added by using {@link #getDataLinks()}.add(dataLink).
+	 * 
+	 * @param dataLinks the <code>DataLink</code>s. <strong>Must not</strong> be null
+	 */
+	public void setDataLinks(Set<DataLink> dataLinks) {
 		dataLinks.clear();
-		dataLinks.addAll(datalinks);
+		dataLinks.addAll(dataLinks);
 	}
 
+	/**
+	 * Set the <code>InputWorkflowPort</code>s to be the contents of the specified set.
+	 * <p>
+	 * <code>InputWorkflowPort</code>s can be added by using {@link #getInputWorkflowPorts()}.add(inputPort).
+	 * 
+	 * @param inputPorts the <code>InputWorkflowPort</code>s. <strong>Must not</strong> be null
+	 */
 	public void setInputPorts(Set<InputWorkflowPort> inputPorts) {
 		this.inputPorts.clear();
 		for (InputWorkflowPort inputPort : inputPorts) {
@@ -116,6 +184,13 @@ public class Workflow extends AbstractNamedChild implements
 		}
 	}
 
+	/**
+	 * Set the <code>OutputWorkflowPort</code>s to be the contents of the specified set.
+	 * <p>
+	 * <code>OutputWorkflowPort</code>s can be added by using {@link #getOutputWorkflowPorts()}.add(outputPort).
+	 * 
+	 * @param outputPorts the <code>OutputWorkflowPort</code>s. <strong>Must not</strong> be null
+	 */
 	public void setOutputPorts(Set<OutputWorkflowPort> outputPorts) {
 		this.outputPorts.clear();
 		for (OutputWorkflowPort outputPort : outputPorts) {
@@ -135,6 +210,13 @@ public class Workflow extends AbstractNamedChild implements
 
 	}
 
+	/**
+	 * Set the <code>Processor</code>s to be the contents of the specified set.
+	 * <p>
+	 * <code>Processor</code>s can be added by using {@link #getProcessors()}.add(processor).
+	 * 
+	 * @param processors the <code>Processor</code>s. <strong>Must not</strong> be null
+	 */
 	public void setProcessors(Set<Processor> processors) {
 		this.processors.clear();
 		for (Processor processor : processors) {
@@ -142,6 +224,11 @@ public class Workflow extends AbstractNamedChild implements
 		}
 	}
 
+	/**
+	 * Sets the workflow identifier.
+	 * 
+	 * @param workflowIdentifier the workflow identifier
+	 */
 	public void setWorkflowIdentifier(URI workflowIdentifier) {
 		this.workflowIdentifier = workflowIdentifier;
 	}
@@ -149,28 +236,21 @@ public class Workflow extends AbstractNamedChild implements
 	@Override
 	public String toString() {
 		final int maxLen = 6;
-		return "Workflow [getName()="
-				+ getName()
-				+ ", getDatalinks()="
-				+ (getDataLinks() != null ? toString(getDataLinks(), maxLen)
-						: null)
-				+ ", getInputPorts()="
-				+ (getInputPorts() != null ? toString(getInputPorts(), maxLen)
-						: null)
-				+ ", getOutputPorts()="
-				+ (getOutputPorts() != null ? toString(getOutputPorts(), maxLen)
-						: null)
-				+ ", getProcessors()="
-				+ (getProcessors() != null ? toString(getProcessors(), maxLen)
-						: null) + "]";
+		return "Workflow [getName()=" + getName() + ", getDatalinks()="
+		+ (getDataLinks() != null ? toString(getDataLinks(), maxLen) : null)
+		+ ", getInputPorts()="
+		+ (getInputPorts() != null ? toString(getInputPorts(), maxLen) : null)
+		+ ", getOutputPorts()="
+		+ (getOutputPorts() != null ? toString(getOutputPorts(), maxLen) : null)
+		+ ", getProcessors()="
+		+ (getProcessors() != null ? toString(getProcessors(), maxLen) : null) + "]";
 	}
 
 	private String toString(Collection<?> collection, int maxLen) {
 		StringBuilder builder = new StringBuilder();
 		builder.append("[");
 		int i = 0;
-		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext()
-				&& i < maxLen; i++) {
+		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext() && i < maxLen; i++) {
 			if (i > 0) {
 				builder.append(", ");
 			}

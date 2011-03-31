@@ -5,6 +5,9 @@ import java.util.List;
 
 import uk.org.taverna.scufl2.api.common.Visitor;
 
+/**
+ * A List of <code>PropertyObject</code>s.
+ */
 public class PropertyList extends ArrayList<PropertyObject> implements
 PropertyObject, List<PropertyObject> {
 

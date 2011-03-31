@@ -5,9 +5,11 @@ import java.text.MessageFormat;
 import uk.org.taverna.scufl2.api.common.Visitor;
 
 /**
+ * A {@link ControlLink} that blocks a {@link Processor} from starting until another
+ * <code>Processor</code> has finished.
+ * 
  * @author Alan R Williams
  * @author Stian Soiland-Reyes
- *
  */
 @SuppressWarnings("rawtypes")
 public class BlockingControlLink implements ControlLink {
@@ -16,9 +18,23 @@ public class BlockingControlLink implements ControlLink {
 	private Processor block;
 	private Processor untilFinished;
 
+	/**
+	 * Constructs an unconnected <code>BlockingControlLink</code>.
+	 */
 	public BlockingControlLink() {
 	}
 
+	/**
+	 * Constructs a <code>BlockingControlLink</code> with the specified blocked and control <code>Processor</code>s.
+	 * <p>
+	 * The parent {@link Workflow} is set to be the same as the parent of the block <code>Processor</code>.
+	 * 
+	 * @param block
+	 *            the <code>Processor</code> that is blocked from starting. <strong>Must
+	 *            not</strong> be <code>null</code>
+	 * @param untilFinished
+	 *            the <code>Processor</code> that controls the block. Can be <code>null</code>.
+	 */
 	public BlockingControlLink(Processor block, Processor untilFinished) {
 		setParent(block.getParent());
 		setUntilFinished(untilFinished);
@@ -33,14 +49,12 @@ public class BlockingControlLink implements ControlLink {
 	@Override
 	public int compareTo(Object o) {
 		if (!(o instanceof BlockingControlLink)) {
-			return o.getClass().getCanonicalName()
-					.compareTo(getClass().getCanonicalName());
+			return o.getClass().getCanonicalName().compareTo(getClass().getCanonicalName());
 		}
 		BlockingControlLink o1 = this;
 		BlockingControlLink o2 = (BlockingControlLink) o;
 
-		int untilFinished = o1.getUntilFinished().compareTo(
-				o2.getUntilFinished());
+		int untilFinished = o1.getUntilFinished().compareTo(o2.getUntilFinished());
 		if (untilFinished != 0) {
 			return untilFinished;
 		}
@@ -85,14 +99,25 @@ public class BlockingControlLink implements ControlLink {
 		return true;
 	}
 
+	/**
+	 * Returns the <code>Processor</code> that is blocked from starting.
+	 * 
+	 * @return the <code>Processor</code> that is blocked from starting
+	 */
 	public Processor getBlock() {
 		return block;
 	}
 
+	@Override
 	public Workflow getParent() {
 		return parent;
 	}
 
+	/**
+	 * Returns the <code>Processor</code> that controls the block.
+	 * 
+	 * @return the <code>Processor</code> that controls the block
+	 */
 	public Processor getUntilFinished() {
 		return untilFinished;
 	}
@@ -107,10 +132,17 @@ public class BlockingControlLink implements ControlLink {
 		return result;
 	}
 
+	/**
+	 * Sets the <code>Processor</code> that is blocked from starting.
+	 * 
+	 * @param block
+	 *            the <code>Processor</code> that is blocked from starting. Can be <code>null</code>
+	 */
 	public void setBlock(Processor block) {
 		this.block = block;
 	}
 
+	@Override
 	public void setParent(Workflow parent) {
 		if (this.parent != null && this.parent != parent) {
 			this.parent.getControlLinks().remove(this);
@@ -121,14 +153,20 @@ public class BlockingControlLink implements ControlLink {
 		}
 	}
 
+	/**
+	 * Sets the <code>Processor</code> that controls the block.
+	 * 
+	 * @param untilFinished
+	 *            the <code>Processor</code> that controls the block. Can be <code>null</code>
+	 */
 	public void setUntilFinished(Processor untilFinished) {
 		this.untilFinished = untilFinished;
 	}
 
 	@Override
 	public String toString() {
-		return MessageFormat.format("block {0} until {1} is finished",
-				getBlock(), getUntilFinished());
+		return MessageFormat.format("block {0} until {1} is finished", getBlock(),
+				getUntilFinished());
 	}
 
 }

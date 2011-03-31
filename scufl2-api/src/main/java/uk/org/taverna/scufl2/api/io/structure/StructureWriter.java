@@ -38,6 +38,10 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.api.property.PropertyObject;
 
+/**
+ * A <code>WorkflowBundleWriter</code> that writes a {@link WorkflowBundle} in Scufl2 Structure
+ * format.
+ */
 public class StructureWriter implements WorkflowBundleWriter {
 
 	private StringBuffer sb;
@@ -98,8 +102,7 @@ public class StructureWriter implements WorkflowBundleWriter {
 			// We'll need to sort them afterwards
 			List<String> links = new ArrayList<String>();
 			for (DataLink dl : wf.getDataLinks()) {
-				links.add(datalink(dl.getReceivesFrom()) + " -> "
-						+ datalink(dl.getSendsTo()));
+				links.add(datalink(dl.getReceivesFrom()) + " -> " + datalink(dl.getSendsTo()));
 			}
 			Collections.sort(links);
 			if (!links.isEmpty()) {
@@ -111,8 +114,7 @@ public class StructureWriter implements WorkflowBundleWriter {
 				append(link);
 			}
 
-			List<ControlLink> controlLinks = new ArrayList<ControlLink>(
-					wf.getControlLinks());
+			List<ControlLink> controlLinks = new ArrayList<ControlLink>(wf.getControlLinks());
 			if (!controlLinks.isEmpty()) {
 				newLine(2);
 				append("Controls");
@@ -163,20 +165,14 @@ public class StructureWriter implements WorkflowBundleWriter {
 				append(pb.getBoundActivity());
 				newLine(3);
 				append("Processor");
-				String name = " '"
-					+ escapeName(pb.getBoundProcessor().getParent()
-							.getName());
-				name = name + ":"
-				+ escapeName(pb.getBoundProcessor().getName()) + "'";
+				String name = " '" + escapeName(pb.getBoundProcessor().getParent().getName());
+				name = name + ":" + escapeName(pb.getBoundProcessor().getName()) + "'";
 				append(name);
 
 				List<String> links = new ArrayList<String>();
 				for (ProcessorInputPortBinding ip : pb.getInputPortBindings()) {
-					links.add("'"
-							+ escapeName(ip.getBoundProcessorPort().getName())
-							+ "' -> '"
-							+ escapeName(ip.getBoundActivityPort().getName())
-							+ "'");
+					links.add("'" + escapeName(ip.getBoundProcessorPort().getName()) + "' -> '"
+							+ escapeName(ip.getBoundActivityPort().getName()) + "'");
 				}
 				Collections.sort(links);
 				if (!links.isEmpty()) {
@@ -191,11 +187,8 @@ public class StructureWriter implements WorkflowBundleWriter {
 				links.clear();
 				for (ProcessorOutputPortBinding ip : pb.getOutputPortBindings()) {
 					// Note: opposite direction as for ProcessorInputPortBinding
-					links.add("'"
-							+ escapeName(ip.getBoundActivityPort().getName())
-							+ "' -> '"
-							+ escapeName(ip.getBoundProcessorPort().getName())
-							+ "'");
+					links.add("'" + escapeName(ip.getBoundActivityPort().getName()) + "' -> '"
+							+ escapeName(ip.getBoundProcessorPort().getName()) + "'");
 				}
 				Collections.sort(links);
 				if (!links.isEmpty()) {
@@ -222,13 +215,12 @@ public class StructureWriter implements WorkflowBundleWriter {
 				append("Configures");
 				Named c = (Named) config.getConfigures();
 				// FIXME: Handle activity/dispatchlayer etc. individually
-				String cName = "'"
-					+ escapeName(c.getClass().getSimpleName().toLowerCase());
+				String cName = "'" + escapeName(c.getClass().getSimpleName().toLowerCase());
 				cName = cName + "/" + escapeName(c.getName()) + "'";
 				append(" " + cName);
 
-				for (Entry<URI, SortedSet<PropertyObject>> prop : config
-						.getPropertyResource().getProperties().entrySet()) {
+				for (Entry<URI, SortedSet<PropertyObject>> prop : config.getPropertyResource()
+						.getProperties().entrySet()) {
 					newLine(3);
 					append("Property");
 					append(prop.getKey());
@@ -238,8 +230,7 @@ public class StructureWriter implements WorkflowBundleWriter {
 							PropertyLiteral lit = (PropertyLiteral) po;
 							newLine(4);
 							append("'''");
-							append(lit.getLiteralValue().replace("'''",
-							"\\'\\'\\'"));
+							append(lit.getLiteralValue().replace("'''", "\\'\\'\\'"));
 							append("'''");
 
 							// TODO: Handle literal types
@@ -271,8 +262,8 @@ public class StructureWriter implements WorkflowBundleWriter {
 	}
 
 	private String escapeName(String name) {
-		return name.replace("\\", "\\\\").replace("'", "\\'")
-		.replace(":", "\\:").replace("/", "\\/");
+		return name.replace("\\", "\\\\").replace("'", "\\'").replace(":", "\\:")
+		.replace("/", "\\/");
 	}
 
 	@Override
@@ -300,20 +291,20 @@ public class StructureWriter implements WorkflowBundleWriter {
 	}
 
 	@Override
-	public synchronized void writeBundle(WorkflowBundle wb, File destination,
-			String mediaType) throws IOException {
+	public synchronized void writeBundle(WorkflowBundle wb, File destination, String mediaType)
+	throws IOException {
 		destination.createNewFile();
 
-		BufferedOutputStream outputStream = new BufferedOutputStream(
-				new FileOutputStream(destination));
+		BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(
+				destination));
 		writeBundle(wb, outputStream, mediaType);
 		outputStream.close();
 
 	}
 
 	@Override
-	public void writeBundle(WorkflowBundle wfBundle, OutputStream output,
-			String mediaType) throws IOException {
+	public void writeBundle(WorkflowBundle wfBundle, OutputStream output, String mediaType)
+	throws IOException {
 		OutputStreamWriter writer = new OutputStreamWriter(output, "utf-8");
 		writer.write(bundleString(wfBundle));
 		writer.close();

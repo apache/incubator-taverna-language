@@ -23,8 +23,7 @@ package uk.org.taverna.scufl2.api.property;
 import java.net.URI;
 
 /**
- * Thrown when a {@link PropertyObject} is not found when a single property was
- * expected.
+ * Thrown when a {@link PropertyObject} is not found when a single property was expected.
  * 
  * @see PropertyResource#getProperty(java.net.URI)
  * @author David Withers
@@ -33,10 +32,9 @@ public class PropertyNotFoundException extends PropertyException {
 
 	private static final long serialVersionUID = 1916372334894633453L;
 
-	public PropertyNotFoundException(URI predicate,
-			PropertyResource propertyResource) {
-		super("Could not find property " + predicate + " in "
-				+ propertyResource, predicate, propertyResource);
+	public PropertyNotFoundException(URI predicate, PropertyResource propertyResource) {
+		super("Could not find property " + predicate + " in " + propertyResource, predicate,
+				propertyResource);
 	}
 
 }

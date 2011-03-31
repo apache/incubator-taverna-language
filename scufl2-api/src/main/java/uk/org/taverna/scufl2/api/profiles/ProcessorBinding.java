@@ -13,23 +13,20 @@ import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.core.Processor;
 
 /**
- * A ProcessorBinding specifies that when enacting a Workflow, if this
- * particular ProcessorBinding is used, then the boundActivity will be used to
- * implement the boundProcessor.
- *
- * The ProcessorBinding specifies the sets of input and output port bindings for
- * the ports of the Processor. Note that there may not need to be a binding for
- * every Processor port, nor for every Activity port. However, the ports must be
- * of the bound Processor and Activity.
- *
- * It has not been decided if the binding must be unique for a given Processor
- * or Activity port within a ProcessorBinding.
- *
+ * A <code>ProcessorBinding</code> specifies that when enacting a
+ * {@link uk.org.taverna.scufl2.api.core.Workflow Workflow}, if this particular <code>ProcessorBinding</code> is
+ * used, then the boundActivity will be used to implement the boundProcessor.
+ * <p>
+ * The <code>ProcessorBinding</code> specifies the sets of input and output port bindings for the ports of the
+ * {@link Processor}. Note that there may not need to be a binding for every <code>Processor</code> port, nor for every
+ * {@link Activity} port. However, the ports must be of the bound <code>Processor</code> and <code>Activity</code>.
+ * <p>
+ * It has not been decided if the binding must be unique for a given <code>Processor</code> or <code>Activity</code> port
+ * within a <code>ProcessorBinding</code>.
+ * 
  * @author Alan R Williams
- *
  */
-public class ProcessorBinding extends AbstractNamed implements
-		Child<Profile> {
+public class ProcessorBinding extends AbstractNamed implements Child<Profile> {
 
 	private Processor boundProcessor;
 	private Activity boundActivity;
@@ -58,50 +55,50 @@ public class ProcessorBinding extends AbstractNamed implements
 	}
 
 	/**
-	 * The relative position of this activity within the processor (for the
-	 * purpose of Failover). Activities will be ordered by this position. Gaps
-	 * will be ignored, overlapping activity positions will have an undetermined
-	 * order.
-	 *
-	 * @return
+	 * Returns the relative position of the bound <code>Activity</code> within the <code>Processor</code> (for the purpose of
+	 * Failover).
+	 * <p>
+	 * <code>Activity</code>s will be ordered by this position. Gaps will be ignored, overlapping <code>Activity</code>
+	 * positions will have an undetermined order.
+	 * 
+	 * @return the relative position of the bound <code>Activity</code> within the <code>Processor</code>
 	 */
 	public final Integer getActivityPosition() {
 		return activityPosition;
 	}
 
 	/**
-	 * Returns the Activity that will be used to enact the Processor if this
-	 * ProcessorBinding is used.
-	 *
-	 * @return
+	 * Returns the <code>Activity</code> that will be used to enact the <code>Processor</code> if this ProcessorBinding is
+	 * used.
+	 * 
+	 * @return the <code>Activity</code> that will be used to enact the <code>Processor</code>
 	 */
 	public Activity getBoundActivity() {
 		return boundActivity;
 	}
 
 	/**
-	 * Returns the Processor for which a possible means of enactment is
-	 * specified.
-	 *
-	 * @return
+	 * Returns the <code>Processor</code> for which a possible means of enactment is specified.
+	 * 
+	 * @return the <code>Processor</code> for which a possible means of enactment is specified
 	 */
 	public Processor getBoundProcessor() {
 		return boundProcessor;
 	}
 
 	/**
-	 * Returns the bindings for individual input ports of the bound Processor.
-	 *
-	 * @return
+	 * Returns the bindings for individual input ports of the bound <code>Processor</code>.
+	 * 
+	 * @return the bindings for individual input ports of the bound <code>Processor</code>
 	 */
 	public Set<ProcessorInputPortBinding> getInputPortBindings() {
 		return inputPortBindings;
 	}
 
 	/**
-	 * Returns the bindings for individual output ports of the bound Procesor
-	 *
-	 * @return
+	 * Returns the bindings for individual output ports of the bound <code>Processor</code>.
+	 * 
+	 * @return the bindings for individual output ports of the bound <code>Processor</code>
 	 */
 	public Set<ProcessorOutputPortBinding> getOutputPortBindings() {
 		return outputPortBindings;
@@ -112,37 +109,53 @@ public class ProcessorBinding extends AbstractNamed implements
 		return parent;
 	}
 
+	/**
+	 * Sets the relative position of the bound <code>Activity</code> within the processor (for the purpose of
+	 * Failover).
+	 * <p>
+	 * <code>Activity</code>s will be ordered by this position. Gaps will be ignored, overlapping <code>Activity</code>
+	 * positions will have an undetermined order.
+	 * 
+	 * @param activityPosition the relative position of the bound <code>Activity</code> within the <code>Processor</code>
+	 */
 	public void setActivityPosition(Integer activityPosition) {
 		this.activityPosition = activityPosition;
 	}
 
 	/**
-	 * @param boundActivity
+	 * Sets the Activity that will be used to enact the <code>Processor</code> if this ProcessorBinding is
+	 * used.
+	 * 
+	 * @param boundActivity the Activity that will be used to enact the <code>Processor</code>
 	 */
 	public void setBoundActivity(Activity boundActivity) {
 		this.boundActivity = boundActivity;
 	}
 
 	/**
-	 * @param boundProcessor
+	 * Sets the <code>Processor</code> for which a possible means of enactment is specified.
+	 * 
+	 * @param boundProcessor the <code>Processor</code> for which a possible means of enactment is specified
 	 */
 	public void setBoundProcessor(Processor boundProcessor) {
 		this.boundProcessor = boundProcessor;
 	}
 
 	/**
-	 * @param inputPortBindings
+	 * Sets the bindings for individual input ports of the bound <code>Processor</code>.
+	 * 
+	 * @param inputPortBindings the bindings for individual input ports of the bound <code>Processor</code>
 	 */
-	public void setInputPortBindings(
-			Set<ProcessorInputPortBinding> inputPortBindings) {
+	public void setInputPortBindings(Set<ProcessorInputPortBinding> inputPortBindings) {
 		this.inputPortBindings = inputPortBindings;
 	}
 
 	/**
-	 * @param outputPortBindings
+	 * Sets the bindings for individual output ports of the bound <code>Processor</code>.
+	 * 
+	 * @param outputPortBindings the bindings for individual output ports of the bound <code>Processor</code>
 	 */
-	public void setOutputPortBindings(
-			Set<ProcessorOutputPortBinding> outputPortBindings) {
+	public void setOutputPortBindings(Set<ProcessorOutputPortBinding> outputPortBindings) {
 		this.outputPortBindings = outputPortBindings;
 	}
 
@@ -159,8 +172,7 @@ public class ProcessorBinding extends AbstractNamed implements
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + " " + getBoundProcessor() + " "
-		+ getBoundActivity();
+		return getClass().getSimpleName() + " " + getBoundProcessor() + " " + getBoundActivity();
 	}
 
 }

@@ -34,6 +34,10 @@ import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 
+/**
+ * A <code>WorkflowBundleReader</code> that reads a {@link WorkflowBundle} in Scufl2 Structure
+ * format.
+ */
 public class StructureReader implements WorkflowBundleReader {
 
 	public enum Level {
@@ -61,7 +65,7 @@ public class StructureReader implements WorkflowBundleReader {
 	.compile("'(.*[^\\\\])'\\s->\\s'(.*[^\\\\\\\\])'");
 
 	Pattern blockPattern = Pattern
-			.compile("\\s*block\\s+'(.*[^\\\\])'\\s+until\\s+'(.*[^\\\\\\\\])'\\s+finish");
+	.compile("\\s*block\\s+'(.*[^\\\\])'\\s+until\\s+'(.*[^\\\\\\\\])'\\s+finish");
 
 	private String mainProfile;
 
@@ -130,30 +134,30 @@ public class StructureReader implements WorkflowBundleReader {
 			boolean in = next.equals("In");
 			String portName = parseName(scanner);
 			switch (level) {
-			case Workflow:
-				if (in) {
-					new InputWorkflowPort(workflow, portName);
-				} else {
-					new OutputWorkflowPort(workflow, portName);
-				}
-				break;
-			case Processor:
-				if (in) {
-					new InputProcessorPort(processor, portName);
-				} else {
-					new OutputProcessorPort(processor, portName);
-				}
-				break;
-			case Activity:
-				if (in) {
-					new InputActivityPort(activity, portName);
-				} else {
-					new OutputActivityPort(activity, portName);
-				}
-				break;
-			default:
-				throw new ReaderException("Unexpected " + next + " at level "
-						+ level);
+				case Workflow:
+					if (in) {
+						new InputWorkflowPort(workflow, portName);
+					} else {
+						new OutputWorkflowPort(workflow, portName);
+					}
+					break;
+				case Processor:
+					if (in) {
+						new InputProcessorPort(processor, portName);
+					} else {
+						new OutputProcessorPort(processor, portName);
+					}
+					break;
+				case Activity:
+					if (in) {
+						new InputActivityPort(activity, portName);
+					} else {
+						new OutputActivityPort(activity, portName);
+					}
+					break;
+				default:
+					throw new ReaderException("Unexpected " + next + " at level "
+							+ level);
 			}
 			return;
 		}
@@ -376,7 +380,7 @@ public class StructureReader implements WorkflowBundleReader {
 
 	@Override
 	public WorkflowBundle readBundle(File bundleFile, String mediaType)
-			throws IOException, ReaderException {
+	throws IOException, ReaderException {
 		BufferedInputStream is = new BufferedInputStream(new FileInputStream(
 				bundleFile));
 		try {
@@ -388,7 +392,7 @@ public class StructureReader implements WorkflowBundleReader {
 
 	@Override
 	public WorkflowBundle readBundle(InputStream inputStream, String mediaType)
-			throws IOException, ReaderException {
+	throws IOException, ReaderException {
 		return parse(inputStream);
 
 	}
