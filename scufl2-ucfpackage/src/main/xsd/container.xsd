@@ -61,9 +61,9 @@
 
 	<!-- xmldsig-core-schema.xsd is also included by xenc-schema.xsd -->
 	<xsd:import namespace='http://www.w3.org/2000/09/xmldsig#'
-		schemaLocation='http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd' />
+		schemaLocation='./xmldsig-core-schema.xsd' />
 	<xsd:import namespace="http://www.w3.org/2001/04/xmlenc#"
-		schemaLocation="http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/xenc-schema.xsd" />
+		schemaLocation="xenc-schema.xsd" />
 
 	<xsd:element name="container" type="container:Container"></xsd:element>
 
