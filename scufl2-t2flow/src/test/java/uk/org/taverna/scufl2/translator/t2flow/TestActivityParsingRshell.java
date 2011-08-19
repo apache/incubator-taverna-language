@@ -9,7 +9,9 @@ import static uk.org.taverna.scufl2.translator.t2flow.defaultactivities.Abstract
 import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.JAXBException;
@@ -62,6 +64,7 @@ public class TestActivityParsingRshell {
 		Configuration config = scufl2Tools
 				.configurationForActivityBoundToProcessor(proc, profile);
 		assertNotNull(config);
+		// TODO: Check data types defined (semantic types)
 		
 	}
 	
@@ -80,6 +83,7 @@ public class TestActivityParsingRshell {
 				.configurationForActivityBoundToProcessor(proc, profile);
 		assertNotNull(config);
 		
+		// TODO: Check data types defined (semantic types)
 	}
 	
 
@@ -147,6 +151,8 @@ public class TestActivityParsingRshell {
 		assertEquals(3, expectedPortUris.size());
 		assertEquals(3, inputDef.size());
 		
+		Map<URI, URI> dataTypes = new HashMap<URI, URI>();
+		
 		for (PropertyResource portDef : inputDef) {
 			assertEquals(PORT_DEFINITION.resolve("#InputPortDefinition"),
 					portDef.getTypeURI());
@@ -159,6 +165,7 @@ public class TestActivityParsingRshell {
 			URI dataType = portDef.getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType"));
 			assertEquals(RshellActivityParser.ACTIVITY_URI.resolve("#samePrefix"), dataType.resolve("#samePrefix"));			
 			// For instance http://ns.taverna.org.uk/2010/activity/rshell#BOOL_LIST
+			dataTypes.put(portURI, dataType);
 			
 		}
 
@@ -173,14 +180,36 @@ public class TestActivityParsingRshell {
 		OutputActivityPort out3 = activity.getOutputPorts().getByName("out3");
 		assertEquals(1, out3.getDepth().intValue());
 
+		expectedPortUris.clear();
+		for (OutputActivityPort inPort : activity.getOutputPorts()) {
+			expectedPortUris.add(new URITools().relativeUriForBean(inPort,
+					config));
+		}
+		
 		Set<PropertyResource> outputDef = config.getPropertyResource()
 				.getPropertiesAsResources(
 						PORT_DEFINITION.resolve("#outputPortDefinition"));
 		assertEquals(3, outputDef.size());
-		PropertyResource out1Def = outputDef.iterator().next();
+		for (PropertyResource portDef : outputDef) {
+			assertEquals(PORT_DEFINITION.resolve("#OutputPortDefinition"),
+					portDef.getTypeURI());
+			assertNull(portDef.getResourceURI());
+			URI portURI = portDef.getPropertyAsResourceURI(PORT_DEFINITION
+					.resolve("#definesOutputPort"));
+			assertTrue("Unknown port " + portURI,
+					expectedPortUris.contains(portURI));
+			
+			URI dataType = portDef.getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType"));
+			assertEquals(RshellActivityParser.ACTIVITY_URI.resolve("#samePrefix"), dataType.resolve("#samePrefix"));			
+			// For instance http://ns.taverna.org.uk/2010/activity/rshell#BOOL_LIST
+			dataTypes.put(portURI, dataType);
+			
+		}
 
-		assertEquals(PORT_DEFINITION.resolve("#OutputPortDefinition"),
-				out1Def.getTypeURI());
+
+		System.out.println(dataTypes);
+		
+		
 
 		PropertyResource connection = config.getPropertyResource().getPropertyAsResource(RshellActivityParser.ACTIVITY_URI.resolve("#connection"));
 		assertEquals(RshellActivityParser.ACTIVITY_URI.resolve("#Connection"), connection.getTypeURI());
