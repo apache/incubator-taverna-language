@@ -113,22 +113,22 @@
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="RShellConfig">
-		<xsd:sequence>
+		<xsd:all>
+			<xsd:element name="inputs" type="activities:ActivityInputPorts" />
+			<xsd:element name="outputs" type="activities:ActivityOutputPorts" />
 			<xsd:element name="rVersion" type="xsd:string" minOccurs="0" />
 			<xsd:element name="script" type="xsd:string" />
 			<xsd:element name="connectionSettings" type="activities:RShellConnection" />
 			<xsd:element name="inputSymanticTypes" type="activities:RShellSymanticType" />
 			<xsd:element name="outputSymanticTypes" type="activities:RShellSymanticType" />
-			<xsd:element name="inputs" type="activities:ActivityInputPorts" />
-			<xsd:element name="outputs" type="activities:ActivityOutputPorts" />
-		</xsd:sequence>
+		</xsd:all>
 	</xsd:complexType>
 	<xsd:complexType name="RShellConnection">
 		<xsd:sequence>		
 			<xsd:element name="host" type="xsd:string" />
 			<xsd:element name="port" type="xsd:unsignedShort" />
-			<xsd:element name="username" type="xsd:string" />
-			<xsd:element name="password" type="xsd:string" />
+			<xsd:element name="username" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="password" type="xsd:string" minOccurs="0"/>
 			<xsd:element name="keepSessionAlive" type="xsd:boolean" />
 			<xsd:element name="newRVersion" type="xsd:boolean" default="false" minOccurs="0"/>
 		</xsd:sequence>
@@ -443,29 +443,44 @@
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="ActivityPortDefinitionBean">
-		<xsd:sequence>
-			<xsd:element name="granularDepth" type="xsd:nonNegativeInteger"
-				minOccurs="0" />
-			<xsd:element name="handledReferenceSchemes" minOccurs="0"
-				maxOccurs="unbounded" />
-			<xsd:element name="translatedElementType" type="xsd:string"
-				minOccurs="0" />
-			<xsd:element name="allowsLiteralValues" type="xsd:boolean"
-				minOccurs="0" />
-			<xsd:element name="name" type="xsd:string" />
-			<xsd:element name="depth" type="xsd:nonNegativeInteger" />
-			<xsd:element name="mimeTypes" minOccurs="0">
-				<xsd:complexType>
-					<xsd:choice>
-						<xsd:element name="string" type="xsd:string"
-							minOccurs="0" maxOccurs="unbounded" />
-						<xsd:element name="element" type="activities:DependencyElement" />
-					</xsd:choice>
+	<xsd:choice minOccurs="1" maxOccurs="unbounded" id="activityPortChoice">
+		<xsd:annotation>
+			<xsd:documentation>
+	These seem to come in any order depending on Activity type and Taverna
+	version (probably some internal hash maps involved) - and instead of
+	trying to model this using xsd:any, xsd:groups and xsd:choice, I just
+	went for an unbounded xsd:choice. Users will have to deal with the following
+	additional constaints:
+    
+	These elements are required, maximum 1 occurance: name, depth
+
+	These can occur 0..unbounded times:
+	handledReferenceSchemes, translatedElementType
+
+	The rest are optional, but must maximally appear once.
+
+			</xsd:documentation>			
+		</xsd:annotation>
+
+		<xsd:element name="handledReferenceSchemes" type="xsd:string"/>
+		<xsd:element name="translatedElementType" type="xsd:string" />
+		<xsd:element name="name" type="xsd:string" />
+		<xsd:element name="depth" type="xsd:nonNegativeInteger" />
+		<xsd:element name="allowsLiteralValues" type="xsd:boolean" />
+		<xsd:element name="mimeTypes">
+			<xsd:complexType>
+				<xsd:choice>
+					<xsd:element name="string" type="xsd:string" minOccurs="0"
+						maxOccurs="unbounded" />
+					<xsd:element name="element" type="activities:DependencyElement" />
+				</xsd:choice>
 				<xsd:attribute name="class" type="xsd:string" use="optional" />
-				</xsd:complexType>		
-			</xsd:element>
-		</xsd:sequence>
-	</xsd:complexType>
+			</xsd:complexType>
+		</xsd:element>
+		<xsd:element name="granularDepth" type="xsd:nonNegativeInteger" />
+
+	</xsd:choice>
+</xsd:complexType>
 
 	<xsd:complexType name="ActivityOutputPorts">
 		<xsd:sequence>
