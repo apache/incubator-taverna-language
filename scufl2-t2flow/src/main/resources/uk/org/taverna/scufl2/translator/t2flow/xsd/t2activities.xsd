@@ -2,7 +2,19 @@
 <xsd:schema elementFormDefault="unqualified"
 	targetNamespace="http://taverna.sf.net/2008/xml/t2activities"
 	xmlns:activities="http://taverna.sf.net/2008/xml/t2activities"
-	xmlns:tav="http://taverna.sf.net/2008/xml/t2flow" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	xmlns:tav="http://taverna.sf.net/2008/xml/t2flow" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+	jxb:version="1.0">
+
+	<xsd:annotation>
+		<xsd:appinfo>
+			<!-- See http://docs.rakeshv.org/java/jaxb/users-guide/jaxb-custom.html -->
+			<jxb:globalBindings />
+			<jxb:schemaBindings>
+				<jxb:package name="uk.org.taverna.scufl2.xml.t2flow.jaxb" />
+			</jxb:schemaBindings>
+		</xsd:appinfo>
+	</xsd:annotation>
 
 	<xsd:import namespace="http://taverna.sf.net/2008/xml/t2flow"
 		schemaLocation="t2flow.xsd" />
@@ -102,15 +114,56 @@
 	</xsd:complexType>
 	<xsd:complexType name="RShellConfig">
 		<xsd:sequence>
-			<xsd:element name="rVersion" type="xsd:string" />
+			<xsd:element name="rVersion" type="xsd:string" minOccurs="0" />
 			<xsd:element name="script" type="xsd:string" />
-			<xsd:element name="connectionSettings" />
-			<xsd:element name="inputSymanticTypes" />
-			<xsd:element name="outputSymanticTypes" />
-			<xsd:element name="inputs" />
-			<xsd:element name="outputs" />
+			<xsd:element name="connectionSettings" type="activities:RShellConnection" />
+			<xsd:element name="inputSymanticTypes" type="activities:RShellSymanticType" />
+			<xsd:element name="outputSymanticTypes" type="activities:RShellSymanticType" />
+			<xsd:element name="inputs" type="activities:ActivityInputPorts" />
+			<xsd:element name="outputs" type="activities:ActivityOutputPorts" />
 		</xsd:sequence>
 	</xsd:complexType>
+	<xsd:complexType name="RShellConnection">
+		<xsd:sequence>		
+			<xsd:element name="host" type="xsd:string" />
+			<xsd:element name="port" type="xsd:unsignedShort" />
+			<xsd:element name="username" type="xsd:string" />
+			<xsd:element name="password" type="xsd:string" />
+			<xsd:element name="keepSessionAlive" type="xsd:boolean" />
+			<xsd:element name="newRVersion" type="xsd:boolean" default="false" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="RShellSymanticType">
+	<xsd:sequence>
+		<xsd:element
+			name="net.sf.taverna.t2.activities.rshell.RShellPortSymanticTypeBean" minOccurs="0" maxOccurs="unbounded">
+			
+			<xsd:complexType>
+			<xsd:annotation>
+				<xsd:appinfo>					
+					<jxb:class name="RShellPortSymanticTypeBean" />
+				</xsd:appinfo>
+			</xsd:annotation>			
+				<xsd:sequence>
+			
+					<xsd:element name="name" type="xsd:string" />
+					<xsd:element name="symanticType">
+						<xsd:complexType>
+							<xsd:simpleContent>
+								<xsd:extension base="xsd:string">
+									<xsd:attribute name="reference" type="xsd:string"
+										use="optional" />
+								</xsd:extension>
+							</xsd:simpleContent>
+						</xsd:complexType>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:complexType>
+		</xsd:element>
+	</xsd:sequence>
+</xsd:complexType>
+
+	
 	<xsd:complexType name="WSDLConfig">
 		<xsd:annotation>
 			<xsd:documentation>Configuration for the WSDL activity.
@@ -385,7 +438,8 @@
 		<xsd:sequence>
 			<xsd:element
 				name="net.sf.taverna.t2.workflowmodel.processor.activity.config.ActivityInputPortDefinitionBean"
-				minOccurs="0" maxOccurs="unbounded" type="activities:ActivityPortDefinitionBean" />
+				minOccurs="0" maxOccurs="unbounded" type="activities:ActivityPortDefinitionBean">
+			</xsd:element>				
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="ActivityPortDefinitionBean">
@@ -417,7 +471,8 @@
 		<xsd:sequence>
 			<xsd:element
 				name="net.sf.taverna.t2.workflowmodel.processor.activity.config.ActivityOutputPortDefinitionBean"
-				minOccurs="0" maxOccurs="unbounded" type="activities:ActivityPortDefinitionBean" />
+				minOccurs="0" maxOccurs="unbounded" type="activities:ActivityPortDefinitionBean">
+			</xsd:element>
 		</xsd:sequence>
 
 	</xsd:complexType>
