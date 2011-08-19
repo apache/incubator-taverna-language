@@ -1,7 +1,10 @@
 package uk.org.taverna.scufl2.translator.t2flow.defaultactivities;
 
 import java.io.StringReader;
+import java.math.BigInteger;
 import java.net.URI;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -89,13 +92,19 @@ public abstract class AbstractActivityParser implements T2Parser {
 			Configuration configuration, Activity activity) {
 		PropertyResource configResource = configuration.getPropertyResource();
 		OutputActivityPort outputPort = new OutputActivityPort();
-		outputPort.setName(portBean.getName());
+		
+		outputPort.setName(getPortElement(portBean, "name", String.class));
 		outputPort.setParent(activity);
-		if (portBean.getDepth() != null) {
-			outputPort.setDepth(portBean.getDepth().intValue());
+		
+
+		BigInteger depth = getPortElement(portBean, "depth", BigInteger.class);
+		if (depth != null) {
+			outputPort.setDepth(depth.intValue());
 		}
-		if (portBean.getGranularDepth() != null) {
-			outputPort.setGranularDepth(portBean.getGranularDepth().intValue());
+		
+		BigInteger granularDepth = getPortElement(portBean, "granularDepth", BigInteger.class);		
+		if (granularDepth != null) {
+			outputPort.setGranularDepth(granularDepth.intValue());
 		}
 
 		PropertyResource portConfig = configResource.addPropertyAsNewResource(
@@ -108,16 +117,36 @@ public abstract class AbstractActivityParser implements T2Parser {
 		parseMimeTypes(portBean, portConfig);
 	}
 
+	/**
+	 * Deals with the not-so-helpful getHandledReferenceSchemesOrTranslatedElementTypeOrName method
+	 * 
+	 * @param portBean
+	 * @param elementName
+	 * @return
+	 */
+	
+	
+	private <T> T getPortElement(ActivityPortDefinitionBean portBean,
+			String elementName, Class<T> type) {
+		for (JAXBElement<?> elem : portBean.getHandledReferenceSchemesOrTranslatedElementTypeOrName()) {
+			if (elem.getName().getLocalPart().equals(elementName)) {
+				return type.cast(elem.getValue());
+			}
+		}
+		return null;
+	}
+
 	protected void parseAndAddInputPortDefinition(ActivityPortDefinitionBean portBean,
 			Configuration configuration, Activity activity) {
 		PropertyResource configResource = configuration.getPropertyResource();
 
 		InputActivityPort inputPort = new InputActivityPort();
-		inputPort.setName(portBean.getName());
+		inputPort.setName(getPortElement(portBean, "name", String.class));
 		inputPort.setParent(activity);
 
-		if (portBean.getDepth() != null) {
-			inputPort.setDepth(portBean.getDepth().intValue());
+		BigInteger depth = getPortElement(portBean, "depth", BigInteger.class);
+		if (depth != null) {
+			inputPort.setDepth(depth.intValue());
 		}
 
 		PropertyResource portConfig = configResource.addPropertyAsNewResource(
@@ -129,37 +158,37 @@ public abstract class AbstractActivityParser implements T2Parser {
 
 		parseMimeTypes(portBean, portConfig);
 		
-		if (portBean.getTranslatedElementType() != null) {
+		String translated = getPortElement(portBean, "translatedElementType", String.class);
+		if (translated != null) {
 			// As "translated element type" is confusing, we'll instead use "dataType"
 			portConfig.addPropertyReference(PORT_DEFINITION.resolve("#dataType"),
-					URI.create("java:" + portBean.getTranslatedElementType()));
+					URI.create("java:" + translated));
 
 			// TODO: Include mapping to XSD types like xsd:string
 		}
 		// T2-1681: Ignoring isAllowsLiteralValues and handledReferenceScheme
-		// TODO: Mime types, etc
 
 	}
 
-	private void parseMimeTypes(ActivityPortDefinitionBean portBean, PropertyResource portConfig) {
-		MimeTypes mimeTypes = portBean.getMimeTypes();
-		if (mimeTypes != null) {
-			// FIXME: Do as annotation as this is not configuration
-			URI mimeType = PORT_DEFINITION.resolve("#expectedMimeType");
-			if (mimeTypes.getElement() != null) {
-				String s = mimeTypes.getElement().getValue();
+	private void parseMimeTypes(ActivityPortDefinitionBean portBean,
+			PropertyResource portConfig) {
+		MimeTypes mimeTypes = getPortElement(portBean, "mimeTypes", MimeTypes.class);
+		if (mimeTypes == null) {
+			return;
+		}
+		// FIXME: Do as annotation as this is not configuration
+		URI mimeType = PORT_DEFINITION.resolve("#expectedMimeType");
+		List<String> strings = mimeTypes.getString();
+		if (strings == null && mimeTypes.getElement() != null) {
+			strings = Arrays.asList(mimeTypes.getElement().getValue());
+		} 
+		if (strings != null) { 
+			for (String s : strings) {
 				if (s.contains("'")) {
 					s = s.split("'")[1];
 				}
-				portConfig.addPropertyReference(mimeType, MEDIATYPES_URI.resolve(s));
-			}
-			if (mimeTypes.getString() != null) {
-				for (String s : mimeTypes.getString()) {
-					if (s.contains("'")) {
-						s = s.split("'")[1];
-					}
-					portConfig.addPropertyReference(mimeType, MEDIATYPES_URI.resolve(s));
-				}
+				portConfig.addPropertyReference(mimeType,
+						MEDIATYPES_URI.resolve(s));
 			}
 		}
 	}
