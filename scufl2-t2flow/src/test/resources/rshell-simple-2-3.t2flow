@@ -37,7 +37,8 @@
     </net.sf.taverna.t2.workflowmodel.processor.activity.config.ActivityOutputPortDefinitionBean>
   </outputs>
   <rVersion>false</rVersion>
-  <script />
+  <script>too
+simple</script>  
   <connectionSettings>
     <host>localhost</host>
     <port>6311</port>
