@@ -88,7 +88,7 @@ public abstract class AbstractActivityParser implements T2Parser {
 		return configElemElem.getValue();
 	}
 
-	protected void parseAndAddOutputPortDefinition(ActivityPortDefinitionBean portBean,
+	protected PropertyResource parseAndAddOutputPortDefinition(ActivityPortDefinitionBean portBean,
 			Configuration configuration, Activity activity) {
 		PropertyResource configResource = configuration.getPropertyResource();
 		OutputActivityPort outputPort = new OutputActivityPort();
@@ -115,6 +115,7 @@ public abstract class AbstractActivityParser implements T2Parser {
 		portConfig.addPropertyReference(PORT_DEFINITION.resolve("#definesOutputPort"), portUri);
 
 		parseMimeTypes(portBean, portConfig);
+		return portConfig;
 	}
 
 	/**
@@ -136,7 +137,7 @@ public abstract class AbstractActivityParser implements T2Parser {
 		return null;
 	}
 
-	protected void parseAndAddInputPortDefinition(ActivityPortDefinitionBean portBean,
+	protected PropertyResource parseAndAddInputPortDefinition(ActivityPortDefinitionBean portBean,
 			Configuration configuration, Activity activity) {
 		PropertyResource configResource = configuration.getPropertyResource();
 
@@ -167,6 +168,7 @@ public abstract class AbstractActivityParser implements T2Parser {
 			// TODO: Include mapping to XSD types like xsd:string
 		}
 		// T2-1681: Ignoring isAllowsLiteralValues and handledReferenceScheme
+		return portConfig;
 
 	}
 
