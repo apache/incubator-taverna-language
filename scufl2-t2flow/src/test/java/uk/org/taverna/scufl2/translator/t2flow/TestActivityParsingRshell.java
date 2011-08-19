@@ -12,6 +12,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.xml.bind.JAXBException;
+
+import org.junit.Before;
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
@@ -33,25 +36,85 @@ public class TestActivityParsingRshell {
 	private static final String WF_RSHELL_2_3 = "/rshell-2-3.t2flow";
 	private static final String WF_RSHELL_SIMPLE_2_3 = "/rshell-simple-2-3.t2flow";
 
+	private static final String WF_ALL_ACTIVITIES = "/defaultActivitiesTaverna2.2.t2flow";
 	
 	private static Scufl2Tools scufl2Tools = new Scufl2Tools();
+	private T2FlowParser parser;
 
+	@Before
+	public void makeParser() throws JAXBException {
+		parser = new T2FlowParser();
+		parser.setValidating(true);
+		parser.setStrict(true);
+		
+	}
+	
+	@Test
+	public void parseRShell22WithReferences() throws Exception {
+		URL wfResource = getClass().getResource(WF_RSHELL_2_2);
+		assertNotNull("Could not find workflow " + WF_RSHELL_2_2, wfResource);
+		WorkflowBundle bundle = parser
+				.parseT2Flow(wfResource.openStream());
+		Profile profile = bundle.getMainProfile();
+		Processor proc = bundle.getMainWorkflow().getProcessors()
+				.getByName("Rshell");
+		assertNotNull(proc);
+		Configuration config = scufl2Tools
+				.configurationForActivityBoundToProcessor(proc, profile);
+		assertNotNull(config);
+		
+	}
+	
+
+	@Test
+	public void parseRShell23() throws Exception {
+		URL wfResource = getClass().getResource(WF_RSHELL_2_3);
+		assertNotNull("Could not find workflow " + WF_RSHELL_2_3, wfResource);
+		WorkflowBundle bundle = parser
+				.parseT2Flow(wfResource.openStream());
+		Profile profile = bundle.getMainProfile();
+		Processor proc = bundle.getMainWorkflow().getProcessors()
+				.getByName("Rshell");
+		assertNotNull(proc);
+		Configuration config = scufl2Tools
+				.configurationForActivityBoundToProcessor(proc, profile);
+		assertNotNull(config);
+		
+	}
+	
+
+
+	@Test
+	public void parseRShellAllActiv() throws Exception {
+		URL wfResource = getClass().getResource(WF_ALL_ACTIVITIES);
+		assertNotNull("Could not find workflow " + WF_ALL_ACTIVITIES, wfResource);
+		parser.setStrict(false); // Ignore other broken activities
+		WorkflowBundle bundle = parser
+				.parseT2Flow(wfResource.openStream());
+		Profile profile = bundle.getMainProfile();
+		Processor proc = bundle.getMainWorkflow().getProcessors()
+				.getByName("Rshell");
+		assertNotNull(proc);
+		Configuration config = scufl2Tools
+				.configurationForActivityBoundToProcessor(proc, profile);
+		assertNotNull(config);
+		
+	}
+		
 	@Test
 	public void parseSimpleRShellScript() throws Exception {
 		URL wfResource = getClass().getResource(WF_RSHELL_SIMPLE_2_3);
 		assertNotNull("Could not find workflow " + WF_RSHELL_SIMPLE_2_3, wfResource);
-		T2FlowParser parser = new T2FlowParser();
-		parser.setValidating(true);
-		parser.setStrict(true);
-		WorkflowBundle researchObj = parser
+		WorkflowBundle bundle = parser
 				.parseT2Flow(wfResource.openStream());
-		Profile profile = researchObj.getMainProfile();
-		Processor proc = researchObj.getMainWorkflow().getProcessors()
+		Profile profile = bundle.getMainProfile();
+		Processor proc = bundle.getMainWorkflow().getProcessors()
 				.getByName("Rshell");
 		assertNotNull(proc);
-
 		Configuration config = scufl2Tools
 				.configurationForActivityBoundToProcessor(proc, profile);
+		assertNotNull(config);
+				
 		Activity activity = (Activity) config.getConfigures();
 		assertEquals(RshellActivityParser.ACTIVITY_URI,
 				activity.getConfigurableType());
@@ -82,7 +145,8 @@ public class TestActivityParsingRshell {
 					config));
 		}
 		assertEquals(3, expectedPortUris.size());
-		assertEquals(3, inputDef.size());		
+		assertEquals(3, inputDef.size());
+		
 		for (PropertyResource portDef : inputDef) {
 			assertEquals(PORT_DEFINITION.resolve("#InputPortDefinition"),
 					portDef.getTypeURI());
@@ -91,6 +155,11 @@ public class TestActivityParsingRshell {
 					.resolve("#definesInputPort"));
 			assertTrue("Unknown port " + portURI,
 					expectedPortUris.contains(portURI));
+			
+			URI dataType = portDef.getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType"));
+			assertEquals(RshellActivityParser.ACTIVITY_URI.resolve("#samePrefix"), dataType.resolve("#samePrefix"));			
+			// For instance http://ns.taverna.org.uk/2010/activity/rshell#BOOL_LIST
+			
 		}
 
 
@@ -124,7 +193,9 @@ public class TestActivityParsingRshell {
 
 		assertEquals(false, connection.getPropertyAsLiteral(RshellActivityParser.ACTIVITY_URI.resolve("#keepSessionAlive")).getLiteralValueAsBoolean());
 		
-		// TODO Check semantic types
+		
+		
+		
 	}
 
 }
