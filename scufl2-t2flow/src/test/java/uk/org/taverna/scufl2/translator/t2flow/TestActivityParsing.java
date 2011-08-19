@@ -248,11 +248,7 @@ public class TestActivityParsing {
 		assertEquals(6311, portLiteral.getLiteralValueAsInt());
 		assertEquals(PropertyLiteral.XSD_UNSIGNEDSHORT, portLiteral.getLiteralType());
 
-		assertEquals("user", connection.getPropertyAsString(RshellActivityParser.ACTIVITY_URI.resolve("#username")));
-		assertEquals("passwd", connection.getPropertyAsString(RshellActivityParser.ACTIVITY_URI.resolve("#password")));
 		assertTrue(connection.getPropertyAsLiteral(RshellActivityParser.ACTIVITY_URI.resolve("#keepSessionAlive")).getLiteralValueAsBoolean());
-		// Note: legacy==true <==> newRVersion==false
-		assertTrue(connection.getPropertyAsLiteral(RshellActivityParser.ACTIVITY_URI.resolve("#legacy")).getLiteralValueAsBoolean());
 		
 		// TODO Check semantic types
 	}
