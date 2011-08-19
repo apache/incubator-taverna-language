@@ -62,17 +62,20 @@ public class RshellActivityParser extends AbstractActivityParser {
 		port.setLiteralType(PropertyLiteral.XSD_UNSIGNEDSHORT);
 		connection.addProperty(ACTIVITY_URI.resolve("#port"), port);
 
-		
-		connection.addPropertyAsString(ACTIVITY_URI.resolve("#username"), rshellConfig.getConnectionSettings().getUsername());
-		connection.addPropertyAsString(ACTIVITY_URI.resolve("#password"), rshellConfig.getConnectionSettings().getPassword());
-		
-		
+		// ignored - Taverna 2.3+ uses credential manager
+//		connection.addPropertyAsString(ACTIVITY_URI.resolve("#username"),
+//				rshellConfig.getConnectionSettings().getUsername());
+//		connection.addPropertyAsString(ACTIVITY_URI.resolve("#password"),
+//				rshellConfig.getConnectionSettings().getPassword());
+//		
 		connection.addProperty(ACTIVITY_URI.resolve("#keepSessionAlive"), 
 				new PropertyLiteral(rshellConfig.getConnectionSettings().isKeepSessionAlive()));
-		if (rshellConfig.getConnectionSettings().isNewRVersion() == null || ! rshellConfig.getConnectionSettings().isNewRVersion()) {
-			connection.addProperty(ACTIVITY_URI.resolve("#legacy"), 
-				new PropertyLiteral(true));
-		}		
+		
+//		ignoooooored - we won't support the legacy ones anymore
+//		if (rshellConfig.getConnectionSettings().isNewRVersion() == null || ! rshellConfig.getConnectionSettings().isNewRVersion()) {
+//			connection.addProperty(ACTIVITY_URI.resolve("#legacy"), 
+//				new PropertyLiteral(true));
+//		}		
 		
 		
 		
