@@ -29,16 +29,20 @@ import uk.org.taverna.scufl2.translator.t2flow.defaultactivities.RshellActivityP
 
 public class TestActivityParsingRshell {
 
-	private static final String WF_ALL_ACTIVITIES = "/defaultActivitiesTaverna2.2.t2flow";
+	private static final String WF_RSHELL_2_2 = "/rshell-2-2.t2flow";
+	private static final String WF_RSHELL_2_3 = "/rshell-2-3.t2flow";
+	private static final String WF_RSHELL_SIMPLE_2_3 = "/rshell-simple-2-3.t2flow";
+
+	
 	private static Scufl2Tools scufl2Tools = new Scufl2Tools();
 
 	@Test
-	public void parseRShellScript() throws Exception {
-		URL wfResource = getClass().getResource(WF_ALL_ACTIVITIES);
-		assertNotNull("Could not find workflow " + WF_ALL_ACTIVITIES, wfResource);
+	public void parseSimpleRShellScript() throws Exception {
+		URL wfResource = getClass().getResource(WF_RSHELL_SIMPLE_2_3);
+		assertNotNull("Could not find workflow " + WF_RSHELL_SIMPLE_2_3, wfResource);
 		T2FlowParser parser = new T2FlowParser();
 		parser.setValidating(true);
-		parser.setStrict(false);
+		parser.setStrict(true);
 		WorkflowBundle researchObj = parser
 				.parseT2Flow(wfResource.openStream());
 		Profile profile = researchObj.getMainProfile();
@@ -55,7 +59,7 @@ public class TestActivityParsingRshell {
 				.getPropertyResource().getTypeURI());
 		String script = config.getPropertyResource().getPropertyAsString(
 				RshellActivityParser.ACTIVITY_URI.resolve("#script"));
-		assertEquals("rshell\nscript", script);
+		assertEquals("too\nsimple", script);
 
 		Set<String> expectedInputs = new HashSet<String>(Arrays.asList(
 				"in1", "in2", "in3"));
@@ -65,7 +69,7 @@ public class TestActivityParsingRshell {
 		InputActivityPort in2 = activity.getInputPorts().getByName("in2");
 		assertEquals(0, in2.getDepth().intValue());
 		InputActivityPort in3 = activity.getInputPorts().getByName("in3");
-		assertEquals(1, in3.getDepth().intValue());
+		assertEquals(0, in3.getDepth().intValue());
 
 		Set<PropertyResource> inputDef = config.getPropertyResource()
 				.getPropertiesAsResources(
@@ -91,21 +95,19 @@ public class TestActivityParsingRshell {
 
 
 		Set<String> expectedOutputs = new HashSet<String>(
-				Arrays.asList("out1", "out2", "out3", "out4"));
+				Arrays.asList("out1", "out2", "out3"));
 		assertEquals(expectedOutputs, activity.getOutputPorts().getNames());
 		OutputActivityPort out1 = activity.getOutputPorts().getByName("out1");
 		assertEquals(0, out1.getDepth().intValue());
 		OutputActivityPort out2 = activity.getOutputPorts().getByName("out2");
-		assertEquals(0, out2.getDepth().intValue());
+		assertEquals(1, out2.getDepth().intValue());
 		OutputActivityPort out3 = activity.getOutputPorts().getByName("out3");
 		assertEquals(1, out3.getDepth().intValue());
-		OutputActivityPort out4 = activity.getOutputPorts().getByName("out4");
-		assertEquals(0, out4.getDepth().intValue());
 
 		Set<PropertyResource> outputDef = config.getPropertyResource()
 				.getPropertiesAsResources(
 						PORT_DEFINITION.resolve("#outputPortDefinition"));
-		assertEquals(4, outputDef.size());
+		assertEquals(3, outputDef.size());
 		PropertyResource out1Def = outputDef.iterator().next();
 
 		assertEquals(PORT_DEFINITION.resolve("#OutputPortDefinition"),
@@ -120,7 +122,7 @@ public class TestActivityParsingRshell {
 		assertEquals(6311, portLiteral.getLiteralValueAsInt());
 		assertEquals(PropertyLiteral.XSD_UNSIGNEDSHORT, portLiteral.getLiteralType());
 
-		assertTrue(connection.getPropertyAsLiteral(RshellActivityParser.ACTIVITY_URI.resolve("#keepSessionAlive")).getLiteralValueAsBoolean());
+		assertEquals(false, connection.getPropertyAsLiteral(RshellActivityParser.ACTIVITY_URI.resolve("#keepSessionAlive")).getLiteralValueAsBoolean());
 		
 		// TODO Check semantic types
 	}
