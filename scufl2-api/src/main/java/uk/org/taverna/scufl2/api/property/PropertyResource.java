@@ -363,6 +363,14 @@ PropertyObject {
 				PropertyReference.class);
 		return propertyResource;
 	}
+	
+	public PropertyResource getPropertyAsResource(URI predicate)
+			throws UnexpectedPropertyException, PropertyNotFoundException,
+			MultiplePropertiesException {
+		PropertyResource propertyResource = getPropertyOfType(predicate,
+				PropertyResource.class);
+		return propertyResource;
+	}
 
 	public URI getPropertyAsResourceURI(URI predicate)
 	throws UnexpectedPropertyException, PropertyNotFoundException,
