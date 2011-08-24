@@ -104,14 +104,19 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 		if (externalToolConfig  != null) {
 			configResource.addProperty(ACTIVITY_URI.resolve("#edited"), 
 					new PropertyLiteral(externalToolConfig.isEdited()));
+		
 			
-			configResource.addPropertyReference(ACTIVITY_URI.resolve("#mechanismType"), 
-					ACTIVITY_URI.resolve("#" + uriTools.validFilename(externalToolConfig.getMechanismType())));
-			
-			configResource.addPropertyAsString(ACTIVITY_URI.resolve("#mechanismName"), 
-					externalToolConfig.getMechanismName());
-			configResource.addProperty(ACTIVITY_URI.resolve("#mechanismXml"),
-					new PropertyLiteral(externalToolConfig.getMechanismName(), PropertyLiteral.XML_LITERAL));
+			if (externalToolConfig.getGroup() != null) {
+				configResource.addPropertyAsNewResource(ACTIVITY_URI.resolve("#invocationGroup"), ACTIVITY_URI.resolve("#InvocationGroup"));
+				// TODO: Invocation groups
+			} else {				
+				configResource.addPropertyReference(ACTIVITY_URI.resolve("#mechanismType"), 
+						ACTIVITY_URI.resolve("#" + uriTools.validFilename(externalToolConfig.getMechanismType())));
+				configResource.addPropertyAsString(ACTIVITY_URI.resolve("#mechanismName"), 
+						externalToolConfig.getMechanismName());
+				configResource.addProperty(ACTIVITY_URI.resolve("#mechanismXml"),
+						new PropertyLiteral(externalToolConfig.getMechanismName(), PropertyLiteral.XML_LITERAL));
+			}
 
 			configResource.addProperty(ACTIVITY_URI.resolve("#toolDescription"), 
 					parseToolDescription(externalToolConfig.getUseCaseDescription()));
@@ -130,14 +135,19 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 		PropertyResource propertyResource = new PropertyResource();
 		propertyResource.setTypeURI(ACTIVITY_URI.resolve("#ToolDescription"));
 		
+		// TODO: Form into URI as well?
 		propertyResource.addPropertyAsString(ACTIVITY_URI.resolve("#usecaseid"), 
 				toolDesc.getUsecaseid());
 		
-		propertyResource.addPropertyAsString(ACTIVITY_URI.resolve("#group"), 
+		if (toolDesc.getGroup() != null) {
+			propertyResource.addPropertyAsString(ACTIVITY_URI.resolve("#group"), 
 				toolDesc.getGroup());
+		}
 		
-		propertyResource.addPropertyAsString(DC.resolve("#description"), 
+		if (toolDesc.getDescription() != null) {
+			propertyResource.addPropertyAsString(DC.resolve("#description"), 
 				toolDesc.getDescription());
+		}
 		
 		propertyResource.addPropertyAsString(ACTIVITY_URI.resolve("#command"), 
 				toolDesc.getCommand());
