@@ -9,7 +9,7 @@
 	<xsd:annotation>
 		<xsd:appinfo>
 			<!-- See http://docs.rakeshv.org/java/jaxb/users-guide/jaxb-custom.html -->
-			<jxb:globalBindings />
+			
 			<jxb:schemaBindings>
 				<jxb:package name="uk.org.taverna.scufl2.xml.t2flow.jaxb" />
 			</jxb:schemaBindings>
@@ -27,9 +27,9 @@
 		</xsd:annotation>
 		<xsd:attribute name="ref" type="tav:uuid"></xsd:attribute>
 	</xsd:complexType>
-
 	<xsd:complexType name="ApiConsumerConfig">
 		<xsd:sequence>
+		
 			<xsd:element name="apiConsumerName" type="xsd:string" />
 			<xsd:element name="apiConsumerDescription" type="xsd:string" />
 			<xsd:element name="description" type="xsd:string" />
