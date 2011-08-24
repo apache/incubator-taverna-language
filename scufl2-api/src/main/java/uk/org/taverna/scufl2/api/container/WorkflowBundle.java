@@ -33,7 +33,7 @@ Named, Root {
 		return WORKFLOW_BUNDLE_ROOT.resolve(UUID.randomUUID().toString() + "/");
 	}
 
-	private URI sameBaseAs = generateIdentifier();
+	private URI globalBaseURI = generateIdentifier();
 	private final NamedSet<Profile> profiles = new NamedSet<Profile>();
 	private final NamedSet<Workflow> workflows = new NamedSet<Workflow>();
 	private Workflow mainWorkflow;
@@ -82,8 +82,8 @@ Named, Root {
 	}
 
 	@Override
-	public URI getSameBaseAs() {
-		return sameBaseAs;
+	public URI getGlobalBaseURI() {
+		return globalBaseURI;
 	}
 
 	public NamedSet<Workflow> getWorkflows() {
@@ -114,8 +114,8 @@ Named, Root {
 	}
 
 	@Override
-	public void setSameBaseAs(URI sameBaseAs) {
-		this.sameBaseAs = sameBaseAs;
+	public void setGlobalBaseURI(URI globalBaseURI) {
+		this.globalBaseURI = globalBaseURI;
 	}
 
 	public void setWorkflows(Set<Workflow> workflows) {
