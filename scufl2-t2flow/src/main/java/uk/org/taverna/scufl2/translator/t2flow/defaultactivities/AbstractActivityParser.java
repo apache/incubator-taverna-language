@@ -194,5 +194,10 @@ public abstract class AbstractActivityParser implements T2Parser {
 			}
 		}
 	}
+	
+	@Override
+	public List<URI> getAdditionalSchemas() {
+		return null;
+	}
 
 }

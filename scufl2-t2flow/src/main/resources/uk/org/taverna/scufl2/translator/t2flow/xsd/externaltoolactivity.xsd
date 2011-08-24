@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema elementFormDefault="unqualified" 
+	
+	xmlns:tool="http://taverna.sf.net/2011/xml/activity/external-tool"
+	xmlns:tav="http://taverna.sf.net/2008/xml/t2flow" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:jxb="http://java.sun.com/xml/ns/jaxb"	
+	jxb:version="1.0">
+
+	<xsd:annotation>
+		<xsd:appinfo>
+			<!-- See http://docs.rakeshv.org/java/jaxb/users-guide/jaxb-custom.html -->
+			
+			<jxb:schemaBindings>
+				<jxb:package name="uk.org.taverna.scufl2.xml.t2flow.externalTool.jaxb" />
+			</jxb:schemaBindings>
+		</xsd:appinfo>
+	</xsd:annotation>
+
+	<xsd:import namespace="http://taverna.sf.net/2008/xml/t2flow"
+		schemaLocation="t2flow.xsd" />
+
+	<xsd:element name="net.sf.taverna.t2.activities.externaltool.ExternalToolActivityConfigurationBean" 
+		type="ExternalToolConfig" substitutionGroup="tav:abstractConfigBean"  />
+
+	<xsd:element name="net.sf.taverna.t2.activities.usecase.UseCaseActivityConfigurationBean"
+		type="UsecaseConfig" substitutionGroup="tav:abstractConfigBean"  />
+	
+
+
+	<xsd:complexType name="UsecaseConfig">
+	<xsd:complexContent>
+			<xsd:extension base="tav:AbstractConfigBean">			
+			<xsd:sequence>
+		
+			<xsd:element name="repositoryUrl" type="xsd:anyURI" />			
+			<xsd:element name="usecaseid" type="xsd:Name" />
+		</xsd:sequence>
+		</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	
+	<xsd:complexType name="ExternalToolConfig">
+		<xsd:complexContent>
+			<xsd:extension base="tav:AbstractConfigBean">			
+			<xsd:sequence>
+	
+				<xsd:element name="mechanismType" type="xsd:string" />
+				<xsd:element name="mechanismName" type="xsd:string" />
+				<xsd:element name="mechanismXML" type="xsd:string" />
+				
+			
+				<xsd:sequence minOccurs="0">
+					<xsd:element name="repositoryUrl" type="xsd:anyURI"  />			
+					<xsd:element name="usecaseid" type="xsd:Name" />
+				</xsd:sequence>
+				
+				<xsd:element name="useCaseDescription" type="UsecaseDescription" />			
+				<xsd:element name="edited" type="xsd:boolean" />
+	
+			</xsd:sequence>
+					</xsd:extension>
+		
+		</xsd:complexContent>
+		
+	</xsd:complexType>
+
+	<xsd:complexType name="UsecaseDescription">
+		<xsd:sequence>
+		
+		</xsd:sequence>
+	</xsd:complexType>
+
+</xsd:schema>
