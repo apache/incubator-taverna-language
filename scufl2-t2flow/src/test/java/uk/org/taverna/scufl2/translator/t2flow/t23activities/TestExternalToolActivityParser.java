@@ -17,6 +17,7 @@ import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.profiles.Profile;
+import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ExternalToolConfig;
 
@@ -53,10 +54,62 @@ public class TestExternalToolActivityParser {
 		assertNotNull(config);
 		assertEquals(ACTIVITY_URI.resolve("#Config"), 
 				config.getConfigurableType());
-		URI usecase = config.getPropertyResource().getPropertyAsResourceURI(
-				ACTIVITY_URI.resolve("#usecase"));
+		URI toolId = config.getPropertyResource().getPropertyAsResourceURI(
+				ACTIVITY_URI.resolve("#toolId"));
 		assertEquals("http://taverna.nordugrid.org/sharedRepository/xml.php#cat", 
-				usecase.toASCIIString());
+				toolId.toASCIIString());
+				
+	}
+	
+	@Test
+	public void parse2_2_resaved() throws Exception {
+		URL wfResource = getClass().getResource(WF_2_2_RESAVED_2_3);
+		assertNotNull("Could not find workflow " + WF_2_2_RESAVED_2_3, wfResource);
+		WorkflowBundle bundle = parser
+				.parseT2Flow(wfResource.openStream());
+		Profile profile = bundle.getMainProfile();
+		Processor proc = bundle.getMainWorkflow().getProcessors()
+				.getByName("cat");
+		assertNotNull(proc);
+		Configuration config = scufl2Tools
+				.configurationForActivityBoundToProcessor(proc, profile);
+		assertNotNull(config);
+		assertEquals(ACTIVITY_URI.resolve("#Config"), 
+				config.getConfigurableType());
+		PropertyResource resource = config.getPropertyResource();
+		assertTrue(resource.getProperties().containsKey(ACTIVITY_URI.resolve("#toolId")));
+		URI toolId = resource.getPropertyAsResourceURI(
+				ACTIVITY_URI.resolve("#toolId"));
+		assertEquals("http://taverna.nordugrid.org/sharedRepository/xml.php#cat", 
+				toolId.toASCIIString());
+		
+		assertEquals(false, resource.getPropertyAsLiteral(
+						ACTIVITY_URI.resolve("#edited")).getLiteralValueAsBoolean());
+		
+		
+		
+	}
+	
+	@Test
+	public void parse2_3() throws Exception {
+		URL wfResource = getClass().getResource(WF_2_3);
+		assertNotNull("Could not find workflow " + WF_2_3, wfResource);
+		WorkflowBundle bundle = parser
+				.parseT2Flow(wfResource.openStream());
+		Profile profile = bundle.getMainProfile();
+		Processor proc = bundle.getMainWorkflow().getProcessors()
+				.getByName("Tool");
+		assertNotNull(proc);
+		Configuration config = scufl2Tools
+				.configurationForActivityBoundToProcessor(proc, profile);
+		assertNotNull(config);
+		assertEquals(ACTIVITY_URI.resolve("#Config"), 
+				config.getConfigurableType());
+		PropertyResource resource = config.getPropertyResource();
+		// Should NOT have a toolId
+		assertFalse(resource.getProperties().containsKey(ACTIVITY_URI.resolve("#toolId")));
+		
+		
 				
 	}
 	
