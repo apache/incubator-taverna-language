@@ -3,7 +3,7 @@ package uk.org.taverna.scufl2.api.common;
 import java.net.URI;
 
 public interface Root extends WorkflowBean {
-	public URI getSameBaseAs();
+	public URI getGlobalBaseURI();
 
-	public void setSameBaseAs(URI sameBaseAs);
+	public void setGlobalBaseURI(URI globalBaseURI);
 }
