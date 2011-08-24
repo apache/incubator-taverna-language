@@ -1,7 +1,10 @@
 package uk.org.taverna.scufl2.translator.t2flow.t23activities;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotNull;
+import static uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser.ACTIVITY_URI;
 
+import java.net.URI;
 import java.net.URL;
 
 import javax.xml.bind.JAXBException;
@@ -15,6 +18,7 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.ExternalToolConfig;
 
 public class TestExternalToolActivityParser {
 	private static final String WF_2_2 = "/tool-2-2.t2flow";
@@ -47,8 +51,15 @@ public class TestExternalToolActivityParser {
 		Configuration config = scufl2Tools
 				.configurationForActivityBoundToProcessor(proc, profile);
 		assertNotNull(config);
-		// TODO: Check data types defined (semantic types)
-		
+		assertEquals(ACTIVITY_URI.resolve("#Config"), 
+				config.getConfigurableType());
+		URI usecase = config.getPropertyResource().getPropertyAsResourceURI(
+				ACTIVITY_URI.resolve("#usecase"));
+		assertEquals("http://taverna.nordugrid.org/sharedRepository/xml.php#cat", 
+				usecase.toASCIIString());
+				
 	}
+	
+	
 	
 }
