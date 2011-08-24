@@ -124,6 +124,12 @@ public class TestURITools {
 				uriTools.validFilename("f/sd\\sdf'asd fa:s&?=d đþ”»æ"));
 	}
 */
+
+	@Test(expected=NullPointerException.class)
+	public void validFileNameNull() {		
+		uriTools.validFilename(null);
+	}
+	
 	@Test
 	public void wfBundle() {
 		assertEquals(

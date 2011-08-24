@@ -250,7 +250,9 @@ public class URITools {
 	}
 
 	public String validFilename(String name) {
-
+		if (name == null) {
+			throw new NullPointerException();
+		}
 		// Make a relative URI
 		URI uri;
 		try {
