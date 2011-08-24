@@ -226,7 +226,7 @@ public class ExampleWorkflow {
 		// bundle
 		// which already has an ID
 		workflowBundle
-				.setSameBaseAs(URI
+				.setGlobalBaseURI(URI
 						.create("http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/"));
 		Workflow workflow = makeMainWorkflow();
 		workflow.setParent(workflowBundle);
