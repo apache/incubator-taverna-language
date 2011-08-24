@@ -33,7 +33,7 @@ public class Profile extends AbstractNamedChild implements Child<WorkflowBundle>
 
 	private final NamedSet<Configuration> configurations = new NamedSet<Configuration>();
 
-	private int profilePosition;
+	private Integer profilePosition;
 
 	private final NamedSet<Activity> activities = new NamedSet<Activity>();
 
@@ -123,7 +123,7 @@ public class Profile extends AbstractNamedChild implements Child<WorkflowBundle>
 	 * @return the position of this profile within the <code>WorkflowBundle</code>
 	 */
 	@XmlElement(required = true, nillable = false)
-	public final int getProfilePosition() {
+	public final Integer getProfilePosition() {
 		return profilePosition;
 	}
 
@@ -179,7 +179,7 @@ public class Profile extends AbstractNamedChild implements Child<WorkflowBundle>
 	 * @param profilePosition
 	 *            the position of this profile within the <code>WorkflowBundle</code>
 	 */
-	public final void setProfilePosition(int profilePosition) {
+	public final void setProfilePosition(Integer profilePosition) {
 		this.profilePosition = profilePosition;
 	}
 
