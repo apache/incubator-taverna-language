@@ -74,8 +74,8 @@
 			<xsd:element name="command" type="xsd:string" />
 			<xsd:element name="test__local" type="xsd:string"
 				minOccurs="0" />
-			<xsd:element name="preparingTimeoutInSeconds" type="xsd:nonNegativeInteger" />
-			<xsd:element name="executionTimeoutInSeconds" type="xsd:nonNegativeInteger" />
+			<xsd:element name="preparingTimeoutInSeconds" type="xsd:int" />
+			<xsd:element name="executionTimeoutInSeconds" type="xsd:int" />
 			<xsd:element name="tags" />
 			<xsd:element name="REs" />
 			<xsd:element name="queue__preferred" />
