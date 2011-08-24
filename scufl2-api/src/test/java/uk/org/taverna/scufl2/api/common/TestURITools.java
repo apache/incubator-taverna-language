@@ -121,7 +121,8 @@ public class TestURITools {
 	public void validFileName() {
 		assertEquals(
 				"f%2fsd%5Csdf'asd%20fa%3as&%3F%3dd%20%C6%92%C3%AB%E2%88%9A%C3%A6%E2%80%9A%C3%84%C3%B9%C2%AC%C2%AA%E2%88%9A%C2%B6",
-				uriTools.validFilename("f/sd\\sdf'asd fa:s&?=d đþ”»æ"));
+				uriTools.validFilename("f/sd\\sdf'asd fa:s&?=d \u0192\u00eb\u221a\u00e6\u201a\u00c4\u00f9\u00ac\u00aa\u221a\u00b6")); 
+		// f/sd\sdf'asd fa:s&?=d  ƒë√æ‚Äù¬ª√¶  -- double check your Maven/Eclipse is using utf-8
 	}
 
 
