@@ -1,7 +1,5 @@
 package uk.org.taverna.scufl2.api.port;
 
-import javax.xml.bind.annotation.XmlTransient;
-
 import uk.org.taverna.scufl2.api.core.Processor;
 
 /**
@@ -46,7 +44,6 @@ ReceiverPort, ProcessorPort, InputPort {
 	 * @see uk.org.taverna.scufl2.api.common.Child#getParent()
 	 */
 	@Override
-	@XmlTransient
 	public Processor getParent() {
 		return parent;
 	}
