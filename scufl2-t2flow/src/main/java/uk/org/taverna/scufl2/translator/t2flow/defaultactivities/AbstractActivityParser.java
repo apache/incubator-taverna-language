@@ -49,6 +49,14 @@ public abstract class AbstractActivityParser implements T2Parser {
 			ConfigBean configBean, String encoding, Class<ConfigType> configType)
 			throws ReaderException {
 		Object config = configBean.getAny();
+		if (config instanceof JAXBElement) {
+			JAXBElement jaxbElement = (JAXBElement) config;
+			if (! configType.isInstance((jaxbElement.getValue()))) {
+				throw new ReaderException("Unexpected config type: " + 
+						jaxbElement.getValue().getClass() + ", expected " + configType);
+			}
+			return configType.cast(jaxbElement.getValue());
+		}
 		if (!(config instanceof Element) || !configBean.getEncoding().equals(encoding)) {
 			throw new ReaderException("Unsupported config bean " + configBean);
 		}
