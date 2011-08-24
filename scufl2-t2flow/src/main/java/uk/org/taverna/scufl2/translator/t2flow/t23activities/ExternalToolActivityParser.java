@@ -10,20 +10,28 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 
 public class ExternalToolActivityParser extends AbstractActivityParser {
 
-	private static URI activityRavenURI =
-			T2FlowParser.ravenURI.resolve("net.sf.taverna.t2.activities/external-tool-activity/");
+	private static URI usecaseActivityRavenUri = T2FlowParser.ravenURI
+			.resolve("net.sf.taverna.t2.activities/usecase-activity/");
 
-	private static String activityClassName = "net.sf.taverna.t2.activities.rshell.RshellActivity";
+	private static String usecaseActivityClass = "net.sf.taverna.t2.activities.usecase.UseCaseActivity";
+
+	private static URI externalToolRavenUri = T2FlowParser.ravenURI
+			.resolve("net.sf.taverna.t2.activities/external-tool-activity/");
+
+	private static String externalToolClass = "net.sf.taverna.t2.activities.externaltool.ExternalToolActivity";
 
 	public static URI ACTIVITY_URI = URI
 			.create("http://ns.taverna.org.uk/2010/activity/tool");
-	
 
 	@Override
 	public boolean canHandlePlugin(URI activityURI) {
 		String activityUriStr = activityURI.toASCIIString();
-		return activityUriStr.startsWith(activityRavenURI.toASCIIString())
-				&& activityUriStr.endsWith(activityClassName);
+		if (activityUriStr.startsWith(usecaseActivityRavenUri.toASCIIString())
+				&& activityUriStr.endsWith(usecaseActivityClass)) {
+			return true;
+		}
+		return activityUriStr.startsWith(externalToolRavenUri.toASCIIString())
+				&& activityUriStr.endsWith(externalToolClass);
 	}
 
 	@Override
@@ -31,11 +39,11 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 		return ACTIVITY_URI;
 	}
 
-
 	@Override
 	public Configuration parseConfiguration(T2FlowParser t2FlowParser,
 			ConfigBean configBean) throws ReaderException {
-	//	RShellConfig rshellConfig = unmarshallConfig(t2FlowParser, configBean, "xstream", RShellConfig.class);
+		// RShellConfig rshellConfig = unmarshallConfig(t2FlowParser,
+		// configBean, "xstream", RShellConfig.class);
 		return null;
 	}
 }
