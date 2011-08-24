@@ -53,7 +53,7 @@ public class WorkflowBundleParser extends AbstractParser {
 			}
 			if (wb.getGlobalBaseURI() != null
 					&& wb.getGlobalBaseURI().getResource() != null) {
-				workflowBundle.setSameBaseAs(base.resolve(wb.getGlobalBaseURI()
+				workflowBundle.setGlobalBaseURI(base.resolve(wb.getGlobalBaseURI()
 						.getResource()));
 			}
 			mapBean(base.resolve(wb.getAbout()), workflowBundle);
