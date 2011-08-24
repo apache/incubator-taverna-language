@@ -51,9 +51,9 @@ public class WorkflowBundleParser extends AbstractParser {
 			if (wb.getName() != null) {
 				workflowBundle.setName(wb.getName());
 			}
-			if (wb.getSameBaseAs() != null
-					&& wb.getSameBaseAs().getResource() != null) {
-				workflowBundle.setSameBaseAs(base.resolve(wb.getSameBaseAs()
+			if (wb.getGlobalBaseURI() != null
+					&& wb.getGlobalBaseURI().getResource() != null) {
+				workflowBundle.setSameBaseAs(base.resolve(wb.getGlobalBaseURI()
 						.getResource()));
 			}
 			mapBean(base.resolve(wb.getAbout()), workflowBundle);
