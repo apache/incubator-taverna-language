@@ -6,11 +6,15 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
+import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
+import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.defaultactivities.AbstractActivityParser;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.BeanshellConfig;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.UsecaseConfig;
 
 public class ExternalToolActivityParser extends AbstractActivityParser {
 
@@ -54,12 +58,26 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 	public URI mapT2flowRavenIdToScufl2URI(URI t2flowActivity) {
 		return ACTIVITY_URI;
 	}
+	
+	private static URITools uriTools = new URITools();
 
 	@Override
 	public Configuration parseConfiguration(T2FlowParser t2FlowParser,
 			ConfigBean configBean) throws ReaderException {
-		// RShellConfig rshellConfig = unmarshallConfig(t2FlowParser,
-		// configBean, "xstream", RShellConfig.class);
-		return null;
+		
+		UsecaseConfig usecaseConfig = unmarshallConfig(t2FlowParser,
+				configBean, "xstream", UsecaseConfig.class);
+		
+		Configuration configuration = new Configuration();
+		configuration.setParent(getParserState().getCurrentProfile());
+		PropertyResource configResource = configuration.getPropertyResource();
+		configResource.setTypeURI(ACTIVITY_URI.resolve("#Config"));
+		
+		if (usecaseConfig.getRepositoryUrl() != null) {
+			URI repositoryUri = URI.create(usecaseConfig.getRepositoryUrl());
+			URI usecase = repositoryUri.resolve("#" + uriTools.validFilename(usecaseConfig.getUsecaseid()));
+			configResource.addPropertyReference(ACTIVITY_URI.resolve("#usecase"), usecase);
+		}		
+		return configuration;
 	}
 }
