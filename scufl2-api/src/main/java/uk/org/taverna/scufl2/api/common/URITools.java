@@ -129,7 +129,7 @@ public class URITools {
 			Root root = (Root) bean;
 			if (root.getGlobalBaseURI() == null) {
 				if (root instanceof WorkflowBundle) {
-					root.setSameBaseAs(WorkflowBundle.generateIdentifier());
+					root.setGlobalBaseURI(WorkflowBundle.generateIdentifier());
 				} else {
 					throw new IllegalArgumentException(
 							"sameBaseAs is null for bean " + bean);
