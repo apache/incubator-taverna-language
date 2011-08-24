@@ -9,12 +9,18 @@ import java.util.List;
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
+import uk.org.taverna.scufl2.api.property.PropertyLiteral;
+import uk.org.taverna.scufl2.api.property.PropertyObject;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.defaultactivities.AbstractActivityParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.BeanshellConfig;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.ExternalToolConfig;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.Group;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.ScriptInputStatic;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.UsecaseConfig;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.UsecaseDescription;
 
 public class ExternalToolActivityParser extends AbstractActivityParser {
 
@@ -32,6 +38,9 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 
 	public static URI ACTIVITY_URI = URI
 			.create("http://ns.taverna.org.uk/2010/activity/tool");
+	
+	public static URI DC = URI
+			.create("http://purl.org/dc/elements/1.1/");
 
 	@Override
 	public boolean canHandlePlugin(URI activityURI) {
@@ -65,19 +74,103 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 	public Configuration parseConfiguration(T2FlowParser t2FlowParser,
 			ConfigBean configBean) throws ReaderException {
 		
-		UsecaseConfig usecaseConfig = unmarshallConfig(t2FlowParser,
-				configBean, "xstream", UsecaseConfig.class);
+		ExternalToolConfig externalToolConfig = null;
+		UsecaseConfig usecaseConfig = null;
+		
+		try { 
+			externalToolConfig = unmarshallConfig(t2FlowParser,
+					configBean, "xstream", ExternalToolConfig.class);
+		} catch (ReaderException ex) {
+			usecaseConfig = unmarshallConfig(t2FlowParser,
+					configBean, "xstream", UsecaseConfig.class);
+		}
+		
 		
 		Configuration configuration = new Configuration();
 		configuration.setParent(getParserState().getCurrentProfile());
 		PropertyResource configResource = configuration.getPropertyResource();
 		configResource.setTypeURI(ACTIVITY_URI.resolve("#Config"));
 		
-		if (usecaseConfig.getRepositoryUrl() != null) {
+		if (usecaseConfig != null && usecaseConfig.getRepositoryUrl() != null) {
 			URI repositoryUri = URI.create(usecaseConfig.getRepositoryUrl());
 			URI usecase = repositoryUri.resolve("#" + uriTools.validFilename(usecaseConfig.getUsecaseid()));
-			configResource.addPropertyReference(ACTIVITY_URI.resolve("#usecase"), usecase);
-		}		
+			configResource.addPropertyReference(ACTIVITY_URI.resolve("#toolId"), usecase);
+		} else if (externalToolConfig  != null && externalToolConfig.getRepositoryUrl() != null) {
+			URI repositoryUri = URI.create(externalToolConfig.getRepositoryUrl());
+			URI usecase = repositoryUri.resolve("#" + uriTools.validFilename(externalToolConfig.getExternaltoolid()));
+			configResource.addPropertyReference(ACTIVITY_URI.resolve("#toolId"), usecase);
+		}
+		
+		if (externalToolConfig  != null) {
+			configResource.addProperty(ACTIVITY_URI.resolve("#edited"), 
+					new PropertyLiteral(externalToolConfig.isEdited()));
+			
+			configResource.addPropertyReference(ACTIVITY_URI.resolve("#mechanismType"), 
+					ACTIVITY_URI.resolve("#" + uriTools.validFilename(externalToolConfig.getMechanismType())));
+			
+			configResource.addPropertyAsString(ACTIVITY_URI.resolve("#mechanismName"), 
+					externalToolConfig.getMechanismName());
+			configResource.addProperty(ACTIVITY_URI.resolve("#mechanismXml"),
+					new PropertyLiteral(externalToolConfig.getMechanismName(), PropertyLiteral.XML_LITERAL));
+
+			configResource.addProperty(ACTIVITY_URI.resolve("#toolDescription"), 
+					parseToolDescription(externalToolConfig.getUseCaseDescription()));
+
+			configResource.addProperty(ACTIVITY_URI.resolve("#invocationGroup"), 
+					parseGroup(externalToolConfig.getGroup()));
+			
+			
+		}
+		
 		return configuration;
+	}
+
+	protected PropertyObject parseToolDescription(
+			UsecaseDescription toolDesc) {
+		PropertyResource propertyResource = new PropertyResource();
+		propertyResource.setTypeURI(ACTIVITY_URI.resolve("#ToolDescription"));
+		
+		propertyResource.addPropertyAsString(ACTIVITY_URI.resolve("#usecaseid"), 
+				toolDesc.getUsecaseid());
+		
+		propertyResource.addPropertyAsString(ACTIVITY_URI.resolve("#group"), 
+				toolDesc.getGroup());
+		
+		propertyResource.addPropertyAsString(DC.resolve("#description"), 
+				toolDesc.getDescription());
+		
+		propertyResource.addPropertyAsString(ACTIVITY_URI.resolve("#command"), 
+				toolDesc.getCommand());
+		propertyResource.addProperty(ACTIVITY_URI.resolve("#preparingTimeoutInSeconds"), 
+				new PropertyLiteral(toolDesc.getPreparingTimeoutInSeconds()));
+		propertyResource.addProperty(ACTIVITY_URI.resolve("executionTimeoutInSeconds"), 
+				new PropertyLiteral(toolDesc.getExecutionTimeoutInSeconds()));
+		
+		
+		// Ignoring tags, REs, queue__preferred, queue__deny
+
+		
+		// static inputs
+		for (ScriptInputStatic inputStatic : toolDesc.getStaticInputs().getDeUniLuebeckInbKnowarcUsecasesScriptInputStatic()) {
+			//
+		}
+		// Inputs
+		// Outputs
+		
+		propertyResource.addProperty(ACTIVITY_URI.resolve("#includeStdIn"), 
+				new PropertyLiteral(toolDesc.isIncludeStdIn()));
+		propertyResource.addProperty(ACTIVITY_URI.resolve("#includeStdOut"), 
+				new PropertyLiteral(toolDesc.isIncludeStdOut()));
+		propertyResource.addProperty(ACTIVITY_URI.resolve("#includeStdErr"), 
+				new PropertyLiteral(toolDesc.isIncludeStdErr()));
+		
+		
+		return propertyResource;
+	}
+
+	protected PropertyObject parseGroup(Group group) {
+		PropertyResource propertyResource = new PropertyResource();
+		propertyResource.setTypeURI(ACTIVITY_URI.resolve("#InvocationGroup"));
+		return propertyResource;
 	}
 }
