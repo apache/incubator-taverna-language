@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,6 +33,7 @@ import org.xml.sax.SAXException;
 
 import uk.org.taverna.scufl2.api.common.Named;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
+import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.DataLink;
@@ -119,6 +121,9 @@ public class T2FlowParser {
 
 	private static Scufl2Tools scufl2Tools = new Scufl2Tools();
 
+	private static URITools uriTools = new URITools();
+
+	
 	protected Set<T2Parser> t2Parsers = null;
 	protected final JAXBContext jaxbContext;
 	private boolean strict = false;
@@ -274,8 +279,8 @@ public class T2FlowParser {
 	}
 
 	private URI makeRavenURI(Raven raven, String className) {
-		return ravenURI.resolve(raven.getGroup() + "/" + raven.getArtifact()
-				+ "/" + raven.getVersion() + "/" + className);
+		return ravenURI.resolve(uriTools.validFilename(raven.getGroup()) + "/" + uriTools.validFilename(raven.getArtifact())
+				+ "/" + uriTools.validFilename(raven.getVersion()) + "/" + uriTools.validFilename(className));
 	}
 
 	private URI mapTypeFromRaven(Raven raven, String activityClass)
@@ -407,16 +412,26 @@ public class T2FlowParser {
 		if (!isValidating() && u.getSchema() != null) {
 			u.setSchema(null);
 		} else if (isValidating() && u.getSchema() == null) {
+			
+					
 			// Load and set schema to validate against
 			Schema schema;
 			try {
 				SchemaFactory schemaFactory = SchemaFactory
 						.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
+				List<URI> schemas = getAdditionalSchemas();
+				
 				URL t2flowExtendedXSD = getClass().getResource(
 						T2FLOW_EXTENDED_XSD);
-				Source schemaSource = new StreamSource(t2flowExtendedXSD
-						.toURI().toASCIIString());
-				schema = schemaFactory.newSchema(schemaSource);
+				schemas.add(0,  t2flowExtendedXSD.toURI());
+				
+				List<Source> schemaSources = new ArrayList<Source>();
+				for (URI schemaUri : schemas) {
+					schemaSources.add(new StreamSource(schemaUri.toASCIIString()));
+				}						
+				Source[] sources = schemaSources.toArray(new Source[schemaSources.size()]);
+				schema = schemaFactory.newSchema(sources);
+				
 			} catch (SAXException e) {
 				throw new RuntimeException("Can't load schema "
 						+ T2FLOW_EXTENDED_XSD, e);
@@ -428,8 +443,21 @@ public class T2FlowParser {
 						+ T2FLOW_EXTENDED_XSD, e);
 			}
 			u.setSchema(schema);
+
+
 		}
 		return u;
+	}
+
+	protected List<URI> getAdditionalSchemas() {
+		List<URI> uris = new ArrayList<URI>();
+		for (T2Parser parser : getT2Parsers()) {
+			List<URI> schemas = parser.getAdditionalSchemas();
+			if (schemas != null) {
+				uris.addAll(schemas);
+			}
+		}
+		return uris;
 	}
 
 	protected void parseActivityInputMap(

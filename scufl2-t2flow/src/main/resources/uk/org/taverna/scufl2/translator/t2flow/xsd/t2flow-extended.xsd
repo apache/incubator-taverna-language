@@ -44,8 +44,6 @@
 						</xsd:element>
 
 
-
-						<!--  activity beans -->
 						<xsd:element form="unqualified"
 							name="net.sf.taverna.t2.activities.apiconsumer.ApiConsumerActivityConfigurationBean"
 							type="activities:ApiConsumerConfig">
@@ -92,8 +90,10 @@
 							type="activities:SoaplabConfig"/>
 
 						
-						<xsd:element name="dataflow" type="activities:DataflowConfig">
-						</xsd:element>
+						<xsd:element name="dataflow" type="activities:DataflowConfig" />
+						
+						<xsd:element ref="tav:abstractConfigBean" />
+						
 					</xsd:choice>
 					<xsd:attribute name="encoding" use="required" type="tav:Encoding" />
 				</xsd:restriction>
