@@ -1,6 +1,10 @@
 package uk.org.taverna.scufl2.translator.t2flow.t23activities;
 
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
@@ -9,6 +13,8 @@ import uk.org.taverna.scufl2.translator.t2flow.defaultactivities.AbstractActivit
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 
 public class ExternalToolActivityParser extends AbstractActivityParser {
+
+	private static final String EXTERNALTOOLACTIVITY_XSD = "../xsd/externaltoolactivity.xsd";
 
 	private static URI usecaseActivityRavenUri = T2FlowParser.ravenURI
 			.resolve("net.sf.taverna.t2.activities/usecase-activity/");
@@ -34,6 +40,16 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 				&& activityUriStr.endsWith(externalToolClass);
 	}
 
+	@Override
+	public List<URI> getAdditionalSchemas() {
+		URL externalToolXsd = getClass().getResource(EXTERNALTOOLACTIVITY_XSD);
+		try {
+			return Arrays.asList(externalToolXsd.toURI());
+		} catch (URISyntaxException e) {
+			throw new IllegalStateException("Can't find external tool schema " + externalToolXsd);
+		}
+	}
+	
 	@Override
 	public URI mapT2flowRavenIdToScufl2URI(URI t2flowActivity) {
 		return ACTIVITY_URI;
