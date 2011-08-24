@@ -772,7 +772,7 @@ public class T2FlowParser {
 				if (df.getRole().equals(Role.TOP)) {
 					wfBundle.setMainWorkflow(workflow);
 					wfBundle.setName(df.getName());
-					wfBundle.setSameBaseAs(WorkflowBundle.WORKFLOW_BUNDLE_ROOT.resolve(df.getId() + "/"));
+					wfBundle.setGlobalBaseURI(WorkflowBundle.WORKFLOW_BUNDLE_ROOT.resolve(df.getId() + "/"));
 				}
 			}
 			// Second stage
