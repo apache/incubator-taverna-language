@@ -117,13 +117,13 @@ public class TestURITools {
 				.toASCIIString());
 	}
 
-/*	@Test
+	@Test
 	public void validFileName() {
 		assertEquals(
-				"f%2fsd%5Csdf'asd%20fa%3as&%3F%3dd%20%C4%91%C3%BE%E2%80%9D%C2%BB%C3%A6",
+				"f%2fsd%5Csdf'asd%20fa%3as&%3F%3dd%20%C6%92%C3%AB%E2%88%9A%C3%A6%E2%80%9A%C3%84%C3%B9%C2%AC%C2%AA%E2%88%9A%C2%B6",
 				uriTools.validFilename("f/sd\\sdf'asd fa:s&?=d đþ”»æ"));
 	}
-*/
+
 
 	@Test(expected=NullPointerException.class)
 	public void validFileNameNull() {		
