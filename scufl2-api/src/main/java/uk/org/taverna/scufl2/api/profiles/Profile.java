@@ -4,10 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlType;
-
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
 import uk.org.taverna.scufl2.api.common.Child;
@@ -26,7 +22,6 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
  * 
  * @author Alan R Williams
  */
-@XmlType(propOrder = { "profilePosition", "processorBindings", "configurations" })
 public class Profile extends AbstractNamedChild implements Child<WorkflowBundle> {
 
 	private final NamedSet<ProcessorBinding> processorBindings = new NamedSet<ProcessorBinding>();
@@ -92,8 +87,6 @@ public class Profile extends AbstractNamedChild implements Child<WorkflowBundle>
 	 * 
 	 * @return the <code>Configuration</code>s that this <code>Profile</code> contains
 	 */
-	@XmlElementWrapper(name = "configurations", nillable = false, required = true)
-	@XmlElement(name = "configuration", nillable = false)
 	public NamedSet<Configuration> getConfigurations() {
 		return configurations;
 	}
@@ -108,21 +101,20 @@ public class Profile extends AbstractNamedChild implements Child<WorkflowBundle>
 	 * 
 	 * @return the set of bindings for individual <code>Processor</code>s
 	 */
-	@XmlElementWrapper(name = "processorBindings", nillable = false, required = true)
-	@XmlElement(name = "processorBinding", nillable = false)
 	public NamedSet<ProcessorBinding> getProcessorBindings() {
 		return processorBindings;
 	}
 
 	/**
-	 * Returns the position of this profile within the {@link WorkflowBundle}.
+	 * Return the suggested position of this profile within the {@link WorkflowBundle}.
 	 * <p>
-	 * When ordering profiles, they can be sorted by decreasing profilePosition. If two profiles
-	 * have the same position, their internal order is undetermined.
+	 * If ordering profiles (for instance for displaying them to the user), they 
+	 * might be sorted by increasing profilePosition. If two profiles
+	 * have the same position, their internal order is undetermined. Profiles with 
+	 * profile position <code>null</code> should be sorted last in such a list. 
 	 * 
 	 * @return the position of this profile within the <code>WorkflowBundle</code>
 	 */
-	@XmlElement(required = true, nillable = false)
 	public final Integer getProfilePosition() {
 		return profilePosition;
 	}
