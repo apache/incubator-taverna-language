@@ -15,6 +15,7 @@
 	<bean id="wsdlXMLSplitterParser" class="uk.org.taverna.scufl2.translator.t2flow.defaultactivities.WSDLXMLSplitterParser" />
 	<bean id="biomartActivityParser" class="uk.org.taverna.scufl2.translator.t2flow.defaultactivities.BiomartActivityParser" />
 	<bean id="apiConsomerActivityParser" class="uk.org.taverna.scufl2.translator.t2flow.defaultactivities.ApiConsomerActivityParser" />
+	<bean id="externalToolActivityParser" class="uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser" />
 
 	<bean id="parallelizeParser" class="uk.org.taverna.scufl2.translator.t2flow.defaultdispatchstack.ParallelizeParser" />
 	<bean id="errorBounceParser" class="uk.org.taverna.scufl2.translator.t2flow.defaultdispatchstack.ErrorBounceParser" />

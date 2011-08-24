@@ -1,6 +1,9 @@
 package uk.org.taverna.scufl2.translator.t2flow;
 
 import java.net.URI;
+import java.util.List;
+
+import javax.xml.transform.Source;
 
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
@@ -17,4 +20,5 @@ public interface T2Parser {
 
 	public void setParserState(ParserState parserState);
 
+	public List<URI> getAdditionalSchemas();
 }

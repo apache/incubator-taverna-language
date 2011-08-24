@@ -127,15 +127,15 @@ public class URITools {
 		}
 		if (bean instanceof Root) {
 			Root root = (Root) bean;
-			if (root.getSameBaseAs() == null) {
+			if (root.getGlobalBaseURI() == null) {
 				if (root instanceof WorkflowBundle) {
-					root.setSameBaseAs(WorkflowBundle.generateIdentifier());
+					root.setGlobalBaseURI(WorkflowBundle.generateIdentifier());
 				} else {
 					throw new IllegalArgumentException(
 							"sameBaseAs is null for bean " + bean);
 				}
 			}
-			return root.getSameBaseAs();
+			return root.getGlobalBaseURI();
 		}
 		if (bean instanceof Child) {
 			Child child = (Child) bean;
@@ -250,7 +250,9 @@ public class URITools {
 	}
 
 	public String validFilename(String name) {
-
+		if (name == null) {
+			throw new NullPointerException();
+		}
 		// Make a relative URI
 		URI uri;
 		try {

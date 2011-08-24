@@ -444,6 +444,10 @@
 		<attribute use="required" name="to" type="tav:PortName" />
 	</complexType>
 
+	<element name="abstractConfigBean" abstract="true" type="tav:AbstractConfigBean"  />
+
+	<complexType name="AbstractConfigBean" />
+
 	<complexType name="ConfigBean">
 		<annotation>
 			<documentation>A serialised configuration bean to configure a
@@ -455,7 +459,7 @@
 				and dispatch layers.</documentation>
 		</annotation>
 		<sequence>
-			<any namespace="##any" processContents="lax"></any>
+			 <any namespace="##any" processContents="lax" />
 		</sequence>
 		<attribute name="encoding" type="string" use="required" />
 	</complexType>

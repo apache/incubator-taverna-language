@@ -78,7 +78,7 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="scufl2:name" minOccurs="0" />
-				<xs:element name="sameBaseAs" type="rdf:Resource"
+				<xs:element name="globalBaseURI" type="rdf:Resource"
 					minOccurs="0" />
 				<xs:element name="mainWorkflow" type="rdf:Resource"
 					minOccurs="0" />

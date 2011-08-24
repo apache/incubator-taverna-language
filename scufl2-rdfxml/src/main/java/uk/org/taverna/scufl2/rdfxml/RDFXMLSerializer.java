@@ -656,10 +656,10 @@ public class RDFXMLSerializer {
 		bundle.setAbout("");
 		bundle.setName(wfBundle.getName());
 
-		if (wfBundle.getSameBaseAs() != null) {
-			Resource sameBaseAs = rdfObjectFactory.createResource();
-			sameBaseAs.setResource(wfBundle.getSameBaseAs().toASCIIString());
-			bundle.setSameBaseAs(sameBaseAs);
+		if (wfBundle.getGlobalBaseURI() != null) {
+			Resource globalBaseURI = rdfObjectFactory.createResource();
+			globalBaseURI.setResource(wfBundle.getGlobalBaseURI().toASCIIString());
+			bundle.setGlobalBaseURI(globalBaseURI);
 		}
 
 		for (Workflow wf : wfBundle.getWorkflows()) {
