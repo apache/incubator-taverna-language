@@ -127,7 +127,7 @@ public class URITools {
 		}
 		if (bean instanceof Root) {
 			Root root = (Root) bean;
-			if (root.getSameBaseAs() == null) {
+			if (root.getGlobalBaseURI() == null) {
 				if (root instanceof WorkflowBundle) {
 					root.setSameBaseAs(WorkflowBundle.generateIdentifier());
 				} else {
@@ -135,7 +135,7 @@ public class URITools {
 							"sameBaseAs is null for bean " + bean);
 				}
 			}
-			return root.getSameBaseAs();
+			return root.getGlobalBaseURI();
 		}
 		if (bean instanceof Child) {
 			Child child = (Child) bean;
