@@ -36,9 +36,9 @@ public class BlockingControlLink implements ControlLink {
 	 *            the <code>Processor</code> that controls the block. Can be <code>null</code>.
 	 */
 	public BlockingControlLink(Processor block, Processor untilFinished) {
-		setParent(block.getParent());
 		setUntilFinished(untilFinished);
 		setBlock(block);
+		setParent(block.getParent());
 	}
 
 	@Override
@@ -51,16 +51,37 @@ public class BlockingControlLink implements ControlLink {
 		if (!(o instanceof BlockingControlLink)) {
 			return o.getClass().getCanonicalName().compareTo(getClass().getCanonicalName());
 		}
-		BlockingControlLink o1 = this;
+		BlockingControlLink o1 = this;		
 		BlockingControlLink o2 = (BlockingControlLink) o;
-
-		int untilFinished = o1.getUntilFinished().compareTo(o2.getUntilFinished());
-		if (untilFinished != 0) {
-			return untilFinished;
+		
+		if (o1.getUntilFinished() == null) {
+			if (o2.getUntilFinished() != null) {
+				return -1;
+			}
+		} else { 
+			if (o2.getUntilFinished() == null) {
+				return 1;
+			}
+			int untilFinished = o1.getUntilFinished().compareTo(o2.getUntilFinished());
+			if (untilFinished != 0) {
+				return untilFinished;
+			}
 		}
 
-		int block = o1.getBlock().compareTo(o2.getBlock());
-		return block;
+		if (o1.getBlock() == null) {
+			if (o2.getBlock() != null) {
+				return -1;
+			}
+		} else { 
+			if (o2.getBlock() == null) {
+				return 1;
+			}
+			int block = o1.getBlock().compareTo(o2.getBlock());
+			if (block != 0) {
+				return block;
+			}
+		}		
+		return 0;
 	}
 
 	@Override
