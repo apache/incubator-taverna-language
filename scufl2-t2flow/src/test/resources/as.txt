@@ -59,6 +59,8 @@ WorkflowBundle 'Workflow1'
       'String_constant:value' -> 'String_constant_value'
       'lk' -> 'Concatenate_two_strings:string2'
       'string1_value:value' -> 'Concatenate_two_strings:string1'
+    Controls
+      block 'String_constant' until 'Concatenate_two_strings' finish
   MainProfile 'taverna-2.1.0'
   Profile 'taverna-2.1.0'
     Activity 'Concatenate_two_strings'
