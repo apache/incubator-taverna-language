@@ -32,10 +32,13 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import uk.org.taverna.scufl2.api.common.Named;
+import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.core.BlockingControlLink;
+import uk.org.taverna.scufl2.api.core.ControlLink;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
@@ -63,6 +66,8 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.Activity;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedGranularDepthPort;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedGranularDepthPorts;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedPorts;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.Condition;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.Conditions;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.CrossProduct;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Dataflow;
@@ -544,9 +549,31 @@ public class T2FlowParser {
 		wf.setOutputPorts(parseOutputPorts(df.getOutputPorts()));
 		wf.setProcessors(parseProcessors(df.getProcessors()));
 		wf.setDataLinks(parseDatalinks(df.getDatalinks()));
-		// TODO: Start conditions, annotations
+		wf.setControlLinks(parseControlLinks(df.getConditions()));
+		// TODO: annotations
 		parserState.get().setCurrentWorkflow(null);
 		return wf;
+	}
+
+	private Set<ControlLink> parseControlLinks(Conditions conditions) throws ReaderException {
+		Set<ControlLink> links = new HashSet<ControlLink>();
+		for (Condition condition : conditions.getCondition()) {
+			NamedSet<Processor> processors = parserState.get().getCurrentWorkflow().getProcessors();
+			String target = condition.getTarget();
+			Processor block = processors.getByName(target);
+			if (block == null && isStrict()) {
+				throw new ReaderException("Unrecognized blocking processor in control link: " + target);
+			}
+			String control = condition.getControl();
+			Processor untilFinished = processors.getByName(control);
+			if (untilFinished == null && isStrict()) {
+				throw new ReaderException("Unrecognized untilFinished processor in control link: " + control);
+			}
+
+			
+			links.add(new BlockingControlLink(block, untilFinished));
+		}
+		return links;
 	}
 
 	protected Set<DataLink> parseDatalinks(Datalinks origLinks)
