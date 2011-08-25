@@ -34,7 +34,7 @@ public class WSDLActivityParser extends AbstractActivityParser {
 	}
 
 	@Override
-	public URI mapT2flowRavenIdToScufl2URI(URI t2flowActivity) {		
+	public URI mapT2flowRavenIdToScufl2URI(URI t2flowActivity) {
 		return WSDL;
 	}
 
@@ -78,7 +78,7 @@ public class WSDLActivityParser extends AbstractActivityParser {
 			URI securityProfileURI = SECURITY.resolve("#" + wsdlConfig
 					.getSecurityProfile());
 			configuration.getPropertyResource().addPropertyReference(
-					SECURITY.resolve("#profile"), securityProfileURI);
+					WSDL.resolve("#securityProfile"), securityProfileURI);
 		}
 		return configuration;
 	}
