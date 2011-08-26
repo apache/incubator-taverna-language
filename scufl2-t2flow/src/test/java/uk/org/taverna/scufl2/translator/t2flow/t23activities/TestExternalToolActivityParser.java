@@ -93,6 +93,8 @@ public class TestExternalToolActivityParser {
 		assertNotNull("Could not find workflow " + WF_2_2_RESAVED_2_3, wfResource);
 		WorkflowBundle bundle = parser
 				.parseT2Flow(wfResource.openStream());
+		
+		
 		Profile profile = bundle.getMainProfile();
 		Processor proc = bundle.getMainWorkflow().getProcessors()
 				.getByName("cat");
@@ -122,9 +124,9 @@ public class TestExternalToolActivityParser {
 		
 		PropertyResource description = resource.getPropertyAsResource(ACTIVITY_URI.resolve("#toolDescription"));
 		assertEquals("cat",  
-				description.getPropertyAsString(ACTIVITY_URI.resolve("#usecaseid")));
+				description.getPropertyAsString(DC.resolve("title")));
 		assertEquals("Testing",  
-				description.getPropertyAsString(ACTIVITY_URI.resolve("#group")));
+				description.getPropertyAsString(ACTIVITY_URI.resolve("#category")));
 		assertEquals("concatenation of two streams",  
 				description.getPropertyAsString(DC.resolve("description")));
 		assertEquals("cat file1.txt file2.txt",  
@@ -136,7 +138,6 @@ public class TestExternalToolActivityParser {
 		assertTrue(description.getProperties().get(ACTIVITY_URI.resolve("#runtimeEnvironment")).isEmpty());
 		assertTrue(description.getProperties().get(ACTIVITY_URI.resolve("#queue")).isEmpty());
 		
-		// TODO: Check static inputs, inputs and outputs
 		assertEquals(false, description.getPropertyAsLiteral(
 				ACTIVITY_URI.resolve("#includeStdIn")).getLiteralValueAsBoolean());
 		assertEquals(true, description.getPropertyAsLiteral(
@@ -170,14 +171,18 @@ public class TestExternalToolActivityParser {
 		assertNotNull("Could not find port definition for first_file", portDefinition);
 		assertEquals(PropertyLiteral.XSD_STRING,
 				portDefinition.getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
-		assertEquals("file.txt",
-				portDefinition.getPropertyAsString(ACTIVITY_URI.resolve("#fileName")));
+		assertEquals(ACTIVITY_URI.resolve("#File"), 
+				portDefinition.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#substitutionType")));
+		assertEquals("file1.txt",
+				portDefinition.getPropertyAsString(ACTIVITY_URI.resolve("#substitutes")));
 		
 		assertEquals(CHARSET.resolve("#windows-1252"),
 				portDefinition.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#charset")));
-		assertNull(portDefinition.getPropertyAsString(ACTIVITY_URI.resolve("#tempFile")));
-		assertNull(portDefinition.getPropertyAsString(ACTIVITY_URI.resolve("#forceCopy")));
 
+		assertFalse(portDefinition.getProperties().containsKey(ACTIVITY_URI.resolve("#forceCopy")));
+		assertFalse(portDefinition.getProperties().containsKey(ACTIVITY_URI.resolve("#concatenate")));
+
+		
 		//		Not translated:
 		//		assertNull(portDefinition.getPropertyAsString(ACTIVITY_URI.resolve("#concatenate")));
 		//		assertNull(portDefinition.getPropertyAsString(ACTIVITY_URI.resolve("#list")));
@@ -185,15 +190,20 @@ public class TestExternalToolActivityParser {
 
 		
 		portDefinition = scufl2Tools.portDefinitionFor(second_file, profile);
+		assertNotNull("Could not find port definition for first_file", portDefinition);
 		assertEquals(PropertyLiteral.XSD_STRING,
 				portDefinition.getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
+		assertEquals(ACTIVITY_URI.resolve("#File"), 
+				portDefinition.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#substitutionType")));
 		assertEquals("file2.txt",
-				portDefinition.getPropertyAsString(ACTIVITY_URI.resolve("#fileName")));
+				portDefinition.getPropertyAsString(ACTIVITY_URI.resolve("#substitutes")));
 		
 		assertEquals(CHARSET.resolve("#windows-1252"),
 				portDefinition.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#charset")));
-		assertNull(portDefinition.getPropertyAsString(ACTIVITY_URI.resolve("#tempFile")));
-		assertNull(portDefinition.getPropertyAsString(ACTIVITY_URI.resolve("#forceCopy")));
+
+		assertFalse(portDefinition.getProperties().containsKey(ACTIVITY_URI.resolve("#forceCopy")));
+		assertFalse(portDefinition.getProperties().containsKey(ACTIVITY_URI.resolve("#concatenate")));
+
 
 		
 	}
