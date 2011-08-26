@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static uk.org.taverna.scufl2.translator.t2flow.defaultactivities.AbstractActivityParser.PORT_DEFINITION;
-
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
@@ -25,6 +23,7 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.RShellConfig;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.RShellSymanticType;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.RShellSymanticType.RShellPortSymanticTypeBean;
+import static uk.org.taverna.scufl2.api.common.Scufl2Tools.PORT_DEFINITION;
 
 public class RshellActivityParser extends AbstractActivityParser {
 
