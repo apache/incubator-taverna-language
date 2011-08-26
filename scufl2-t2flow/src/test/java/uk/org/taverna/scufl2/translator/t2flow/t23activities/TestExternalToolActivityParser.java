@@ -3,12 +3,22 @@ package uk.org.taverna.scufl2.translator.t2flow.t23activities;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotNull;
 import static uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser.ACTIVITY_URI;
+import static uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser.DC;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Date;
+import java.util.SortedSet;
 
 import javax.xml.bind.JAXBException;
 
+import org.jdom.Attribute;
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.JDOMException;
+import org.jdom.input.SAXBuilder;
+import org.jdom.xpath.XPath;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,6 +27,7 @@ import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.profiles.Profile;
+import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ExternalToolConfig;
@@ -58,6 +69,8 @@ public class TestExternalToolActivityParser {
 				ACTIVITY_URI.resolve("#toolId"));
 		assertEquals("http://taverna.nordugrid.org/sharedRepository/xml.php#cat", 
 				toolId.toASCIIString());
+		
+		// Not much more to check as 2.2 does not include tool description
 				
 	}
 	
@@ -82,12 +95,72 @@ public class TestExternalToolActivityParser {
 				ACTIVITY_URI.resolve("#toolId"));
 		assertEquals("http://taverna.nordugrid.org/sharedRepository/xml.php#cat", 
 				toolId.toASCIIString());
-		
+		Date x;
 		assertEquals(false, resource.getPropertyAsLiteral(
 						ACTIVITY_URI.resolve("#edited")).getLiteralValueAsBoolean());
 		
+		assertEquals(ACTIVITY_URI.resolve("#local"),  
+				resource.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#mechanismType")));
+		assertEquals("default local",  
+				resource.getPropertyAsString(ACTIVITY_URI.resolve("#mechanismName")));
+	
 		
+		String mechanismXML = resource.getPropertyAsLiteral(ACTIVITY_URI.resolve("#mechanismXML")).getLiteralValue();
+		assertXpathEquals("", mechanismXML, "/localInvocation");
 		
+		PropertyResource description = resource.getPropertyAsResource(ACTIVITY_URI.resolve("#toolDescription"));
+		assertEquals("cat",  
+				description.getPropertyAsString(ACTIVITY_URI.resolve("#usecaseid")));
+		assertEquals("Testing",  
+				description.getPropertyAsString(ACTIVITY_URI.resolve("#group")));
+		assertEquals("concatenation of two streams",  
+				description.getPropertyAsString(DC.resolve("description")));
+		assertEquals("cat file1.txt file2.txt",  
+				description.getPropertyAsString(ACTIVITY_URI.resolve("#command")));
+		assertEquals(1200, description.getPropertyAsLiteral(ACTIVITY_URI.resolve("#preparingTimeoutInSeconds")).getLiteralValueAsInt());
+		assertEquals(1800, description.getPropertyAsLiteral(ACTIVITY_URI.resolve("#executionTimeoutInSeconds")).getLiteralValueAsInt());
+		
+		assertNull(description.getProperties().get(ACTIVITY_URI.resolve("#tag")));
+		assertNull(description.getProperties().get(ACTIVITY_URI.resolve("#runtimeEnvironment")));
+		assertNull(description.getProperties().get(ACTIVITY_URI.resolve("#queue")));
+		
+		// TODO: Check static inputs, inputs and outputs
+		assertEquals(false, description.getPropertyAsLiteral(
+				ACTIVITY_URI.resolve("#includeStdIn")).getLiteralValueAsBoolean());
+		assertEquals(true, description.getPropertyAsLiteral(
+				ACTIVITY_URI.resolve("#includeStdOut")).getLiteralValueAsBoolean());
+		assertEquals(true, description.getPropertyAsLiteral(
+				ACTIVITY_URI.resolve("#includeStdErr")).getLiteralValueAsBoolean());
+		assertNull(description.getProperties().get(ACTIVITY_URI.resolve("#validReturnCode")));
+		
+	}
+	
+
+	protected Object xpathSelectElement(String xml, String xpath) throws JDOMException, IOException {	
+		SAXBuilder saxBuilder = new SAXBuilder();
+		Document doc = saxBuilder.build(xml);
+		Element element = doc.getRootElement();
+		
+		XPath x = XPath.newInstance(xpath);	
+		//x.addNamespace(XML_NS);
+
+		return x.selectSingleNode(element);
+	}
+	
+	protected void assertXpathEquals(String expected, String xml,
+			String xpath) throws JDOMException, IOException {
+		Object o = xpathSelectElement(xml, xpath);
+		if (o == null) {
+			fail("Can't find " + xpath  + " in:\n" + xml);
+			return;
+		}
+		String text;
+		if (o instanceof Attribute) {
+			text = ((Attribute)o).getValue();
+		} else {
+			text = ((Element)o).getValue();
+		}
+		assertEquals(expected, text);
 	}
 	
 	@Test

@@ -4,7 +4,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
@@ -14,7 +16,6 @@ import uk.org.taverna.scufl2.api.property.PropertyObject;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.defaultactivities.AbstractActivityParser;
-import uk.org.taverna.scufl2.xml.t2flow.jaxb.BeanshellConfig;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ExternalToolConfig;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Group;
@@ -41,6 +42,19 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 	
 	public static URI DC = URI
 			.create("http://purl.org/dc/elements/1.1/");
+
+	private Map<URI,URI> mappedMechanismTypes = makeMappedMechanismTypes();
+
+	private Map<URI, URI> makeMappedMechanismTypes() {
+		Map<URI, URI> map = new HashMap<URI, URI>();
+		map.put(ACTIVITY_URI.resolve("#789663B8-DA91-428A-9F7D-B3F3DA185FD4"), 
+				ACTIVITY_URI.resolve("#local"));
+		
+		map.put(ACTIVITY_URI.resolve("#D0A4CDEB-DD10-4A8E-A49C-8871003083D8"), 
+				ACTIVITY_URI.resolve("#ssh"));
+		
+		return map;
+	}
 
 	@Override
 	public boolean canHandlePlugin(URI activityURI) {
@@ -110,8 +124,13 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 				configResource.addPropertyAsNewResource(ACTIVITY_URI.resolve("#invocationGroup"), ACTIVITY_URI.resolve("#InvocationGroup"));
 				// TODO: Invocation groups
 			} else {				
+				URI mechanismType = ACTIVITY_URI.resolve("#" + uriTools.validFilename(externalToolConfig.getMechanismType()));
+				if (mappedMechanismTypes .containsKey(mechanismType)) {
+					mechanismType = mappedMechanismTypes.get(mechanismType);
+				}
 				configResource.addPropertyReference(ACTIVITY_URI.resolve("#mechanismType"), 
-						ACTIVITY_URI.resolve("#" + uriTools.validFilename(externalToolConfig.getMechanismType())));
+						mechanismType);
+				
 				configResource.addPropertyAsString(ACTIVITY_URI.resolve("#mechanismName"), 
 						externalToolConfig.getMechanismName());
 				configResource.addProperty(ACTIVITY_URI.resolve("#mechanismXml"),
@@ -145,7 +164,7 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 		}
 		
 		if (toolDesc.getDescription() != null) {
-			propertyResource.addPropertyAsString(DC.resolve("#description"), 
+			propertyResource.addPropertyAsString(DC.resolve("description"), 
 				toolDesc.getDescription());
 		}
 		
