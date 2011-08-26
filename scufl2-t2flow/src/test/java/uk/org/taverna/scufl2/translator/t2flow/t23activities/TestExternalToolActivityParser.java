@@ -1,15 +1,19 @@
 package uk.org.taverna.scufl2.translator.t2flow.t23activities;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser.ACTIVITY_URI;
 import static uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser.DC;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.URI;
 import java.net.URL;
 import java.util.Date;
-import java.util.SortedSet;
 
 import javax.xml.bind.JAXBException;
 
@@ -27,10 +31,8 @@ import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.profiles.Profile;
-import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
-import uk.org.taverna.scufl2.xml.t2flow.jaxb.ExternalToolConfig;
 
 public class TestExternalToolActivityParser {
 	private static final String WF_2_2 = "/tool-2-2.t2flow";
@@ -95,7 +97,6 @@ public class TestExternalToolActivityParser {
 				ACTIVITY_URI.resolve("#toolId"));
 		assertEquals("http://taverna.nordugrid.org/sharedRepository/xml.php#cat", 
 				toolId.toASCIIString());
-		Date x;
 		assertEquals(false, resource.getPropertyAsLiteral(
 						ACTIVITY_URI.resolve("#edited")).getLiteralValueAsBoolean());
 		
@@ -120,9 +121,9 @@ public class TestExternalToolActivityParser {
 		assertEquals(1200, description.getPropertyAsLiteral(ACTIVITY_URI.resolve("#preparingTimeoutInSeconds")).getLiteralValueAsInt());
 		assertEquals(1800, description.getPropertyAsLiteral(ACTIVITY_URI.resolve("#executionTimeoutInSeconds")).getLiteralValueAsInt());
 		
-		assertNull(description.getProperties().get(ACTIVITY_URI.resolve("#tag")));
-		assertNull(description.getProperties().get(ACTIVITY_URI.resolve("#runtimeEnvironment")));
-		assertNull(description.getProperties().get(ACTIVITY_URI.resolve("#queue")));
+		assertTrue(description.getProperties().get(ACTIVITY_URI.resolve("#tag")).isEmpty());
+		assertTrue(description.getProperties().get(ACTIVITY_URI.resolve("#runtimeEnvironment")).isEmpty());
+		assertTrue(description.getProperties().get(ACTIVITY_URI.resolve("#queue")).isEmpty());
 		
 		// TODO: Check static inputs, inputs and outputs
 		assertEquals(false, description.getPropertyAsLiteral(
@@ -131,14 +132,15 @@ public class TestExternalToolActivityParser {
 				ACTIVITY_URI.resolve("#includeStdOut")).getLiteralValueAsBoolean());
 		assertEquals(true, description.getPropertyAsLiteral(
 				ACTIVITY_URI.resolve("#includeStdErr")).getLiteralValueAsBoolean());
-		assertNull(description.getProperties().get(ACTIVITY_URI.resolve("#validReturnCode")));
+		assertTrue(description.getProperties().get(ACTIVITY_URI.resolve("#validReturnCode")).isEmpty());
 		
 	}
 	
 
 	protected Object xpathSelectElement(String xml, String xpath) throws JDOMException, IOException {	
 		SAXBuilder saxBuilder = new SAXBuilder();
-		Document doc = saxBuilder.build(xml);
+//		System.out.println(xml);
+		Document doc = saxBuilder.build(new StringReader(xml));
 		Element element = doc.getRootElement();
 		
 		XPath x = XPath.newInstance(xpath);	
