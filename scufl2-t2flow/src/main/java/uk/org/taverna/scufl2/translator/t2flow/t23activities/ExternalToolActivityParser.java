@@ -133,8 +133,8 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 				
 				configResource.addPropertyAsString(ACTIVITY_URI.resolve("#mechanismName"), 
 						externalToolConfig.getMechanismName());
-				configResource.addProperty(ACTIVITY_URI.resolve("#mechanismXml"),
-						new PropertyLiteral(externalToolConfig.getMechanismName(), PropertyLiteral.XML_LITERAL));
+				configResource.addProperty(ACTIVITY_URI.resolve("#mechanismXML"),
+						new PropertyLiteral(externalToolConfig.getMechanismXML(), PropertyLiteral.XML_LITERAL));
 			}
 
 			configResource.addProperty(ACTIVITY_URI.resolve("#toolDescription"), 
@@ -172,7 +172,7 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 				toolDesc.getCommand());
 		propertyResource.addProperty(ACTIVITY_URI.resolve("#preparingTimeoutInSeconds"), 
 				new PropertyLiteral(toolDesc.getPreparingTimeoutInSeconds()));
-		propertyResource.addProperty(ACTIVITY_URI.resolve("executionTimeoutInSeconds"), 
+		propertyResource.addProperty(ACTIVITY_URI.resolve("#executionTimeoutInSeconds"), 
 				new PropertyLiteral(toolDesc.getExecutionTimeoutInSeconds()));
 		
 		
