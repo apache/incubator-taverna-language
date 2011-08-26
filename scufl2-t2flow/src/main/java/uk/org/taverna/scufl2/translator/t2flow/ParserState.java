@@ -1,5 +1,6 @@
 package uk.org.taverna.scufl2.translator.t2flow;
 
+import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
@@ -74,6 +75,7 @@ public class ParserState {
 	private T2Parser currentT2Parser;
 	private Workflow currentWorkflow;
 	private T2FlowParser t2FlowParser;
+	private Configuration currentConfiguration;
 	public final T2FlowParser getT2FlowParser() {
 		return t2FlowParser;
 	}
@@ -82,5 +84,15 @@ public class ParserState {
 		this.t2FlowParser = t2FlowParser;
 		
 	}
+
+	public Configuration getCurrentConfiguration() {
+		return currentConfiguration;
+	}
+
+	public void setCurrentConfiguration(Configuration currentConfiguration) {
+		this.currentConfiguration = currentConfiguration;
+	}
+
+
 	
 }
