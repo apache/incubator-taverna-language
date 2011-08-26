@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static uk.org.taverna.scufl2.translator.t2flow.defaultactivities.AbstractActivityParser.PORT_DEFINITION;
+import static uk.org.taverna.scufl2.translator.t2flow.defaultactivities.RshellActivityParser.ACTIVITY_URI;
 
 import java.net.URI;
 import java.net.URL;
@@ -30,7 +31,6 @@ import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
-import uk.org.taverna.scufl2.translator.t2flow.defaultactivities.RshellActivityParser;
 
 public class TestActivityParsingRshell {
 
@@ -41,6 +41,7 @@ public class TestActivityParsingRshell {
 	private static final String WF_ALL_ACTIVITIES = "/defaultActivitiesTaverna2.2.t2flow";
 	
 	private static Scufl2Tools scufl2Tools = new Scufl2Tools();
+	private static URITools uriTools = new URITools();
 	private T2FlowParser parser;
 
 	@Before
@@ -82,8 +83,66 @@ public class TestActivityParsingRshell {
 		Configuration config = scufl2Tools
 				.configurationForActivityBoundToProcessor(proc, profile);
 		assertNotNull(config);
+
+		Activity activity = (Activity) config.getConfigures();
+
+		System.out.println(activity.getInputPorts().getNames());
+		System.out.println(activity.getOutputPorts().getNames());
+
 		
-		// TODO: Check data types defined (semantic types)
+		assertEquals(ACTIVITY_URI.resolve("#BOOL_LIST"), 
+				scufl2Tools.portDefinitionFor(activity.getInputPorts().getByName("logVec"), profile).
+				getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
+		
+		assertEquals(ACTIVITY_URI.resolve("#R_EXP"), 
+				scufl2Tools.portDefinitionFor(activity.getInputPorts().getByName("regxp"), profile).
+				getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
+		assertEquals(ACTIVITY_URI.resolve("#STRING"), 
+				scufl2Tools.portDefinitionFor(activity.getInputPorts().getByName("str"), profile).
+				getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
+		assertEquals(ACTIVITY_URI.resolve("#STRING"), 
+				scufl2Tools.portDefinitionFor(activity.getInputPorts().getByName("str2"), profile).
+				getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
+
+		assertEquals(ACTIVITY_URI.resolve("#INTEGER"), 
+				scufl2Tools.portDefinitionFor(activity.getOutputPorts().getByName("int"), profile).
+				getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
+		assertEquals(ACTIVITY_URI.resolve("#INTEGER_LIST"), 
+				scufl2Tools.portDefinitionFor(activity.getOutputPorts().getByName("intVector"), profile).
+				getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
+		assertEquals(ACTIVITY_URI.resolve("#BOOL"), 
+				scufl2Tools.portDefinitionFor(activity.getOutputPorts().getByName("log"), profile).
+				getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
+		assertEquals(ACTIVITY_URI.resolve("#BOOL_LIST"), 
+				scufl2Tools.portDefinitionFor(activity.getOutputPorts().getByName("logicVector"), profile).
+				getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
+
+		assertEquals(ACTIVITY_URI.resolve("#DOUBLE"), 
+				scufl2Tools.portDefinitionFor(activity.getOutputPorts().getByName("num"), profile).
+				getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
+		assertEquals(ACTIVITY_URI.resolve("#DOUBLE_LIST"), 
+				scufl2Tools.portDefinitionFor(activity.getOutputPorts().getByName("numVector"), profile).
+				getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
+
+		assertEquals(ACTIVITY_URI.resolve("#PNG_FILE"), 
+				scufl2Tools.portDefinitionFor(activity.getOutputPorts().getByName("png"), profile).
+				getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
+		assertEquals(ACTIVITY_URI.resolve("#R_EXP"), 
+				scufl2Tools.portDefinitionFor(activity.getOutputPorts().getByName("rexpr"), profile).
+				getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
+
+		
+		assertEquals(ACTIVITY_URI.resolve("#STRING"), 
+				scufl2Tools.portDefinitionFor(activity.getOutputPorts().getByName("str"), profile).
+				getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
+		assertEquals(ACTIVITY_URI.resolve("#STRING_LIST"), 
+				scufl2Tools.portDefinitionFor(activity.getOutputPorts().getByName("strVector"), profile).
+				getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
+
+		assertEquals(ACTIVITY_URI.resolve("#TEXT_FILE"), 
+				scufl2Tools.portDefinitionFor(activity.getOutputPorts().getByName("txt"), profile).
+				getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
+		
 	}
 	
 
@@ -120,12 +179,12 @@ public class TestActivityParsingRshell {
 		assertNotNull(config);
 				
 		Activity activity = (Activity) config.getConfigures();
-		assertEquals(RshellActivityParser.ACTIVITY_URI,
+		assertEquals(ACTIVITY_URI,
 				activity.getConfigurableType());
-		assertEquals(RshellActivityParser.ACTIVITY_URI.resolve("#Config"), config
+		assertEquals(ACTIVITY_URI.resolve("#Config"), config
 				.getPropertyResource().getTypeURI());
 		String script = config.getPropertyResource().getPropertyAsString(
-				RshellActivityParser.ACTIVITY_URI.resolve("#script"));
+				ACTIVITY_URI.resolve("#script"));
 		assertEquals("too\nsimple", script);
 
 		Set<String> expectedInputs = new HashSet<String>(Arrays.asList(
@@ -145,8 +204,10 @@ public class TestActivityParsingRshell {
 
 		Set<URI> expectedPortUris = new HashSet<URI>();
 		for (InputActivityPort inPort : activity.getInputPorts()) {
-			expectedPortUris.add(new URITools().relativeUriForBean(inPort,
+			expectedPortUris.add(uriTools.relativeUriForBean(inPort,
 					config));
+			PropertyResource portDef = scufl2Tools.portDefinitionFor(inPort, profile);
+			assertNotNull("Could not find port definition for port " + inPort, portDef);
 		}
 		assertEquals(3, expectedPortUris.size());
 		assertEquals(3, inputDef.size());
@@ -163,9 +224,10 @@ public class TestActivityParsingRshell {
 					expectedPortUris.contains(portURI));
 			
 			URI dataType = portDef.getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType"));
-			assertEquals(RshellActivityParser.ACTIVITY_URI.resolve("#samePrefix"), dataType.resolve("#samePrefix"));			
+			assertEquals(ACTIVITY_URI.resolve("#samePrefix"), dataType.resolve("#samePrefix"));			
 			// For instance http://ns.taverna.org.uk/2010/activity/rshell#BOOL_LIST
 			dataTypes.put(portURI, dataType);
+			
 			
 		}
 
@@ -181,9 +243,13 @@ public class TestActivityParsingRshell {
 		assertEquals(1, out3.getDepth().intValue());
 
 		expectedPortUris.clear();
-		for (OutputActivityPort inPort : activity.getOutputPorts()) {
-			expectedPortUris.add(new URITools().relativeUriForBean(inPort,
+		for (OutputActivityPort outPort : activity.getOutputPorts()) {
+	
+			expectedPortUris.add(uriTools.relativeUriForBean(outPort,
 					config));
+			PropertyResource portDef = scufl2Tools.portDefinitionFor(outPort, profile);
+			assertNotNull("Could not find port definition for port " + outPort, portDef);
+
 		}
 		
 		Set<PropertyResource> outputDef = config.getPropertyResource()
@@ -200,27 +266,46 @@ public class TestActivityParsingRshell {
 					expectedPortUris.contains(portURI));
 			
 			URI dataType = portDef.getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType"));
-			assertEquals(RshellActivityParser.ACTIVITY_URI.resolve("#samePrefix"), dataType.resolve("#samePrefix"));			
+			assertEquals(ACTIVITY_URI.resolve("#samePrefix"), dataType.resolve("#samePrefix"));			
 			// For instance http://ns.taverna.org.uk/2010/activity/rshell#BOOL_LIST
 			dataTypes.put(portURI, dataType);
 			
 		}
 
 
-		System.out.println(dataTypes);
+		//System.out.println(dataTypes);
 		
+		assertEquals(ACTIVITY_URI.resolve("#STRING"), 
+				scufl2Tools.portDefinitionFor(activity.getInputPorts().getByName("in1"), profile).
+				getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
+		
+		assertEquals(ACTIVITY_URI.resolve("#DOUBLE"), 
+				scufl2Tools.portDefinitionFor(activity.getInputPorts().getByName("in2"), profile).
+				getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
+		assertEquals(ACTIVITY_URI.resolve("#STRING"), 
+				scufl2Tools.portDefinitionFor(activity.getInputPorts().getByName("in3"), profile).
+				getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
+		assertEquals(ACTIVITY_URI.resolve("#STRING"), 
+				scufl2Tools.portDefinitionFor(activity.getOutputPorts().getByName("out1"), profile).
+				getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
+		assertEquals(ACTIVITY_URI.resolve("#BOOL_LIST"), 
+				scufl2Tools.portDefinitionFor(activity.getOutputPorts().getByName("out2"), profile).
+				getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
+		assertEquals(ACTIVITY_URI.resolve("#STRING_LIST"), 
+				scufl2Tools.portDefinitionFor(activity.getOutputPorts().getByName("out3"), profile).
+				getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
 		
 
-		PropertyResource connection = config.getPropertyResource().getPropertyAsResource(RshellActivityParser.ACTIVITY_URI.resolve("#connection"));
-		assertEquals(RshellActivityParser.ACTIVITY_URI.resolve("#Connection"), connection.getTypeURI());
+		PropertyResource connection = config.getPropertyResource().getPropertyAsResource(ACTIVITY_URI.resolve("#connection"));
+		assertEquals(ACTIVITY_URI.resolve("#Connection"), connection.getTypeURI());
 
-		assertEquals("localhost", connection.getPropertyAsString(RshellActivityParser.ACTIVITY_URI.resolve("#hostname")));
+		assertEquals("localhost", connection.getPropertyAsString(ACTIVITY_URI.resolve("#hostname")));
 		
-		PropertyLiteral portLiteral = connection.getPropertyAsLiteral(RshellActivityParser.ACTIVITY_URI.resolve("#port"));
+		PropertyLiteral portLiteral = connection.getPropertyAsLiteral(ACTIVITY_URI.resolve("#port"));
 		assertEquals(6311, portLiteral.getLiteralValueAsInt());
 		assertEquals(PropertyLiteral.XSD_UNSIGNEDSHORT, portLiteral.getLiteralType());
 
-		assertEquals(false, connection.getPropertyAsLiteral(RshellActivityParser.ACTIVITY_URI.resolve("#keepSessionAlive")).getLiteralValueAsBoolean());
+		assertEquals(false, connection.getPropertyAsLiteral(ACTIVITY_URI.resolve("#keepSessionAlive")).getLiteralValueAsBoolean());
 		
 		
 		
