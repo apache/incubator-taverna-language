@@ -1,5 +1,9 @@
 package uk.org.taverna.scufl2.translator.t2flow.t23activities;
 
+import static org.junit.Assert.assertEquals;
+import static uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser.ACTIVITY_URI;
+import static uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser.CHARSET;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -11,21 +15,36 @@ import java.util.Map;
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
+import uk.org.taverna.scufl2.api.port.ActivityPort;
+import uk.org.taverna.scufl2.api.port.InputActivityPort;
+import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.api.property.PropertyObject;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.defaultactivities.AbstractActivityParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.Entry;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ExternalToolConfig;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Group;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ScriptInputStatic;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.ScriptInputUser;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.ScriptOutput;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.UsecaseConfig;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.UsecaseDescription;
 
 public class ExternalToolActivityParser extends AbstractActivityParser {
 
+	private static final String STDOUT = "STDOUT";
+
+	private static final String STDIN = "STDIN";
+
+	private static final String STDERR = "STDERR";
+
 	private static final String EXTERNALTOOLACTIVITY_XSD = "../xsd/externaltoolactivity.xsd";
+	
+	public static URI CHARSET = URI.create("http://www.iana.org/assignments/character-sets");
+	// or http://www.iana.org/assignments/charset-reg/ ? 
 
 	private static URI usecaseActivityRavenUri = T2FlowParser.ravenURI
 			.resolve("net.sf.taverna.t2.activities/usecase-activity/");
@@ -100,8 +119,10 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 		}
 		
 		
-		Configuration configuration = new Configuration();
+		Configuration configuration = new Configuration();		
 		configuration.setParent(getParserState().getCurrentProfile());
+		getParserState().setCurrentConfiguration(configuration);
+		try { 
 		PropertyResource configResource = configuration.getPropertyResource();
 		configResource.setTypeURI(ACTIVITY_URI.resolve("#Config"));
 		
@@ -147,6 +168,9 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 		}
 		
 		return configuration;
+		} finally {
+			getParserState().setCurrentConfiguration(null);
+		}
 	}
 
 	protected PropertyObject parseToolDescription(
@@ -181,20 +205,119 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 		
 		// static inputs
 		for (ScriptInputStatic inputStatic : toolDesc.getStaticInputs().getDeUniLuebeckInbKnowarcUsecasesScriptInputStatic()) {
-			//
+			String portName = inputStatic.getTag();
+			PropertyResource portDef = generatePortDefinition(portName,
+					inputStatic.getTag(), inputStatic.getCharsetName(), true, false,
+					inputStatic.isBinary(), inputStatic.isFile(),
+					inputStatic.isTempFile(), inputStatic.isForceCopy(),
+					false);
+			propertyResource.addProperty(PORT_DEFINITION.resolve("#inputPortDefinition"), portDef);
+			if (inputStatic.getUrl() != null) {
+				portDef.addPropertyReference(ACTIVITY_URI.resolve("#source"), URI.create(inputStatic.getUrl()));
+			} else { 
+				portDef.addPropertyAsString(ACTIVITY_URI.resolve("#content"), inputStatic.getContent().getValue());			
+			}
 		}
-		// Inputs
-		// Outputs
 		
+		// Inputs
+		for (Entry entry : toolDesc.getInputs().getEntry()) {
+			String portName = entry.getString();
+			ScriptInputUser scriptInput = entry.getDeUniLuebeckInbKnowarcUsecasesScriptInputUser();
+			PropertyResource portDef = generatePortDefinition(portName,
+					scriptInput.getTag(), scriptInput.getCharsetName(), true, scriptInput.isList(),
+					scriptInput.isBinary(), scriptInput.isFile(),
+					scriptInput.isTempFile(), scriptInput.isForceCopy(),
+					scriptInput.isConcatenate());
+			propertyResource.addProperty(PORT_DEFINITION.resolve("#inputPortDefinition"), portDef);
+		}
+		// Outputs
+		for (Entry entry : toolDesc.getOutputs().getEntry()) {
+			String portName = entry.getString();
+			ScriptOutput scriptOutput = entry.getDeUniLuebeckInbKnowarcUsecasesScriptOutput();
+			PropertyResource portDef = generatePortDefinition(portName,
+					scriptOutput.getPath(), null, true, false,
+					scriptOutput.isBinary(), true, false, false, false);
+			propertyResource.addProperty(PORT_DEFINITION.resolve("#outputPortDefinition"), portDef);
+		}
+				
 		propertyResource.addProperty(ACTIVITY_URI.resolve("#includeStdIn"), 
-				new PropertyLiteral(toolDesc.isIncludeStdIn()));
+				new PropertyLiteral(toolDesc.isIncludeStdIn()));		
 		propertyResource.addProperty(ACTIVITY_URI.resolve("#includeStdOut"), 
 				new PropertyLiteral(toolDesc.isIncludeStdOut()));
 		propertyResource.addProperty(ACTIVITY_URI.resolve("#includeStdErr"), 
 				new PropertyLiteral(toolDesc.isIncludeStdErr()));
+
+		if (toolDesc.isIncludeStdIn()) {
+			new InputActivityPort(getParserState().getCurrentActivity(), STDIN);			
+		}
+		if (toolDesc.isIncludeStdOut()) {
+			new OutputActivityPort(getParserState().getCurrentActivity(), STDOUT);			
+		}
+		if (toolDesc.isIncludeStdErr()) {
+			new OutputActivityPort(getParserState().getCurrentActivity(), STDERR);			
+		}
 		
 		
 		return propertyResource;
+	}
+
+	private PropertyResource generatePortDefinition(String portName, String tag, String charSet, boolean isInput,
+			boolean isList, boolean isBinary, boolean isFile, boolean isTempFile, boolean isForceCopy, boolean isConcatenate) {
+		PropertyResource resource = new PropertyResource();
+		
+		ActivityPort actPort;
+		if (isInput) {
+			resource.setTypeURI(PORT_DEFINITION.resolve("#InputPortDefinition"));
+			actPort = new InputActivityPort(getParserState().getCurrentActivity(), portName);
+		} else {
+			resource.setTypeURI(PORT_DEFINITION.resolve("#OutputPortDefinition"));
+			actPort = new OutputActivityPort(getParserState().getCurrentActivity(), portName);
+		}
+		
+		
+		if (isList) {
+			actPort.setDepth(1);
+		} else {			
+			actPort.setDepth(0);
+		}
+		
+		URI portUri = uriTools.relativeUriForBean(actPort, getParserState().getCurrentConfiguration());		
+		resource.addPropertyReference(PORT_DEFINITION.resolve("#definesInputPort"), portUri);
+
+		URI dataType = PropertyLiteral.XSD_STRING;
+		if (isBinary) {
+			// FIXME: Is there a good URI for raw bytes? xsd:byte is just one byte, 
+			// xsd:hexBinary and xsd:base64Binary both mandate an encoding
+			dataType = ACTIVITY_URI.resolve("#binary");
+		} else if (charSet != null) {
+			resource.addPropertyReference(ACTIVITY_URI.resolve("#charset"), 
+					CHARSET.resolve("#" + uriTools.validFilename(charSet)));
+			// TODO: Check with http://www.w3.org/International/www-international.html if
+			// this URI scheme really make sense
+		} else {
+			resource.addPropertyReference(ACTIVITY_URI.resolve("#charset"), 
+					CHARSET.resolve("#UTF-8"));
+		}		
+		
+		resource.addPropertyReference(PORT_DEFINITION.resolve("#dataType"), dataType);
+		
+
+		if (isFile) {
+			resource.addPropertyAsString(ACTIVITY_URI.resolve("#file"), tag);
+		} else if (isTempFile) {
+			resource.addPropertyAsString(ACTIVITY_URI.resolve("#tempFile"), tag);				
+ 		} else {
+			resource.addPropertyAsString(ACTIVITY_URI.resolve("#replacesString"), tag);
+		}
+		
+		if (isForceCopy) {
+			resource.addProperty(ACTIVITY_URI.resolve("#forceCopy"), new PropertyLiteral(true));
+		}
+		if (isConcatenate) {
+			resource.addProperty(ACTIVITY_URI.resolve("#concatenate"), new PropertyLiteral(true));
+		}		
+		
+		return resource;
 	}
 
 	protected PropertyObject parseGroup(Group group) {

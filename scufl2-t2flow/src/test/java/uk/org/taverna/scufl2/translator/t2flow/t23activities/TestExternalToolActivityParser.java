@@ -167,6 +167,7 @@ public class TestExternalToolActivityParser {
 		
 		
 		PropertyResource portDefinition = scufl2Tools.portDefinitionFor(first_file, profile);
+		assertNotNull("Could not find port definition for first_file", portDefinition);
 		assertEquals(PropertyLiteral.XSD_STRING,
 				portDefinition.getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
 		assertEquals("file.txt",
