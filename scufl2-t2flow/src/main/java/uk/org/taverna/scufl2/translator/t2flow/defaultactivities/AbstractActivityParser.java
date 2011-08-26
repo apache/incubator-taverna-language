@@ -15,6 +15,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.w3c.dom.Element;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
+import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
@@ -27,14 +28,16 @@ import uk.org.taverna.scufl2.translator.t2flow.T2Parser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityPortDefinitionBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityPortDefinitionBean.MimeTypes;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
+//import static uk.org.taverna.scufl2.api.common.Scufl2Tools.PORT_DEFINITION;
+
 
 public abstract class AbstractActivityParser implements T2Parser {
 
 	public static URI MEDIATYPES_URI = URI.create("http://purl.org/NET/mediatypes/");
 
-	public static URI PORT_DEFINITION = URI
-			.create("http://ns.taverna.org.uk/2010/scufl2#portDefinition");
-
+	@Deprecated
+	public static URI PORT_DEFINITION = Scufl2Tools.PORT_DEFINITION;
+	
 	private ParserState parserState;
 
 	public ParserState getParserState() {

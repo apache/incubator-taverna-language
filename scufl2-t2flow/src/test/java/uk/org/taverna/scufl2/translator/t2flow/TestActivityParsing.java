@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static uk.org.taverna.scufl2.translator.t2flow.defaultactivities.AbstractActivityParser.PORT_DEFINITION;
+import static uk.org.taverna.scufl2.api.common.Scufl2Tools.PORT_DEFINITION;
 
 import java.net.URI;
 import java.net.URL;
