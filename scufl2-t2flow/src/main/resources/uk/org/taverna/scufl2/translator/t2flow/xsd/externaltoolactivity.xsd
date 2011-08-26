@@ -137,13 +137,13 @@
 	<xsd:complexType name="ScriptInputUser">
 		<xsd:sequence>
 			<xsd:element name="tag" type="xsd:string" />
-			<xsd:element name="file" type="xsd:string" />
-			<xsd:element name="tempFile" type="xsd:string" />
-			<xsd:element name="binary" type="xsd:string" />
+			<xsd:element name="file" type="xsd:boolean" />
+			<xsd:element name="tempFile" type="xsd:boolean" />
+			<xsd:element name="binary" type="xsd:boolean" />
 			<xsd:element name="charsetName" type="xsd:string" />
-			<xsd:element name="forceCopy" type="xsd:string" />
-			<xsd:element name="list" type="xsd:string" />
-			<xsd:element name="concatenate" type="xsd:string" />
+			<xsd:element name="forceCopy" type="xsd:boolean" />
+			<xsd:element name="list" type="xsd:boolean" />
+			<xsd:element name="concatenate" type="xsd:boolean" />
 			<xsd:element name="mime" />
 		</xsd:sequence>
 	</xsd:complexType>
@@ -152,11 +152,11 @@
 	<xsd:complexType name="ScriptInputStatic">
 		<xsd:sequence>
 			<xsd:element name="tag" type="xsd:string" />
-			<xsd:element name="file" type="xsd:string" />
-			<xsd:element name="tempFile" type="xsd:string" />
-			<xsd:element name="binary" type="xsd:string" />
+			<xsd:element name="file" type="xsd:boolean" />
+			<xsd:element name="tempFile" type="xsd:boolean" />
+			<xsd:element name="binary" type="xsd:boolean" />
 			<xsd:element name="charsetName" type="xsd:string" />
-			<xsd:element name="forceCopy" type="xsd:string" />
+			<xsd:element name="forceCopy" type="xsd:boolean" />
 			<xsd:choice>
 				<xsd:element name="content" >
 					<xsd:complexType>
@@ -175,7 +175,7 @@
 	<xsd:complexType name="ScriptOutput">
 		<xsd:sequence>
 			<xsd:element name="path" type="xsd:string" />
-			<xsd:element name="binary" type="xsd:string" />
+			<xsd:element name="binary" type="xsd:boolean" />
 			<xsd:element name="mime" />
 		</xsd:sequence>
 	</xsd:complexType>
