@@ -42,8 +42,11 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 	private static final String STDERR = "STDERR";
 
 	private static final String EXTERNALTOOLACTIVITY_XSD = "../xsd/externaltoolactivity.xsd";
+
+	public static URI CNT = URI.create("http://www.w3.org/2011/content#");
+
 	
-	public static URI CHARSET = URI.create("http://www.iana.org/assignments/character-sets");
+	public static URI CHARSET = URI.create("http://www.iana.org/assignments/character-sets#");
 	// or http://www.iana.org/assignments/charset-reg/ ? 
 
 	private static URI usecaseActivityRavenUri = T2FlowParser.ravenURI
@@ -178,12 +181,11 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 		PropertyResource propertyResource = new PropertyResource();
 		propertyResource.setTypeURI(ACTIVITY_URI.resolve("#ToolDescription"));
 		
-		// TODO: Form into URI as well?
-		propertyResource.addPropertyAsString(ACTIVITY_URI.resolve("#usecaseid"), 
+		propertyResource.addPropertyAsString(DC.resolve("title"), 
 				toolDesc.getUsecaseid());
 		
 		if (toolDesc.getGroup() != null) {
-			propertyResource.addPropertyAsString(ACTIVITY_URI.resolve("#group"), 
+			propertyResource.addPropertyAsString(ACTIVITY_URI.resolve("#category"), 
 				toolDesc.getGroup());
 		}
 		
@@ -202,20 +204,26 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 		
 		// Ignoring tags, REs, queue__preferred, queue__deny
 
+		PropertyResource configResource = getParserState().getCurrentConfiguration().getPropertyResource();
 		
 		// static inputs
 		for (ScriptInputStatic inputStatic : toolDesc.getStaticInputs().getDeUniLuebeckInbKnowarcUsecasesScriptInputStatic()) {
 			String portName = inputStatic.getTag();
-			PropertyResource portDef = generatePortDefinition(portName,
+			PropertyResource staticInput = generatePortDefinition(portName,
 					inputStatic.getTag(), inputStatic.getCharsetName(), true, false,
 					inputStatic.isBinary(), inputStatic.isFile(),
 					inputStatic.isTempFile(), inputStatic.isForceCopy(),
-					false);
-			propertyResource.addProperty(PORT_DEFINITION.resolve("#inputPortDefinition"), portDef);
+					false, true);
+			
+			configResource.addProperty(ACTIVITY_URI.resolve("#staticInput"), staticInput);
 			if (inputStatic.getUrl() != null) {
-				portDef.addPropertyReference(ACTIVITY_URI.resolve("#source"), URI.create(inputStatic.getUrl()));
-			} else { 
-				portDef.addPropertyAsString(ACTIVITY_URI.resolve("#content"), inputStatic.getContent().getValue());			
+				staticInput.addPropertyReference(ACTIVITY_URI.resolve("#source"), URI.create(inputStatic.getUrl()));
+			} else {
+				PropertyResource content = staticInput.addPropertyAsNewResource(ACTIVITY_URI.resolve("#source"), 
+						CNT.resolve("#ContentAsText")); 
+				content.addPropertyAsString(CNT.resolve("#chars"), 
+						inputStatic.getContent().getValue());			
+				// TODO: Support bytes?
 			}
 		}
 		
@@ -227,8 +235,8 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 					scriptInput.getTag(), scriptInput.getCharsetName(), true, scriptInput.isList(),
 					scriptInput.isBinary(), scriptInput.isFile(),
 					scriptInput.isTempFile(), scriptInput.isForceCopy(),
-					scriptInput.isConcatenate());
-			propertyResource.addProperty(PORT_DEFINITION.resolve("#inputPortDefinition"), portDef);
+					scriptInput.isConcatenate(), false);
+			configResource.addProperty(PORT_DEFINITION.resolve("#inputPortDefinition"), portDef);
 		}
 		// Outputs
 		for (Entry entry : toolDesc.getOutputs().getEntry()) {
@@ -236,8 +244,8 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 			ScriptOutput scriptOutput = entry.getDeUniLuebeckInbKnowarcUsecasesScriptOutput();
 			PropertyResource portDef = generatePortDefinition(portName,
 					scriptOutput.getPath(), null, true, false,
-					scriptOutput.isBinary(), true, false, false, false);
-			propertyResource.addProperty(PORT_DEFINITION.resolve("#outputPortDefinition"), portDef);
+					scriptOutput.isBinary(), true, false, false, false, false);
+			configResource.addProperty(PORT_DEFINITION.resolve("#outputPortDefinition"), portDef);
 		}
 				
 		propertyResource.addProperty(ACTIVITY_URI.resolve("#includeStdIn"), 
@@ -248,42 +256,52 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 				new PropertyLiteral(toolDesc.isIncludeStdErr()));
 
 		if (toolDesc.isIncludeStdIn()) {
-			new InputActivityPort(getParserState().getCurrentActivity(), STDIN);			
+			InputActivityPort stdin = new InputActivityPort(getParserState().getCurrentActivity(), STDIN);			
+			stdin.setDepth(0);
 		}
 		if (toolDesc.isIncludeStdOut()) {
-			new OutputActivityPort(getParserState().getCurrentActivity(), STDOUT);			
+			OutputActivityPort stdout = new OutputActivityPort(getParserState().getCurrentActivity(), STDOUT);			
+			stdout.setDepth(0);
 		}
 		if (toolDesc.isIncludeStdErr()) {
-			new OutputActivityPort(getParserState().getCurrentActivity(), STDERR);			
+			OutputActivityPort stderr = new OutputActivityPort(getParserState().getCurrentActivity(), STDERR);			
+			stderr.setDepth(0);
 		}
 		
 		
 		return propertyResource;
 	}
 
-	private PropertyResource generatePortDefinition(String portName, String tag, String charSet, boolean isInput,
-			boolean isList, boolean isBinary, boolean isFile, boolean isTempFile, boolean isForceCopy, boolean isConcatenate) {
+	private PropertyResource generatePortDefinition(String portName,
+			String tag, String charSet, boolean isInput, boolean isList,
+			boolean isBinary, boolean isFile, boolean isTempFile,
+			boolean isForceCopy, boolean isConcatenate, boolean isStatic) {
 		PropertyResource resource = new PropertyResource();
 		
 		ActivityPort actPort;
-		if (isInput) {
-			resource.setTypeURI(PORT_DEFINITION.resolve("#InputPortDefinition"));
-			actPort = new InputActivityPort(getParserState().getCurrentActivity(), portName);
+		if (isStatic) {
+			resource.setTypeURI(ACTIVITY_URI.resolve("#StaticInput"));		
 		} else {
-			resource.setTypeURI(PORT_DEFINITION.resolve("#OutputPortDefinition"));
-			actPort = new OutputActivityPort(getParserState().getCurrentActivity(), portName);
+			
+			if (isInput) {
+				resource.setTypeURI(PORT_DEFINITION.resolve("#InputPortDefinition"));
+				actPort = new InputActivityPort(getParserState().getCurrentActivity(), portName);
+				URI portUri = uriTools.relativeUriForBean(actPort, getParserState().getCurrentConfiguration());		
+				resource.addPropertyReference(PORT_DEFINITION.resolve("#definesInputPort"), portUri);
+			} else {
+				resource.setTypeURI(PORT_DEFINITION.resolve("#OutputPortDefinition"));
+				actPort = new OutputActivityPort(getParserState().getCurrentActivity(), portName);
+				URI portUri = uriTools.relativeUriForBean(actPort, getParserState().getCurrentConfiguration());		
+				resource.addPropertyReference(PORT_DEFINITION.resolve("#definesOutputPort"), portUri);
+			}
+				
+			if (isList) {
+				actPort.setDepth(1);
+			} else {			
+				actPort.setDepth(0);
+			}
 		}
 		
-		
-		if (isList) {
-			actPort.setDepth(1);
-		} else {			
-			actPort.setDepth(0);
-		}
-		
-		URI portUri = uriTools.relativeUriForBean(actPort, getParserState().getCurrentConfiguration());		
-		resource.addPropertyReference(PORT_DEFINITION.resolve("#definesInputPort"), portUri);
-
 		URI dataType = PropertyLiteral.XSD_STRING;
 		if (isBinary) {
 			// FIXME: Is there a good URI for raw bytes? xsd:byte is just one byte, 
@@ -297,23 +315,25 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 		} else {
 			resource.addPropertyReference(ACTIVITY_URI.resolve("#charset"), 
 					CHARSET.resolve("#UTF-8"));
-		}		
-		
+		}				
 		resource.addPropertyReference(PORT_DEFINITION.resolve("#dataType"), dataType);
-		
+			
 
+		resource.addPropertyAsString(ACTIVITY_URI.resolve("#substitutes"), tag);
+		URI subsitutionType;
 		if (isFile) {
-			resource.addPropertyAsString(ACTIVITY_URI.resolve("#file"), tag);
+			subsitutionType = ACTIVITY_URI.resolve("#File");
 		} else if (isTempFile) {
-			resource.addPropertyAsString(ACTIVITY_URI.resolve("#tempFile"), tag);				
+			subsitutionType = ACTIVITY_URI.resolve("#TempFile");
  		} else {
-			resource.addPropertyAsString(ACTIVITY_URI.resolve("#replacesString"), tag);
+ 			subsitutionType = ACTIVITY_URI.resolve("#Parameter");
 		}
-		
-		if (isForceCopy) {
+		resource.addPropertyReference(ACTIVITY_URI.resolve("#substitutionType"), subsitutionType);
+				
+		if ((isFile || isTempFile) && isForceCopy) {
 			resource.addProperty(ACTIVITY_URI.resolve("#forceCopy"), new PropertyLiteral(true));
 		}
-		if (isConcatenate) {
+		if (isList && isConcatenate) {
 			resource.addProperty(ACTIVITY_URI.resolve("#concatenate"), new PropertyLiteral(true));
 		}		
 		
