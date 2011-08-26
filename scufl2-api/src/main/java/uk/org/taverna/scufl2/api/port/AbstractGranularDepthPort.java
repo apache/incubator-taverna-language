@@ -12,7 +12,7 @@ package uk.org.taverna.scufl2.api.port;
  * @author Alan R Williams
  * 
  */
-public abstract class AbstractGranularDepthPort extends AbstractDepthPort implements Port {
+public abstract class AbstractGranularDepthPort extends AbstractDepthPort implements GranularDepthPort {
 
 	private Integer granularDepth;
 
