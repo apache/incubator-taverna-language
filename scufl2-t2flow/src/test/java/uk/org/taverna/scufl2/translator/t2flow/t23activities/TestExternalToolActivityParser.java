@@ -8,6 +8,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser.ACTIVITY_URI;
 import static uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser.DC;
+import static uk.org.taverna.scufl2.api.common.Scufl2Tools.PORT_DEFINITION;
+import static uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser.CHARSET;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -26,11 +28,16 @@ import org.jdom.xpath.XPath;
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.org.taverna.scufl2.api.activity.Activity;
+import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Processor;
+import uk.org.taverna.scufl2.api.port.InputActivityPort;
+import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.api.profiles.Profile;
+import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 
@@ -67,6 +74,10 @@ public class TestExternalToolActivityParser {
 		assertNotNull(config);
 		assertEquals(ACTIVITY_URI.resolve("#Config"), 
 				config.getConfigurableType());
+		
+		Activity activity = (Activity) config.getConfigures();
+		assertEquals(ACTIVITY_URI, activity.getConfigurableType());
+		
 		URI toolId = config.getPropertyResource().getPropertyAsResourceURI(
 				ACTIVITY_URI.resolve("#toolId"));
 		assertEquals("http://taverna.nordugrid.org/sharedRepository/xml.php#cat", 
@@ -133,6 +144,56 @@ public class TestExternalToolActivityParser {
 		assertEquals(true, description.getPropertyAsLiteral(
 				ACTIVITY_URI.resolve("#includeStdErr")).getLiteralValueAsBoolean());
 		assertTrue(description.getProperties().get(ACTIVITY_URI.resolve("#validReturnCode")).isEmpty());
+		
+
+		Activity activity = (Activity) config.getConfigures();
+		assertEquals(2, activity.getInputPorts().size());
+		InputActivityPort first_file = activity.getInputPorts().getByName("First_file");
+		assertNotNull("Could not find activity input port first_file", first_file);
+		assertEquals(Integer.valueOf(0), first_file.getDepth());
+			
+		InputActivityPort second_file = activity.getInputPorts().getByName("Second_file");
+		assertNotNull("Could not find activity input port second_file", second_file);
+		assertEquals(Integer.valueOf(0), second_file.getDepth());
+		
+		// No STDIN as includeStdIn is false
+		
+		assertEquals(2, activity.getOutputPorts().size());
+		OutputActivityPort stdout = activity.getOutputPorts().getByName("STDOUT");
+		assertNotNull("Could not find output port STDOUT", stdout);
+		
+		OutputActivityPort stderr = activity.getOutputPorts().getByName("STDERR");
+		assertNotNull("Could not find output port STDERR", stderr);
+		
+		
+		PropertyResource portDefinition = scufl2Tools.portDefinitionFor(first_file, profile);
+		assertEquals(PropertyLiteral.XSD_STRING,
+				portDefinition.getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
+		assertEquals("file.txt",
+				portDefinition.getPropertyAsString(ACTIVITY_URI.resolve("#fileName")));
+		
+		assertEquals(CHARSET.resolve("#windows-1252"),
+				portDefinition.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#charset")));
+		assertNull(portDefinition.getPropertyAsString(ACTIVITY_URI.resolve("#tempFile")));
+		assertNull(portDefinition.getPropertyAsString(ACTIVITY_URI.resolve("#forceCopy")));
+
+		//		Not translated:
+		//		assertNull(portDefinition.getPropertyAsString(ACTIVITY_URI.resolve("#concatenate")));
+		//		assertNull(portDefinition.getPropertyAsString(ACTIVITY_URI.resolve("#list")));
+		//		assertNull(portDefinition.getPropertyAsString(ACTIVITY_URI.resolve("#mime")));
+
+		
+		portDefinition = scufl2Tools.portDefinitionFor(second_file, profile);
+		assertEquals(PropertyLiteral.XSD_STRING,
+				portDefinition.getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
+		assertEquals("file2.txt",
+				portDefinition.getPropertyAsString(ACTIVITY_URI.resolve("#fileName")));
+		
+		assertEquals(CHARSET.resolve("#windows-1252"),
+				portDefinition.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#charset")));
+		assertNull(portDefinition.getPropertyAsString(ACTIVITY_URI.resolve("#tempFile")));
+		assertNull(portDefinition.getPropertyAsString(ACTIVITY_URI.resolve("#forceCopy")));
+
 		
 	}
 	
