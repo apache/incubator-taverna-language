@@ -7,5 +7,6 @@
   </parent>
   <groupId>uk.org.taverna.scufl2</groupId>
   <artifactId>scufl2-validation</artifactId>
+  <packaging>pom</packaging>
   <version>0.1-SNAPSHOT</version>
 </project>
