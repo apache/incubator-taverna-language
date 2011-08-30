@@ -244,7 +244,7 @@ public class StructureWriter implements WorkflowBundleWriter {
 
 		}
 		append("\n");
-		System.out.println(sb);
+		//System.out.println(sb);
 		return sb.toString();
 	}
 
