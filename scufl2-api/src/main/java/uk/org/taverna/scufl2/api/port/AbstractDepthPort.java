@@ -12,7 +12,7 @@ import uk.org.taverna.scufl2.api.common.Visitor;
  * 
  * @author Alan R Williams
  */
-public abstract class AbstractDepthPort extends AbstractNamedChild implements Port {
+public abstract class AbstractDepthPort extends AbstractNamedChild implements DepthPort {
 
 	private Integer depth;
 

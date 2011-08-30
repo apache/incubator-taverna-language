@@ -7,7 +7,7 @@ import uk.org.taverna.scufl2.api.core.Processor;
  * An <code>OutputProcessorPort</code> is a <Port> that outputs data from a {@link Processor}.
  */
 public class OutputProcessorPort extends AbstractGranularDepthPort implements
-SenderPort, ProcessorPort, OutputPort {
+SenderPort, ProcessorPort, OutputPort, GranularDepthPort {
 
 
 

@@ -1,5 +1,8 @@
-package uk.org.taverna.scufl2.api.common;
+package uk.org.taverna.scufl2.api.common;
+import uk.org.taverna.scufl2.api.property.PropertyException;
 
+
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -27,6 +30,11 @@ import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
+import uk.org.taverna.scufl2.api.property.MultiplePropertiesException;
+import uk.org.taverna.scufl2.api.property.PropertyNotFoundException;
+import uk.org.taverna.scufl2.api.property.PropertyResource;
+import uk.org.taverna.scufl2.api.property.UnexpectedPropertyException;
+
 
 /**
  * Utility methods for dealing with SCUFL2 models
@@ -35,6 +43,13 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
  */
 public class Scufl2Tools {
 
+
+	public static URI PORT_DEFINITION = URI
+			.create("http://ns.taverna.org.uk/2010/scufl2#portDefinition");
+	
+	private static URITools uriTools = new URITools();
+
+	
 	/**
 	 * Compare {@link ProcessorBinding}s by their {@link ProcessorBinding#getActivityPosition()}.
 	 * 
@@ -175,6 +190,35 @@ public class Scufl2Tools {
 		}
 		return null;
 
+	}
+	
+	public PropertyResource portDefinitionFor(ActivityPort activityPort, Profile profile) throws PropertyException {
+		Configuration actConfig = configurationFor(activityPort.getParent(), profile);
+		
+		URI portURI = uriTools.uriForBean(activityPort);
+		URI configURI = uriTools.uriForBean(actConfig);
+
+		
+		URI portDefinition;
+		URI definesPort;
+		if (activityPort instanceof InputPort) {
+			portDefinition = PORT_DEFINITION.resolve("#inputPortDefinition");
+			definesPort = PORT_DEFINITION.resolve("#definesInputPort");
+		} else {
+			portDefinition = PORT_DEFINITION.resolve("#outputPortDefinition");
+			definesPort = PORT_DEFINITION.resolve("#definesOutputPort");
+		}
+		for (PropertyResource portDef : 
+			actConfig.getPropertyResource().getPropertiesAsResources(portDefinition)) {			
+			URI portDefURI = portDef.getPropertyAsResourceURI(definesPort);
+			// We'll compare the URIs as absolute URIs - but portDefURI is most likely relative
+			// to the config
+			if (configURI.resolve(portDefURI).equals(portURI)) {
+				return portDef;
+			}
+		}
+		return null;
+		
 	}
 
 	public ProcessorBinding processorBindingForProcessor(Processor processor, Profile profile) {

@@ -13,7 +13,7 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
 public class TestT2FlowParser {
 
 	private static final String AS_T2FLOW = "/as.t2flow";
-
+	
 	@Test
 	public void readSimpleWorkflow() throws Exception {
 		URL wfResource = getClass().getResource(AS_T2FLOW);
@@ -26,6 +26,8 @@ public class TestT2FlowParser {
 		assertEquals(profile, researchObj.getProfiles().getByName("taverna-2.1.0"));
 		
 	}
+	
+	
 
 	
 }
