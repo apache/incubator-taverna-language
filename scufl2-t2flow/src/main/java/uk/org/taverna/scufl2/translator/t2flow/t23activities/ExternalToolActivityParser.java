@@ -305,19 +305,25 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 		}
 		
 		URI dataType = PropertyLiteral.XSD_STRING;
-		if (isBinary) {
-			// FIXME: Is there a good URI for raw bytes? xsd:byte is just one byte, 
-			// xsd:hexBinary and xsd:base64Binary both mandate an encoding
-			dataType = ACTIVITY_URI.resolve("#binary");
-		} else if (charSet != null) {
-			resource.addPropertyReference(ACTIVITY_URI.resolve("#charset"), 
-					CHARSET.resolve("#" + uriTools.validFilename(charSet)));
-			// TODO: Check with http://www.w3.org/International/www-international.html if
-			// this URI scheme really make sense
-		} else {
-			resource.addPropertyReference(ACTIVITY_URI.resolve("#charset"), 
-					CHARSET.resolve("#UTF-8"));
-		}				
+		if (isFile || isTempFile) {			
+			if (isForceCopy) {
+				resource.addProperty(ACTIVITY_URI.resolve("#forceCopy"), new PropertyLiteral(true));
+			}
+			
+			if (isBinary) {
+				// FIXME: Is there a good URI for raw bytes? xsd:byte is just one byte, 
+				// xsd:hexBinary and xsd:base64Binary both mandate an encoding
+				dataType = ACTIVITY_URI.resolve("#binary");
+			} else if (charSet != null) {
+				resource.addPropertyReference(ACTIVITY_URI.resolve("#charset"), 
+						CHARSET.resolve("#" + uriTools.validFilename(charSet)));
+				// TODO: Check with http://www.w3.org/International/www-international.html if
+				// this URI scheme really make sense
+			} else {
+				resource.addPropertyReference(ACTIVITY_URI.resolve("#charset"), 
+						CHARSET.resolve("#UTF-8"));
+			}				
+		}
 		resource.addPropertyReference(PORT_DEFINITION.resolve("#dataType"), dataType);
 			
 
@@ -332,9 +338,6 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 		}
 		resource.addPropertyReference(ACTIVITY_URI.resolve("#substitutionType"), subsitutionType);
 				
-		if ((isFile || isTempFile) && isForceCopy) {
-			resource.addProperty(ACTIVITY_URI.resolve("#forceCopy"), new PropertyLiteral(true));
-		}
 		if (isList && isConcatenate) {
 			resource.addProperty(ACTIVITY_URI.resolve("#concatenate"), new PropertyLiteral(true));
 		}		
