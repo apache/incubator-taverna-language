@@ -1,9 +1,31 @@
-<workflow 
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<workflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://taverna.sf.net/2008/xml/t2flow ../../main/resources/uk/org/taverna/scufl2/translator/t2flow/xsd/t2flow-extended.xsd"
 	xsi:noNamespaceSchemaLocation="../../main/resources/uk/org/taverna/scufl2/translator/t2flow/xsd/externaltoolactivity.xsd"
 
-xmlns="http://taverna.sf.net/2008/xml/t2flow" version="1" producedBy="taverna-2.3.0"><dataflow id="357ab8e4-0dcd-4e90-a89d-ac9ff189eda4" role="top"><name>Workflow1</name><inputPorts /><outputPorts /><processors><processor><name>Tool</name><inputPorts /><outputPorts /><annotations /><activities><activity><raven><group>net.sf.taverna.t2.activities</group><artifact>external-tool-activity</artifact><version>1.3</version></raven><class>net.sf.taverna.t2.activities.externaltool.ExternalToolActivity</class><inputMap /><outputMap /><configBean encoding="xstream"><net.sf.taverna.t2.activities.externaltool.ExternalToolActivityConfigurationBean xmlns="">
+	xmlns="http://taverna.sf.net/2008/xml/t2flow" version="1" producedBy="taverna-2.3.0">
+	<dataflow id="357ab8e4-0dcd-4e90-a89d-ac9ff189eda4" role="top">
+		<name>Workflow1</name>
+		<inputPorts />
+		<outputPorts />
+		<processors>
+			<processor>
+				<name>Tool</name>
+				<inputPorts />
+				<outputPorts />
+				<annotations />
+				<activities>
+					<activity>
+						<raven>
+							<group>net.sf.taverna.t2.activities</group>
+							<artifact>external-tool-activity</artifact>
+							<version>1.3</version>
+						</raven>
+						<class>net.sf.taverna.t2.activities.externaltool.ExternalToolActivity</class>
+						<inputMap />
+						<outputMap />
+						<configBean encoding="xstream">
+							<net.sf.taverna.t2.activities.externaltool.ExternalToolActivityConfigurationBean
+								xmlns="">
   <mechanismType>789663B8-DA91-428A-9F7D-B3F3DA185FD4</mechanismType>
   <mechanismName>default local</mechanismName>
   <mechanismXML>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&#xD;
