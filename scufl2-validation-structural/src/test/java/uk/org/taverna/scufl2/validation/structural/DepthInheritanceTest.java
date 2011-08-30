@@ -45,7 +45,7 @@ public class DepthInheritanceTest {
 		DataLink bLink = new DataLink(w, b, outB);
 		
 	    StructuralValidator sv = new StructuralValidator();
-	    	ReportStructuralValidationEventListener l = new ReportStructuralValidationEventListener();
+	    	ReportStructuralValidationListener l = new ReportStructuralValidationListener();
 			sv.checkStructure(wb, l);
 			ValidatorState vs = sv.getValidatorState();
 			assertEquals(0, l.getIncompleteWorkflows().size());
@@ -81,7 +81,7 @@ public class DepthInheritanceTest {
 		bLink2.setMergePosition(0);
 		
 	    StructuralValidator sv = new StructuralValidator();
-	    	ReportStructuralValidationEventListener l = new ReportStructuralValidationEventListener();
+	    	ReportStructuralValidationListener l = new ReportStructuralValidationListener();
 			sv.checkStructure(wb, l);
 			ValidatorState vs = sv.getValidatorState();
 			assertEquals(0, l.getIncompleteWorkflows().size());
@@ -118,7 +118,7 @@ public class DepthInheritanceTest {
 		portNode.setDesiredDepth(0);
 
 	    StructuralValidator sv = new StructuralValidator();
-	    	ReportStructuralValidationEventListener l = new ReportStructuralValidationEventListener();
+	    	ReportStructuralValidationListener l = new ReportStructuralValidationListener();
 			sv.checkStructure(wb, l);
 			ValidatorState vs = sv.getValidatorState();
 			assertEquals(0, l.getIncompleteWorkflows().size());

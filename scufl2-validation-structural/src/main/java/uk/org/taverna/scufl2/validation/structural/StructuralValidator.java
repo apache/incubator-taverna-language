@@ -41,7 +41,7 @@ public final class StructuralValidator {
 		};
 	};
 	
-	public void checkStructure(WorkflowBundle bundle, StructuralValidationEventListener eventListener) {
+	public void checkStructure(WorkflowBundle bundle, StructuralValidationListener eventListener) {
 		validatorState.get().setEventListener(eventListener);
 		validatorState.get().setWorkflowBundle(bundle);
 		for (Workflow w : bundle.getWorkflows()) {
@@ -53,7 +53,7 @@ public final class StructuralValidator {
 		return validatorState.get();
 	}
 	
-	public void checkStructure(Workflow workflow, StructuralValidationEventListener eventListener) {
+	public void checkStructure(Workflow workflow, StructuralValidationListener eventListener) {
 		validatorState.get().setEventListener(eventListener);
 		checkStructure(workflow);
 	}

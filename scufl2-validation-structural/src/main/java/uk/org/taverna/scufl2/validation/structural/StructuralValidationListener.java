@@ -10,7 +10,7 @@ import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyNode;
 import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
 import uk.org.taverna.scufl2.api.port.ReceiverPort;
 
-public interface StructuralValidationEventListener {
+public interface StructuralValidationListener {
 
 	void passedProcessor(Processor p);
 

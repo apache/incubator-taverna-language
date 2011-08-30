@@ -16,7 +16,7 @@ public class WorkflowTest {
 	
 	@Test
 	public void testIncompleteWorkflow() throws ReaderException, IOException {
-    	ReportStructuralValidationEventListener l = new ReportStructuralValidationEventListener();
+    	ReportStructuralValidationListener l = new ReportStructuralValidationListener();
 		WorkflowBundle wb = new WorkflowBundle();
 		Workflow w = new Workflow();
 		wb.setMainWorkflow(w);
