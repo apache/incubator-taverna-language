@@ -105,7 +105,7 @@ public class TestExternalToolActivityParser {
 		assertEquals(ACTIVITY_URI.resolve("#Config"), 
 				config.getConfigurableType());
 		PropertyResource resource = config.getPropertyResource();
-		assertTrue(resource.getProperties().containsKey(ACTIVITY_URI.resolve("#toolId")));
+		assertTrue(resource.hasProperty(ACTIVITY_URI.resolve("#toolId")));
 		URI toolId = resource.getPropertyAsResourceURI(
 				ACTIVITY_URI.resolve("#toolId"));
 		assertEquals("http://taverna.nordugrid.org/sharedRepository/xml.php#cat", 
@@ -179,8 +179,8 @@ public class TestExternalToolActivityParser {
 		assertEquals(CHARSET.resolve("#windows-1252"),
 				portDefinition.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#charset")));
 
-		assertFalse(portDefinition.getProperties().containsKey(ACTIVITY_URI.resolve("#forceCopy")));
-		assertFalse(portDefinition.getProperties().containsKey(ACTIVITY_URI.resolve("#concatenate")));
+		assertFalse(portDefinition.hasProperty(ACTIVITY_URI.resolve("#forceCopy")));
+		assertFalse(portDefinition.hasProperty(ACTIVITY_URI.resolve("#concatenate")));
 
 		
 		//		Not translated:
@@ -201,8 +201,8 @@ public class TestExternalToolActivityParser {
 		assertEquals(CHARSET.resolve("#windows-1252"),
 				portDefinition.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#charset")));
 
-		assertFalse(portDefinition.getProperties().containsKey(ACTIVITY_URI.resolve("#forceCopy")));
-		assertFalse(portDefinition.getProperties().containsKey(ACTIVITY_URI.resolve("#concatenate")));
+		assertFalse(portDefinition.hasProperty(ACTIVITY_URI.resolve("#forceCopy")));
+		assertFalse(portDefinition.hasProperty(ACTIVITY_URI.resolve("#concatenate")));
 
 
 		
@@ -254,8 +254,8 @@ public class TestExternalToolActivityParser {
 		assertEquals(ACTIVITY_URI.resolve("#Config"), 
 				config.getConfigurableType());
 		PropertyResource resource = config.getPropertyResource();
-		assertFalse(resource.getProperties().containsKey(ACTIVITY_URI.resolve("#toolId")));
-		assertFalse(resource.getProperties().containsKey(ACTIVITY_URI.resolve("#edited")));
+		assertFalse(resource.hasProperty(ACTIVITY_URI.resolve("#toolId")));
+		assertFalse(resource.hasProperty(ACTIVITY_URI.resolve("#edited")));
 
 		assertEquals(ACTIVITY_URI.resolve("#local"),  
 				resource.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#mechanismType")));
@@ -293,7 +293,6 @@ public class TestExternalToolActivityParser {
 		// Check ports
 
 		Activity activity = (Activity) config.getConfigures();
-		System.out.println(activity.getInputPorts().getNames());
 		assertEquals(6, activity.getInputPorts().size());
 		
 		
@@ -307,11 +306,11 @@ public class TestExternalToolActivityParser {
 
 		InputActivityPort fileList = activity.getInputPorts().getByName("fileList");
 		assertNotNull("Could not find activity input port first_file", fileList);
-		assertEquals(Integer.valueOf(1), file2.getDepth());
+		assertEquals(Integer.valueOf(1), fileList.getDepth());
 
 		InputActivityPort fileList2 = activity.getInputPorts().getByName("fileList2");
 		assertNotNull("Could not find activity input port first_file", fileList2);
-		assertEquals(Integer.valueOf(1), file2.getDepth());
+		assertEquals(Integer.valueOf(1), fileList2.getDepth());
 		
 		InputActivityPort stringReplace = activity.getInputPorts().getByName("stringReplace");
 		assertNotNull("Could not find activity input port first_file", stringReplace);
@@ -319,7 +318,7 @@ public class TestExternalToolActivityParser {
 		
 		InputActivityPort stringReplaceWithDifferentPort = activity.getInputPorts().getByName("stringReplaceWithDifferentPort");
 		assertNotNull("Could not find activity input port first_file", stringReplaceWithDifferentPort);
-		assertEquals(Integer.valueOf(0), stringReplace.getDepth());
+		assertEquals(Integer.valueOf(0), stringReplaceWithDifferentPort.getDepth());
 		
 		// No STDIN as includeStdIn is false
 		
@@ -351,10 +350,12 @@ public class TestExternalToolActivityParser {
 				portDefinition.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#substitutionType")));
 		assertEquals("file1",
 				portDefinition.getPropertyAsString(ACTIVITY_URI.resolve("#substitutes")));		
-		assertFalse(portDefinition.getProperties().containsKey(ACTIVITY_URI.resolve("#charset")));
+		//System.out.println(portDefinition.getProperties().get(ACTIVITY_URI.resolve("#charset1337")));
+		assertFalse("Binary files don't have charset", 
+				portDefinition.hasProperty(ACTIVITY_URI.resolve("#charset1337")));
 
-		assertFalse(portDefinition.getProperties().containsKey(ACTIVITY_URI.resolve("#forceCopy")));
-		assertFalse(portDefinition.getProperties().containsKey(ACTIVITY_URI.resolve("#concatenate")));
+		assertFalse(portDefinition.hasProperty(ACTIVITY_URI.resolve("#forceCopy")));
+		assertFalse(portDefinition.hasProperty(ACTIVITY_URI.resolve("#concatenate")));
 
 		// 2 - file2
 		portDefinition = scufl2Tools.portDefinitionFor(file2, profile);
@@ -365,12 +366,12 @@ public class TestExternalToolActivityParser {
 				portDefinition.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#substitutionType")));
 		assertEquals("anotherFile.txt",
 				portDefinition.getPropertyAsString(ACTIVITY_URI.resolve("#substitutes")));	
-		assertTrue(portDefinition.getProperties().containsKey(ACTIVITY_URI.resolve("#charset")));
+		assertTrue(portDefinition.hasProperty(ACTIVITY_URI.resolve("#charset")));
 		assertEquals(CHARSET.resolve("#windows-1252"),
 				portDefinition.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#charset")));
 
-		assertFalse(portDefinition.getProperties().containsKey(ACTIVITY_URI.resolve("#forceCopy")));
-		assertFalse(portDefinition.getProperties().containsKey(ACTIVITY_URI.resolve("#concatenate")));
+		assertFalse(portDefinition.hasProperty(ACTIVITY_URI.resolve("#forceCopy")));
+		assertFalse(portDefinition.hasProperty(ACTIVITY_URI.resolve("#concatenate")));
 
 		
 		// 3 - fileList
@@ -382,12 +383,12 @@ public class TestExternalToolActivityParser {
 				portDefinition.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#substitutionType")));
 		assertEquals("fileList",
 				portDefinition.getPropertyAsString(ACTIVITY_URI.resolve("#substitutes")));	
-		assertTrue(portDefinition.getProperties().containsKey(ACTIVITY_URI.resolve("#charset")));
+		assertTrue(portDefinition.hasProperty(ACTIVITY_URI.resolve("#charset")));
 		assertEquals(CHARSET.resolve("#windows-1252"),
 				portDefinition.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#charset")));
 
-		assertFalse(portDefinition.getProperties().containsKey(ACTIVITY_URI.resolve("#forceCopy")));
-		assertFalse(portDefinition.getProperties().containsKey(ACTIVITY_URI.resolve("#concatenate")));
+		assertFalse(portDefinition.hasProperty(ACTIVITY_URI.resolve("#forceCopy")));
+		assertFalse(portDefinition.hasProperty(ACTIVITY_URI.resolve("#concatenate")));
 		
 		// 4 - fileList2
 		portDefinition = scufl2Tools.portDefinitionFor(fileList2, profile);
@@ -397,46 +398,38 @@ public class TestExternalToolActivityParser {
 		assertEquals(ACTIVITY_URI.resolve("#File"), 
 				portDefinition.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#substitutionType")));
 		assertEquals("another",
-				portDefinition.getPropertyAsString(ACTIVITY_URI.resolve("#substitutes")));	
-		assertTrue(portDefinition.getProperties().containsKey(ACTIVITY_URI.resolve("#charset")));
-		assertEquals(CHARSET.resolve("#windows-1252"),
-				portDefinition.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#charset")));
-
-		assertFalse(portDefinition.getProperties().containsKey(ACTIVITY_URI.resolve("#forceCopy")));
-		assertFalse(portDefinition.getProperties().containsKey(ACTIVITY_URI.resolve("#concatenate")));
+				portDefinition.getPropertyAsString(ACTIVITY_URI.resolve("#substitutes")));
+		assertFalse(portDefinition.hasProperty(ACTIVITY_URI.resolve("#charset")));
+		
+		assertFalse(portDefinition.hasProperty(ACTIVITY_URI.resolve("#forceCopy")));
+		assertFalse(portDefinition.hasProperty(ACTIVITY_URI.resolve("#concatenate")));
 		
 		// 5 - stringReplace
 		portDefinition = scufl2Tools.portDefinitionFor(stringReplace, profile);
 		assertNotNull("Could not find port definition for stringReplace", portDefinition);
-		assertEquals(ACTIVITY_URI.resolve("#binary"),
+		assertEquals(PropertyLiteral.XSD_STRING,
 				portDefinition.getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
 		assertEquals(ACTIVITY_URI.resolve("#Parameter"), 
 				portDefinition.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#substitutionType")));
 		assertEquals("stringReplace",
 				portDefinition.getPropertyAsString(ACTIVITY_URI.resolve("#substitutes")));
-		assertFalse(portDefinition.getProperties().containsKey(ACTIVITY_URI.resolve("#charset")));
-		//assertEquals(CHARSET.resolve("#windows-1252"),
-				//portDefinition.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#charset")));
-
-		assertFalse(portDefinition.getProperties().containsKey(ACTIVITY_URI.resolve("#forceCopy")));
-		assertFalse(portDefinition.getProperties().containsKey(ACTIVITY_URI.resolve("#concatenate")));
+		assertFalse(portDefinition.hasProperty(ACTIVITY_URI.resolve("#charset")));	
+		assertFalse(portDefinition.hasProperty(ACTIVITY_URI.resolve("#forceCopy")));
+		assertFalse(portDefinition.hasProperty(ACTIVITY_URI.resolve("#concatenate")));
 
 
 		// 6 - stringReplaceWithDifferentPort
 		portDefinition = scufl2Tools.portDefinitionFor(stringReplaceWithDifferentPort, profile);
 		assertNotNull("Could not find port definition for stringReplaceWithDifferentPort", portDefinition);
-		assertEquals(ACTIVITY_URI.resolve("#binary"),
+		assertEquals(PropertyLiteral.XSD_STRING,
 				portDefinition.getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
 		assertEquals(ACTIVITY_URI.resolve("#Parameter"), 
 				portDefinition.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#substitutionType")));
-		assertEquals("%%theString%%",
+		assertEquals("theString",
 				portDefinition.getPropertyAsString(ACTIVITY_URI.resolve("#substitutes")));
-		assertFalse(portDefinition.getProperties().containsKey(ACTIVITY_URI.resolve("#charset")));
-		//assertEquals(CHARSET.resolve("#windows-1252"),
-				//portDefinition.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#charset")));
-
-		assertFalse(portDefinition.getProperties().containsKey(ACTIVITY_URI.resolve("#forceCopy")));
-		assertFalse(portDefinition.getProperties().containsKey(ACTIVITY_URI.resolve("#concatenate")));
+		assertFalse(portDefinition.hasProperty(ACTIVITY_URI.resolve("#charset")));
+		assertFalse(portDefinition.hasProperty(ACTIVITY_URI.resolve("#forceCopy")));
+		assertFalse(portDefinition.hasProperty(ACTIVITY_URI.resolve("#concatenate")));
 		
 		
 				
