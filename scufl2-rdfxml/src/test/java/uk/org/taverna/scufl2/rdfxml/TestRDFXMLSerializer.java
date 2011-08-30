@@ -413,7 +413,7 @@ public class TestRDFXMLSerializer {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		// To test that seeAlso URIs are stored
 		serializer.profileDoc(outStream, workflowBundle.getMainProfile(), URI.create(TAVERNAWORKBENCH_RDF));
-		System.out.write(outStream.toByteArray());
+		//System.out.write(outStream.toByteArray());
 		Document doc = parseXml(outStream);
 		Element root = doc.getRootElement();
 
