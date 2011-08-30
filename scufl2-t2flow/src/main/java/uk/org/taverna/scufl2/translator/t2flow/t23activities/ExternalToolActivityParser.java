@@ -245,7 +245,7 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 			String portName = entry.getString();
 			ScriptOutput scriptOutput = entry.getDeUniLuebeckInbKnowarcUsecasesScriptOutput();
 			PropertyResource portDef = generatePortDefinition(portName,
-					scriptOutput.getPath(), null, true, false,
+					scriptOutput.getPath(), null, false, false,
 					scriptOutput.isBinary(), true, false, false, false, false);
 			configResource.addProperty(PORT_DEFINITION.resolve("#outputPortDefinition"), portDef);
 		}
