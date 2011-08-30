@@ -1,9 +1,5 @@
 package uk.org.taverna.scufl2.translator.t2flow.t23activities;
 
-import static org.junit.Assert.assertEquals;
-import static uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser.ACTIVITY_URI;
-import static uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser.CHARSET;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
