@@ -3,36 +3,24 @@ package uk.org.taverna.scufl2.translator.t2flow.t23activities;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static uk.org.taverna.scufl2.api.common.Scufl2Tools.PORT_DEFINITION;
 import static uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser.ACTIVITY_URI;
 import static uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser.CHARSET;
 import static uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser.CNT;
 import static uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser.DC;
-import static uk.org.taverna.scufl2.api.common.Scufl2Tools.PORT_DEFINITION;
 
-
-import java.io.IOException;
-import java.io.StringReader;
 import java.net.URI;
 import java.net.URL;
-import java.util.Date;
 import java.util.SortedSet;
 
 import javax.xml.bind.JAXBException;
 
-import org.jdom.Attribute;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-import org.jdom.xpath.XPath;
 import org.junit.Before;
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
-import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
