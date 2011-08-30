@@ -424,5 +424,13 @@ PropertyObject {
 		+ ", getResourceURI()=" + getResourceURI() + "]";
 	}
 
+	public boolean hasProperty(URI predicate) {
+		if (! getProperties().containsKey(predicate)) {
+			return false;
+		}
+		// Might be an empty set
+		return ! getProperties().get(predicate).isEmpty();
+	}
+
 
 }
