@@ -36,7 +36,7 @@ public class ValidatorState {
 	private Map<SenderPort, List<DataLink>> senderDataLinkMap = new HashMap<SenderPort, List<DataLink>>();
 	private Map<ReceiverPort, List<DataLink>> receiverDataLinkMap = new HashMap<ReceiverPort, List<DataLink>>();
 	private Map<Port, Integer> portResolvedDepthMap = new HashMap<Port, Integer> ();
-	private StructuralValidationEventListener eventListener = new DefaultStructuralValidationEventListener();
+	private StructuralValidationListener eventListener = new DefaultStructuralValidationListener();
 
 	public void setWorkflowBundle(WorkflowBundle workflowBundle) {
 		this.workflowBundle = workflowBundle;
@@ -138,11 +138,11 @@ public class ValidatorState {
 		return this.processor;
 	}
 
-	public void setEventListener(StructuralValidationEventListener eventListener) {
+	public void setEventListener(StructuralValidationListener eventListener) {
 		this.eventListener = eventListener;
 	}
 
-	public StructuralValidationEventListener getEventListener() {
+	public StructuralValidationListener getEventListener() {
 		return eventListener;
 	}
 

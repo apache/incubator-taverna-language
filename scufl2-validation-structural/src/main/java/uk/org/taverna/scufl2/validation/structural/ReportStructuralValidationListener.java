@@ -26,8 +26,8 @@ import uk.org.taverna.scufl2.api.port.SenderPort;
  * @author alanrw
  *
  */
-public class ReportStructuralValidationEventListener extends
-		DefaultStructuralValidationEventListener {
+public class ReportStructuralValidationListener extends
+		DefaultStructuralValidationListener {
 	
 	private Map<SenderPort, List<DataLink>> senderDataLinkMap = new HashMap<SenderPort, List<DataLink>>();
 	private Map<ReceiverPort, List<DataLink>> receiverDataLinkMap = new HashMap<ReceiverPort, List<DataLink>>();
