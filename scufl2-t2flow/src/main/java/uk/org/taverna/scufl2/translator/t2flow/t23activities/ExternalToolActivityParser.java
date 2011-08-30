@@ -140,8 +140,10 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 		}
 		
 		if (externalToolConfig  != null) {
-			configResource.addProperty(ACTIVITY_URI.resolve("#edited"), 
-					new PropertyLiteral(externalToolConfig.isEdited()));
+			if (configResource.getProperties().containsKey(ACTIVITY_URI.resolve("#toolId"))) {			
+				configResource.addProperty(ACTIVITY_URI.resolve("#edited"), 
+						new PropertyLiteral(externalToolConfig.isEdited()));
+			}
 		
 			
 			if (externalToolConfig.getGroup() != null) {
