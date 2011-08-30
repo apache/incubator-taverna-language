@@ -7,15 +7,18 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser.ACTIVITY_URI;
+import static uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser.CHARSET;
+import static uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser.CNT;
 import static uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser.DC;
 import static uk.org.taverna.scufl2.api.common.Scufl2Tools.PORT_DEFINITION;
-import static uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser.CHARSET;
+
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.URL;
 import java.util.Date;
+import java.util.SortedSet;
 
 import javax.xml.bind.JAXBException;
 
@@ -38,6 +41,7 @@ import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.api.property.PropertyLiteral;
+import uk.org.taverna.scufl2.api.property.PropertyReference;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 
@@ -431,10 +435,25 @@ public class TestExternalToolActivityParser {
 		assertFalse(portDefinition.hasProperty(ACTIVITY_URI.resolve("#forceCopy")));
 		assertFalse(portDefinition.hasProperty(ACTIVITY_URI.resolve("#concatenate")));
 		
-		
+		SortedSet<PropertyResource> staticInputs = resource.getPropertiesAsResources(ACTIVITY_URI.resolve("#staticInput"));
+		assertEquals(2, staticInputs.size());
+		for (PropertyResource staticInput : staticInputs) {
+			String substitutes = staticInput.getPropertyAsString(ACTIVITY_URI.resolve("#substitutes"));
+			PropertyReference sourceRef = staticInput.getPropertyAsReference(ACTIVITY_URI.resolve("#source"));
+			
+			if (substitutes.equals("thefile.txt")) {
+				PropertyResource source = (PropertyResource)sourceRef;
+				assertEquals(CNT.resolve("#ContentAsText"), source.getTypeURI());
+				assertEquals("A multi\n   line\n     string inserted here. \u0192(x).", 
+						source.getPropertyAsString(CNT.resolve("#chars")));
+			} else if (substitutes.equals("downloaded.zip")) {
+				assertEquals(URI.create("http://example.com/download#strange"), sourceRef.getResourceURI());
+			} else {
+				fail("Unexpected substitution " + substitutes);
+			}
+		}
 				
 	}
-	
 	
 	
 }
