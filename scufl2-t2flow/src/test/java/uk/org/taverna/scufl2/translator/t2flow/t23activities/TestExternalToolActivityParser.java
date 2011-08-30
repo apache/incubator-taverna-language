@@ -116,16 +116,18 @@ public class TestExternalToolActivityParser {
 				toolId.toASCIIString());
 		assertEquals(false, resource.getPropertyAsLiteral(
 						ACTIVITY_URI.resolve("#edited")).getLiteralValueAsBoolean());
+	
+
+		PropertyResource invocation = resource.getPropertyAsResource(ACTIVITY_URI.resolve("#invocation"));
 		
 		assertEquals(ACTIVITY_URI.resolve("#local"),  
-				resource.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#mechanismType")));
+				invocation.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#mechanismType")));
 		assertEquals("default local",  
-				resource.getPropertyAsString(ACTIVITY_URI.resolve("#mechanismName")));
+				invocation.getPropertyAsString(ACTIVITY_URI.resolve("#mechanismName")));
 	
-		
-		String mechanismXML = resource.getPropertyAsLiteral(ACTIVITY_URI.resolve("#mechanismXML")).getLiteralValue();
-		assertXpathEquals("", mechanismXML, "/localInvocation");
-		
+		assertFalse(invocation.hasProperty(ACTIVITY_URI.resolve("#mechanismXML")));
+		assertFalse(invocation.hasProperty(ACTIVITY_URI.resolve("#node")));
+	
 		PropertyResource description = resource.getPropertyAsResource(ACTIVITY_URI.resolve("#toolDescription"));
 		assertEquals("cat",  
 				description.getPropertyAsString(DC.resolve("title")));
@@ -210,36 +212,7 @@ public class TestExternalToolActivityParser {
 
 
 		
-	}
-	
-
-	protected Object xpathSelectElement(String xml, String xpath) throws JDOMException, IOException {	
-		SAXBuilder saxBuilder = new SAXBuilder();
-//		System.out.println(xml);
-		Document doc = saxBuilder.build(new StringReader(xml));
-		Element element = doc.getRootElement();
-		
-		XPath x = XPath.newInstance(xpath);	
-		//x.addNamespace(XML_NS);
-
-		return x.selectSingleNode(element);
-	}
-	
-	protected void assertXpathEquals(String expected, String xml,
-			String xpath) throws JDOMException, IOException {
-		Object o = xpathSelectElement(xml, xpath);
-		if (o == null) {
-			fail("Can't find " + xpath  + " in:\n" + xml);
-			return;
-		}
-		String text;
-		if (o instanceof Attribute) {
-			text = ((Attribute)o).getValue();
-		} else {
-			text = ((Element)o).getValue();
-		}
-		assertEquals(expected, text);
-	}
+	}	
 	
 	@Test
 	public void parse2_3() throws Exception {
@@ -258,17 +231,21 @@ public class TestExternalToolActivityParser {
 		assertEquals(ACTIVITY_URI.resolve("#Config"), 
 				config.getConfigurableType());
 		PropertyResource resource = config.getPropertyResource();
-		assertFalse(resource.hasProperty(ACTIVITY_URI.resolve("#toolId")));
+		URI toolId = resource.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#toolId"));
+		assertEquals(ACTIVITY_URI.resolve("#2cd545bf-64ae-4cda-84fc-8cfe2faed772"), toolId);
+		
 		assertFalse(resource.hasProperty(ACTIVITY_URI.resolve("#edited")));
 
+		PropertyResource invocation = resource.getPropertyAsResource(ACTIVITY_URI.resolve("#invocation"));
+		assertEquals(ACTIVITY_URI.resolve("#Invocation"), invocation.getTypeURI());
+
 		assertEquals(ACTIVITY_URI.resolve("#local"),  
-				resource.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#mechanismType")));
+				invocation.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#mechanismType")));
 		assertEquals("default local",  
-				resource.getPropertyAsString(ACTIVITY_URI.resolve("#mechanismName")));
+				invocation.getPropertyAsString(ACTIVITY_URI.resolve("#mechanismName")));
 	
-		
-		String mechanismXML = resource.getPropertyAsLiteral(ACTIVITY_URI.resolve("#mechanismXML")).getLiteralValue();
-		assertXpathEquals("", mechanismXML, "/localInvocation");
+		assertFalse(invocation.hasProperty(ACTIVITY_URI.resolve("#mechanismXML")));
+		assertFalse(invocation.hasProperty(ACTIVITY_URI.resolve("#node")));
 		
 		PropertyResource description = resource.getPropertyAsResource(ACTIVITY_URI.resolve("#toolDescription"));
 		assertEquals("someName",  
@@ -452,7 +429,95 @@ public class TestExternalToolActivityParser {
 				fail("Unexpected substitution " + substitutes);
 			}
 		}
+		
+		
+		// Processor symbolicLocation
+		proc = bundle.getMainWorkflow().getProcessors()
+					.getByName("symbolicLocation");
+		assertNotNull(proc);
+		config = scufl2Tools
+				.configurationForActivityBoundToProcessor(proc, profile);
+		
+		resource = config.getPropertyResource();
+		
+		toolId = resource.getPropertyAsResourceURI(
+				ACTIVITY_URI.resolve("#toolId"));		
+		assertEquals(ACTIVITY_URI.resolve("#5dd1fdb0-df3c-4fce-a856-29b4d0ac67bb"), toolId);
+		assertFalse(resource.hasProperty(ACTIVITY_URI.resolve("#edited")));
+
+		invocation = resource.getPropertyAsResource(ACTIVITY_URI.resolve("#invocation"));
+		
+		assertEquals(ACTIVITY_URI.resolve("#InvocationGroup"), invocation.getTypeURI());
+		
+		assertEquals("asdfsadf",  
+				invocation.getPropertyAsString(DC.resolve("identifier")));
+	
+		
+		assertEquals(ACTIVITY_URI.resolve("#ssh"),  
+				invocation.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#mechanismType")));
+		assertEquals("asdfasdg",  
+				invocation.getPropertyAsString(ACTIVITY_URI.resolve("#mechanismName")));
+	
+		assertFalse(invocation.hasProperty(ACTIVITY_URI.resolve("#mechanismXML")));
+		
+		PropertyResource node = invocation.getPropertyAsResource(ACTIVITY_URI.resolve("#node"));
+		assertNotNull(node);
+		assertEquals(ACTIVITY_URI.resolve("#SSHNode"), node.getTypeURI());
+		
+		assertEquals("127.0.0.1", node.getPropertyAsString(ACTIVITY_URI.resolve("#hostname")));
+		
+		assertEquals(22, node.getPropertyAsLiteral(ACTIVITY_URI.resolve("#port")).getLiteralValueAsInt());
+		assertEquals("/tmp/asdfasdf/", node.getPropertyAsString(ACTIVITY_URI.resolve("#directory")));
+		assertEquals("/bin/ln -s %%PATH_TO_ORIGINAL%% %%TARGET_NAME%%", 
+				node.getPropertyAsString(ACTIVITY_URI.resolve("#linkCommand")));
+		assertEquals("/bin/cp %%PATH_TO_ORIGINAL%% %%TARGET_NAME%%", 
+				node.getPropertyAsString(ACTIVITY_URI.resolve("#copyCommand")));
+
+		
+		// Processor explicitLocation
+				proc = bundle.getMainWorkflow().getProcessors()
+							.getByName("explicitLocation");
+				assertNotNull(proc);
+				config = scufl2Tools
+						.configurationForActivityBoundToProcessor(proc, profile);
 				
+				resource = config.getPropertyResource();
+				
+				toolId = resource.getPropertyAsResourceURI(
+						ACTIVITY_URI.resolve("#toolId"));		
+				assertEquals(ACTIVITY_URI.resolve("#5dd1fdb0-df3c-4fce-a856-29b4d0ac67bb"), toolId);
+				assertFalse(resource.hasProperty(ACTIVITY_URI.resolve("#edited")));
+
+				invocation = resource.getPropertyAsResource(ACTIVITY_URI.resolve("#invocation"));
+				
+				assertEquals(ACTIVITY_URI.resolve("#Invocation"), invocation.getTypeURI());
+				
+				assertFalse(invocation.hasProperty(DC.resolve("identifier")));
+			
+				
+				assertEquals(ACTIVITY_URI.resolve("#ssh"),  
+						invocation.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#mechanismType")));
+				assertEquals("asdfasdg",  
+						invocation.getPropertyAsString(ACTIVITY_URI.resolve("#mechanismName")));
+			
+				assertFalse(invocation.hasProperty(ACTIVITY_URI.resolve("#mechanismXML")));
+				
+				node = invocation.getPropertyAsResource(ACTIVITY_URI.resolve("#node"));
+				assertNotNull(node);
+				assertEquals(ACTIVITY_URI.resolve("#SSHNode"), node.getTypeURI());
+				
+				assertEquals("127.0.0.1", node.getPropertyAsString(ACTIVITY_URI.resolve("#hostname")));
+				
+				assertEquals(22, node.getPropertyAsLiteral(ACTIVITY_URI.resolve("#port")).getLiteralValueAsInt());
+				assertEquals("/tmp/asdfasdf/", node.getPropertyAsString(ACTIVITY_URI.resolve("#directory")));
+				assertEquals("/bin/ln -s %%PATH_TO_ORIGINAL%% %%TARGET_NAME%%", 
+						node.getPropertyAsString(ACTIVITY_URI.resolve("#linkCommand")));
+				assertEquals("/bin/cp %%PATH_TO_ORIGINAL%% %%TARGET_NAME%%", 
+						node.getPropertyAsString(ACTIVITY_URI.resolve("#copyCommand")));
+
+
+		
+		
 	}
 	
 	
