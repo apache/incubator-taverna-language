@@ -5,8 +5,13 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
@@ -14,9 +19,14 @@ import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.api.port.ActivityPort;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.OutputActivityPort;
+import uk.org.taverna.scufl2.api.property.MultiplePropertiesException;
+import uk.org.taverna.scufl2.api.property.PropertyException;
 import uk.org.taverna.scufl2.api.property.PropertyLiteral;
+import uk.org.taverna.scufl2.api.property.PropertyNotFoundException;
 import uk.org.taverna.scufl2.api.property.PropertyObject;
+import uk.org.taverna.scufl2.api.property.PropertyReference;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
+import uk.org.taverna.scufl2.api.property.UnexpectedPropertyException;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.defaultactivities.AbstractActivityParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
@@ -133,31 +143,51 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 			URI repositoryUri = URI.create(externalToolConfig.getRepositoryUrl());
 			URI usecase = repositoryUri.resolve("#" + uriTools.validFilename(externalToolConfig.getExternaltoolid()));
 			configResource.addPropertyReference(ACTIVITY_URI.resolve("#toolId"), usecase);
-		}
-		
-		if (externalToolConfig  != null) {
 			if (configResource.getProperties().containsKey(ACTIVITY_URI.resolve("#toolId"))) {			
 				configResource.addProperty(ACTIVITY_URI.resolve("#edited"), 
 						new PropertyLiteral(externalToolConfig.isEdited()));
 			}
+		} else if (externalToolConfig  != null && externalToolConfig.getExternaltoolid() != null) {
+			URI usecase = ACTIVITY_URI.resolve("#" + uriTools.validFilename(externalToolConfig.getExternaltoolid()));
+			configResource.addPropertyReference(ACTIVITY_URI.resolve("#toolId"), usecase);
+		}
 		
+		if (externalToolConfig  != null) {
+		
+			PropertyResource invocation = configResource.addPropertyAsNewResource(ACTIVITY_URI.resolve("#invocation"), ACTIVITY_URI.resolve("#Invocation"));
 			
+			String mechanismType;
+			String mechanismName;
+			String mechanismXML;
 			if (externalToolConfig.getGroup() != null) {
-				configResource.addPropertyAsNewResource(ACTIVITY_URI.resolve("#invocationGroup"), ACTIVITY_URI.resolve("#InvocationGroup"));
-				// TODO: Invocation groups
-			} else {				
-				URI mechanismType = ACTIVITY_URI.resolve("#" + uriTools.validFilename(externalToolConfig.getMechanismType()));
-				if (mappedMechanismTypes .containsKey(mechanismType)) {
-					mechanismType = mappedMechanismTypes.get(mechanismType);
-				}
-				configResource.addPropertyReference(ACTIVITY_URI.resolve("#mechanismType"), 
-						mechanismType);
-				
-				configResource.addPropertyAsString(ACTIVITY_URI.resolve("#mechanismName"), 
-						externalToolConfig.getMechanismName());
-				configResource.addProperty(ACTIVITY_URI.resolve("#mechanismXML"),
-						new PropertyLiteral(externalToolConfig.getMechanismXML(), PropertyLiteral.XML_LITERAL));
+				mechanismType = externalToolConfig.getGroup().getMechanismType();
+				mechanismName = externalToolConfig.getGroup().getMechanismName();
+				mechanismXML = externalToolConfig.getGroup().getMechanismXML();
+				invocation.setTypeURI(ACTIVITY_URI.resolve("#InvocationGroup"));
+				invocation.addPropertyAsString(DC.resolve("identifier"), 
+						externalToolConfig.getGroup().getInvocationGroupName());
+			} else {	
+				mechanismType = externalToolConfig.getMechanismType();
+				mechanismName = externalToolConfig.getMechanismName();
+				mechanismXML = externalToolConfig.getMechanismXML();
 			}
+			URI mechanismTypeURI = ACTIVITY_URI.resolve("#" + uriTools.validFilename(mechanismType));
+			if (mappedMechanismTypes.containsKey(mechanismTypeURI)) {
+				mechanismTypeURI = mappedMechanismTypes.get(mechanismTypeURI);
+			}
+			invocation.addPropertyReference(ACTIVITY_URI.resolve("#mechanismType"), 
+					mechanismTypeURI);
+			
+			invocation.addPropertyAsString(ACTIVITY_URI.resolve("#mechanismName"), 
+					mechanismName);
+			invocation.addProperty(ACTIVITY_URI.resolve("#mechanismXML"),
+					new PropertyLiteral(mechanismXML, PropertyLiteral.XML_LITERAL));
+			try { 
+				parseMechanismXML(invocation);			
+			} catch (PropertyException ex) {
+				throw new ReaderException("Can't parse mechanism XML", ex);
+			}
+			
 
 			configResource.addProperty(ACTIVITY_URI.resolve("#toolDescription"), 
 					parseToolDescription(externalToolConfig.getUseCaseDescription()));
@@ -172,6 +202,97 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 		} finally {
 			getParserState().setCurrentConfiguration(null);
 		}
+	}
+
+	private void parseMechanismXML(PropertyResource invocation) throws PropertyException {
+		URI type = invocation.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#mechanismType"));
+		if (type.equals(ACTIVITY_URI.resolve("#local"))) {
+			Element xml = invocation.getPropertyAsLiteral(ACTIVITY_URI.resolve("#mechanismXML")).getLiteralValueAsElement();			
+				
+			String directory = elementByTag(xml, "directory");
+			String linkCommand = elementByTag(xml, "linkCommand");
+			String shellPrefix = elementByTag(xml, "shellPrefix");
+			PropertyResource node = new PropertyResource();
+			node.setTypeURI(ACTIVITY_URI.resolve("#LocalNode"));
+			if (directory != null) {
+				node.addPropertyAsString(ACTIVITY_URI.resolve("#directory"), directory);
+			}				
+			if (linkCommand != null) {
+				node.addPropertyAsString(ACTIVITY_URI.resolve("#linkCommand"), linkCommand);
+			}
+			if (shellPrefix != null) {
+				node.addPropertyAsString(ACTIVITY_URI.resolve("#shellPrefix"), shellPrefix);
+			}
+			if (! node.getProperties().isEmpty()) {
+				// Only add if it is customized
+				invocation.addProperty(ACTIVITY_URI.resolve("#node"), node);
+			}			
+			
+			invocation.getProperties().remove(ACTIVITY_URI.resolve("#mechanismXML"));
+		} else if (type.equals(ACTIVITY_URI.resolve("#ssh"))) {
+			Element xml = invocation.getPropertyAsLiteral(ACTIVITY_URI.resolve("#mechanismXML")).getLiteralValueAsElement();			
+			for (Element sshNode : elementIter(xml.getElementsByTagName("sshNode"))) {
+				String hostname = elementByTag(sshNode, "host");
+				String port = elementByTag(sshNode, "port");
+				String directory = elementByTag(sshNode, "directory");
+				String linkCommand = elementByTag(sshNode, "linkCommand");
+				String copyCommand = elementByTag(sshNode, "copyCommand");
+				
+				PropertyResource node = invocation.addPropertyAsNewResource(ACTIVITY_URI.resolve("#node"), 
+						ACTIVITY_URI.resolve("#SSHNode"));
+				node.addPropertyAsString(ACTIVITY_URI.resolve("#hostname"), hostname);
+				if (port != null) {
+					PropertyLiteral portLit = new PropertyLiteral(port, PropertyLiteral.XSD_INT);
+					node.addProperty(ACTIVITY_URI.resolve("#port"), portLit);					
+				}
+				if (directory != null) {
+					node.addPropertyAsString(ACTIVITY_URI.resolve("#directory"), directory);
+				}				
+				if (linkCommand != null) {
+					node.addPropertyAsString(ACTIVITY_URI.resolve("#linkCommand"), linkCommand);
+				}
+				if (copyCommand != null) {
+					node.addPropertyAsString(ACTIVITY_URI.resolve("#copyCommand"), copyCommand);
+				}
+			}
+			invocation.getProperties().remove(ACTIVITY_URI.resolve("#mechanismXML"));			
+		} else {
+			
+		}
+	}
+
+	private Iterable<Element> elementIter(final NodeList nodeList) {
+		return new Iterable<Element>() {			
+			@Override
+			public Iterator<Element> iterator() {
+				return new Iterator<Element>() {
+					int position = 0;
+					
+					@Override
+					public boolean hasNext() {
+						return nodeList.getLength() > position;
+					}
+					@Override
+					public Element next() {
+						return (Element)nodeList.item(position++);
+					}
+
+					@Override
+					public void remove() {
+						throw new UnsupportedOperationException();
+					}
+					
+				};
+			}
+		};
+	}
+
+	private String elementByTag(Element el, String tagName) {
+		NodeList nodeList = el.getElementsByTagName(tagName);
+		if (nodeList.getLength() == 0) {
+			return null;
+		}
+		return nodeList.item(0).getTextContent();
 	}
 
 	protected PropertyObject parseToolDescription(
