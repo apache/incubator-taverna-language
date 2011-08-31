@@ -2,6 +2,7 @@ package uk.org.taverna.scufl2.validation.correctness;
 
 import static org.junit.Assert.*;
 
+import java.util.Collections;
 import java.util.Set;
 
 import org.junit.Test;
@@ -35,7 +36,7 @@ public class TestAbstractDepthPort {
 		}
 		
 		Set<NullFieldProblem> nullFieldProblems = rcvl.getNullFieldProblems();
-		assertEquals(0, nullFieldProblems.size()); // only done when completeness check
+		assertEquals(Collections.EMPTY_SET, nullFieldProblems); // only done when completeness check
 	}
 
 	@Test
@@ -60,7 +61,7 @@ public class TestAbstractDepthPort {
 		}
 		
 		Set<NullFieldProblem> nullFieldProblems = rcvl.getNullFieldProblems();
-		assertEquals(1, nullFieldProblems.size()); // parent
+		assertFalse(nullFieldProblems.isEmpty()); // parent
 		boolean depthFieldProblem = false;
 		for (NullFieldProblem nlp : nullFieldProblems) {
 			if (nlp.getBean().equals(iap) && nlp.getFieldName().equals("depth")) {
@@ -83,10 +84,10 @@ public class TestAbstractDepthPort {
 		cv.checkCorrectness(iap, false, rcvl);
 		
 		Set<NegativeValueProblem> negativeValueProblems = rcvl.getNegativeValueProblems();
-		assertEquals(0, negativeValueProblems.size());
+		assertEquals(Collections.EMPTY_SET, negativeValueProblems);
 		
 		Set<NullFieldProblem> nullFieldProblems = rcvl.getNullFieldProblems();
-		assertEquals(0, nullFieldProblems.size()); // only done when completeness check
+		assertEquals(Collections.EMPTY_SET, nullFieldProblems); // only done when completeness check
 	}
 	
 	@Test
@@ -105,7 +106,7 @@ public class TestAbstractDepthPort {
 		assertEquals(0, negativeValueProblems.size());
 		
 		Set<NullFieldProblem> nullFieldProblems = rcvl.getNullFieldProblems();
-		assertEquals(2, nullFieldProblems.size()); // depth and parent
+		assertFalse(nullFieldProblems.isEmpty()); // depth and parent
 		boolean depthFieldProblem = false;
 		for (NullFieldProblem nlp : nullFieldProblems) {
 			if (nlp.getBean().equals(iap) && nlp.getFieldName().equals("depth")) {

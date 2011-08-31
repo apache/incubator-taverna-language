@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
 import java.util.Set;
 
 import org.junit.Test;
@@ -122,7 +123,7 @@ public class TestDataLink {
 		cv.checkCorrectness(dataLink, true, rcvl);
 		
 		Set<OutOfScopeValueProblem> outOfScopeValueProblems = rcvl.getOutOfScopeValueProblems();
-		assertTrue(outOfScopeValueProblems.isEmpty());
+		assertEquals(Collections.EMPTY_SET, outOfScopeValueProblems);
 	}
 	
 	@Test
@@ -222,7 +223,7 @@ public class TestDataLink {
 		cv.checkCorrectness(dataLink, true, rcvl);
 		
 		Set<OutOfScopeValueProblem> outOfScopeValueProblems = rcvl.getOutOfScopeValueProblems();
-		assertTrue(outOfScopeValueProblems.isEmpty());
+		assertEquals(Collections.EMPTY_SET, outOfScopeValueProblems);
 	}
 	
 	@Test
@@ -362,7 +363,7 @@ public class TestDataLink {
 		cv.checkCorrectness(dataLink, false, rcvl);
 		
 		Set<NegativeValueProblem> negativeValueProblems = rcvl.getNegativeValueProblems();
-		assertTrue(negativeValueProblems.isEmpty());
+		assertEquals(Collections.EMPTY_SET, negativeValueProblems);
 	}
 
 }

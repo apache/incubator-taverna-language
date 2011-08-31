@@ -3,9 +3,11 @@
  */
 package uk.org.taverna.scufl2.validation.correctness;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
 import java.util.Set;
 
 import org.junit.Test;
@@ -45,7 +47,7 @@ public class TestNamed {
 		cv.checkCorrectness(w, false, rcvl);
 		
 		Set<NullFieldProblem> nullFieldProblems = rcvl.getNullFieldProblems();
-		assertTrue(nullFieldProblems.isEmpty());
+		assertEquals(Collections.EMPTY_SET, nullFieldProblems);
 		
 	}
 	
@@ -60,7 +62,7 @@ public class TestNamed {
 		cv.checkCorrectness(w, false, rcvl);
 		
 		Set<NullFieldProblem> nullFieldProblems = rcvl.getNullFieldProblems();
-		assertTrue(nullFieldProblems.isEmpty());	
+		assertEquals(Collections.EMPTY_SET, nullFieldProblems);	
 	}
 	
 	@Test
@@ -109,24 +111,6 @@ public class TestNamed {
 			}
 		}
 		assertTrue(problemDetected);
-	}
-	
-
-	
-	private static class DummyWorkflow extends Workflow {
-
-		private String name2;
-
-		@Override
-		public String getName() {
-			return name2;
-		}
-
-		@Override
-		public void setName(String name) {
-			name2 = name;
-		}
-		
 	}
 
 }

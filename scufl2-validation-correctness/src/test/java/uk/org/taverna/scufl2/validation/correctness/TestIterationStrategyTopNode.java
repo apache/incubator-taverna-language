@@ -3,9 +3,11 @@
  */
 package uk.org.taverna.scufl2.validation.correctness;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
 import java.util.Set;
 
 import org.junit.Test;
@@ -59,7 +61,7 @@ public class TestIterationStrategyTopNode {
 		cv.checkCorrectness(p, false, rcvl);
 		
 		Set<PortMentionedTwiceProblem> problems = rcvl.getPortMentionedTwiceProblems();
-		assertTrue(problems.isEmpty());
+		assertEquals(Collections.EMPTY_SET, problems);
 
 	}
 
