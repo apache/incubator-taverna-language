@@ -54,7 +54,7 @@ public class DefaultCorrectnessValidationListener implements
 	 * @see uk.org.taverna.scufl2.validation.correctness.CorrectnessValidationListener#nonAbsoluteGlobalBaseURI(uk.org.taverna.scufl2.api.common.Root)
 	 */
 	@Override
-	public void nonAbsoluteGlobalBaseURI(Root bean) {
+	public void nonAbsoluteURI(WorkflowBean bean) {
 		// TODO Auto-generated method stub
 
 	}

@@ -28,7 +28,7 @@ public class ReportCorrectnessValidationListener implements
 	HashSet<MismatchConfigurableTypeProblem> mismatchConfigurableTypeProblems = new HashSet<MismatchConfigurableTypeProblem>();
 	HashSet<NegativeValueProblem> negativeValueProblems = new HashSet<NegativeValueProblem>();
 
-	HashSet<Root> nonAbsoluteGlobalBaseURIs = new HashSet<Root>();
+	HashSet<WorkflowBean> nonAbsoluteURIs = new HashSet<WorkflowBean>();
 	HashSet<NullFieldProblem> nullFieldProblems = new HashSet<NullFieldProblem>();
 	HashSet<OutOfScopeValueProblem> outOfScopeValueProblems = new HashSet<OutOfScopeValueProblem>();
 	HashSet<PortMentionedTwiceProblem> portMentionedTwiceProblems = new HashSet<PortMentionedTwiceProblem>();
@@ -66,8 +66,8 @@ public class ReportCorrectnessValidationListener implements
 	 * @see uk.org.taverna.scufl2.validation.correctness.CorrectnessValidationListener#nonAbsoluteGlobalBaseURI(uk.org.taverna.scufl2.api.common.Root)
 	 */
 	@Override
-	public void nonAbsoluteGlobalBaseURI(Root bean) {
-		nonAbsoluteGlobalBaseURIs.add(bean);
+	public void nonAbsoluteURI(WorkflowBean bean) {
+		nonAbsoluteURIs.add(bean);
 	}
 
 	/* (non-Javadoc)
@@ -143,6 +143,10 @@ public class ReportCorrectnessValidationListener implements
 			return configurable;
 		}
 		
+		public String toString() {
+			return ("The types of " + configuration + " and " + configurable + " are mismatched");
+		}
+		
 	}
 	
 	public static class NegativeValueProblem {
@@ -178,6 +182,10 @@ public class ReportCorrectnessValidationListener implements
 		public Integer getFieldValue() {
 			return fieldValue;
 		}
+		
+		public String toString() {
+			return (bean + " has " + fieldName + " of value " + fieldValue);
+		}
 	}
 	
 	public HashSet<NegativeValueProblem> getNegativeValueProblems() {
@@ -206,6 +214,10 @@ public class ReportCorrectnessValidationListener implements
 		 */
 		public String getFieldName() {
 			return fieldName;
+		}
+		
+		public String toString() {
+			return (bean + " has a null " + fieldName);
 		}
 	}
 	
@@ -246,6 +258,10 @@ public class ReportCorrectnessValidationListener implements
 		public Object getValue() {
 			return value;
 		}
+		
+		public String toString() {
+			return (bean + " has " + fieldName + " with out of scope value " + value);
+		}
 
 	}
 
@@ -277,6 +293,10 @@ public class ReportCorrectnessValidationListener implements
 		public IterationStrategyNode getDuplicateNode() {
 			return duplicateNode;
 		}
+		
+		public String toString() {
+			return (originalNode + " and " + duplicateNode + " reference the same port");
+		}
 
 	}
 
@@ -307,6 +327,10 @@ public class ReportCorrectnessValidationListener implements
 		 */
 		public IterationStrategyStack getIterationStrategyStack() {
 			return iterationStrategyStack;
+		}
+		
+		public String toString() {
+			return (iterationStrategyStack + " does not include " + port);
 		}
 
 	}
@@ -348,6 +372,10 @@ public class ReportCorrectnessValidationListener implements
 		public Integer getGranularDepth() {
 			return granularDepth;
 		}
+		
+		public String toString() {
+			return (bean + " has depth " + depth + " and granular depth " + granularDepth);
+		}
 
 	}
 
@@ -369,8 +397,8 @@ public class ReportCorrectnessValidationListener implements
 	/**
 	 * @return the nonAbsoluteGlobalBaseURIs
 	 */
-	public HashSet<Root> getNonAbsoluteGlobalBaseURIs() {
-		return nonAbsoluteGlobalBaseURIs;
+	public HashSet<WorkflowBean> getNonAbsoluteURIs() {
+		return nonAbsoluteURIs;
 	}
 
 	/**
