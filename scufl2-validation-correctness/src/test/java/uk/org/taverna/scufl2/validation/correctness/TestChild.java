@@ -108,24 +108,6 @@ public class TestChild {
 		assertEquals(1, wrongParents.size());
 		assertTrue(wrongParents.contains((Child) fw));
 	}
-	
-	/**
-	 * @author alanrw
-	 *
-	 */
-	public class DummyWorkflow extends Workflow {
-		
-		private WorkflowBundle dummyParent = new WorkflowBundle();
-
-		public DummyWorkflow(WorkflowBundle parent) {
-			super.setParent(parent);
-		}
-		
-		public WorkflowBundle getParent() {
-			return dummyParent;
-		}
-
-	}
 
 
 
