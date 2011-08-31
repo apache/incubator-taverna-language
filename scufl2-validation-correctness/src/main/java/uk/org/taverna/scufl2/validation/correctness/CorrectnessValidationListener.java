@@ -24,7 +24,7 @@ public interface CorrectnessValidationListener {
 
 	void mismatchConfigurableType(Configuration bean, Configurable configures);
 
-	void nonAbsoluteGlobalBaseURI(Root bean);
+	void nonAbsoluteURI(WorkflowBean bean);
 
 	void nullField(WorkflowBean bean, String string);
 
