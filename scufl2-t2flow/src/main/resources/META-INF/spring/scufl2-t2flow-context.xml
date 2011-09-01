@@ -3,6 +3,16 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
         http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+	<bean id="t2FlowParser" class="uk.org.taverna.scufl2.translator.t2flow.T2FlowParser">
+		<property name="t2Parsers" ref="t2Parsers" />
+	</bean>
+
+	<bean id="t2FlowReader" class="uk.org.taverna.scufl2.translator.t2flow.T2FlowReader">
+		<property name="parser">
+			<ref local="t2FlowParser" />
+		</property>
+	</bean>
+
 	<bean id="dataflowActivityParser" class="uk.org.taverna.scufl2.translator.t2flow.defaultactivities.DataflowActivityParser" />
 	<bean id="beanshellActivityParser" class="uk.org.taverna.scufl2.translator.t2flow.defaultactivities.BeanshellActivityParser" />
 	<bean id="rshellActivityParser" class="uk.org.taverna.scufl2.translator.t2flow.defaultactivities.RshellActivityParser" />
@@ -15,7 +25,9 @@
 	<bean id="wsdlXMLSplitterParser" class="uk.org.taverna.scufl2.translator.t2flow.defaultactivities.WSDLXMLSplitterParser" />
 	<bean id="biomartActivityParser" class="uk.org.taverna.scufl2.translator.t2flow.defaultactivities.BiomartActivityParser" />
 	<bean id="apiConsomerActivityParser" class="uk.org.taverna.scufl2.translator.t2flow.defaultactivities.ApiConsomerActivityParser" />
+	
 	<bean id="externalToolActivityParser" class="uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser" />
+	<bean id="restActivityParser" class="uk.org.taverna.scufl2.translator.t2flow.t23activities.RESTActivityParser" />
 
 	<bean id="parallelizeParser" class="uk.org.taverna.scufl2.translator.t2flow.defaultdispatchstack.ParallelizeParser" />
 	<bean id="errorBounceParser" class="uk.org.taverna.scufl2.translator.t2flow.defaultdispatchstack.ErrorBounceParser" />
@@ -24,14 +36,5 @@
 	<bean id="loopParser" class="uk.org.taverna.scufl2.translator.t2flow.defaultdispatchstack.LoopParser" />
 	<bean id="invokeParser" class="uk.org.taverna.scufl2.translator.t2flow.defaultdispatchstack.InvokeParser" />
 
-	<bean id="t2FlowParser" class="uk.org.taverna.scufl2.translator.t2flow.T2FlowParser">
-		<property name="t2Parsers" ref="t2Parsers" />
-	</bean>
-
-	<bean id="t2FlowReader" class="uk.org.taverna.scufl2.translator.t2flow.T2FlowReader">
-		<property name="parser">
-			<ref local="t2FlowParser" />
-		</property>
-	</bean>
 
 </beans>
