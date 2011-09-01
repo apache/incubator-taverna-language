@@ -6,6 +6,7 @@ import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.api.port.OutputActivityPort;
+import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.StringConstantConfig;
@@ -49,7 +50,7 @@ public class StringConstantActivityParser extends AbstractActivityParser {
 		configuration.getPropertyResource().addPropertyAsString(
 				CONSTANT.resolve("#string"), value);
 		
-		Activity activity = getParserState().getCurrentActivity();
+		Activity activity = parserState.getCurrentActivity();
 		OutputActivityPort valuePort = new OutputActivityPort(activity, VALUE);
 		valuePort.setDepth(0);
 		valuePort.setGranularDepth(0);
