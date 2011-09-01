@@ -18,6 +18,7 @@ import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.api.property.PropertyException;
 import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
+import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityPortDefinitionBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
@@ -63,12 +64,12 @@ public class RshellActivityParser extends AbstractActivityParser {
 
 	@Override
 	public Configuration parseConfiguration(T2FlowParser t2FlowParser,
-			ConfigBean configBean) throws ReaderException {
+			ConfigBean configBean, ParserState parserState) throws ReaderException {
 		RShellConfig rshellConfig = unmarshallConfig(t2FlowParser, configBean,
 				"xstream", RShellConfig.class);
 
 		Configuration configuration = new Configuration();
-		configuration.setParent(getParserState().getCurrentProfile());
+		configuration.setParent(parserState.getCurrentProfile());
 
 		PropertyResource configResource = configuration.getPropertyResource();
 		configResource.setTypeURI(ACTIVITY_URI.resolve("#Config"));
@@ -112,7 +113,7 @@ public class RshellActivityParser extends AbstractActivityParser {
 		// }
 
 		// Activity ports
-		Activity activity = getParserState().getCurrentActivity();
+		Activity activity = parserState.getCurrentActivity();
 		activity.getInputPorts().clear();
 		activity.getOutputPorts().clear();
 		Map<URI, PropertyResource> portDefs = new HashMap<URI, PropertyResource>();
@@ -153,7 +154,7 @@ public class RshellActivityParser extends AbstractActivityParser {
 		for (RShellPortSymanticTypeBean symanticType : inputSymanticTypes
 				.getNetSfTavernaT2ActivitiesRshellRShellPortSymanticTypeBean()) {
 			String portName = symanticType.getName();
-			InputActivityPort symanticPort = getParserState()
+			InputActivityPort symanticPort = parserState
 					.getCurrentActivity().getInputPorts().getByName(portName);
 			URI portUri = new URITools().relativeUriForBean(symanticPort,
 					configuration);
@@ -197,7 +198,7 @@ public class RshellActivityParser extends AbstractActivityParser {
 		for (RShellPortSymanticTypeBean symanticType : outputSymanticTypes
 				.getNetSfTavernaT2ActivitiesRshellRShellPortSymanticTypeBean()) {
 			String portName = symanticType.getName();
-			OutputActivityPort symanticPort = getParserState()
+			OutputActivityPort symanticPort = parserState
 					.getCurrentActivity().getOutputPorts().getByName(portName);
 			URI portUri = new URITools().relativeUriForBean(symanticPort,
 					configuration);

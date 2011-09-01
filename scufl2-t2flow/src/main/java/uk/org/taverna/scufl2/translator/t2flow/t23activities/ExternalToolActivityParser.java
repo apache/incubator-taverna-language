@@ -23,6 +23,7 @@ import uk.org.taverna.scufl2.api.property.PropertyException;
 import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.api.property.PropertyObject;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
+import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.defaultactivities.AbstractActivityParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
@@ -110,7 +111,7 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 
 	@Override
 	public Configuration parseConfiguration(T2FlowParser t2FlowParser,
-			ConfigBean configBean) throws ReaderException {
+			ConfigBean configBean, ParserState parserState) throws ReaderException {
 
 		ExternalToolConfig externalToolConfig = null;
 		UsecaseConfig usecaseConfig = null;
@@ -124,8 +125,8 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 		}
 
 		Configuration configuration = new Configuration();
-		configuration.setParent(getParserState().getCurrentProfile());
-		getParserState().setCurrentConfiguration(configuration);
+		configuration.setParent(parserState.getCurrentProfile());
+		parserState.setCurrentConfiguration(configuration);
 		try {
 			PropertyResource configResource = configuration
 					.getPropertyResource();
@@ -213,7 +214,7 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 				configResource.addProperty(ACTIVITY_URI
 						.resolve("#toolDescription"),
 						parseToolDescription(externalToolConfig
-								.getUseCaseDescription()));
+								.getUseCaseDescription(), parserState));
 
 				configResource.addProperty(
 						ACTIVITY_URI.resolve("#invocationGroup"),
@@ -223,7 +224,7 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 
 			return configuration;
 		} finally {
-			getParserState().setCurrentConfiguration(null);
+			parserState.setCurrentConfiguration(null);
 		}
 	}
 
@@ -337,7 +338,7 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 		return nodeList.item(0).getTextContent();
 	}
 
-	protected PropertyObject parseToolDescription(UsecaseDescription toolDesc) {
+	protected PropertyObject parseToolDescription(UsecaseDescription toolDesc, ParserState parserState) {
 		PropertyResource propertyResource = new PropertyResource();
 		propertyResource.setTypeURI(ACTIVITY_URI.resolve("#ToolDescription"));
 
@@ -365,7 +366,7 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 
 		// Ignoring tags, REs, queue__preferred, queue__deny
 
-		PropertyResource configResource = getParserState()
+		PropertyResource configResource = parserState
 				.getCurrentConfiguration().getPropertyResource();
 
 		// static inputs
@@ -376,7 +377,7 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 					inputStatic.getTag(), inputStatic.getCharsetName(), true,
 					false, inputStatic.isBinary(), inputStatic.isFile(),
 					inputStatic.isTempFile(), inputStatic.isForceCopy(), false,
-					true);
+					true, parserState);
 
 			configResource.addProperty(ACTIVITY_URI.resolve("#staticInput"),
 					staticInput);
@@ -405,7 +406,7 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 					scriptInput.isList(), scriptInput.isBinary(),
 					scriptInput.isFile(), scriptInput.isTempFile(),
 					scriptInput.isForceCopy(), scriptInput.isConcatenate(),
-					false);
+					false, parserState);
 			configResource
 					.addProperty(Scufl2Tools.PORT_DEFINITION
 							.resolve("#inputPortDefinition"), portDef);
@@ -417,7 +418,7 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 					.getDeUniLuebeckInbKnowarcUsecasesScriptOutput();
 			PropertyResource portDef = generatePortDefinition(portName,
 					scriptOutput.getPath(), null, false, false,
-					scriptOutput.isBinary(), true, false, false, false, false);
+					scriptOutput.isBinary(), true, false, false, false, false, parserState);
 			configResource.addProperty(Scufl2Tools.PORT_DEFINITION
 					.resolve("#outputPortDefinition"), portDef);
 		}
@@ -430,18 +431,18 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 				new PropertyLiteral(toolDesc.isIncludeStdErr()));
 
 		if (toolDesc.isIncludeStdIn()) {
-			InputActivityPort stdin = new InputActivityPort(getParserState()
+			InputActivityPort stdin = new InputActivityPort(parserState
 					.getCurrentActivity(), STDIN);
 			stdin.setDepth(0);
 		}
 		if (toolDesc.isIncludeStdOut()) {
-			OutputActivityPort stdout = new OutputActivityPort(getParserState()
+			OutputActivityPort stdout = new OutputActivityPort(parserState
 					.getCurrentActivity(), STDOUT);
 			stdout.setDepth(0);
 			stdout.setGranularDepth(0);
 		}
 		if (toolDesc.isIncludeStdErr()) {
-			OutputActivityPort stderr = new OutputActivityPort(getParserState()
+			OutputActivityPort stderr = new OutputActivityPort(parserState
 					.getCurrentActivity(), STDERR);
 			stderr.setDepth(0);
 			stderr.setGranularDepth(0);
@@ -453,7 +454,7 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 	private PropertyResource generatePortDefinition(String portName,
 			String tag, String charSet, boolean isInput, boolean isList,
 			boolean isBinary, boolean isFile, boolean isTempFile,
-			boolean isForceCopy, boolean isConcatenate, boolean isStatic) {
+			boolean isForceCopy, boolean isConcatenate, boolean isStatic, ParserState parserState) {
 		PropertyResource resource = new PropertyResource();
 
 		ActivityPort actPort;
@@ -464,19 +465,19 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 			if (isInput) {
 				resource.setTypeURI(Scufl2Tools.PORT_DEFINITION
 						.resolve("#InputPortDefinition"));
-				actPort = new InputActivityPort(getParserState()
+				actPort = new InputActivityPort(parserState
 						.getCurrentActivity(), portName);
 				URI portUri = uriTools.relativeUriForBean(actPort,
-						getParserState().getCurrentConfiguration());
+						parserState.getCurrentConfiguration());
 				resource.addPropertyReference(Scufl2Tools.PORT_DEFINITION
 						.resolve("#definesInputPort"), portUri);
 			} else {
 				resource.setTypeURI(Scufl2Tools.PORT_DEFINITION
 						.resolve("#OutputPortDefinition"));
-				actPort = new OutputActivityPort(getParserState()
+				actPort = new OutputActivityPort(parserState
 						.getCurrentActivity(), portName);
 				URI portUri = uriTools.relativeUriForBean(actPort,
-						getParserState().getCurrentConfiguration());
+						parserState.getCurrentConfiguration());
 				resource.addPropertyReference(Scufl2Tools.PORT_DEFINITION
 						.resolve("#definesOutputPort"), portUri);
 			}

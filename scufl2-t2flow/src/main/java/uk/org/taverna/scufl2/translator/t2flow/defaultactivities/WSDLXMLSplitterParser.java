@@ -9,6 +9,7 @@ import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
+import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityPortDefinitionBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
@@ -53,13 +54,13 @@ public class WSDLXMLSplitterParser extends AbstractActivityParser {
 
 	@Override
 	public Configuration parseConfiguration(T2FlowParser t2FlowParser,
-			ConfigBean configBean) throws ReaderException {
+			ConfigBean configBean, ParserState parserState) throws ReaderException {
 
 		XMLSplitterConfig splitterConfig = unmarshallConfig(t2FlowParser, configBean,
 				"xstream", XMLSplitterConfig.class);		
 
 		Configuration configuration = new Configuration();
-		configuration.setParent(getParserState().getCurrentProfile());
+		configuration.setParent(parserState.getCurrentProfile());
 		
 		PropertyResource resource = configuration.getPropertyResource();		
 		resource.setTypeURI(
@@ -70,7 +71,7 @@ public class WSDLXMLSplitterParser extends AbstractActivityParser {
 		resource.addProperty(SPLITTER.resolve("#wrappedType"), literalXml);
 		
 
-		Activity activity = getParserState().getCurrentActivity();
+		Activity activity = parserState.getCurrentActivity();
 		activity.getInputPorts().clear();
 		activity.getOutputPorts().clear();
 		
