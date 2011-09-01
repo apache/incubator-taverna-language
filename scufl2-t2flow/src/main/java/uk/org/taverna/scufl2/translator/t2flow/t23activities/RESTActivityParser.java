@@ -4,37 +4,15 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
-import uk.org.taverna.scufl2.api.port.ActivityPort;
-import uk.org.taverna.scufl2.api.port.InputActivityPort;
-import uk.org.taverna.scufl2.api.port.OutputActivityPort;
-import uk.org.taverna.scufl2.api.property.PropertyException;
-import uk.org.taverna.scufl2.api.property.PropertyLiteral;
-import uk.org.taverna.scufl2.api.property.PropertyObject;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.defaultactivities.AbstractActivityParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
-import uk.org.taverna.scufl2.xml.t2flow.jaxb.Entry;
-import uk.org.taverna.scufl2.xml.t2flow.jaxb.ExternalToolConfig;
-import uk.org.taverna.scufl2.xml.t2flow.jaxb.Group;
-import uk.org.taverna.scufl2.xml.t2flow.jaxb.ScriptInputStatic;
-import uk.org.taverna.scufl2.xml.t2flow.jaxb.ScriptInputUser;
-import uk.org.taverna.scufl2.xml.t2flow.jaxb.ScriptOutput;
-import uk.org.taverna.scufl2.xml.t2flow.jaxb.UsecaseConfig;
-import uk.org.taverna.scufl2.xml.t2flow.jaxb.UsecaseDescription;
-
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.RESTConfig;
 
 public class RESTActivityParser extends AbstractActivityParser {
@@ -44,17 +22,24 @@ public class RESTActivityParser extends AbstractActivityParser {
 	private static URI ravenURI = T2FlowParser.ravenURI
 			.resolve("net.sf.taverna.t2.activities/rest-activity/");
 
+	private static URI ravenUIURI = T2FlowParser.ravenURI
+			.resolve("net.sf.taverna.t2.ui-activities/rest-activity/");
+
+	
 	private static String className = "net.sf.taverna.t2.activities.rest.RESTActivity";
 
 	public static URI ACTIVITY_URI = URI
 			.create("http://ns.taverna.org.uk/2010/activity/rest");
-
+	
+	public static URI HTTP_URI = URI.create("http://www.w3.org/2011/http#");
+	public static URI HTTP_HEADERS_URI = URI.create("http://www.w3.org/2011/http-headers#");
+	public static URI HTTP_METHODS_URI = URI.create("http://www.w3.org/2011/http-methods#");
 
 
 	@Override
 	public boolean canHandlePlugin(URI activityURI) {
 		String activityUriStr = activityURI.toASCIIString();
-		return activityUriStr.startsWith(ravenURI.toASCIIString())
+		return ( activityUriStr.startsWith(ravenURI.toASCIIString()) || activityUriStr.startsWith(ravenUIURI.toASCIIString()) ) 
 				&& activityUriStr.endsWith(className);
 	}
 
@@ -83,8 +68,8 @@ public class RESTActivityParser extends AbstractActivityParser {
 		
 
 
-		Object restConfig = unmarshallConfig(t2FlowParser, configBean,
-					"xstream", RESTActivityConfig.class);
+		RESTConfig restConfig = unmarshallConfig(t2FlowParser, configBean,
+					"xstream", RESTConfig.class);
 	
 		Configuration configuration = new Configuration();
 		configuration.setParent(getParserState().getCurrentProfile());
