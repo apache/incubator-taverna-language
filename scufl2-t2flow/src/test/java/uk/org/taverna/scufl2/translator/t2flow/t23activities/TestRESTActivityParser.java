@@ -26,8 +26,11 @@ import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Processor;
+import uk.org.taverna.scufl2.api.port.InputActivityPort;
+import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.api.property.PropertyList;
+import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.api.property.PropertyObject;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
@@ -128,7 +131,24 @@ public class TestRESTActivityParser {
 		//assertFalse(configResource.getPropertyAsLiteral(ACTIVITY_URI.resolve("#escapeParameters")).getLiteralValueAsBoolean());
 		assertFalse(configResource.hasProperty(ACTIVITY_URI.resolve("#escapeParameters")));
 
-				
+		
+		// Check ports
+		assertEquals(1, activity.getInputPorts().size());
+		InputActivityPort userID = activity.getInputPorts().getByName("userID");
+		assertEquals((Integer)0, userID.getDepth());
+		
+		assertEquals(2, activity.getOutputPorts().size());
+		OutputActivityPort responseBody = activity.getOutputPorts().getByName("responseBody");
+		assertEquals((Integer)0, responseBody.getDepth());		
+
+		OutputActivityPort status = activity.getOutputPorts().getByName("status");
+		assertEquals((Integer)0, status.getDepth());
+		
+		PropertyResource userIDDef = scufl2Tools.portDefinitionFor(userID, profile);
+		assertEquals(Scufl2Tools.PORT_DEFINITION.resolve("#InputPortDefinition"), userIDDef.getTypeURI());
+		assertEquals(PropertyLiteral.XSD_STRING, 
+				userIDDef.getPropertyAsResourceURI(Scufl2Tools.PORT_DEFINITION.resolve("#dataType")));
+		
 	}
 	
 }
