@@ -342,9 +342,6 @@ public class T2FlowParser {
 		processorBinding.setBoundActivity(newActivity);
 		processorBinding.setActivityPosition(activityPosition);
 
-		parseActivityInputMap(origActivity.getInputMap());
-		parseActivityOutputMap(origActivity.getOutputMap());
-
 		try {
 			parseActivityConfiguration(origActivity.getConfigBean());
 		} catch (JAXBException e) {
@@ -354,6 +351,9 @@ public class T2FlowParser {
 			logger.log(Level.WARNING, "Can't configure activity" + newActivity,
 					e);
 		}
+
+		parseActivityInputMap(origActivity.getInputMap());
+		parseActivityOutputMap(origActivity.getOutputMap());
 
 		parserState.get().setCurrentActivity(null);
 		parserState.get().setCurrentProcessorBinding(null);
@@ -488,11 +488,19 @@ public class T2FlowParser {
 				}
 			}
 
-			InputActivityPort inputActivityPort = new InputActivityPort();
-			inputActivityPort.setName(toActivityOutput);
-			inputActivityPort.setParent(parserState.get().getCurrentActivity());
-			parserState.get().getCurrentActivity().getInputPorts()
-					.add(inputActivityPort);
+			
+			InputActivityPort inputActivityPort = parserState.get().getCurrentActivity().getInputPorts().getByName(toActivityOutput);
+			if (inputActivityPort == null) {
+				inputActivityPort = new InputActivityPort();
+				inputActivityPort.setName(toActivityOutput);
+				inputActivityPort.setParent(parserState.get().getCurrentActivity());
+				parserState.get().getCurrentActivity().getInputPorts()
+						.add(inputActivityPort);
+			}
+
+			if (inputActivityPort.getDepth() == null) {
+				inputActivityPort.setDepth(inputProcessorPort.getDepth());
+			}
 
 			processorInputPortBinding.setBoundActivityPort(inputActivityPort);
 			processorInputPortBinding.setBoundProcessorPort(inputProcessorPort);
@@ -526,12 +534,22 @@ public class T2FlowParser {
 				}
 			}
 
-			OutputActivityPort outputActivityPort = new OutputActivityPort();
-			outputActivityPort.setName(fromActivityOutput);
-			outputActivityPort
-					.setParent(parserState.get().getCurrentActivity());
-			parserState.get().getCurrentActivity().getOutputPorts()
-					.add(outputActivityPort);
+			OutputActivityPort outputActivityPort = parserState.get().getCurrentActivity().getOutputPorts().getByName(fromActivityOutput);
+			if (outputActivityPort == null) {
+				outputActivityPort = new OutputActivityPort();
+				outputActivityPort.setName(fromActivityOutput);
+				outputActivityPort.setParent(parserState.get().getCurrentActivity());
+				parserState.get().getCurrentActivity().getOutputPorts()
+						.add(outputActivityPort);
+			}
+
+			if (outputActivityPort.getDepth() == null) {
+				outputActivityPort.setDepth(outputProcessorPort.getDepth());
+			}
+			if (outputActivityPort.getGranularDepth() == null) {
+				outputActivityPort.setGranularDepth(outputProcessorPort.getGranularDepth());
+			}
+
 
 			processorOutputPortBinding.setBoundActivityPort(outputActivityPort);
 			processorOutputPortBinding
@@ -683,6 +701,10 @@ public class T2FlowParser {
 				topNode = strategy.getDot();
 			}			
 			if (topNode == null) {
+				continue;
+			}
+			IterationNodeParent parent = (IterationNodeParent) topNode;
+			if (parent.getCrossOrDotOrPort().isEmpty()) {
 				continue;
 			}
 			try {
