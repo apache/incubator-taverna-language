@@ -16,9 +16,7 @@ public interface T2Parser {
 	URI mapT2flowRavenIdToScufl2URI(URI t2flowActivity);
 
 	Configuration parseConfiguration(T2FlowParser t2FlowParser,
-			ConfigBean configBean) throws ReaderException;
-
-	public void setParserState(ParserState parserState);
+			ConfigBean configBean, ParserState parserState) throws ReaderException;
 
 	public List<URI> getAdditionalSchemas();
 }

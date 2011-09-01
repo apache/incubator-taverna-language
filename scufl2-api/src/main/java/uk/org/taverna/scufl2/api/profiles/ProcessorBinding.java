@@ -41,8 +41,12 @@ public class ProcessorBinding extends AbstractNamed implements Child<Profile> {
 	public boolean accept(Visitor visitor) {
 		if (visitor.visitEnter(this)) {
 			List<Iterable<? extends WorkflowBean>> children = new ArrayList<Iterable<? extends WorkflowBean>>();
-			children.add(getInputPortBindings());
-			children.add(getOutputPortBindings());
+			if (getInputPortBindings() != null) {
+				children.add(getInputPortBindings());
+			}
+			if (getOutputPortBindings() != null) {
+				children.add(getOutputPortBindings());				
+			}
 			outer: for (Iterable<? extends WorkflowBean> it : children) {
 				for (WorkflowBean bean : it) {
 					if (!bean.accept(visitor)) {

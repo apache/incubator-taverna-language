@@ -7,6 +7,7 @@ import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
+import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.SoaplabConfig;
@@ -32,13 +33,13 @@ public class SoaplabActivityParser extends AbstractActivityParser {
 	}
 
 	@Override
-	public Configuration parseConfiguration(T2FlowParser t2FlowParser, ConfigBean configBean)
+	public Configuration parseConfiguration(T2FlowParser t2FlowParser, ConfigBean configBean, ParserState parserState)
 			throws ReaderException {
 		SoaplabConfig soaplabConfig = unmarshallConfig(t2FlowParser, configBean, "xstream",
 				SoaplabConfig.class);
 
 		Configuration configuration = new Configuration();
-		configuration.setParent(getParserState().getCurrentProfile());
+		configuration.setParent(parserState.getCurrentProfile());
 
 		PropertyResource configResource = configuration.getPropertyResource();
 		configResource.setTypeURI(scufl2Uri.resolve("#Config"));

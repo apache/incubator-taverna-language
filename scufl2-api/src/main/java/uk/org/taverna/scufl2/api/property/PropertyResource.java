@@ -279,6 +279,7 @@ PropertyObject {
 		return properties;
 	}
 
+	
 	public SortedSet<PropertyLiteral> getPropertiesAsLiterals(URI predicate)
 	throws UnexpectedPropertyException {
 		return getPropertiesOfType(predicate, PropertyLiteral.class);
@@ -350,6 +351,12 @@ PropertyObject {
 		return foundProperty;
 	}
 
+
+	public PropertyList getPropertyAsList(URI predicate)
+		throws UnexpectedPropertyException, PropertyNotFoundException, MultiplePropertiesException {
+			return getPropertyOfType(predicate, PropertyList.class);
+	}
+	
 	public PropertyLiteral getPropertyAsLiteral(URI predicate) throws UnexpectedPropertyException, PropertyNotFoundException, MultiplePropertiesException {
 		PropertyLiteral propertyResource = getPropertyOfType(predicate,
 				PropertyLiteral.class);
@@ -431,6 +438,8 @@ PropertyObject {
 		// Might be an empty set
 		return ! getProperties().get(predicate).isEmpty();
 	}
+
+	
 
 
 }
