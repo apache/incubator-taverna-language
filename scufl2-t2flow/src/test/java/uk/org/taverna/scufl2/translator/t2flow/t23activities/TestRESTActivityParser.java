@@ -2,22 +2,25 @@ package uk.org.taverna.scufl2.translator.t2flow.t23activities;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static uk.org.taverna.scufl2.translator.t2flow.t23activities.RESTActivityParser.ACTIVITY_URI;
 import static uk.org.taverna.scufl2.translator.t2flow.t23activities.RESTActivityParser.HTTP_METHODS_URI;
 import static uk.org.taverna.scufl2.translator.t2flow.t23activities.RESTActivityParser.HTTP_URI;
 
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
-import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
@@ -40,22 +43,21 @@ public class TestRESTActivityParser {
 
 	private static final String WF_2_2 = "/rest-2-2.t2flow";
 	private static final String WF_2_3 = "/rest-2-3.t2flow";
-	private static final String WF_2_2_RESAVED_2_3 = "/rest-2-2-resaved-2-3.t2flow";
-	private T2FlowParser parser;
+	private static final String WF_2_2_SAVED_2_3 = "/rest-2-2-saved-2-3.t2flow";
 	private static Scufl2Tools scufl2Tools = new Scufl2Tools();
 
 	private static URITools uriTools = new URITools();
 
-	
-	@Before
-	public void makeParser() throws JAXBException {
-		parser = new T2FlowParser();
+		
+	public T2FlowParser makeParser() throws JAXBException {
+		T2FlowParser parser = new T2FlowParser();
 		parser.setValidating(true);
 		parser.setStrict(true);
-		checkT2Parsers();
+		checkT2Parsers(parser);
+		return parser;
 	}
 	
-	private void checkT2Parsers() {
+	private void checkT2Parsers(T2FlowParser parser) {
 		for (T2Parser t2Parser : parser.getT2Parsers()) {
 			if (t2Parser instanceof RESTActivityParser) {
 				return;
@@ -64,16 +66,82 @@ public class TestRESTActivityParser {
 		fail("Could not find REST activity parser, found " + parser.getT2Parsers());		
 	}
 
+	/* Move to integration test with higher thread counts */
 	@Test
-	public void parse2_2() throws Exception {
+	public void multiThreadParse() throws Exception {
+		
+		final boolean LOG = false;
+		final int NUM_THREADS=6; 
+		
+		final T2FlowParser parser = makeParser();
+		final URL wf_2_2 = getClass().getResource(WF_2_2);
+		final URL wf_2_2_saved = getClass().getResource(WF_2_2_SAVED_2_3);
+		final URL wf_2_3 = getClass().getResource(WF_2_3);
+		
+		
+		List<Thread> threads = new ArrayList<Thread>();
+		for (int i=0; i<NUM_THREADS; i++) {
+			threads.add( 
+			new Thread(				
+					new Runnable() {							
+				@Override
+				public void run() {
+					try {
+						if (LOG)
+							System.out.print(".");
+						parser.parseT2Flow(wf_2_2.openStream());
+						if (LOG)
+							System.out.print("·");
+						parser.parseT2Flow(wf_2_2_saved.openStream());
+						if (LOG)
+							System.out.print(":");
+						parser.parseT2Flow(wf_2_3.openStream());
+						if (LOG)
+							System.out.print("'");
+					} catch (Exception e) {
+						throw new RuntimeException("", e);
+					}
+				}
+			}));			
+		}
+		Date started = new Date();
+		final List<Throwable> errors = new ArrayList<Throwable>();
+		for (Thread t : threads) {
+			if (LOG) System.out.print("+");
+			t.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+				@Override
+				public void uncaughtException(Thread t, Throwable e) {
+					e.printStackTrace();
+					errors.add(e);
+				}
+			});
+			t.start();
+		}
+		if (LOG) System.out.print("\n");
+		for (Thread t : threads) {
+			t.join();
+			if (LOG) System.out.print("-");
+		}
+		Date finished = new Date();
+		if (LOG) System.out.print("\n" + (finished.getTime() - started.getTime()) + " ms");
+		assertTrue(errors.size() + " errors occured", errors.isEmpty());
+	}
+	
+	public WorkflowBundle parse2_2() throws Exception {
+		T2FlowParser parser = makeParser();
 		URL wfResource = getClass().getResource(WF_2_2);
 		assertNotNull("Could not find workflow " + WF_2_2, wfResource);
-		WorkflowBundle bundle = parser
+		return parser
 				.parseT2Flow(wfResource.openStream());
-		Profile profile = bundle.getMainProfile();
+	}
+	
+	@Test
+	public void default2_2() throws Exception {
+		WorkflowBundle bundle_2_2 = parse2_2();
+		Profile profile = bundle_2_2.getMainProfile();
 		//System.out.println(bundle.getMainWorkflow().getProcessors().getNames());
 		// [default, post, put]
-		Processor proc = bundle.getMainWorkflow().getProcessors()
+		Processor proc = bundle_2_2.getMainWorkflow().getProcessors()
 				.getByName("default");
 		assertNotNull(proc);
 		Configuration config = scufl2Tools
@@ -148,6 +216,191 @@ public class TestRESTActivityParser {
 		assertEquals(Scufl2Tools.PORT_DEFINITION.resolve("#InputPortDefinition"), userIDDef.getTypeURI());
 		assertEquals(PropertyLiteral.XSD_STRING, 
 				userIDDef.getPropertyAsResourceURI(Scufl2Tools.PORT_DEFINITION.resolve("#dataType")));
+		
+	}
+	
+	public WorkflowBundle parse2_2_saved_2_3() throws Exception {		
+		T2FlowParser parser = makeParser();
+		URL wfResource = getClass().getResource(WF_2_2_SAVED_2_3);
+		assertNotNull("Could not find workflow " + WF_2_2_SAVED_2_3, wfResource);
+		return parser
+				.parseT2Flow(wfResource.openStream());
+	} 
+	
+	@Test
+	public void default_2_2_saved() throws Exception {
+		WorkflowBundle bundle_2_2_saved = parse2_2_saved_2_3();
+		Profile profile = bundle_2_2_saved.getMainProfile();
+		//System.out.println(bundle.getMainWorkflow().getProcessors().getNames());
+		// [default, post, put]
+		Processor proc = bundle_2_2_saved.getMainWorkflow().getProcessors()
+				.getByName("default");
+		assertNotNull(proc);
+		Configuration config = scufl2Tools
+				.configurationForActivityBoundToProcessor(proc, profile);
+		assertNotNull(config);
+		assertEquals(ACTIVITY_URI.resolve("#Config"), 
+				config.getConfigurableType());
+		
+		Activity activity = (Activity) config.getConfigures();
+		assertEquals(ACTIVITY_URI, activity.getConfigurableType());
+		
+		PropertyResource configResource = config.getPropertyResource();
+		PropertyResource request = configResource.getPropertyAsResource(
+				ACTIVITY_URI.resolve("#request"));
+		assertEquals(ACTIVITY_URI.resolve("#Request"), request.getTypeURI());
+		// A sub-class of HTTP_URI.resolve("#Request")
+		
+		URI toolId = request.getPropertyAsResourceURI(
+				HTTP_URI.resolve("#mthd"));
+		assertEquals(HTTP_METHODS_URI.resolve("#GET"), 
+				toolId);
+		
+		String urlSignature = request.getPropertyAsString(
+				ACTIVITY_URI.resolve("#absoluteURITemplate"));		
+		assertEquals("http://www.myexperiment.org/user.xml?id={userID}", urlSignature);
+		
+		Map<String, String> foundHeaders = new HashMap<String, String>();
+		PropertyList headers = request.getPropertyAsList(HTTP_URI.resolve("#headers"));
+		for (PropertyObject header : headers) {
+			PropertyResource reqHeader = (PropertyResource) header;
+			String fieldName = reqHeader.getPropertyAsString(HTTP_URI.resolve("#fieldName"));
+			String value;
+			if (reqHeader.hasProperty(HTTP_URI.resolve("#fieldValue"))) {
+				value = reqHeader.getPropertyAsString(HTTP_URI.resolve("#fieldValue"));
+			} else if (reqHeader.hasProperty(ACTIVITY_URI.resolve("#use100Continue"))) {
+				assertEquals(true, 
+						reqHeader.getPropertyAsLiteral(ACTIVITY_URI.resolve("#use100Continue")).getLiteralValueAsBoolean());
+				value = "--use100Continue--";
+			} else {
+				value = "--undefinedValue--";
+			}
+			foundHeaders.put(fieldName, value); 
+			assertEquals(HTTP_URI.resolve("#RequestHeader"), reqHeader.getTypeURI());
+		}
+		assertEquals("text/plain", foundHeaders.get("Accept"));
+		// Content-Type and Expect should *not* be included if the method is GET/HEAD/DELETE
+		assertFalse(foundHeaders.containsKey("Content-Type"));
+		assertFalse(foundHeaders.containsKey("Expect"));
+		//assertEquals("application/zip", foundHeaders.get("Content-Type"));
+		// assertEquals("--use100Continue--", foundHeaders.get("Expect"))
+		
+	
+		assertFalse(configResource.hasProperty(ACTIVITY_URI.resolve("#showRedirectionOutputPort")));
+		//assertTrue(configResource.getPropertyAsLiteral(ACTIVITY_URI.resolve("#showRedirectionOutputPort")).getLiteralValueAsBoolean());
+		//assertFalse(configResource.getPropertyAsLiteral(ACTIVITY_URI.resolve("#escapeParameters")).getLiteralValueAsBoolean());
+		assertFalse(configResource.hasProperty(ACTIVITY_URI.resolve("#escapeParameters")));
+	
+		
+		// Check ports
+		assertEquals(1, activity.getInputPorts().size());
+		InputActivityPort userID = activity.getInputPorts().getByName("userID");
+		assertEquals((Integer)0, userID.getDepth());
+		
+		assertEquals(2, activity.getOutputPorts().size());
+		OutputActivityPort responseBody = activity.getOutputPorts().getByName("responseBody");
+		assertEquals((Integer)0, responseBody.getDepth());		
+	
+		OutputActivityPort status = activity.getOutputPorts().getByName("status");
+		assertEquals((Integer)0, status.getDepth());
+		
+		PropertyResource userIDDef = scufl2Tools.portDefinitionFor(userID, profile);
+		assertEquals(Scufl2Tools.PORT_DEFINITION.resolve("#InputPortDefinition"), userIDDef.getTypeURI());
+		assertEquals(PropertyLiteral.XSD_STRING, 
+				userIDDef.getPropertyAsResourceURI(Scufl2Tools.PORT_DEFINITION.resolve("#dataType")));
+		
+	}
+
+	
+	public WorkflowBundle parse2_3() throws Exception {
+		T2FlowParser parser = makeParser();
+		URL wfResource = getClass().getResource(WF_2_3);
+		assertNotNull("Could not find workflow " + WF_2_3, wfResource);
+		return parser
+				.parseT2Flow(wfResource.openStream());
+	} 
+	
+	@Test
+	public void default2_3() throws Exception {
+		WorkflowBundle bundle_2_3 = parse2_3();
+		Profile profile = bundle_2_3.getMainProfile();
+		//System.out.println(bundle.getMainWorkflow().getProcessors().getNames());
+		// [default, post, put]
+		Processor proc = bundle_2_3.getMainWorkflow().getProcessors()
+				.getByName("default");
+		assertNotNull(proc);
+		Configuration config = scufl2Tools
+				.configurationForActivityBoundToProcessor(proc, profile);
+		assertNotNull(config);
+		assertEquals(ACTIVITY_URI.resolve("#Config"), 
+				config.getConfigurableType());
+		
+		Activity activity = (Activity) config.getConfigures();
+		assertEquals(ACTIVITY_URI, activity.getConfigurableType());
+		
+		PropertyResource configResource = config.getPropertyResource();
+		PropertyResource request = configResource.getPropertyAsResource(
+				ACTIVITY_URI.resolve("#request"));
+		assertEquals(ACTIVITY_URI.resolve("#Request"), request.getTypeURI());
+		// A sub-class of HTTP_URI.resolve("#Request")
+		
+		URI toolId = request.getPropertyAsResourceURI(
+				HTTP_URI.resolve("#mthd"));
+		assertEquals(HTTP_METHODS_URI.resolve("#GET"), 
+				toolId);
+		
+		String urlSignature = request.getPropertyAsString(
+				ACTIVITY_URI.resolve("#absoluteURITemplate"));		
+		assertEquals("http://www.uniprot.org/uniprot/{id}.xml", urlSignature);
+		
+		Map<String, String> foundHeaders = new HashMap<String, String>();
+		PropertyList headers = request.getPropertyAsList(HTTP_URI.resolve("#headers"));
+		for (PropertyObject header : headers) {
+			PropertyResource reqHeader = (PropertyResource) header;
+			String fieldName = reqHeader.getPropertyAsString(HTTP_URI.resolve("#fieldName"));
+			String value;
+			if (reqHeader.hasProperty(HTTP_URI.resolve("#fieldValue"))) {
+				value = reqHeader.getPropertyAsString(HTTP_URI.resolve("#fieldValue"));
+			} else if (reqHeader.hasProperty(ACTIVITY_URI.resolve("#use100Continue"))) {
+				assertEquals(true, 
+						reqHeader.getPropertyAsLiteral(ACTIVITY_URI.resolve("#use100Continue")).getLiteralValueAsBoolean());
+				value = "--use100Continue--";
+			} else {
+				value = "--undefinedValue--";
+			}
+			foundHeaders.put(fieldName, value); 
+			assertEquals(HTTP_URI.resolve("#RequestHeader"), reqHeader.getTypeURI());
+		}
+		assertEquals("application/xml", foundHeaders.get("Accept"));
+		// Content-Type and Expect should *not* be included if the method is GET/HEAD/DELETE
+		assertFalse(foundHeaders.containsKey("Content-Type"));
+		assertFalse(foundHeaders.containsKey("Expect"));
+		//assertEquals("application/zip", foundHeaders.get("Content-Type"));
+		// assertEquals("--use100Continue--", foundHeaders.get("Expect"))
+		
+	
+		assertFalse(configResource.hasProperty(ACTIVITY_URI.resolve("#showRedirectionOutputPort")));
+		//assertTrue(configResource.getPropertyAsLiteral(ACTIVITY_URI.resolve("#showRedirectionOutputPort")).getLiteralValueAsBoolean());
+		//assertFalse(configResource.getPropertyAsLiteral(ACTIVITY_URI.resolve("#escapeParameters")).getLiteralValueAsBoolean());
+		assertFalse(configResource.hasProperty(ACTIVITY_URI.resolve("#escapeParameters")));
+	
+		
+		// Check ports
+		assertEquals(1, activity.getInputPorts().size());
+		InputActivityPort id = activity.getInputPorts().getByName("id");
+		assertEquals((Integer)0, id.getDepth());
+		
+		assertEquals(2, activity.getOutputPorts().size());
+		OutputActivityPort responseBody = activity.getOutputPorts().getByName("responseBody");
+		assertEquals((Integer)0, responseBody.getDepth());		
+	
+		OutputActivityPort status = activity.getOutputPorts().getByName("status");
+		assertEquals((Integer)0, status.getDepth());
+		
+		PropertyResource idDef = scufl2Tools.portDefinitionFor(id, profile);
+		assertEquals(Scufl2Tools.PORT_DEFINITION.resolve("#InputPortDefinition"), idDef.getTypeURI());
+		assertEquals(PropertyLiteral.XSD_STRING, 
+				idDef.getPropertyAsResourceURI(Scufl2Tools.PORT_DEFINITION.resolve("#dataType")));
 		
 	}
 	

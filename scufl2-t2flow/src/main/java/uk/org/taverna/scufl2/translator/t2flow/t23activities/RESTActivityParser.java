@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
+import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
@@ -18,6 +19,7 @@ import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.api.property.PropertyList;
 import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
+import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.defaultactivities.AbstractActivityParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityInputs.Entry;
@@ -55,7 +57,7 @@ public class RESTActivityParser extends AbstractActivityParser {
 
 	@Override
 	public List<URI> getAdditionalSchemas() {
-		URL externalToolXsd = getClass().getResource(ACTIVITY_XSD);
+		URL externalToolXsd = getClass().getResource(ACTIVITY_XSD);		
 		try {
 			return Arrays.asList(externalToolXsd.toURI());
 		} catch (URISyntaxException e) {
@@ -73,15 +75,15 @@ public class RESTActivityParser extends AbstractActivityParser {
 
 	@Override
 	public Configuration parseConfiguration(T2FlowParser t2FlowParser,
-			ConfigBean configBean) throws ReaderException {
+			ConfigBean configBean, ParserState parserState) throws ReaderException {
 
 
 		RESTConfig restConfig = unmarshallConfig(t2FlowParser, configBean,
 					"xstream", RESTConfig.class);
 	
 		Configuration configuration = new Configuration();
-		configuration.setParent(getParserState().getCurrentProfile());
-		getParserState().setCurrentConfiguration(configuration);
+		configuration.setParent(parserState.getCurrentProfile());
+		parserState.setCurrentConfiguration(configuration);
 		try {
 			PropertyResource configResource = configuration
 					.getPropertyResource();
@@ -136,13 +138,14 @@ public class RESTActivityParser extends AbstractActivityParser {
 			
 			// Ports
 			
+			Activity currentActivity = parserState.getCurrentActivity();
 			if (restConfig.getActivityInputs() != null && restConfig.getActivityInputs().getEntry() != null) {
 				for (Entry entry : restConfig.getActivityInputs().getEntry()) {
 					String portName = entry.getString();
 					// Ignored, URL parameters have to be strings
 					//String className = entry.getJavaClass();
 					
-					InputActivityPort inputPort = new InputActivityPort(getParserState().getCurrentActivity(), portName);
+					InputActivityPort inputPort = new InputActivityPort(currentActivity, portName);
 					inputPort.setDepth(0);
 					
 					
@@ -157,7 +160,7 @@ public class RESTActivityParser extends AbstractActivityParser {
 				}
 			}
 			if (hasContent(method)) {
-				InputActivityPort inputPort = new InputActivityPort(getParserState().getCurrentActivity(), IN_BODY);
+				InputActivityPort inputPort = new InputActivityPort(currentActivity, IN_BODY);
 				inputPort.setDepth(0);
 				
 				// FIXME: Is this really an #inputPortDefinition? It's not specified
@@ -178,20 +181,20 @@ public class RESTActivityParser extends AbstractActivityParser {
 						dataType);
 			}
 			
-			OutputActivityPort responseBody = new OutputActivityPort(getParserState().getCurrentActivity(), OUT_RESPONSE_BODY);
+			OutputActivityPort responseBody = new OutputActivityPort(currentActivity, OUT_RESPONSE_BODY);
 			responseBody.setDepth(0);
-			OutputActivityPort status = new OutputActivityPort(getParserState().getCurrentActivity(), OUT_STATUS);
+			OutputActivityPort status = new OutputActivityPort(currentActivity, OUT_STATUS);
 			status.setDepth(0);
 			
 			if (restConfig.isShowRedirectionOutputPort()) {
-				OutputActivityPort redirection = new OutputActivityPort(getParserState().getCurrentActivity(), OUT_REDIRECTION);
+				OutputActivityPort redirection = new OutputActivityPort(currentActivity, OUT_REDIRECTION);
 				redirection.setDepth(0);									
 			}
 			
 			
 			return configuration;
 		} finally {
-			getParserState().setCurrentConfiguration(null);
+			parserState.setCurrentConfiguration(null);
 		}
 	}
 	
