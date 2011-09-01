@@ -438,11 +438,13 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 			OutputActivityPort stdout = new OutputActivityPort(getParserState()
 					.getCurrentActivity(), STDOUT);
 			stdout.setDepth(0);
+			stdout.setGranularDepth(0);
 		}
 		if (toolDesc.isIncludeStdErr()) {
 			OutputActivityPort stderr = new OutputActivityPort(getParserState()
 					.getCurrentActivity(), STDERR);
 			stderr.setDepth(0);
+			stderr.setGranularDepth(0);
 		}
 
 		return propertyResource;
