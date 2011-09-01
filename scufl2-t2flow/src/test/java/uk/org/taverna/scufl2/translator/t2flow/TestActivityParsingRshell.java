@@ -86,8 +86,8 @@ public class TestActivityParsingRshell {
 
 		Activity activity = (Activity) config.getConfigures();
 
-		System.out.println(activity.getInputPorts().getNames());
-		System.out.println(activity.getOutputPorts().getNames());
+//		System.out.println(activity.getInputPorts().getNames());
+//		System.out.println(activity.getOutputPorts().getNames());
 
 		
 		assertEquals(ACTIVITY_URI.resolve("#BOOL_LIST"), 
