@@ -31,6 +31,7 @@ import uk.org.taverna.scufl2.api.property.PropertyList;
 import uk.org.taverna.scufl2.api.property.PropertyObject;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
+import uk.org.taverna.scufl2.translator.t2flow.T2Parser;
 
 public class TestRESTActivityParser {
 
@@ -42,14 +43,24 @@ public class TestRESTActivityParser {
 
 	private static URITools uriTools = new URITools();
 
+	
 	@Before
 	public void makeParser() throws JAXBException {
 		parser = new T2FlowParser();
 		parser.setValidating(true);
 		parser.setStrict(true);
-		
+		checkT2Parsers();
 	}
 	
+	private void checkT2Parsers() {
+		for (T2Parser t2Parser : parser.getT2Parsers()) {
+			if (t2Parser instanceof RESTActivityParser) {
+				return;
+			}
+		}
+		fail("Could not find REST activity parser, found " + parser.getT2Parsers());		
+	}
+
 	@Test
 	public void parse2_2() throws Exception {
 		URL wfResource = getClass().getResource(WF_2_2);
@@ -74,9 +85,11 @@ public class TestRESTActivityParser {
 		PropertyResource configResource = config.getPropertyResource();
 		PropertyResource request = configResource.getPropertyAsResource(
 				ACTIVITY_URI.resolve("#request"));
+		assertEquals(ACTIVITY_URI.resolve("#Request"), request.getTypeURI());
+		// A sub-class of HTTP_URI.resolve("#Request")
 		
 		URI toolId = request.getPropertyAsResourceURI(
-				HTTP_URI.resolve("#mthd")); //
+				HTTP_URI.resolve("#mthd"));
 		assertEquals(HTTP_METHODS_URI.resolve("#GET"), 
 				toolId);
 		
@@ -89,17 +102,32 @@ public class TestRESTActivityParser {
 		for (PropertyObject header : headers) {
 			PropertyResource reqHeader = (PropertyResource) header;
 			String fieldName = reqHeader.getPropertyAsString(HTTP_URI.resolve("#fieldName"));
-			String value = reqHeader.getPropertyAsString(HTTP_URI.resolve("#fieldName"));
-			foundHeaders.put(fieldName, value);
+			String value;
+			if (reqHeader.hasProperty(HTTP_URI.resolve("#fieldValue"))) {
+				value = reqHeader.getPropertyAsString(HTTP_URI.resolve("#fieldValue"));
+			} else if (reqHeader.hasProperty(ACTIVITY_URI.resolve("#use100Continue"))) {
+				assertEquals(true, 
+						reqHeader.getPropertyAsLiteral(ACTIVITY_URI.resolve("#use100Continue")).getLiteralValueAsBoolean());
+				value = "--use100Continue--";
+			} else {
+				value = "--undefinedValue--";
+			}
+			foundHeaders.put(fieldName, value); 
+			assertEquals(HTTP_URI.resolve("#RequestHeader"), reqHeader.getTypeURI());
 		}
-		assertEquals("text/plain", foundHeaders.get(HTTP_METHODS_URI.resolve("#accept")));
-		//assertEquals("application/zip", foundHeaders.get(HTTP_METHODS_URI.resolve("#content-type")));
+		assertEquals("text/plain", foundHeaders.get("Accept"));
+		// Content-Type and Expect should *not* be included if the method is GET/HEAD/DELETE
+		assertFalse(foundHeaders.containsKey("Content-Type"));
+		assertFalse(foundHeaders.containsKey("Expect"));
+		//assertEquals("application/zip", foundHeaders.get("Content-Type"));
+		// assertEquals("--use100Continue--", foundHeaders.get("Expect"))
 		
-		assertTrue(configResource.getPropertyAsLiteral(ACTIVITY_URI.resolve("#showRedirectionOutputPort")).getLiteralValueAsBoolean());
-		assertTrue(configResource.getPropertyAsLiteral(ACTIVITY_URI.resolve("#sendHTTPExpectRequestHeader")).getLiteralValueAsBoolean());
-		assertTrue(configResource.getPropertyAsLiteral(ACTIVITY_URI.resolve("#escapeParameters")).getLiteralValueAsBoolean());
-		
-		// Not much more to check as 2.2 does not include tool description
+	
+		assertFalse(configResource.hasProperty(ACTIVITY_URI.resolve("#showRedirectionOutputPort")));
+		//assertTrue(configResource.getPropertyAsLiteral(ACTIVITY_URI.resolve("#showRedirectionOutputPort")).getLiteralValueAsBoolean());
+		//assertFalse(configResource.getPropertyAsLiteral(ACTIVITY_URI.resolve("#escapeParameters")).getLiteralValueAsBoolean());
+		assertFalse(configResource.hasProperty(ACTIVITY_URI.resolve("#escapeParameters")));
+
 				
 	}
 	
