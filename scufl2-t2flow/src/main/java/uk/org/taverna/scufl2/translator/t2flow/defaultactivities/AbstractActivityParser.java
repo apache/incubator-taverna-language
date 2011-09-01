@@ -28,7 +28,7 @@ import uk.org.taverna.scufl2.translator.t2flow.T2Parser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityPortDefinitionBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityPortDefinitionBean.MimeTypes;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
-//import static uk.org.taverna.scufl2.api.common.Scufl2Tools.PORT_DEFINITION;
+//import static uk.org.taverna.scufl2.api.common.Scufl2Tools.Scufl2Tools.PORT_DEFINITION;
 
 
 public abstract class AbstractActivityParser implements T2Parser {
@@ -119,11 +119,11 @@ public abstract class AbstractActivityParser implements T2Parser {
 		}
 
 		PropertyResource portConfig = configResource.addPropertyAsNewResource(
-				PORT_DEFINITION.resolve("#outputPortDefinition"),
-				PORT_DEFINITION.resolve("#OutputPortDefinition"));
+				Scufl2Tools.PORT_DEFINITION.resolve("#outputPortDefinition"),
+				Scufl2Tools.PORT_DEFINITION.resolve("#OutputPortDefinition"));
 
 		URI portUri = new URITools().relativeUriForBean(outputPort, configuration);
-		portConfig.addPropertyReference(PORT_DEFINITION.resolve("#definesOutputPort"), portUri);
+		portConfig.addPropertyReference(Scufl2Tools.PORT_DEFINITION.resolve("#definesOutputPort"), portUri);
 
 		parseMimeTypes(portBean, portConfig);
 		return portConfig;
@@ -162,18 +162,18 @@ public abstract class AbstractActivityParser implements T2Parser {
 		}
 
 		PropertyResource portConfig = configResource.addPropertyAsNewResource(
-				PORT_DEFINITION.resolve("#inputPortDefinition"),
-				PORT_DEFINITION.resolve("#InputPortDefinition"));
+				Scufl2Tools.PORT_DEFINITION.resolve("#inputPortDefinition"),
+				Scufl2Tools.PORT_DEFINITION.resolve("#InputPortDefinition"));
 
 		URI portUri = new URITools().relativeUriForBean(inputPort, configuration);
-		portConfig.addPropertyReference(PORT_DEFINITION.resolve("#definesInputPort"), portUri);
+		portConfig.addPropertyReference(Scufl2Tools.PORT_DEFINITION.resolve("#definesInputPort"), portUri);
 
 		parseMimeTypes(portBean, portConfig);
 		
 		String translated = getPortElement(portBean, "translatedElementType", String.class);
 		if (translated != null) {
 			// As "translated element type" is confusing, we'll instead use "dataType"
-			portConfig.addPropertyReference(PORT_DEFINITION.resolve("#dataType"),
+			portConfig.addPropertyReference(Scufl2Tools.PORT_DEFINITION.resolve("#dataType"),
 					URI.create("java:" + translated));
 
 			// TODO: Include mapping to XSD types like xsd:string
@@ -190,7 +190,7 @@ public abstract class AbstractActivityParser implements T2Parser {
 			return;
 		}
 		// FIXME: Do as annotation as this is not configuration
-		URI mimeType = PORT_DEFINITION.resolve("#expectedMimeType");
+		URI mimeType = Scufl2Tools.PORT_DEFINITION.resolve("#expectedMimeType");
 		List<String> strings = mimeTypes.getString();
 		if (strings == null && mimeTypes.getElement() != null) {
 			strings = Arrays.asList(mimeTypes.getElement().getValue());
