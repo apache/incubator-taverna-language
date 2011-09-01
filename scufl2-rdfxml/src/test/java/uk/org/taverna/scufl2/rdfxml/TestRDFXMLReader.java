@@ -201,8 +201,7 @@ public class TestRDFXMLReader {
 		assertEquals("HelloWorld", helloWorld.getName());
 		assertEquals(workflowBundle.getMainWorkflow(), helloWorld);
 	}
-
-	// @Ignore
+	 
 	@Test
 	public void xmlOutput() throws Exception {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -210,7 +209,7 @@ public class TestRDFXMLReader {
 				workflowBundle.getMainWorkflow(),
 				URI.create("workflows/HelloWorld.rdf"));
 		String bundleTxt = new String(output.toByteArray(), "UTF-8");
-		System.out.println(bundleTxt);
+//		System.out.println(bundleTxt);
 
 	}
 

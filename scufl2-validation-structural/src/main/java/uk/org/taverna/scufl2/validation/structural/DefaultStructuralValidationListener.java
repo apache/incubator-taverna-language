@@ -17,8 +17,8 @@ import uk.org.taverna.scufl2.api.port.ReceiverPort;
  * @author alanrw
  *
  */
-public class DefaultStructuralValidationEventListener implements
-		StructuralValidationEventListener {
+public class DefaultStructuralValidationListener implements
+		StructuralValidationListener {
 
 	/* (non-Javadoc)
 	 * @see uk.org.taverna.scufl2.validation.structural.StructuralValidationEventListener#dataLinkReceiver(uk.org.taverna.scufl2.api.core.DataLink)

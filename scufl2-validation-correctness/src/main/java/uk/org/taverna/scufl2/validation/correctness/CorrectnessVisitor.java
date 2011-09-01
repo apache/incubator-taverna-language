@@ -82,12 +82,15 @@ public class CorrectnessVisitor extends DispatchingVisitor {
 		return getCurrentPath().peek();
 	}
 	
-	private <T> T findAncestral(Child bean,
+	public <T> T findAncestral(Child bean,
 			Class<T> class1) {
 		T result = null;
-		for (WorkflowBean parent = bean.getParent(); parent != null;) {
+		for (WorkflowBean parent = bean.getParent(); parent != null; parent = ((Child)parent).getParent()) {
 			if (class1.isInstance(parent)) {
 				return (T) parent;
+			}
+			if (!(parent instanceof Child)) {
+				return null;
 			}
 		}
 		return result;
@@ -118,7 +121,7 @@ public class CorrectnessVisitor extends DispatchingVisitor {
 			}
 			Integer depth = bean.getDepth();
 			if (depth != null) {
-				if (granularDepth >= depth) {
+				if (granularDepth > depth) {
 					listener.incompatibleGranularDepth(bean, depth, granularDepth);
 				}
 			}
@@ -158,25 +161,19 @@ public class CorrectnessVisitor extends DispatchingVisitor {
 		Processor untilFinished = bean.getUntilFinished();
 		
 		// Check the block and untilFinished processors are in the same workflow
-		if (parent != null) {
-			if (block != null) {
-				Workflow blockParent = block.getParent();
-				if (blockParent != null) {
-					if (!blockParent.equals(parent)) {
-						listener.outOfScopeValue(bean, "block", block);
-					}
-				}
-			}
-			if (untilFinished != null) {
-				Workflow untilFinishedParent = untilFinished.getParent();
-				if (untilFinishedParent != null) {
-					if (!untilFinishedParent.equals(parent)) {
-						listener.outOfScopeValue(bean, "untilFinished", untilFinished);
-					}
-				}
+		if (block != null) {
+			Workflow blockParent = block.getParent();
+			if ((parent == null) || !parent.equals(blockParent)) {
+				listener.outOfScopeValue(bean, "block", block);
 			}
 		}
-		
+		if (untilFinished != null) {
+			Workflow untilFinishedParent = untilFinished.getParent();
+			if ((parent == null) || !parent.equals(untilFinishedParent)) {
+				listener.outOfScopeValue(bean, "untilFinished", untilFinished);
+			}
+		}
+
 		// Check the block and untilFinished processors are specified
 		if (checkComplete) {
 			if (block == null) {
@@ -232,12 +229,13 @@ public class CorrectnessVisitor extends DispatchingVisitor {
 				configuresType = ((Typed) configures).getConfigurableType();
 			}
 		}
-		URI configurationType = bean.getConfigurableType();
-		if ((configuresType != null) && (configurationType != null)) {
-			if (!configuresType.equals(configurationType)) {
-				listener.mismatchConfigurableType(bean, configures);
-			}
-		}
+		// Correct check cannot be completed unless property descriptions are available
+//		URI configurationType = bean.getConfigurableType();
+//		if ((configuresType != null) && (configurationType != null)) {
+//			if (!configuresType.equals(configurationType)) {
+//				listener.mismatchConfigurableType(bean, configures);
+//			}
+//		}
 		
 		// TODO Check that the PropertyResource is correct
 		
@@ -277,24 +275,18 @@ public class CorrectnessVisitor extends DispatchingVisitor {
 		SenderPort receivesFrom = bean.getReceivesFrom();
 		
 		Workflow parent = bean.getParent();
-		if (parent != null) {
-			if (sendsTo != null) {
-				Workflow sendsToWorkflow = findAncestral((Child) sendsTo,
-						Workflow.class);
-				if (sendsToWorkflow != null) {
-					if (!sendsToWorkflow.equals(parent)) {
-						listener.outOfScopeValue(bean, "sendsTo", sendsTo);
-					}
-				}
+		if (sendsTo != null) {
+			Workflow sendsToWorkflow = findAncestral((Child) sendsTo,
+					Workflow.class);
+			if ((parent == null) || !parent.equals(sendsToWorkflow)) {
+				listener.outOfScopeValue(bean, "sendsTo", sendsTo);
 			}
-			if (receivesFrom != null) {
-				Workflow receivesFromWorkflow = findAncestral(
-						(Child) receivesFrom, Workflow.class);
-				if (receivesFromWorkflow != null) {
-					if (!receivesFromWorkflow.equals(parent)) {
-						listener.outOfScopeValue(bean, "receivesFrom", receivesFrom);
-					}
-				}
+		}
+		if (receivesFrom != null) {
+			Workflow receivesFromWorkflow = findAncestral((Child) receivesFrom,
+					Workflow.class);
+			if ((parent == null) || !parent.equals(receivesFromWorkflow)) {
+				listener.outOfScopeValue(bean, "receivesFrom", receivesFrom);
 			}
 		}
 		
@@ -537,15 +529,12 @@ public class CorrectnessVisitor extends DispatchingVisitor {
 		
 		if (inputProcessorPort != null) {
 			Processor ancestralProcessor = findAncestral(bean, Processor.class);
-			if (ancestralProcessor != null) {
-				NamedSet<InputProcessorPort> inputPorts = ancestralProcessor
-						.getInputPorts();
-				if (inputPorts != null) {
-					if (!inputPorts.contains(inputProcessorPort)) {
-						listener.outOfScopeValue(bean, "inputProcessorPort",
-								inputProcessorPort);
-					}
-				}
+			Processor portAncestralProcessor = findAncestral(
+					inputProcessorPort, Processor.class);
+			if ((ancestralProcessor == null)
+					|| !ancestralProcessor.equals(portAncestralProcessor)) {
+				listener.outOfScopeValue(bean, "inputProcessorPort",
+						inputProcessorPort);
 			}
 		}
 		
@@ -596,26 +585,26 @@ public class CorrectnessVisitor extends DispatchingVisitor {
 	public void visitProcessorBinding(ProcessorBinding bean) {
 		Processor boundProcessor = bean.getBoundProcessor();
 		Activity boundActivity = bean.getBoundActivity();
-		WorkflowBundle workflowBundle = findAncestral(bean, WorkflowBundle.class);
+		WorkflowBundle workflowBundle = findAncestral(bean,
+				WorkflowBundle.class);
 
-		if (workflowBundle != null) {
-			if (boundProcessor != null) {
-				WorkflowBundle boundProcessorBundle = findAncestral(boundProcessor, WorkflowBundle.class);
-				if (boundProcessorBundle != null) {
-					if (!workflowBundle.equals(boundProcessorBundle)) {
-						listener.outOfScopeValue(bean, "boundProcessor", boundProcessor);
-					}
-				}
-			}
-			if (boundActivity != null) {
-				WorkflowBundle boundActivityBundle = findAncestral(boundActivity, WorkflowBundle.class);
-				if (boundActivityBundle != null) {
-					if (!workflowBundle.equals(boundActivityBundle)) {
-						listener.outOfScopeValue(bean, "boundActivity", boundActivity);
-					}
-				}
+		if (boundProcessor != null) {
+			WorkflowBundle boundProcessorBundle = findAncestral(boundProcessor,
+					WorkflowBundle.class);
+			if ((workflowBundle == null)
+					|| !workflowBundle.equals(boundProcessorBundle)) {
+				listener.outOfScopeValue(bean, "boundProcessor", boundProcessor);
 			}
 		}
+		if (boundActivity != null) {
+			WorkflowBundle boundActivityBundle = findAncestral(boundActivity,
+					WorkflowBundle.class);
+			if ((workflowBundle == null)
+					|| !workflowBundle.equals(boundActivityBundle)) {
+				listener.outOfScopeValue(bean, "boundActivity", boundActivity);
+			}
+		}
+
 		Integer activityPosition = bean.getActivityPosition();
 		if (activityPosition != null) {
 			if (activityPosition < 0) {
@@ -650,16 +639,16 @@ public class CorrectnessVisitor extends DispatchingVisitor {
 		
 		if (parent != null) {
 			Processor boundProcessor = parent.getBoundProcessor();
-			if ((boundProcessor != null) && (boundProcessorPort != null)) {
-				NamedSet<InputProcessorPort> inputs = boundProcessor.getInputPorts();
-				if ((inputs != null) && !inputs.contains(boundProcessorPort)) {
-					listener.outOfScopeValue(bean, "boundProcessorPort", boundProcessorPort);
+			if (boundProcessorPort != null) {
+				Processor boundPortProcessor = findAncestral(boundProcessorPort, Processor.class);
+				if ((boundProcessor == null) || !boundProcessor.equals(boundPortProcessor)) {
+					listener.outOfScopeValue(bean, "boundProcessorPort", boundProcessorPort);					
 				}
 			}
 			Activity boundActivity = parent.getBoundActivity();
-			if ((boundActivity != null) && (boundActivityPort != null)) {
-				NamedSet<InputActivityPort> inputs = boundActivity.getInputPorts();
-				if ((inputs != null) &&  !inputs.contains(boundActivityPort)) {
+			if (boundActivityPort != null) {
+				Activity boundPortActivity = findAncestral(boundActivityPort, Activity.class);
+				if ((boundActivity == null) || !boundActivity.equals(boundPortActivity)) {
 					listener.outOfScopeValue(bean, "boundActivityPort", boundActivityPort);
 				}
 			}
@@ -685,16 +674,16 @@ public class CorrectnessVisitor extends DispatchingVisitor {
 		
 		if (parent != null) {
 			Processor boundProcessor = parent.getBoundProcessor();
-			if ((boundProcessor != null) && (boundProcessorPort != null)) {
-				NamedSet<OutputProcessorPort> outputs = boundProcessor.getOutputPorts();
-				if ((outputs != null) && !outputs.contains(boundProcessorPort)) {
-					listener.outOfScopeValue(bean, "boundProcessorPort", boundProcessorPort);
+			if (boundProcessorPort != null) {
+				Processor boundPortProcessor = findAncestral(boundProcessorPort, Processor.class);
+				if ((boundProcessor == null) || !boundProcessor.equals(boundPortProcessor)) {
+					listener.outOfScopeValue(bean, "boundProcessorPort", boundProcessorPort);					
 				}
 			}
 			Activity boundActivity = parent.getBoundActivity();
-			if ((boundActivity != null) && (boundActivityPort != null)) {
-				NamedSet<OutputActivityPort> outputs = boundActivity.getOutputPorts();
-				if ((outputs != null) &&  !outputs.contains(boundActivityPort)) {
+			if (boundActivityPort != null) {
+				Activity boundPortActivity = findAncestral(boundActivityPort, Activity.class);
+				if ((boundActivity == null) || !boundActivity.equals(boundPortActivity)) {
 					listener.outOfScopeValue(bean, "boundActivityPort", boundActivityPort);
 				}
 			}
@@ -784,7 +773,10 @@ public class CorrectnessVisitor extends DispatchingVisitor {
 		URI globalBaseURI = bean.getGlobalBaseURI();
 		if (globalBaseURI != null) {
 			if (!globalBaseURI.isAbsolute()) {
-				listener.nonAbsoluteGlobalBaseURI(bean);
+				listener.nonAbsoluteURI(bean);
+			}
+			else if (globalBaseURI.getScheme().equals("file")) {
+				listener.nonAbsoluteURI(bean);
 			}
 		}
 		if (checkComplete) {
@@ -807,8 +799,17 @@ public class CorrectnessVisitor extends DispatchingVisitor {
 	 */
 	@Override
 	public void visitTyped(Typed bean) {
+		URI configurableType = bean.getConfigurableType();
+		if (configurableType != null) {
+			if (!configurableType.isAbsolute()) {
+				listener.nonAbsoluteURI(bean);
+			}
+			else if (configurableType.getScheme().equals("file")) {
+				listener.nonAbsoluteURI(bean);
+			}
+		}
 		if (checkComplete) {
-			if (bean.getConfigurableType() == null) {
+			if (configurableType == null) {
 				listener.nullField(bean, "configurableType");
 			}
 		}
@@ -826,6 +827,15 @@ public class CorrectnessVisitor extends DispatchingVisitor {
 		
 		NamedSet<Processor> processors = bean.getProcessors();
 		URI workflowIdentifier = bean.getWorkflowIdentifier();
+		
+		if (workflowIdentifier != null) {
+			if (!workflowIdentifier.isAbsolute()) {
+				listener.nonAbsoluteURI(bean);
+			}
+			else if (workflowIdentifier.getScheme().equals("file")) {
+				listener.nonAbsoluteURI(bean);
+			}
+		}
 		
 		if (checkComplete) {
 			if (dataLinks == null) {

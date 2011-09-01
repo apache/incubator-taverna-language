@@ -78,7 +78,7 @@
 			<xsd:documentation>Configuration for the Beanshell activity.
 			</xsd:documentation>
 		</xsd:annotation>
-		<xsd:sequence>
+		<xsd:all>
 			<xsd:element name="script" type="xsd:string">
 				<xsd:annotation>
 					<xsd:documentation>A Beanshell script</xsd:documentation>
@@ -90,10 +90,10 @@
 			<xsd:element name="artifactDependencies" type="activities:ArtifactDependencies" />
 			<xsd:element name="inputs" type="activities:ActivityInputPorts" />
 			<xsd:element name="outputs" type="activities:ActivityOutputPorts" />
-		</xsd:sequence>
+		</xsd:all>
 	</xsd:complexType>
 	<xsd:complexType name="LocalworkerConfig">
-		<xsd:sequence>
+	    <xsd:all>
 			<xsd:element name="localworkerName" type="xsd:string"
 				minOccurs="0" />
 			<xsd:element name="script" type="xsd:string" />
@@ -103,7 +103,7 @@
 			<xsd:element name="artifactDependencies" type="activities:ArtifactDependencies" />
 			<xsd:element name="inputs" type="activities:ActivityInputPorts" />
 			<xsd:element name="outputs" type="activities:ActivityOutputPorts" />
-		</xsd:sequence>
+		</xsd:all>
 	</xsd:complexType>
 	<xsd:complexType name="StringConstantConfig">
 		<xsd:sequence>
@@ -208,11 +208,11 @@
 	</xsd:simpleType>
 
 	<xsd:complexType name="XMLSplitterConfig">
-		<xsd:sequence>
+		<xsd:all>
 			<xsd:element name="wrappedTypeXML" type="xsd:string" />
 			<xsd:element name="inputs" type="activities:ActivityInputPorts" />
 			<xsd:element name="outputs" type="activities:ActivityOutputPorts" />
-		</xsd:sequence>
+		</xsd:all>
 	</xsd:complexType>
 	<xsd:complexType name="BioMartConfig">
 		<xsd:sequence>

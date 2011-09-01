@@ -6,6 +6,7 @@ package uk.org.taverna.scufl2.validation.correctness;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
 import java.util.Set;
 
 import org.junit.Test;
@@ -59,7 +60,7 @@ public class TestIterationStrategyStack {
 		cv.checkCorrectness(p, true, rcvl);
 		
 		Set<PortMissingFromIterationStrategyStackProblem> problems = rcvl.getPortMissingFromIterationStrategyStackProblems();
-		assertTrue(problems.isEmpty());
+		assertEquals(Collections.EMPTY_SET, problems);
 
 	}
 
