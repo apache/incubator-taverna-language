@@ -147,6 +147,9 @@ public class Processor extends AbstractNamedChild implements Child<Workflow>, Po
 	 */
 	public void setDispatchStack(DispatchStack dispatchStack) {
 		this.dispatchStack = dispatchStack;
+		if (dispatchStack != null) {
+			dispatchStack.setParent(this);
+		}
 	}
 
 	/**
@@ -166,6 +169,9 @@ public class Processor extends AbstractNamedChild implements Child<Workflow>, Po
 	 */
 	public void setIterationStrategyStack(IterationStrategyStack iterationStrategyStack) {
 		this.iterationStrategyStack = iterationStrategyStack;
+		if (iterationStrategyStack != null) {
+			iterationStrategyStack.setParent(this);
+		}
 	}
 
 	/**
