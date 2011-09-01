@@ -32,10 +32,10 @@
 					<xsd:element name="acceptsHeaderValue" type="xsd:string" />
 					<xsd:element name="contentTypeForUpdates" type="xsd:string" />
 					<xsd:element name="outgoingDataFormat" type="xsd:string" />
-					<xsd:element name="sendHTTPExpectRequestHeader" type="xsd:string" />
-					<xsd:element name="showRedirectionOutputPort" type="xsd:string" />
-					<xsd:element name="escapeParameters" type="xsd:string" />
-					<xsd:element name="otherHTTPHeaders" type="HTTPHeaders" />
+					<xsd:element name="sendHTTPExpectRequestHeader" type="xsd:boolean" />
+					<xsd:element name="showRedirectionOutputPort" type="xsd:boolean" />
+					<xsd:element name="escapeParameters" type="xsd:boolean" minOccurs="0" />
+					<xsd:element name="otherHTTPHeaders" type="HTTPHeaders" minOccurs="0" />
 					<xsd:element name="activityInputs" type="ActivityInputs" />
 				</xsd:sequence>
 			</xsd:extension>
