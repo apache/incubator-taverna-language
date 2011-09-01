@@ -38,15 +38,7 @@ public abstract class AbstractActivityParser implements T2Parser {
 	@Deprecated
 	public static URI PORT_DEFINITION = Scufl2Tools.PORT_DEFINITION;
 	
-	private ParserState parserState;
-
-	public ParserState getParserState() {
-		return parserState;
-	}
-
-	public void setParserState(ParserState parserState) {
-		this.parserState = parserState;
-	}
+	private ThreadLocal<ParserState> parserState;
 
 	public <ConfigType> ConfigType unmarshallConfig(T2FlowParser t2FlowParser,
 			ConfigBean configBean, String encoding, Class<ConfigType> configType)

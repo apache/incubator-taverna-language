@@ -6,6 +6,7 @@ import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
+import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityPortDefinitionBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.BeanshellConfig;
@@ -49,14 +50,14 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 
 	@Override
 	public Configuration parseConfiguration(T2FlowParser t2FlowParser,
-			ConfigBean configBean) throws ReaderException {
+			ConfigBean configBean, ParserState parserState) throws ReaderException {
 		
 		// FIXME: Test with local workers
 		BeanshellConfig beanshellConfig = unmarshallConfig(t2FlowParser,
 				configBean, "xstream", BeanshellConfig.class);
 
 		Configuration configuration = new Configuration();
-		configuration.setParent(getParserState().getCurrentProfile());
+		configuration.setParent(parserState.getCurrentProfile());
 
 		PropertyResource configResource = configuration.getPropertyResource();
 		configResource.setTypeURI(ACTIVITY_URI.resolve("#Config"));
@@ -66,7 +67,7 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 
 		// TODO: Dependencies, activities, etc
 
-		Activity activity = getParserState().getCurrentActivity();
+		Activity activity = parserState.getCurrentActivity();
 		activity.getInputPorts().clear();
 		activity.getOutputPorts().clear();
 		for (ActivityPortDefinitionBean portBean : beanshellConfig

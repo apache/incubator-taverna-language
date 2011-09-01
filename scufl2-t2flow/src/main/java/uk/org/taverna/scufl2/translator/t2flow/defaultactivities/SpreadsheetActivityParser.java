@@ -3,6 +3,7 @@ package uk.org.taverna.scufl2.translator.t2flow.defaultactivities;
 import java.net.URI;
 
 import uk.org.taverna.scufl2.api.configurations.Configuration;
+import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 
@@ -30,7 +31,7 @@ public class SpreadsheetActivityParser extends AbstractActivityParser {
 
 	@Override
 	public Configuration parseConfiguration(T2FlowParser t2FlowParser,
-			ConfigBean configBean) {
+			ConfigBean configBean, ParserState parserState) {
 		// TODO Auto-generated method stub
 		return null;
 	}

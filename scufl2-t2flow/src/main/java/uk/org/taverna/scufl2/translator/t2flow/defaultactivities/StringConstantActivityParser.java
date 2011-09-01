@@ -36,7 +36,7 @@ public class StringConstantActivityParser extends AbstractActivityParser {
 
 	@Override
 	public Configuration parseConfiguration(T2FlowParser t2FlowParser,
-			ConfigBean configBean) throws ReaderException {
+			ConfigBean configBean, ParserState parserState) throws ReaderException {
 		StringConstantConfig strConfig = unmarshallConfig(t2FlowParser,
 				configBean, "xstream", StringConstantConfig.class);
 		String value = strConfig.getValue();

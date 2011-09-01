@@ -6,6 +6,7 @@ import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.io.ReaderException;
+import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.DataflowConfig;
@@ -36,7 +37,7 @@ public class DataflowActivityParser extends AbstractActivityParser {
 
 	@Override
 	public Configuration parseConfiguration(T2FlowParser t2FlowParser,
-			ConfigBean configBean) throws ReaderException {
+			ConfigBean configBean, ParserState parserState) throws ReaderException {
 		DataflowConfig dataflowConfig = unmarshallConfig(t2FlowParser,
 				configBean, "dataflow", DataflowConfig.class);
 		Configuration configuration = new Configuration();
@@ -44,8 +45,8 @@ public class DataflowActivityParser extends AbstractActivityParser {
 
 		String wfId = dataflowConfig.getRef();
 		URI wfUri = Workflow.WORKFLOW_ROOT.resolve(wfId + "/");
-		Workflow wf = (Workflow) getUriTools().resolveUri(wfUri, getParserState().getCurrentWorkflowBundle());		
-		URI uri = getUriTools().relativeUriForBean(wf, getParserState().getCurrentWorkflowBundle());
+		Workflow wf = (Workflow) getUriTools().resolveUri(wfUri, parserState.getCurrentWorkflowBundle());		
+		URI uri = getUriTools().relativeUriForBean(wf, parserState.getCurrentWorkflowBundle());
 
 		configuration.getPropertyResource().addPropertyReference(nestedUri.resolve("#workflow"), uri);		
 		return configuration;
