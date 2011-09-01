@@ -303,7 +303,6 @@ public class T2FlowParser {
 				return classURI;
 			}
 		}
-		t2Parser.setParserState(parserState.get());
 		parserState.get().setCurrentT2Parser(t2Parser);
 		return t2Parser.mapT2flowRavenIdToScufl2URI(classURI);
 	}
@@ -374,7 +373,7 @@ public class T2FlowParser {
 
 		try {
 			configuration = parserState.get().getCurrentT2Parser()
-					.parseConfiguration(this, configBean);
+					.parseConfiguration(this, configBean, parserState.get());
 		} catch (ReaderException e) {
 			if (isStrict()) {
 				throw e;
@@ -413,22 +412,18 @@ public class T2FlowParser {
 
 	public Unmarshaller getUnmarshaller() {
 		Unmarshaller u = unmarshaller.get();
-
 		if (!isValidating() && u.getSchema() != null) {
 			u.setSchema(null);
 		} else if (isValidating() && u.getSchema() == null) {
-			
-					
 			// Load and set schema to validate against
 			Schema schema;
 			try {
 				SchemaFactory schemaFactory = SchemaFactory
 						.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
 				List<URI> schemas = getAdditionalSchemas();
-				
 				URL t2flowExtendedXSD = getClass().getResource(
 						T2FLOW_EXTENDED_XSD);
-				schemas.add(0,  t2flowExtendedXSD.toURI());
+				schemas.add(t2flowExtendedXSD.toURI());
 				
 				List<Source> schemaSources = new ArrayList<Source>();
 				for (URI schemaUri : schemas) {
@@ -436,7 +431,6 @@ public class T2FlowParser {
 				}						
 				Source[] sources = schemaSources.toArray(new Source[schemaSources.size()]);
 				schema = schemaFactory.newSchema(sources);
-				
 			} catch (SAXException e) {
 				throw new RuntimeException("Can't load schema "
 						+ T2FLOW_EXTENDED_XSD, e);
@@ -448,8 +442,6 @@ public class T2FlowParser {
 						+ T2FLOW_EXTENDED_XSD, e);
 			}
 			u.setSchema(schema);
-
-
 		}
 		return u;
 	}
