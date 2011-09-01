@@ -131,7 +131,7 @@ public class RESTActivityParser extends AbstractActivityParser {
 			if (restConfig.isShowRedirectionOutputPort()) {
 				configResource.addProperty(ACTIVITY_URI.resolve("#showRedirectionOutputPort"), new PropertyLiteral(true));
 			}
-			if (restConfig.isEscapeParameters() != null && ! restConfig.isEscapeParameters()) {
+			if (restConfig.getEscapeParameters() != null && ! restConfig.getEscapeParameters()) {
 				// Default: true
 				configResource.addProperty(ACTIVITY_URI.resolve("#escapeParameters"), new PropertyLiteral(false));
 			}
