@@ -499,7 +499,7 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 				// FIXME: Is there a good URI for raw bytes? xsd:byte is just
 				// one byte,
 				// xsd:hexBinary and xsd:base64Binary both mandate an encoding
-				dataType = ACTIVITY_URI.resolve("#binary");
+				dataType = Scufl2Tools.PORT_DEFINITION.resolve("#binary");
 			} else if (charSet != null) {
 				resource.addPropertyReference(ACTIVITY_URI.resolve("#charset"),
 						CHARSET.resolve("#" + uriTools.validFilename(charSet)));

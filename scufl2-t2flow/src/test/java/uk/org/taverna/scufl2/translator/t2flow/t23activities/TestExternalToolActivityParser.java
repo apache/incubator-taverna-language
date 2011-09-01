@@ -32,6 +32,7 @@ import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.api.property.PropertyReference;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
+import uk.org.taverna.scufl2.translator.t2flow.T2Parser;
 
 public class TestExternalToolActivityParser {
 	private static final String WF_2_2 = "/tool-2-2.t2flow";
@@ -47,8 +48,19 @@ public class TestExternalToolActivityParser {
 		parser = new T2FlowParser();
 		parser.setValidating(true);
 		parser.setStrict(true);
+		checkT2Parsers();
 		
 	}
+	
+	private void checkT2Parsers() {
+		for (T2Parser t2Parser : parser.getT2Parsers()) {
+			if (t2Parser instanceof ExternalToolActivityParser) {
+				return;
+			}
+		}
+		fail("Could not find ExternalToolActivityParser, found " + parser.getT2Parsers());		
+	}
+
 	
 	
 	@Test
@@ -313,7 +325,7 @@ public class TestExternalToolActivityParser {
 		// 1 - file1
 		PropertyResource portDefinition = scufl2Tools.portDefinitionFor(file1, profile);
 		assertNotNull("Could not find port definition for file1", portDefinition);
-		assertEquals(ACTIVITY_URI.resolve("#binary"),
+		assertEquals(Scufl2Tools.PORT_DEFINITION.resolve("#binary"),
 				portDefinition.getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
 		assertEquals(ACTIVITY_URI.resolve("#File"), 
 				portDefinition.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#substitutionType")));
@@ -362,7 +374,7 @@ public class TestExternalToolActivityParser {
 		// 4 - fileList2
 		portDefinition = scufl2Tools.portDefinitionFor(fileList2, profile);
 		assertNotNull("Could not find port definition for fileList2", portDefinition);
-		assertEquals(ACTIVITY_URI.resolve("#binary"),
+		assertEquals(Scufl2Tools.PORT_DEFINITION.resolve("#binary"),
 				portDefinition.getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
 		assertEquals(ACTIVITY_URI.resolve("#File"), 
 				portDefinition.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#substitutionType")));
