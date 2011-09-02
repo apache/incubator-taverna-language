@@ -1,0 +1,37 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>scufl2-validation</artifactId>
+    <groupId>uk.org.taverna.scufl2</groupId>
+    <version>0.1-SNAPSHOT</version>
+  </parent>
+  <groupId>uk.org.taverna.scufl2</groupId>
+  <artifactId>scufl2-validation-integration</artifactId>
+  <version>0.1-SNAPSHOT</version>
+  <name>SCUFL2 Validation Integration</name>
+  <dependencies>
+  	<dependency>
+  		<groupId>uk.org.taverna.scufl2</groupId>
+  		<artifactId>scufl2-t2flow</artifactId>
+  		<version>0.1-SNAPSHOT</version>
+  		<type>bundle</type>
+  	</dependency>
+  	<dependency>
+  		<groupId>uk.org.taverna.scufl2</groupId>
+  		<artifactId>scufl2-validation-correctness</artifactId>
+  		<version>0.1-SNAPSHOT</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>uk.org.taverna.scufl2</groupId>
+  		<artifactId>scufl2-validation-structural</artifactId>
+  		<version>0.1-SNAPSHOT</version>
+  		<type>bundle</type>
+  	</dependency>
+  	<dependency>
+  		<groupId>uk.org.taverna.scufl2</groupId>
+  		<artifactId>scufl2-scufl</artifactId>
+  		<version>0.1-SNAPSHOT</version>
+  		<type>jar</type>
+  	</dependency>
+  </dependencies>
+</project>
