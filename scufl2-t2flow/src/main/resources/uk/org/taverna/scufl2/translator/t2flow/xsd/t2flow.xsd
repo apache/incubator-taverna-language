@@ -320,14 +320,12 @@
 		<annotation>
 			<documentation>List of annotation chains</documentation>
 		</annotation>
-		<sequence>
-			<choice maxOccurs="unbounded" minOccurs="0">
-				<element name="annotation_chain" type="tav:AnnotationChain">
-				</element>
-				<element name="annotation_chain_2_2" type="tav:AnnotationChain">
-				</element>
-			</choice>
-		</sequence>
+		<choice maxOccurs="unbounded" minOccurs="0">
+			<element name="annotation_chain" type="tav:AnnotationChain">
+			</element>
+			<element name="annotation_chain_2_2" type="tav:AnnotationChain">
+			</element>
+		</choice>
 	</complexType>
 
 	<complexType name="Activities">

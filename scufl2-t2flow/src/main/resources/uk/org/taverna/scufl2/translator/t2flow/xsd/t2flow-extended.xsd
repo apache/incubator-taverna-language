@@ -55,7 +55,7 @@
 						</xsd:element>
 						<xsd:element form="unqualified"
 							name="net.sf.taverna.t2.activities.localworker.LocalworkerActivityConfigurationBean"
-							type="activities:LocalworkerConfig">
+							type="activities:BeanshellConfig">
 						</xsd:element>
 						<xsd:element form="unqualified"
 							name="net.sf.taverna.t2.activities.stringconstant.StringConstantConfigurationBean"
