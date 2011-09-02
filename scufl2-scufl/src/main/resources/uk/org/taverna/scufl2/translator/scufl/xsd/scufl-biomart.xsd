@@ -1,0 +1,16 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://org.embl.ebi.escience/xscufl/0.1alpha"
+            targetNamespace="http://org.embl.ebi.escience/xscufl/0.1alpha"
+            xmlns:scufl="http://org.embl.ebi.escience/xscufl/0.1alpha">
+
+<xsd:include schemaLocation="scufl.xsd" />
+
+<xsd:complexType name="biomartType">
+  <xsd:sequence>
+  <xsd:any/>
+  </xsd:sequence>
+</xsd:complexType>
+
+<xsd:element name="biomart" type="scufl:biomartType" substitutionGroup="processorElement"/>
+
+</xsd:schema>
