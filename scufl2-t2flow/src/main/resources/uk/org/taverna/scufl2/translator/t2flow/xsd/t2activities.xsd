@@ -90,19 +90,8 @@
 			<xsd:element name="artifactDependencies" type="activities:ArtifactDependencies" />
 			<xsd:element name="inputs" type="activities:ActivityInputPorts" />
 			<xsd:element name="outputs" type="activities:ActivityOutputPorts" />
-		</xsd:all>
-	</xsd:complexType>
-	<xsd:complexType name="LocalworkerConfig">
-	    <xsd:all>
 			<xsd:element name="localworkerName" type="xsd:string"
-				minOccurs="0" />
-			<xsd:element name="script" type="xsd:string" />
-			<xsd:element name="dependencies" type="activities:Dependencies" />
-			<xsd:element name="classLoaderSharing" type="activities:ClassLoaderSharing" />
-			<xsd:element name="localDependencies" type="activities:LocalDependencies" />
-			<xsd:element name="artifactDependencies" type="activities:ArtifactDependencies" />
-			<xsd:element name="inputs" type="activities:ActivityInputPorts" />
-			<xsd:element name="outputs" type="activities:ActivityOutputPorts" />
+						minOccurs="0" />
 		</xsd:all>
 	</xsd:complexType>
 	<xsd:complexType name="StringConstantConfig">
@@ -420,7 +409,8 @@
 
 	<xsd:simpleType name="ClassLoaderSharing">
 		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="workflow"></xsd:enumeration>
+			<xsd:enumeration value="workflow" />
+			<xsd:enumeration value="system" />
 		</xsd:restriction>
 	</xsd:simpleType>
 
