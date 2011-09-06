@@ -187,6 +187,7 @@ WorkflowBundle 'Workflow1'
     Configuration 'Concatenate_two_strings'
       Type <http://ns.taverna.org.uk/2010/activity/beanshell#Config>
       Configures 'activity/Concatenate_two_strings'
+      Property <http://ns.taverna.org.uk/2010/activity/beanshell#derivedFrom>
       Property <http://ns.taverna.org.uk/2010/activity/beanshell#script>
         '''output = string1 + string2;'''
       Property <http://ns.taverna.org.uk/2010/scufl2#inputPortDefinition>
@@ -194,6 +195,7 @@ WorkflowBundle 'Workflow1'
     Configuration 'Concatenate_two_strings1'
       Type <http://ns.taverna.org.uk/2010/activity/beanshell#Config>
       Configures 'activity/Concatenate_two_strings1'
+      Property <http://ns.taverna.org.uk/2010/activity/beanshell#derivedFrom>
       Property <http://ns.taverna.org.uk/2010/activity/beanshell#script>
         '''output = string1 + string2;'''
       Property <http://ns.taverna.org.uk/2010/scufl2#inputPortDefinition>
@@ -201,6 +203,7 @@ WorkflowBundle 'Workflow1'
     Configuration 'Concatenate_two_strings_2'
       Type <http://ns.taverna.org.uk/2010/activity/beanshell#Config>
       Configures 'activity/Concatenate_two_strings_2'
+      Property <http://ns.taverna.org.uk/2010/activity/beanshell#derivedFrom>
       Property <http://ns.taverna.org.uk/2010/activity/beanshell#script>
         '''output = string1 + string2;'''
       Property <http://ns.taverna.org.uk/2010/scufl2#inputPortDefinition>
@@ -208,6 +211,7 @@ WorkflowBundle 'Workflow1'
     Configuration 'Concatenate_two_strings_3'
       Type <http://ns.taverna.org.uk/2010/activity/beanshell#Config>
       Configures 'activity/Concatenate_two_strings_3'
+      Property <http://ns.taverna.org.uk/2010/activity/beanshell#derivedFrom>
       Property <http://ns.taverna.org.uk/2010/activity/beanshell#script>
         '''output = string1 + string2;'''
       Property <http://ns.taverna.org.uk/2010/scufl2#inputPortDefinition>
@@ -215,6 +219,7 @@ WorkflowBundle 'Workflow1'
     Configuration 'Concatenate_two_strings_4'
       Type <http://ns.taverna.org.uk/2010/activity/beanshell#Config>
       Configures 'activity/Concatenate_two_strings_4'
+      Property <http://ns.taverna.org.uk/2010/activity/beanshell#derivedFrom>
       Property <http://ns.taverna.org.uk/2010/activity/beanshell#script>
         '''output = string1 + string2;'''
       Property <http://ns.taverna.org.uk/2010/scufl2#inputPortDefinition>
@@ -222,6 +227,7 @@ WorkflowBundle 'Workflow1'
     Configuration 'Create_Lots_Of_Strings'
       Type <http://ns.taverna.org.uk/2010/activity/beanshell#Config>
       Configures 'activity/Create_Lots_Of_Strings'
+      Property <http://ns.taverna.org.uk/2010/activity/beanshell#derivedFrom>
       Property <http://ns.taverna.org.uk/2010/activity/beanshell#script>
         '''List strings = new ArrayList();
 for (int i = 0; i < 40; i++) {
@@ -232,6 +238,7 @@ for (int i = 0; i < 40; i++) {
     Configuration 'Echo_List'
       Type <http://ns.taverna.org.uk/2010/activity/beanshell#Config>
       Configures 'activity/Echo_List'
+      Property <http://ns.taverna.org.uk/2010/activity/beanshell#derivedFrom>
       Property <http://ns.taverna.org.uk/2010/activity/beanshell#script>
         '''outputlist = inputlist;'''
       Property <http://ns.taverna.org.uk/2010/scufl2#inputPortDefinition>
