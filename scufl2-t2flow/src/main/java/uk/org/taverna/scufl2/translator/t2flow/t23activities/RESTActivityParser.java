@@ -185,8 +185,8 @@ public class RESTActivityParser extends AbstractActivityParser {
 				portConfig.addPropertyReference(Scufl2Tools.PORT_DEFINITION.resolve("#definesInputPort"), portUri);
 				
 				URI dataType = PropertyLiteral.XSD_STRING;
-				if (restConfig.getOutgoingDataFormat().equals("Binary")) {
-					dataType = Scufl2Tools.PORT_DEFINITION.resolve("#Binary");
+				if (restConfig.getOutgoingDataFormat().equalsIgnoreCase("binary")) {
+					dataType = Scufl2Tools.PORT_DEFINITION.resolve("#binary");
 				}						
 				portConfig.addPropertyReference(Scufl2Tools.PORT_DEFINITION.resolve("#dataType"),
 						dataType);
