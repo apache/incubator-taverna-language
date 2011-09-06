@@ -239,10 +239,9 @@ public class UCFPackage {
 			throws JAXBException {
 		if (jaxbContext == null) {
 			jaxbContext = JAXBContext.newInstance(
-					"org.oasis_open.names.tc.opendocument.xmlns.container:"
-							+ "org.w3._2000._09.xmldsig_:"
-							+ "org.w3._2001._04.xmlenc_",
-					UCFPackage.class.getClassLoader());
+					org.oasis_open.names.tc.opendocument.xmlns.container.ObjectFactory.class,					
+							org.w3._2000._09.xmldsig.ObjectFactory.class,
+							org.w3._2001._04.xmlenc.ObjectFactory.class);
 		}
 		return jaxbContext;
 	}
