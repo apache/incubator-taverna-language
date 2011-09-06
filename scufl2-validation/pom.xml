@@ -5,8 +5,7 @@
     <groupId>uk.org.taverna.scufl2</groupId>
     <version>0.1-SNAPSHOT</version>
   </parent>
-  <groupId>uk.org.taverna.scufl2</groupId>
+  <packaging>bundle</packaging>
   <artifactId>scufl2-validation</artifactId>
-  <packaging>pom</packaging>
-  <version>0.1-SNAPSHOT</version>
+  <name>Taverna Scufl 2 validation</name>
 </project>

@@ -1,0 +1,21 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://org.embl.ebi.escience/xscufl/0.1alpha"
+            targetNamespace="http://org.embl.ebi.escience/xscufl/0.1alpha"
+            xmlns:scufl="http://org.embl.ebi.escience/xscufl/0.1alpha">
+            
+<xsd:include schemaLocation="scufl.xsd" />
+
+<xsd:complexType name="soaplabwsdlType">
+ <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+    <xsd:attribute name="interval" type="xsd:nonNegativeInteger"/>
+    <xsd:attribute name="backoff" type="xsd:double"/>
+    <xsd:attribute name="maxinterval" type="xsd:nonNegativeInteger"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+    
+<xsd:element name="soaplabwsdl" type="scufl:soaplabwsdlType" substitutionGroup="processorElement">
+</xsd:element>
+
+</xsd:schema>

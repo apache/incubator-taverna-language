@@ -1,0 +1,42 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://org.embl.ebi.escience/xscufl/0.1alpha"
+            targetNamespace="http://org.embl.ebi.escience/xscufl/0.1alpha"
+            xmlns:scufl="http://org.embl.ebi.escience/xscufl/0.1alpha">
+            
+<xsd:include schemaLocation="scufl.xsd" />
+<xsd:include schemaLocation="scufl-wsdl.xsd" />
+
+<xsd:complexType name="flattenlistType">
+  <xsd:attribute name="depth" type="xsd:nonNegativeInteger"/>
+</xsd:complexType>
+            
+<xsd:complexType name="slicelistType">
+  <xsd:attribute name="depth" type="xsd:nonNegativeInteger"/>
+</xsd:complexType>
+            
+<xsd:complexType name="extensionsType">
+	<xsd:choice>
+        <xsd:element ref="complextype"/>
+        <xsd:element ref="arraytype"/>
+        <xsd:element ref="flattenlist"/>
+        <xsd:element ref="slicelist"/>
+      </xsd:choice>
+</xsd:complexType>
+
+<xsd:complexType name="localType" mixed="true">
+      <xsd:sequence>
+      <xsd:element ref="extensions" maxOccurs="1" minOccurs="0"/>
+      </xsd:sequence>
+     <xsd:attributeGroup ref="scufl:processorElementAttributes"/>
+</xsd:complexType>
+
+<xsd:element name="slicelist" type="scufl:slicelistType"/>
+
+<xsd:element name="flattenlist" type="scufl:flattenlistType"/>
+
+<xsd:element name="extensions" type="scufl:extensionsType"/>
+
+<xsd:element name="local" type="scufl:localType" substitutionGroup="processorElement">
+</xsd:element>
+
+</xsd:schema>
