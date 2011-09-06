@@ -69,8 +69,8 @@
 	<url>http://www.mygrid.org.uk/dev/wiki/display/developer/SCUFL2</url>
 	<scm>
 		<connection>scm:git:git://github.com/myGrid/scufl2.git</connection>
-		<developerConnection>scm:git:git@github.com:myGrid/scufl2.git</developerConnection>
-		<url>http://github.com/myGrid/scufl2/</url>
+		<developerConnection>scm:git:ssh://git@github.com/myGrid/scufl2.git</developerConnection>
+		<url>https://github.com/myGrid/scufl2/</url>
 	</scm>
 
 	<repositories>
