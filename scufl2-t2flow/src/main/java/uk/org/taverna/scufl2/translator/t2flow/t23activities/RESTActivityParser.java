@@ -122,7 +122,7 @@ public class RESTActivityParser extends AbstractActivityParser {
 					PropertyResource expect = new PropertyResource();
 					expect.setTypeURI(HTTP_URI.resolve("#RequestHeader"));
 					expect.addPropertyAsString(HTTP_URI.resolve("#fieldName"), "Expect");
-					configResource.addProperty(ACTIVITY_URI.resolve("#use100Continue"), new PropertyLiteral(true));
+					expect.addProperty(ACTIVITY_URI.resolve("#use100Continue"), new PropertyLiteral(true));
 					//accept.addPropertyReference(HTTP_URI.resolve("#hdrName"), HTTP_METHODS_URI.resolve("#expect"));
 					headers.add(expect);
 				}
