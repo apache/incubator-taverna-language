@@ -18,6 +18,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<jaxb.version>2.2.4-1</jaxb.version>
 	</properties>
 	<dependencies>
 		<!-- Common dependencies - keep these to a minimum as we want to reduce 
@@ -53,7 +54,33 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>jaxb2-maven-plugin</artifactId>
-					<version>1.3</version>
+					<version>1.3.1</version>
+					<configuration>
+						<target>2.1</target>
+						<arguments>-enableIntrospection</arguments>						
+						<!-- Needed for consistency across Java 6 and Java 7
+						on optional Booleans.
+						
+						http://www.olivergierke.de/wordpress/2011/03/a-jaxb-or-rather-xjc-odyssey/
+						http://www.mojavelinux.com/blog/archives/2006/09/the_great_jaxb_api_blunder/
+						http://java.net/jira/browse/JAXB-131
+						
+						 -->
+					</configuration>
+					<dependencies>
+						<dependency>
+							<groupId>com.sun.xml.bind</groupId>
+							<artifactId>jaxb-xjc</artifactId>
+							<version>${jaxb.version}</version>
+						</dependency>
+							<!-- 
+							<dependency>
+							<groupId>com.sun.xml.bind</groupId>
+							<artifactId>jaxb-impl</artifactId>
+							<version>${jaxb.version}</version>				
+						</dependency>
+							 -->
+					</dependencies>
 				</plugin>
 
 				<!-- Enable for Java 5 -->
@@ -117,7 +144,7 @@
 			<dependency>
 				<groupId>com.sun.xml.bind</groupId>
 				<artifactId>jaxb-impl</artifactId>
-				<version>2.2.2</version>
+				<version>${jaxb.version}</version>
 				<type>jar</type>
 				<optional>true</optional>
 			</dependency>
