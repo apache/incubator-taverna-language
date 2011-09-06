@@ -24,6 +24,7 @@ import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.defaultactivities.AbstractActivityParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityInputs.Entry;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.HTTPHeaders;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.RESTConfig;
 
 public class RESTActivityParser extends AbstractActivityParser {
@@ -108,8 +109,7 @@ public class RESTActivityParser extends AbstractActivityParser {
 				//accept.addPropertyReference(HTTP_URI.resolve("#hdrName"), HTTP_METHODS_URI.resolve("#accept"));
 				headers.add(accept);
 			}
-			if (hasContent(method)) {
-				
+			if (hasContent(method)) {				
 				if (restConfig.getContentTypeForUpdates() != null && ! restConfig.getContentTypeForUpdates().isEmpty()) {
 					PropertyResource contentType = new PropertyResource();
 					contentType.setTypeURI(HTTP_URI.resolve("#RequestHeader"));
@@ -127,7 +127,18 @@ public class RESTActivityParser extends AbstractActivityParser {
 					headers.add(expect);
 				}
 			}
-			
+			if (restConfig.getOtherHTTPHeaders() != null && restConfig.getOtherHTTPHeaders().getList() != null) {
+				for (HTTPHeaders.List list : restConfig.getOtherHTTPHeaders().getList()) {
+					String fieldName = list.getContent().get(0).getValue();
+					String fieldValue = list.getContent().get(1).getValue();
+					
+					PropertyResource header = new PropertyResource();
+					header.setTypeURI(HTTP_URI.resolve("#RequestHeader"));
+					header.addPropertyAsString(HTTP_URI.resolve("#fieldName"), fieldName);
+					header.addPropertyAsString(HTTP_URI.resolve("#fieldValue"), fieldValue);
+					headers.add(header);
+				}
+			}
 			if (restConfig.isShowRedirectionOutputPort()) {
 				configResource.addProperty(ACTIVITY_URI.resolve("#showRedirectionOutputPort"), new PropertyLiteral(true));
 			}
