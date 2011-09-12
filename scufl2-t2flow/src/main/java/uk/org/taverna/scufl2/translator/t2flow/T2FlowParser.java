@@ -421,7 +421,7 @@ public class T2FlowParser {
 				SchemaFactory schemaFactory = SchemaFactory
 						.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
 				List<URI> schemas = getAdditionalSchemas();
-				URL t2flowExtendedXSD = getClass().getResource(
+				URL t2flowExtendedXSD = T2FlowParser.class.getResource(
 						T2FLOW_EXTENDED_XSD);
 				schemas.add(t2flowExtendedXSD.toURI());
 				
@@ -432,14 +432,11 @@ public class T2FlowParser {
 				Source[] sources = schemaSources.toArray(new Source[schemaSources.size()]);
 				schema = schemaFactory.newSchema(sources);
 			} catch (SAXException e) {
-				throw new RuntimeException("Can't load schema "
-						+ T2FLOW_EXTENDED_XSD, e);
+				throw new RuntimeException("Can't load schemas", e);
 			} catch (URISyntaxException e) {
-				throw new RuntimeException("Can't find schema "
-						+ T2FLOW_EXTENDED_XSD, e);
+				throw new RuntimeException("Can't find schemas", e);
 			} catch (NullPointerException e) {
-				throw new RuntimeException("Can't find schema "
-						+ T2FLOW_EXTENDED_XSD, e);
+				throw new RuntimeException("Can't find schemas", e);
 			}
 			u.setSchema(schema);
 		}
