@@ -29,7 +29,7 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.RESTConfig;
 
 public class RESTActivityParser extends AbstractActivityParser {
 
-	private static final String ACTIVITY_XSD = "../xsd/restactivity.xsd";
+	private static final String ACTIVITY_XSD = "/uk/org/taverna/scufl2/translator/t2flow/xsd/restactivity.xsd";
 
 	private static URI ravenURI = T2FlowParser.ravenURI
 			.resolve("net.sf.taverna.t2.activities/rest-activity/");
@@ -58,12 +58,12 @@ public class RESTActivityParser extends AbstractActivityParser {
 
 	@Override
 	public List<URI> getAdditionalSchemas() {
-		URL externalToolXsd = getClass().getResource(ACTIVITY_XSD);		
+		URL restXsd = RESTActivityParser.class.getResource(ACTIVITY_XSD);		
 		try {
-			return Arrays.asList(externalToolXsd.toURI());
-		} catch (URISyntaxException e) {
-			throw new IllegalStateException("Can't find external tool schema "
-					+ externalToolXsd);
+			return Arrays.asList(restXsd.toURI());
+		} catch (Exception e) {
+			throw new IllegalStateException("Can't find REST schema "
+					+ restXsd);
 		}
 	}
 

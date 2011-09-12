@@ -44,7 +44,7 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 
 	private static final String STDERR = "STDERR";
 
-	private static final String EXTERNALTOOLACTIVITY_XSD = "../xsd/externaltoolactivity.xsd";
+	private static final String EXTERNALTOOLACTIVITY_XSD = "/uk/org/taverna/scufl2/translator/t2flow/xsd/externaltoolactivity.xsd";
 
 	public static URI CNT = URI.create("http://www.w3.org/2011/content#");
 
@@ -93,10 +93,10 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 
 	@Override
 	public List<URI> getAdditionalSchemas() {
-		URL externalToolXsd = getClass().getResource(EXTERNALTOOLACTIVITY_XSD);
+		URL externalToolXsd = ExternalToolActivityParser.class.getResource(EXTERNALTOOLACTIVITY_XSD);
 		try {
 			return Arrays.asList(externalToolXsd.toURI());
-		} catch (URISyntaxException e) {
+		} catch (Exception e) {
 			throw new IllegalStateException("Can't find external tool schema "
 					+ externalToolXsd);
 		}
