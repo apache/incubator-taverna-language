@@ -9,7 +9,7 @@ import org.junit.Test;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.io.ReaderException;
-import uk.org.taverna.scufl2.validation.ValidationException;
+import uk.org.taverna.scufl2.validation.ValidationProblem;
 
 
 public class WorkflowTest {
