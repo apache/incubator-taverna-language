@@ -30,6 +30,7 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
 
 public class TestRDFXMLReader {
 
+	private static final String EXAMPLE_SCUFL2 = "example.wfbundle";
 	private URL exampleBundle;
 	public static final String APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE = "application/vnd.taverna.scufl2.workflow-bundle";
 	protected WorkflowBundle workflowBundle;
@@ -67,7 +68,7 @@ public class TestRDFXMLReader {
 
 	@Before
 	public void exampleBundle() throws ReaderException, IOException {
-		String name = "example.scufl2";
+		String name = EXAMPLE_SCUFL2;
 		exampleBundle = getClass().getResource(name);
 		assertNotNull("Can't find example workflow bundle " + name,
 				exampleBundle);
@@ -160,7 +161,6 @@ public class TestRDFXMLReader {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		bundleIO.writeBundle(workflowBundle, output,
 				TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
-
 		String bundleTxt = new String(output.toByteArray(), "UTF-8");
 
 		assertEquals(testWorkflowBundleIO.getStructureFormatWorkflowBundle(),
@@ -168,6 +168,23 @@ public class TestRDFXMLReader {
 
 	}
 
+	@Test
+	public void guessMediaType() throws Exception {
+
+		byte[] firstBytes = new byte[1024];
+		getClass().getResourceAsStream(EXAMPLE_SCUFL2).read(firstBytes);		
+		assertEquals(APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE, bundleIO.guessMediaTypeForSignature(firstBytes));
+		// Mess up the mime type string
+		firstBytes[45] = 32;
+		assertEquals(null, bundleIO.guessMediaTypeForSignature(firstBytes));
+	}
+
+	@Test
+	public void readStreamNoMediaType() throws ReaderException, IOException {
+		workflowBundle = bundleIO.readBundle(getClass().getResourceAsStream(EXAMPLE_SCUFL2), null);
+		assertNotNull(workflowBundle);
+	}
+	
 	@Test
 	public void workflowIdentifier() throws Exception {
 		assertEquals(
