@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Set;
 
@@ -38,6 +39,28 @@ public class RDFXMLReader implements WorkflowBundleReader {
 		UCFPackage ucfPackage = new UCFPackage(inputStream);
 		WorkflowBundleParser deserializer = new WorkflowBundleParser();
 		return deserializer.readWorkflowBundle(ucfPackage, URI.create(""));
+	}
+	
+	@Override
+	public String guessMediaTypeForSignature(byte[] firstBytes) {
+
+		if (firstBytes.length < 100) { 
+			return null;
+		}
+		Charset latin1 = Charset.forName("ISO-8859-1");
+		String pk = new String(firstBytes, 0, 2, latin1);
+		if (!pk.equals("PK")) {
+			return null;
+		}
+		String mimetype = new String(firstBytes, 30, 8, latin1);
+		if (!mimetype.equals("mimetype")) {
+			return null;
+		}
+		String bundle = new String(firstBytes, 38, APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE.length(), latin1);
+		if (!bundle.equals(APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE)) {
+			return null;
+		}
+		return APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE;
 	}
 
 }
