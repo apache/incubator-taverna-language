@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uk.org.taverna.scufl2.validation.integration.t2flow;
+package uk.org.taverna.scufl2.validation.integration.scufl;
 
 import static org.junit.Assert.*;
 
