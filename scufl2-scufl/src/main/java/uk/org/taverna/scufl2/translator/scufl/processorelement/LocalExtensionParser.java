@@ -3,13 +3,16 @@
  */
 package uk.org.taverna.scufl2.translator.scufl.processorelement;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
+import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.translator.scufl.ScuflExtensionParser;
+import uk.org.taverna.scufl2.xml.scufl.jaxb.LocalType;
 
 /**
  * @author alanrw
@@ -17,7 +20,7 @@ import uk.org.taverna.scufl2.translator.scufl.ScuflExtensionParser;
  */
 public class LocalExtensionParser extends AbstractExtensionParser {
 
-	private static final String LOCAL_XSD = "../xsd/scufl-local.xsd";
+	private static final String LOCAL_XSD = "/uk/org/taverna/scufl2/translator/scufl/xsd/scufl-local.xsd";
 
 	/* (non-Javadoc)
 	 * @see uk.org.taverna.scufl2.translator.scufl.ScuflExtensionParser#canHandle(java.lang.Class)

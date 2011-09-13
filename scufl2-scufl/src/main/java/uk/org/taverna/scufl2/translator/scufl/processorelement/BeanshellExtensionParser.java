@@ -17,7 +17,7 @@ import uk.org.taverna.scufl2.translator.scufl.ScuflExtensionParser;
  */
 public class BeanshellExtensionParser extends AbstractExtensionParser {
 
-	private static final String BEANSHELL_XSD = "../xsd/scufl-beanshell.xsd";
+	private static final String BEANSHELL_XSD = "/uk/org/taverna/scufl2/translator/scufl/xsd/scufl-beanshell.xsd";
 
 	/* (non-Javadoc)
 	 * @see uk.org.taverna.scufl2.translator.scufl.ScuflExtensionParser#canHandle(java.lang.Class)

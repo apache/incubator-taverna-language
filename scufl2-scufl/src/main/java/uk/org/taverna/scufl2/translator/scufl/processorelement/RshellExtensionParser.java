@@ -17,7 +17,7 @@ import uk.org.taverna.scufl2.translator.scufl.ScuflExtensionParser;
  */
 public class RshellExtensionParser extends AbstractExtensionParser {
 
-	private static final String RSHELL_XSD = "../xsd/scufl-rshell.xsd";
+	private static final String RSHELL_XSD = "/uk/org/taverna/scufl2/translator/scufl/xsd/scufl-rshell.xsd";
 
 	/* (non-Javadoc)
 	 * @see uk.org.taverna.scufl2.translator.scufl.ScuflExtensionParser#canHandle(java.lang.Class)

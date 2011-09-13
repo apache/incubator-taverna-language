@@ -18,7 +18,7 @@ import uk.org.taverna.scufl2.translator.scufl.ScuflExtensionParser;
  */
 public class BiomartExtensionParser extends AbstractExtensionParser {
 
-	private static final String BIOMART_XSD = "../xsd/scufl-biomart.xsd";
+	private static final String BIOMART_XSD = "/uk/org/taverna/scufl2/translator/scufl/xsd/scufl-biomart.xsd";
 
 	/* (non-Javadoc)
 	 * @see uk.org.taverna.scufl2.translator.scufl.ScuflExtensionParser#canHandle(java.lang.Class)
