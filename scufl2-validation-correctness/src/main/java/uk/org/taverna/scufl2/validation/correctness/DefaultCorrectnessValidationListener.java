@@ -15,6 +15,7 @@ import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyTopNode;
 import uk.org.taverna.scufl2.api.port.AbstractGranularDepthPort;
 import uk.org.taverna.scufl2.api.port.Port;
+import uk.org.taverna.scufl2.validation.ValidationException;
 
 /**
  * @author alanrw
@@ -114,6 +115,18 @@ public class DefaultCorrectnessValidationListener implements
 			Integer depth, Integer granularDepth) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public boolean detectedProblems() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public ValidationException getException() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

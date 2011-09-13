@@ -4,6 +4,7 @@
 package uk.org.taverna.scufl2.validation.correctness;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.HashSet;
 
 import uk.org.taverna.scufl2.api.common.Child;
@@ -16,6 +17,7 @@ import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyTopNode;
 import uk.org.taverna.scufl2.api.port.AbstractGranularDepthPort;
 import uk.org.taverna.scufl2.api.port.Port;
+import uk.org.taverna.scufl2.validation.ValidationException;
 import uk.org.taverna.scufl2.validation.ValidationProblem;
 
 /**
@@ -24,8 +26,6 @@ import uk.org.taverna.scufl2.validation.ValidationProblem;
  */
 public class ReportCorrectnessValidationListener implements
 		CorrectnessValidationListener {
-	
-
 
 	HashSet<EmptyIterationStrategyTopNodeProblem> emptyIterationStrategyTopNodeProblems = new HashSet<EmptyIterationStrategyTopNodeProblem> ();
 	HashSet<MismatchConfigurableTypeProblem> mismatchConfigurableTypeProblems = new HashSet<MismatchConfigurableTypeProblem>();
@@ -448,6 +448,30 @@ public class ReportCorrectnessValidationListener implements
 	 */
 	public HashSet<IncompatibleGranularDepthProblem> getIncompatibleGranularDepthProblems() {
 		return incompatibleGranularDepthProblems;
+	}
+
+	@Override
+	public boolean detectedProblems() {
+		return (!(Collections.EMPTY_SET.equals(getEmptyIterationStrategyTopNodeProblems()) &&
+				Collections.EMPTY_SET.equals(getIncompatibleGranularDepthProblems()) &&
+				Collections.EMPTY_SET.equals(getMismatchConfigurableTypeProblems()) &&
+				Collections.EMPTY_SET.equals(getNegativeValueProblems()) &&
+				Collections.EMPTY_SET.equals(getNonAbsoluteURIProblems()) &&
+				Collections.EMPTY_SET.equals(getNullFieldProblems()) &&
+				Collections.EMPTY_SET.equals(getOutOfScopeValueProblems()) &&
+				Collections.EMPTY_SET.equals(getPortMentionedTwiceProblems()) &&
+				Collections.EMPTY_SET.equals(getPortMissingFromIterationStrategyStackProblems()) &&
+				Collections.EMPTY_SET.equals(getWrongParentProblems())));
+	}
+
+	@Override
+	public ValidationException getException() {
+		// TODO Needs to be improved;
+		if (detectedProblems()) {
+			return new ValidationException(this.toString());
+		} else {
+			return null;
+		}
 	}
 
 
