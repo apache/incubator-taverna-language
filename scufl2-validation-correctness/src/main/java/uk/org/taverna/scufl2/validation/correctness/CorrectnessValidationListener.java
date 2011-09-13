@@ -3,6 +3,8 @@
  */
 package uk.org.taverna.scufl2.validation.correctness;
 
+import java.net.URI;
+
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.common.Root;
@@ -24,7 +26,7 @@ public interface CorrectnessValidationListener {
 
 	void mismatchConfigurableType(Configuration bean, Configurable configures);
 
-	void nonAbsoluteURI(WorkflowBean bean);
+	void nonAbsoluteURI(WorkflowBean bean, String fieldName, URI fieldValue);
 
 	void nullField(WorkflowBean bean, String string);
 

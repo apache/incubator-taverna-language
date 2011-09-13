@@ -3,6 +3,8 @@
  */
 package uk.org.taverna.scufl2.validation.correctness;
 
+import java.net.URI;
+
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.common.Root;
@@ -54,7 +56,7 @@ public class DefaultCorrectnessValidationListener implements
 	 * @see uk.org.taverna.scufl2.validation.correctness.CorrectnessValidationListener#nonAbsoluteGlobalBaseURI(uk.org.taverna.scufl2.api.common.Root)
 	 */
 	@Override
-	public void nonAbsoluteURI(WorkflowBean bean) {
+	public void nonAbsoluteURI(WorkflowBean bean, String fieldName, URI fieldValue) {
 		// TODO Auto-generated method stub
 
 	}

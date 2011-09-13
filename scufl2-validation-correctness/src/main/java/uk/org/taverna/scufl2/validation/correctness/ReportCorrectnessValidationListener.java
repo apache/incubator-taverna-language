@@ -3,6 +3,7 @@
  */
 package uk.org.taverna.scufl2.validation.correctness;
 
+import java.net.URI;
 import java.util.HashSet;
 
 import uk.org.taverna.scufl2.api.common.Child;
@@ -15,6 +16,7 @@ import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyTopNode;
 import uk.org.taverna.scufl2.api.port.AbstractGranularDepthPort;
 import uk.org.taverna.scufl2.api.port.Port;
+import uk.org.taverna.scufl2.validation.ValidationProblem;
 
 /**
  * @author alanrw
@@ -24,16 +26,17 @@ public class ReportCorrectnessValidationListener implements
 		CorrectnessValidationListener {
 	
 
-	HashSet<IterationStrategyTopNode> emptyIterationStrategyTopNodes = new HashSet<IterationStrategyTopNode> ();
+
+	HashSet<EmptyIterationStrategyTopNodeProblem> emptyIterationStrategyTopNodeProblems = new HashSet<EmptyIterationStrategyTopNodeProblem> ();
 	HashSet<MismatchConfigurableTypeProblem> mismatchConfigurableTypeProblems = new HashSet<MismatchConfigurableTypeProblem>();
 	HashSet<NegativeValueProblem> negativeValueProblems = new HashSet<NegativeValueProblem>();
 
-	HashSet<WorkflowBean> nonAbsoluteURIs = new HashSet<WorkflowBean>();
+	HashSet<NonAbsoluteURIProblem> nonAbsoluteURIProblems = new HashSet<NonAbsoluteURIProblem>();
 	HashSet<NullFieldProblem> nullFieldProblems = new HashSet<NullFieldProblem>();
 	HashSet<OutOfScopeValueProblem> outOfScopeValueProblems = new HashSet<OutOfScopeValueProblem>();
 	HashSet<PortMentionedTwiceProblem> portMentionedTwiceProblems = new HashSet<PortMentionedTwiceProblem>();
 	private HashSet<PortMissingFromIterationStrategyStackProblem> portMissingFromIterationStrategyStackProblems = new HashSet<PortMissingFromIterationStrategyStackProblem>();
-	private HashSet<Child> wrongParents = new HashSet<Child>();
+	private HashSet<WrongParentProblem> wrongParentProblems = new HashSet<WrongParentProblem>();
 	private HashSet<IncompatibleGranularDepthProblem> incompatibleGranularDepthProblems = new HashSet<IncompatibleGranularDepthProblem>();
 
 	/* (non-Javadoc)
@@ -41,7 +44,7 @@ public class ReportCorrectnessValidationListener implements
 	 */
 	@Override
 	public void emptyIterationStrategyTopNode(IterationStrategyTopNode bean) {
-		emptyIterationStrategyTopNodes.add(bean);
+		emptyIterationStrategyTopNodeProblems.add(new EmptyIterationStrategyTopNodeProblem(bean));
 	}
 
 	/* (non-Javadoc)
@@ -66,8 +69,8 @@ public class ReportCorrectnessValidationListener implements
 	 * @see uk.org.taverna.scufl2.validation.correctness.CorrectnessValidationListener#nonAbsoluteGlobalBaseURI(uk.org.taverna.scufl2.api.common.Root)
 	 */
 	@Override
-	public void nonAbsoluteURI(WorkflowBean bean) {
-		nonAbsoluteURIs.add(bean);
+	public void nonAbsoluteURI(WorkflowBean bean, String fieldName, URI fieldValue) {
+		nonAbsoluteURIProblems.add(new NonAbsoluteURIProblem(bean, fieldName, fieldValue));
 	}
 
 	/* (non-Javadoc)
@@ -110,7 +113,7 @@ public class ReportCorrectnessValidationListener implements
 	 */
 	@Override
 	public void wrongParent(Child iap) {
-		wrongParents.add(iap);
+		wrongParentProblems.add(new WrongParentProblem(iap));
 	}
 	
 	@Override
@@ -119,21 +122,13 @@ public class ReportCorrectnessValidationListener implements
 		incompatibleGranularDepthProblems .add(new IncompatibleGranularDepthProblem(bean, depth, granularDepth));
 	}
 	
-	public static class MismatchConfigurableTypeProblem {
+	public static class MismatchConfigurableTypeProblem extends ValidationProblem {
 		
-		private final Configuration configuration;
 		private final Configurable configurable;
 
 		public MismatchConfigurableTypeProblem(Configuration configuration, Configurable configurable) {
-			this.configuration = configuration;
+			super(configuration);
 			this.configurable = configurable;	
-		}
-
-		/**
-		 * @return the configuration
-		 */
-		public Configuration getConfiguration() {
-			return configuration;
 		}
 
 		/**
@@ -144,29 +139,21 @@ public class ReportCorrectnessValidationListener implements
 		}
 		
 		public String toString() {
-			return ("The types of " + configuration + " and " + configurable + " are mismatched");
+			return ("The types of " + getBean() + " and " + configurable + " are mismatched");
 		}
 		
 	}
 	
-	public static class NegativeValueProblem {
-		private final WorkflowBean bean;
+	public static class NegativeValueProblem extends ValidationProblem {
 		private final String fieldName;
 		private final Integer fieldValue;
 
 		public NegativeValueProblem(WorkflowBean bean, String fieldName,
 				Integer fieldValue) {
-					this.bean = bean;
+			super(bean);
 					this.fieldName = fieldName;
 					this.fieldValue = fieldValue;
 			
-		}
-
-		/**
-		 * @return the bean
-		 */
-		public WorkflowBean getBean() {
-			return bean;
 		}
 
 		/**
@@ -184,7 +171,7 @@ public class ReportCorrectnessValidationListener implements
 		}
 		
 		public String toString() {
-			return (bean + " has " + fieldName + " of value " + fieldValue);
+			return (getBean() + " has " + fieldName + " of value " + fieldValue);
 		}
 	}
 	
@@ -193,20 +180,12 @@ public class ReportCorrectnessValidationListener implements
 	}
 
 	
-	public static class NullFieldProblem {
-		private final WorkflowBean bean;
+	public static class NullFieldProblem extends ValidationProblem {
 		private final String fieldName;
 
 		public NullFieldProblem(WorkflowBean bean, String fieldName) {
-			this.bean = bean;
+			super(bean);
 			this.fieldName = fieldName;	
-		}
-
-		/**
-		 * @return the bean
-		 */
-		public WorkflowBean getBean() {
-			return bean;
 		}
 
 		/**
@@ -217,7 +196,7 @@ public class ReportCorrectnessValidationListener implements
 		}
 		
 		public String toString() {
-			return (bean + " has a null " + fieldName);
+			return (getBean() + " has a null " + fieldName);
 		}
 	}
 	
@@ -225,24 +204,16 @@ public class ReportCorrectnessValidationListener implements
 	 * @author alanrw
 	 *
 	 */
-	public static class OutOfScopeValueProblem {
+	public static class OutOfScopeValueProblem extends ValidationProblem {
 
-		private final WorkflowBean bean;
 		private final String fieldName;
 		private final Object value;
 
 		public OutOfScopeValueProblem(WorkflowBean bean, String fieldName,
 				Object value) {
-					this.bean = bean;
+			super(bean);
 					this.fieldName = fieldName;
 					this.value = value;
-		}
-
-		/**
-		 * @return the bean
-		 */
-		public WorkflowBean getBean() {
-			return bean;
 		}
 
 		/**
@@ -260,7 +231,7 @@ public class ReportCorrectnessValidationListener implements
 		}
 		
 		public String toString() {
-			return (bean + " has " + fieldName + " with out of scope value " + value);
+			return (getBean() + " has " + fieldName + " with out of scope value " + value);
 		}
 
 	}
@@ -269,22 +240,14 @@ public class ReportCorrectnessValidationListener implements
 	 * @author alanrw
 	 *
 	 */
-	public static class PortMentionedTwiceProblem {
+	public static class PortMentionedTwiceProblem extends ValidationProblem {
 
-		private final IterationStrategyNode originalNode;
 		private final IterationStrategyNode duplicateNode;
 
 		public PortMentionedTwiceProblem(IterationStrategyNode originalNode,
 				IterationStrategyNode duplicateNode) {
-					this.originalNode = originalNode;
+			super(originalNode);
 					this.duplicateNode = duplicateNode;
-		}
-
-		/**
-		 * @return the subNode
-		 */
-		public IterationStrategyNode getOriginalNode() {
-			return originalNode;
 		}
 
 		/**
@@ -295,7 +258,7 @@ public class ReportCorrectnessValidationListener implements
 		}
 		
 		public String toString() {
-			return (originalNode + " and " + duplicateNode + " reference the same port");
+			return (getBean() + " and " + duplicateNode + " reference the same port");
 		}
 
 	}
@@ -304,15 +267,14 @@ public class ReportCorrectnessValidationListener implements
 	 * @author alanrw
 	 *
 	 */
-	public static class PortMissingFromIterationStrategyStackProblem {
+	public static class PortMissingFromIterationStrategyStackProblem extends ValidationProblem {
 
 		private final Port port;
-		private final IterationStrategyStack iterationStrategyStack;
 
 		public PortMissingFromIterationStrategyStackProblem(Port port,
 				IterationStrategyStack iterationStrategyStack) {
+			super(iterationStrategyStack);
 					this.port = port;
-					this.iterationStrategyStack = iterationStrategyStack;
 		}
 
 		/**
@@ -322,15 +284,9 @@ public class ReportCorrectnessValidationListener implements
 			return port;
 		}
 
-		/**
-		 * @return the iterationStrategyStack
-		 */
-		public IterationStrategyStack getIterationStrategyStack() {
-			return iterationStrategyStack;
-		}
 		
 		public String toString() {
-			return (iterationStrategyStack + " does not include " + port);
+			return (getBean() + " does not include " + port);
 		}
 
 	}
@@ -339,24 +295,16 @@ public class ReportCorrectnessValidationListener implements
 	 * @author alanrw
 	 *
 	 */
-	public class IncompatibleGranularDepthProblem {
+	public class IncompatibleGranularDepthProblem extends ValidationProblem {
 
-		private final AbstractGranularDepthPort bean;
 		private final Integer depth;
 		private final Integer granularDepth;
 
 		public IncompatibleGranularDepthProblem(AbstractGranularDepthPort bean,
 				Integer depth, Integer granularDepth) {
-					this.bean = bean;
+			super(bean);
 					this.depth = depth;
 					this.granularDepth = granularDepth;
-		}
-
-		/**
-		 * @return the bean
-		 */
-		public AbstractGranularDepthPort getBean() {
-			return bean;
 		}
 
 		/**
@@ -374,7 +322,66 @@ public class ReportCorrectnessValidationListener implements
 		}
 		
 		public String toString() {
-			return (bean + " has depth " + depth + " and granular depth " + granularDepth);
+			return (getBean() + " has depth " + depth + " and granular depth " + granularDepth);
+		}
+
+	}
+
+	/**
+	 * @author alanrw
+	 *
+	 */
+	public class EmptyIterationStrategyTopNodeProblem extends ValidationProblem {
+		
+		public EmptyIterationStrategyTopNodeProblem(IterationStrategyTopNode bean) {
+			super(bean);
+		}
+
+		public String toString() {
+			return (getBean() + " is empty");
+		}
+
+	}
+	
+	public class NonAbsoluteURIProblem extends ValidationProblem {
+		
+		private String fieldName;
+		private URI fieldValue;
+		
+		public NonAbsoluteURIProblem(WorkflowBean bean, String fieldName, URI fieldValue) {
+			super(bean);
+			this.fieldName = fieldName;
+			this.fieldValue = fieldValue;
+			
+		}
+
+		/**
+		 * @return the fieldName
+		 */
+		public String getFieldName() {
+			return fieldName;
+		}
+
+		/**
+		 * @return the fieldValue
+		 */
+		public URI getFieldValue() {
+			return fieldValue;
+		}
+		
+		public String toString() {
+			return(getBean() + "has a non-absolute URI in field " + fieldName + " of value " + fieldValue.toString());
+		}
+	}
+	
+	public class WrongParentProblem extends ValidationProblem {
+		
+		public WrongParentProblem(WorkflowBean bean) {
+			super(bean);
+		}
+		
+		public String toString() {
+			return(getBean() + " does not have the correct parent");
 		}
 
 	}
@@ -383,8 +390,8 @@ public class ReportCorrectnessValidationListener implements
 	/**
 	 * @return the emptyIterationStrategyTopNodes
 	 */
-	public HashSet<IterationStrategyTopNode> getEmptyIterationStrategyTopNodes() {
-		return emptyIterationStrategyTopNodes;
+	public HashSet<EmptyIterationStrategyTopNodeProblem> getEmptyIterationStrategyTopNodeProblems() {
+		return emptyIterationStrategyTopNodeProblems;
 	}
 
 	/**
@@ -397,8 +404,8 @@ public class ReportCorrectnessValidationListener implements
 	/**
 	 * @return the nonAbsoluteGlobalBaseURIs
 	 */
-	public HashSet<WorkflowBean> getNonAbsoluteURIs() {
-		return nonAbsoluteURIs;
+	public HashSet<NonAbsoluteURIProblem> getNonAbsoluteURIProblems() {
+		return nonAbsoluteURIProblems;
 	}
 
 	/**
@@ -432,8 +439,8 @@ public class ReportCorrectnessValidationListener implements
 	/**
 	 * @return the wrongParents
 	 */
-	public HashSet<Child> getWrongParents() {
-		return wrongParents;
+	public HashSet<WrongParentProblem> getWrongParentProblems() {
+		return wrongParentProblems;
 	}
 
 	/**
