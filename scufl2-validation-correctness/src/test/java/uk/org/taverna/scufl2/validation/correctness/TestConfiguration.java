@@ -100,7 +100,7 @@ public class TestConfiguration {
 		assertEquals(1, mismatchConfigurableTypeProblems.size());
 		boolean mismatchProblem = false;
 		for (MismatchConfigurableTypeProblem nlp : mismatchConfigurableTypeProblems) {
-			if (nlp.getConfiguration().equals(configuration) && nlp.getConfigurable().equals(a)) {
+			if (nlp.getBean().equals(configuration) && nlp.getConfigurable().equals(a)) {
 				mismatchProblem = true;
 			}
 		}

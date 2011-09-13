@@ -106,7 +106,7 @@ public class TestIterationStrategyTopNode {
 		assertFalse(problems.isEmpty());
 		boolean problemDetected = false;
 		for (PortMentionedTwiceProblem problem : problems) {
-			if (problem.getOriginalNode().equals(pNode1) && problem.getDuplicateNode().equals(duplicateNode)) {
+			if (problem.getBean().equals(pNode1) && problem.getDuplicateNode().equals(duplicateNode)) {
 				problemDetected = true;
 			}
 		}
@@ -155,7 +155,7 @@ public class TestIterationStrategyTopNode {
 		assertFalse(problems.isEmpty());
 		boolean problemDetected = false;
 		for (PortMentionedTwiceProblem problem : problems) {
-			if (problem.getOriginalNode().equals(pNode1) && problem.getDuplicateNode().equals(duplicateNode)) {
+			if (problem.getBean().equals(pNode1) && problem.getDuplicateNode().equals(duplicateNode)) {
 				problemDetected = true;
 			}
 		}

@@ -18,6 +18,7 @@ import uk.org.taverna.scufl2.api.common.Root;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
+import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.NonAbsoluteURIProblem;
 import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.NullFieldProblem;
 
 /**
@@ -85,30 +86,44 @@ public class TestRoot {
 	@Test
 	public void testNonAbsoluteURI() throws URISyntaxException {
 		WorkflowBundle wb = new WorkflowBundle();
-		wb.setGlobalBaseURI(new URI("fred/soup"));
+		URI globalBaseURI = new URI("fred/soup");
+		wb.setGlobalBaseURI(globalBaseURI);
 		
 		CorrectnessValidator cv = new CorrectnessValidator();
 		ReportCorrectnessValidationListener rcvl = new ReportCorrectnessValidationListener();
 		
 		cv.checkCorrectness(wb, false, rcvl);
 		
-		Set<WorkflowBean> problems = rcvl.getNonAbsoluteURIs();
-		assertTrue(problems.contains(wb));
+		Set<NonAbsoluteURIProblem> problems = rcvl.getNonAbsoluteURIProblems();
+		boolean problem = false;
+		for (NonAbsoluteURIProblem p : problems) {
+			if (p.getBean().equals(wb) && p.getFieldName().equals("globalBaseURI") && p.getFieldValue().equals(globalBaseURI)) {
+				problem = true;
+			}
+		}
+		assertTrue(problem);
 		
 	}
 	
 	@Test
 	public void testFileURI() throws URISyntaxException {
 		WorkflowBundle wb = new WorkflowBundle();
-		wb.setGlobalBaseURI(new URI("file:///fred/soup"));
+		URI globalBaseURI = new URI("file:///fred/soup");
+		wb.setGlobalBaseURI(globalBaseURI);
 		
 		CorrectnessValidator cv = new CorrectnessValidator();
 		ReportCorrectnessValidationListener rcvl = new ReportCorrectnessValidationListener();
 		
 		cv.checkCorrectness(wb, false, rcvl);
 		
-		Set<WorkflowBean> problems = rcvl.getNonAbsoluteURIs();
-		assertTrue(problems.contains(wb));
+		Set<NonAbsoluteURIProblem> problems = rcvl.getNonAbsoluteURIProblems();
+		boolean problem = false;
+		for (NonAbsoluteURIProblem p : problems) {
+			if (p.getBean().equals(wb) && p.getFieldName().equals("globalBaseURI") && p.getFieldValue().equals(globalBaseURI)) {
+				problem = true;
+			}
+		}
+		assertTrue(problem);
 		
 	}
 }
