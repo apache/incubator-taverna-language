@@ -1,0 +1,979 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<s:scufl xmlns:s="http://org.embl.ebi.escience/xscufl/0.1alpha" version="0.2" log="0">
+  <s:workflowdescription lsid="urn:lsid:net.sf.taverna:wfDefinition:d93a16c9-b599-48b4-b2c8-562127456fa3" author="Saeedeh Maleki-Dizaji and Paul Fisher" title="Microarray CEL file to candidate pathways">This workflow takes in a CEL file and a normalisation method then returns a series of images/graphs which represent the same output obtained using the MADAT software package (MicroArray Data Analysis Tool) [http://www.bioinf.manchester.ac.uk/MADAT/index.html]. Also retruned by this workflow are a list of the top differentialy expressed genes (size dependant on the number specified as input - geneNumber), which are then used to find the candidate pathways which may be influencing the observed changes in the microarray data. By identifying the candidate pathways, more detailed insights into the gene expression data can be obtained.
+
+NOTE - You will also need to install R and Rserv on your machine and install the libaries required by the R script into you R library directory (see for basic info: http://www.cs.man.ac.uk/~fisherp/rlib.html)
+
+The example inputs for this workflow are as follows:
+Samples1 = one or more CEL files for cross-correlating with Samples2 CEL files (new line separated including the .CEL): 
+Liver_Day1_Mouse.CEL
+Liver_Day2_Mouse.CEL
+
+Samples2 = one or more CEL files for cross-correlating with Samples1 CEL files (new line separated including the .CEL):
+Kideny_Day1_Mouse.CEL
+Kidney_Day2_Mouse.CEL
+
+geneNumber = the number of differentialy expressed gene to be returned above a given p-value, e.g. 20
+arrayTypeAffy = the name of the Mouse AffyMetrix array used, e.g. mouse4302, hgu133a...
+path = the direct path to the CEL file location, e.g. C:/Microarray_Data/CEL_FILES/ - note the forward slashes
+NormalizationMethod = the type of normalisation to perfrom, e.g. rma, gcrma or mmgmos
+testMethod = e.g. limma, mmtest or pplr
+p-value = the p-value cut-off value for the array data, e.g. 0.05
+foldChange = the fold change value for the microarray data, e.g. 1 (means greater than 1 or less than -1)</s:workflowdescription>
+  <s:processor name="String_Constant" boring="true">
+    <s:stringconstant>\n</s:stringconstant>
+  </s:processor>
+  <s:processor name="Split_sample2">
+    <s:local>org.embl.ebi.escience.scuflworkers.java.SplitByRegex</s:local>
+  </s:processor>
+  <s:processor name="AffyDataAnalysis">
+    <s:defaults>
+      <s:default name="dirPath">C:/affy data for Munich course/ShortCelFilesLiver</s:default>
+      <s:default name="arrayType">mouse4302</s:default>
+    </s:defaults>
+    <s:rshell s:hostname="localhost" s:port="6311" s:username="" s:password="" s:keepSessionAlive="false">
+      #@to do: extract  array type automatically then install relevant packages
+
+# installing packages
+#source("http://www.bioconductor.org/biocLite.R")
+#biocLite()
+#biocLite(c("affy "," limma ","mmgmos"," ade4"," affyQCReport"," base","pplr " ," splines "," survival "," multtest "))
+
+library(base)
+library(affy)
+# make sure you are in the directory
+# where the CEL files are
+getwd()
+#setwd("C:/affy data for Munich course/ShortCelFilesLiver")
+
+  # dirPath input from workflow
+setwd(dirPath) 
+fnames = dir(pattern="CEL")
+
+# read in CEL files
+#library(mouse4302cdf, lib="C:/Program Files/R/rw2001/library" )
+#library(mouse4302cdf)
+#library(mouse4302, lib="C:/Program Files/R/rw2001/library")
+#library(mouse4302);
+
+library(arrayType,,character.only = TRUE)
+library(sub(" ","",paste(arrayType,'cdf')), character.only = TRUE)
+
+affyID1 &lt;- NULL
+
+#************ Loadind data
+data.raw = ReadAffy(filenames=fnames)
+sName = sampleNames(data.raw)
+# check whether it read in things correctly
+#data.raw
+
+   #image(data.raw, col=rainbow(100, start=0, end=0.7)[100:1])
+   # boxplot(data.raw, col=rainbow(50))
+    histRawPlot = 'histRawPlot.png' 
+    png(histRawPlot)
+    hist(data.raw, col = 1:length(sName))
+    legend('right',sName, lt = 1:length(sName),col = 1:length(sName), cex = 0.6)
+    dev.off()
+for (i in 1:5) gc()
+
+#************* Normalization Method
+
+normalization &lt;- function (data,method) {
+
+ switch(method,
+             rma = rma(data),
+             gcrma = gcrma(data),
+             mmgmos = mmgmos(data)  
+            
+          )
+                                        }
+data.norm &lt;- normalization(data.raw, normMethod)
+ 
+# Write result into the text file
+normText = 'normText.txt'
+temp = exprs(data.norm)
+#write.exprs(temp, normText)
+write(temp, normText)
+
+# create box plot
+ boxNormPlot = 'boxNormPlot.png' 
+    png(boxNormPlot)
+    boxplot(data.frame(exprs(data.norm)), col=rainbow(30))
+    dev.off()
+#class(data.rma)
+
+
+#*************** Quality control  PCA 
+ library(ade4)
+ library(affyQCReport)
+ library(base)
+
+      
+ data.pca = dudi.pca(exprs(data.norm), scannf = F, nf = length(fnames))
+# produce PCA plot
+     pcaPlot = 'pcaPlot.png'
+     pc1 = data.pca$co[,2]
+     pc2 = data.pca$co[,3]
+     xl =  "1. PC"
+     yl =  "2. PC"
+     title = "PCA Result"
+     png(pcaPlot)
+     plot(pc1,pc2, xlab=xl,ylab=yl,main=title)
+     sName = sampleNames(data.norm)
+     points(pc1,pc2, col = 1:length(sName))
+     legend('topright',sName, col = 1:length(sName),pch = 1, cex = 0.6) 
+     dev.off()
+
+     # write result column to the given file name
+
+       pcaResultFileCol = 'pcaResultCol.txt'
+       pcaResultFileRow = 'pcaResultRow.txt'
+       pcaResultFileEig = 'pcaResultEig.txt'
+
+       se = ','
+
+          
+      # write result column to the given file name
+     
+      write.table(data.pca$co, file = pcaResultFileCol, sep = se, row.names = FALSE)
+
+      #write result raw to the given file name
+  
+
+      # create column names of comp1, comp2,  ...
+      v = data.pca$eig
+      h = length (v)
+      comp= 'Comp'
+      M = 1:h
+      for (i in 1:h) { M[i] = as.character(i) }
+      colNames = paste(comp ,M)
+
+     write.table(data.pca$li, file = pcaResultFileRow, sep = se, row.names = FALSE, col.names =  colNames)
+
+      #write result reigen value to the given file name
+      
+      K = matrix(1:h, h,3)
+
+      #setting cel file names from row.names
+       K[,1] = row.names(data.pca$co)
+       for (i in 1:h) {K[i,2] = v[i]}
+       for (i in 1:h) {K[i,3] =( (v[i]*100) / sum(v))}
+       col = c ('','Eigen Value', ' % Percentage')
+      
+          write.table(K, file =  pcaResultFileEig , sep = se, row.names = FALSE,col.names = col)
+
+
+
+
+
+
+
+#************** start ttest
+library(splines)
+library(limma)
+library(survival)
+library(splines)
+library(multtest)
+
+#*****ttest
+envi = 'mouse4302GENENAME'
+#group1 = c("B05.CEL","B04.CEL")
+#group2 = c("A75.CEL","A74.CEL")
+cl = c(rep(1,length(group1)),rep(2,length(group2)))
+
+# limma function
+limma &lt;- function (data.norm,group1,group2,cl){
+  design &lt;- model.matrix(~ -1+factor(cl))
+  #design &lt;- model.matrix(~ -1+factor(c(1,1,1,2,2,2)))
+  colnames(design)&lt;-c("group1","group2")
+  contrast.matrix = makeContrasts(group1-group2,levels = design)
+  #contrast.matrix &lt;- cbind(group2vs1=c(-1,1))
+  fit = lmFit(exprs(data.norm)[,c(group1,group2)],design)
+  fit2 &lt;-contrasts.fit(fit,contrast.matrix)
+  efit &lt;- eBayes(fit2)
+  
+  tops = topTable(efit,coef=1,adjust='fdr',sort.by='B',number = 50000)
+  affyID = tops[, 'ID']
+  P = tops[,'P.Value']
+  T = tops[,'t']
+  M = tops[,'M']
+  A= tops[,'A']
+  B = tops[,'B']
+
+# result file name should be same as workflow output
+  result2 = 'testResult.txt'
+  write.table(cbind(affyID,A,M,T,P,B), file = result2,sep = ',',row.names = FALSE)
+
+
+
+ # filtering
+  tops = topTable(efit,coef=1,adjust="fdr",sort.by="B",number=gNum)
+  filter = tops[tops$P.Value &lt;pVal &amp; (tops$M &gt; FCVal| tops$M &lt;  (-1*FCVal) ) ,]
+
+  #geneId = c('gene')
+# annotating filterd result 
+
+  num = gNum
+  topsFil = filter
+  fSize = num
+  lenFil = length (topsFil$ID)
+  if (lenFil &lt; fSize)  fSize = lenFil
+  if (fSize &gt; 0) topsFil = topsFil [1: fSize,] else topsFil = NULL
+  if (fSize &gt; 0) testSize = TRUE else testSize = FALSE
+
+  affyID = topsFil[, 'ID']
+ 
+
+  for (i in 1: length(affyID)) { affyID1 = c(affyID1,affyID[i]) }
+ 
+  P = topsFil[,'P.Value']
+  T = topsFil[,'t']
+  M = topsFil[,'M']
+  A= topsFil[,'A']
+  B = topsFil[,'B']
+
+# result file name should be same as workflow output
+  result2 = 'filterResult.txt'
+  envi = sub(" ","",envi)
+ llnames = NULL
+
+#  if  (exists(envi, mode='environment') )  llnames &lt;- mget(affyID, env = mouse4302GENENAME  ,ifnotfound ='NA') else llnames = NULL
+  GeneName &lt;- as.character(llnames)
+  if (length(GeneName) &gt;0) write.table(cbind(affyID,GeneName,A,M,T,P,B), file = result2,sep = ',',row.names = FALSE) else write.table(cbind(affyID,A,M,T,P,B), file = result2,sep = ',',row.names = FALSE) 
+  #affyID1 = c("1418809_at","1418240_at")
+  return(affyID1);  
+    } 
+# end of limma function
+
+# **********mmtest function 
+
+mmtest &lt;- function (data.norm,group1,group2,cl) {
+
+# calculate t statistic
+  cl = cl -1
+  tValue = mt.teststat(exprs(data.norm)[,c(group1,group2)], classlabel=cl)
+
+# calculate P value
+  pValue = 2*pt(-abs(tValue), df=ncol(exprs(data.norm))-2 )
+
+# adjust P value according to Benjamini &amp; Yekutieli
+ adjp = mt.rawp2adjp(pValue, proc="BY")
+
+# order pvals
+ ord = order(adjp$index)
+ adjp.BY = adjp$adj[ord,"BY"]
+
+# calculate fold changes
+  mean.group1 = apply(exprs(data.norm)[,group1], 1, mean, na.rm=T)
+  mean.group2 = apply(exprs(data.norm)[,group2], 1, mean, na.rm=T)
+  FC = 2^( mean.group2 - mean.group1 )
+  
+# writettest result into the file
+  size = length(FC)
+  AffyID = names(FC)
+  FoldChange = numeric(size)
+  for (i in 1:size) { FoldChange[i] = FC[[i]]}
+  Pvalue = adjp.BY
+  result1 = 'testResult.txt'
+  write.table(cbind(AffyID,Pvalue,FoldChange), file= result1,sep = ',',,row.names = FALSE)
+
+
+# filtering 
+ # fRes = which(adjp.BY&lt;pVal &amp;  (FC &gt;FCVal | FC&lt;  (-1*FCVal) ))
+   fRes = which(adjp.BY&lt;pVal &amp;  (FC &gt;FCVal | FC&lt;  (-1*FCVal) ))
+
+  num = gNum
+  size = num
+ lenFil = length (fRes)
+ if (lenFil &lt; size)  size = lenFil
+ if ( size &gt; 0)  fRes = fRes [1: size] else fRes = NULL
+ if (size &gt; 0) testSize = TRUE else testSize = FALSE
+ AffyID = names(fRes)
+ for (i in 1: length(AffyID)) { affyID1 = c(affyID1,AffyID[i]) }
+ FoldChange = numeric(size)
+ Pvalue = numeric(size)
+ llnames = NULL
+ if ( size &gt; 0) for (i in 1:size) { FoldChange[i] = FC[[fRes[[i]]]]; Pvalue[i] = adjp.BY[fRes[[i]]] }
+ result3 = 'filterResult.txt'
+
+ #if  (exists(envi, mode='environment') )  llnames &lt;- mget(AffyID, env = mouse4302GENENAME ,ifnotfound ='NA')  else llnames = NULL
+ GeneName &lt;- llnames
+ GeneName = gsub (',',' ',GeneName)
+
+if (length(GeneName) &gt;0) write.table(cbind(AffyID,GeneName,Pvalue,FoldChange), file= result3,sep = ',',row.names = FALSE)  else  write.table(cbind(AffyID,Pvalue,FoldChange), file= result3,sep = ',',row.names = FALSE)
+ 
+ return(affyID1);               
+   } 
+
+# end of mmtest function
+
+# *********pplr
+pplrTest &lt;-  function (data.norm,group1,group2,cl){
+  library(pplr)
+  num = gNum
+  e &lt;- NULL
+  se &lt;- NULL
+  r &lt;- NULL
+  p1e &lt;- NULL
+  samples &lt;- NULL
+  samples = c(group1,group2)
+  e &lt;- exprs(data.norm)[,samples]
+  se &lt;- se.exprs(data.norm)[,samples]
+  r &lt;- bcomb(e,se,replicate = cl, method='em')
+#//          rCon.eval("r &lt;- bcomb(e,se,replicate = cl, method='map')"); //quick for testing but should be em
+  p1e &lt;- pplr(r,1,2)
+  result1 = 'testResult.txt'
+  write.csv (p1e,result1)
+
+    # do filter
+
+    fSize =  num
+    topsFil = p1e[p1e$PPLR &lt;pVal &amp; (p1e$LRM &gt; FCVal | p1e$LRM &lt; (-1*FCVal)),]
+    lenFil = length (row.names(topsFil)) 
+    if (lenFil &lt; fSize)  fSize = lenFil 
+    if (fSize &gt; 0) topsFil = topsFil [1: fSize,] else topsFil = NULL
+    if (fSize &gt; 0) testSize = TRUE else testSize = FALSE 
+    affyID = row.names(topsFil)
+    for (i in 1: length(affyID)) { affyID1 = c(affyID1,affyID[i]) }
+    PPLR = topsFil[,'PPLR']
+    index = topsFil[,'index']
+    cM = topsFil[,'cM']
+    sM = topsFil[,'sM']
+    cStd = topsFil[,'cStd']
+    sStd = topsFil[,'sStd']
+    LRM= topsFil[,'LRM']
+    LRStd= topsFil[,'LRStd']
+    stat = topsFil[,'stat']
+    llnames = NULL
+    result2 = 'filterResult.txt'
+    ##annotation file
+    # if  (exists(envi, mode='environment') )  llnames &lt;- mget(affyID, env = mouse4302GENENAME  ,ifnotfound ='NA') else  llnames = NULL
+      GeneName &lt;- as.character(llnames)
+
+     if (length(GeneName) &gt;0) write.table(cbind(affyID,GeneName,index,cM,sM,cStd,sStd,LRM,LRStd,stat,PPLR), file = result2,sep = ',',row.names = FALSE) else write.table(cbind(affyID,index,cM,sM,cStd,sStd,LRM,LRStd,stat,PPLR), file = result2,sep = ',',row.names = FALSE) 
+     return(affyID1);
+
+} # end of pplr function
+
+
+
+# selecting ttest method
+ttest &lt;- function (data.norm,method) {
+ switch(method,
+             limma = limma(data.norm,group1,group2,cl), mmtest = mmtest(data.norm,group1,group2,cl), pplr = pplrTest (data.norm,group1,group2,cl))   
+
+                                    }
+
+#ttest(data.norm,"limma")
+#if ((length(ttestMethod) &gt; 0) affyID1 &lt;- ttest(data.norm,ttestMethod) else affyID1 = NULL
+affyID1 &lt;- ttest(data.norm,ttestMethod)
+#ttest(data.norm,"pplr")
+      <s:rshellInputPortList>
+        <s:rshellInputPort s:syntacticType="l('text/plain')" s:symanticType="STRING_LIST">dirPath</s:rshellInputPort>
+        <s:rshellInputPort s:syntacticType="l('text/plain')" s:symanticType="STRING_LIST">arrayType</s:rshellInputPort>
+        <s:rshellInputPort s:syntacticType="l('text/plain')" s:symanticType="STRING_LIST">normMethod</s:rshellInputPort>
+        <s:rshellInputPort s:syntacticType="l('text/plain')" s:symanticType="STRING_LIST">ttestMethod</s:rshellInputPort>
+        <s:rshellInputPort s:syntacticType="l('text/plain')" s:symanticType="INTEGER_LIST">gNum</s:rshellInputPort>
+        <s:rshellInputPort s:syntacticType="l('text/plain')" s:symanticType="DOUBLE_LIST">pVal</s:rshellInputPort>
+        <s:rshellInputPort s:syntacticType="l('text/plain')" s:symanticType="DOUBLE_LIST">FCVal</s:rshellInputPort>
+        <s:rshellInputPort s:syntacticType="l('text/plain')" s:symanticType="STRING_LIST">group1</s:rshellInputPort>
+        <s:rshellInputPort s:syntacticType="l('text/plain')" s:symanticType="STRING_LIST">group2</s:rshellInputPort>
+      </s:rshellInputPortList>
+      <s:rshellOutputPortList>
+        <s:rshellOutputPort s:syntacticType="'image/png'" s:symanticType="PNG_FILE">histRawPlot</s:rshellOutputPort>
+        <s:rshellOutputPort s:syntacticType="'image/png'" s:symanticType="PNG_FILE">boxNormPlot</s:rshellOutputPort>
+        <s:rshellOutputPort s:syntacticType="'image/png'" s:symanticType="PNG_FILE">pcaPlot</s:rshellOutputPort>
+        <s:rshellOutputPort s:syntacticType="l('text/plain')" s:symanticType="STRING_LIST">affyID1</s:rshellOutputPort>
+      </s:rshellOutputPortList>
+    </s:rshell>
+  </s:processor>
+  <s:processor name="Split_sample1">
+    <s:local>org.embl.ebi.escience.scuflworkers.java.SplitByRegex</s:local>
+  </s:processor>
+  <s:processor name="Probeset_to_Pathway">
+    <s:workflow>
+      <s:scufl version="0.2" log="0">
+        <s:workflowdescription lsid="urn:lsid:www.mygrid.org.uk:operation:RUO295H3GU0" author="Paul Fisher" title="Human Pathways from Diff Expressed Genes">This workflow takes in probesets from and AffyMetrix micorarray experiment and returns: the genes in the QTL; gene start and end positions; chromosome where genes reside; ensembl trasncripts; SwissProt ids; affy probeset identifiers for chips Mouse430_2 and Mouse430a_2. The final output of the workflow is a list of candidate pathways which are linked to the genes expressed in the microarray data</s:workflowdescription>
+        <s:processor name="remove_entrez_duplicates">
+          <s:local>org.embl.ebi.escience.scuflworkers.java.StringStripDuplicates</s:local>
+        </s:processor>
+        <s:processor name="merge_uniprot_ids">
+          <s:local>org.embl.ebi.escience.scuflworkers.java.StringListMerge</s:local>
+        </s:processor>
+        <s:processor name="concat_kegg_genes">
+          <s:local>org.embl.ebi.escience.scuflworkers.java.StringConcat</s:local>
+        </s:processor>
+        <s:processor name="merge_pathway_ids_2">
+          <s:local>org.embl.ebi.escience.scuflworkers.java.StringListMerge</s:local>
+        </s:processor>
+        <s:processor name="merge_reports">
+          <s:local>org.embl.ebi.escience.scuflworkers.java.StringListMerge</s:local>
+        </s:processor>
+        <s:processor name="remove_pathway_nulls">
+          <s:beanshell>
+            <s:scriptvalue>String[] split = input.split("\n");
+Vector nonEmpty = new Vector();
+
+for (int i = 0; i &lt; split.length; i++){
+   if (!(split[i].equals("")))
+   {
+       nonEmpty.add(split[i].trim());
+   }
+}
+
+String[] non_empty = new String[nonEmpty.size()];
+
+for (int i = 0; i &lt; non_empty.length; i ++)
+{
+   non_empty[i] = nonEmpty.elementAt(i);
+}
+
+String output = "";
+
+for (int i = 0; i &lt; non_empty.length; i++)
+{
+	output = output + (String) (non_empty[i] + "\n");
+}</s:scriptvalue>
+            <s:beanshellinputlist>
+              <s:beanshellinput s:syntactictype="'text/plain'">input</s:beanshellinput>
+            </s:beanshellinputlist>
+            <s:beanshelloutputlist>
+              <s:beanshelloutput s:syntactictype="'text/plain'">output</s:beanshelloutput>
+            </s:beanshelloutputlist>
+            <s:dependencies s:classloader="iteration" />
+          </s:beanshell>
+        </s:processor>
+        <s:processor name="add_ncbi_to_string">
+          <s:beanshell>
+            <s:scriptvalue>String[] split = input.split("\n");
+Vector nonEmpty = new Vector();
+
+for (int i = 0; i &lt; split.length; i++) 
+{		
+	String trimmed = split[i].trim();
+	nonEmpty.add(trimmed);	
+}
+
+String output = "";
+
+for (int i = 0; i &lt; nonEmpty.size(); i++)
+{
+	output = output + "ncbi-geneid:" + (String) (nonEmpty.elementAt(i) + "\n");
+}</s:scriptvalue>
+            <s:beanshellinputlist>
+              <s:beanshellinput s:syntactictype="'text/plain'">input</s:beanshellinput>
+            </s:beanshellinputlist>
+            <s:beanshelloutputlist>
+              <s:beanshelloutput s:syntactictype="'text/plain'">output</s:beanshelloutput>
+            </s:beanshelloutputlist>
+            <s:dependencies s:classloader="iteration" />
+          </s:beanshell>
+        </s:processor>
+        <s:processor name="add_uniprot_to_string">
+          <s:beanshell>
+            <s:scriptvalue>String[] split = input.split("\n");
+Vector nonEmpty = new Vector();
+
+for (int i = 0; i &lt; split.length; i++) 
+{		
+	String trimmed = split[i].trim();
+	nonEmpty.add(trimmed);	
+}
+
+String output = "";
+
+for (int i = 0; i &lt; nonEmpty.size(); i++)
+{
+	output = output + "uniprot:" + (String) (nonEmpty.elementAt(i) + "\n");
+}</s:scriptvalue>
+            <s:beanshellinputlist>
+              <s:beanshellinput s:syntactictype="'text/plain'">input</s:beanshellinput>
+            </s:beanshellinputlist>
+            <s:beanshelloutputlist>
+              <s:beanshelloutput s:syntactictype="'text/plain'">output</s:beanshelloutput>
+            </s:beanshelloutputlist>
+            <s:dependencies s:classloader="iteration" />
+          </s:beanshell>
+        </s:processor>
+        <s:processor name="split_gene_ids">
+          <s:beanshell>
+            <s:scriptvalue>String[] split = input.split("\n");
+Vector nonEmpty = new Vector();
+
+for (int i = 0; i &lt; split.length; i++) 
+{		
+	String trimmed = split[i].trim();
+	String[] trimmedSplit = trimmed.split("\t");
+	if (trimmedSplit.length &gt;= 2)
+	{
+	    nonEmpty.add(trimmedSplit[1].trim());	
+	}
+}
+
+String output = "";
+
+for (int i = 0; i &lt; nonEmpty.size(); i++)
+{
+	output = output + (String) (nonEmpty.elementAt(i) + "\n");
+}</s:scriptvalue>
+            <s:beanshellinputlist>
+              <s:beanshellinput s:syntactictype="'text/plain'">input</s:beanshellinput>
+            </s:beanshellinputlist>
+            <s:beanshelloutputlist>
+              <s:beanshelloutput s:syntactictype="'text/plain'">output</s:beanshelloutput>
+            </s:beanshelloutputlist>
+            <s:dependencies s:classloader="iteration" />
+          </s:beanshell>
+        </s:processor>
+        <s:processor name="REMOVE_NULLS_2">
+          <s:beanshell>
+            <s:scriptvalue>String[] split = input.split("\n");
+Vector nonEmpty = new Vector();
+
+for (int i = 0; i &lt; split.length; i++){
+   if (!(split[i].equals("")))
+   {
+       nonEmpty.add(split[i].trim());
+   }
+}
+
+String[] non_empty = new String[nonEmpty.size()];
+
+for (int i = 0; i &lt; non_empty.length; i ++)
+{
+   non_empty[i] = nonEmpty.elementAt(i);
+}
+
+String output = "";
+
+for (int i = 0; i &lt; non_empty.length; i++)
+{
+	output = output + (String) (non_empty[i] + "\n");
+}</s:scriptvalue>
+            <s:beanshellinputlist>
+              <s:beanshellinput s:syntactictype="'text/plain'">input</s:beanshellinput>
+            </s:beanshellinputlist>
+            <s:beanshelloutputlist>
+              <s:beanshelloutput s:syntactictype="'text/plain'">output</s:beanshelloutput>
+            </s:beanshelloutputlist>
+            <s:dependencies s:classloader="iteration" />
+          </s:beanshell>
+        </s:processor>
+        <s:processor name="merge_pathway_desc">
+          <s:local>org.embl.ebi.escience.scuflworkers.java.StringListMerge</s:local>
+        </s:processor>
+        <s:processor name="kegg_pathway_release" boring="true">
+          <s:stringconstant>kegg pathway</s:stringconstant>
+        </s:processor>
+        <s:processor name="remove_duplicate_kegg_genes">
+          <s:local>org.embl.ebi.escience.scuflworkers.java.StringStripDuplicates</s:local>
+        </s:processor>
+        <s:processor name="regex_2" boring="true">
+          <s:stringconstant>\n</s:stringconstant>
+        </s:processor>
+        <s:processor name="species" boring="true">
+          <s:stringconstant>homo_sapiens</s:stringconstant>
+        </s:processor>
+        <s:processor name="remove_pathway_duplicates">
+          <s:local>org.embl.ebi.escience.scuflworkers.java.StringStripDuplicates</s:local>
+        </s:processor>
+        <s:processor name="merge_genes_pathways_3">
+          <s:local>org.embl.ebi.escience.scuflworkers.java.StringListMerge</s:local>
+        </s:processor>
+        <s:processor name="merge_pathway_ids_1">
+          <s:local>org.embl.ebi.escience.scuflworkers.java.StringListMerge</s:local>
+        </s:processor>
+        <s:processor name="split_for_duplicates">
+          <s:local>org.embl.ebi.escience.scuflworkers.java.SplitByRegex</s:local>
+        </s:processor>
+        <s:processor name="merge_gene_desc">
+          <s:local>org.embl.ebi.escience.scuflworkers.java.StringListMerge</s:local>
+        </s:processor>
+        <s:processor name="remove_uniprot_duplicates">
+          <s:local>org.embl.ebi.escience.scuflworkers.java.StringStripDuplicates</s:local>
+        </s:processor>
+        <s:processor name="merge_entrez_genes">
+          <s:local>org.embl.ebi.escience.scuflworkers.java.StringListMerge</s:local>
+        </s:processor>
+        <s:processor name="remove_description_nulls">
+          <s:beanshell>
+            <s:scriptvalue>String[] split = input.split("\n");
+Vector nonEmpty = new Vector();
+
+for (int i = 0; i &lt; split.length; i++){
+   if (!(split[i].equals("")))
+   {
+       nonEmpty.add(split[i].trim());
+   }
+}
+
+String[] non_empty = new String[nonEmpty.size()];
+
+for (int i = 0; i &lt; non_empty.length; i ++)
+{
+   non_empty[i] = nonEmpty.elementAt(i);
+}
+
+String output = "";
+
+for (int i = 0; i &lt; non_empty.length; i++)
+{
+	output = output + (String) (non_empty[i] + "\n");
+}</s:scriptvalue>
+            <s:beanshellinputlist>
+              <s:beanshellinput s:syntactictype="'text/plain'">input</s:beanshellinput>
+            </s:beanshellinputlist>
+            <s:beanshelloutputlist>
+              <s:beanshelloutput s:syntactictype="'text/plain'">output</s:beanshelloutput>
+            </s:beanshelloutputlist>
+            <s:dependencies s:classloader="iteration" />
+          </s:beanshell>
+        </s:processor>
+        <s:processor name="split_probesets">
+          <s:local>org.embl.ebi.escience.scuflworkers.java.SplitByRegex</s:local>
+        </s:processor>
+        <s:processor name="remove_Nulls">
+          <s:beanshell>
+            <s:scriptvalue>String[] split = input.split("\n");
+Vector nonEmpty = new Vector();
+
+for (int i = 0; i &lt; split.length; i++){
+   if (!(split[i].equals("")))
+   {
+       nonEmpty.add(split[i].trim());
+   }
+}
+
+String[] non_empty = new String[nonEmpty.size()];
+
+for (int i = 0; i &lt; non_empty.length; i ++)
+{
+   non_empty[i] = nonEmpty.elementAt(i);
+}
+
+String output = "";
+
+for (int i = 0; i &lt; non_empty.length; i++)
+{
+	output = output + (String) (non_empty[i] + "\n");
+}</s:scriptvalue>
+            <s:beanshellinputlist>
+              <s:beanshellinput s:syntactictype="'text/plain'">input</s:beanshellinput>
+            </s:beanshellinputlist>
+            <s:beanshelloutputlist>
+              <s:beanshelloutput s:syntactictype="'text/plain'">output</s:beanshelloutput>
+            </s:beanshelloutputlist>
+            <s:dependencies s:classloader="iteration" />
+          </s:beanshell>
+        </s:processor>
+        <s:processor name="merge_genes_pathways_2">
+          <s:local>org.embl.ebi.escience.scuflworkers.java.StringListMerge</s:local>
+        </s:processor>
+        <s:processor name="merge_genes_and_pathways">
+          <s:local>org.embl.ebi.escience.scuflworkers.java.StringListMerge</s:local>
+        </s:processor>
+        <s:processor name="remove_duplicate_desc">
+          <s:local>org.embl.ebi.escience.scuflworkers.java.StringStripDuplicates</s:local>
+        </s:processor>
+        <s:processor name="hsapiens_gene_ensembl">
+          <s:description>Homo sapiens genes (NCBI36)</s:description>
+          <s:biomart>
+            <biomart:MartQuery xmlns:biomart="http://org.embl.ebi.escience/xscufl-biomart/0.1alpha">
+              <biomart:MartService location="http://www.biomart.org/biomart/martservice" />
+              <biomart:MartDataset displayName="Homo sapiens genes (NCBI36)" name="hsapiens_gene_ensembl" type="TableSet" initialBatchSize="200" maximumBatchSize="50000" visible="false" interface="default" modified="2007-03-07 17:09:02">
+                <biomart:MartURLLocation database="ensembl_mart_43" default="1" displayName="ENSEMBL 43 GENE (SANGER)" host="www.biomart.org" includeDatasets="" martUser="" name="ensembl" path="/biomart/martservice" port="80" serverVirtualSchema="default" virtualSchema="default" visible="1" redirect="0" />
+              </biomart:MartDataset>
+              <biomart:Query virtualSchemaName="default" count="0" uniqueRows="0" softwareVersion="0.5" requestId="taverna">
+                <biomart:Dataset name="hsapiens_gene_ensembl">
+                  <biomart:Attribute name="ensembl_gene_id" />
+                  <biomart:Attribute name="external_gene_id" />
+                  <biomart:Attribute name="entrezgene" />
+                  <biomart:Attribute name="uniprot_swissprot_accession" />
+                  <biomart:Attribute name="end_position" />
+                  <biomart:Attribute name="start_position" />
+                  <biomart:Attribute name="ensembl_transcript_id" />
+                  <biomart:Attribute name="chromosome_name" />
+                  <biomart:Filter name="affy_hg_u133a" value="" list="true" />
+                </biomart:Dataset>
+              </biomart:Query>
+            </biomart:MartQuery>
+          </s:biomart>
+        </s:processor>
+        <s:processor name="create_report">
+          <s:beanshell>
+            <s:scriptvalue>result = ensemblGeneId + "," + entrezGeneId + "," + externalGeneId + "," + chromoName + "," + geneStart + "," + geneEnd + "," + ensemblTranscriptId + "," + uniprotAcc;</s:scriptvalue>
+            <s:beanshellinputlist>
+              <s:beanshellinput s:syntactictype="'text/plain'">ensemblGeneId</s:beanshellinput>
+              <s:beanshellinput s:syntactictype="'text/plain'">entrezGeneId</s:beanshellinput>
+              <s:beanshellinput s:syntactictype="'text/plain'">externalGeneId</s:beanshellinput>
+              <s:beanshellinput s:syntactictype="'text/plain'">chromoName</s:beanshellinput>
+              <s:beanshellinput s:syntactictype="'text/plain'">geneStart</s:beanshellinput>
+              <s:beanshellinput s:syntactictype="'text/plain'">geneEnd</s:beanshellinput>
+              <s:beanshellinput s:syntactictype="'text/plain'">ensemblTranscriptId</s:beanshellinput>
+              <s:beanshellinput s:syntactictype="'text/plain'">uniprotAcc</s:beanshellinput>
+            </s:beanshellinputlist>
+            <s:beanshelloutputlist>
+              <s:beanshelloutput s:syntactictype="'text/plain'">result</s:beanshelloutput>
+            </s:beanshelloutputlist>
+            <s:dependencies s:classloader="iteration" />
+          </s:beanshell>
+          <s:iterationstrategy>
+            <i:dot xmlns:i="http://org.embl.ebi.escience/xscufliteration/0.1beta10">
+              <i:iterator name="uniprotAcc" />
+              <i:iterator name="ensemblTranscriptId" />
+              <i:iterator name="geneEnd" />
+              <i:iterator name="geneStart" />
+              <i:iterator name="chromoName" />
+              <i:iterator name="externalGeneId" />
+              <i:iterator name="entrezGeneId" />
+              <i:iterator name="ensemblGeneId" />
+            </i:dot>
+          </s:iterationstrategy>
+        </s:processor>
+        <s:processor name="binfo">
+          <s:arbitrarywsdl>
+            <s:wsdl>http://soap.genome.jp/KEGG.wsdl</s:wsdl>
+            <s:operation>binfo</s:operation>
+          </s:arbitrarywsdl>
+        </s:processor>
+        <s:processor name="gene_descriptions">
+          <s:arbitrarywsdl>
+            <s:wsdl>http://soap.genome.jp/KEGG.wsdl</s:wsdl>
+            <s:operation>btit</s:operation>
+          </s:arbitrarywsdl>
+        </s:processor>
+        <s:processor name="Kegg_gene_ids">
+          <s:arbitrarywsdl>
+            <s:wsdl>http://soap.genome.jp/KEGG.wsdl</s:wsdl>
+            <s:operation>bconv</s:operation>
+          </s:arbitrarywsdl>
+        </s:processor>
+        <s:processor name="Kegg_gene_ids_2">
+          <s:arbitrarywsdl>
+            <s:wsdl>http://soap.genome.jp/KEGG.wsdl</s:wsdl>
+            <s:operation>bconv</s:operation>
+          </s:arbitrarywsdl>
+        </s:processor>
+        <s:processor name="Get_Pathways">
+          <s:description>This workflow removes any null values from a list of strings</s:description>
+          <s:workflow>
+            <s:scufl version="0.2" log="0">
+              <s:workflowdescription lsid="urn:lsid:www.mygrid.org.uk:operation:P81DV9PQW02" author="Paul Fisher / Jun Zhao" title="Remove null values">This workflow removes any null values from a list of strings</s:workflowdescription>
+              <s:processor name="concat_ids">
+                <s:beanshell>
+                  <s:scriptvalue>String[] split = input.split("\n");
+Vector nonEmpty = new Vector();
+
+for (int i = 0; i &lt; split.length; i++){
+   if (!(split[i].equals("")))
+   {
+       nonEmpty.add(split[i].trim());
+   }
+}
+
+String[] non_empty = new String[nonEmpty.size()];
+
+for (int i = 0; i &lt; non_empty.length; i ++)
+{
+   non_empty[i] = nonEmpty.elementAt(i);
+}
+
+String output = "";
+
+for (int i = 0; i &lt; non_empty.length; i++)
+{
+	output = output + (String) (non_empty[i] + "\t");
+}</s:scriptvalue>
+                  <s:beanshellinputlist>
+                    <s:beanshellinput s:syntactictype="'text/plain'">input</s:beanshellinput>
+                  </s:beanshellinputlist>
+                  <s:beanshelloutputlist>
+                    <s:beanshelloutput s:syntactictype="'text/plain'">output</s:beanshelloutput>
+                  </s:beanshelloutputlist>
+                  <s:dependencies s:classloader="iteration" />
+                </s:beanshell>
+              </s:processor>
+              <s:processor name="Merge_pathways">
+                <s:local>org.embl.ebi.escience.scuflworkers.java.StringListMerge</s:local>
+              </s:processor>
+              <s:processor name="split_by_regex">
+                <s:local>org.embl.ebi.escience.scuflworkers.java.SplitByRegex</s:local>
+              </s:processor>
+              <s:processor name="regex" boring="true">
+                <s:stringconstant>\n</s:stringconstant>
+              </s:processor>
+              <s:processor name="Merge_pathway_desc">
+                <s:local>org.embl.ebi.escience.scuflworkers.java.StringListMerge</s:local>
+              </s:processor>
+              <s:processor name="Merge_gene_pathways">
+                <s:local>org.embl.ebi.escience.scuflworkers.java.StringListMerge</s:local>
+              </s:processor>
+              <s:processor name="concat_gene_pathway_ids">
+                <s:beanshell>
+                  <s:scriptvalue>String pathway_id_input = pathway_ids.trim();
+String gene_id_input = gene_id.trim();
+
+String output = "";
+
+output = gene_id_input + "\t" + pathway_id_input;</s:scriptvalue>
+                  <s:beanshellinputlist>
+                    <s:beanshellinput s:syntactictype="'text/plain'">pathway_ids</s:beanshellinput>
+                    <s:beanshellinput s:syntactictype="'text/plain'">gene_id</s:beanshellinput>
+                  </s:beanshellinputlist>
+                  <s:beanshelloutputlist>
+                    <s:beanshelloutput s:syntactictype="'text/plain'">output</s:beanshelloutput>
+                  </s:beanshelloutputlist>
+                  <s:dependencies s:classloader="iteration" />
+                </s:beanshell>
+              </s:processor>
+              <s:processor name="pathway_desc">
+                <s:arbitrarywsdl>
+                  <s:wsdl>http://soap.genome.jp/KEGG.wsdl</s:wsdl>
+                  <s:operation>btit</s:operation>
+                </s:arbitrarywsdl>
+              </s:processor>
+              <s:processor name="lister">
+                <s:arbitrarywsdl>
+                  <s:wsdl>http://phoebus.cs.man.ac.uk:8081/axis/EnsemblListner.jws?wsdl</s:wsdl>
+                  <s:operation>lister</s:operation>
+                </s:arbitrarywsdl>
+              </s:processor>
+              <s:processor name="get_pathways_by_genes1">
+                <s:arbitrarywsdl>
+                  <s:wsdl>http://soap.genome.jp/KEGG.wsdl</s:wsdl>
+                  <s:operation>get_pathways_by_genes</s:operation>
+                </s:arbitrarywsdl>
+              </s:processor>
+              <s:link source="Merge_gene_pathways:concatenated" sink="pathway_genes" />
+              <s:link source="Merge_pathway_desc:concatenated" sink="pathway_desc" />
+              <s:link source="Merge_pathways:concatenated" sink="concat_ids:input" />
+              <s:link source="Merge_pathways:concatenated" sink="pathway_desc:string" />
+              <s:link source="Merge_pathways:concatenated" sink="pathway_ids" />
+              <s:link source="concat_gene_pathway_ids:output" sink="Merge_gene_pathways:stringlist" />
+              <s:link source="concat_ids:output" sink="concat_gene_pathway_ids:pathway_ids" />
+              <s:link source="gene_ids" sink="split_by_regex:string" />
+              <s:link source="get_pathways_by_genes1:return" sink="Merge_pathways:stringlist" />
+              <s:link source="lister:listerReturn" sink="concat_gene_pathway_ids:gene_id" />
+              <s:link source="lister:listerReturn" sink="get_pathways_by_genes1:genes_id_list" />
+              <s:link source="pathway_desc:return" sink="Merge_pathway_desc:stringlist" />
+              <s:link source="regex:value" sink="split_by_regex:regex" />
+              <s:link source="split_by_regex:split" sink="lister:file" />
+              <s:source name="gene_ids" />
+              <s:sink name="pathway_genes" />
+              <s:sink name="pathway_desc" />
+              <s:sink name="pathway_ids" />
+            </s:scufl>
+          </s:workflow>
+        </s:processor>
+        <s:processor name="getcurrentdatabase">
+          <s:description>Retrieves the current databases from ENSEMBL for a species</s:description>
+          <s:soaplabwsdl>http://phoebus.cs.man.ac.uk:1977/axis/services/qtl_analysis.getcurrentdatabase</s:soaplabwsdl>
+        </s:processor>
+        <s:link source="Get_Pathways:pathway_desc" sink="remove_duplicate_desc:stringlist" />
+        <s:link source="Get_Pathways:pathway_genes" sink="merge_genes_and_pathways:stringlist" />
+        <s:link source="Get_Pathways:pathway_ids" sink="merge_pathway_ids_1:stringlist" />
+        <s:link source="Kegg_gene_ids:return" sink="concat_kegg_genes:string1" />
+        <s:link source="Kegg_gene_ids_2:return" sink="concat_kegg_genes:string2" />
+        <s:link source="REMOVE_NULLS_2:output" sink="add_uniprot_to_string:input" />
+        <s:link source="add_ncbi_to_string:output" sink="Kegg_gene_ids_2:string" />
+        <s:link source="add_uniprot_to_string:output" sink="Kegg_gene_ids:string" />
+        <s:link source="concat_kegg_genes:output" sink="split_for_duplicates:string" />
+        <s:link source="create_report:result" sink="merge_reports:stringlist" />
+        <s:link source="gene_descriptions:return" sink="merge_gene_desc:stringlist" />
+        <s:link source="hsapiens_gene_ensembl:hsapiens_gene_ensembl.chromosome_name" sink="create_report:chromoName" />
+        <s:link source="hsapiens_gene_ensembl:hsapiens_gene_ensembl.end_position" sink="create_report:geneEnd" />
+        <s:link source="hsapiens_gene_ensembl:hsapiens_gene_ensembl.ensembl_gene_id" sink="create_report:ensemblGeneId" />
+        <s:link source="hsapiens_gene_ensembl:hsapiens_gene_ensembl.ensembl_transcript_id" sink="create_report:ensemblTranscriptId" />
+        <s:link source="hsapiens_gene_ensembl:hsapiens_gene_ensembl.entrezgene" sink="create_report:entrezGeneId" />
+        <s:link source="hsapiens_gene_ensembl:hsapiens_gene_ensembl.entrezgene" sink="remove_entrez_duplicates:stringlist" />
+        <s:link source="hsapiens_gene_ensembl:hsapiens_gene_ensembl.external_gene_id" sink="create_report:externalGeneId" />
+        <s:link source="hsapiens_gene_ensembl:hsapiens_gene_ensembl.start_position" sink="create_report:geneStart" />
+        <s:link source="hsapiens_gene_ensembl:hsapiens_gene_ensembl.uniprot_swissprot_accession" sink="create_report:uniprotAcc" />
+        <s:link source="hsapiens_gene_ensembl:hsapiens_gene_ensembl.uniprot_swissprot_accession" sink="remove_uniprot_duplicates:stringlist" />
+        <s:link source="kegg_pathway_release:value" sink="binfo:db" />
+        <s:link source="merge_entrez_genes:concatenated" sink="remove_Nulls:input" />
+        <s:link source="merge_gene_desc:concatenated" sink="remove_description_nulls:input" />
+        <s:link source="merge_genes_and_pathways:concatenated" sink="merge_genes_pathways_2:stringlist" />
+        <s:link source="merge_pathway_ids_1:concatenated" sink="remove_pathway_duplicates:stringlist" />
+        <s:link source="merge_uniprot_ids:concatenated" sink="REMOVE_NULLS_2:input" />
+        <s:link source="probeset_list" sink="split_probesets:string" />
+        <s:link source="regex_2:value" sink="split_for_duplicates:regex" />
+        <s:link source="binfo:return" sink="kegg_pathway_release" />
+        <s:link source="getcurrentdatabase:output" sink="ensembl_database_release" />
+        <s:link source="merge_genes_pathways_2:concatenated" sink="merge_genes_pathways_3:stringlist" />
+        <s:link source="merge_genes_pathways_3:concatenated" sink="merged_pathways" />
+        <s:link source="merge_pathway_desc:concatenated" sink="remove_pathway_nulls:input" />
+        <s:link source="merge_pathway_ids_2:concatenated" sink="pathway_list" />
+        <s:link source="merge_reports:concatenated" sink="report" />
+        <s:link source="regex_2:value" sink="split_probesets:regex" />
+        <s:link source="remove_Nulls:output" sink="add_ncbi_to_string:input" />
+        <s:link source="remove_duplicate_desc:strippedlist" sink="merge_pathway_desc:stringlist" />
+        <s:link source="remove_duplicate_kegg_genes:strippedlist" sink="split_gene_ids:input" />
+        <s:link source="remove_entrez_duplicates:strippedlist" sink="merge_entrez_genes:stringlist" />
+        <s:link source="remove_pathway_duplicates:strippedlist" sink="merge_pathway_ids_2:stringlist" />
+        <s:link source="remove_description_nulls:output" sink="gene_descriptions" />
+        <s:link source="remove_pathway_nulls:output" sink="pathway_descriptions" />
+        <s:link source="remove_uniprot_duplicates:strippedlist" sink="merge_uniprot_ids:stringlist" />
+        <s:link source="species:value" sink="getcurrentdatabase:species" />
+        <s:link source="split_for_duplicates:split" sink="remove_duplicate_kegg_genes:stringlist" />
+        <s:link source="split_gene_ids:output" sink="Get_Pathways:gene_ids" />
+        <s:link source="split_gene_ids:output" sink="gene_descriptions:string" />
+        <s:link source="split_probesets:split" sink="hsapiens_gene_ensembl:hsapiens_gene_ensembl.affy_hg_u133a_filter" />
+        <s:source name="probeset_list" />
+        <s:sink name="merged_pathways" />
+        <s:sink name="gene_descriptions" />
+        <s:sink name="pathway_descriptions" />
+        <s:sink name="ensembl_database_release" />
+        <s:sink name="kegg_pathway_release" />
+        <s:sink name="pathway_list" />
+        <s:sink name="report" />
+      </s:scufl>
+    </s:workflow>
+  </s:processor>
+  <s:link source="NormalizationMethod" sink="AffyDataAnalysis:normMethod" />
+  <s:link source="arrayTypeAffy" sink="AffyDataAnalysis:arrayType" />
+  <s:link source="foldChange" sink="AffyDataAnalysis:FCVal" />
+  <s:link source="geneNumber" sink="AffyDataAnalysis:gNum" />
+  <s:link source="pValue" sink="AffyDataAnalysis:pVal" />
+  <s:link source="path" sink="AffyDataAnalysis:dirPath" />
+  <s:link source="samples1" sink="Split_sample1:string" />
+  <s:link source="testMethod" sink="AffyDataAnalysis:ttestMethod" />
+  <s:link source="Split_sample1:split" sink="AffyDataAnalysis:group1" />
+  <s:link source="Split_sample2:split" sink="AffyDataAnalysis:group2" />
+  <s:link source="String_Constant:value" sink="Split_sample1:regex" />
+  <s:link source="String_Constant:value" sink="Split_sample2:regex" />
+  <s:link source="samples2" sink="Split_sample2:string" />
+  <s:link source="AffyDataAnalysis:affyID1" sink="Probeset_to_Pathway:probeset_list" />
+  <s:link source="AffyDataAnalysis:affyID1" sink="geneID" />
+  <s:link source="AffyDataAnalysis:boxNormPlot" sink="boxNorm" />
+  <s:link source="AffyDataAnalysis:histRawPlot" sink="hist" />
+  <s:link source="AffyDataAnalysis:pcaPlot" sink="pca" />
+  <s:link source="Probeset_to_Pathway:ensembl_database_release" sink="ensembl_database_release" />
+  <s:link source="Probeset_to_Pathway:gene_descriptions" sink="gene_descriptions" />
+  <s:link source="Probeset_to_Pathway:kegg_pathway_release" sink="KEGG_pathway_release" />
+  <s:link source="Probeset_to_Pathway:merged_pathways" sink="merged_pathways" />
+  <s:link source="Probeset_to_Pathway:pathway_descriptions" sink="pathway_description" />
+  <s:link source="Probeset_to_Pathway:pathway_list" sink="pathway_list" />
+  <s:link source="Probeset_to_Pathway:report" sink="BioMart_report" />
+  <s:source name="arrayTypeAffy" />
+  <s:source name="path" />
+  <s:source name="NormalizationMethod" />
+  <s:source name="testMethod" />
+  <s:source name="pValue" />
+  <s:source name="foldChange" />
+  <s:source name="geneNumber" />
+  <s:source name="samples1" />
+  <s:source name="samples2" />
+  <s:sink name="hist" />
+  <s:sink name="boxNorm" />
+  <s:sink name="pca" />
+  <s:sink name="geneID" />
+  <s:sink name="pathway_description" />
+  <s:sink name="merged_pathways" />
+  <s:sink name="pathway_list" />
+  <s:sink name="gene_descriptions" />
+  <s:sink name="ensembl_database_release" />
+  <s:sink name="KEGG_pathway_release" />
+  <s:sink name="BioMart_report" />
+</s:scufl>
+
