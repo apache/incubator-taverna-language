@@ -8,4 +8,12 @@
   <packaging>bundle</packaging>
   <artifactId>scufl2-validation</artifactId>
   <name>Taverna Scufl 2 validation</name>
+  <dependencies>
+  	<dependency>
+  		<groupId>uk.org.taverna.scufl2</groupId>
+  		<artifactId>scufl2-api</artifactId>
+  		<version>0.9-SNAPSHOT</version>
+  		<type>bundle</type>
+  	</dependency>
+  </dependencies>
 </project>
