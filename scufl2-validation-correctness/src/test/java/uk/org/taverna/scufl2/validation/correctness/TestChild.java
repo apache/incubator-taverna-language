@@ -5,6 +5,7 @@ package uk.org.taverna.scufl2.validation.correctness;
 
 import static org.junit.Assert.*;
 
+import java.util.Collections;
 import java.util.Set;
 
 import org.junit.Test;
@@ -17,6 +18,7 @@ import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.NegativeValueProblem;
 import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.NullFieldProblem;
+import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.WrongParentProblem;
 
 /**
  * @author alanrw
@@ -90,8 +92,8 @@ public class TestChild {
 		ReportCorrectnessValidationListener rcvl = new ReportCorrectnessValidationListener();
 		
 		cv.checkCorrectness(parent, false, rcvl);
-		Set<Child> wrongParents = rcvl.getWrongParents();
-		assertEquals(0, wrongParents.size());
+		Set<WrongParentProblem> wrongParentProblems = rcvl.getWrongParentProblems();
+		assertEquals(Collections.EMPTY_SET, wrongParentProblems);
 	}
 	
 	@Test
@@ -104,9 +106,15 @@ public class TestChild {
 		ReportCorrectnessValidationListener rcvl = new ReportCorrectnessValidationListener();
 		
 		cv.checkCorrectness(parent, false, rcvl);
-		Set<Child> wrongParents = rcvl.getWrongParents();
-		assertEquals(1, wrongParents.size());
-		assertTrue(wrongParents.contains((Child) fw));
+		Set<WrongParentProblem> wrongParentProblems = rcvl.getWrongParentProblems();
+		assertEquals(1, wrongParentProblems.size());
+		boolean parentProblem = false;
+		for (WrongParentProblem p : wrongParentProblems) {
+			if (p.getBean().equals(fw)) {
+				parentProblem = true;
+			}
+		}
+		assertTrue(parentProblem);
 	}
 
 

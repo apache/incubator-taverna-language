@@ -18,7 +18,7 @@ import uk.org.taverna.scufl2.translator.scufl.ScuflExtensionParser;
  */
 public class ApiConsumerExtensionParser extends AbstractExtensionParser {
 
-	private static final String APICONSUMER_XSD = "../xsd/scufl-apiconsumer.xsd";
+	private static final String APICONSUMER_XSD = "/uk/org/taverna/scufl2/translator/scufl/xsd/scufl-apiconsumer.xsd";
 
 	/* (non-Javadoc)
 	 * @see uk.org.taverna.scufl2.translator.scufl.ScuflExtensionParser#canHandle(java.lang.Class)

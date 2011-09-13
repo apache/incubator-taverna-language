@@ -1,13 +1,18 @@
 package uk.org.taverna.scufl2.api.io;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ServiceLoader;
+import java.util.Set;
 
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 
@@ -131,6 +136,40 @@ public class WorkflowBundleIO {
 	}
 
 	/**
+	 * Attempt to guess the media type for a stream or file that starts with
+	 * these bytes. 
+	 * <p>
+	 * All registered {@link #getReaders()} are consulted. 
+	 * <p>
+	 * Return <code>null</code> if ambiguous (more than one possibility) or
+	 * unknown.
+	 * 
+	 * @param firstBytes
+	 *            The initial bytes, at least 512 bytes long unless the resource
+	 *            is smaller.
+	 * @return The recognised media type, or <code>null</code> if the bytes were
+	 *         ambiguous or unknown.
+	 */
+	public String guessMediaTypeForSignature(byte[] firstBytes) {
+		Set<String> mediaTypes = new HashSet<String>();
+		for (WorkflowBundleReader reader : getReaders()) {
+			String guess = reader.guessMediaTypeForSignature(firstBytes);
+			if (guess != null) {
+				mediaTypes.add(guess);
+			}
+		}
+		if (mediaTypes.isEmpty()) {
+			return null;
+		}
+		if (mediaTypes.size() > 1) {
+			// log.warn("Multiple media types found: " + mediaTypes)
+			return null;
+		}
+		return mediaTypes.iterator().next();
+	}
+	
+	
+	/**
 	 * Reads a file containing a workflow bundle in the specified media type and returns a
 	 * <code>WorkflowBundle</code>.
 	 * 
@@ -138,7 +177,8 @@ public class WorkflowBundleIO {
 	 *            the file containing the workflow bundle
 	 * @param mediaType
 	 *            the media type of the workflow bundle. A <code>WorkflowBundleReader</code> must
-	 *            exist for this media type
+	 *            exist for this media type.
+	 *            If <code>null</code>, the media type will be guessed as with {@link #guessMediaTypeForSignature(byte[])}.
 	 * @return the <code>WorkflowBundle</code> read from the file
 	 * @throws ReaderException
 	 *             if there is an error parsing the workflow bundle
@@ -149,8 +189,16 @@ public class WorkflowBundleIO {
 	 */
 	public WorkflowBundle readBundle(File bundleFile, String mediaType) throws ReaderException,
 	IOException {
+		if (mediaType == null) {
+			byte[] firstBytes = new byte[1024];
+			new FileInputStream(bundleFile).read(firstBytes);
+			mediaType = guessMediaTypeForSignature(firstBytes);
+		}
 		WorkflowBundleReader reader = getReaderForMediaType(mediaType);
 		if (reader == null) {
+			if (mediaType == null) {
+				throw new IllegalArgumentException("Could not guess media type for " + bundleFile);
+			}
 			throw new IllegalArgumentException("Could not find reader for media type " + mediaType);
 		}
 		return reader.readBundle(bundleFile, mediaType);
@@ -164,7 +212,8 @@ public class WorkflowBundleIO {
 	 *            the stream containing the workflow bundle
 	 * @param mediaType
 	 *            the media type of the workflow bundle. A <code>WorkflowBundleReader</code> must
-	 *            exist for this media type
+	 *            exist for this media type.
+	 *            If <code>null</code>, the media type will be guessed as with {@link #guessMediaTypeForSignature(byte[])}.
 	 * @return the <code>WorkflowBundle</code> read from the stream
 	 * @throws ReaderException
 	 *             if there is an error parsing the workflow bundle
@@ -175,8 +224,24 @@ public class WorkflowBundleIO {
 	 */
 	public WorkflowBundle readBundle(InputStream inputStream, String mediaType)
 	throws ReaderException, IOException {
+		
+		if (mediaType == null) {
+			byte[] firstBytes = new byte[1024];
+			inputStream = new BufferedInputStream(inputStream);
+			try { 
+				inputStream.mark(firstBytes.length*2);			
+				inputStream.read(firstBytes);
+				mediaType = guessMediaTypeForSignature(firstBytes);
+			} finally {
+				inputStream.reset();
+				// Important = so readBundle can start from the beginning
+			}
+		}
 		WorkflowBundleReader reader = getReaderForMediaType(mediaType);
 		if (reader == null) {
+			if (mediaType == null) {
+				throw new IllegalArgumentException("Could not guess media type for input stream");
+			}
 			throw new IllegalArgumentException("Could not find reader for media type " + mediaType);
 		}
 		return reader.readBundle(inputStream, mediaType);
@@ -191,6 +256,8 @@ public class WorkflowBundleIO {
 	 * @param mediaType
 	 *            the media type of the workflow bundle. A <code>WorkflowBundleReader</code> must
 	 *            exist for this media type
+	 *            If <code>null</code>, the media type will 
+	 *            be guessed as with {@link #guessMediaTypeForSignature(byte[])}.
 	 * @return the <code>WorkflowBundle</code> read from the URL
 	 * @throws ReaderException
 	 *             if there is an error parsing the workflow bundle
@@ -201,6 +268,8 @@ public class WorkflowBundleIO {
 	 */
 	public WorkflowBundle readBundle(URL url, String mediaType) throws ReaderException, IOException {
 		// TODO: Pass URL to reader
+		// TODO: Use known media type for Accept header
+		// TODO: Extract Content-Type from result
 		return readBundle(url.openStream(), mediaType);
 
 	}

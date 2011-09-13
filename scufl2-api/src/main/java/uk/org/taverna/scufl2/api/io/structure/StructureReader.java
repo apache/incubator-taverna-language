@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Scanner;
 import java.util.Set;
@@ -395,6 +397,14 @@ public class StructureReader implements WorkflowBundleReader {
 	throws IOException, ReaderException {
 		return parse(inputStream);
 
+	}
+
+	@Override
+	public String guessMediaTypeForSignature(byte[] firstBytes) {
+		if (new String(firstBytes, Charset.forName("ISO-8859-1")).contains("WorkflowBundle '")) {
+			return TEXT_VND_TAVERNA_SCUFL2_STRUCTURE;
+		}
+		return null;
 	}
 
 }

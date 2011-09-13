@@ -18,7 +18,7 @@ import uk.org.taverna.scufl2.api.port.InputProcessorPort;
 import uk.org.taverna.scufl2.api.port.InputWorkflowPort;
 import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
 import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
-import uk.org.taverna.scufl2.validation.ValidationException;
+import uk.org.taverna.scufl2.validation.ValidationProblem;
 
 /**
  * @author alanrw

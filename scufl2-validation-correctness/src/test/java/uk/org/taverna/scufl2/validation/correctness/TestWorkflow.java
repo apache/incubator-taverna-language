@@ -20,6 +20,7 @@ import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.core.ControlLink;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
+import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.NonAbsoluteURIProblem;
 import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.NullFieldProblem;
 
 /**
@@ -180,30 +181,42 @@ public class TestWorkflow {
 	@Test
 	public void testNonAbsoluteURI() throws URISyntaxException {
 		DummyWorkflow dw = new DummyWorkflow();
-		dw.setWorkflowIdentifier(new URI("fred/soup"));
+		URI workflowIdentifier = new URI("fred/soup");
+		dw.setWorkflowIdentifier(workflowIdentifier);
 		
 		CorrectnessValidator cv = new CorrectnessValidator();
 		ReportCorrectnessValidationListener rcvl = new ReportCorrectnessValidationListener();
 		
 		cv.checkCorrectness(dw, false, rcvl);
 		
-		Set<WorkflowBean> problems = rcvl.getNonAbsoluteURIs();
-		assertTrue(problems.contains(dw));
-		
+		Set<NonAbsoluteURIProblem> problems = rcvl.getNonAbsoluteURIProblems();
+		boolean problem = false;
+		for (NonAbsoluteURIProblem p : problems) {
+			if (p.getBean().equals(dw) && p.getFieldName().equals("workflowIdentifier") && p.getFieldValue().equals(workflowIdentifier)) {
+				problem = true;
+			}
+		}
+		assertTrue(problem);
 	}
 	
 	@Test
 	public void testFileURI() throws URISyntaxException {
 		DummyWorkflow dw = new DummyWorkflow();
-		dw.setWorkflowIdentifier(new URI("file:///fred/soup"));
+		URI workflowIdentifier = new URI("file:///fred/soup");
+		dw.setWorkflowIdentifier(workflowIdentifier);
 		
 		CorrectnessValidator cv = new CorrectnessValidator();
 		ReportCorrectnessValidationListener rcvl = new ReportCorrectnessValidationListener();
 		
 		cv.checkCorrectness(dw, false, rcvl);
 		
-		Set<WorkflowBean> problems = rcvl.getNonAbsoluteURIs();
-		assertTrue(problems.contains(dw));
-		
+		Set<NonAbsoluteURIProblem> problems = rcvl.getNonAbsoluteURIProblems();
+		boolean problem = false;
+		for (NonAbsoluteURIProblem p : problems) {
+			if (p.getBean().equals(dw) && p.getFieldName().equals("workflowIdentifier") && p.getFieldValue().equals(workflowIdentifier)) {
+				problem = true;
+			}
+		}
+		assertTrue(problem);
 	}
 }

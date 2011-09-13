@@ -177,5 +177,68 @@ public class ReportStructuralValidationListener extends
 		unresolvedProcessors.add(p);
 	}
 
+	/**
+	 * @return the dotProductIterationMismatches
+	 */
+	public Set<DotProduct> getDotProductIterationMismatches() {
+		return dotProductIterationMismatches;
+	}
+
+	/**
+	 * @return the emptyCrossProducts
+	 */
+	public Set<CrossProduct> getEmptyCrossProducts() {
+		return emptyCrossProducts;
+	}
+
+	/**
+	 * @return the emptyDotProducts
+	 */
+	public Set<DotProduct> getEmptyDotProducts() {
+		return emptyDotProducts;
+	}
+
+	/**
+	 * @return the failedProcessors
+	 */
+	public Set<Processor> getFailedProcessors() {
+		return failedProcessors;
+	}
+
+	/**
+	 * @return the missingIterationStrategyStacks
+	 */
+	public Set<Processor> getMissingIterationStrategyStacks() {
+		return missingIterationStrategyStacks;
+	}
+
+	/**
+	 * @return the missingMainIncomingDataLinks
+	 */
+	public Set<ReceiverPort> getMissingMainIncomingDataLinks() {
+		return missingMainIncomingDataLinks;
+	}
+
+	/**
+	 * @return the unrecognizedIterationStrategyNodes
+	 */
+	public Set<IterationStrategyNode> getUnrecognizedIterationStrategyNodes() {
+		return unrecognizedIterationStrategyNodes;
+	}
+
+	/**
+	 * @return the unresolvedOutputs
+	 */
+	public Set<OutputWorkflowPort> getUnresolvedOutputs() {
+		return unresolvedOutputs;
+	}
+
+	/**
+	 * @return the unresolvedProcessors
+	 */
+	public Set<Processor> getUnresolvedProcessors() {
+		return unresolvedProcessors;
+	}
+
 
 }

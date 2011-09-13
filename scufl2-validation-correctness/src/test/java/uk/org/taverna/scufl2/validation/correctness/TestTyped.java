@@ -19,6 +19,7 @@ import uk.org.taverna.scufl2.api.common.Root;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
+import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.NonAbsoluteURIProblem;
 import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.NullFieldProblem;
 
 /**
@@ -86,30 +87,42 @@ public class TestTyped {
 	@Test
 	public void testNonAbsoluteURI() throws URISyntaxException {
 		Activity a = new Activity();
-		a.setConfigurableType(new URI("fred/soup"));
+		URI type = new URI("fred/soup");
+		a.setConfigurableType(type);
 		
 		CorrectnessValidator cv = new CorrectnessValidator();
 		ReportCorrectnessValidationListener rcvl = new ReportCorrectnessValidationListener();
 		
 		cv.checkCorrectness(a, false, rcvl);
 		
-		Set<WorkflowBean> problems = rcvl.getNonAbsoluteURIs();
-		assertTrue(problems.contains(a));
-		
+		Set<NonAbsoluteURIProblem> problems = rcvl.getNonAbsoluteURIProblems();
+		boolean problem = false;
+		for (NonAbsoluteURIProblem p : problems) {
+			if (p.getBean().equals(a) && p.getFieldName().equals("configurableType") && p.getFieldValue().equals(type)) {
+				problem = true;
+			}
+		}
+		assertTrue(problem);
 	}
 	
 	@Test
 	public void testFileURI() throws URISyntaxException {
 		Activity a = new Activity();
-		a.setConfigurableType(new URI("file:///fred/soup"));
+		URI type = new URI("file:///fred/soup");
+		a.setConfigurableType(type);
 		
 		CorrectnessValidator cv = new CorrectnessValidator();
 		ReportCorrectnessValidationListener rcvl = new ReportCorrectnessValidationListener();
 		
 		cv.checkCorrectness(a, false, rcvl);
 		
-		Set<WorkflowBean> problems = rcvl.getNonAbsoluteURIs();
-		assertTrue(problems.contains(a));
-		
+		Set<NonAbsoluteURIProblem> problems = rcvl.getNonAbsoluteURIProblems();
+		boolean problem = false;
+		for (NonAbsoluteURIProblem p : problems) {
+			if (p.getBean().equals(a) && p.getFieldName().equals("configurableType") && p.getFieldValue().equals(type)) {
+				problem = true;
+			}
+		}
+		assertTrue(problem);
 	}
 }

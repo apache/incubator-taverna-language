@@ -3,6 +3,7 @@ package uk.org.taverna.scufl2.translator.t2flow;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Set;
 
@@ -67,5 +68,30 @@ public class T2FlowReader implements WorkflowBundleReader {
 		}
 		return parser;
 	}
+	
+	@Override
+	public String guessMediaTypeForSignature(byte[] firstBytes) {
+
+		if (firstBytes.length < 100) { 
+			return null;
+		}
+		// FIXME: Does not deal with potential UTF-16 encoding
+		
+		// Latin 1 can deal with nasty bytes in binaries
+		Charset latin1 = Charset.forName("ISO-8859-1");
+		String asLatin1 = new String(firstBytes, latin1);
+		if (! asLatin1.contains("workflow")) { 
+			return null;
+		}
+		if (! asLatin1.contains("http://taverna.sf.net/2008/xml/t2flow")) { 
+			return null;
+		}
+		if (! asLatin1.contains("dataflow")) { 
+			return null;
+		}
+		// Good enough - XML is hard to check on so few bytes		
+		return APPLICATION_VND_TAVERNA_T2FLOW_XML;
+	}
+	
 
 }

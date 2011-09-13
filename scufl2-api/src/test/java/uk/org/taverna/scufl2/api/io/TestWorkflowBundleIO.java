@@ -1,6 +1,7 @@
 package uk.org.taverna.scufl2.api.io;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -11,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 
@@ -76,6 +78,70 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 		assertNull(bundleIO
 				.getWriterForMediaType("application/vnd.example.unknownStuff"));
 	}
+	
+	@Test
+	public void guessMediaType() {
+		WorkflowBundleReader myReader = new WorkflowBundleReader() {
+			@Override
+			public Set<String> getMediaTypes() {
+				return null;
+			}
+			@Override
+			public WorkflowBundle readBundle(File bundleFile, String mediaType) {
+				return null;
+			}
+			@Override
+			public WorkflowBundle readBundle(InputStream inputStream,
+					String mediaType) {
+				return null;
+			}
+			@Override
+			public String guessMediaTypeForSignature(byte[] firstBytes) {
+				if (firstBytes.length == 4) {
+					return "test/test";
+				}
+				return null;
+			}
+		};
+
+		WorkflowBundleReader otherReader = new WorkflowBundleReader() {
+			@Override
+			public Set<String> getMediaTypes() {
+				return null;
+			}
+			@Override
+			public WorkflowBundle readBundle(File bundleFile, String mediaType) {
+				return null;
+			}
+			@Override
+			public WorkflowBundle readBundle(InputStream inputStream,
+					String mediaType) {
+				return null;
+			}
+			@Override
+			public String guessMediaTypeForSignature(byte[] firstBytes) {
+				if (firstBytes.length == 4) {
+					return "test/other";
+				}
+				return null;
+			}
+		};
+
+		
+		bundleIO.setReaders(Arrays.asList(myReader));
+		assertEquals(null, bundleIO.guessMediaTypeForSignature(new byte[16]));
+		assertEquals("test/test", bundleIO.guessMediaTypeForSignature(new byte[4]));
+
+
+		bundleIO.setReaders(Arrays.asList(myReader, myReader));
+		// 4 bytes should not be ambiguous, they all agree
+		assertEquals("test/test", bundleIO.guessMediaTypeForSignature(new byte[4]));		
+		
+		bundleIO.setReaders(Arrays.asList(myReader, myReader, otherReader));
+		// 4 bytes should now be ambiguous
+		assertEquals(null, bundleIO.guessMediaTypeForSignature(new byte[4]));		
+	}
+
 
 	@Test
 	public void readBundleFile() throws Exception {
@@ -91,6 +157,25 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 				.containsName("Hello"));
 	}
 
+	
+
+	@Test
+	public void readBundleFileNoMediaType() throws Exception {
+		File bundleFile = tempFile();
+		FileUtils.writeStringToFile(bundleFile,
+				getStructureFormatWorkflowBundle(),
+				UTF_8);
+		WorkflowBundle wfBundle = bundleIO.readBundle(bundleFile,null);
+		assertNotNull(wfBundle);
+
+		File emptyFile = File.createTempFile("test", "txt");
+		try {
+			WorkflowBundle none = bundleIO.readBundle(emptyFile,null);
+			fail("Should throw IllegalArgumentException for unrecognized file");
+		} catch (IllegalArgumentException ex) {
+		}
+	}
+
 	@Test
 	public void readBundleStream() throws Exception {
 		InputStream inputStream = new ByteArrayInputStream(
@@ -102,6 +187,17 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 		assertTrue(wfBundle.getMainWorkflow().getProcessors()
 				.containsName("Hello"));
 	}
+	
+	@Test
+	public void readBundleStreamNoMediaType() throws Exception {
+		InputStream inputStream = new ByteArrayInputStream(
+				getStructureFormatWorkflowBundle().getBytes("utf-8"));
+		WorkflowBundle wfBundle = bundleIO.readBundle(inputStream, null);
+		assertNotNull(wfBundle);
+		assertEquals("HelloWorld", wfBundle.getName());
+
+	}
+
 
 	@Test
 	public void readToWriteRoundTrip() throws Exception {
@@ -132,6 +228,10 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 					String mediaType) {
 				return null;
 			}
+			@Override
+			public String guessMediaTypeForSignature(byte[] firstBytes) {
+				return "test/test";
+			}
 		};
 
 		bundleIO.setReaders(Collections.singletonList(myReader));
@@ -142,8 +242,11 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 
 		// Should now be null
 		assertNull(bundleIO
-				.getReaderForMediaType(TEXT_VND_TAVERNA_SCUFL2_STRUCTURE));
+				.getReaderForMediaType(TEXT_VND_TAVERNA_SCUFL2_STRUCTURE));		
+		assertEquals("test/test", bundleIO.guessMediaTypeForSignature(new byte[4]));
 	}
+	
+	
 
 	@Test
 	public void setWriters() {

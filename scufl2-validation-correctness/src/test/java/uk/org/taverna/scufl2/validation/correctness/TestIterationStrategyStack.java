@@ -99,7 +99,7 @@ public class TestIterationStrategyStack {
 
 		boolean problem = false;
 		for (PortMissingFromIterationStrategyStackProblem nlp : problems) {
-			if (nlp.getPort().equals(p3) && nlp.getIterationStrategyStack().equals(iss)) {
+			if (nlp.getPort().equals(p3) && nlp.getBean().equals(iss)) {
 				problem = true;
 			}
 		}
