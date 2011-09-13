@@ -21,7 +21,7 @@ import uk.org.taverna.scufl2.xml.scufl.jaxb.StringconstantType;
  */
 public class StringConstantExtensionParser extends AbstractExtensionParser {
 
-	private static final String STRINGCONSTANT_XSD = "../xsd/scufl-string.xsd";
+	private static final String STRINGCONSTANT_XSD = "/uk/org/taverna/scufl2/translator/scufl/xsd/scufl-stringconstant.xsd";
 
 	private static final String VALUE = "value";
 	

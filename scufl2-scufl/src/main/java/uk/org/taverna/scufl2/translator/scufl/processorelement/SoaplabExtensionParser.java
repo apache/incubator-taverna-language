@@ -17,7 +17,7 @@ import uk.org.taverna.scufl2.translator.scufl.ScuflExtensionParser;
  */
 public class SoaplabExtensionParser extends AbstractExtensionParser {
 
-	private static final String SOAPLAB_XSD = "../xsd/scufl-soaplab.xsd";
+	private static final String SOAPLAB_XSD = "/uk/org/taverna/scufl2/translator/scufl/xsd/scufl-soaplab.xsd";
 
 	/* (non-Javadoc)
 	 * @see uk.org.taverna.scufl2.translator.scufl.ScuflExtensionParser#canHandle(java.lang.Class)

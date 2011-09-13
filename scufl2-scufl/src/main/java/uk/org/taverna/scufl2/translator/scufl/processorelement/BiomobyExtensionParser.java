@@ -17,7 +17,7 @@ import uk.org.taverna.scufl2.translator.scufl.ScuflExtensionParser;
  */
 public class BiomobyExtensionParser extends AbstractExtensionParser {
 
-	private static final String BIOMOBY_XSD = "../xsd/scufl-biomoby.xsd";
+	private static final String BIOMOBY_XSD = "/uk/org/taverna/scufl2/translator/scufl/xsd/scufl-biomoby.xsd";
 
 	/* (non-Javadoc)
 	 * @see uk.org.taverna.scufl2.translator.scufl.ScuflExtensionParser#canHandle(java.lang.Class)

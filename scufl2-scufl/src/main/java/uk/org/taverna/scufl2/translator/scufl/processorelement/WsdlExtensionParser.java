@@ -17,7 +17,7 @@ import uk.org.taverna.scufl2.translator.scufl.ScuflExtensionParser;
  */
 public class WsdlExtensionParser extends AbstractExtensionParser {
 
-	private static final String WSDL_XSD = "../xsd/scufl-wsdl.xsd";
+	private static final String WSDL_XSD = "/uk/org/taverna/scufl2/translator/scufl/xsd/scufl-wsdl.xsd";
 
 	/* (non-Javadoc)
 	 * @see uk.org.taverna.scufl2.translator.scufl.ScuflExtensionParser#canHandle(java.lang.Class)
@@ -46,8 +46,7 @@ public class WsdlExtensionParser extends AbstractExtensionParser {
 	 */
 	@Override
 	public void parseScuflObject(Object o) {
-		// TODO Auto-generated method stub
-
+		System.err.println(this.getClass() + " is not yet implemented");
 	}
 
 }
