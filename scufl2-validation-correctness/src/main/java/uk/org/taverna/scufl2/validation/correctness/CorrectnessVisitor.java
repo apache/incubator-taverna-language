@@ -773,10 +773,10 @@ public class CorrectnessVisitor extends DispatchingVisitor {
 		URI globalBaseURI = bean.getGlobalBaseURI();
 		if (globalBaseURI != null) {
 			if (!globalBaseURI.isAbsolute()) {
-				listener.nonAbsoluteURI(bean);
+				listener.nonAbsoluteURI(bean, "globalBaseURI", globalBaseURI);
 			}
 			else if (globalBaseURI.getScheme().equals("file")) {
-				listener.nonAbsoluteURI(bean);
+				listener.nonAbsoluteURI(bean, "globalBaseURI", globalBaseURI);
 			}
 		}
 		if (checkComplete) {
@@ -802,10 +802,10 @@ public class CorrectnessVisitor extends DispatchingVisitor {
 		URI configurableType = bean.getConfigurableType();
 		if (configurableType != null) {
 			if (!configurableType.isAbsolute()) {
-				listener.nonAbsoluteURI(bean);
+				listener.nonAbsoluteURI(bean, "configurableType", configurableType);
 			}
 			else if (configurableType.getScheme().equals("file")) {
-				listener.nonAbsoluteURI(bean);
+				listener.nonAbsoluteURI(bean, "configurableType", configurableType);
 			}
 		}
 		if (checkComplete) {
@@ -830,10 +830,10 @@ public class CorrectnessVisitor extends DispatchingVisitor {
 		
 		if (workflowIdentifier != null) {
 			if (!workflowIdentifier.isAbsolute()) {
-				listener.nonAbsoluteURI(bean);
+				listener.nonAbsoluteURI(bean, "workflowIdentifier", workflowIdentifier);
 			}
 			else if (workflowIdentifier.getScheme().equals("file")) {
-				listener.nonAbsoluteURI(bean);
+				listener.nonAbsoluteURI(bean, "workflowIdentifier", workflowIdentifier);
 			}
 		}
 		
