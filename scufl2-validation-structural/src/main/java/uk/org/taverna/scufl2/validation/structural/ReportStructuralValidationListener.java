@@ -4,6 +4,7 @@
 package uk.org.taverna.scufl2.validation.structural;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -18,9 +19,9 @@ import uk.org.taverna.scufl2.api.iterationstrategy.CrossProduct;
 import uk.org.taverna.scufl2.api.iterationstrategy.DotProduct;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyNode;
 import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
-import uk.org.taverna.scufl2.api.port.Port;
 import uk.org.taverna.scufl2.api.port.ReceiverPort;
 import uk.org.taverna.scufl2.api.port.SenderPort;
+import uk.org.taverna.scufl2.validation.ValidationException;
 
 /**
  * @author alanrw
@@ -238,6 +239,31 @@ public class ReportStructuralValidationListener extends
 	 */
 	public Set<Processor> getUnresolvedProcessors() {
 		return unresolvedProcessors;
+	}
+	
+	@Override
+	public boolean detectedProblems() {
+		return (!
+				(Collections.EMPTY_SET.equals(getDotProductIterationMismatches()) && 
+				Collections.EMPTY_SET.equals(getEmptyCrossProducts()) && 
+				Collections.EMPTY_SET.equals(getEmptyDotProducts()) && 
+				Collections.EMPTY_SET.equals(getFailedProcessors()) && 
+				Collections.EMPTY_SET.equals(getIncompleteWorkflows()) &&
+				Collections.EMPTY_SET.equals(getMissingIterationStrategyStacks()) &&
+				Collections.EMPTY_SET.equals(getMissingMainIncomingDataLinks()) &&
+				Collections.EMPTY_SET.equals(getUnrecognizedIterationStrategyNodes()) &&
+				Collections.EMPTY_SET.equals(getUnresolvedOutputs()) &&
+				Collections.EMPTY_SET.equals(getUnresolvedProcessors())));
+	}	
+
+	@Override
+	public ValidationException getException() {
+		// TODO Needs to be improved;
+		if (detectedProblems()) {
+			return new ValidationException(this.toString());
+		} else {
+			return null;
+		}
 	}
 
 
