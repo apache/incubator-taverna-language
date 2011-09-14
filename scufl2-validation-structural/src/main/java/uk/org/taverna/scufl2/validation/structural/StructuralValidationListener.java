@@ -9,6 +9,7 @@ import uk.org.taverna.scufl2.api.iterationstrategy.DotProduct;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyNode;
 import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
 import uk.org.taverna.scufl2.api.port.ReceiverPort;
+import uk.org.taverna.scufl2.validation.ValidationException;
 
 public interface StructuralValidationListener {
 
@@ -41,4 +42,7 @@ public interface StructuralValidationListener {
 
 	void incompleteWorkflow(Workflow w);
 
+	boolean detectedProblems();
+	
+	ValidationException getException();
 }
