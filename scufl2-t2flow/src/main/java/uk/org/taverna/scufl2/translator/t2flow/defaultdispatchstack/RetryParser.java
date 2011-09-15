@@ -30,6 +30,18 @@ public class RetryParser extends AbstractActivityParser {
 				&& uriStr.endsWith(className);
 	}
 
+	/*
+	 * Defaults - ignored for now
+	 */
+	/*
+	public static final class Defaults {
+		public static final int MAX_RETRIES = 1;
+		public static final int INITIAL_DELAY = 1000;
+		public static final int MAX_DELAY = 5000;
+		public static final int BACKOFF_FACTOR = 5000;
+	}
+	 */
+	
 	@Override
 	public URI mapT2flowRavenIdToScufl2URI(URI t2flowActivity) {
 		return scufl2Uri;
