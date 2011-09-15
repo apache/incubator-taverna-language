@@ -77,6 +77,34 @@ public class TestDispatchLayerParsing {
 		assertTrue(parallelizeConfig.getPropertyResource().getProperties().isEmpty());				
 	}
 	
+	@Test
+	public void errorBounceEmpty() throws Exception {
+		Processor retry = processors.getByName("retries");
+		URI ERRORBOUNCE = DISPATCH_LAYER.resolve("ErrorBounce");
+		DispatchStackLayer errorbounce = scufl2Tools.dispatchStackByType(retry, ERRORBOUNCE);
+		assertNotNull(errorbounce);
+		assertTrue(scufl2Tools.configurationsFor(errorbounce, profile).isEmpty());
+	}
+	
+
+	@Test
+	public void failoverEmpty() throws Exception {
+		Processor retry = processors.getByName("retries");
+		URI FAILOVER = DISPATCH_LAYER.resolve("Failover");
+		DispatchStackLayer failover = scufl2Tools.dispatchStackByType(retry, FAILOVER);
+		assertNotNull(failover);
+		assertTrue(scufl2Tools.configurationsFor(failover, profile).isEmpty());
+	}
+	
+	@Test
+	public void invokeEmpty() throws Exception {
+		Processor retry = processors.getByName("retries");
+		URI INVOKE = DISPATCH_LAYER.resolve("Failover");
+		DispatchStackLayer invoke = scufl2Tools.dispatchStackByType(retry, INVOKE);
+		assertNotNull(invoke);
+		assertTrue(scufl2Tools.configurationsFor(invoke, profile).isEmpty());
+	}
+	
 
 	@Test
 	public void parallelizeDefaultFromT1() throws Exception {

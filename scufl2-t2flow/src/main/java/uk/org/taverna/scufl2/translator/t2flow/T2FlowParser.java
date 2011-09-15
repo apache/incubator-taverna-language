@@ -370,7 +370,10 @@ public class T2FlowParser {
 	protected void parseConfiguration(ConfigBean configBean,
 			Configures configures) throws JAXBException, ReaderException {
 
-		Configuration configuration = null;
+		// Placeholder to check later if no configuration have been provided
+		Configuration UNCONFIGURED = new Configuration();
+		
+		Configuration configuration = UNCONFIGURED;
 		if (parserState.get().getCurrentT2Parser() == null) {
 			String message = "No config parser for " + configures
 					+ parserState.get().getCurrentConfigurable();
@@ -389,6 +392,11 @@ public class T2FlowParser {
 			}
 		}
 		if (configuration == null) {
+			// Perfectly valid - true for say Invoke layer
+			return;
+		}
+		
+		if (configuration == UNCONFIGURED) {
 			if (isStrict()) {
 				throw new ReaderException("No configuration returned from "
 						+ parserState.get().getCurrentT2Parser() + " for "
@@ -411,6 +419,7 @@ public class T2FlowParser {
 			properties.get(fallBackURI).add(literal);
 
 		}
+		
 		if (configures == Configures.activity) {
 			configuration.setName(parserState.get().getCurrentActivity()
 					.getName());
