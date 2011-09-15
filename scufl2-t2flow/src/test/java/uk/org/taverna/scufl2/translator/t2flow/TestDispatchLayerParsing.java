@@ -48,6 +48,16 @@ public class TestDispatchLayerParsing {
 	
 	@Test
 	public void retriesDefault() throws Exception {
+		Processor parallelise = processors.getByName("parallelise");
+		URI RETRY = DISPATCH_LAYER.resolve("Retry");
+		DispatchStackLayer retry = scufl2Tools.dispatchStackByType(parallelise, RETRY);
+		Configuration retryConfig = scufl2Tools.configurationFor(retry, profile);
+		assertEquals(RETRY.resolve("#Config"), retryConfig.getConfigurableType());
+		assertTrue(retryConfig.getPropertyResource().getProperties().isEmpty());				
+	}
+	
+	@Test
+	public void retriesDefaultFromT1() throws Exception {
 		Processor alternates = processors.getByName("alternates");
 		URI RETRY = DISPATCH_LAYER.resolve("Retry");
 		DispatchStackLayer retry = scufl2Tools.dispatchStackByType(alternates, RETRY);
@@ -55,6 +65,40 @@ public class TestDispatchLayerParsing {
 		assertEquals(RETRY.resolve("#Config"), retryConfig.getConfigurableType());
 		assertTrue(retryConfig.getPropertyResource().getProperties().isEmpty());				
 	}
+	
+	
+	@Test
+	public void parallelizeDefault() throws Exception {
+		Processor retry = processors.getByName("retries");
+		URI PARALLELIZE = DISPATCH_LAYER.resolve("Parallelize");
+		DispatchStackLayer parallelize = scufl2Tools.dispatchStackByType(retry, PARALLELIZE);
+		Configuration parallelizeConfig = scufl2Tools.configurationFor(parallelize, profile);
+		assertEquals(PARALLELIZE.resolve("#Config"), parallelizeConfig.getConfigurableType());
+		assertTrue(parallelizeConfig.getPropertyResource().getProperties().isEmpty());				
+	}
+	
+
+	@Test
+	public void parallelizeDefaultFromT1() throws Exception {
+		Processor alternates = processors.getByName("alternates");
+		URI PARALLELIZE = DISPATCH_LAYER.resolve("Parallelize");
+		DispatchStackLayer parallelize = scufl2Tools.dispatchStackByType(alternates, PARALLELIZE);
+		Configuration parallelizeConfig = scufl2Tools.configurationFor(parallelize, profile);
+		assertEquals(PARALLELIZE.resolve("#Config"), parallelizeConfig.getConfigurableType());
+		assertTrue(parallelizeConfig.getPropertyResource().getProperties().isEmpty());				
+	}
+	
+	@Test
+	public void parallelize() throws Exception {
+		Processor retry = processors.getByName("parallelise");
+		URI PARALLELIZE = DISPATCH_LAYER.resolve("Parallelize");
+		DispatchStackLayer parallelize = scufl2Tools.dispatchStackByType(retry, PARALLELIZE);
+		Configuration parallelizeConfig = scufl2Tools.configurationFor(parallelize, profile);
+		assertEquals(PARALLELIZE.resolve("#Config"), parallelizeConfig.getConfigurableType());
+		assertFalse(parallelizeConfig.getPropertyResource().getProperties().isEmpty());				
+		assertEquals(5, parallelizeConfig.getPropertyResource().getPropertyAsLiteral(PARALLELIZE.resolve("#maxJobs")).getLiteralValueAsInt());
+	}
+	
 	
 	@Test
 	public void retriesCustom() throws Exception {
