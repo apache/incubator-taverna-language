@@ -60,7 +60,7 @@ public class RetryParser extends AbstractActivityParser {
 		PropertyResource resource = c.getPropertyResource();
 
 		BigInteger maxRetries = config.getMaxRetries();
-		if (maxRetries.longValue() != Defaults.MAX_RETRIES || maxRetries.longValue() < 0) {
+		if (maxRetries != null && maxRetries.longValue() != Defaults.MAX_RETRIES || maxRetries.longValue() < 0) {
 			PropertyLiteral maxRetriesProp = new PropertyLiteral(maxRetries.longValue());
 			resource.addProperty(scufl2Uri.resolve("#maxRetries"), maxRetriesProp);
 		}
