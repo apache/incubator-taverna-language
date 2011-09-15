@@ -1,7 +1,9 @@
 package uk.org.taverna.scufl2.translator.t2flow;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotNull;
 
+import java.net.URI;
 import java.net.URL;
 
 import org.junit.Before;
@@ -26,6 +28,8 @@ public class TestDispatchLayerParsing {
 	private Workflow workflow;
 	private NamedSet<Processor> processors;
 	
+	private URI DISPATCH_LAYER = URI.create("http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/");
+	
 	@Before
 	public void readWorkflow() throws Exception {		
 		parser = new T2FlowParser();
@@ -42,10 +46,27 @@ public class TestDispatchLayerParsing {
 	}
 	
 	@Test
+	public void retriesDefault() throws Exception {
+		Processor alternates = processors.getByName("alternates");
+		URI RETRY = DISPATCH_LAYER.resolve("Retry");
+		DispatchStackLayer retry = scufl2Tools.dispatchStackByType(alternates, RETRY);
+		Configuration retryConfig = scufl2Tools.configurationFor(retry, profile);
+		assertEquals(RETRY.resolve("#Config"), retryConfig.getConfigurableType());
+		assertTrue(retryConfig.getPropertyResource().getProperties().isEmpty());		
+	}
+	
+	@Test
 	public void retries() throws Exception {
 		Processor retries = processors.getByName("retries");
+		URI RETRY = DISPATCH_LAYER.resolve("Retry");
+		DispatchStackLayer retry = scufl2Tools.dispatchStackByType(retries, RETRY);
+		Configuration retryConfig = scufl2Tools.configurationFor(retry, profile);
+		assertEquals(RETRY.resolve("#Config"), retryConfig.getConfigurableType());
+		assertEquals(3, retryConfig.getPropertyResource().getPropertyAsLiteral(RETRY.resolve("#maxRetries")).getLiteralValueAsInt());
+		assertEquals(1000, retryConfig.getPropertyResource().getPropertyAsLiteral(RETRY.resolve("#initialDelay")).getLiteralValueAsInt());
+		assertEquals(5000, retryConfig.getPropertyResource().getPropertyAsLiteral(RETRY.resolve("#maxDelay")).getLiteralValueAsInt());
+		assertEquals(1.0, retryConfig.getPropertyResource().getPropertyAsLiteral(RETRY.resolve("#backoffFactor")).getLiteralValueAsDouble(), 0.001);
 		
-		DispatchStackLayer retry = retries.getDispatchStack().getByName("retry");
 	}
 
 	
