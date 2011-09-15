@@ -34,7 +34,7 @@ public class ErrorBounceParser extends AbstractActivityParser {
 	@Override
 	public Configuration parseConfiguration(T2FlowParser t2FlowParser,
 			ConfigBean configBean, ParserState parserState) throws ReaderException {
-		return null;
+		return null; // no config!
 	}
 
 }
