@@ -22,6 +22,10 @@ public class ParallelizeParser extends AbstractActivityParser {
 		public static URI scufl2Uri = URI
 				.create("http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Parallelize");
 
+		public static class Defaults {
+			public static int maxJobs = 1;
+		}
+		
 		@Override
 		public boolean canHandlePlugin(URI pluginURI) {
 			String uriStr = pluginURI.toASCIIString();
@@ -41,14 +45,12 @@ public class ParallelizeParser extends AbstractActivityParser {
 
 			ParallelizeConfig parallelConfig = unmarshallConfig(t2FlowParser, configBean,
 					"xstream", ParallelizeConfig.class);
-
-			
 			Configuration c = new Configuration();		
 			c.setConfigurableType(scufl2Uri.resolve("#Config"));
 
 			BigInteger maxJobs = parallelConfig.getMaxJobs();
-			if (maxJobs != null) {
-				PropertyLiteral p = new PropertyLiteral(maxJobs.longValue());
+			if (maxJobs != null && maxJobs.intValue() > 0 && maxJobs.intValue() != Defaults.maxJobs) {
+				PropertyLiteral p = new PropertyLiteral(maxJobs.intValue());
 				c.getPropertyResource().addProperty(scufl2Uri.resolve("#maxJobs"), p);
 			}
 			return c;
