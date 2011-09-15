@@ -128,7 +128,6 @@ public class T2FlowParser {
 
 	private static URITools uriTools = new URITools();
 
-	
 	protected Set<T2Parser> t2Parsers = null;
 	protected final JAXBContext jaxbContext;
 	private boolean strict = false;
@@ -284,8 +283,10 @@ public class T2FlowParser {
 	}
 
 	private URI makeRavenURI(Raven raven, String className) {
-		return ravenURI.resolve(uriTools.validFilename(raven.getGroup()) + "/" + uriTools.validFilename(raven.getArtifact())
-				+ "/" + uriTools.validFilename(raven.getVersion()) + "/" + uriTools.validFilename(className));
+		return ravenURI.resolve(uriTools.validFilename(raven.getGroup()) + "/"
+				+ uriTools.validFilename(raven.getArtifact()) + "/"
+				+ uriTools.validFilename(raven.getVersion()) + "/"
+				+ uriTools.validFilename(className));
 	}
 
 	private URI mapTypeFromRaven(Raven raven, String activityClass)
@@ -341,8 +342,11 @@ public class T2FlowParser {
 		processorBinding.setBoundActivity(newActivity);
 		processorBinding.setActivityPosition(activityPosition);
 
+		parserState.get().setCurrentConfigurable(newActivity);
+
 		try {
-			parseActivityConfiguration(origActivity.getConfigBean());
+			parseConfiguration(origActivity.getConfigBean(),
+					Configures.activity);
 		} catch (JAXBException e) {
 			if (isStrict()) {
 				throw e;
@@ -354,17 +358,22 @@ public class T2FlowParser {
 		parseActivityInputMap(origActivity.getInputMap());
 		parseActivityOutputMap(origActivity.getOutputMap());
 
+		parserState.get().setCurrentConfigurable(null);
 		parserState.get().setCurrentActivity(null);
 		parserState.get().setCurrentProcessorBinding(null);
 	}
 
-	protected void parseActivityConfiguration(ConfigBean configBean)
-			throws JAXBException, ReaderException {
+	enum Configures {
+		activity, dispatchLayer
+	};
+
+	protected void parseConfiguration(ConfigBean configBean,
+			Configures configures) throws JAXBException, ReaderException {
 
 		Configuration configuration = null;
 		if (parserState.get().getCurrentT2Parser() == null) {
-			String message = "No config parser for activity "
-					+ parserState.get().getCurrentActivity();
+			String message = "No config parser for " + configures
+					+ parserState.get().getCurrentConfigurable();
 			if (isStrict()) {
 				throw new ReaderException(message);
 			}
@@ -382,9 +391,9 @@ public class T2FlowParser {
 		if (configuration == null) {
 			if (isStrict()) {
 				throw new ReaderException("No configuration returned from "
-						+ parserState.get().getCurrentT2Parser()
-						+ " for activity "
-						+ parserState.get().getCurrentActivity());
+						+ parserState.get().getCurrentT2Parser() + " for "
+						+ configures
+						+ parserState.get().getCurrentConfigurable());
 			}
 			// We'll have to fake it
 			configuration = new Configuration();
@@ -402,12 +411,14 @@ public class T2FlowParser {
 			properties.get(fallBackURI).add(literal);
 
 		}
-
-		configuration.setName(parserState.get().getCurrentActivity().getName());
+		if (configures == Configures.activity) {
+			configuration.setName(parserState.get().getCurrentActivity()
+					.getName());
+		}
 		parserState.get().getCurrentProfile().getConfigurations()
 				.addWithUniqueName(configuration);
 		configuration.setParent(parserState.get().getCurrentProfile());
-		configuration.setConfigures(parserState.get().getCurrentActivity());
+		configuration.setConfigures(parserState.get().getCurrentConfigurable());
 	}
 
 	public Unmarshaller getUnmarshaller() {
@@ -421,15 +432,17 @@ public class T2FlowParser {
 				SchemaFactory schemaFactory = SchemaFactory
 						.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
 				List<URI> schemas = getAdditionalSchemas();
-				URL t2flowExtendedXSD = T2FlowParser.class.getResource(
-						T2FLOW_EXTENDED_XSD);
+				URL t2flowExtendedXSD = T2FlowParser.class
+						.getResource(T2FLOW_EXTENDED_XSD);
 				schemas.add(t2flowExtendedXSD.toURI());
-				
+
 				List<Source> schemaSources = new ArrayList<Source>();
 				for (URI schemaUri : schemas) {
-					schemaSources.add(new StreamSource(schemaUri.toASCIIString()));
-				}						
-				Source[] sources = schemaSources.toArray(new Source[schemaSources.size()]);
+					schemaSources.add(new StreamSource(schemaUri
+							.toASCIIString()));
+				}
+				Source[] sources = schemaSources
+						.toArray(new Source[schemaSources.size()]);
 				schema = schemaFactory.newSchema(sources);
 			} catch (SAXException e) {
 				throw new RuntimeException("Can't load schemas", e);
@@ -477,12 +490,14 @@ public class T2FlowParser {
 				}
 			}
 
-			
-			InputActivityPort inputActivityPort = parserState.get().getCurrentActivity().getInputPorts().getByName(toActivityOutput);
+			InputActivityPort inputActivityPort = parserState.get()
+					.getCurrentActivity().getInputPorts()
+					.getByName(toActivityOutput);
 			if (inputActivityPort == null) {
 				inputActivityPort = new InputActivityPort();
 				inputActivityPort.setName(toActivityOutput);
-				inputActivityPort.setParent(parserState.get().getCurrentActivity());
+				inputActivityPort.setParent(parserState.get()
+						.getCurrentActivity());
 				parserState.get().getCurrentActivity().getInputPorts()
 						.add(inputActivityPort);
 			}
@@ -523,11 +538,14 @@ public class T2FlowParser {
 				}
 			}
 
-			OutputActivityPort outputActivityPort = parserState.get().getCurrentActivity().getOutputPorts().getByName(fromActivityOutput);
+			OutputActivityPort outputActivityPort = parserState.get()
+					.getCurrentActivity().getOutputPorts()
+					.getByName(fromActivityOutput);
 			if (outputActivityPort == null) {
 				outputActivityPort = new OutputActivityPort();
 				outputActivityPort.setName(fromActivityOutput);
-				outputActivityPort.setParent(parserState.get().getCurrentActivity());
+				outputActivityPort.setParent(parserState.get()
+						.getCurrentActivity());
 				parserState.get().getCurrentActivity().getOutputPorts()
 						.add(outputActivityPort);
 			}
@@ -536,9 +554,9 @@ public class T2FlowParser {
 				outputActivityPort.setDepth(outputProcessorPort.getDepth());
 			}
 			if (outputActivityPort.getGranularDepth() == null) {
-				outputActivityPort.setGranularDepth(outputProcessorPort.getGranularDepth());
+				outputActivityPort.setGranularDepth(outputProcessorPort
+						.getGranularDepth());
 			}
-
 
 			processorOutputPortBinding.setBoundActivityPort(outputActivityPort);
 			processorOutputPortBinding
@@ -562,22 +580,27 @@ public class T2FlowParser {
 		return wf;
 	}
 
-	private Set<ControlLink> parseControlLinks(Conditions conditions) throws ReaderException {
+	private Set<ControlLink> parseControlLinks(Conditions conditions)
+			throws ReaderException {
 		Set<ControlLink> links = new HashSet<ControlLink>();
 		for (Condition condition : conditions.getCondition()) {
-			NamedSet<Processor> processors = parserState.get().getCurrentWorkflow().getProcessors();
+			NamedSet<Processor> processors = parserState.get()
+					.getCurrentWorkflow().getProcessors();
 			String target = condition.getTarget();
 			Processor block = processors.getByName(target);
 			if (block == null && isStrict()) {
-				throw new ReaderException("Unrecognized blocking processor in control link: " + target);
+				throw new ReaderException(
+						"Unrecognized blocking processor in control link: "
+								+ target);
 			}
 			String control = condition.getControl();
 			Processor untilFinished = processors.getByName(control);
 			if (untilFinished == null && isStrict()) {
-				throw new ReaderException("Unrecognized untilFinished processor in control link: " + control);
+				throw new ReaderException(
+						"Unrecognized untilFinished processor in control link: "
+								+ control);
 			}
 
-			
 			links.add(new BlockingControlLink(block, untilFinished));
 		}
 		return links;
@@ -648,9 +671,19 @@ public class T2FlowParser {
 		URI typeUri = mapTypeFromRaven(dispatchLayer.getRaven(),
 				dispatchLayer.getClazz());
 		dispatchStackLayer.setConfigurableType(typeUri);
+		parserState.get().setCurrentConfigurable(dispatchStackLayer);
+		try {
+			parseConfiguration(dispatchLayer.getConfigBean(),
+					Configures.dispatchLayer);
+		} catch (JAXBException ex) {
+			String message = "Can't parse configuration for dispatch layer in "
+					+ parserState.get().getCurrentProcessor();
+			logger.log(Level.WARNING, message, ex);
+			if (isStrict()) {
+				throw new ReaderException(message, ex);
+			}
 
-		// parseActivityConfiguration(dispatchLayer.getConfigBean());
-
+		}
 		return dispatchStackLayer;
 	}
 
@@ -680,15 +713,17 @@ public class T2FlowParser {
 	}
 
 	protected IterationStrategyStack parseIterationStrategyStack(
-			uk.org.taverna.scufl2.xml.t2flow.jaxb.IterationStrategyStack originalStack) throws ReaderException {
+			uk.org.taverna.scufl2.xml.t2flow.jaxb.IterationStrategyStack originalStack)
+			throws ReaderException {
 		IterationStrategyStack newStack = new IterationStrategyStack();
-		
-		List<TopIterationNode> strategies = originalStack.getIteration().getStrategy();
+
+		List<TopIterationNode> strategies = originalStack.getIteration()
+				.getStrategy();
 		for (TopIterationNode strategy : strategies) {
 			IterationNode topNode = strategy.getCross();
 			if (topNode == null) {
 				topNode = strategy.getDot();
-			}			
+			}
 			if (topNode == null) {
 				continue;
 			}
@@ -697,7 +732,7 @@ public class T2FlowParser {
 				continue;
 			}
 			try {
-				newStack.add((IterationStrategyTopNode)parseIterationStrategyNode(topNode));
+				newStack.add((IterationStrategyTopNode) parseIterationStrategyNode(topNode));
 			} catch (ReaderException e) {
 				logger.warning(e.getMessage());
 				if (isStrict()) {
@@ -705,25 +740,27 @@ public class T2FlowParser {
 				}
 			}
 		}
-		
+
 		return newStack;
 	}
 
-	protected IterationStrategyNode parseIterationStrategyNode(IterationNode topNode) throws ReaderException {
-		if (topNode instanceof PortProduct) {			
+	protected IterationStrategyNode parseIterationStrategyNode(
+			IterationNode topNode) throws ReaderException {
+		if (topNode instanceof PortProduct) {
 			PortProduct portProduct = (PortProduct) topNode;
 			PortNode portNode = new PortNode();
-			portNode.setDesiredDepth(portProduct.getDepth().intValue());			
+			portNode.setDesiredDepth(portProduct.getDepth().intValue());
 			String name = portProduct.getName();
 			Processor processor = parserState.get().getCurrentProcessor();
-			InputProcessorPort inputProcessorPort = processor.getInputPorts().getByName(name);
-			portNode.setInputProcessorPort(inputProcessorPort);			
+			InputProcessorPort inputProcessorPort = processor.getInputPorts()
+					.getByName(name);
+			portNode.setInputProcessorPort(inputProcessorPort);
 			return portNode;
 		}
-		
+
 		IterationStrategyNode node;
 		if (topNode instanceof DotProduct) {
-			node = new uk.org.taverna.scufl2.api.iterationstrategy.DotProduct();			
+			node = new uk.org.taverna.scufl2.api.iterationstrategy.DotProduct();
 		} else if (topNode instanceof CrossProduct) {
 			node = new uk.org.taverna.scufl2.api.iterationstrategy.CrossProduct();
 		} else {
@@ -733,7 +770,7 @@ public class T2FlowParser {
 		IterationNodeParent parent = (IterationNodeParent) topNode;
 		for (IterationNode child : parent.getCrossOrDotOrPort()) {
 			children.add(parseIterationStrategyNode(child));
-		}		
+		}
 		return node;
 	}
 
@@ -838,7 +875,8 @@ public class T2FlowParser {
 				if (df.getRole().equals(Role.TOP)) {
 					wfBundle.setMainWorkflow(workflow);
 					wfBundle.setName(df.getName());
-					wfBundle.setGlobalBaseURI(WorkflowBundle.WORKFLOW_BUNDLE_ROOT.resolve(df.getId() + "/"));
+					wfBundle.setGlobalBaseURI(WorkflowBundle.WORKFLOW_BUNDLE_ROOT
+							.resolve(df.getId() + "/"));
 				}
 			}
 			// Second stage
