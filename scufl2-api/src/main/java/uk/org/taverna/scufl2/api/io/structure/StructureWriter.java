@@ -21,6 +21,7 @@ import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.Named;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.Ported;
+import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.BlockingControlLink;
@@ -45,6 +46,8 @@ import uk.org.taverna.scufl2.api.property.PropertyObject;
 public class StructureWriter implements WorkflowBundleWriter {
 
 	private StringBuffer sb;
+	private URITools uriTools = new URITools();
+
 
 	private void append(Named named) {
 		append(" '");
@@ -213,12 +216,16 @@ public class StructureWriter implements WorkflowBundleWriter {
 				}
 				newLine(3);
 				append("Configures");
-				Named c = (Named) config.getConfigures();
-				// FIXME: Handle activity/dispatchlayer etc. individually
-				String cName = "'" + escapeName(c.getClass().getSimpleName().toLowerCase());
-				cName = cName + "/" + escapeName(c.getName()) + "'";
-				append(" " + cName);
-
+				if (config.getConfigures() instanceof Named) {				
+					Named c = (Named) config.getConfigures();					
+					String cName = "'" + escapeName(c.getClass().getSimpleName().toLowerCase());
+					cName = cName + "/" + escapeName(c.getName()) + "'";
+					append(" " + cName);
+				} else {
+					URI configuredURI = uriTools.relativeUriForBean(config.getConfigures(), p);
+					append(" '" + configuredURI.toASCIIString() + "'");
+				}
+				
 				for (Entry<URI, SortedSet<PropertyObject>> prop : config.getPropertyResource()
 						.getProperties().entrySet()) {
 					newLine(3);
