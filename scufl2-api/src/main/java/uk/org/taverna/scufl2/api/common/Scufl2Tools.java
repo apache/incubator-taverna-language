@@ -1,6 +1,6 @@
-package uk.org.taverna.scufl2.api.common;
-import uk.org.taverna.scufl2.api.property.PropertyException;
+package uk.org.taverna.scufl2.api.common;
 
+import uk.org.taverna.scufl2.api.property.PropertyException;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -18,6 +18,7 @@ import uk.org.taverna.scufl2.api.core.ControlLink;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
+import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
 import uk.org.taverna.scufl2.api.port.ActivityPort;
 import uk.org.taverna.scufl2.api.port.InputPort;
 import uk.org.taverna.scufl2.api.port.OutputPort;
@@ -314,6 +315,21 @@ public class Scufl2Tools {
 			}
 
 		});
+	}
+
+	public DispatchStackLayer dispatchStackByType(Processor processor, URI type) {
+		DispatchStackLayer candidate = null;
+		for (DispatchStackLayer layer : processor.getDispatchStack()) {
+			if (layer.getConfigurableType().equals(type)) {
+				if (candidate != null) {
+					throw new IllegalStateException("Found multiple dispatch stack layers of type "
+							+ type + " in " + processor);
+				}
+				candidate = layer;
+			}
+		}
+		return candidate;
+		
 	}
 
 }

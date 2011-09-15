@@ -1,9 +1,12 @@
 package uk.org.taverna.scufl2.api.common;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.net.URI;
 import java.util.Collections;
 
 import org.junit.Test;
@@ -13,6 +16,7 @@ import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.ControlLink;
 import uk.org.taverna.scufl2.api.core.Processor;
+import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
 import uk.org.taverna.scufl2.api.port.OutputActivityPort;
@@ -112,4 +116,18 @@ public class TestScufl2Tools {
 				scufl2Tools.processorPortBindingForPort(port, profile));
 	}
 
+	@Test
+	public void dispatchStackForType() throws Exception {
+		Processor hello = wfBundle.getMainWorkflow().getProcessors()
+				.getByName("Hello");
+		assertTrue("Need at least one layer", 
+				! hello.getDispatchStack().isEmpty());
+		for (DispatchStackLayer layer : hello.getDispatchStack()) {
+			URI type = layer.getConfigurableType();
+			assertNotNull(type);
+			assertSame(layer, scufl2Tools.dispatchStackByType(hello, type));
+		}
+		assertNull(scufl2Tools.dispatchStackByType(hello, URI.create("http://example.com/unknown")));
+	}
+	
 }
