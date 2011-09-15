@@ -17,6 +17,7 @@ import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
 import uk.org.taverna.scufl2.api.profiles.Profile;
+import uk.org.taverna.scufl2.translator.t2flow.defaultdispatchstack.RetryParser.Defaults;
 
 public class TestDispatchLayerParsing {
 
@@ -52,7 +53,14 @@ public class TestDispatchLayerParsing {
 		DispatchStackLayer retry = scufl2Tools.dispatchStackByType(alternates, RETRY);
 		Configuration retryConfig = scufl2Tools.configurationFor(retry, profile);
 		assertEquals(RETRY.resolve("#Config"), retryConfig.getConfigurableType());
-		assertTrue(retryConfig.getPropertyResource().getProperties().isEmpty());		
+		//assertTrue(retryConfig.getPropertyResource().getProperties().isEmpty());		
+		
+		assertEquals(Defaults.MAX_RETRIES, retryConfig.getPropertyResource().getPropertyAsLiteral(RETRY.resolve("#maxRetries")).getLiteralValueAsInt());
+		assertEquals(Defaults.INITIAL_DELAY, retryConfig.getPropertyResource().getPropertyAsLiteral(RETRY.resolve("#initialDelay")).getLiteralValueAsInt());
+		assertEquals(Defaults.MAX_DELAY, retryConfig.getPropertyResource().getPropertyAsLiteral(RETRY.resolve("#maxDelay")).getLiteralValueAsInt());
+		assertEquals(Defaults.BACKOFF_FACTOR, retryConfig.getPropertyResource().getPropertyAsLiteral(RETRY.resolve("#backoffFactor")).getLiteralValueAsDouble(), 0.001);
+		
+		
 	}
 	
 	@Test
