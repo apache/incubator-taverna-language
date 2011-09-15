@@ -8,12 +8,15 @@ import uk.org.taverna.scufl2.api.common.Typed;
 import uk.org.taverna.scufl2.api.common.Visitor;
 
 /**
- * A <code>DispatchStackLayer</code> adds functionality to a <code>DispatchStack</code>.
+ * A <code>DispatchStackLayer</code> adds functionality to a
+ * <code>DispatchStack</code>.
  * <p>
- * e.g. a retry layer (of type http://ns.taverna.org.uk/2010/scufl2/taverna#Failover) adds the
- * functionality to retry an Activity if an invocation fails.
+ * e.g. a retry layer (of type
+ * http://ns.taverna.org.uk/2010/scufl2/taverna#Failover) adds the functionality
+ * to retry an Activity if an invocation fails.
  */
-public class DispatchStackLayer implements Typed, Child<DispatchStack>, Configurable {
+public class DispatchStackLayer implements Typed, Child<DispatchStack>,
+		Configurable {
 
 	private DispatchStack parent;
 	private URI configurableType;
@@ -25,11 +28,12 @@ public class DispatchStackLayer implements Typed, Child<DispatchStack>, Configur
 	}
 
 	/**
-	 * Constructs a <code>DispatchStackLayer</code> for the specified <code>DispatchStack</code>
-	 * with the specified type.
+	 * Constructs a <code>DispatchStackLayer</code> for the specified
+	 * <code>DispatchStack</code> with the specified type.
 	 * 
 	 * @param parent
-	 *            the <code>DispatchStack</code> to add the <code>DispatchStackLayer</code> to
+	 *            the <code>DispatchStack</code> to add the
+	 *            <code>DispatchStackLayer</code> to
 	 * @param configurableType
 	 *            the type of the <code>DispatchStackLayer</code>
 	 */
@@ -83,4 +87,21 @@ public class DispatchStackLayer implements Typed, Child<DispatchStack>, Configur
 		}
 	}
 
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer("DispatchStackLayer");
+		if (getConfigurableType() != null) {
+			sb.append(" ");
+			sb.append(getConfigurableType());
+		}
+		if (getParent() != null && getParent().getParent() != null) {
+			int index = getParent().indexOf(this);
+			sb.append(" #");
+			sb.append(index);
+			sb.append(" in ");
+			sb.append(getParent().getParent());
+		}
+		return sb.toString();
+	}
+	
 }
