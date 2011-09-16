@@ -5,6 +5,9 @@ import static org.junit.Assert.assertNotNull;
 
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +47,22 @@ public class TestDispatchLayerParsing {
 		profile = wfBundle.getMainProfile();
 		workflow = wfBundle.getMainWorkflow();
 		processors = workflow.getProcessors();
+	}
+	
+
+	@Test
+	public void whichLayers() throws Exception {
+		Processor parallelise = processors.getByName("retries");
+		URI RETRY = DISPATCH_LAYER.resolve("Retry");
+		// As inspected in /scufl2-t2flow/src/test/resources/dispatchlayers-xsd.t2flow
+		List<String> expectedNames = Arrays.asList("Parallelize", "ErrorBounce", "Failover", "Retry", "Invoke");
+		List<String> foundNames = new ArrayList<String>();
+		
+		for (DispatchStackLayer layer : parallelise.getDispatchStack()) {
+			URI type = layer.getConfigurableType();
+			foundNames.add(DISPATCH_LAYER.relativize(type).toASCIIString());
+		}		
+		assertEquals(expectedNames, foundNames);
 	}
 	
 	@Test
