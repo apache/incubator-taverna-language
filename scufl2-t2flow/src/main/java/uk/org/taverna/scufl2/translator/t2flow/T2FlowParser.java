@@ -423,11 +423,16 @@ public class T2FlowParser {
 		if (configures == Configures.activity) {
 			configuration.setName(parserState.get().getCurrentActivity()
 					.getName());
+		} else {
+			DispatchStackLayer layer = (DispatchStackLayer) parserState.get().getCurrentConfigurable();
+			configuration.setName(parserState.get().getCurrentProcessor().getName() +
+					"-dispatch-" + parserState.get().getCurrentDispatchStack().size());
+
 		}
 		parserState.get().getCurrentProfile().getConfigurations()
 				.addWithUniqueName(configuration);
-		configuration.setParent(parserState.get().getCurrentProfile());
 		configuration.setConfigures(parserState.get().getCurrentConfigurable());
+		parserState.get().getCurrentProfile().getConfigurations().addWithUniqueName(configuration);
 	}
 
 	public Unmarshaller getUnmarshaller() {
@@ -666,10 +671,14 @@ public class T2FlowParser {
 	protected uk.org.taverna.scufl2.api.dispatchstack.DispatchStack parseDispatchStack(
 			DispatchStack dispatchStack) throws ReaderException {
 		uk.org.taverna.scufl2.api.dispatchstack.DispatchStack newStack = new uk.org.taverna.scufl2.api.dispatchstack.DispatchStack();
-
-		for (DispatchLayer dispatchLayer : dispatchStack.getDispatchLayer()) {
-			DispatchStackLayer layer = parseDispatchStack(dispatchLayer);
-			newStack.add(layer);
+		parserState.get().setCurrentDispatchStack(newStack);
+		try { 
+			for (DispatchLayer dispatchLayer : dispatchStack.getDispatchLayer()) {
+				DispatchStackLayer layer = parseDispatchStack(dispatchLayer);
+				newStack.add(layer);
+			}
+		} finally {
+			parserState.get().setCurrentDispatchStack(null);
 		}
 		return newStack;
 	}
