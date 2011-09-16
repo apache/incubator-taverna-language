@@ -128,7 +128,7 @@ public class TestPropertyParsing {
 		profile = bundle.getProfiles().getByName("taverna-2.2.0");
 		assertNotNull(profile);
 	}
-
+	
 	@Test
 	public void xmlOutput() throws Exception {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -138,6 +138,9 @@ public class TestPropertyParsing {
 
 		String expectedProfile = IOUtils.toString(profileUrl.openStream(),
 				"UTF-8");
+		// Namespaces seems to come in random order depending on which Java you run..
+		expectedProfile = expectedProfile.replaceAll("xmlns[^>]*>", "");		
+		profileStr = profileStr.replaceAll("xmlns[^>]*>", "");
 		assertEquals(expectedProfile, profileStr);
 		// System.out.println(profileStr);
 
