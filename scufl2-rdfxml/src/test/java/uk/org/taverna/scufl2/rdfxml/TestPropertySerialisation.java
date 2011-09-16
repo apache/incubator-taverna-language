@@ -170,7 +170,7 @@ public class TestPropertySerialisation {
 		assertEquals("Collection", elem.getAttributeNS(
 				PropertyResourceSerialiser.RDF, "parseType"));
 		assertEquals(1, elem.getAttributes().getLength());
-		System.out.println(elem.getChildNodes().item(0).getNodeName());
+//		System.out.println(elem.getChildNodes().item(0).getNodeName());
 		assertEquals(3, elem.getChildNodes().getLength());
 
 	}
