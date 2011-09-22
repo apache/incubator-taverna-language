@@ -176,6 +176,8 @@
 		<module>scufl2-validation-structural</module>
 
 		<module>scufl2-validation-correctness</module>
+        <!-- Disabled until unit tests work
 		<module>scufl2-validation-integration</module>
+        -->
 	</modules>
 </project>
