@@ -184,7 +184,7 @@ public abstract class AbstractActivityParser implements T2Parser {
 		// FIXME: Do as annotation as this is not configuration
 		URI mimeType = Scufl2Tools.PORT_DEFINITION.resolve("#expectedMimeType");
 		List<String> strings = mimeTypes.getString();
-		if (strings == null && mimeTypes.getElement() != null) {
+		if ((strings == null || strings.isEmpty()) && mimeTypes.getElement() != null) {
 			strings = Arrays.asList(mimeTypes.getElement().getValue());
 		} 
 		if (strings != null) { 
