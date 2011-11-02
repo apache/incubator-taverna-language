@@ -37,12 +37,12 @@ public class RESTActivityParser extends AbstractActivityParser {
 	private static URI ravenUIURI = T2FlowParser.ravenURI
 			.resolve("net.sf.taverna.t2.ui-activities/rest-activity/");
 
-	
+
 	private static String className = "net.sf.taverna.t2.activities.rest.RESTActivity";
 
 	public static URI ACTIVITY_URI = URI
 			.create("http://ns.taverna.org.uk/2010/activity/rest");
-	
+
 	public static URI HTTP_URI = URI.create("http://www.w3.org/2011/http#");
 	public static URI HTTP_HEADERS_URI = URI.create("http://www.w3.org/2011/http-headers#");
 	public static URI HTTP_METHODS_URI = URI.create("http://www.w3.org/2011/http-methods#");
@@ -51,14 +51,14 @@ public class RESTActivityParser extends AbstractActivityParser {
 	@Override
 	public boolean canHandlePlugin(URI activityURI) {
 		String activityUriStr = activityURI.toASCIIString();
-		return ( activityUriStr.startsWith(ravenURI.toASCIIString()) || 
-				 activityUriStr.startsWith(ravenUIURI.toASCIIString()) ) 
+		return ( activityUriStr.startsWith(ravenURI.toASCIIString()) ||
+				 activityUriStr.startsWith(ravenUIURI.toASCIIString()) )
 				&& activityUriStr.endsWith(className);
 	}
 
 	@Override
 	public List<URI> getAdditionalSchemas() {
-		URL restXsd = RESTActivityParser.class.getResource(ACTIVITY_XSD);		
+		URL restXsd = RESTActivityParser.class.getResource(ACTIVITY_XSD);
 		try {
 			return Arrays.asList(restXsd.toURI());
 		} catch (Exception e) {
@@ -81,7 +81,7 @@ public class RESTActivityParser extends AbstractActivityParser {
 
 		RESTConfig restConfig = unmarshallConfig(t2FlowParser, configBean,
 					"xstream", RESTConfig.class);
-	
+
 		Configuration configuration = new Configuration();
 		configuration.setParent(parserState.getCurrentProfile());
 		parserState.setCurrentConfiguration(configuration);
@@ -90,17 +90,17 @@ public class RESTActivityParser extends AbstractActivityParser {
 					.getPropertyResource();
 			configResource.setTypeURI(ACTIVITY_URI.resolve("#Config"));
 
-			PropertyResource request = configResource.addPropertyAsNewResource(ACTIVITY_URI.resolve("#request"), 
+			PropertyResource request = configResource.addPropertyAsNewResource(ACTIVITY_URI.resolve("#request"),
 					ACTIVITY_URI.resolve("#Request"));
-						
+
 			URI method = HTTP_METHODS_URI.resolve("#" + restConfig.getHttpMethod().toUpperCase());
 			request.addPropertyReference(HTTP_URI.resolve("#mthd"), method);
-			
+
 			request.addPropertyAsString(ACTIVITY_URI.resolve("#absoluteURITemplate"), restConfig.getUrlSignature());
 
 			PropertyList headers = new PropertyList();
 			request.addProperty(HTTP_URI.resolve("#headers"), headers);
-			
+
 			if (restConfig.getAcceptsHeaderValue() != null && ! restConfig.getAcceptsHeaderValue().isEmpty()) {
 				PropertyResource accept = new PropertyResource();
 				accept.setTypeURI(HTTP_URI.resolve("#RequestHeader"));
@@ -109,7 +109,7 @@ public class RESTActivityParser extends AbstractActivityParser {
 				//accept.addPropertyReference(HTTP_URI.resolve("#hdrName"), HTTP_METHODS_URI.resolve("#accept"));
 				headers.add(accept);
 			}
-			if (hasContent(method)) {				
+			if (hasContent(method)) {
 				if (restConfig.getContentTypeForUpdates() != null && ! restConfig.getContentTypeForUpdates().isEmpty()) {
 					PropertyResource contentType = new PropertyResource();
 					contentType.setTypeURI(HTTP_URI.resolve("#RequestHeader"));
@@ -117,7 +117,7 @@ public class RESTActivityParser extends AbstractActivityParser {
 					contentType.addPropertyAsString(HTTP_URI.resolve("#fieldValue"), restConfig.getContentTypeForUpdates());
 					//accept.addPropertyReference(HTTP_URI.resolve("#hdrName"), HTTP_METHODS_URI.resolve("#content-type"));
 					headers.add(contentType);
-				} 
+				}
 				if (restConfig.isSendHTTPExpectRequestHeader()) {
 					PropertyResource expect = new PropertyResource();
 					expect.setTypeURI(HTTP_URI.resolve("#RequestHeader"));
@@ -131,7 +131,7 @@ public class RESTActivityParser extends AbstractActivityParser {
 				for (HTTPHeaders.List list : restConfig.getOtherHTTPHeaders().getList()) {
 					String fieldName = list.getContent().get(0).getValue();
 					String fieldValue = list.getContent().get(1).getValue();
-					
+
 					PropertyResource header = new PropertyResource();
 					header.setTypeURI(HTTP_URI.resolve("#RequestHeader"));
 					header.addPropertyAsString(HTTP_URI.resolve("#fieldName"), fieldName);
@@ -146,80 +146,83 @@ public class RESTActivityParser extends AbstractActivityParser {
 				// Default: true
 				configResource.addProperty(ACTIVITY_URI.resolve("#escapeParameters"), new PropertyLiteral(false));
 			}
-			
+			if (restConfig.getOutgoingDataFormat() != null) {
+				configResource.addProperty(ACTIVITY_URI.resolve("#outgoingDataFormat"), new PropertyLiteral(restConfig.getOutgoingDataFormat()));
+			}
+
 			// Ports
-			
-			Activity currentActivity = parserState.getCurrentActivity();
-			if (restConfig.getActivityInputs() != null && restConfig.getActivityInputs().getEntry() != null) {
-				for (Entry entry : restConfig.getActivityInputs().getEntry()) {
-					String portName = entry.getString();
-					// Ignored, URL parameters have to be strings
-					//String className = entry.getJavaClass();
-					
-					InputActivityPort inputPort = new InputActivityPort(currentActivity, portName);
-					inputPort.setDepth(0);
-					
-					
-					PropertyResource portConfig = configResource.addPropertyAsNewResource(
-							Scufl2Tools.PORT_DEFINITION.resolve("#inputPortDefinition"),
-							Scufl2Tools.PORT_DEFINITION.resolve("#InputPortDefinition"));
 
-					URI portUri = new URITools().relativeUriForBean(inputPort, configuration);
-					portConfig.addPropertyReference(Scufl2Tools.PORT_DEFINITION.resolve("#definesInputPort"), portUri);
-					portConfig.addPropertyReference(Scufl2Tools.PORT_DEFINITION.resolve("#dataType"),
-							PropertyLiteral.XSD_STRING);										
-				}
-			}
-			if (hasContent(method)) {
-				InputActivityPort inputPort = new InputActivityPort(currentActivity, IN_BODY);
-				inputPort.setDepth(0);
-				
-				// FIXME: Is this really an #inputPortDefinition? It's not specified
-				// by the user - it's a consequence of the method choice. But if we don't do 
-				// this, then we'll have to specify the binary/string option elsewhere.
-				PropertyResource portConfig = configResource.addPropertyAsNewResource(
-						Scufl2Tools.PORT_DEFINITION.resolve("#inputPortDefinition"),
-						Scufl2Tools.PORT_DEFINITION.resolve("#InputPortDefinition"));
+//			Activity currentActivity = parserState.getCurrentActivity();
+//			if (restConfig.getActivityInputs() != null && restConfig.getActivityInputs().getEntry() != null) {
+//				for (Entry entry : restConfig.getActivityInputs().getEntry()) {
+//					String portName = entry.getString();
+//					// Ignored, URL parameters have to be strings
+//					//String className = entry.getJavaClass();
+//
+//					InputActivityPort inputPort = new InputActivityPort(currentActivity, portName);
+//					inputPort.setDepth(0);
+//
+//
+//					PropertyResource portConfig = configResource.addPropertyAsNewResource(
+//							Scufl2Tools.PORT_DEFINITION.resolve("#inputPortDefinition"),
+//							Scufl2Tools.PORT_DEFINITION.resolve("#InputPortDefinition"));
+//
+//					URI portUri = new URITools().relativeUriForBean(inputPort, configuration);
+//					portConfig.addPropertyReference(Scufl2Tools.PORT_DEFINITION.resolve("#definesInputPort"), portUri);
+//					portConfig.addPropertyReference(Scufl2Tools.PORT_DEFINITION.resolve("#dataType"),
+//							PropertyLiteral.XSD_STRING);
+//				}
+//			}
+//			if (hasContent(method)) {
+//				InputActivityPort inputPort = new InputActivityPort(currentActivity, IN_BODY);
+//				inputPort.setDepth(0);
+//
+//				// FIXME: Is this really an #inputPortDefinition? It's not specified
+//				// by the user - it's a consequence of the method choice. But if we don't do
+//				// this, then we'll have to specify the binary/string option elsewhere.
+//				PropertyResource portConfig = configResource.addPropertyAsNewResource(
+//						Scufl2Tools.PORT_DEFINITION.resolve("#inputPortDefinition"),
+//						Scufl2Tools.PORT_DEFINITION.resolve("#InputPortDefinition"));
+//
+//				URI portUri = new URITools().relativeUriForBean(inputPort, configuration);
+//				portConfig.addPropertyReference(Scufl2Tools.PORT_DEFINITION.resolve("#definesInputPort"), portUri);
+//
+//				URI dataType = PropertyLiteral.XSD_STRING;
+//				if (restConfig.getOutgoingDataFormat().equalsIgnoreCase("binary")) {
+//					dataType = Scufl2Tools.PORT_DEFINITION.resolve("#binary");
+//				}
+//				portConfig.addPropertyReference(Scufl2Tools.PORT_DEFINITION.resolve("#dataType"),
+//						dataType);
+//			}
+//
+//			OutputActivityPort responseBody = new OutputActivityPort(currentActivity, OUT_RESPONSE_BODY);
+//			responseBody.setDepth(0);
+//			OutputActivityPort status = new OutputActivityPort(currentActivity, OUT_STATUS);
+//			status.setDepth(0);
+//
+//			if (restConfig.isShowRedirectionOutputPort()) {
+//				OutputActivityPort redirection = new OutputActivityPort(currentActivity, OUT_REDIRECTION);
+//				redirection.setDepth(0);
+//			}
 
-				URI portUri = new URITools().relativeUriForBean(inputPort, configuration);
-				portConfig.addPropertyReference(Scufl2Tools.PORT_DEFINITION.resolve("#definesInputPort"), portUri);
-				
-				URI dataType = PropertyLiteral.XSD_STRING;
-				if (restConfig.getOutgoingDataFormat().equalsIgnoreCase("binary")) {
-					dataType = Scufl2Tools.PORT_DEFINITION.resolve("#binary");
-				}						
-				portConfig.addPropertyReference(Scufl2Tools.PORT_DEFINITION.resolve("#dataType"),
-						dataType);
-			}
-			
-			OutputActivityPort responseBody = new OutputActivityPort(currentActivity, OUT_RESPONSE_BODY);
-			responseBody.setDepth(0);
-			OutputActivityPort status = new OutputActivityPort(currentActivity, OUT_STATUS);
-			status.setDepth(0);
-			
-			if (restConfig.isShowRedirectionOutputPort()) {
-				OutputActivityPort redirection = new OutputActivityPort(currentActivity, OUT_REDIRECTION);
-				redirection.setDepth(0);									
-			}
-			
-			
+
 			return configuration;
 		} finally {
 			parserState.setCurrentConfiguration(null);
 		}
 	}
-	
+
 	private static final String IN_BODY = "inputBody";
 	private static final String OUT_RESPONSE_BODY = "responseBody";
 	private static final String OUT_STATUS = "status";
 	private static final String OUT_REDIRECTION = "redirection";
 
 	private boolean hasContent(URI method) {
-		if (! (method.resolve("#").equals(HTTP_METHODS_URI))) { 
+		if (! (method.resolve("#").equals(HTTP_METHODS_URI))) {
 			throw new IllegalArgumentException("Only standard HTTP methods from " +
 					HTTP_METHODS_URI + " are supported");
 		}
-		String methodName = method.getFragment();		
+		String methodName = method.getFragment();
 		if (Arrays.asList("GET", "HEAD", "DELETE", "CONNECT").contains(methodName)) {
 			return false;
 		}
