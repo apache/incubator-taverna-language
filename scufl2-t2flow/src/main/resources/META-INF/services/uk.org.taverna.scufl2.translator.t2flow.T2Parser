@@ -12,6 +12,7 @@ uk.org.taverna.scufl2.translator.t2flow.defaultactivities.ApiConsomerActivityPar
 
 uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser
 uk.org.taverna.scufl2.translator.t2flow.t23activities.RESTActivityParser
+uk.org.taverna.scufl2.translator.t2flow.t23activities.XPathActivityParser
 
 uk.org.taverna.scufl2.translator.t2flow.defaultdispatchstack.ParallelizeParser
 uk.org.taverna.scufl2.translator.t2flow.defaultdispatchstack.ErrorBounceParser
