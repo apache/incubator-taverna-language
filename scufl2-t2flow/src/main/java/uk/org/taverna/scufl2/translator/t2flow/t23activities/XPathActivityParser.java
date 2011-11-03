@@ -30,7 +30,7 @@ public class XPathActivityParser extends AbstractActivityParser {
 			.create("http://ns.taverna.org.uk/2010/activity/xpath");
 
 	public static URI NAMESPACE_MAPPING_URI = URI
-			.create("http://ns.taverna.org.uk/2010/activity/spreadsheet-import/NamespaceMapping");
+			.create("http://ns.taverna.org.uk/2010/activity/xpath/NamespaceMapping");
 
 	@Override
 	public boolean canHandlePlugin(URI activityURI) {
