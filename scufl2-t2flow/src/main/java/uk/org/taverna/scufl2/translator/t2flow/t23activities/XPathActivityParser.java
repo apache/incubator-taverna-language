@@ -7,7 +7,6 @@ import java.util.List;
 
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
-import uk.org.taverna.scufl2.api.property.PropertyList;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
@@ -25,10 +24,13 @@ public class XPathActivityParser extends AbstractActivityParser {
 	private static URI ravenUIURI = T2FlowParser.ravenURI
 			.resolve("net.sf.taverna.t2.ui-activities/xpath-activity/");
 
-	private static String className = "net.sf.taverna.t2.activities.rest.XPathActivity";
+	private static String className = "net.sf.taverna.t2.activities.xpath.XPathActivity";
 
 	public static URI ACTIVITY_URI = URI
 			.create("http://ns.taverna.org.uk/2010/activity/xpath");
+
+	public static URI NAMESPACE_MAPPING_URI = URI
+			.create("http://ns.taverna.org.uk/2010/activity/spreadsheet-import/NamespaceMapping");
 
 	@Override
 	public boolean canHandlePlugin(URI activityURI) {
@@ -65,6 +67,7 @@ public class XPathActivityParser extends AbstractActivityParser {
 		Configuration configuration = new Configuration();
 		configuration.setParent(parserState.getCurrentProfile());
 		parserState.setCurrentConfiguration(configuration);
+
 		try {
 
 			PropertyResource configResource = configuration
@@ -79,24 +82,16 @@ public class XPathActivityParser extends AbstractActivityParser {
 			configResource.addPropertyAsString(
 					ACTIVITY_URI.resolve("#xpathExpression"), xpathExpression);
 
-			PropertyList xpathNamespaceMap = new PropertyList();
-			configResource.addProperty(ACTIVITY_URI.resolve("#xpathNamespaceMap"),
-					xpathNamespaceMap);
-			for (uk.org.taverna.scufl2.xml.t2flow.jaxb.XpathNamespaceMap.List list : xpathConfig
+			for (uk.org.taverna.scufl2.xml.t2flow.jaxb.XPathNamespaceMap.List list : xpathConfig
 					.getXpathNamespaceMap().getList()) {
 
 				String namespacePrefix = list.getContent().get(0).getValue();
 				String namespaceURI = list.getContent().get(1).getValue();
-				
-				PropertyResource namespaceMapping = new PropertyResource();
-				namespaceMapping.setTypeURI(ACTIVITY_URI.resolve("#xpathNamespaceMap"));
-				// Not sure what to use as URI here!!!
-				namespaceMapping.addPropertyAsString(
-						ACTIVITY_URI.resolve("#prefix"), namespacePrefix);
-				// Not sure what to use as URI here!!!
-				namespaceMapping.addPropertyAsString(
-						ACTIVITY_URI.resolve("#uri"), namespaceURI);
-				xpathNamespaceMap.add(namespaceMapping);
+
+				PropertyResource namespaceMapping = configResource.addPropertyAsNewResource(
+						ACTIVITY_URI.resolve("#xpathNamespaceMap"), NAMESPACE_MAPPING_URI);
+				namespaceMapping.addPropertyAsString(NAMESPACE_MAPPING_URI.resolve("#prefix"), namespacePrefix);
+				namespaceMapping.addPropertyReference(NAMESPACE_MAPPING_URI.resolve("#uri"), URI.create(namespaceURI));
 			}
 
 		} finally {
