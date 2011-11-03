@@ -9,7 +9,7 @@
 	<xsd:annotation>
 		<xsd:appinfo>
 			<!-- See http://docs.rakeshv.org/java/jaxb/users-guide/jaxb-custom.html -->
-			
+
 			<jxb:schemaBindings>
 				<jxb:package name="uk.org.taverna.scufl2.xml.t2flow.jaxb" />
 			</jxb:schemaBindings>
@@ -29,7 +29,7 @@
 	</xsd:complexType>
 	<xsd:complexType name="ApiConsumerConfig">
 		<xsd:sequence>
-		
+
 			<xsd:element name="apiConsumerName" type="xsd:string" />
 			<xsd:element name="apiConsumerDescription" type="xsd:string" />
 			<xsd:element name="description" type="xsd:string" />
@@ -113,7 +113,7 @@
 		</xsd:all>
 	</xsd:complexType>
 	<xsd:complexType name="RShellConnection">
-		<xsd:sequence>		
+		<xsd:sequence>
 			<xsd:element name="host" type="xsd:string" />
 			<xsd:element name="port" type="xsd:unsignedShort" />
 			<xsd:element name="username" type="xsd:string" minOccurs="0"/>
@@ -126,15 +126,15 @@
 	<xsd:sequence>
 		<xsd:element
 			name="net.sf.taverna.t2.activities.rshell.RShellPortSymanticTypeBean" minOccurs="0" maxOccurs="unbounded">
-			
+
 			<xsd:complexType>
 			<xsd:annotation>
-				<xsd:appinfo>					
+				<xsd:appinfo>
 					<jxb:class name="RShellPortSymanticTypeBean" />
 				</xsd:appinfo>
-			</xsd:annotation>			
+			</xsd:annotation>
 				<xsd:sequence>
-			
+
 					<xsd:element name="name" type="xsd:string" />
 					<xsd:element name="symanticType">
 						<xsd:complexType>
@@ -152,7 +152,7 @@
 	</xsd:sequence>
 </xsd:complexType>
 
-	
+
 	<xsd:complexType name="WSDLConfig">
 		<xsd:annotation>
 			<xsd:documentation>Configuration for the WSDL activity.
@@ -329,7 +329,7 @@
 	<xsd:simpleType name="OutputFormat">
 		<xsd:restriction base="xsd:string">
 			<xsd:enumeration value="PORT_PER_COLUMN"></xsd:enumeration>
-			<xsd:enumeration value=" SINGLE_PORT"></xsd:enumeration>
+			<xsd:enumeration value="SINGLE_PORT"></xsd:enumeration>
 		</xsd:restriction>
 	</xsd:simpleType>
 
@@ -352,8 +352,8 @@
 
 	<xsd:complexType name="SpreadsheetRange">
 		<xsd:sequence>
-			<xsd:element name="start" type="xsd:string" />
-			<xsd:element name="end" type="xsd:string" />
+			<xsd:element name="start" type="xsd:nonNegativeInteger" />
+			<xsd:element name="end" type="xsd:nonNegativeInteger" />
 			<xsd:element name="excludes" type="activities:SpreadsheetExcludes" />
 		</xsd:sequence>
 	</xsd:complexType>
@@ -429,7 +429,7 @@
 			<xsd:element
 				name="net.sf.taverna.t2.workflowmodel.processor.activity.config.ActivityInputPortDefinitionBean"
 				minOccurs="0" maxOccurs="unbounded" type="activities:ActivityPortDefinitionBean">
-			</xsd:element>				
+			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
 	<xsd:complexType name="ActivityPortDefinitionBean">
@@ -441,7 +441,7 @@
 	trying to model this using xsd:any, xsd:groups and xsd:choice, I just
 	went for an unbounded xsd:choice. Users will have to deal with the following
 	additional constaints:
-    
+
 	These elements are required, maximum 1 occurance: name, depth
 
 	These can occur 0..unbounded times:
@@ -449,7 +449,7 @@
 
 	The rest are optional, but must maximally appear once.
 
-			</xsd:documentation>			
+			</xsd:documentation>
 		</xsd:annotation>
 
 		<xsd:element name="handledReferenceSchemes" type="xsd:string"/>
