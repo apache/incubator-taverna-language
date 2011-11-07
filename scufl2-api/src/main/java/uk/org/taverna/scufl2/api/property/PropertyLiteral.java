@@ -102,7 +102,35 @@ public class PropertyLiteral implements PropertyObject {
 	public static URI XML_LITERAL = URI
 	.create("http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral");
 
+	private static DocumentBuilderFactory documentBuilderFactory;
+
+	private static TransformerFactory transformerFactory;
+
 	private static DocumentBuilder docBuilder;
+
+	private static Transformer transformer;
+
+	public static DocumentBuilderFactory getDocumentBuilderFactory() {
+		if (documentBuilderFactory == null) {
+			documentBuilderFactory = DocumentBuilderFactory.newInstance();
+		}
+		return documentBuilderFactory;
+	}
+
+	public void setDocumentBuilderFactory(DocumentBuilderFactory documentBuilderFactory) {
+		PropertyLiteral.documentBuilderFactory = documentBuilderFactory;
+	}
+
+	public static TransformerFactory getTransformerFactory() {
+		if (transformerFactory == null) {
+			transformerFactory = TransformerFactory.newInstance();
+		}
+		return transformerFactory;
+	}
+
+	public void setTransformerFactory(TransformerFactory transformerFactory) {
+		PropertyLiteral.transformerFactory = transformerFactory;
+	}
 
 	protected static DocumentBuilder getDocumentBuilder() {
 		if (docBuilder == null) {
@@ -110,8 +138,9 @@ public class PropertyLiteral implements PropertyObject {
 				if (docBuilder != null) {
 					return docBuilder;
 				}
-				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+				DocumentBuilderFactory factory = getDocumentBuilderFactory();
 				factory.setNamespaceAware(true);
+				factory.setValidating(false);
 				try {
 					docBuilder = factory.newDocumentBuilder();
 				} catch (ParserConfigurationException e) {
@@ -120,6 +149,23 @@ public class PropertyLiteral implements PropertyObject {
 			}
 		}
 		return docBuilder;
+	}
+
+	protected static Transformer getTransformer() {
+		if (transformer == null) {
+			synchronized (PropertyLiteral.class) {
+				if (transformer != null) {
+					return transformer;
+				}
+				TransformerFactory tFactory = getTransformerFactory();
+				try {
+					transformer = tFactory.newTransformer();
+				} catch (TransformerConfigurationException e1) {
+					throw new IllegalStateException("Can't find transformer to write XML", e1);
+				}
+			}
+		}
+		return transformer;
 	}
 
 	private String literalValue = "";
@@ -186,13 +232,7 @@ public class PropertyLiteral implements PropertyObject {
 		// }
 		// doc.importNode(element, true);
 
-		TransformerFactory tFactory = TransformerFactory.newInstance();
-		Transformer transformer;
-		try {
-			transformer = tFactory.newTransformer();
-		} catch (TransformerConfigurationException e1) {
-			throw new IllegalStateException("Can't find transformer to write XML", e1);
-		}
+		Transformer transformer = getTransformer();
 		CharArrayWriter writer = new CharArrayWriter();
 		try {
 			transformer.transform(new DOMSource(element), new StreamResult(writer));
