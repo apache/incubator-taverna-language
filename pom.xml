@@ -5,27 +5,25 @@
 		<groupId>net.sf.taverna</groupId>
 		<artifactId>taverna-parent</artifactId>
 		<version>3.0-SNAPSHOT</version>
-		<relativePath>../../taverna-parent/pom.xml</relativePath>
 	</parent>
-
 	<groupId>net.sf.taverna.t2</groupId>
 	<artifactId>baclava</artifactId>
 	<version>0.1-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 	<name>Baclava format/files handling utilities</name>
 	<description>Utilities for handling Baclava format used for saving input data and results of workflow runs</description>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.jdom</groupId>
-			<artifactId>jdom</artifactId>
-			<version>${jdom.version}</version>
+			<artifactId>com.springsource.org.jdom</artifactId>
+			<version>1.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.log4j</groupId>
 			<artifactId>com.springsource.org.apache.log4j</artifactId>
 			<version>1.2.16</version>
 		</dependency>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -33,4 +31,24 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<repositories>
+		<repository>
+			<releases />
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>mygrid-repository</id>
+			<name>myGrid Repository</name>
+			<url>http://www.mygrid.org.uk/maven/repository</url>
+		</repository>
+		<repository>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots />
+			<id>mygrid-snapshot-repository</id>
+			<name>myGrid Snapshot Repository</name>
+			<url>http://www.mygrid.org.uk/maven/snapshot-repository</url>
+		</repository>
+	</repositories>
 </project>
