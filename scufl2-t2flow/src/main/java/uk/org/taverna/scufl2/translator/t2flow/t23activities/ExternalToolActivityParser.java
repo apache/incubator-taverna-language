@@ -110,115 +110,90 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 	private static URITools uriTools = new URITools();
 
 	@Override
-	public Configuration parseConfiguration(T2FlowParser t2FlowParser,
-			ConfigBean configBean, ParserState parserState) throws ReaderException {
+	public Configuration parseConfiguration(T2FlowParser t2FlowParser, ConfigBean configBean,
+			ParserState parserState) throws ReaderException {
 
 		ExternalToolConfig externalToolConfig = null;
 		UsecaseConfig usecaseConfig = null;
 
 		try {
-			externalToolConfig = unmarshallConfig(t2FlowParser, configBean,
-					"xstream", ExternalToolConfig.class);
+			externalToolConfig = unmarshallConfig(t2FlowParser, configBean, "xstream",
+					ExternalToolConfig.class);
 		} catch (ReaderException ex) {
-			usecaseConfig = unmarshallConfig(t2FlowParser, configBean,
-					"xstream", UsecaseConfig.class);
+			usecaseConfig = unmarshallConfig(t2FlowParser, configBean, "xstream",
+					UsecaseConfig.class);
 		}
 
 		Configuration configuration = new Configuration();
 		configuration.setParent(parserState.getCurrentProfile());
 		parserState.setCurrentConfiguration(configuration);
 		try {
-			PropertyResource configResource = configuration
-					.getPropertyResource();
+			PropertyResource configResource = configuration.getPropertyResource();
 			configResource.setTypeURI(ACTIVITY_URI.resolve("#Config"));
 
-			if (usecaseConfig != null
-					&& usecaseConfig.getRepositoryUrl() != null) {
-				URI repositoryUri = URI
-						.create(usecaseConfig.getRepositoryUrl());
+			if (usecaseConfig != null && usecaseConfig.getRepositoryUrl() != null) {
+				URI repositoryUri = URI.create(usecaseConfig.getRepositoryUrl());
 				URI usecase = repositoryUri.resolve("#"
 						+ uriTools.validFilename(usecaseConfig.getUsecaseid()));
-				configResource.addPropertyReference(
-						ACTIVITY_URI.resolve("#toolId"), usecase);
-			} else if (externalToolConfig != null
-					&& externalToolConfig.getRepositoryUrl() != null) {
-				URI repositoryUri = URI.create(externalToolConfig
-						.getRepositoryUrl());
+				configResource.addPropertyReference(ACTIVITY_URI.resolve("#toolId"), usecase);
+			} else if (externalToolConfig != null && externalToolConfig.getRepositoryUrl() != null) {
+				URI repositoryUri = URI.create(externalToolConfig.getRepositoryUrl());
 				URI usecase = repositoryUri.resolve("#"
-						+ uriTools.validFilename(externalToolConfig
-								.getExternaltoolid()));
-				configResource.addPropertyReference(
-						ACTIVITY_URI.resolve("#toolId"), usecase);
-				if (configResource.getProperties().containsKey(
-						ACTIVITY_URI.resolve("#toolId"))) {
+						+ uriTools.validFilename(externalToolConfig.getExternaltoolid()));
+				configResource.addPropertyReference(ACTIVITY_URI.resolve("#toolId"), usecase);
+				if (configResource.getProperties().containsKey(ACTIVITY_URI.resolve("#toolId"))) {
 					configResource.addProperty(ACTIVITY_URI.resolve("#edited"),
 							new PropertyLiteral(externalToolConfig.isEdited()));
 				}
-			} else if (externalToolConfig != null
-					&& externalToolConfig.getExternaltoolid() != null) {
-				URI usecase = ACTIVITY_URI.resolve("#"
-						+ uriTools.validFilename(externalToolConfig
-								.getExternaltoolid()));
-				configResource.addPropertyReference(
-						ACTIVITY_URI.resolve("#toolId"), usecase);
+			} else if (externalToolConfig != null && externalToolConfig.getExternaltoolid() != null) {
+				configResource.addPropertyAsString(ACTIVITY_URI.resolve("#toolId"), externalToolConfig.getExternaltoolid());
 			}
 
 			if (externalToolConfig != null) {
-
-				PropertyResource invocation = configResource
-						.addPropertyAsNewResource(
-								ACTIVITY_URI.resolve("#invocation"),
-								ACTIVITY_URI.resolve("#Invocation"));
-
-				String mechanismType;
-				String mechanismName;
-				String mechanismXML;
 				if (externalToolConfig.getGroup() != null) {
-					mechanismType = externalToolConfig.getGroup()
-							.getMechanismType();
-					mechanismName = externalToolConfig.getGroup()
-							.getMechanismName();
-					mechanismXML = externalToolConfig.getGroup()
-							.getMechanismXML();
-					invocation.setTypeURI(ACTIVITY_URI
-							.resolve("#InvocationGroup"));
-					invocation.addPropertyAsString(DC.resolve("identifier"),
-							externalToolConfig.getGroup()
-									.getInvocationGroupName());
+					PropertyResource invocationGroup = configResource.addPropertyAsNewResource(
+							ACTIVITY_URI.resolve("#invocationGroup"), ACTIVITY_URI.resolve("#InvocationGroup"));
+					invocationGroup.addPropertyAsString(ACTIVITY_URI.resolve("name"), externalToolConfig
+							.getGroup().getInvocationGroupName());
+					invocationGroup.addPropertyAsString(ACTIVITY_URI.resolve("#mechanismType"),
+							externalToolConfig.getGroup().getMechanismType());
+					invocationGroup.addPropertyAsString(ACTIVITY_URI.resolve("#mechanismName"),
+							externalToolConfig.getGroup().getMechanismName());
+					invocationGroup.addPropertyAsString(ACTIVITY_URI.resolve("#mechanismXML"),
+							externalToolConfig.getGroup().getMechanismXML());
 				} else {
-					mechanismType = externalToolConfig.getMechanismType();
-					mechanismName = externalToolConfig.getMechanismName();
-					mechanismXML = externalToolConfig.getMechanismXML();
+					configResource.addPropertyAsString(ACTIVITY_URI.resolve("#mechanismType"),
+							externalToolConfig.getMechanismType());
+					configResource.addPropertyAsString(ACTIVITY_URI.resolve("#mechanismName"),
+							externalToolConfig.getMechanismName());
+					configResource.addPropertyAsString(ACTIVITY_URI.resolve("#mechanismXML"),
+							externalToolConfig.getMechanismXML());
 				}
-				URI mechanismTypeURI = ACTIVITY_URI.resolve("#"
-						+ uriTools.validFilename(mechanismType));
-				if (mappedMechanismTypes.containsKey(mechanismTypeURI)) {
-					mechanismTypeURI = mappedMechanismTypes
-							.get(mechanismTypeURI);
-				}
-				invocation.addPropertyReference(
-						ACTIVITY_URI.resolve("#mechanismType"),
-						mechanismTypeURI);
-
-				invocation.addPropertyAsString(
-						ACTIVITY_URI.resolve("#mechanismName"), mechanismName);
-				invocation.addProperty(ACTIVITY_URI.resolve("#mechanismXML"),
-						new PropertyLiteral(mechanismXML,
-								PropertyLiteral.XML_LITERAL));
-				try {
-					parseMechanismXML(invocation);
-				} catch (PropertyException ex) {
-					throw new ReaderException("Can't parse mechanism XML", ex);
-				}
-
-				configResource.addProperty(ACTIVITY_URI
-						.resolve("#toolDescription"),
-						parseToolDescription(externalToolConfig
-								.getUseCaseDescription(), parserState));
+//				URI mechanismTypeURI = ACTIVITY_URI.resolve("#"
+//						+ uriTools.validFilename(mechanismType));
+//				if (mappedMechanismTypes.containsKey(mechanismTypeURI)) {
+//					mechanismTypeURI = mappedMechanismTypes.get(mechanismTypeURI);
+//				}
+//				invocation.addPropertyReference(ACTIVITY_URI.resolve("#mechanismType"),
+//						mechanismTypeURI);
+//
+//				invocation.addPropertyAsString(ACTIVITY_URI.resolve("#mechanismName"),
+//						mechanismName);
+//				invocation.addProperty(ACTIVITY_URI.resolve("#mechanismXML"), new PropertyLiteral(
+//						mechanismXML, PropertyLiteral.XML_LITERAL));
+//				try {
+//					parseMechanismXML(invocation);
+//				} catch (PropertyException ex) {
+//					throw new ReaderException("Can't parse mechanism XML", ex);
+//				}
 
 				configResource.addProperty(
-						ACTIVITY_URI.resolve("#invocationGroup"),
-						parseGroup(externalToolConfig.getGroup()));
+						ACTIVITY_URI.resolve("#toolDescription"),
+						parseToolDescription(externalToolConfig.getUseCaseDescription(),
+								parserState));
+
+//				configResource.addProperty(ACTIVITY_URI.resolve("#invocationGroup"),
+//						parseGroup(externalToolConfig.getGroup()));
 
 			}
 
@@ -228,13 +203,10 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 		}
 	}
 
-	private void parseMechanismXML(PropertyResource invocation)
-			throws PropertyException {
-		URI type = invocation.getPropertyAsResourceURI(ACTIVITY_URI
-				.resolve("#mechanismType"));
+	private void parseMechanismXML(PropertyResource invocation) throws PropertyException {
+		URI type = invocation.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#mechanismType"));
 		if (type.equals(ACTIVITY_URI.resolve("#local"))) {
-			Element xml = invocation.getPropertyAsLiteral(
-					ACTIVITY_URI.resolve("#mechanismXML"))
+			Element xml = invocation.getPropertyAsLiteral(ACTIVITY_URI.resolve("#mechanismXML"))
 					.getLiteralValueAsElement();
 
 			String directory = elementByTag(xml, "directory");
@@ -243,30 +215,24 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 			PropertyResource node = new PropertyResource();
 			node.setTypeURI(ACTIVITY_URI.resolve("#LocalNode"));
 			if (directory != null) {
-				node.addPropertyAsString(ACTIVITY_URI.resolve("#directory"),
-						directory);
+				node.addPropertyAsString(ACTIVITY_URI.resolve("#directory"), directory);
 			}
 			if (linkCommand != null) {
-				node.addPropertyAsString(ACTIVITY_URI.resolve("#linkCommand"),
-						linkCommand);
+				node.addPropertyAsString(ACTIVITY_URI.resolve("#linkCommand"), linkCommand);
 			}
 			if (shellPrefix != null) {
-				node.addPropertyAsString(ACTIVITY_URI.resolve("#shellPrefix"),
-						shellPrefix);
+				node.addPropertyAsString(ACTIVITY_URI.resolve("#shellPrefix"), shellPrefix);
 			}
 			if (!node.getProperties().isEmpty()) {
 				// Only add if it is customized
 				invocation.addProperty(ACTIVITY_URI.resolve("#node"), node);
 			}
 
-			invocation.getProperties().remove(
-					ACTIVITY_URI.resolve("#mechanismXML"));
+			invocation.getProperties().remove(ACTIVITY_URI.resolve("#mechanismXML"));
 		} else if (type.equals(ACTIVITY_URI.resolve("#ssh"))) {
-			Element xml = invocation.getPropertyAsLiteral(
-					ACTIVITY_URI.resolve("#mechanismXML"))
+			Element xml = invocation.getPropertyAsLiteral(ACTIVITY_URI.resolve("#mechanismXML"))
 					.getLiteralValueAsElement();
-			for (Element sshNode : elementIter(xml
-					.getElementsByTagName("sshNode"))) {
+			for (Element sshNode : elementIter(xml.getElementsByTagName("sshNode"))) {
 				String hostname = elementByTag(sshNode, "host");
 				String port = elementByTag(sshNode, "port");
 				String directory = elementByTag(sshNode, "directory");
@@ -274,30 +240,23 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 				String copyCommand = elementByTag(sshNode, "copyCommand");
 
 				PropertyResource node = invocation.addPropertyAsNewResource(
-						ACTIVITY_URI.resolve("#node"),
-						ACTIVITY_URI.resolve("#SSHNode"));
-				node.addPropertyAsString(ACTIVITY_URI.resolve("#hostname"),
-						hostname);
+						ACTIVITY_URI.resolve("#node"), ACTIVITY_URI.resolve("#SSHNode"));
+				node.addPropertyAsString(ACTIVITY_URI.resolve("#hostname"), hostname);
 				if (port != null) {
-					PropertyLiteral portLit = new PropertyLiteral(port,
-							PropertyLiteral.XSD_INT);
+					PropertyLiteral portLit = new PropertyLiteral(port, PropertyLiteral.XSD_INT);
 					node.addProperty(ACTIVITY_URI.resolve("#port"), portLit);
 				}
 				if (directory != null) {
-					node.addPropertyAsString(
-							ACTIVITY_URI.resolve("#directory"), directory);
+					node.addPropertyAsString(ACTIVITY_URI.resolve("#directory"), directory);
 				}
 				if (linkCommand != null) {
-					node.addPropertyAsString(
-							ACTIVITY_URI.resolve("#linkCommand"), linkCommand);
+					node.addPropertyAsString(ACTIVITY_URI.resolve("#linkCommand"), linkCommand);
 				}
 				if (copyCommand != null) {
-					node.addPropertyAsString(
-							ACTIVITY_URI.resolve("#copyCommand"), copyCommand);
+					node.addPropertyAsString(ACTIVITY_URI.resolve("#copyCommand"), copyCommand);
 				}
 			}
-			invocation.getProperties().remove(
-					ACTIVITY_URI.resolve("#mechanismXML"));
+			invocation.getProperties().remove(ACTIVITY_URI.resolve("#mechanismXML"));
 		} else {
 
 		}
@@ -338,16 +297,16 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 		return nodeList.item(0).getTextContent();
 	}
 
-	protected PropertyObject parseToolDescription(UsecaseDescription toolDesc, ParserState parserState) {
+	protected PropertyObject parseToolDescription(UsecaseDescription toolDesc,
+			ParserState parserState) {
 		PropertyResource propertyResource = new PropertyResource();
 		propertyResource.setTypeURI(ACTIVITY_URI.resolve("#ToolDescription"));
 
-		propertyResource.addPropertyAsString(DC.resolve("title"),
-				toolDesc.getUsecaseid());
+		propertyResource.addPropertyAsString(DC.resolve("title"), toolDesc.getUsecaseid());
 
 		if (toolDesc.getGroup() != null) {
-			propertyResource.addPropertyAsString(
-					ACTIVITY_URI.resolve("#category"), toolDesc.getGroup());
+			propertyResource.addPropertyAsString(ACTIVITY_URI.resolve("#group"),
+					toolDesc.getGroup());
 		}
 
 		if (toolDesc.getDescription() != null) {
@@ -357,103 +316,134 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 
 		propertyResource.addPropertyAsString(ACTIVITY_URI.resolve("#command"),
 				toolDesc.getCommand());
-		propertyResource.addProperty(
-				ACTIVITY_URI.resolve("#preparingTimeoutInSeconds"),
+		propertyResource.addProperty(ACTIVITY_URI.resolve("#preparingTimeoutInSeconds"),
 				new PropertyLiteral(toolDesc.getPreparingTimeoutInSeconds()));
-		propertyResource.addProperty(
-				ACTIVITY_URI.resolve("#executionTimeoutInSeconds"),
+		propertyResource.addProperty(ACTIVITY_URI.resolve("#executionTimeoutInSeconds"),
 				new PropertyLiteral(toolDesc.getExecutionTimeoutInSeconds()));
 
 		// Ignoring tags, REs, queue__preferred, queue__deny
 
-		PropertyResource configResource = parserState
-				.getCurrentConfiguration().getPropertyResource();
+		PropertyResource configResource = parserState.getCurrentConfiguration()
+				.getPropertyResource();
 
 		// static inputs
 		for (ScriptInputStatic inputStatic : toolDesc.getStaticInputs()
 				.getDeUniLuebeckInbKnowarcUsecasesScriptInputStatic()) {
-			String portName = inputStatic.getTag();
-			PropertyResource staticInput = generatePortDefinition(portName,
-					inputStatic.getTag(), inputStatic.getCharsetName(), true,
-					false, inputStatic.isBinary(), inputStatic.isFile(),
-					inputStatic.isTempFile(), inputStatic.isForceCopy(), false,
-					true, parserState);
-
-			configResource.addProperty(ACTIVITY_URI.resolve("#staticInput"),
-					staticInput);
+			PropertyResource inputStaticResource = propertyResource.addPropertyAsNewResource(
+					ACTIVITY_URI.resolve("#staticInputs"),
+					ACTIVITY_URI.resolve("#ScriptInputStatic"));
+			inputStaticResource.addPropertyAsString(ACTIVITY_URI.resolve("#tag"), inputStatic.getTag());
+			inputStaticResource.addProperty(ACTIVITY_URI.resolve("#file"), new PropertyLiteral(inputStatic.isFile()));
+			inputStaticResource.addProperty(ACTIVITY_URI.resolve("#tempFile"), new PropertyLiteral(inputStatic.isTempFile()));
+			inputStaticResource.addProperty(ACTIVITY_URI.resolve("#binary"), new PropertyLiteral(inputStatic.isBinary()));
+			inputStaticResource.addPropertyAsString(ACTIVITY_URI.resolve("#charsetName"), inputStatic.getCharsetName());
+			inputStaticResource.addProperty(ACTIVITY_URI.resolve("#forceCopy"), new PropertyLiteral(inputStatic.isForceCopy()));
 			if (inputStatic.getUrl() != null) {
-				staticInput.addPropertyReference(
-						ACTIVITY_URI.resolve("#source"),
-						URI.create(inputStatic.getUrl()));
-			} else {
-				PropertyResource content = staticInput
-						.addPropertyAsNewResource(
-								ACTIVITY_URI.resolve("#source"),
-								CNT.resolve("#ContentAsText"));
-				content.addPropertyAsString(CNT.resolve("#chars"), inputStatic
-						.getContent().getValue());
-				// TODO: Support bytes?
+				inputStaticResource.addPropertyAsString(ACTIVITY_URI.resolve("#url"), inputStatic.getUrl());
+			}
+			if (inputStatic.getContent() != null) {
+				inputStaticResource.addPropertyAsString(ACTIVITY_URI.resolve("#content"), inputStatic.getContent().getValue());
 			}
 		}
+//		for (ScriptInputStatic inputStatic : toolDesc.getStaticInputs()
+//				.getDeUniLuebeckInbKnowarcUsecasesScriptInputStatic()) {
+//			String portName = inputStatic.getTag();
+//			PropertyResource staticInput = generatePortDefinition(portName, inputStatic.getTag(),
+//					inputStatic.getCharsetName(), true, false, inputStatic.isBinary(),
+//					inputStatic.isFile(), inputStatic.isTempFile(), inputStatic.isForceCopy(),
+//					false, true, parserState);
+//
+//			configResource.addProperty(ACTIVITY_URI.resolve("#staticInput"), staticInput);
+//			if (inputStatic.getUrl() != null) {
+//				staticInput.addPropertyReference(ACTIVITY_URI.resolve("#source"),
+//						URI.create(inputStatic.getUrl()));
+//			} else {
+//				PropertyResource content = staticInput.addPropertyAsNewResource(
+//						ACTIVITY_URI.resolve("#source"), CNT.resolve("#ContentAsText"));
+//				content.addPropertyAsString(CNT.resolve("#chars"), inputStatic.getContent()
+//						.getValue());
+//				// TODO: Support bytes?
+//			}
+//		}
 
 		// Inputs
 		for (Entry entry : toolDesc.getInputs().getEntry()) {
-			String portName = entry.getString();
-			ScriptInputUser scriptInput = entry
-					.getDeUniLuebeckInbKnowarcUsecasesScriptInputUser();
-			PropertyResource portDef = generatePortDefinition(portName,
-					scriptInput.getTag(), scriptInput.getCharsetName(), true,
-					scriptInput.isList(), scriptInput.isBinary(),
-					scriptInput.isFile(), scriptInput.isTempFile(),
-					scriptInput.isForceCopy(), scriptInput.isConcatenate(),
-					false, parserState);
-			configResource
-					.addProperty(Scufl2Tools.PORT_DEFINITION
-							.resolve("#inputPortDefinition"), portDef);
+			PropertyResource inputMap = propertyResource.addPropertyAsNewResource(
+					ACTIVITY_URI.resolve("#inputs"),
+					ACTIVITY_URI.resolve("#InputMap"));
+			inputMap.addPropertyAsString(ACTIVITY_URI.resolve("#port"), entry.getString());
+			PropertyResource scriptInputResource = inputMap.addPropertyAsNewResource(ACTIVITY_URI.resolve("#input"), ACTIVITY_URI.resolve("#ScriptInput"));
+			ScriptInputUser scriptInput = entry.getDeUniLuebeckInbKnowarcUsecasesScriptInputUser();
+			scriptInputResource.addPropertyAsString(ACTIVITY_URI.resolve("#tag"), scriptInput.getTag());
+			scriptInputResource.addProperty(ACTIVITY_URI.resolve("#file"), new PropertyLiteral(scriptInput.isFile()));
+			scriptInputResource.addProperty(ACTIVITY_URI.resolve("#tempFile"), new PropertyLiteral(scriptInput.isTempFile()));
+			scriptInputResource.addProperty(ACTIVITY_URI.resolve("#binary"), new PropertyLiteral(scriptInput.isBinary()));
+			scriptInputResource.addPropertyAsString(ACTIVITY_URI.resolve("#charsetName"), scriptInput.getCharsetName());
+			scriptInputResource.addProperty(ACTIVITY_URI.resolve("#forceCopy"), new PropertyLiteral(scriptInput.isForceCopy()));
+			scriptInputResource.addProperty(ACTIVITY_URI.resolve("#list"), new PropertyLiteral(scriptInput.isList()));
+			scriptInputResource.addProperty(ACTIVITY_URI.resolve("#concatenate"), new PropertyLiteral(scriptInput.isConcatenate()));
+
 		}
+//		for (Entry entry : toolDesc.getInputs().getEntry()) {
+//			String portName = entry.getString();
+//			ScriptInputUser scriptInput = entry.getDeUniLuebeckInbKnowarcUsecasesScriptInputUser();
+//			PropertyResource portDef = generatePortDefinition(portName, scriptInput.getTag(),
+//					scriptInput.getCharsetName(), true, scriptInput.isList(),
+//					scriptInput.isBinary(), scriptInput.isFile(), scriptInput.isTempFile(),
+//					scriptInput.isForceCopy(), scriptInput.isConcatenate(), false, parserState);
+//			configResource.addProperty(Scufl2Tools.PORT_DEFINITION.resolve("#inputPortDefinition"),
+//					portDef);
+//		}
 		// Outputs
 		for (Entry entry : toolDesc.getOutputs().getEntry()) {
-			String portName = entry.getString();
-			ScriptOutput scriptOutput = entry
-					.getDeUniLuebeckInbKnowarcUsecasesScriptOutput();
-			PropertyResource portDef = generatePortDefinition(portName,
-					scriptOutput.getPath(), null, false, false,
-					scriptOutput.isBinary(), true, false, false, false, false, parserState);
-			configResource.addProperty(Scufl2Tools.PORT_DEFINITION
-					.resolve("#outputPortDefinition"), portDef);
+			PropertyResource outputMap = propertyResource.addPropertyAsNewResource(
+					ACTIVITY_URI.resolve("#outputs"),
+					ACTIVITY_URI.resolve("#OutputMap"));
+			outputMap.addPropertyAsString(ACTIVITY_URI.resolve("#port"), entry.getString());
+			PropertyResource scriptOutputResource = outputMap.addPropertyAsNewResource(ACTIVITY_URI.resolve("#output"), ACTIVITY_URI.resolve("#ScriptOutput"));
+			ScriptOutput scriptOutput = entry.getDeUniLuebeckInbKnowarcUsecasesScriptOutput();
+			scriptOutputResource.addPropertyAsString(ACTIVITY_URI.resolve("#path"), scriptOutput.getPath());
+			scriptOutputResource.addProperty(ACTIVITY_URI.resolve("#binary"), new PropertyLiteral(scriptOutput.isBinary()));
 		}
+//		for (Entry entry : toolDesc.getOutputs().getEntry()) {
+//			String portName = entry.getString();
+//			ScriptOutput scriptOutput = entry.getDeUniLuebeckInbKnowarcUsecasesScriptOutput();
+//			PropertyResource portDef = generatePortDefinition(portName, scriptOutput.getPath(),
+//					null, false, false, scriptOutput.isBinary(), true, false, false, false, false,
+//					parserState);
+//			configResource.addProperty(
+//					Scufl2Tools.PORT_DEFINITION.resolve("#outputPortDefinition"), portDef);
+//		}
 
-		propertyResource.addProperty(ACTIVITY_URI.resolve("#includeStdIn"),
-				new PropertyLiteral(toolDesc.isIncludeStdIn()));
-		propertyResource.addProperty(ACTIVITY_URI.resolve("#includeStdOut"),
-				new PropertyLiteral(toolDesc.isIncludeStdOut()));
-		propertyResource.addProperty(ACTIVITY_URI.resolve("#includeStdErr"),
-				new PropertyLiteral(toolDesc.isIncludeStdErr()));
+		propertyResource.addProperty(ACTIVITY_URI.resolve("#includeStdIn"), new PropertyLiteral(
+				toolDesc.isIncludeStdIn()));
+		propertyResource.addProperty(ACTIVITY_URI.resolve("#includeStdOut"), new PropertyLiteral(
+				toolDesc.isIncludeStdOut()));
+		propertyResource.addProperty(ACTIVITY_URI.resolve("#includeStdErr"), new PropertyLiteral(
+				toolDesc.isIncludeStdErr()));
 
-		if (toolDesc.isIncludeStdIn()) {
-			InputActivityPort stdin = new InputActivityPort(parserState
-					.getCurrentActivity(), STDIN);
-			stdin.setDepth(0);
-		}
-		if (toolDesc.isIncludeStdOut()) {
-			OutputActivityPort stdout = new OutputActivityPort(parserState
-					.getCurrentActivity(), STDOUT);
-			stdout.setDepth(0);
-			stdout.setGranularDepth(0);
-		}
-		if (toolDesc.isIncludeStdErr()) {
-			OutputActivityPort stderr = new OutputActivityPort(parserState
-					.getCurrentActivity(), STDERR);
-			stderr.setDepth(0);
-			stderr.setGranularDepth(0);
-		}
+//		if (toolDesc.isIncludeStdIn()) {
+//			InputActivityPort stdin = new InputActivityPort(parserState.getCurrentActivity(), STDIN);
+//			stdin.setDepth(0);
+//		}
+//		if (toolDesc.isIncludeStdOut()) {
+//			OutputActivityPort stdout = new OutputActivityPort(parserState.getCurrentActivity(),
+//					STDOUT);
+//			stdout.setDepth(0);
+//			stdout.setGranularDepth(0);
+//		}
+//		if (toolDesc.isIncludeStdErr()) {
+//			OutputActivityPort stderr = new OutputActivityPort(parserState.getCurrentActivity(),
+//					STDERR);
+//			stderr.setDepth(0);
+//			stderr.setGranularDepth(0);
+//		}
 
 		return propertyResource;
 	}
 
-	private PropertyResource generatePortDefinition(String portName,
-			String tag, String charSet, boolean isInput, boolean isList,
-			boolean isBinary, boolean isFile, boolean isTempFile,
+	private PropertyResource generatePortDefinition(String portName, String tag, String charSet,
+			boolean isInput, boolean isList, boolean isBinary, boolean isFile, boolean isTempFile,
 			boolean isForceCopy, boolean isConcatenate, boolean isStatic, ParserState parserState) {
 		PropertyResource resource = new PropertyResource();
 
@@ -463,23 +453,19 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 		} else {
 
 			if (isInput) {
-				resource.setTypeURI(Scufl2Tools.PORT_DEFINITION
-						.resolve("#InputPortDefinition"));
-				actPort = new InputActivityPort(parserState
-						.getCurrentActivity(), portName);
+				resource.setTypeURI(Scufl2Tools.PORT_DEFINITION.resolve("#InputPortDefinition"));
+				actPort = new InputActivityPort(parserState.getCurrentActivity(), portName);
 				URI portUri = uriTools.relativeUriForBean(actPort,
 						parserState.getCurrentConfiguration());
-				resource.addPropertyReference(Scufl2Tools.PORT_DEFINITION
-						.resolve("#definesInputPort"), portUri);
+				resource.addPropertyReference(
+						Scufl2Tools.PORT_DEFINITION.resolve("#definesInputPort"), portUri);
 			} else {
-				resource.setTypeURI(Scufl2Tools.PORT_DEFINITION
-						.resolve("#OutputPortDefinition"));
-				actPort = new OutputActivityPort(parserState
-						.getCurrentActivity(), portName);
+				resource.setTypeURI(Scufl2Tools.PORT_DEFINITION.resolve("#OutputPortDefinition"));
+				actPort = new OutputActivityPort(parserState.getCurrentActivity(), portName);
 				URI portUri = uriTools.relativeUriForBean(actPort,
 						parserState.getCurrentConfiguration());
-				resource.addPropertyReference(Scufl2Tools.PORT_DEFINITION
-						.resolve("#definesOutputPort"), portUri);
+				resource.addPropertyReference(
+						Scufl2Tools.PORT_DEFINITION.resolve("#definesOutputPort"), portUri);
 			}
 
 			if (isList) {
@@ -492,8 +478,7 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 		URI dataType = PropertyLiteral.XSD_STRING;
 		if (isFile || isTempFile) {
 			if (isForceCopy) {
-				resource.addProperty(ACTIVITY_URI.resolve("#forceCopy"),
-						new PropertyLiteral(true));
+				resource.addProperty(ACTIVITY_URI.resolve("#forceCopy"), new PropertyLiteral(true));
 			}
 
 			if (isBinary) {
@@ -512,8 +497,7 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 						CHARSET.resolve("#UTF-8"));
 			}
 		}
-		resource.addPropertyReference(
-				Scufl2Tools.PORT_DEFINITION.resolve("#dataType"), dataType);
+		resource.addPropertyReference(Scufl2Tools.PORT_DEFINITION.resolve("#dataType"), dataType);
 
 		resource.addPropertyAsString(ACTIVITY_URI.resolve("#substitutes"), tag);
 		URI subsitutionType;
@@ -524,20 +508,18 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 		} else {
 			subsitutionType = ACTIVITY_URI.resolve("#Parameter");
 		}
-		resource.addPropertyReference(
-				ACTIVITY_URI.resolve("#substitutionType"), subsitutionType);
+		resource.addPropertyReference(ACTIVITY_URI.resolve("#substitutionType"), subsitutionType);
 
 		if (isList && isConcatenate) {
-			resource.addProperty(ACTIVITY_URI.resolve("#concatenate"),
-					new PropertyLiteral(true));
+			resource.addProperty(ACTIVITY_URI.resolve("#concatenate"), new PropertyLiteral(true));
 		}
 
 		return resource;
 	}
 
-	protected PropertyObject parseGroup(Group group) {
-		PropertyResource propertyResource = new PropertyResource();
-		propertyResource.setTypeURI(ACTIVITY_URI.resolve("#InvocationGroup"));
-		return propertyResource;
-	}
+//	protected PropertyObject parseGroup(Group group) {
+//		PropertyResource propertyResource = new PropertyResource();
+//		propertyResource.setTypeURI(ACTIVITY_URI.resolve("#InvocationGroup"));
+//		return propertyResource;
+//	}
 }
