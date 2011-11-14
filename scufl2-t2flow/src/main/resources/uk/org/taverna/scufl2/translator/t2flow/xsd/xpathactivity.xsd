@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema elementFormDefault="unqualified"
+
+	xmlns:tool="http://taverna.sf.net/2011/xml/activity/xpath" xmlns:tav="http://taverna.sf.net/2008/xml/t2flow"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+	jxb:version="1.0">
+
+	<xsd:annotation>
+		<xsd:appinfo>
+			<!-- See http://docs.rakeshv.org/java/jaxb/users-guide/jaxb-custom.html -->
+
+			<!-- <jxb:schemaBindings> <jxb:package name="uk.org.taverna.scufl2.xml.t2flow.rest.jaxb"
+				/> </jxb:schemaBindings> -->
+		</xsd:appinfo>
+	</xsd:annotation>
+
+	<xsd:import namespace="http://taverna.sf.net/2008/xml/t2flow"
+		schemaLocation="t2flow.xsd" />
+
+	<xsd:element
+		name="net.sf.taverna.t2.activities.xpath.XPathActivityConfigurationBean"
+		type="XPathConfig" substitutionGroup="tav:abstractConfigBean" />
+
+	<xsd:complexType name="XPathConfig">
+		<xsd:complexContent>
+			<xsd:extension base="tav:AbstractConfigBean">
+				<xsd:sequence>
+					<xsd:element name="xmlDocument" type="xsd:string" />
+					<xsd:element name="xpathExpression" type="xsd:string" minOccurs="0" />
+					<xsd:element name="xpathNamespaceMap" type="XPathNamespaceMap" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="XPathNamespaceMap">
+		<xsd:sequence>
+			<xsd:element name="list" minOccurs="0" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="string" type="xsd:string" />
+						<xsd:element name="string" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+</xsd:schema>

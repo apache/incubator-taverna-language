@@ -18,6 +18,7 @@
 
 	<service ref="externalToolActivityParser" interface="uk.org.taverna.scufl2.translator.t2flow.T2Parser" />
 	<service ref="restActivityParser" interface="uk.org.taverna.scufl2.translator.t2flow.T2Parser" />
+	<service ref="xPathActivityParser" interface="uk.org.taverna.scufl2.translator.t2flow.T2Parser" />
 
 	<service ref="parallelizeParser" interface="uk.org.taverna.scufl2.translator.t2flow.T2Parser" />
 	<service ref="errorBounceParser" interface="uk.org.taverna.scufl2.translator.t2flow.T2Parser" />
