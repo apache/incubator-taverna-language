@@ -32,74 +32,12 @@ describing Taverna workflows.""" ;
 #################################################################
 
 
-:basedOnWorkflowBundle rdf:type owl:AnnotationProperty ;
-                       
-                       rdfs:subPropertyOf rdfs:seeAlso .
 
 
 
-:workflowIdentifier rdf:type owl:AnnotationProperty ;
-                    
-                    rdfs:label "Workflow identifier" ;
-                    
-                    rdfs:subPropertyOf dcterms:identifier .
 
 
 
-:globalBaseURI rdf:type owl:AnnotationProperty ;
-               
-               rdfs:comment """The resources are the same (like in owl:sameAs), and
-      so are the sub-resources having the same base URI as a parent.  For instance if 
-        <file:///tmp/example/> scufl2:globalBaseURI 
-            <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/> .
-      then also 
-        <file:///tmp/example/workflow/HelloWorld/> scufl2:globalBaseURI 
-            <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/> 
-
-      Note that for URIs under
-      <http://ns.taverna.org.uk/2010/workflowBundle/> special URI template rules
-      link the URI with the scufl2:parent, rdf:type, scufl2:name of the
-      resource. 
-      
-      For instance given 
-        <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/processor/Hello/out/greeting> 
-      it must be so that:
-
-        <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/processor/Hello/out/greeting>
-            a scufl2:OutputProcessorPort;
-            scufl2:name \"greeting\";
-            scufl2:parent <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/processor/Hello>.
-
-        <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/processor/Hello>
-            a scufl2:Processor;
-            scufl2:name \"Hello\";
-            scufl2:parent <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/>;
-            scufl2:outputProcessorPort <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/processor/Hello/out/greeting>.
-        
-        <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/>    
-            a scufl2:Workflow;
-            scufl2:name \"HelloWorld\";
-            scufl2:parent <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/>;
-            sculf2:processor <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/processor/Hello>.
-        
-        <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/>    
-            a scufl2:WorkflowBundle;
-            scufl2:workflow <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/>;
-            scufl2:workflowBundleId \"28f7c554-4f35-401f-b34b-516e9a0ef731\";
-
-        Where 28f7c554-4f35-401f-b34b-516e9a0ef731 must be a randomly
-        generated UUID.    
-    """ .
-
-
-
-:requiredConfiguration rdf:type owl:AnnotationProperty ;
-                       
-                       rdfs:domain rdf:Property .
-
-
-
-dcterms:identifier rdf:type owl:AnnotationProperty .
 
 
 
@@ -803,23 +741,6 @@ dcterms:identifier rdf:type owl:AnnotationProperty .
                   
                   rdfs:subPropertyOf dcterms:relation .
 
-
-
-###  http://www.w3.org/1999/02/22-rdf-syntax-ns#first
-
-rdf:first rdf:type owl:ObjectProperty .
-
-
-
-###  http://www.w3.org/1999/02/22-rdf-syntax-ns#rest
-
-rdf:rest rdf:type owl:ObjectProperty .
-
-
-
-###  http://www.w3.org/2002/07/owl#sameAs
-
-owl:sameAs rdf:type owl:ObjectProperty .
 
 
 
@@ -1675,26 +1596,6 @@ Super-class for any Scufl2 class. """@en .
               
               rdfs:comment "Ports of a Workflow. "@en .
 
-
-
-###  http://www.w3.org/1999/02/22-rdf-syntax-ns#List
-
-rdf:List rdf:type owl:Class .
-
-
-
-
-
-#################################################################
-#
-#    Individuals
-#
-#################################################################
-
-
-###  http://www.w3.org/1999/02/22-rdf-syntax-ns#nil
-
-rdf:nil rdf:type owl:NamedIndividual .
 
 
 
