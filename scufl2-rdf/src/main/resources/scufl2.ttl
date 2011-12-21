@@ -1,4 +1,4 @@
-@base <http://ns.taverna.org.uk/2010/scufl2#> .
+@base <http://ns.taverna.org.uk/2010/scufl2> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
@@ -12,15 +12,12 @@
 <>
     a owl:Ontology ;
     dc:title "SCUFL2 Core ontology" ;
-    # Note: Protege does not support this as
-    # owl:imports dc:, dcterms:,rdfs: ; 
-    owl:imports <http://purl.org/dc/elements/1.1/>,
-    	<http://purl.org/dc/terms/>,<http://www.w3.org/2000/01/rdf-schema#>;
+    owl:imports <http://www.w3.org/2000/01/rdf-schema#>, <http://purl.org/NET/dc_owl2dl/terms_od>;
 
     rdfs:comment """The ontology defining SCUFL2 - a model for
-        describing Taverna workflows.""" ;
+describing Taverna workflows.""" ;
     rdfs:seeAlso
-      <http://www.mygrid.org.uk/dev/wiki/display/developer/SCUFL2>,
+      <http://www.mygrid.org.uk/dev/wiki/display/developer/Scufl2+Ontology>,
       <http://www.taverna.org.uk/> .
 
 # General classes and properties
@@ -34,40 +31,34 @@
     rdfs:label "Child" .
 
 :parent
-    a owl:InverseFunctionalProperty, owl:ObjectProperty ;
-    rdfs:range :Child ;
+    a owl:FunctionalProperty, owl:ObjectProperty ;
     rdfs:label "parent" ;
-    rdfs:domain :Parent ;
+    rdfs:domain :Child ;
+    rdfs:range :Parent ;
+    rdfs:subPropertyOf dcterms:isPartOf ;
     owl:inverseOf :child .
 
 :child
-    a owl:FunctionalProperty, owl:ObjectProperty ;
+    a owl:InverseFunctionalProperty, owl:ObjectProperty ;
     owl:inverseOf :parent ;
-    rdfs:range :Parent ;
+    rdfs:subPropertyOf dcterms:hasPart ;
     rdfs:label "child" ;
-    rdfs:domain :Child .
+    rdfs:domain :Parent ;
+    rdfs:range :Child .
 
 :Configurable
     a owl:Class ;
     rdfs:label "Configurable" ;
     rdfs:subClassOf :WorkflowElement .
 
-:hasConfigurationType a owl:FunctionalProperty,owl:AnnotationProperty ;
-    rdfs:domain :Configurable ;
-    rdfs:range owl:Class, [
-             a owl:Restriction;
-             owl:hasValue :Configuration;
-             owl:onProperty rdfs:subClassOf
-    ] .
-
-:sameBaseAs
-    #a owl:ObjectProperty, owl:TransitiveProperty ;
+:globalBaseURI
+    a owl:TransitiveProperty ;
     rdfs:comment """The resources are the same (like in owl:sameAs), and
-      so are the sub-resources having base URI as a parent.  For instance if 
-        <file:///tmp/example/> scufl2:sameBaseAs 
+      so are the sub-resources having the same base URI as a parent.  For instance if 
+        <file:///tmp/example/> scufl2:globalBaseURI 
             <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/> .
       then also 
-        <file:///tmp/example/workflow/HelloWorld/> scufl2:sameBaseAs 
+        <file:///tmp/example/workflow/HelloWorld/> scufl2:globalBaseURI 
             <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/> 
 
       Note that for URIs under
@@ -122,7 +113,7 @@
     rdfs:domain :Named ;
     rdfs:label "name" ;
     rdfs:range xsd:string ;
-    rdfs:subPropertyOf dc:title .
+    rdfs:subPropertyOf dcterms:identifier .
 
 # Top level entry point for a SCUFL2 archive
 
@@ -141,50 +132,51 @@
     rdfs:subPropertyOf :child .
 
 
-:workflowBundleId
-    a owl:FunctionalProperty, owl:DatatypeProperty;    
-    dc:description """A randomly generated UUID. This is also the
-    :name of the :WorkflowBundle, and used by :sameBaseAs.
-
-    It is essential that the :workflowBundleId, and hence the 
-    :sameBaseAs statement, is updated whenever a structural change
-    has been made to the workflow bundle. A structural change
-    is classified as any changed triples within the :child structure of
-    the :WorkflowBundle, except for metadata annotations.
-
-    So for instance, if you change scufl2:portDepth of a processor port, 
-    that is a structural change requiring a new ID, but if you add a
-    dc:description to a workflow input port, that is simply an
-    annotation which does not modify the workflow structure or binding,
-    and don't require a new ID.
-
-    When reassigning the :workflowBundleId, SCUFL2 software is
-    recommended to annotate that the new bundle is based on the old
-    bundle by using :basedOnWorkflowBundle, and keep the old
-    chain of :basedOnWorkflowBundle annotations (but neccessarily
-    any other data about the previous bundles).
-
-    This enables external annotations made on older versions of
-    this bundle to be potentially relinked to this newer version,
-    in addition to tracing workflow development and attribution.
-
-    The UUIDs should be of type UUIDv4 or better, to avoid exposing
-    details such as MAC address or timestamps.
-
-    Example:
-    
-    <.> a scufl2:WorkflowBundle
-        scufl2:workflowBundleId "5175305c-2b09-4942-b00a-9ee4928ab0eb";
-        scufl2:sameBaseAs <http://ns.taverna.org.uk/2010/workflowBundle/5175305c-2b09-4942-b00a-9ee4928ab0eb/>;
-        scufl2:basedOnWorkflowBundle <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/> .
-
-    <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/> 
-      scufl2:basedOnWorkflowBundle <http://ns.taverna.org.uk/2010/workflowBundle/4e98d43b-e583-40f6-9308-ad7aa42dad9c/>.
-
-    """;
-    rdfs:subPropertyOf :name;
-    rdfs:seeAlso <http://en.wikipedia.org/wiki/Universally_unique_identifier>,
-                 <http://tools.ietf.org/html/rfc4122>.
+#:workflowBundleId
+#    a owl:FunctionalProperty, owl:DatatypeProperty;    
+#    rdfs:comment """A randomly generated UUID. This is also the
+#    :name of the :WorkflowBundle, and used by :globalBaseURI.
+#
+#    It is essential that the :workflowBundleId, and hence the 
+#    :globalBaseURI statement, is updated whenever a structural change
+#    has been made to the workflow bundle. A structural change
+#    is classified as any changed triples within the :child structure of
+#    the :WorkflowBundle, except for metadata annotations.
+#
+#    So for instance, if you change scufl2:portDepth of a processor port, 
+#    that is a structural change requiring a new ID, but if you add a
+#    dc:description to a workflow input port, that is simply an
+#    annotation which does not modify the workflow structure or binding,
+#    and don't require a new ID.
+#
+#    When reassigning the :workflowBundleId, SCUFL2 software is
+#    recommended to annotate that the new bundle is based on the old
+#    bundle by using :basedOnWorkflowBundle, and keep the old
+#    chain of :basedOnWorkflowBundle annotations (but neccessarily
+#    any other data about the previous bundles).
+#
+#    This enables external annotations made on older versions of
+#    this bundle to be potentially relinked to this newer version,
+#    in addition to tracing workflow development and attribution.
+#
+#    The UUIDs should be of type UUIDv4 or better, to avoid exposing
+#    details such as MAC address or timestamps.
+#
+#    Example:
+#    
+#    <.> a scufl2:WorkflowBundle
+#        scufl2:workflowBundleId "5175305c-2b09-4942-b00a-9ee4928ab0eb";
+#        scufl2:globalBaseURI <http://ns.taverna.org.uk/2010/workflowBundle/5175305c-2b09-4942-b00a-9ee4928ab0eb/>;
+#        scufl2:basedOnWorkflowBundle <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/> .
+#
+#    <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/> 
+#      scufl2:basedOnWorkflowBundle <http://ns.taverna.org.uk/2010/workflowBundle/4e98d43b-e583-40f6-9308-ad7aa42dad9c/>.
+#
+#    """;
+#    rdfs:subPropertyOf :name;
+#    rdfs:seeAlso <http://en.wikipedia.org/wiki/Universally_unique_identifier>,
+#                 <http://tools.ietf.org/html/rfc4122>.
+#
 
 :basedOnWorkflowBundle
     a owl:ObjectProperty, owl:TransitiveProperty;
@@ -236,7 +228,7 @@
 
 :workflowIdentifier    
     a owl:ObjectProperty, owl:FunctionalProperty ;
-    rdfs:domain :Named ;
+    rdfs:domain :Workflow;
     rdfs:label "Workflow identifier" ;
     rdfs:subPropertyOf dcterms:identifier .
 
@@ -300,13 +292,15 @@
 
 :portDepth
     a owl:DatatypeProperty, owl:FunctionalProperty ;
-    rdfs:domain :InputWorkflowPort, :InputProcessorPort, :InputActivityPort, :OutputActivityPort;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf (:InputWorkflowPort :InputProcessorPort :InputActivityPort :OutputActivityPort) ] ;
     rdfs:label "depth" ;
     rdfs:range xsd:nonNegativeInteger .
 
 :granularPortDepth
     a owl:DatatypeProperty, owl:FunctionalProperty ;
-    rdfs:domain :InputProcessorPort, :InputActivityPort, :OutputActivityPort;
+    rdfs:domain [ a owl:Class ;
+            owl:unionOf (:InputProcessorPort :InputActivityPort :OutputActivityPort) ] ;
     rdfs:label "granular depth" ;
     rdfs:range xsd:nonNegativeInteger .
 
@@ -346,16 +340,6 @@
     rdfs:range :Processor ;
     rdfs:subPropertyOf :child .
 
-:processorType
-    a owl:FunctionalProperty, owl:ObjectProperty ;
-    rdfs:domain :Processor ;
-    rdfs:label "processorType" ;
-    rdfs:range :ProcessorType .
-
-:ProcessorType
-    a owl:Class ;
-    rdfs:label "ProcessorType" .
-
 # Dispatch stack    
 
 :dispatchStack
@@ -371,18 +355,17 @@
              a owl:Restriction;
              owl:onProperty rdf:first;
              owl:allValuesFrom :DispatchStackLayer
-            ]
-,[
-             a owl:Restriction;
-             owl:onProperty rdf:last;
-             owl:allValuesFrom [
-             	owl:unionOf ( :DispatchStack rdf:nil)
-               ] 
-            ] 
-.
-
-# Trick to keep Sesame Elmo happy, let's hope this does not break anything!
-rdf:nil a owl:Class .
+            ], [ 
+             a owl:Class ;
+             owl:unionOf ( 
+                 [ a owl:Restriction;
+                     owl:onProperty rdf:next;
+                     owl:allValuesFrom :DispatchStack ]
+                 [ a owl:Restriction;
+                     owl:onProperty rdf:next;
+                     owl:hasValue rdf:nil ] 
+                ) 
+            ] .
 
 :DispatchStackLayer
 	a owl:Class ;
@@ -415,12 +398,16 @@ rdf:nil a owl:Class .
              a owl:Restriction;
              owl:allValuesFrom :IterationStrategyNodeWithChildren;
              owl:onProperty rdf:first 
-            ], [
-             a owl:Restriction;
-             owl:onProperty rdf:last;
-             owl:allValuesFrom [
-             	owl:unionOf ( :IterationStrategyStack rdf:nil ) 
-               ] 
+            ], [ 
+             a owl:Class ;
+             owl:unionOf ( 
+                 [ a owl:Restriction;
+                     owl:onProperty rdf:next;
+                     owl:allValuesFrom :IterationStrategyStack ]
+                 [ a owl:Restriction;
+                     owl:onProperty rdf:next;
+                     owl:hasValue rdf:nil ] 
+                ) 
             ] .
 
 :iterationStrategyChildren
@@ -435,12 +422,16 @@ rdf:nil a owl:Class .
              a owl:Restriction;
              owl:onProperty rdf:first;
              owl:allValuesFrom :IterationStrategyNode
-            ], [
-             a owl:Restriction;
-             owl:onProperty rdf:last;
-             owl:allValuesFrom [
-             	owl:unionOf ( :IterationStrategyChildren rdf:nil ) 
-               ] 
+            ], [ 
+             a owl:Class ;
+             owl:unionOf ( 
+                 [ a owl:Restriction;
+                     owl:onProperty rdf:next;
+                     owl:allValuesFrom :IterationStrategyChildren ]
+                 [ a owl:Restriction;
+                     owl:onProperty rdf:next;
+                     owl:hasValue rdf:nil ] 
+                ) 
             ] .
 
 :CrossProduct
@@ -597,7 +588,7 @@ rdf:nil a owl:Class .
     a owl:Class ;
     rdfs:subClassOf :WorkflowElement .
 
-:configures a owl:ObjectProperty ;
+:configure a owl:ObjectProperty ;
     rdfs:domain :Configuration ;
     rdfs:label "configuration" ;
     rdfs:range :Configurable .
