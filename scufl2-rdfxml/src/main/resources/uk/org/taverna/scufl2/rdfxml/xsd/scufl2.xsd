@@ -241,11 +241,6 @@
 			<xs:attributeGroup ref="rdf:about" />
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="configures">
-		<xs:complexType>
-			<xs:attributeGroup ref="rdf:resource" />
-		</xs:complexType>
-	</xs:element>
 	<xs:element name="Workflow">
 		<xs:complexType>
 			<xs:sequence>
