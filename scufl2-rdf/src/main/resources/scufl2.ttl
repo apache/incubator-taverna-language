@@ -7,9 +7,9 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix ro: <http://ns.mygrid.org.uk/2010/ResearchObject/> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
-@base <http://ns.taverna.org.uk/2010/scufl2#> .
+@base <http://ns.taverna.org.uk/2010/scufl2> .
 
-<http://ns.taverna.org.uk/2010/scufl2#> rdf:type owl:Ontology ;
+<http://ns.taverna.org.uk/2010/scufl2> rdf:type owl:Ontology ;
                                         
                                         rdfs:comment """The ontology defining SCUFL2 - a model for
 describing Taverna workflows.""" ;
