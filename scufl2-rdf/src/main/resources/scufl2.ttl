@@ -3,18 +3,15 @@
 @prefix : <http://ns.taverna.org.uk/2010/scufl2#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix dc: <http://purl.org/dc/elements/1.1/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix ro: <http://ns.mygrid.org.uk/2010/ResearchObject/> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @base <http://ns.taverna.org.uk/2010/scufl2> .
 
 <http://ns.taverna.org.uk/2010/scufl2> rdf:type owl:Ontology ;
                                        
-                                       dc:title "SCUFL2 Core ontology" ;
+                                       rdfs:label "SCUFL2 Core ontology"@en ;
                                        
-                                       rdfs:comment """The ontology defining SCUFL2 - a model for
-describing Taverna workflows.""" ;
+                                       rdfs:comment "The ontology defining SCUFL2 - a model for describing Taverna workflows."@en ;
                                        
                                        owl:imports <http://purl.org/NET/dc_owl2dl/terms_od> ;
                                        
@@ -30,15 +27,6 @@ describing Taverna workflows.""" ;
 #    Annotation properties
 #
 #################################################################
-
-
-
-
-
-
-
-
-
 
 
 
@@ -63,7 +51,7 @@ describing Taverna workflows.""" ;
 
 :activateConfiguration rdf:type owl:ObjectProperty ;
                        
-                       rdfs:label "activates configuration" ;
+                       rdfs:label "activate configuration"@en ;
                        
                        rdfs:range :Configuration ;
                        
@@ -77,7 +65,7 @@ describing Taverna workflows.""" ;
 
 :activityPort rdf:type owl:ObjectProperty ;
               
-              rdfs:label "Activity port" ;
+              rdfs:label "Activity port"@en ;
               
               rdfs:domain :Activity ;
               
@@ -108,7 +96,7 @@ describing Taverna workflows.""" ;
 :bindActivity rdf:type owl:FunctionalProperty ,
                        owl:ObjectProperty ;
               
-              rdfs:label "boundActivity" ;
+              rdfs:label "bind activity"@en ;
               
               rdfs:range :Activity ;
               
@@ -123,7 +111,7 @@ describing Taverna workflows.""" ;
 :bindInputActivityPort rdf:type owl:FunctionalProperty ,
                                 owl:ObjectProperty ;
                        
-                       rdfs:label "Bound input activity port" ;
+                       rdfs:label "bind input activity port"@en ;
                        
                        rdfs:range :InputActivityPort ;
                        
@@ -138,7 +126,7 @@ describing Taverna workflows.""" ;
 :bindInputProcessorPort rdf:type owl:FunctionalProperty ,
                                  owl:ObjectProperty ;
                         
-                        rdfs:label "bound input processor port" ;
+                        rdfs:label "bind input processor port"@en ;
                         
                         rdfs:domain :InputPortBinding ;
                         
@@ -153,7 +141,7 @@ describing Taverna workflows.""" ;
 :bindOutputActivityPort rdf:type owl:FunctionalProperty ,
                                  owl:ObjectProperty ;
                         
-                        rdfs:label "Bound output activity port" ;
+                        rdfs:label "bind output activity port"@en ;
                         
                         rdfs:range :OutputActivityPort ;
                         
@@ -168,7 +156,7 @@ describing Taverna workflows.""" ;
 :bindOutputProcessorPort rdf:type owl:FunctionalProperty ,
                                   owl:ObjectProperty ;
                          
-                         rdfs:label "bound output processor port" ;
+                         rdfs:label "bind output processor port"@en ;
                          
                          rdfs:domain :OutputPortBinding ;
                          
@@ -199,7 +187,7 @@ describing Taverna workflows.""" ;
 :bindProcessor rdf:type owl:FunctionalProperty ,
                         owl:ObjectProperty ;
                
-               rdfs:label "bind processor" ;
+               rdfs:label "bind processor"@en ;
                
                rdfs:range :Processor ;
                
@@ -227,7 +215,7 @@ describing Taverna workflows.""" ;
                 owl:IrreflexiveProperty ,
                 owl:ObjectProperty ;
        
-       rdfs:label "child" ;
+       rdfs:label "child"@en ;
        
        rdfs:range :Child ;
        
@@ -245,7 +233,7 @@ describing Taverna workflows.""" ;
 :configure rdf:type owl:FunctionalProperty ,
                     owl:ObjectProperty ;
            
-           rdfs:label "configuration" ;
+           rdfs:label "configure"@en ;
            
            rdfs:range :Configurable ;
            
@@ -284,7 +272,7 @@ describing Taverna workflows.""" ;
 :controllingProcessor rdf:type owl:FunctionalProperty ,
                                owl:ObjectProperty ;
                       
-                      rdfs:label "controllingProcessor" ;
+                      rdfs:label "controlling processor"@en ;
                       
                       rdfs:domain :Control ;
                       
@@ -298,7 +286,7 @@ describing Taverna workflows.""" ;
 
 :datalink rdf:type owl:ObjectProperty ;
           
-          rdfs:label "datalink" ;
+          rdfs:label "datalink"@en ;
           
           rdfs:range :DataLink ;
           
@@ -313,7 +301,7 @@ describing Taverna workflows.""" ;
 :dispatchStack rdf:type owl:FunctionalProperty ,
                         owl:ObjectProperty ;
                
-               rdfs:label "dispatchStack" ;
+               rdfs:label "dispatch stack"@en ;
                
                rdfs:range :DispatchStack ;
                
@@ -372,8 +360,7 @@ describing Taverna workflows.""" ;
         generated UUID.    
     """ ;
                
-               rdfs:subPropertyOf :workflowRelation ,
-                                  owl:sameAs .
+               rdfs:subPropertyOf :workflowRelation .
 
 
 
@@ -381,7 +368,7 @@ describing Taverna workflows.""" ;
 
 :inputActivityPort rdf:type owl:ObjectProperty ;
                    
-                   rdfs:label "Activity input port" ;
+                   rdfs:label "input acticity port"@en ;
                    
                    rdfs:domain :Activity ;
                    
@@ -395,7 +382,7 @@ describing Taverna workflows.""" ;
 
 :inputPortBinding rdf:type owl:ObjectProperty ;
                   
-                  rdfs:label "inputPortBindings" ;
+                  rdfs:label "input port binding"@en ;
                   
                   rdfs:range :InputPortBinding ;
                   
@@ -409,7 +396,7 @@ describing Taverna workflows.""" ;
 
 :inputProcessorPort rdf:type owl:ObjectProperty ;
                     
-                    rdfs:label "Processor input port" ;
+                    rdfs:label "input processor port"@en ;
                     
                     rdfs:range :InputProcessorPort ;
                     
@@ -423,7 +410,7 @@ describing Taverna workflows.""" ;
 
 :inputWorkflowPort rdf:type owl:ObjectProperty ;
                    
-                   rdfs:label "Workflow input port" ;
+                   rdfs:label "input workflow port"@en ;
                    
                    rdfs:range :InputWorkflowPort ;
                    
@@ -451,7 +438,7 @@ describing Taverna workflows.""" ;
 :iterationStrategyStack rdf:type owl:FunctionalProperty ,
                                  owl:ObjectProperty ;
                         
-                        rdfs:label "iterationStrategyStack" ;
+                        rdfs:label "iteration strategy stack"@en ;
                         
                         rdfs:range :IterationStrategyStack ;
                         
@@ -466,7 +453,7 @@ describing Taverna workflows.""" ;
 :mainProfile rdf:type owl:FunctionalProperty ,
                       owl:ObjectProperty ;
              
-             rdfs:label "main profile" ;
+             rdfs:label "main profile"@en ;
              
              rdfs:range :Profile ;
              
@@ -481,7 +468,7 @@ describing Taverna workflows.""" ;
 :mainWorkflow rdf:type owl:FunctionalProperty ,
                        owl:ObjectProperty ;
               
-              rdfs:label "main workflow" ;
+              rdfs:label "main workflow"@en ;
               
               rdfs:range :Workflow ;
               
@@ -495,7 +482,7 @@ describing Taverna workflows.""" ;
 
 :outputActivityPort rdf:type owl:ObjectProperty ;
                     
-                    rdfs:label "Activity output port" ;
+                    rdfs:label "output activity port"@en ;
                     
                     rdfs:domain :Activity ;
                     
@@ -509,7 +496,7 @@ describing Taverna workflows.""" ;
 
 :outputPortBinding rdf:type owl:ObjectProperty ;
                    
-                   rdfs:label "outputPortBindings" ;
+                   rdfs:label "output port binding"@en ;
                    
                    rdfs:range :OutputPortBinding ;
                    
@@ -523,7 +510,7 @@ describing Taverna workflows.""" ;
 
 :outputProcessorPort rdf:type owl:ObjectProperty ;
                      
-                     rdfs:label "Processor output port" ;
+                     rdfs:label "output processor port"@en ;
                      
                      rdfs:range :OutputProcessorPort ;
                      
@@ -537,7 +524,7 @@ describing Taverna workflows.""" ;
 
 :outputWorkflowPort rdf:type owl:ObjectProperty ;
                     
-                    rdfs:label "Workflow output port" ;
+                    rdfs:label "output workflow port"@en ;
                     
                     rdfs:range :OutputWorkflowPort ;
                     
@@ -552,7 +539,7 @@ describing Taverna workflows.""" ;
 :parent rdf:type owl:FunctionalProperty ,
                  owl:ObjectProperty ;
         
-        rdfs:label "parent" ;
+        rdfs:label "parent"@en ;
         
         rdfs:domain :Child ;
         
@@ -567,7 +554,7 @@ describing Taverna workflows.""" ;
 
 :port rdf:type owl:ObjectProperty ;
       
-      rdfs:label "Port" ;
+      rdfs:label "port"@en ;
       
       rdfs:domain :Parent ;
       
@@ -588,7 +575,7 @@ describing Taverna workflows.""" ;
 
 :processor rdf:type owl:ObjectProperty ;
            
-           rdfs:label "processor" ;
+           rdfs:label "processor"@en ;
            
            rdfs:range :Processor ;
            
@@ -602,7 +589,7 @@ describing Taverna workflows.""" ;
 
 :processorBinding rdf:type owl:ObjectProperty ;
                   
-                  rdfs:label "processorBindings" ;
+                  rdfs:label "processor binding"@en ;
                   
                   rdfs:range :ProcessorBinding ;
                   
@@ -616,7 +603,7 @@ describing Taverna workflows.""" ;
 
 :processorPort rdf:type owl:ObjectProperty ;
                
-               rdfs:label "Processor port" ;
+               rdfs:label "processor port"@en ;
                
                rdfs:domain :Processor ;
                
@@ -630,6 +617,8 @@ describing Taverna workflows.""" ;
 
 :productOf rdf:type owl:ObjectProperty ;
            
+           rdfs:label "product of"@en ;
+           
            rdfs:subPropertyOf :child .
 
 
@@ -638,7 +627,7 @@ describing Taverna workflows.""" ;
 
 :profile rdf:type owl:ObjectProperty ;
          
-         rdfs:label "profile" ;
+         rdfs:label "profile"@en ;
          
          rdfs:range :Profile ;
          
@@ -653,7 +642,7 @@ describing Taverna workflows.""" ;
 :receiveFrom rdf:type owl:FunctionalProperty ,
                       owl:ObjectProperty ;
              
-             rdfs:label "receives from" ;
+             rdfs:label "receive from"@en ;
              
              rdfs:domain :DataLink ;
              
@@ -668,7 +657,7 @@ describing Taverna workflows.""" ;
 :sendTo rdf:type owl:FunctionalProperty ,
                  owl:ObjectProperty ;
         
-        rdfs:label "sends to" ;
+        rdfs:label "send to"@en ;
         
         rdfs:domain :DataLink ;
         
@@ -683,6 +672,8 @@ describing Taverna workflows.""" ;
 :untilFinished rdf:type owl:FunctionalProperty ,
                         owl:ObjectProperty ;
                
+               rdfs:label "until finished"@en ;
+               
                rdfs:domain :Blocking ;
                
                rdfs:subPropertyOf :controllingProcessor .
@@ -693,7 +684,7 @@ describing Taverna workflows.""" ;
 
 :workflow rdf:type owl:ObjectProperty ;
           
-          rdfs:label "workflow" ;
+          rdfs:label "workflow"@en ;
           
           rdfs:range :Workflow ;
           
@@ -708,7 +699,7 @@ describing Taverna workflows.""" ;
 :workflowIdentifier rdf:type owl:FunctionalProperty ,
                              owl:ObjectProperty ;
                     
-                    rdfs:label "Workflow identifier" ;
+                    rdfs:label "workflow identifier"@en ;
                     
                     rdfs:domain :Workflow ;
                     
@@ -721,7 +712,7 @@ describing Taverna workflows.""" ;
 
 :workflowPort rdf:type owl:ObjectProperty ;
               
-              rdfs:label "Workflow port" ;
+              rdfs:label "workflow port"@en ;
               
               rdfs:domain :Workflow ;
               
@@ -735,12 +726,13 @@ describing Taverna workflows.""" ;
 
 :workflowRelation rdf:type owl:ObjectProperty ;
                   
+                  rdfs:label "workflow relation"@en ;
+                  
                   rdfs:domain :WorkflowElement ;
                   
                   rdfs:range :WorkflowElement ;
                   
                   rdfs:subPropertyOf dcterms:relation .
-
 
 
 
@@ -758,7 +750,7 @@ describing Taverna workflows.""" ;
 :activityPosition rdf:type owl:DatatypeProperty ,
                            owl:FunctionalProperty ;
                   
-                  rdfs:label "activityPosition" ;
+                  rdfs:label "activity position"@en ;
                   
                   rdfs:domain :ProcessorBinding ;
                   
@@ -771,56 +763,11 @@ describing Taverna workflows.""" ;
 :desiredDepth rdf:type owl:DatatypeProperty ,
                        owl:FunctionalProperty ;
               
+              rdfs:label "desired depth"@en ;
+              
               rdfs:domain :PortNode ;
               
               rdfs:range xsd:nonNegativeInteger .
-
-
-
-###  http://ns.taverna.org.uk/2010/scufl2#globalBaseURI
-
-:globalBaseURI rdfs:comment """The resources are the same (like in owl:sameAs), and
-      so are the sub-resources having the same base URI as a parent.  For instance if 
-        <file:///tmp/example/> scufl2:globalBaseURI 
-            <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/> .
-      then also 
-        <file:///tmp/example/workflow/HelloWorld/> scufl2:globalBaseURI 
-            <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/> 
-
-      Note that for URIs under
-      <http://ns.taverna.org.uk/2010/workflowBundle/> special URI template rules
-      link the URI with the scufl2:parent, rdf:type, scufl2:name of the
-      resource. 
-      
-      For instance given 
-        <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/processor/Hello/out/greeting> 
-      it must be so that:
-
-        <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/processor/Hello/out/greeting>
-            a scufl2:OutputProcessorPort;
-            scufl2:name \"greeting\";
-            scufl2:parent <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/processor/Hello>.
-
-        <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/processor/Hello>
-            a scufl2:Processor;
-            scufl2:name \"Hello\";
-            scufl2:parent <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/>;
-            scufl2:outputProcessorPort <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/processor/Hello/out/greeting>.
-        
-        <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/>    
-            a scufl2:Workflow;
-            scufl2:name \"HelloWorld\";
-            scufl2:parent <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/>;
-            sculf2:processor <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/processor/Hello>.
-        
-        <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/>    
-            a scufl2:WorkflowBundle;
-            scufl2:workflow <http://ns.taverna.org.uk/2010/workflowBundle/28f7c554-4f35-401f-b34b-516e9a0ef731/workflow/HelloWorld/>;
-            scufl2:workflowBundleId \"28f7c554-4f35-401f-b34b-516e9a0ef731\";
-
-        Where 28f7c554-4f35-401f-b34b-516e9a0ef731 must be a randomly
-        generated UUID.    
-    """ .
 
 
 
@@ -829,7 +776,7 @@ describing Taverna workflows.""" ;
 :granularPortDepth rdf:type owl:DatatypeProperty ,
                             owl:FunctionalProperty ;
                    
-                   rdfs:label "granular depth" ;
+                   rdfs:label "granular port depth"@en ;
                    
                    rdfs:range xsd:nonNegativeInteger ;
                    
@@ -847,6 +794,8 @@ describing Taverna workflows.""" ;
 :mergePosition rdf:type owl:DatatypeProperty ,
                         owl:FunctionalProperty ;
                
+               rdfs:label "merge position"@en ;
+               
                rdfs:domain :DataLink ;
                
                rdfs:range xsd:integer .
@@ -858,7 +807,7 @@ describing Taverna workflows.""" ;
 :name rdf:type owl:DatatypeProperty ,
                owl:FunctionalProperty ;
       
-      rdfs:label "name" ;
+      rdfs:label "name"@en ;
       
       rdfs:domain :Named ;
       
@@ -873,7 +822,7 @@ describing Taverna workflows.""" ;
 :portDepth rdf:type owl:DatatypeProperty ,
                     owl:FunctionalProperty ;
            
-           rdfs:label "depth" ;
+           rdfs:label "port depth"@en ;
            
            rdfs:range xsd:nonNegativeInteger ;
            
@@ -892,26 +841,11 @@ describing Taverna workflows.""" ;
 :profilePosition rdf:type owl:DatatypeProperty ,
                           owl:FunctionalProperty ;
                  
-                 rdfs:label "profile position" ;
+                 rdfs:label "profile position"@en ;
                  
                  rdfs:domain :Profile ;
                  
                  rdfs:range xsd:nonNegativeInteger .
-
-
-
-###  http://ns.taverna.org.uk/2010/scufl2#requiredConfiguration
-
-:requiredConfiguration rdf:type owl:DatatypeProperty ,
-                                owl:FunctionalProperty ;
-                       
-                       rdfs:range xsd:boolean .
-
-
-
-###  http://ns.taverna.org.uk/2010/scufl2#workflowIdentifier
-
-:workflowIdentifier rdfs:label "Workflow identifier" .
 
 
 
@@ -928,7 +862,7 @@ describing Taverna workflows.""" ;
 
 :Activity rdf:type owl:Class ;
           
-          rdfs:label "Activity" ;
+          rdfs:label "Activity"@en ;
           
           rdfs:subClassOf :Configurable ,
                           :Named .
@@ -939,18 +873,18 @@ describing Taverna workflows.""" ;
 
 :ActivityPort rdf:type owl:Class ;
               
-              rdfs:label "ActivityPort" ;
+              rdfs:label "Activity Port"@en ;
               
               rdfs:subClassOf :Child ,
                               :Port ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :parent ;
+                                owl:someValuesFrom :Activity
+                              ] ,
                               [ rdf:type owl:Class ;
                                 owl:unionOf ( :InputActivityPort
                                               :OutputActivityPort
                                             )
-                              ] ,
-                              [ rdf:type owl:Restriction ;
-                                owl:onProperty :parent ;
-                                owl:someValuesFrom :Activity
                               ] .
 
 
@@ -959,13 +893,15 @@ describing Taverna workflows.""" ;
 
 :Blocking rdf:type owl:Class ;
           
+          rdfs:label "Blocking"@en ;
+          
           rdfs:subClassOf :Control ,
                           [ rdf:type owl:Restriction ;
-                            owl:onProperty :untilFinished ;
+                            owl:onProperty :block ;
                             owl:someValuesFrom :Processor
                           ] ,
                           [ rdf:type owl:Restriction ;
-                            owl:onProperty :block ;
+                            owl:onProperty :untilFinished ;
                             owl:someValuesFrom :Processor
                           ] .
 
@@ -975,7 +911,7 @@ describing Taverna workflows.""" ;
 
 :Child rdf:type owl:Class ;
        
-       rdfs:label "Child" ;
+       rdfs:label "Child"@en ;
        
        rdfs:subClassOf :WorkflowElement ,
                        [ rdf:type owl:Restriction ;
@@ -993,7 +929,7 @@ The Child-relationship also gives a strong hint that the entity should be serial
 
 :Configurable rdf:type owl:Class ;
               
-              rdfs:label "Configurable" ;
+              rdfs:label "Configurable"@en ;
               
               rdfs:subClassOf :WorkflowElement .
 
@@ -1002,6 +938,8 @@ The Child-relationship also gives a strong hint that the entity should be serial
 ###  http://ns.taverna.org.uk/2010/scufl2#Configuration
 
 :Configuration rdf:type owl:Class ;
+               
+               rdfs:label "Configuration"@en ;
                
                rdfs:subClassOf :Named ,
                                [ rdf:type owl:Restriction ;
@@ -1015,13 +953,15 @@ The Child-relationship also gives a strong hint that the entity should be serial
 
 :Control rdf:type owl:Class ;
          
+         rdfs:label "Control"@en ;
+         
          rdfs:subClassOf :WorkflowElement ,
                          [ rdf:type owl:Restriction ;
-                           owl:onProperty :controllingProcessor ;
+                           owl:onProperty :controlledProcessor ;
                            owl:someValuesFrom :Processor
                          ] ,
                          [ rdf:type owl:Restriction ;
-                           owl:onProperty :controlledProcessor ;
+                           owl:onProperty :controllingProcessor ;
                            owl:someValuesFrom :Processor
                          ] .
 
@@ -1031,7 +971,7 @@ The Child-relationship also gives a strong hint that the entity should be serial
 
 :CrossProduct rdf:type owl:Class ;
               
-              rdfs:label "CrossProduct" ;
+              rdfs:label "Cross Product"@en ;
               
               rdfs:subClassOf :Product .
 
@@ -1041,15 +981,15 @@ The Child-relationship also gives a strong hint that the entity should be serial
 
 :DataLink rdf:type owl:Class ;
           
-          rdfs:label "DataLink" ;
+          rdfs:label "Data Link"@en ;
           
           rdfs:subClassOf :WorkflowElement ,
                           [ rdf:type owl:Restriction ;
-                            owl:onProperty :sendTo ;
+                            owl:onProperty :receiveFrom ;
                             owl:someValuesFrom :Processor
                           ] ,
                           [ rdf:type owl:Restriction ;
-                            owl:onProperty :receiveFrom ;
+                            owl:onProperty :sendTo ;
                             owl:someValuesFrom :Processor
                           ] .
 
@@ -1059,12 +999,10 @@ The Child-relationship also gives a strong hint that the entity should be serial
 
 :DispatchStack rdf:type owl:Class ;
                
+               rdfs:label "Dispatch Stack"@en ;
+               
                rdfs:subClassOf :WorkflowElement ,
                                rdf:List ,
-                               [ rdf:type owl:Restriction ;
-                                 owl:onProperty rdf:first ;
-                                 owl:allValuesFrom :DispatchStackLayer
-                               ] ,
                                [ rdf:type owl:Class ;
                                  owl:unionOf ( [ rdf:type owl:Restriction ;
                                                  owl:onProperty rdf:rest ;
@@ -1075,6 +1013,10 @@ The Child-relationship also gives a strong hint that the entity should be serial
                                                  owl:hasValue rdf:nil
                                                ]
                                              )
+                               ] ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty rdf:first ;
+                                 owl:allValuesFrom :DispatchStackLayer
                                ] .
 
 
@@ -1082,6 +1024,8 @@ The Child-relationship also gives a strong hint that the entity should be serial
 ###  http://ns.taverna.org.uk/2010/scufl2#DispatchStackLayer
 
 :DispatchStackLayer rdf:type owl:Class ;
+                    
+                    rdfs:label "Dispatch Stack Layer"@en ;
                     
                     rdfs:subClassOf :Configurable .
 
@@ -1091,7 +1035,7 @@ The Child-relationship also gives a strong hint that the entity should be serial
 
 :DotProduct rdf:type owl:Class ;
             
-            rdfs:label "DotProduct" ;
+            rdfs:label "Dot Product"@en ;
             
             rdfs:subClassOf :Product .
 
@@ -1101,7 +1045,7 @@ The Child-relationship also gives a strong hint that the entity should be serial
 
 :InputActivityPort rdf:type owl:Class ;
                    
-                   rdfs:label "Input activity port" ;
+                   rdfs:label "Input Activity Port"@en ;
                    
                    rdfs:subClassOf :ActivityPort ,
                                    [ rdf:type owl:Restriction ;
@@ -1117,7 +1061,7 @@ The Child-relationship also gives a strong hint that the entity should be serial
 
 :InputPortBinding rdf:type owl:Class ;
                   
-                  rdfs:label "Processor input port binding" ;
+                  rdfs:label "Input Port Binding"@en ;
                   
                   rdfs:subClassOf :PortBinding ,
                                   [ rdf:type owl:Restriction ;
@@ -1137,7 +1081,7 @@ The Child-relationship also gives a strong hint that the entity should be serial
 
 :InputProcessorPort rdf:type owl:Class ;
                     
-                    rdfs:label "Input processor port" ;
+                    rdfs:label "Input Processor Port"@en ;
                     
                     rdfs:subClassOf :ProcessorPort ,
                                     :ReceiverPort ,
@@ -1152,7 +1096,7 @@ The Child-relationship also gives a strong hint that the entity should be serial
 
 :InputWorkflowPort rdf:type owl:Class ;
                    
-                   rdfs:label "Input workflow port" ;
+                   rdfs:label "Input Workflow Port"@en ;
                    
                    rdfs:subClassOf :SenderPort ,
                                    :WorkflowPort ,
@@ -1170,6 +1114,8 @@ This is considered a SenderPort within the workflow, so that it can be connected
 ###  http://ns.taverna.org.uk/2010/scufl2#IterationStrategyChildren
 
 :IterationStrategyChildren rdf:type owl:Class ;
+                           
+                           rdfs:label "Iteration Strategy Children"@en ;
                            
                            rdfs:subClassOf :WorkflowElement ,
                                            rdf:List ,
@@ -1195,7 +1141,7 @@ This is considered a SenderPort within the workflow, so that it can be connected
 
 :IterationStrategyNode rdf:type owl:Class ;
                        
-                       rdfs:label "Iteration strategy node"@en ;
+                       rdfs:label "Iteration Strategy Node"@en ;
                        
                        rdfs:subClassOf :WorkflowElement .
 
@@ -1204,6 +1150,8 @@ This is considered a SenderPort within the workflow, so that it can be connected
 ###  http://ns.taverna.org.uk/2010/scufl2#IterationStrategyStack
 
 :IterationStrategyStack rdf:type owl:Class ;
+                        
+                        rdfs:label "Iteration Strategy Stack"@en ;
                         
                         rdfs:subClassOf :WorkflowElement ,
                                         rdf:List ,
@@ -1229,7 +1177,7 @@ This is considered a SenderPort within the workflow, so that it can be connected
 
 :Named rdf:type owl:Class ;
        
-       rdfs:label "Named" ;
+       rdfs:label "Named"@en ;
        
        rdfs:subClassOf :WorkflowElement ,
                        [ rdf:type owl:Restriction ;
@@ -1270,7 +1218,7 @@ This is considered a SenderPort within the workflow, so that it can be connected
 
 :OutputActivityPort rdf:type owl:Class ;
                     
-                    rdfs:label "Output activity port" ;
+                    rdfs:label "Output Activity Port"@en ;
                     
                     rdfs:subClassOf :ActivityPort ,
                                     [ rdf:type owl:Restriction ;
@@ -1288,7 +1236,7 @@ This is considered a SenderPort within the workflow, so that it can be connected
 
 :OutputPortBinding rdf:type owl:Class ;
                    
-                   rdfs:label "Processor output Port binding" ;
+                   rdfs:label "Output Port binding"@en ;
                    
                    rdfs:subClassOf :PortBinding ,
                                    [ rdf:type owl:Restriction ;
@@ -1306,7 +1254,7 @@ This is considered a SenderPort within the workflow, so that it can be connected
 
 :OutputProcessorPort rdf:type owl:Class ;
                      
-                     rdfs:label "Output processor port" ;
+                     rdfs:label "Output Processor Port"@en ;
                      
                      rdfs:subClassOf :ProcessorPort ,
                                      :SenderPort ,
@@ -1325,7 +1273,7 @@ This is considered a SenderPort within the workflow, so that it can be connected
 
 :OutputWorkflowPort rdf:type owl:Class ;
                     
-                    rdfs:label "Output workflow port" ;
+                    rdfs:label "Output Workflow Port"@en ;
                     
                     rdfs:subClassOf :ReceiverPort ,
                                     :WorkflowPort ;
@@ -1340,7 +1288,7 @@ This is considered a ReceiverPort within the workflow, so that it can be connect
 
 :Parent rdf:type owl:Class ;
         
-        rdfs:label "Parent" ;
+        rdfs:label "Parent"@en ;
         
         rdfs:subClassOf :WorkflowElement .
 
@@ -1350,7 +1298,7 @@ This is considered a ReceiverPort within the workflow, so that it can be connect
 
 :Port rdf:type owl:Class ;
       
-      rdfs:label "Port" ;
+      rdfs:label "Port"@en ;
       
       rdfs:subClassOf :Named ,
                       [ rdf:type owl:Restriction ;
@@ -1372,15 +1320,17 @@ This is considered a ReceiverPort within the workflow, so that it can be connect
 
 :PortBinding rdf:type owl:Class ;
              
+             rdfs:label "Port Binding"@en ;
+             
              rdfs:subClassOf :Child ,
-                             [ rdf:type owl:Restriction ;
-                               owl:onProperty :parent ;
-                               owl:someValuesFrom :ProcessorBinding
-                             ] ,
                              [ rdf:type owl:Class ;
                                owl:unionOf ( :InputPortBinding
                                              :OutputPortBinding
                                            )
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :parent ;
+                               owl:someValuesFrom :ProcessorBinding
                              ] .
 
 
@@ -1388,6 +1338,8 @@ This is considered a ReceiverPort within the workflow, so that it can be connect
 ###  http://ns.taverna.org.uk/2010/scufl2#PortNode
 
 :PortNode rdf:type owl:Class ;
+          
+          rdfs:label "Port Node"@en ;
           
           rdfs:subClassOf :IterationStrategyNode ,
                           [ rdf:type owl:Restriction ;
@@ -1405,10 +1357,9 @@ This is considered a ReceiverPort within the workflow, so that it can be connect
 
 :Processor rdf:type owl:Class ;
            
-           rdfs:label "Processor" ;
+           rdfs:label "Processor"@en ;
            
            rdfs:subClassOf :Child ,
-                           :Configurable ,
                            :Named ,
                            [ rdf:type owl:Restriction ;
                              owl:onProperty :name ;
@@ -1425,15 +1376,15 @@ A processor is bound to an Activity which specifies how to execute the task. Thi
 
 :ProcessorBinding rdf:type owl:Class ;
                   
-                  rdfs:label "ProcessorBinding" ;
+                  rdfs:label "Processor Binding"@en ;
                   
                   rdfs:subClassOf :Named ,
                                   [ rdf:type owl:Restriction ;
-                                    owl:onProperty :bindActivity ;
+                                    owl:onProperty :bindProcessor ;
                                     owl:someValuesFrom :Processor
                                   ] ,
                                   [ rdf:type owl:Restriction ;
-                                    owl:onProperty :bindProcessor ;
+                                    owl:onProperty :bindActivity ;
                                     owl:someValuesFrom :Processor
                                   ] .
 
@@ -1443,7 +1394,7 @@ A processor is bound to an Activity which specifies how to execute the task. Thi
 
 :ProcessorPort rdf:type owl:Class ;
                
-               rdfs:label "ProcessorPort" ;
+               rdfs:label "Processor Port"@en ;
                
                rdfs:subClassOf :Child ,
                                :Port ,
@@ -1463,17 +1414,17 @@ A processor is bound to an Activity which specifies how to execute the task. Thi
 
 :Product rdf:type owl:Class ;
          
-         rdfs:label "IterationStrategyNode" ;
+         rdfs:label "Product"@en ;
          
          rdfs:subClassOf :IterationStrategyNode ,
-                         [ rdf:type owl:Restriction ;
-                           owl:onProperty :productOf ;
-                           owl:someValuesFrom :IterationStrategyChildren
-                         ] ,
                          [ rdf:type owl:Class ;
                            owl:unionOf ( :CrossProduct
                                          :DotProduct
                                        )
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :productOf ;
+                           owl:someValuesFrom :IterationStrategyChildren
                          ] .
 
 
@@ -1482,7 +1433,7 @@ A processor is bound to an Activity which specifies how to execute the task. Thi
 
 :Profile rdf:type owl:Class ;
          
-         rdfs:label "Profile" ;
+         rdfs:label "Profile"@en ;
          
          rdfs:subClassOf :Child ,
                          :Named ,
@@ -1494,7 +1445,7 @@ A processor is bound to an Activity which specifies how to execute the task. Thi
 
 :ReceiverPort rdf:type owl:Class ;
               
-              rdfs:label "ReceiverPort" ;
+              rdfs:label "Receiver Port"@en ;
               
               rdfs:subClassOf :Port ,
                               [ rdf:type owl:Class ;
@@ -1505,7 +1456,7 @@ A processor is bound to an Activity which specifies how to execute the task. Thi
               
               owl:disjointWith :SenderPort ;
               
-              rdfs:comment "A port which can receive data from a DataLink"@en .
+              rdfs:comment "A Port which can receive data from a DataLink"@en .
 
 
 
@@ -1513,7 +1464,7 @@ A processor is bound to an Activity which specifies how to execute the task. Thi
 
 :SenderPort rdf:type owl:Class ;
             
-            rdfs:label "SenderPort" ;
+            rdfs:label "Sender Port"@en ;
             
             rdfs:subClassOf :Port ,
                             [ rdf:type owl:Class ;
@@ -1522,7 +1473,7 @@ A processor is bound to an Activity which specifies how to execute the task. Thi
                                           )
                             ] ;
             
-            rdfs:comment "A port which can send data to a Datalink"@en .
+            rdfs:comment "A Port which can send data to a DataLink"@en .
 
 
 
@@ -1530,7 +1481,7 @@ A processor is bound to an Activity which specifies how to execute the task. Thi
 
 :Workflow rdf:type owl:Class ;
           
-          rdfs:label "Workflow" ;
+          rdfs:label "Workflow"@en ;
           
           rdfs:subClassOf :Named ,
                           [ rdf:type owl:Restriction ;
@@ -1551,7 +1502,7 @@ A processor is bound to an Activity which specifies how to execute the task. Thi
 
 :WorkflowBundle rdf:type owl:Class ;
                 
-                rdfs:label "Workflow bundle" ;
+                rdfs:label "Workflow Bundle"@en ;
                 
                 rdfs:subClassOf :Named ,
                                 [ rdf:type owl:Restriction ;
@@ -1569,7 +1520,7 @@ A processor is bound to an Activity which specifies how to execute the task. Thi
 
 :WorkflowElement rdf:type owl:Class ;
                  
-                 rdfs:label "Workflow element" ;
+                 rdfs:label "Workflow Element"@en ;
                  
                  rdfs:comment """Any element that defines a workflow, such as a processor, port, datalink, activity, port binding, profile.
 
@@ -1581,7 +1532,7 @@ Super-class for any Scufl2 class. """@en .
 
 :WorkflowPort rdf:type owl:Class ;
               
-              rdfs:label "Workflow port"@en ;
+              rdfs:label "Workflow Port"@en ;
               
               rdfs:subClassOf :Port ,
                               [ rdf:type owl:Restriction ;
@@ -1596,6 +1547,20 @@ Super-class for any Scufl2 class. """@en .
               
               rdfs:comment "Ports of a Workflow. "@en .
 
+
+
+
+
+#################################################################
+#
+#    Individuals
+#
+#################################################################
+
+
+###  http://www.w3.org/1999/02/22-rdf-syntax-ns#nil
+
+rdf:nil rdf:type owl:NamedIndividual .
 
 
 
