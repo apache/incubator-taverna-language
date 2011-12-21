@@ -9,7 +9,7 @@
 @prefix : <http://ns.taverna.org.uk/2010/scufl2#> .
 
 
-<>
+<http://ns.taverna.org.uk/2010/scufl2#>
     a owl:Ontology ;
     dc:title "SCUFL2 Core ontology" ;
     owl:imports <http://www.w3.org/2000/01/rdf-schema#>, <http://purl.org/NET/dc_owl2dl/terms_od>;
