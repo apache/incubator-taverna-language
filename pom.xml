@@ -87,19 +87,25 @@
 									fork="true" failonerror="true" maxmemory="128m">
 									<arg value="-b" />
 									<arg
-										value="no.s11.w3.prov.elmo=http://w3.org/ProvenanceOntology.owl#" />
+										value="org.purl.wf4ever.wfdesc=http://purl.org/wf4ever/wfdesc#" />
+										<!-- 
 									<arg value="-p" />
-									<arg value="prov" />	
+									<arg value="wfdesc" />	
+										 -->
 									<arg value="-j" />
-									<arg value="target/prov-ontology.jar" />
-									<!-- <arg value="-p" /> <arg value="" /> -->
-									<arg value="src/main/resources/no/s11/w3/prov/ProvenanceOntology.owl" />
+									<arg value="target/wfdesc-ontology.jar" />
+									<arg value="-p" /> <arg value="" /> 
+									<!--
+									<arg value="http://purl.org/wf4ever/wfdesc" />
+                                    -->
+                                    <arg
+                                    value="src/main/resources/org/purl/wf4ever/wfdesc/wfdesc.ttl"/>
 									<classpath refid="maven.plugin.classpath" />
 									<classpath>
 										<pathelement path="." />
 									</classpath>
 								</java>
-								<unzip src="${project.build.directory}/prov-ontology.jar"
+								<unzip src="${project.build.directory}/wfdesc-ontology.jar"
 									dest="${project.build.directory}/generated-sources/elmo">
 									<patternset>
 										<exclude name="**/*.class" />
@@ -208,6 +214,20 @@
 		</pluginManagement>
 	</build>
 	<dependencies>
+	
+		<dependency>
+			<groupId>uk.org.taverna.scufl2</groupId>
+			<artifactId>scufl2-api</artifactId>
+			<version>${scufl2.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>uk.org.taverna.scufl2</groupId>
+			<artifactId>scufl2-api</artifactId>
+			<version>${scufl2.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+	
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -261,6 +281,13 @@
 			<groupId>org.openrdf.elmo</groupId>
 			<artifactId>elmo-codegen</artifactId>
 			<version>${elmo.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.1</version>
+			<type>jar</type>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<repositories>
