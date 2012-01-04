@@ -4,9 +4,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>uk.org.taverna.scufl2</groupId>
 	<artifactId>scufl2-wfdesc</artifactId>
-	<version>1.0-SNAPSHOT</version>
-	<name>SCUFL2 Wfdesc</name>
-	<description>W3C Provenance WG Prov ontology bindings for Sesame/Elmo</description>
+	<version>0.1-SNAPSHOT</version>
+	<name>SCUFL2 to wfdesc</name>
+	<description>Convert Scufl2 workflow to wfdesc structure (from Wf4Ever RO ontology)</description>
 	<properties>
 		<scufl2.version>0.9-SNAPSHOT</scufl2.version>
 		<elmo.version>1.5</elmo.version>
@@ -151,62 +151,30 @@
 					</execution>
 				</executions>
 			</plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>appassembler-maven-plugin</artifactId>
+                <version>1.1.1</version>
+                <executions>
+                	<execution>
+                		<id>assemble</id>
+                		<phase>package</phase>
+                		<goals>
+                			<goal>assemble</goal>
+                		</goals>
+                	</execution>
+                </executions>
+                <configuration>
+                 <assembleDirectory>${project.build.directory}/${project.name}</assembleDirectory>	
+                  <programs>
+                    <program>
+                      <mainClass>uk.org.taverna.scufl2.wfdesc.ConvertToWfdesc</mainClass>
+                      <name>scufl2-to-wfdesc</name>
+                    </program>
+                  </programs>
+                </configuration>
+              </plugin>
 		</plugins>
-		<pluginManagement>
-			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
-											org.apache.maven.plugins
-										</groupId>
-										<artifactId>
-											maven-antrun-plugin
-										</artifactId>
-										<versionRange>
-											[1.6,)
-										</versionRange>
-										<goals>
-											<goal>run</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
-											org.codehaus.mojo
-										</groupId>
-										<artifactId>
-											build-helper-maven-plugin
-										</artifactId>
-										<versionRange>
-											[1.5,)
-										</versionRange>
-										<goals>
-											<goal>add-resource</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
 	<dependencies>
 
@@ -320,6 +288,24 @@
 			<name>Aduna Open Source - Maven snapshots</name>
 			<url>http://repo.aduna-software.org/maven2/snapshots</url>
 		</repository>
+        <repository>
+            <releases/>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>mygrid-repository</id>
+            <name>myGrid Repository</name>
+            <url>http://www.mygrid.org.uk/maven/repository</url>
+        </repository>
+        <repository>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots/>
+            <id>mygrid-snapshot-repository</id>
+            <name>myGrid Snapshot Repository</name>
+            <url>http://www.mygrid.org.uk/maven/snapshot-repository</url>
+        </repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
