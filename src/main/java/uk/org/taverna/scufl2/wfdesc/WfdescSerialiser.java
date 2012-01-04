@@ -126,20 +126,20 @@ public class WfdescSerialiser {
 					sesameManager
 							.designate(parentQName,
 									org.purl.wf4ever.wfdesc.Workflow.class)
-							.getWfdescHasSubProcess().add(process);
+							.getHasSubProcess().add(process);
 					return true;
 				}
 				if (node instanceof InputPort) {
 					Input input = sesameManager.create(qName, Input.class);
 					Process process = sesameManager.designate(parentQName,
 							Process.class);
-					process.getWfdescHasInput().add(input);
+					process.getHasInput().add(input);
 					return true;
 				}
 				if (node instanceof OutputPort) {
 					Output output = sesameManager.create(qName, Output.class);
 					sesameManager.designate(parentQName, Process.class)
-							.getWfdescHasOutput().add(output);
+							.getHasOutput().add(output);
 					return true;
 				}
 				if (node instanceof DataLink) {
@@ -149,14 +149,14 @@ public class WfdescSerialiser {
 							org.purl.wf4ever.wfdesc.DataLink.class);
 					Output source = sesameManager.designate(
 							qnameForBean(link.getReceivesFrom()), Output.class);
-					dl.getWfdescHasSource().add(source);
+					dl.getHasSource().add(source);
 					Input sink = sesameManager.designate(
 							qnameForBean(link.getSendsTo()), Input.class);
-					dl.getWfdescHasSink().add(sink);
+					dl.getHasSink().add(sink);
 					sesameManager
 							.designate(parentQName,
 									org.purl.wf4ever.wfdesc.Workflow.class)
-							.getWfdescHasDataLink().add(dl);
+							.getHasDataLink().add(dl);
 					return true;
 				}
 //				 System.out.println("Ignoring " + node);
