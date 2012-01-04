@@ -1,0 +1,39 @@
+@base <http://ns.taverna.org.uk/2010/workflowBundle/01348671-5aaa-4cc2-84cc-477329b70b0d/workflow/Hello_Anyone/> .
+@prefix wfdesc: <http://purl.org/wf4ever/wfdesc#> .
+
+<datalink?from=in/name&to=processor/Concatenate_two_strings/in/string2> a wfdesc:DataLink ;
+	wfdesc:hasSource <in/name> ;
+	wfdesc:hasSink <processor/Concatenate_two_strings/in/string2> .
+
+<datalink?from=processor/Concatenate_two_strings/out/output&to=out/greeting> a wfdesc:DataLink ;
+	wfdesc:hasSource <processor/Concatenate_two_strings/out/output> ;
+	wfdesc:hasSink <out/greeting> .
+
+<datalink?from=processor/hello/out/value&to=processor/Concatenate_two_strings/in/string1> a wfdesc:DataLink ;
+	wfdesc:hasSource <processor/hello/out/value> ;
+	wfdesc:hasSink <processor/Concatenate_two_strings/in/string1> .
+
+<in/name> a wfdesc:Input , wfdesc:Output .
+
+<out/greeting> a wfdesc:Output , wfdesc:Input .
+
+<processor/Concatenate_two_strings/in/string1> a wfdesc:Input .
+
+<processor/Concatenate_two_strings/in/string2> a wfdesc:Input .
+
+<processor/Concatenate_two_strings/out/output> a wfdesc:Output .
+
+<processor/hello/out/value> a wfdesc:Output .
+
+<> a wfdesc:Workflow , wfdesc:Process ;
+	wfdesc:hasInput <in/name> ;
+	wfdesc:hasOutput <out/greeting> ;
+	wfdesc:hasSubProcess <processor/Concatenate_two_strings/> , <processor/hello/> ;
+	wfdesc:hasDataLink <datalink?from=in/name&to=processor/Concatenate_two_strings/in/string2> , <datalink?from=processor/Concatenate_two_strings/out/output&to=out/greeting> , <datalink?from=processor/hello/out/value&to=processor/Concatenate_two_strings/in/string1> .
+
+<processor/Concatenate_two_strings/> a wfdesc:Process ;
+	wfdesc:hasInput <processor/Concatenate_two_strings/in/string1> , <processor/Concatenate_two_strings/in/string2> ;
+	wfdesc:hasOutput <processor/Concatenate_two_strings/out/output> .
+
+<processor/hello/> a wfdesc:Process ;
+	wfdesc:hasOutput <processor/hello/out/value> .

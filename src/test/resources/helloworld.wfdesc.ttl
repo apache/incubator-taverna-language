@@ -1,0 +1,18 @@
+@base <http://ns.taverna.org.uk/2010/workflowBundle/8781d5f4-d0ba-48a8-a1d1-14281bd8a917/workflow/Hello_World/> .
+@prefix wfdesc: <http://purl.org/wf4ever/wfdesc#> .
+
+<datalink?from=processor/hello/out/value&to=out/greeting> a wfdesc:DataLink ;
+	wfdesc:hasSource <processor/hello/out/value> ;
+	wfdesc:hasSink <out/greeting> .
+
+<out/greeting> a wfdesc:Output , wfdesc:Input .
+
+<processor/hello/out/value> a wfdesc:Output .
+
+<> a wfdesc:Workflow , wfdesc:Process ;
+	wfdesc:hasOutput <out/greeting> ;
+	wfdesc:hasSubProcess <processor/hello/> ;
+	wfdesc:hasDataLink <datalink?from=processor/hello/out/value&to=out/greeting> .
+
+<processor/hello/> a wfdesc:Process ;
+	wfdesc:hasOutput <processor/hello/out/value> .
