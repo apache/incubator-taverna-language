@@ -21,7 +21,8 @@ public class ConvertToWfdesc {
 			File wfdesc = new File(original.getParentFile(), filename);
 			WorkflowBundle wfBundle = io.readBundle(original, null);
 			io.writeBundle(wfBundle, wfdesc,
-					"text/vnd.wf4ever.wfdesc+turtle");	
+					"text/vnd.wf4ever.wfdesc+turtle");
+			System.out.println("Converted " + original.getPath() + " to " + wfdesc.getPath());
 		}
 	}
 }
