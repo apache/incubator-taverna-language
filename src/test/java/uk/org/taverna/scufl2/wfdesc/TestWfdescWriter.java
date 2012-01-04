@@ -32,8 +32,8 @@ public class TestWfdescWriter {
 
 	public File tempFile() throws IOException {
 		File bundleFile = File.createTempFile("wfdesc", ".ttl");
-//		bundleFile.deleteOnExit();
-		System.out.println(bundleFile);
+		bundleFile.deleteOnExit();
+//		System.out.println(bundleFile);
 		return bundleFile;
 	}
 
