@@ -97,7 +97,7 @@
 									<classpath refid="maven.plugin.classpath" />
 									<classpath>
 										<pathelement path="." />
-									</classpath>
+									</classpath>project.name
 								</java>
 								<unzip src="${project.build.directory}/wfdesc-ontology.jar"
 									dest="${project.build.directory}/generated-sources/elmo">
@@ -165,7 +165,7 @@
                 	</execution>
                 </executions>
                 <configuration>
-                 <assembleDirectory>${project.build.directory}/${project.name}</assembleDirectory>	
+                 <assembleDirectory>${project.build.directory}/${project.artifactId}</assembleDirectory>	
                   <programs>
                     <program>
                       <mainClass>uk.org.taverna.scufl2.wfdesc.ConvertToWfdesc</mainClass>
