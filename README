@@ -1,0 +1,144 @@
+Convert SCUFL2 to wfdesc
+========================
+
+This is an extension to Scufl2 [1] which provides the export capability
+to wfdesc ontology from the Wf4Ever [2] RO wfdesc ontology v0.1 [3].
+
+This is exposed as a command line tool "scufl2-to-wfdesc", but can also
+be accessed programmatically using the SCUFL2 APIs.
+
+
+
+
+
+
+Building
+--------
+
+Requirements:
+ * Java JDK 6 or higher [6], or OpenJDK 7 or higher [7]
+ * Maven 2 or higher [9]  (only for building)
+
+To build, simply use "mvn clean install"
+
+Example:
+
+    : stain@ralph ~/src/wf4ever/scufl2-wfdesc;mvn clean install
+    [INFO] Scanning for projects...
+    [INFO]                                                                         
+    [INFO] ------------------------------------------------------------------------
+    [INFO] Building SCUFL2 to wfdesc 0.1-SNAPSHOT
+    [INFO] ------------------------------------------------------------------------
+    [INFO] 
+    [INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ scufl2-wfdesc ---
+    [INFO] 
+    [INFO] --- maven-antrun-plugin:1.6:run (default) @ scufl2-wfdesc ---
+    [INFO] Executing tasks
+
+    main:
+        [mkdir] Created dir: /home/stain/stuff/src/wf4ever/scufl2-wfdesc/target/generated-sources
+    (..)
+    [INFO] ------------------------------------------------------------------------
+    [INFO] BUILD SUCCESS
+    [INFO] ------------------------------------------------------------------------
+    [INFO] Total time: 46.734s
+    [INFO] Finished at: Wed Jan 04 15:22:58 WET 2012
+    [INFO] Final Memory: 18M/129M
+    [INFO] ------------------------------------------------------------------------
+
+
+Note that the first time you build, Maven will download several
+required dependencies from Maven repositories. Depending on your network
+connection this might take some time to complete.
+
+
+
+Command line tool
+-----------------
+
+After building, the folder "target/scufl2-wfdesc" contains a
+distribution of the command line tool "scufl2-to-wfdesc", with launchers
+generated for Unix and Windows.
+
+You may copy and distribute this folder for a standalone usage of the
+conversion tool.
+
+The command line tool takes a list of Taverna workflow files (supported file
+types are *.t2flow and *.wfbundle) 
+
+
+Example:
+
+    : stain@ralph ~/src/wf4ever/scufl2-wfdesc; target/scufl2-wfdesc/bin/scufl2-to-wfdesc src/test/resources/helloworld.t2flow 
+    log4j:WARN No appenders could be found for logger (org.openrdf.sail.memory.MemoryStore).
+    log4j:WARN Please initialize the log4j system properly.
+    Converted src/test/resources/helloworld.t2flow to src/test/resources/helloworld.wfdesc.ttl
+
+
+    : stain@ralph ~/src/wf4ever/scufl2-wfdesc; cat src/test/resources/helloworld.wfdesc.ttl 
+    @base <http://ns.taverna.org.uk/2010/workflowBundle/8781d5f4-d0ba-48a8-a1d1-14281bd8a917/workflow/Hello_World/> .
+    @prefix wfdesc: <http://purl.org/wf4ever/wfdesc#> .
+
+    <datalink?from=processor/hello/out/value&to=out/greeting> a wfdesc:DataLink ;
+            wfdesc:hasSource <processor/hello/out/value> ;
+            wfdesc:hasSink <out/greeting> .
+
+    <out/greeting> a wfdesc:Output , wfdesc:Input .
+
+    <processor/hello/out/value> a wfdesc:Output .
+
+    <> a wfdesc:Workflow , wfdesc:Process ;
+            wfdesc:hasOutput <out/greeting> ;
+            wfdesc:hasSubProcess <processor/hello/> ;
+            wfdesc:hasDataLink <datalink?from=processor/hello/out/value&to=out/greeting> .
+
+    <processor/hello/> a wfdesc:Process ;
+            wfdesc:hasOutput <processor/hello/out/value> .
+
+
+
+Programmatic use
+----------------
+
+Add a Maven dependency to "scufl2-wfdesc":
+
+    <dependency>
+        <groupId>uk.org.taverna.scufl2</groupId>
+        <artifactId>scufl2-wfdesc</artifactId>
+        <version>0.1-SNAPSHOT</version>
+    </dependency>
+
+
+Example:
+
+    import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+    import uk.org.taverna.scufl2.api.io.ReaderException;
+    import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
+    import uk.org.taverna.scufl2.api.io.WriterException;
+
+    ..
+    File original = new File("helloworld.t2flow");
+    File output = new File("helloworld.wfdesc.ttl");
+    String original = null; // to guess filetype
+    WorkflowBundle wfBundle = io.readBundle(original, null);
+    io.writeBundle(wfBundle, output, "text/vnd.wf4ever.wfdesc+turtle");
+
+
+
+
+
+References
+----------
+ * SCUFL2 [4]
+ * RO ontologies wfdesc [5]
+
+
+
+[1] https://github.com/mygrid/scufl2/
+[2] http://www.wf4ever-project.org/
+[3] https://github.com/wf4ever/ro/tree/0.1
+[4] http://www.mygrid.org.uk/dev/wiki/display/developer/2010-07+SCUFL2
+[5] http://www.wf4ever-project.org/wiki/display/docs/Research+Object+Vocabulary+Specification+v0.1
+[6] http://www.oracle.com/technetwork/java/javase/downloads/index.html
+[7] http://openjdk.java.net/install/
+[8] http://maven.apache.org/download.html
