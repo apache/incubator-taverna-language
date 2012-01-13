@@ -87,6 +87,11 @@
 									fork="true" failonerror="true" maxmemory="128m">
 									<arg value="-b" />
 									<arg value="org.purl.wf4ever.wfdesc=http://purl.org/wf4ever/wfdesc#" />
+									<arg value="-b" />
+									<arg value="org.purl.wf4ever.wf4ever=http://purl.org/wf4ever/wf4ever#" />
+									<arg value="-b" />
+									<arg value="org.purl.wf4ever.wfprov=http://purl.org/wf4ever/wfprov#" />
+									
 									<!-- <arg value="-p" /> <arg value="wfdesc" /> -->
 									<arg value="-j" />
 									<arg value="target/wfdesc-ontology.jar" />
@@ -94,6 +99,10 @@
 									<arg value="" />
 									<!-- <arg value="http://purl.org/wf4ever/wfdesc" /> -->
 									<arg value="src/main/resources/org/purl/wf4ever/wfdesc/wfdesc.ttl" />
+									<arg value="src/main/resources/org/purl/wf4ever/wfdesc/wf4ever.ttl" />
+									<arg value="src/main/resources/com/xmlns/foaf/foaf.rdf" />
+									
+									
 									<classpath refid="maven.plugin.classpath" />
 									<classpath>
 										<pathelement path="." />
