@@ -17,7 +17,7 @@ import org.openrdf.sail.memory.MemoryStore;
 import static org.junit.Assert.*;
 
 public class TestConvertToWfdesc {
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 
 	private static final String HELLOANYONE_T2FLOW = "helloanyone.t2flow";
 	private static final String HELLOWORLD_T2FLOW = "helloworld.t2flow";
