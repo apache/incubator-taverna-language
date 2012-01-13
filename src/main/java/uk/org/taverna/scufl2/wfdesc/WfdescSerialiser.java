@@ -176,7 +176,7 @@ public class WfdescSerialiser {
 							if (type.equals(TOOL)) {
 								CommandLineTool cmd = sesameManager.designateEntity(process, CommandLineTool.class);
 								PropertyResource desc = props.getPropertyAsResource(TOOL.resolve("#toolDescription"));
-								cmd.getCommands().add(desc.getPropertyAsString(TOOL.resolve("#name")));
+								cmd.getCommands().add(desc.getPropertyAsString(TOOL.resolve("#command")));
 							} 
 							} catch (IndexOutOfBoundsException ex) {
 								continue;

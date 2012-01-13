@@ -88,10 +88,11 @@
 									<arg value="-b" />
 									<arg value="org.purl.wf4ever.wfdesc=http://purl.org/wf4ever/wfdesc#" />
 									<arg value="-b" />
-									<arg value="org.purl.wf4ever.wf4ever=http://purl.org/wf4ever/wf4ever#" />
+									<arg
+										value="org.purl.wf4ever.wf4ever=http://purl.org/wf4ever/wf4ever#" />
 									<arg value="-b" />
 									<arg value="org.purl.wf4ever.wfprov=http://purl.org/wf4ever/wfprov#" />
-									
+
 									<!-- <arg value="-p" /> <arg value="wfdesc" /> -->
 									<arg value="-j" />
 									<arg value="target/wfdesc-ontology.jar" />
@@ -101,12 +102,13 @@
 									<arg value="src/main/resources/org/purl/wf4ever/wfdesc/wfdesc.ttl" />
 									<arg value="src/main/resources/org/purl/wf4ever/wfdesc/wf4ever.ttl" />
 									<arg value="src/main/resources/com/xmlns/foaf/foaf.rdf" />
-									
-									
+
+
 									<classpath refid="maven.plugin.classpath" />
 									<classpath>
 										<pathelement path="." />
-									</classpath>project.name
+									</classpath>
+									project.name
 								</java>
 								<unzip src="${project.build.directory}/wfdesc-ontology.jar"
 									dest="${project.build.directory}/generated-sources/elmo">
@@ -160,29 +162,29 @@
 					</execution>
 				</executions>
 			</plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>appassembler-maven-plugin</artifactId>
-                <version>1.1.1</version>
-                <executions>
-                	<execution>
-                		<id>assemble</id>
-                		<phase>package</phase>
-                		<goals>
-                			<goal>assemble</goal>
-                		</goals>
-                	</execution>
-                </executions>
-                <configuration>
-                 <assembleDirectory>${project.build.directory}/${project.artifactId}</assembleDirectory>	
-                  <programs>
-                    <program>
-                      <mainClass>uk.org.taverna.scufl2.wfdesc.ConvertToWfdesc</mainClass>
-                      <name>scufl2-to-wfdesc</name>
-                    </program>
-                  </programs>
-                </configuration>
-              </plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>appassembler-maven-plugin</artifactId>
+				<version>1.1.1</version>
+				<executions>
+					<execution>
+						<id>assemble</id>
+						<phase>package</phase>
+						<goals>
+							<goal>assemble</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<assembleDirectory>${project.build.directory}/${project.artifactId}</assembleDirectory>
+					<programs>
+						<program>
+							<mainClass>uk.org.taverna.scufl2.wfdesc.ConvertToWfdesc</mainClass>
+							<name>scufl2-to-wfdesc</name>
+						</program>
+					</programs>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -273,6 +275,18 @@
 			<type>jar</type>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.3</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-client</artifactId>
+			<version>1.11</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>
@@ -297,24 +311,24 @@
 			<name>Aduna Open Source - Maven snapshots</name>
 			<url>http://repo.aduna-software.org/maven2/snapshots</url>
 		</repository>
-        <repository>
-            <releases/>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>mygrid-repository</id>
-            <name>myGrid Repository</name>
-            <url>http://www.mygrid.org.uk/maven/repository</url>
-        </repository>
-        <repository>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots/>
-            <id>mygrid-snapshot-repository</id>
-            <name>myGrid Snapshot Repository</name>
-            <url>http://www.mygrid.org.uk/maven/snapshot-repository</url>
-        </repository>
+		<repository>
+			<releases />
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>mygrid-repository</id>
+			<name>myGrid Repository</name>
+			<url>http://www.mygrid.org.uk/maven/repository</url>
+		</repository>
+		<repository>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots />
+			<id>mygrid-snapshot-repository</id>
+			<name>myGrid Snapshot Repository</name>
+			<url>http://www.mygrid.org.uk/maven/snapshot-repository</url>
+		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>

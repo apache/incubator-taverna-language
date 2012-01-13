@@ -1,0 +1,73 @@
+@base <http://ns.taverna.org.uk/2010/workflowBundle/0f6bc83f-13c9-4b92-a2c1-fd8260117788/workflow/All_types/> .
+@prefix wfdesc: <http://purl.org/wf4ever/wfdesc#> .
+@prefix wf4ever: <http://purl.org/wf4ever/wf4ever#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<processor/theBeanshell/> a wfdesc:Process , wfdesc:Description , <http://www.w3.org/2002/07/owl#Thing> , wf4ever:BeanshellScript ;
+	wf4ever:script "s = \"a beanshell script\";" ;
+	rdfs:label "theBeanshell" ;
+	wfdesc:hasOutput <processor/theBeanshell/out/s> .
+
+<processor/theTool/> a wfdesc:Process , wfdesc:Description , <http://www.w3.org/2002/07/owl#Thing> , wf4ever:CommandLineTool ;
+	wf4ever:command "echo \"Hello there\"" ;
+	rdfs:label "theTool" ;
+	wfdesc:hasInput <processor/theTool/in/STDIN> ;
+	wfdesc:hasOutput <processor/theTool/out/STDOUT> .
+
+<processor/theRscript/> a wfdesc:Process , wfdesc:Description , <http://www.w3.org/2002/07/owl#Thing> , wf4ever:RScript ;
+	wf4ever:script "\"some r-script\"" ;
+	rdfs:label "theRscript" ;
+	wfdesc:hasInput <processor/theRscript/in/in1> ;
+	wfdesc:hasOutput <processor/theRscript/out/out1> .
+
+<processor/theWsdl/> a wfdesc:Process , wfdesc:Description , <http://www.w3.org/2002/07/owl#Thing> , wf4ever:SOAPService ;
+	wf4ever:wsdlURI "http://www.ebi.ac.uk/ws/services/urn:Dbfetch?wsdl"^^<http://www.w3.org/2001/XMLSchema#anyURI> ;
+	rdfs:label "theWsdl" ;
+	wfdesc:hasInput <processor/theWsdl/in/format> ;
+	wfdesc:hasOutput <processor/theWsdl/out/fetchBatchReturn> .
+
+<datalink?from=processor/theBeanshell/out/s&to=processor/theWsdl/in/format> a wfdesc:DataLink ;
+	wfdesc:hasSource <processor/theBeanshell/out/s> ;
+	wfdesc:hasSink <processor/theWsdl/in/format> .
+
+<datalink?from=processor/theRscript/out/out1&to=out/out> a wfdesc:DataLink ;
+	wfdesc:hasSource <processor/theRscript/out/out1> ;
+	wfdesc:hasSink <out/out> .
+
+<datalink?from=processor/theTool/out/STDOUT&to=processor/theRscript/in/in1> a wfdesc:DataLink ;
+	wfdesc:hasSource <processor/theTool/out/STDOUT> ;
+	wfdesc:hasSink <processor/theRscript/in/in1> .
+
+<datalink?from=processor/theWsdl/out/fetchBatchReturn&to=processor/theTool/in/STDIN> a wfdesc:DataLink ;
+	wfdesc:hasSource <processor/theWsdl/out/fetchBatchReturn> ;
+	wfdesc:hasSink <processor/theTool/in/STDIN> .
+
+<> a wfdesc:Workflow , wfdesc:Description , wfdesc:Process ;
+	rdfs:label "All_types" ;
+	wfdesc:hasOutput <out/out> ;
+	wfdesc:hasSubProcess <processor/theBeanshell/> , <processor/theRscript/> , <processor/theTool/> , <processor/theWsdl/> ;
+	wfdesc:hasDataLink <datalink?from=processor/theBeanshell/out/s&to=processor/theWsdl/in/format> , <datalink?from=processor/theRscript/out/out1&to=out/out> , <datalink?from=processor/theTool/out/STDOUT&to=processor/theRscript/in/in1> , <datalink?from=processor/theWsdl/out/fetchBatchReturn&to=processor/theTool/in/STDIN> .
+
+<out/out> a wfdesc:Output , wfdesc:Description , wfdesc:Input ;
+	rdfs:label "out" .
+
+<processor/theBeanshell/out/s> a wfdesc:Output , wfdesc:Description ;
+	rdfs:label "s" .
+
+<processor/theRscript/in/in1> a wfdesc:Input , wfdesc:Description ;
+	rdfs:label "in1" .
+
+<processor/theRscript/out/out1> a wfdesc:Output , wfdesc:Description ;
+	rdfs:label "out1" .
+
+<processor/theTool/in/STDIN> a wfdesc:Input , wfdesc:Description ;
+	rdfs:label "STDIN" .
+
+<processor/theTool/out/STDOUT> a wfdesc:Output , wfdesc:Description ;
+	rdfs:label "STDOUT" .
+
+<processor/theWsdl/in/format> a wfdesc:Input , wfdesc:Description ;
+	rdfs:label "format" .
+
+<processor/theWsdl/out/fetchBatchReturn> a wfdesc:Output , wfdesc:Description ;
+	rdfs:label "fetchBatchReturn" .
