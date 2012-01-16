@@ -283,6 +283,10 @@ public class T2FlowParser {
 	}
 
 	private URI makeRavenURI(Raven raven, String className) {
+		if (raven == null) {
+			return ravenURI.resolve("undefined/" + uriTools.validFilename(className));
+		}
+		
 		return ravenURI.resolve(uriTools.validFilename(raven.getGroup()) + "/"
 				+ uriTools.validFilename(raven.getArtifact()) + "/"
 				+ uriTools.validFilename(raven.getVersion()) + "/"
