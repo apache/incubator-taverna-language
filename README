@@ -76,24 +76,58 @@ Example:
 
 
     : stain@ralph ~/src/wf4ever/scufl2-wfdesc; cat src/test/resources/helloworld.wfdesc.ttl 
-    @base <http://ns.taverna.org.uk/2010/workflowBundle/8781d5f4-d0ba-48a8-a1d1-14281bd8a917/workflow/Hello_World/> .
+
+    @base <http://ns.taverna.org.uk/2010/workflowBundle/01348671-5aaa-4cc2-84cc-477329b70b0d/workflow/Hello_Anyone/> .
     @prefix wfdesc: <http://purl.org/wf4ever/wfdesc#> .
+    @prefix wf4ever: <http://purl.org/wf4ever/wf4ever#> .
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-    <datalink?from=processor/hello/out/value&to=out/greeting> a wfdesc:DataLink ;
-            wfdesc:hasSource <processor/hello/out/value> ;
-            wfdesc:hasSink <out/greeting> .
+    <processor/Concatenate_two_strings/> a wfdesc:Process , wfdesc:Description , <http://www.w3.org/2002/07/owl#Thing> , wf4ever:BeanshellScript ;
+        wf4ever:script "output = string1 + string2;" ;
+        rdfs:label "Concatenate_two_strings" ;
+        wfdesc:hasInput <processor/Concatenate_two_strings/in/string1> , <processor/Concatenate_two_strings/in/string2> ;
+        wfdesc:hasOutput <processor/Concatenate_two_strings/out/output> .
 
-    <out/greeting> a wfdesc:Output , wfdesc:Input .
+    <datalink?from=in/name&to=processor/Concatenate_two_strings/in/string2> a wfdesc:DataLink ;
+        wfdesc:hasSource <in/name> ;
+        wfdesc:hasSink <processor/Concatenate_two_strings/in/string2> .
 
-    <processor/hello/out/value> a wfdesc:Output .
+    <datalink?from=processor/Concatenate_two_strings/out/output&to=out/greeting> a wfdesc:DataLink ;
+        wfdesc:hasSource <processor/Concatenate_two_strings/out/output> ;
+        wfdesc:hasSink <out/greeting> .
 
-    <> a wfdesc:Workflow , wfdesc:Process ;
-            wfdesc:hasOutput <out/greeting> ;
-            wfdesc:hasSubProcess <processor/hello/> ;
-            wfdesc:hasDataLink <datalink?from=processor/hello/out/value&to=out/greeting> .
+    <datalink?from=processor/hello/out/value&to=processor/Concatenate_two_strings/in/string1> a wfdesc:DataLink ;
+        wfdesc:hasSource <processor/hello/out/value> ;
+        wfdesc:hasSink <processor/Concatenate_two_strings/in/string1> .
 
-    <processor/hello/> a wfdesc:Process ;
-            wfdesc:hasOutput <processor/hello/out/value> .
+    <> a wfdesc:Workflow , wfdesc:Description , wfdesc:Process ;
+        rdfs:label "Hello_Anyone" ;
+        wfdesc:hasInput <in/name> ;
+        wfdesc:hasOutput <out/greeting> ;
+        wfdesc:hasSubProcess <processor/Concatenate_two_strings/> , <processor/hello/> ;
+        wfdesc:hasDataLink <datalink?from=in/name&to=processor/Concatenate_two_strings/in/string2> , <datalink?from=processor/Concatenate_two_strings/out/output&to=out/greeting> , <datalink?from=processor/hello/out/value&to=processor/Concatenate_two_strings/in/string1> .
+
+    <in/name> a wfdesc:Input , wfdesc:Description , wfdesc:Output ;
+        rdfs:label "name" .
+
+    <out/greeting> a wfdesc:Output , wfdesc:Description , wfdesc:Input ;
+        rdfs:label "greeting" .
+
+    <processor/Concatenate_two_strings/in/string1> a wfdesc:Input , wfdesc:Description ;
+        rdfs:label "string1" .
+
+    <processor/Concatenate_two_strings/in/string2> a wfdesc:Input , wfdesc:Description ;
+        rdfs:label "string2" .
+
+    <processor/Concatenate_two_strings/out/output> a wfdesc:Output , wfdesc:Description ;
+        rdfs:label "output" .
+
+    <processor/hello/> a wfdesc:Process , wfdesc:Description ;
+        rdfs:label "hello" ;
+        wfdesc:hasOutput <processor/hello/out/value> .
+
+    <processor/hello/out/value> a wfdesc:Output , wfdesc:Description ;
+        rdfs:label "value" .
 
 
 
