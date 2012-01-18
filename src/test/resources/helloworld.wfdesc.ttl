@@ -1,18 +1,24 @@
 @base <http://ns.taverna.org.uk/2010/workflowBundle/8781d5f4-d0ba-48a8-a1d1-14281bd8a917/workflow/Hello_World/> .
 @prefix wfdesc: <http://purl.org/wf4ever/wfdesc#> .
+@prefix wf4ever: <http://purl.org/wf4ever/wf4ever#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
 <datalink?from=processor/hello/out/value&to=out/greeting> a wfdesc:DataLink ;
 	wfdesc:hasSource <processor/hello/out/value> ;
 	wfdesc:hasSink <out/greeting> .
 
-<out/greeting> a wfdesc:Output , wfdesc:Input .
-
-<processor/hello/out/value> a wfdesc:Output .
-
-<> a wfdesc:Workflow , wfdesc:Process ;
+<> a wfdesc:Workflow , wfdesc:Description , wfdesc:Process ;
+	rdfs:label "Hello_World" ;
 	wfdesc:hasOutput <out/greeting> ;
 	wfdesc:hasSubProcess <processor/hello/> ;
 	wfdesc:hasDataLink <datalink?from=processor/hello/out/value&to=out/greeting> .
 
-<processor/hello/> a wfdesc:Process ;
+<out/greeting> a wfdesc:Output , wfdesc:Description , wfdesc:Input ;
+	rdfs:label "greeting" .
+
+<processor/hello/> a wfdesc:Process , wfdesc:Description ;
+	rdfs:label "hello" ;
 	wfdesc:hasOutput <processor/hello/out/value> .
+
+<processor/hello/out/value> a wfdesc:Output , wfdesc:Description ;
+	rdfs:label "value" .
