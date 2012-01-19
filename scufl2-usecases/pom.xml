@@ -42,4 +42,10 @@
 			<optional>true</optional>
 		</dependency>
 	</dependencies>
+    <licenses>
+        <license>
+            <name>The BSD 2-Clause License</name>
+            <url>http://www.opensource.org/licenses/bsd-license</url>
+        </license>
+    </licenses>
 </project>
