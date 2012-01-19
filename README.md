@@ -85,7 +85,7 @@ classpath:
 * scufl2-t2flow/target/scufl2-t2flow-0.9.jar
 
 
-See the [*scufl2-validation*](scufl2-validation/) folder for examples of
+See the *scufl2-validation* folder for examples of
 usage. The best classes to start exploring would be
 `uk.org.taverna.scufl2.api.io.WorkflowBundleIO` and
 `uk.org.taverna.scufl2.api.container.WorkflowBundle`.
