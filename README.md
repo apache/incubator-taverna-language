@@ -113,22 +113,21 @@ Modules
 
 Official modules:
 
-* [*scufl2-api*](scufl2-api/) Java Beans for working with SCUFL2 
-* [*scufl2-t2flow*](scufl2-t2flow/) .t2flow import from Taverna 2
-* [*scufl2-rdfxml*](scufl2-rdfxml/) .wfbundle import/export (RDF/XML)
-* [*scufl2-usecases*](scufl2-usecases/) Example code covering [SCUFL2 use cases][4]
+* *scufl2-api* Java Beans for working with SCUFL2 
+* *scufl2-t2flow* .t2flow import from Taverna 2
+* *scufl2-rdfxml* .wfbundle import/export (RDF/XML)
+* *scufl2-usecases* Example code covering [SCUFL2 use cases][4]
 
 Experimental modules:
 
-* [*scufl2-rdf*](scufl2-rdf/) Pure RDF export/import (out of date)
-* [*scufl2-scufl*](scufl2-scufl/) SCUFL 1 .xml import from Taverna 1
-* [*scufl2-validation*](scufl2-validation/) API for validating a Scufl2
-  workflow bundle
-* [*scufl2-validation-correctness*](scufl2-validation-correctness/) 
+* *scufl2-rdf* Pure RDF export/import (out of date)
+* *scufl2-scufl* SCUFL 1 .xml import from Taverna 1
+* *scufl2-validation* API for validating a Scufl2 workflow bundle
+* *scufl2-validation-correctness* 
   Validate correctness of Scufl2 workflow definition
-* [*scufl2-validation-structural*](scufl2-validation-structural/)
+* *scufl2-validation-structural*
   Validate that a Scufl2 workflow definition is structurally sound
-* [*scufl2-validation-integration*](scufl2-validation-integration/)
+* *scufl2-validation-integration*
   Integration tests for scufl2-validation modules
 
 
