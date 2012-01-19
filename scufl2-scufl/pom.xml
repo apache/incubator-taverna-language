@@ -8,7 +8,8 @@
   <artifactId>scufl2-scufl</artifactId>
   <packaging>bundle</packaging>
   <name>Taverna Scufl 2 SCUFL parser</name>
-  	<build>
+  <description>Parse Taverna 1.x workflows (Status: Experimental)</description>
+  <build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.felix</groupId>
