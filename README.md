@@ -1,64 +1,143 @@
 SCUFL2
 ======
-[SCUFL2 wiki][1]
 
-(c) 2009-2010 myGrid, University of Manchester
+See also the [SCUFL2 wiki][1]
 
-Licensed under the [GNU Lesser General Public License (LGPL) 2.1][9],
-except for `scufl2-usecases`, which are licensed under a [modified BSD
-license](scufl2-usecases/LICENSE.txt). See LICENSE.txt for details.
+(c) 2009-2011 [myGrid][2], University of Manchester
 
-This is the code, model and XML syntax of SCUFL2 which will replace the current 
-[Taverna][8] format [t2flow][2].
+Licensed under the [GNU Lesser General Public License (LGPL) 2.1][6],
+except for `scufl2-usecases`, which are licensed under a modified BSD
+license. See LICENSE.txt for the full terms of LGPL 2.1.
 
-Compare this with the [t2flow XML schema][3] - which has documentation
-about workflow elements as currently serialized.
+This is the API, model and format of [SCUFL2][1], which replaces 
+[Taverna][5]'s workflow format .t2flow. This API allows 
+JVM applications to inspect, generate and modify Taverna workflow
+definitions without depending on the Taverna runtime.
 
-The t2flow serialization format suffers from being very close to the
-Java object model, and contains various items that are simply Java beans
-serialized using _XMLBeans_. As the t2flow format is very verbose, it
-can be difficult to deal with for third party software to do
-*inspection* ("Which services does this workflow use?"), *modification*
-("Change all calls to http://broken.com/ to http://fixed.com/") and
-*generation* ("Build a custom workflow from a button").
+A new format, called [Scufl2 Workflow Bundle][7] is defined alongside this
+API. This format can be inspected, generated and modified independently
+of this API.
 
-Developers have informed us that the old SCUFL format of Taverna 1 was
-significantly easier to work with. However, this format also has its
-caveats, like no schema, unidentified ways to extend service definitions
-for Taverna plugins and not supporting various new features in the
-Taverna 2 engine.
-
-We have therefore decided to form a new serialisation format for
-workflows, called *SCUFL2*. This format will be accompanied with an
-*UML* model, and a primary serialisation format as *XML*, but also with
-possible secondary serialisations as *JSON* and *RDF*, all following the
-UML model. This model will also be reflected in a lightweight *API*,
-which can deserialize and serialize these formats, in addition to
-`.scufl` and `.t2flow`, but also more easily allow inspection of
-workflow structures, modification and generation.
-
-Rough overview:
-
-* [*scufl2-api*](scufl2-api/) Java Beans for SCUFL2 objects (and currently XML import/export)
-* [*scufl2-t2flow*](scufl2-t2flow/) .t2flow import (and later export)
-* [*scufl2-rdf*](scufl2-rdf/) RDF export (and later import)
-* [*scufl2-usecases*](scufl2-usecases/) Example code covering [SCUFL2 use cases][4]
+Note that the ability for Scufl2 API to read a workflow bundle (using
+the `scufl2-rdfxml` module) does not guarantee it is valid or
+structurally sound. The experimental modules `scufl2-validation-*` will
+in the future be able to provide such verification.
 
 
-Here is an attempt at demonstrating the new proposed *XML syntax* for
-Scufl2: [as.scufl2.xml][5] - a translation of
-[as.t2flow][6]
+Requisites
+----------
 
-Specification of *identifiers* in [Taverna URI templates][7].
+* Java 1.5 or newer
+* Maven 2.2 or newer (for building)
+
+
+Building
+--------
+
+* `mvn clean install`
+
+This will build each module and run their tests, producing JARs like
+`scufl2-api/target/scufl2-api-0.9.jar`. 
+
+First time you build Scufl2 this might download dependencies needed for
+compliation. These have separate open source licenses, but should be
+compatible with LGPL. None of the dependencies are neccessary for
+using the compiled SCUFL2 API.
+
+Some of the experimental modules are not built automatically, to build
+them separately, run the same command from within their folder.
+
+
+
+Usage
+-----
+
+Scufl2 is built as a Maven project, and the easiest way to use it is
+from other Maven projects.
+
+Typical users of the Scufl2 API will depend on the three modules
+*scufl2-api*, *scufl2-t2flow* and *scufl2-rdfxml*. In your Maven
+project's POM file, add this to your `<dependencies>` section:
+
+		<dependency>
+			<groupId>uk.org.taverna.scufl2</groupId>
+			<artifactId>scufl2-api</artifactId>
+			<version>0.9</version>
+		</dependency>
+		<dependency>
+			<groupId>uk.org.taverna.scufl2</groupId>
+			<artifactId>scufl2-rdfxml</artifactId>
+			<version>0.9</version>
+		</dependency>
+		<dependency>
+			<groupId>uk.org.taverna.scufl2</groupId>
+			<artifactId>scufl2-t2flow</artifactId>
+			<version>0.9</version>
+		</dependency>
+
+All Scufl2 modules are also valid OSGi bundles.
+
+You can alternatively copy and add the JARs from these modules to your
+classpath:
+
+* scufl2-api/target/scufl2-api-0.9.jar
+* scufl2-rdfxml/target/scufl2-rdfxml-0.9.jar
+* scufl2-t2flow/target/scufl2-t2flow-0.9.jar
+
+
+See the *scufl2-validation* folder for examples of
+usage. The best classes to start exploring would be
+`uk.org.taverna.scufl2.api.io.WorkflowBundleIO` and
+`uk.org.taverna.scufl2.api.container.WorkflowBundle`.
+
+Example of converting .t2flow to .wfbundle:
+
+    import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+    import uk.org.taverna.scufl2.api.io.ReaderException;
+    import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
+    import uk.org.taverna.scufl2.api.io.WriterException;
+
+    // ..
+    
+    WorkflowBundleIO io = new WorkflowBundleIO();
+    File t2File = new File("workflow.t2flow");
+    File scufl2File = new File("workflow.wfbundle");
+    WorkflowBundle wfBundle = io.readBundle(t2File, "application/vnd.taverna.t2flow+xml");
+    io.writeBundle(wfBundle, scufl2File, "application/vnd.taverna.scufl2.workflow-bundle");
+
+
+
+
+Modules
+-------
+
+Official modules:
+
+* *scufl2-api* Java Beans for working with SCUFL2 
+* *scufl2-t2flow* .t2flow import from Taverna 2
+* *scufl2-rdfxml* .wfbundle import/export (RDF/XML)
+* *scufl2-usecases* Example code covering [SCUFL2 use cases][4]
+
+Experimental modules:
+
+* *scufl2-rdf* Pure RDF export/import (out of date)
+* *scufl2-scufl* SCUFL 1 .xml import from Taverna 1
+* *scufl2-validation* API for validating a Scufl2 workflow bundle
+* *scufl2-validation-correctness* 
+  Validate correctness of Scufl2 workflow definition
+* *scufl2-validation-structural*
+  Validate that a Scufl2 workflow definition is structurally sound
+* *scufl2-validation-integration*
+  Integration tests for scufl2-validation modules
+
+
 
 
 
 [1]: http://www.mygrid.org.uk/dev/wiki/display/developer/SCUFL2
-[2]: http://www.mygrid.org.uk/dev/wiki/display/story/Dataflow+serialization
-[3]: http://code.google.com/p/taverna/source/browse/taverna#taverna/dev/xsd/trunk/t2flow
+[2]: http://www.mygrid.org.uk/
+[3]: http://www.mygrid.org.uk/dev/wiki/display/story/Dataflow+serialization
 [4]: http://www.mygrid.org.uk/dev/wiki/display/developer/SCUFL2+use+cases
-[5]: http://www.mygrid.org.uk/dev/wiki/download/attachments/3572756/as.scufl2.xml?version=1&modificationDate=1270028271000
-[6]: http://www.mygrid.org.uk/dev/wiki/download/attachments/3572756/as.t2flow?version=1&modificationDate=1270028403000
-[7]: http://www.mygrid.org.uk/dev/wiki/display/developer/Taverna+URI+templates
-[8]: http://www.taverna.org.uk/
-[9]: http://www.gnu.org/licenses/lgpl-2.1.html
+[5]: http://www.taverna.org.uk/
+[6]: http://www.gnu.org/licenses/lgpl-2.1.html
+[7]: http://www.mygrid.org.uk/dev/wiki/display/developer/Taverna+Workflow+Bundle

@@ -17,7 +17,7 @@ public class ConvertT2flowScufl2 {
 		for (String filepath : args) {
 			File t2File = new File(filepath);
 			String filename = t2File.getName();
-			filename = filename.replaceFirst("\\..*", ".scufl2");
+			filename = filename.replaceFirst("\\..*", ".wfbundle");
 			File scufl2File = new File(t2File.getParentFile(), filename);
 			WorkflowBundle wfBundle = io.readBundle(t2File, "application/vnd.taverna.t2flow+xml");
 			io.writeBundle(wfBundle, scufl2File, "application/vnd.taverna.scufl2.workflow-bundle");

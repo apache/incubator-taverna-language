@@ -1,7 +1,7 @@
-Simplified BSD license [1]
-==========================
+Simplified 2-Clause BSD license
+===============================
 
-Copyright (c) 2010, myGrid, University of Mancester, UK
+Copyright (c) 2010-2011, myGrid, University of Mancester, UK
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
