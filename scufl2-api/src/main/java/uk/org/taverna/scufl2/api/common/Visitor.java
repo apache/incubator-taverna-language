@@ -3,8 +3,6 @@ package uk.org.taverna.scufl2.api.common;
 import java.util.List;
 import java.util.Stack;
 
-import uk.org.taverna.scufl2.api.common.Visitor.VisitorAdapter;
-import uk.org.taverna.scufl2.api.common.Visitor.VisitorWithPath;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
