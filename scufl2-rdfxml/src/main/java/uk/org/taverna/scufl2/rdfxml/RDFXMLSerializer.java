@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.XMLConstants;
@@ -74,6 +75,8 @@ import uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowDocument;
 
 public class RDFXMLSerializer {
 
+	private static boolean warnedOnce = false;
+	
 	public class ProfileSerialisationVisitor implements Visitor {
 
 		private uk.org.taverna.scufl2.rdfxml.jaxb.Activity activity;
@@ -759,12 +762,13 @@ public class RDFXMLSerializer {
 			// Maven.
 			setPrefixMapper = true;
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.log(Level.FINE, "Can't find NamespacePrefixMapper", e);
 		}
 
-		if (!setPrefixMapper) {
-			logger.warning("Could not set prefix mapper (incompatible JAXB) "
+		if (!setPrefixMapper && ! warnedOnce) {
+			logger.info("Could not set prefix mapper (missing or incompatible JAXB) "
 					+ "- will use prefixes ns0, ns1, ..");
+			warnedOnce = true;
 		}
 	}
 
