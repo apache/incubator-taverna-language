@@ -9,7 +9,7 @@
 
 	<groupId>uk.org.taverna.scufl2</groupId>
 	<artifactId>scufl2</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>0.9.1</version>
 	<packaging>pom</packaging>
 
 	<name>Taverna Scufl 2</name>
@@ -90,9 +90,9 @@
 		<developerConnection>scm:git:ssh://git@github.com/myGrid/scufl2.git</developerConnection>
 		<url>https://github.com/myGrid/scufl2/</url>
         -->
-		<connection>scm:svn:http://taverna.googlecode.com/svn/scufl2/trunk/</connection>
-        <developerConnection>scm:svn:https://taverna.googlecode.com/svn/scufl2/trunk/</developerConnection>
-        <url>http://code.google.com/p/taverna/source/browse/scufl2#scufl2%2Ftrunk</url>
+		<connection>scm:svn:http://taverna.googlecode.com/svn/scufl2/tags/scufl2-0.9.1</connection>
+        <developerConnection>scm:svn:https://taverna.googlecode.com/svn/scufl2/tags/scufl2-0.9.1</developerConnection>
+        <url>http://code.google.com/p/taverna/source/browse/scufl2#scufl2%2Ftrunk/tags/scufl2-0.9.1</url>
 	</scm>
 
 	<repositories>
