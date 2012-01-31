@@ -15,7 +15,6 @@ import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
 import uk.org.taverna.scufl2.api.io.WriterException;
-import uk.org.taverna.scufl2.api.iterationstrategy.DotProduct;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
 import uk.org.taverna.scufl2.api.port.InputWorkflowPort;
@@ -33,19 +32,51 @@ public class WorkflowMaker {
 	private static WorkflowBundleIO bundleIO = new WorkflowBundleIO();
 
 	public static void main(String[] args) throws Exception {
-		new WorkflowMaker().makeWorkflow();
+		new WorkflowMaker().makeWorkflowBundle();
 	}
 
-	public void makeWorkflow() throws IOException, WriterException,
+	protected WorkflowBundle bundle;
+	protected Workflow workflow;
+	protected Processor p;
+	protected InputProcessorPort pIn;
+	protected OutputProcessorPort pOut;
+	protected Profile profile;
+	protected Activity myBeanshell;
+	protected File file;
+
+	
+	public void makeWorkflowBundle() throws IOException, WriterException,
 			ReaderException {
 
 		/** Top-level object is a Workflow Bundle */
-		WorkflowBundle bundle = new WorkflowBundle();
+		bundle = new WorkflowBundle();
 
-		Workflow workflow = new Workflow();
+		/** Generate the workflow structure **/
+		makeWorkflow();
+		
+		/** Specify the implementations **/
+		makeProfile();
+
+		/**
+		 * Before storing the workflow bundle, we'll make sure that everything
+		 * we made has a parent included (so that for instance a configuration
+		 * is stored together with its parent profile). The
+		 * scufl2Tools.setParents method will traverse the WorkflowBundle from
+		 * the top and fill in any blank parents.
+		 */
+		scufl2Tools.setParents(bundle);
+
+		/** Write bundle to StdOut and a new file */
+		writeBundleToFile();
+
+	}
+
+
+	private void makeWorkflow() {
+		workflow = new Workflow();
 		/** Workflow names must be unique within the WorkflowBundle */
 		workflow.setName("Echotest");
-
+	
 		bundle.setMainWorkflow(workflow);
 		/**
 		 * Additional (typically nested) workflows can be added:
@@ -56,7 +87,7 @@ public class WorkflowMaker {
 		 * 
 		 * but the above is implied by setMainWorkflow()
 		 */
-
+	
 		/** Creating and adding a workflow port */
 		InputWorkflowPort in1 = new InputWorkflowPort();
 		in1.setName("in1");
@@ -69,7 +100,7 @@ public class WorkflowMaker {
 		 * workflow.getInputPorts().add(in1);
 		 * </pre>
 		 */
-
+	
 		/**
 		 * If input should be a list instead of single value:
 		 * 
@@ -77,17 +108,17 @@ public class WorkflowMaker {
 		 * in1.setDepth(1);
 		 * </pre>
 		 */
-
+	
 		/** Output, this time using the shorthand constructors */
 		OutputWorkflowPort out1 = new OutputWorkflowPort(workflow, "out1");
-
+	
 		/**
 		 * A processor is a unit which performs some work in a workflow. The
 		 * name must be unique within the parent workflow.
 		 * 
 		 */
-		Processor p = new Processor(workflow, "p");
-
+		p = new Processor(workflow, "p");
+	
 		/**
 		 * Same as:
 		 * 
@@ -98,18 +129,18 @@ public class WorkflowMaker {
 		 * workflow.getProcessors().add(p);
 		 * </pre>
 		 */
-
+	
 		/**
 		 * Processors typically have inputs and outputs which are connected
 		 * within the workflow
 		 */
-		InputProcessorPort pIn = new InputProcessorPort(p, "pIn");
-		OutputProcessorPort pOut = new OutputProcessorPort(p, "pOut");
+		pIn = new InputProcessorPort(p, "pIn");
+		pOut = new OutputProcessorPort(p, "pOut");
 		/**
 		 * .. any additional ports must have a unique name within the input or
 		 * output ports of that processor.
 		 */
-
+	
 		/**
 		 * Defining a data link from the workflow input port 'in1' to the
 		 * processor input port 'pIn' - this means that data will flow from
@@ -123,7 +154,7 @@ public class WorkflowMaker {
 		 * same workflow as the datalink is added to:
 		 */
 		workflow.getDataLinks().add(link);
-
+	
 		/**
 		 * Or more compact style: pOut -> out1 .. connecting processor output
 		 * port 'pOut' to the workflow output port 'out1'
@@ -137,19 +168,42 @@ public class WorkflowMaker {
 		 * 		workflow.getDataLinks().add(workflow)
 		 * </pre>
 		 */
-
+	
 		/**
 		 * Note: As datalinks are unique based on the connection, they don't
 		 * have names
 		 */
-
+		
 		/**
-		 * Unless this workflow bundle is abstract, we need to fill in what the
-		 * processors are to execute, by connecting them to the activity
-		 * implementations. This is done in a Profile, which is added to the
-		 * WorkflowBundle.
+		 * Not covered by this example:
+		 * 
+		 * Dispatch stack:
+		 * 
+		 * <pre>
+		 * DispatchStackLayer dispatchStackLayer = new DispatchStackLayer();
+		 * dispatchStackLayer
+		 * 		.setConfigurableType(URI
+		 * 				.create(&quot;http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Retry&quot;));
+		 * p.getDispatchStack().add(dispatchStackLayer);
+		 * Configuration retryConfig = new Configuration();
+		 * retryConfig.setConfigures(dispatchStackLayer);
+		 * // ..
+		 * </pre>
+		 * 
+		 * Iteration strategies:
+		 * 
+		 * <pre>
+		 * DotProduct dot = new DotProduct();
+		 * dot.add(pIn);
+		 * dot.add(pIn2);
+		 * p.getIterationStrategyStack().add(dot);
+		 * </pre>
 		 */
-		Profile profile = new Profile("default");
+	}
+
+
+	private void makeProfile() {
+		profile = new Profile("default");
 
 		/**
 		 * One profile can be suggest as the 'main' profile - but alternative
@@ -168,13 +222,7 @@ public class WorkflowMaker {
 		 * </pre>
 		 */
 
-		/**
-		 * An Activity is a particular service implementation. The name is not
-		 * important, but need to be unique within the activities in a profile.
-		 * (The default constructor can be used to generate a random UUID-based
-		 * name)
-		 */
-		Activity myBeanshell = new Activity("myBeanshell");
+		myBeanshell = new Activity("myBeanshell");
 
 		/**
 		 * Activities are of different types, identified by an URI. A workflow
@@ -195,49 +243,7 @@ public class WorkflowMaker {
 		 */
 		profile.getActivities().add(myBeanshell);
 
-		/**
-		 * Most activities also require a configuration in order to run. The
-		 * name of the configuration is not important, but must be unique within
-		 * the configurations of a profile. The default constructor
-		 * Configuration() generates a UUID-based name as a fallback.
-		 */
-		Configuration beanshellConfig = new Configuration("beanshellConf");
-		/**
-		 * The activity we configure. (DispatchStackLayer can also be
-		 * configured)
-		 */
-		beanshellConfig.setConfigures(myBeanshell);
-		/**
-		 * A configuration is of a specified type (specified as an URI), which
-		 * is typically related to (but different from) the activity type - but
-		 * might in some cases be shared amongst several activity types.
-		 */
-		beanshellConfig.setConfigurableType(BEANSHELL.resolve("#Config"));
-
-		/**
-		 * Configurations are normally shared in the same profile as the
-		 * activity they configure (the parent) - but in some cases might also
-		 * be added by other profiles in order to reuse a configuration across
-		 * profiles. (Note: A profile is *stored* within its parent profile).
-		 */
-		beanshellConfig.setParent(profile);
-		profile.getConfigurations().add(beanshellConfig);
-
-		/**
-		 * Depending on the configuration type specified above, certain
-		 * *properties* should be specified, and other properties might be
-		 * optional. In this case, only
-		 * <http://ns.taverna.org.uk/2010/activity/beanshell#script> is
-		 * specified, as a string value. (more complex properties can be
-		 * specified using other methods of the PropertyResource)
-		 */
-		beanshellConfig.getPropertyResource().addPropertyAsString(
-				BEANSHELL.resolve("#script"), "out1 = in1");
-		/**
-		 * Note that property names are specified as URIs, which are often
-		 * related to the URI of the configuration type - but might be reused
-		 * across several configuration types.
-		 */
+		makeConfiguration();
 
 		/**
 		 * A Processor Binding connects a Processor ('p') with an Activity
@@ -301,56 +307,77 @@ public class WorkflowMaker {
 		 * must be bound for each processor binding.
 		 */
 
+	
+	}
+
+
+
+	private void makeConfiguration() {
+		URI BEANSHELL = URI
+				.create("http://ns.taverna.org.uk/2010/activity/beanshell");
 		/**
-		 * Not covered by this example:
-		 * 
-		 * Dispatch stack:
-		 * 
-		 * <pre>
-		 * DispatchStackLayer dispatchStackLayer = new DispatchStackLayer();
-		 * dispatchStackLayer
-		 * 		.setConfigurableType(URI
-		 * 				.create(&quot;http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Retry&quot;));
-		 * p.getDispatchStack().add(dispatchStackLayer);
-		 * Configuration retryConfig = new Configuration();
-		 * retryConfig.setConfigures(dispatchStackLayer);
-		 * // ..
-		 * </pre>
-		 * 
-		 * Iteration strategies:
-		 * 
-		 * <pre>
-		 * p.getIterationStrategyStack().add(new DotProduct(pIn, pIn2));
-		 * </pre>
+		 * Most activities also require a configuration in order to run. The
+		 * name of the configuration is not important, but must be unique within
+		 * the configurations of a profile. The default constructor
+		 * Configuration() generates a UUID-based name as a fallback.
 		 */
+		Configuration beanshellConfig = new Configuration("beanshellConf");
+		/**
+		 * The activity we configure. (DispatchStackLayer can also be
+		 * configured)
+		 */
+		beanshellConfig.setConfigures(myBeanshell);
+		/**
+		 * A configuration is of a specified type (specified as an URI), which
+		 * is typically related to (but different from) the activity type - but
+		 * might in some cases be shared amongst several activity types.
+		 */
+		beanshellConfig.setConfigurableType(BEANSHELL.resolve("#Config"));
 
 		/**
-		 * Before storing the workflow bundle, we'll make sure that everything
-		 * we made has a parent included (so that for instance a configuration
-		 * is stored together with its parent profile). The
-		 * scufl2Tools.setParents method will traverse the WorkflowBundle from
-		 * the top and fill in any blank parents.
+		 * Configurations are normally shared in the same profile as the
+		 * activity they configure (the parent) - but in some cases might also
+		 * be added by other profiles in order to reuse a configuration across
+		 * profiles. (Note: A profile is *stored* within its parent profile).
 		 */
-		scufl2Tools.setParents(bundle);
+		beanshellConfig.setParent(profile);
+		profile.getConfigurations().add(beanshellConfig);
 
-		/** We will write out as a SCUFL2 Workflow Bundle file (*.wfbundle),
-		 * for simplicity we'll just use a temporary file in this example.  */
-		File file = File.createTempFile("test", ".wfbundle");
+		/**
+		 * Depending on the configuration type specified above, certain
+		 * *properties* should be specified, and other properties might be
+		 * optional. In this case, only
+		 * <http://ns.taverna.org.uk/2010/activity/beanshell#script> is
+		 * specified, as a string value. (more complex properties can be
+		 * specified using other methods of the PropertyResource)
+		 */
+		beanshellConfig.getPropertyResource().addPropertyAsString(
+				BEANSHELL.resolve("#script"), "out1 = in1");
+		/**
+		 * Note that property names are specified as URIs, which are often
+		 * related to the URI of the configuration type - but might be reused
+		 * across several configuration types.
+		 */
+	}
 
+
+	private void writeBundleToFile() throws IOException, WriterException,
+			ReaderException {
+		file = File.createTempFile("test", ".wfbundle");
+	
 		/**
 		 * Bundle IO 
 		 */
 		bundleIO.writeBundle(bundle, file,
 				"application/vnd.taverna.scufl2.workflow-bundle");
 		System.out.println("Written to " + file + "\n");
-
+	
 		// Read it back in
 		WorkflowBundle secondBundle = bundleIO.readBundle(file,
 				"application/vnd.taverna.scufl2.workflow-bundle");
-
+	
 		// Write in a debug text format
 		bundleIO.writeBundle(secondBundle, System.out,
 				"text/vnd.taverna.scufl2.structure");
-
 	}
 }
