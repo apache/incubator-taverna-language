@@ -766,7 +766,7 @@ public class RDFXMLSerializer {
 		}
 
 		if (!setPrefixMapper && ! warnedOnce) {
-			logger.warning("Could not set prefix mapper (missing or incompatible JAXB) "
+			logger.info("Could not set prefix mapper (missing or incompatible JAXB) "
 					+ "- will use prefixes ns0, ns1, ..");
 			warnedOnce = true;
 		}
