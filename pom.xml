@@ -35,17 +35,28 @@
 			<artifactId>scufl2-rdfxml</artifactId>
 			<version>${scufl2.version}</version>
 		</dependency>
+
+		<!-- Included to get rid of "Could not set prefix mapper" warning, but 
+			should work fine without -->
 		<dependency>
-			<groupId>uk.org.taverna.scufl2</groupId>
-			<artifactId>scufl2-usecases</artifactId>
-			<version>${scufl2.version}</version>
-			<scope>test</scope>
-			<type>test-jar</type>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>2.2.4-1</version>
+			<optional>true</optional>
 		</dependency>
+
+
+		<!-- Following only needed by src/test/java -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.4</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.1</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
