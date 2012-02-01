@@ -46,7 +46,7 @@ public class DataflowActivityParser extends AbstractActivityParser {
 		String wfId = dataflowConfig.getRef();
 		URI wfUri = Workflow.WORKFLOW_ROOT.resolve(wfId + "/");
 		Workflow wf = (Workflow) getUriTools().resolveUri(wfUri, parserState.getCurrentWorkflowBundle());		
-		URI uri = getUriTools().relativeUriForBean(wf, parserState.getCurrentWorkflowBundle());
+		URI uri = getUriTools().relativeUriForBean(wf, parserState.getCurrentProfile());
 
 		configuration.getPropertyResource().addPropertyReference(nestedUri.resolve("#workflow"), uri);		
 		return configuration;
