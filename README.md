@@ -5,9 +5,8 @@ See also the [SCUFL2 wiki][1]
 
 (c) 2009-2011 [myGrid][2], University of Manchester
 
-Licensed under the [GNU Lesser General Public License (LGPL) 2.1][6],
-except for `scufl2-usecases`, which are licensed under a modified BSD
-license. See LICENSE.txt for the full terms of LGPL 2.1.
+Licensed under the [GNU Lesser General Public License (LGPL) 2.1][6]. 
+See LICENSE.txt for the full terms of LGPL 2.1.
 
 This is the API, model and format of [SCUFL2][1], which replaces 
 [Taverna][5]'s workflow format .t2flow. This API allows 
@@ -105,7 +104,8 @@ Example of converting .t2flow to .wfbundle:
     WorkflowBundle wfBundle = io.readBundle(t2File, "application/vnd.taverna.t2flow+xml");
     io.writeBundle(wfBundle, scufl2File, "application/vnd.taverna.scufl2.workflow-bundle");
 
-
+Check out the GitHub project scufl2-examples[8] for examples of using Scufl2, 
+including the above code.
 
 
 Modules
@@ -116,10 +116,10 @@ Official modules:
 * *scufl2-api* Java Beans for working with SCUFL2 
 * *scufl2-t2flow* .t2flow import from Taverna 2
 * *scufl2-rdfxml* .wfbundle import/export (RDF/XML)
-* *scufl2-usecases* Example code covering [SCUFL2 use cases][4]
 
 Experimental modules:
 
+* *scufl2-usecases* Example code covering [SCUFL2 use cases][4] (out of date)
 * *scufl2-rdf* Pure RDF export/import (out of date)
 * *scufl2-scufl* SCUFL 1 .xml import from Taverna 1
 * *scufl2-validation* API for validating a Scufl2 workflow bundle
@@ -132,8 +132,6 @@ Experimental modules:
 
 
 
-
-
 [1]: http://www.mygrid.org.uk/dev/wiki/display/developer/SCUFL2
 [2]: http://www.mygrid.org.uk/
 [3]: http://www.mygrid.org.uk/dev/wiki/display/story/Dataflow+serialization
@@ -141,3 +139,4 @@ Experimental modules:
 [5]: http://www.taverna.org.uk/
 [6]: http://www.gnu.org/licenses/lgpl-2.1.html
 [7]: http://www.mygrid.org.uk/dev/wiki/display/developer/Taverna+Workflow+Bundle
+[8]: https://github.com/mygrid/scufl2-examples
