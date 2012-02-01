@@ -132,7 +132,7 @@ public class UCFPackage {
 
 	public void save(File packageFile) throws IOException {
 		File tempFile = File.createTempFile("." + packageFile.getName(),
-				".tmp", packageFile.getParentFile());
+				".tmp", packageFile.getCanonicalFile().getParentFile());
 		prepareAndSave(tempFile);
 		boolean renamed = tempFile.renameTo(packageFile);
 		if (!renamed) {
