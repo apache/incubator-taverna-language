@@ -36,4 +36,18 @@ public class TestProcessorNames {
 		assertEquals(expected, processorNames.showProcessorNames(ro));
 		System.out.println(processorNames.showProcessorTree(ro));
 	}
+	
+
+	@Test
+	public void nestedWorkflow() throws JAXBException, IOException, ReaderException {
+		InputStream workflow = getClass().getResourceAsStream(
+				"/workflows/t2flow/as.t2flow");
+		assertNotNull(workflow);
+
+		WorkflowBundleIO io = new WorkflowBundleIO();
+		WorkflowBundle ro = io.readBundle(workflow,
+				"application/vnd.taverna.t2flow+xml");
+		ProcessorNames processorNames = new ProcessorNames();
+		System.out.println(processorNames.showProcessorTree(ro));
+	}
 }
