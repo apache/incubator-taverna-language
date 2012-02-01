@@ -22,7 +22,7 @@ public class TestConvertT2flowScufl2 {
 		IOUtils.copy(ebi, output);
 		output.close();
 		
-		ConvertT2flowScufl2.main(new String[]{tmp.getAbsolutePath()});		
+		ConvertT2flowToWorkflowBundle.main(new String[]{tmp.getAbsolutePath()});		
 		File scufl2File = new File(tmp.getAbsolutePath().replace(".t2flow", ".wfbundle"));
 		assertTrue(scufl2File.isFile());
 		assertNotNull(new ZipFile(scufl2File).getEntry("workflowBundle.rdf"));
