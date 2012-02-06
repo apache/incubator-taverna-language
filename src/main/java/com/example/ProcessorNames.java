@@ -33,8 +33,8 @@ public class ProcessorNames {
 		for (String filename : args) {
 			WorkflowBundle ro = io.readBundle(new File(filename),
 					"application/vnd.taverna.t2flow+xml");
-			System.out.print(filename + ": ");
-			System.out.println(processorNames.showProcessorNames(ro));
+//			System.out.print(filename + ": ");
+//			System.out.println(processorNames.showProcessorNames(ro));
 			System.out.println(processorNames.showProcessorTree(ro));
 		}
 	}
