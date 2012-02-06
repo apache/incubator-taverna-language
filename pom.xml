@@ -60,4 +60,47 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>appassembler-maven-plugin</artifactId>
+				<version>1.1.1</version>
+				<executions>
+					<execution>
+						<id>assemble</id>
+						<phase>package</phase>
+						<goals>
+							<goal>assemble</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<repositoryLayout>flat</repositoryLayout>
+					<repositoryName>lib</repositoryName>
+					<assembleDirectory>${project.build.directory}/${project.artifactId}</assembleDirectory>
+					<programs>
+						<program>
+							<mainClass>com.example.ConvertT2flowToWorkflowBundle</mainClass>
+							<name>t2flowtowfbundle</name>
+						</program>
+						<program>
+							<mainClass>com.example.ProcessorNames</mainClass>
+							<name>processornames</name>
+						</program>
+						<program>
+							<mainClass>com.example.ServiceTypes</mainClass>
+							<name>servicetypes</name>
+						</program>
+						<program>
+							<mainClass>com.example.WorkflowMaker</mainClass>
+							<name>workflowmaker</name>
+						</program>
+					</programs>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
 </project>
