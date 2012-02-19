@@ -3,7 +3,7 @@ SCUFL2
 
 See also the [SCUFL2 wiki][1]
 
-(c) 2009-2011 [myGrid][2], University of Manchester
+(c) 2009-2011 University of Manchester, UK
 
 Licensed under the [GNU Lesser General Public License (LGPL) 2.1][6]. 
 See LICENSE.txt for the full terms of LGPL 2.1.

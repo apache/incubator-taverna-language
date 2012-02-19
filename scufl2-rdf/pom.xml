@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>uk.org.taverna.scufl2</groupId>
 		<artifactId>scufl2</artifactId>
-		<version>1.0-SNAPSHOT</version>
+		<version>0.9.3-SNAPSHOT</version>
 	</parent>
 	<artifactId>scufl2-rdf</artifactId>
 	<packaging>bundle</packaging>
