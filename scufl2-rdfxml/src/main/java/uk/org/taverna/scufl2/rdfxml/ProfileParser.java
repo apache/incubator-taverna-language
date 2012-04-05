@@ -215,7 +215,7 @@ public class ProfileParser extends AbstractParser {
 			if (!(node instanceof Element)) {
 				continue;
 			}
-			PropertyObject propertyObject = parseElement(element);
+			PropertyObject propertyObject = parseElement(node);
 			propertyList.add(propertyObject);
 
 		}
