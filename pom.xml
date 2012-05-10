@@ -8,7 +8,7 @@
 	</parent>
 	<groupId>net.sf.taverna.t2</groupId>
 	<artifactId>baclava</artifactId>
-	<version>0.1.0</version>
+	<version>0.1.1-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 	<name>Baclava format/files handling utilities</name>
 	<description>Utilities for handling Baclava format used for saving input data and results of workflow runs</description>
