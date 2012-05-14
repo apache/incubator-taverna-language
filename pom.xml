@@ -96,8 +96,10 @@
 									<!-- <arg value="-p" /> <arg value="wfdesc" /> -->
 									<arg value="-j" />
 									<arg value="target/wfdesc-ontology.jar" />
+									
 									<arg value="-p" />
-									<arg value="" />
+									<arg value='""' /> <!-- Windows freaks out if this is really empty -->
+									
 									<!-- <arg value="http://purl.org/wf4ever/wfdesc" /> -->
 									<arg value="src/main/resources/org/purl/wf4ever/wfdesc/wfdesc.ttl" />
 									<arg value="src/main/resources/org/purl/wf4ever/wfdesc/wf4ever.ttl" />
@@ -185,7 +187,39 @@
 					</programs>
 				</configuration>
 			</plugin>
+			
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-antrun-plugin</artifactId>
+										<versionRange>[1.6,)</versionRange>
+										<goals>
+											<goal>run</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute>
+											<runOnIncremental>false</runOnIncremental>
+										</execute>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 	<dependencies>
 
