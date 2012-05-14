@@ -76,10 +76,12 @@ public class TestExternalToolActivityParser {
 		Activity activity = (Activity) config.getConfigures();
 		assertEquals(ACTIVITY_URI, activity.getConfigurableType());
 
-		URI toolId = config.getPropertyResource().getPropertyAsResourceURI(
+		String repositoryUrl = config.getPropertyResource().getPropertyAsString(
+				ACTIVITY_URI.resolve("#repositoryUrl"));
+		assertEquals("http://taverna.nordugrid.org/sharedRepository/xml.php", repositoryUrl);
+		String toolId = config.getPropertyResource().getPropertyAsString(
 				ACTIVITY_URI.resolve("#toolId"));
-		assertEquals("http://taverna.nordugrid.org/sharedRepository/xml.php#cat",
-				toolId.toASCIIString());
+		assertEquals("cat", toolId);
 
 		// Not much more to check as 2.2 does not include tool description
 
@@ -217,12 +219,13 @@ public class TestExternalToolActivityParser {
 		assertNotNull(config);
 		assertEquals(ACTIVITY_URI.resolve("#Config"), config.getConfigurableType());
 		PropertyResource resource = config.getPropertyResource();
+		assertTrue(resource.hasProperty(ACTIVITY_URI.resolve("#repositoryUrl")));
+		String repositoryUrl = resource.getPropertyAsString(ACTIVITY_URI.resolve("#repositoryUrl"));
+		assertEquals("http://taverna.nordugrid.org/sharedRepository/xml.php", repositoryUrl);
 		assertTrue(resource.hasProperty(ACTIVITY_URI.resolve("#toolId")));
-		URI toolId = resource.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#toolId"));
-		assertEquals("http://taverna.nordugrid.org/sharedRepository/xml.php#cat",
-				toolId.toASCIIString());
-		assertEquals(false, resource.getPropertyAsLiteral(ACTIVITY_URI.resolve("#edited"))
-				.getLiteralValueAsBoolean());
+		String toolId = resource.getPropertyAsString(ACTIVITY_URI.resolve("#toolId"));
+		assertEquals("cat", toolId);
+		assertFalse(resource.hasProperty(ACTIVITY_URI.resolve("#edited")));
 
 		assertEquals("789663B8-DA91-428A-9F7D-B3F3DA185FD4",
 				resource.getPropertyAsString(ACTIVITY_URI.resolve("#mechanismType")));

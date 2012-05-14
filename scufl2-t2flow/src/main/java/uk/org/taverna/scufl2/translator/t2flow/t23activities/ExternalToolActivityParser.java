@@ -131,22 +131,19 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 			PropertyResource configResource = configuration.getPropertyResource();
 			configResource.setTypeURI(ACTIVITY_URI.resolve("#Config"));
 
-			if (usecaseConfig != null && usecaseConfig.getRepositoryUrl() != null) {
-				URI repositoryUri = URI.create(usecaseConfig.getRepositoryUrl());
-				URI usecase = repositoryUri.resolve("#"
-						+ uriTools.validFilename(usecaseConfig.getUsecaseid()));
-				configResource.addPropertyReference(ACTIVITY_URI.resolve("#toolId"), usecase);
-			} else if (externalToolConfig != null && externalToolConfig.getRepositoryUrl() != null) {
-				URI repositoryUri = URI.create(externalToolConfig.getRepositoryUrl());
-				URI usecase = repositoryUri.resolve("#"
-						+ uriTools.validFilename(externalToolConfig.getExternaltoolid()));
-				configResource.addPropertyReference(ACTIVITY_URI.resolve("#toolId"), usecase);
-				if (configResource.getProperties().containsKey(ACTIVITY_URI.resolve("#toolId"))) {
-					configResource.addProperty(ACTIVITY_URI.resolve("#edited"),
-							new PropertyLiteral(externalToolConfig.isEdited()));
+			if (usecaseConfig != null) {
+				if (usecaseConfig.getRepositoryUrl() != null) {
+					configResource.addPropertyAsString(ACTIVITY_URI.resolve("#repositoryUrl"), usecaseConfig.getRepositoryUrl());
 				}
-			} else if (externalToolConfig != null && externalToolConfig.getExternaltoolid() != null) {
+				configResource.addPropertyAsString(ACTIVITY_URI.resolve("#toolId"), usecaseConfig.getUsecaseid());
+			} else if (externalToolConfig != null) {
+				if (externalToolConfig.getRepositoryUrl() != null) {
+					configResource.addPropertyAsString(ACTIVITY_URI.resolve("#repositoryUrl"), externalToolConfig.getRepositoryUrl());
+				}
 				configResource.addPropertyAsString(ACTIVITY_URI.resolve("#toolId"), externalToolConfig.getExternaltoolid());
+				if(externalToolConfig.isEdited()) {
+					configResource.addProperty(ACTIVITY_URI.resolve("#edited"), new PropertyLiteral(externalToolConfig.isEdited()));
+				}
 			}
 
 			if (externalToolConfig != null) {
