@@ -14,7 +14,7 @@
 				.t2flow and
 				served using the content-type
 				application/vnd.taverna.t2flow+xml
-	</p>			<p xmlns='http://www.w3.org/1999/xhtml'>				Stable as of 2009-09-11 by Stian Soiland-Reyes, should correctly				describe workflows as saved from Taverna 2.0, 2.1 b1 and 2.1 b2, but				as this schema has been made in retrospect no guarantees are made.				To test the schema against the examples, try xmllint:				<code>xmllint --noout --schema t2flow.xsd examples/*t2flow</code>			</p>		</documentation>	</annotation>
+			</p>			<p xmlns='http://www.w3.org/1999/xhtml'>				Stable as of 2009-09-11 by Stian Soiland-Reyes, should correctly				describe workflows as saved from Taverna 2.0, 2.1 b1 and 2.1 b2, but				as this schema has been made in retrospect no guarantees are made.				To test the schema against the examples, try xmllint:				<code>xmllint --noout --schema t2flow.xsd examples/*t2flow</code>			</p>		</documentation>	</annotation>
 	<element name="workflow" type="tav:Workflow">
 		<annotation>
 			<documentation>The container element for a .t2flow workflow
@@ -79,7 +79,8 @@
 				annotations (descriptions) about the Dataflow under 'annotations'.
 				The "role" attribute should be "top" for the main dataflow, and
 				"nested" for nested dataflows. The uuid-s in "id" can be referenced
-				from a nested dataflow activity.</documentation>
+				from a nested dataflow activity.
+			</documentation>
 		</annotation>
 		<sequence>
 			<element name="name" type="string">
@@ -91,14 +92,16 @@
 				<annotation>
 					<documentation>List of dataflow input ports. Input ports are the
 						"parameters" or inputs to running a workflow and must be described
-						with depth and granular depth.</documentation>
+						with depth and granular depth.
+					</documentation>
 				</annotation>
 			</element>
 			<element name="outputPorts" type="tav:AnnotatedPorts">
 				<annotation>
 					<documentation>List of output ports of the dataflows. Results are
 						delivered to the output ports, the depth of the output port is
-						calculated at runtime.</documentation>
+						calculated at runtime.
+					</documentation>
 				</annotation>
 			</element>
 			<element name="processors" type="tav:Processors">
@@ -133,7 +136,8 @@
 				minOccurs="0">
 				<annotation>
 					<documentation>List of annotations, ie. descriptions and metadata
-						about the dataflow such as "title" and "author".</documentation>
+						about the dataflow such as "title" and "author".
+					</documentation>
 				</annotation>
 			</element>
 		</sequence>
@@ -141,7 +145,8 @@
 			<annotation>
 				<documentation>A unique identifier for this dataflow (UUID). This id
 					should change whenever a structural change has been done to the
-					dataflow.</documentation>
+					dataflow.
+				</documentation>
 			</annotation>
 		</attribute>
 		<attribute name="role" type="tav:role" use="required">
@@ -158,7 +163,8 @@
 		<annotation>
 			<documentation>A hex-formatted UUID. (Universial Unique IDentifier).
 				UUIDs should be generated using a random algorithm so that they
-				can't identify the machine who saved the dataflow.</documentation>
+				can't identify the machine who saved the dataflow.
+			</documentation>
 		</annotation>
 		<restriction base="string">
 			<pattern
@@ -212,7 +218,8 @@
 	<complexType name="Datalinks">
 		<annotation>
 			<documentation>List of datalinks between dataflow ports and
-				processors in a workflow.</documentation>
+				processors in a workflow.
+			</documentation>
 		</annotation>
 		<sequence>
 			<element name="datalink" type="tav:DataLink" maxOccurs="unbounded"
@@ -234,7 +241,7 @@
 				to reach the activities that invokes the actual services. The
 				outputs from the services buble up through the dispatch stack and is
 				pushed out on the output ports, indexed according to the iteration
-				strategy.</documentation>
+				strategy.			</documentation>
 		</annotation>
 		<sequence>
 			<element name="name" type="tav:ProcessorName">
@@ -242,7 +249,8 @@
 					<documentation>Name of processor within the dataflow. This name is
 						used to describe datalinks. The name of a processor must be
 						locally unique within a dataflow. (However the name can be reused
-						in a nested dataflow)</documentation>
+						in a nested dataflow)
+					</documentation>
 				</annotation>
 			</element>
 			<element name="inputPorts" type="tav:DepthPorts">
@@ -252,7 +260,8 @@
 						is served at a higher depth the iteration strategy stack will be
 						involved to do the iteration over the input. "Depth" means the
 						granularity of data, single strings are depth 0, a list of strings
-						are depth 1, lists of such lists are depth 2, etc.</documentation>
+						are depth 1, lists of such lists are depth 2, etc.
+					</documentation>
 				</annotation>
 			</element>
 			<element name="outputPorts" type="tav:GranularDepthPorts">
@@ -266,7 +275,8 @@
 						lower granularity than the granularDepth can be set to describe at
 						which level the intermediate outputs will be produced. (Note that
 						such a processor would still need to produce the final list of the
-						defined depth in the end).</documentation>
+						defined depth in the end).
+					</documentation>
 				</annotation>
 			</element>
 			<element name="annotations" type="tav:Annotations" maxOccurs="1"
@@ -274,7 +284,8 @@
 				<annotation>
 					<documentation>List of processor annotations, describing this
 						processor. For instance a description could say what is the role
-						of this processor in the dataflow.</documentation>
+						of this processor in the dataflow.
+					</documentation>
 				</annotation>
 			</element>
 
@@ -287,7 +298,8 @@
 						output mapping to be able to populate all of this processors
 						outputPorts, and can have input mapping to use one or more of the
 						input ports. Note that the depth of the mapped activity ports must
-						match the defined depths in the Processor ports.</documentation>
+						match the defined depths in the Processor ports.
+					</documentation>
 				</annotation>
 			</element>
 			<element name="dispatchStack" type="tav:DispatchStack">
@@ -300,7 +312,8 @@
 						individual processors, for instance if one wants to do failover
 						before retries, or do a customized layer that does service
 						selection at runtime by doing a lookup in a service repository
-						like BioCatalogue.</documentation>
+						like BioCatalogue.
+					</documentation>
 				</annotation>
 			</element>
 			<element name="iterationStrategyStack" type="tav:IterationStrategyStack">
@@ -310,7 +323,8 @@
 						inputs of higher granularity than what it expects. The typical
 						usecase is a single iteration strategy in the stack, and by
 						default a single cross product of all the input ports (meaning
-						all-to-all iteration).</documentation>
+						all-to-all iteration).
+					</documentation>
 				</annotation>
 			</element>
 		</sequence>
@@ -332,7 +346,8 @@
 		<annotation>
 			<documentation>List of activities. The list can be empty, used for
 				"abstract" processors, placeholders until a matching activity is
-				found.</documentation>
+				found.
+			</documentation>
 		</annotation>
 		<sequence>
 			<element name="activity" type="tav:Activity" maxOccurs="unbounded"
@@ -348,7 +363,7 @@
 				that knows how to locally execute a Beanshell script, or a Dataflow
 				activity that knows how to execute a nested dataflow. (Typically
 				included as another dataflow element within this Workflow
-				description).</documentation>
+				description).			</documentation>
 		</annotation>
 		<sequence>
 			<element name="raven" type="tav:Raven" maxOccurs="1"
@@ -357,7 +372,8 @@
 					<documentation>Raven artifact from which the activity
 						implementation class is to be loaded. The version of this artifact
 						is mainly informational, as the currently loaded artifact is
-						preferred.</documentation>
+						preferred.
+					</documentation>
 				</annotation>
 			</element>
 			<element name="class" type="string">
@@ -382,7 +398,8 @@
 						additional processor ports, and only map them in that activity.
 						(If the other activity is invoked those inputs are ignored - but
 						note that they would still be iterated over according ot the
-						iteration strategy). </documentation>
+						iteration strategy).
+					</documentation>
 				</annotation>
 			</element>
 			<element name="outputMap" type="tav:Map">
@@ -392,7 +409,8 @@
 						Not all of the activity's output ports need to be mapped, but all
 						of the processor output ports need to have a mapping. Notice that
 						this mapping is activityPort -> processorPort, while the order is
-						opposite for inputMap.</documentation>
+						opposite for inputMap.
+					</documentation>
 				</annotation>
 			</element>
 			<element name="configBean" type="tav:ConfigBean">
@@ -403,7 +421,8 @@
 						input and output ports will be defined at runtime after this
 						configuration. (For some activities the configuration bean
 						includes this port definition, while other calculate the ports by
-						parsing service descriptions, etc).</documentation>
+						parsing service descriptions, etc).
+					</documentation>
 				</annotation>
 			</element>
 			<element name="annotations" type="tav:Annotations" maxOccurs="1"
@@ -420,7 +439,8 @@
 		<annotation>
 			<documentation>Raven artifact described using typical Maven groupId,
 				artifactId and version. When loading a dataflow this artifact must
-				have already been loaded from one of the plugins.</documentation>
+				have already been loaded from one of the plugins.
+			</documentation>
 		</annotation>
 		<sequence>
 			<element name="group" type="string" />
@@ -434,13 +454,15 @@
 			<documentation>A mapping of port names. For instance in an inputMap,
 				where a processor input port "database" is to be mapped to the
 				activity input port "db", an inputMap would be made with
-				from="database" to="db".</documentation>
+				from="database" to="db".
+			</documentation>
 		</annotation>
 		<attribute use="required" name="from" type="tav:PortName" />
 		<attribute use="required" name="to" type="tav:PortName" />
 	</complexType>
 
-	<element name="abstractConfigBean" abstract="true" type="tav:AbstractConfigBean"  />
+	<element name="abstractConfigBean" abstract="true"
+		type="tav:AbstractConfigBean" />
 
 	<complexType name="AbstractConfigBean" />
 
@@ -452,10 +474,11 @@
 				the serialisation is therefore also dependent on the plugin defining
 				the activity or dispatch layer. The alternative schema
 				t2flow-extended.xsd adds descriptions of the most typical activities
-				and dispatch layers.</documentation>
+				and dispatch layers.
+			</documentation>
 		</annotation>
 		<sequence>
-			 <any namespace="##any" processContents="lax" />
+			<any namespace="##any" processContents="lax" />
 		</sequence>
 		<attribute name="encoding" type="string" use="required" />
 	</complexType>
@@ -464,7 +487,8 @@
 		<annotation>
 			<documentation>List of dispatch layers. This would typically contain
 				at least the Invoke layer to perform the actual invocation of the
-				activity.</documentation>
+				activity.
+			</documentation>
 		</annotation>
 		<sequence>
 			<element name="dispatchLayer" type="tav:DispatchLayer"
@@ -483,21 +507,24 @@
 				<annotation>
 					<documentation>Raven artifact from which the layer class is to be
 						loaded. The version of this artifact is mainly informational, as
-						the currently loaded artifact is preferred.</documentation>
+						the currently loaded artifact is preferred.
+					</documentation>
 				</annotation>
 			</element>
 			<element name="class" type="string">
 				<annotation>
 					<documentation>Fully qualified Java class name defining this
 						dispatch layer. An instance of this class will be constructed and
-						then configured with the deserialised configBean.</documentation>
+						then configured with the deserialised configBean.
+					</documentation>
 				</annotation>
 			</element>
 			<element name="configBean" type="tav:ConfigBean">
 				<annotation>
 					<documentation>A serialised configuration for the dispatch layer.
 						The deserialised version of this bean will be passed to the layer
-						instance after initialisation.</documentation>
+						instance after initialisation.
+					</documentation>
 				</annotation>
 			</element>
 		</sequence>
@@ -661,14 +688,16 @@
 	<complexType name="DataLink">
 		<annotation>
 			<documentation>A link between two dataflow units, from source to
-				link.</documentation>
+				link.
+			</documentation>
 		</annotation>
 		<sequence>
 			<element name="sink" type="tav:Link">
 				<annotation>
 					<documentation>The sink of the link - where the data will be
 						flowing to. This must be either a processor input port or a
-						dataflow output port.</documentation>
+						dataflow output port.
+					</documentation>
 				</annotation>
 			</element>
 
@@ -676,7 +705,8 @@
 				<annotation>
 					<documentation>The source of the link - where the data will be
 						flowing from. This must be a dataflow input port or a processor
-						output port.</documentation>
+						output port.
+					</documentation>
 				</annotation>
 			</element>
 		</sequence>
@@ -715,7 +745,8 @@
 				<annotation>
 					<documentation>If type is "processor" or "merge" this describes a
 						processor input port (if this link is a sink) or output port (if
-						this link is a source).</documentation>
+						this link is a source).
+					</documentation>
 				</annotation>
 			</element>
 		</sequence>
@@ -756,13 +787,58 @@
 	<complexType name="AnnotationChain">
 		<annotation>
 			<documentation>Chain of annotations. Annotations are serialised Java
-				objects, similar to the ConfigBeans.</documentation>
+				objects, similar to the ConfigBeans.
+			</documentation>
 		</annotation>
 		<sequence>
-			<any namespace="##any" processContents="lax"></any>
+			<element name="net.sf.taverna.t2.annotation.AnnotationChainImpl"
+				form="unqualified">
+				<complexType>
+					<sequence>
+						<element name="annotationAssertions" form="unqualified"
+							type="tav:AnnotationAssertionImpl">
+
+						</element>
+					</sequence>
+				</complexType>
+			</element>
 		</sequence>
 		<attribute use="required" name="encoding" type="string"></attribute>
 	</complexType>
+
+	<complexType name="AnnotationAssertionImpl">
+		<sequence>
+			<element name="net.sf.taverna.t2.annotation.AnnotationAssertionImpl"
+				form="unqualified">
+				<complexType>
+					<sequence>
+						<element name="annotationBean" form="unqualified" type="tav:AnnotationBean" />										
+						<element name="date" form="unqualified" type="tav:datetime" />
+						<element name="creators" form="unqualified" />
+						<element name="curationEventList" form="unqualified" />
+					</sequence>
+				</complexType>
+			</element>
+
+		</sequence>
+	</complexType>
+	
+	<complexType name="AnnotationBean">
+		<sequence>
+			<any minOccurs="0" maxOccurs="unbounded" processContents="lax"  />
+		</sequence>
+		<attribute name="class" form="unqualified" />
+	</complexType>
+
+	<simpleType name="datetime">
+		<annotation>
+			<documentation>ISO 8601 datetime with spaces and letter time zones; YYYY-mm-dd hh:mm:ss.nnn TTT
+			</documentation>
+		</annotation>
+		<restriction base="string">
+			<pattern value="\d{4}-\d\d-\d\d \d\d:\d\d:\d\d\.?\d* .*"></pattern>
+		</restriction>
+	</simpleType>
 
 	<simpleType name="Version1">
 		<annotation>
@@ -792,7 +868,8 @@
 			<documentation>Name of a processor within a dataflow. Each processor
 				in the same dataflow need a unique processor name. It is not
 				required, but recommended, to avoid 'special' characters like space,
-				", -, ', \, etc.</documentation>
+				", -, ', \, etc.
+			</documentation>
 		</annotation>
 		<restriction base="string"></restriction>
 	</simpleType>
@@ -809,7 +886,7 @@
 				with the same name (but they are separate ports), but not two input
 				ports or output ports with the same name. It is not required, but
 				recommended, to avoid 'special' characters like space, ", -, ', \,
-				etc.</documentation>
+				etc.			</documentation>
 		</annotation>
 		<restriction base="string"></restriction>
 	</simpleType>

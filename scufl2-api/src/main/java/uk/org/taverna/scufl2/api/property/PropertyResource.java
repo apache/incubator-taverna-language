@@ -274,6 +274,14 @@ PropertyObject {
 	public void addPropertyReference(URI predicate, URI resourceURI) {
 		addProperty(predicate, new PropertyReference(resourceURI));
 	}
+	
+	public void clearAllProperties() {
+		getProperties().clear();
+	}
+	
+	public void clearProperties(URI predicate) {
+		getProperties().remove(predicate);		
+	}
 
 	public final Map<URI, SortedSet<PropertyObject>> getProperties() {
 		return properties;
@@ -438,6 +446,8 @@ PropertyObject {
 		// Might be an empty set
 		return ! getProperties().get(predicate).isEmpty();
 	}
+
+	
 
 	
 
