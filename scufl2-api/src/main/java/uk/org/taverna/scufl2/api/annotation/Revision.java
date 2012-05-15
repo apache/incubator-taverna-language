@@ -47,11 +47,6 @@ public class Revision extends PropertyResource {
 		addPropertyReference(WAS_ATTRIBUTED_TO, creator);
 	}
 
-	@Override
-	public Revision clone() throws CloneNotSupportedException {
-		return new Revision(this);
-	}
-
 	public Calendar getCreated() {
 		PropertyResource generation;
 		try {
