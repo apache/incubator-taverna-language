@@ -206,7 +206,7 @@ public class ExampleWorkflow {
 		Profile profile = makeMainProfile();
 		profile.setName("tavernaServer");
 		Configuration config = profile.getConfigurations().getByName("Hello");
-		config.getPropertyResource().getProperties().clear();
+		config.getPropertyResource().clearAllProperties();
 		// FIXME: Need removeProperty!
 		config.getPropertyResource()
 				.addPropertyAsString(

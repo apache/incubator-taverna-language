@@ -253,7 +253,7 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 					node.addPropertyAsString(ACTIVITY_URI.resolve("#copyCommand"), copyCommand);
 				}
 			}
-			invocation.getProperties().remove(ACTIVITY_URI.resolve("#mechanismXML"));
+			invocation.clearProperties(ACTIVITY_URI.resolve("#mechanismXML"));
 		} else {
 
 		}
