@@ -7,6 +7,8 @@ import java.util.Set;
 import uk.org.taverna.scufl2.api.property.MultiplePropertiesException;
 import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.api.property.PropertyNotFoundException;
+import uk.org.taverna.scufl2.api.property.PropertyObject;
+import uk.org.taverna.scufl2.api.property.PropertyReference;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.api.property.UnexpectedPropertyException;
 
@@ -18,9 +20,11 @@ public class Revision extends PropertyResource {
 	 * TODO: Update for PROV-O when released as spec
 	 **/
 	protected static final URI PROV = URI.create("http://www.w3.org/ns/prov#");
+
+	protected static final URI AT_TIME = PROV.resolve("#atTime");
 	protected static final URI ENTITY = PROV.resolve("#Entity");
 	protected static final URI GENERATION = PROV.resolve("#Generation");
-	protected static final URI AT_TIME = PROV.resolve("#atTime");
+
 	protected static final URI QUALIFIED_GENERATION = PROV
 			.resolve("#qualifiedGeneration");
 	protected static final URI WAS_ATTRIBUTED_TO = PROV
@@ -28,19 +32,31 @@ public class Revision extends PropertyResource {
 	protected static final URI WAS_REVISION_OF = PROV.resolve("#wasRevisionOf");
 
 	public Revision() {
-		setTypeURI(ENTITY);
-	}
-	
-	public Revision(URI uri, Revision previous) {
-		this();
-		setResourceURI(uri);
-		setPreviousRevision(previous);
+		this(null, null);
 	}
 
+	/**
+	 * Cloning constructor
+	 * 
+	 * @param propertyAsResource
+	 */
 	protected Revision(PropertyResource propertyAsResource) {
 		setTypeURI(propertyAsResource.getTypeURI());
 		setResourceURI(propertyAsResource.getResourceURI());
+		/*
+		 * Note: setProperties() makes an implicit clone of the properties map
+		 */
 		setProperties(propertyAsResource.getProperties());
+	}
+
+	public Revision(URI uri) {
+		this(uri, null);
+	}
+
+	public Revision(URI uri, Revision previous) {
+		setResourceURI(uri);
+		setTypeURI(ENTITY);
+		setPreviousRevision(previous);
 	}
 
 	public void addCreator(URI creator) {
@@ -75,21 +91,26 @@ public class Revision extends PropertyResource {
 
 	public Revision getPreviousRevision() {
 		try {
-			PropertyResource propertyAsResource = getPropertyAsResource(WAS_REVISION_OF);
+			PropertyObject property = getProperty(WAS_REVISION_OF);
 			Revision revision;
-			if (propertyAsResource instanceof Revision) {
-				revision = (Revision) propertyAsResource;
-			} else {			
-				revision = new Revision(propertyAsResource);
-				// Replace the plain PropertyResource
+			if (property instanceof Revision) {
+				revision = (Revision) property;
+			} else if (property instanceof PropertyResource) {
+				// Clone it as Revision subclass
+				revision = new Revision((PropertyResource) property);
+				// Replace the plain PropertyResource so changes shine through
 				setPreviousRevision(revision);
-			}			
+			} else if (property instanceof PropertyReference) {
+				URI previous = ((PropertyReference) property).getResourceURI();
+				revision = new Revision(previous);
+				setPreviousRevision(revision);
+			} else {
+				throw new IllegalStateException(String.format("Invalid %s",
+						WAS_REVISION_OF));
+			}
 			return revision;
 		} catch (PropertyNotFoundException e) {
 			return null;
-		} catch (UnexpectedPropertyException e) {
-			throw new IllegalStateException(String.format("Invalid %s",
-					WAS_REVISION_OF), e);
 		} catch (MultiplePropertiesException e) {
 			throw new IllegalStateException(String.format("Multiple %s",
 					WAS_REVISION_OF), e);
@@ -123,7 +144,9 @@ public class Revision extends PropertyResource {
 
 	public void setPreviousRevision(Revision previous) {
 		clearProperties(WAS_REVISION_OF);
-		addProperty(WAS_REVISION_OF, previous);
+		if (previous != null) {
+			addProperty(WAS_REVISION_OF, previous);
+		}
 	}
 
 }
