@@ -149,4 +149,11 @@ public class Revision extends PropertyResource {
 		}
 	}
 
+	public void setPreviousRevision(URI previous) {
+		clearProperties(WAS_REVISION_OF);
+		if (previous != null) {
+			addPropertyReference(WAS_REVISION_OF, previous);
+		}		
+	}
+
 }
