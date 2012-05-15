@@ -9,7 +9,7 @@
 
 	<groupId>uk.org.taverna.scufl2</groupId>
 	<artifactId>scufl2</artifactId>
-	<version>0.9.3-SNAPSHOT</version>
+	<version>0.10-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>Taverna Scufl 2</name>
