@@ -15,6 +15,9 @@
 	<xsd:import namespace="http://taverna.sf.net/2008/xml/t2flow"
 		schemaLocation="t2flow.xsd" />
 
+<!-- Note: JAXB Does not seem to pick up these due to xsd:any in tav:AnnotationBean
+
+ -->
 	<xsd:complexType name="IdentificationAssertion">
 		<xsd:complexContent>
 			<xsd:restriction base="tav:AnnotationBean">
