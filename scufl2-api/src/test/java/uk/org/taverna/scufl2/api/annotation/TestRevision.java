@@ -1,5 +1,6 @@
 package uk.org.taverna.scufl2.api.annotation;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -12,6 +13,7 @@ import java.util.HashSet;
 
 import org.junit.Test;
 
+import uk.org.taverna.scufl2.api.property.PropertyReference;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
 
 public class TestRevision {
@@ -55,12 +57,22 @@ public class TestRevision {
 	@Test
 	public void getPreviousFromReference() throws Exception {
 		Revision rev2 = new Revision(r2);		
-		rev2.addPropertyReference(URI
-				.create("http://www.w3.org/ns/prov#wasRevisionOf"), r1);
+		rev2.setPreviousRevision(r1);		
+		PropertyReference rev1Prop = rev2.getPropertyAsReference(URI
+				.create("http://www.w3.org/ns/prov#wasRevisionOf"));
+		assertEquals(r1, rev1Prop.getResourceURI());
+		assertFalse(rev1Prop instanceof PropertyResource);
 		Revision rev1 = rev2.getPreviousRevision();		
 		assertEquals(r1, rev1.getResourceURI());
 		assertEquals(URI
 				.create("http://www.w3.org/ns/prov#Entity"), rev1.getTypeURI());
+		
+		// Should have replaced it
+		rev1Prop = rev2.getPropertyAsReference(URI
+				.create("http://www.w3.org/ns/prov#wasRevisionOf"));
+		assertEquals(r1, rev1Prop.getResourceURI());
+		assertTrue(rev1Prop instanceof PropertyResource);
+		
 	}
 	
 	@Test
