@@ -6,15 +6,26 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TimeZone;
+import java.util.TreeMap;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,6 +34,9 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
@@ -31,6 +45,7 @@ import javax.xml.validation.SchemaFactory;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import uk.org.taverna.scufl2.api.annotation.Revision;
 import uk.org.taverna.scufl2.api.common.Named;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
@@ -66,6 +81,9 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.Activity;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedGranularDepthPort;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedGranularDepthPorts;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedPorts;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotationAssertionImpl.NetSfTavernaT2AnnotationAnnotationAssertionImpl;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotationChain;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.Annotations;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Condition;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Conditions;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
@@ -592,10 +610,76 @@ public class T2FlowParser {
 		wf.setOutputPorts(parseOutputPorts(df.getOutputPorts()));
 		wf.setProcessors(parseProcessors(df.getProcessors()));
 		wf.setDataLinks(parseDatalinks(df.getDatalinks()));
-		wf.setControlLinks(parseControlLinks(df.getConditions()));
-		// TODO: annotations
+		wf.setControlLinks(parseControlLinks(df.getConditions()));		
+		wf.setCurrentRevision(parseIdentificationAnnotations(df.getAnnotations()));
+		
 		parserState.get().setCurrentWorkflow(null);
 		return wf;
+	}
+
+	protected Revision parseIdentificationAnnotations(Annotations annotations) {
+		SortedMap<Calendar, UUID> revisions = new TreeMap<Calendar, UUID>();
+
+		for (JAXBElement<AnnotationChain> el : annotations
+				.getAnnotationChainOrAnnotationChain22()) {
+			NetSfTavernaT2AnnotationAnnotationAssertionImpl ann = el.getValue()
+					.getNetSfTavernaT2AnnotationAnnotationChainImpl()
+					.getAnnotationAssertions()
+					.getNetSfTavernaT2AnnotationAnnotationAssertionImpl();
+			String annClass = ann.getAnnotationBean().getClazz();
+			if (!annClass
+					.equals("net.sf.taverna.t2.annotation.annotationbeans.IdentificationAssertion")) {
+				continue;
+			}
+			for (Object obj : ann.getAnnotationBean().getAny()) {
+				if (!(obj instanceof Element)) {
+					continue;
+				}
+				Element elem = (Element) obj;
+				if (elem.getNamespaceURI() == null
+						&& elem.getLocalName().equals("identification")) {
+					String uuid = elem.getTextContent().trim();
+					String date = ann.getDate();
+					Calendar cal = parseDate(date);					
+					revisions.put(cal, UUID.fromString(uuid));
+				}				
+			}
+		}
+		
+		Revision rev = null;
+		for (Entry<Calendar, UUID> entry : revisions.entrySet()) {			
+			Calendar cal = entry.getKey();
+			UUID uuid = entry.getValue();
+			URI uri = Workflow.WORKFLOW_ROOT.resolve(uuid.toString() + "/");
+			rev = new Revision(uri, rev);
+			rev.setCreated(cal);			
+		}
+		return rev;
+	}
+
+	private Calendar parseDate(String dateStr) {
+		// Based briefly on patterns used by 
+		// com.thoughtworks.xstream.converters.basic.DateConverter
+		
+		List<String> patterns = new ArrayList<String>();
+		patterns.add("yyyy-MM-dd HH:mm:ss.S z");
+		patterns.add("yyyy-MM-dd HH:mm:ss z");
+		patterns.add("yyyy-MM-dd HH:mm:ssz");
+		patterns.add("yyyy-MM-dd HH:mm:ss.S 'UTC'");
+		patterns.add("yyyy-MM-dd HH:mm:ss 'UTC'");
+        Date date;
+		for (String pattern : patterns) {
+        	SimpleDateFormat dateFormat = new SimpleDateFormat(pattern, Locale.ENGLISH);
+        	try {        		
+				date = dateFormat.parse(dateStr);
+				GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"), Locale.ENGLISH);
+				cal.setTime(date);
+				return cal;
+			} catch (ParseException e) {
+				continue;
+			}
+        }
+        throw new IllegalArgumentException("Can't parse date: " + dateStr);		
 	}
 
 	private Set<ControlLink> parseControlLinks(Conditions conditions)
