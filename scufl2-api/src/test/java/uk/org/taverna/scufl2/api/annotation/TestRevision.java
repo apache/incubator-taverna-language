@@ -108,7 +108,7 @@ public class TestRevision {
 		GregorianCalendar now = new GregorianCalendar();
 		rev1.setCreated(now);
 		
-		assertEquals(now, rev1.getCreated());
+		assertEquals(now.getTime(), rev1.getCreated().getTime());
 		assertEquals(1, rev1.getProperties().size());
 		PropertyResource generation = rev1.getPropertyAsResource(URI
 				.create("http://www.w3.org/ns/prov#qualifiedGeneration"));
@@ -116,8 +116,8 @@ public class TestRevision {
 				.create("http://www.w3.org/ns/prov#Generation"), generation.getTypeURI());
 		//assertNull(generation.getResourceURI());
 		assertEquals(1, generation.getProperties().size());
-		assertEquals(now, generation.getPropertyAsLiteral(URI
-				.create("http://www.w3.org/ns/prov#atTime")).getLiteralValueAsCalendar());
+		assertEquals(now.getTime(), generation.getPropertyAsLiteral(URI
+				.create("http://www.w3.org/ns/prov#atTime")).getLiteralValueAsCalendar().getTime());
 	}
 
 	@Test
@@ -137,8 +137,8 @@ public class TestRevision {
 		assertEquals(generation, rev1.getPropertyAsResource(URI
 				.create("http://www.w3.org/ns/prov#qualifiedGeneration")));
 		// But replaced the literal		
-		assertEquals(again, generation.getPropertyAsLiteral(URI
-				.create("http://www.w3.org/ns/prov#atTime")).getLiteralValueAsCalendar());
+		assertEquals(again.getTime(), generation.getPropertyAsLiteral(URI
+				.create("http://www.w3.org/ns/prov#atTime")).getLiteralValueAsCalendar().getTime());
 	}
 
 	
