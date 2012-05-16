@@ -611,7 +611,10 @@ public class T2FlowParser {
 		wf.setProcessors(parseProcessors(df.getProcessors()));
 		wf.setDataLinks(parseDatalinks(df.getDatalinks()));
 		wf.setControlLinks(parseControlLinks(df.getConditions()));		
-		wf.setCurrentRevision(parseIdentificationAnnotations(df.getAnnotations()));
+		Revision revision = parseIdentificationAnnotations(df.getAnnotations());
+		if (revision != null) {
+			wf.setCurrentRevision(revision);
+		}
 		
 		parserState.get().setCurrentWorkflow(null);
 		return wf;
