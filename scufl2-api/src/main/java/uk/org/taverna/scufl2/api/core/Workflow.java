@@ -3,6 +3,7 @@ package uk.org.taverna.scufl2.api.core;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
@@ -54,13 +55,16 @@ public class Workflow extends AbstractNamedChild implements
 
 	public void setCurrentRevision(Revision currentRevision) {
 		this.currentRevision = currentRevision;
+		if (currentRevision == null) {
+			newRevision();		
+		}
 	}
 
 	/**
 	 * Constructs a <code>Workflow</code> with a name based on a random UUID.
 	 */
-	public Workflow() {
-		setWorkflowIdentifier(generateIdentifier());
+	public Workflow() {	
+		newRevision();
 		String workflowId = WORKFLOW_ROOT.relativize(getWorkflowIdentifier())
 				.toASCIIString();
 		setName("wf-" + workflowId);
@@ -75,6 +79,7 @@ public class Workflow extends AbstractNamedChild implements
 			children.add(getProcessors());
 			children.add(getDataLinks());
 			children.add(getControlLinks());
+			children.add(Collections.singleton(getCurrentRevision()));
 			outer: for (Iterable<? extends WorkflowBean> it : children) {
 				for (WorkflowBean bean : it) {
 					if (!bean.accept(visitor)) {
