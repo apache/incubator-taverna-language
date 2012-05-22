@@ -3,11 +3,11 @@
  */
 package uk.org.taverna.scufl2.validation.correctness;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
+import uk.org.taverna.scufl2.api.annotation.Revision;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
@@ -27,7 +27,14 @@ class DummyWorkflow extends Workflow {
 	private NamedSet<InputWorkflowPort> inputPorts = null;
 	private NamedSet<OutputWorkflowPort> outputPorts = null;
 	private NamedSet<Processor> processors = null;
-	private URI workflowIdentifier = null;
+	private Revision currentRevision = null;
+	public Revision getCurrentRevision() {
+		return currentRevision;
+	}
+
+	public void setCurrentRevision(Revision currentRevision) {
+		this.currentRevision = currentRevision;
+	}
 
 	private WorkflowBundle dummyParent = new WorkflowBundle();
 	
@@ -154,18 +161,5 @@ class DummyWorkflow extends Workflow {
 		this.processors = processors;
 	}
 
-	/**
-	 * @return the workflowIdentifier
-	 */
-	public URI getWorkflowIdentifier() {
-		return workflowIdentifier;
-	}
-
-	/**
-	 * @param workflowIdentifier the workflowIdentifier to set
-	 */
-	public void setWorkflowIdentifier(URI workflowIdentifier) {
-		this.workflowIdentifier = workflowIdentifier;
-	}
 
 }
