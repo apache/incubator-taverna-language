@@ -49,16 +49,6 @@ public class Workflow extends AbstractNamedChild implements
 	private WorkflowBundle parent;
 	private Revision currentRevision;
 
-	public Revision getCurrentRevision() {
-		return currentRevision;
-	}
-
-	public void setCurrentRevision(Revision currentRevision) {
-		this.currentRevision = currentRevision;
-		if (currentRevision == null) {
-			newRevision();		
-		}
-	}
 
 	/**
 	 * Constructs a <code>Workflow</code> with a name based on a random UUID.
@@ -101,6 +91,12 @@ public class Workflow extends AbstractNamedChild implements
 	public Set<ControlLink> getControlLinks() {
 		return controlLinks;
 	}
+	
+
+	public Revision getCurrentRevision() {
+		return currentRevision;
+	}
+
 
 	/**
 	 * Returns the <code>DataLink</code>s.
@@ -164,6 +160,9 @@ public class Workflow extends AbstractNamedChild implements
 	 * @return the workflow identifier
 	 */
 	public URI getWorkflowIdentifier() {
+		if (getCurrentRevision() == null) {
+			return null;
+		}
 		return getCurrentRevision().getResourceURI();
 	}
 
@@ -181,6 +180,13 @@ public class Workflow extends AbstractNamedChild implements
 	public void setControlLinks(Set<ControlLink> controlLinks) {
 		this.controlLinks.clear();
 		this.controlLinks.addAll(controlLinks);
+	}
+	
+	public void setCurrentRevision(Revision currentRevision) {
+		this.currentRevision = currentRevision;
+		if (currentRevision == null) {
+			newRevision();		
+		}
 	}
 
 	/**
