@@ -1,4 +1,4 @@
-package uk.org.taverna.scufl2.wfdesc;
+package org.purl.wf4ever.wfdesc.scufl;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +13,7 @@ import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.sail.memory.MemoryStore;
+import org.purl.wf4ever.wfdesc.scufl2.ConvertToWfdesc;
 
 import static org.junit.Assert.*;
 

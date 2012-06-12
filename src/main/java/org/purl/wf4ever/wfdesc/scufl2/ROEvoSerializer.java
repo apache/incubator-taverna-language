@@ -1,4 +1,4 @@
-package uk.org.taverna.scufl2.wfdesc;
+package org.purl.wf4ever.wfdesc.scufl2;
 
 import java.io.OutputStream;
 
