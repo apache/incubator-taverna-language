@@ -24,8 +24,6 @@ public class TestConvertToWfdesc {
 	private File helloanyoneT2flow;
 	private File helloworldWfdesc;
 	private File helloanyoneWfdesc;
-
-	
 	
 	@Before
 	public void copyT2flow() throws IOException {
