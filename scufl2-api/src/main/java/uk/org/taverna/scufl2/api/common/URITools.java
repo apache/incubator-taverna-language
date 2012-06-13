@@ -23,6 +23,7 @@ import uk.org.taverna.scufl2.api.port.Port;
 import uk.org.taverna.scufl2.api.port.ProcessorPort;
 import uk.org.taverna.scufl2.api.profiles.ProcessorPortBinding;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
+import uk.org.taverna.scufl2.api.property.PropertyResource.PropertyVisit;
 
 /**
  * Utility methods for dealing with URIs.
@@ -232,7 +233,7 @@ public class URITools {
 				return parentUri.resolve(procPortUri);
 			} else {
 				throw new IllegalStateException(
-						"Can't create URIs for non-named child: " + bean);
+						"Can't create URIs for child of unrecogized type " + bean.getClass());
 			}
 
 		}
