@@ -53,6 +53,9 @@ import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
+import uk.org.taverna.scufl2.api.property.PropertyObject;
+import uk.org.taverna.scufl2.api.property.PropertyResource;
+import uk.org.taverna.scufl2.api.property.PropertyResource.PropertyVisit;
 import uk.org.taverna.scufl2.rdfxml.impl.NamespacePrefixMapperJAXB_RI;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Blocking;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Control;
@@ -321,6 +324,11 @@ public class RDFXMLSerializer {
 					workflow.setWorkflowIdentifier(wfId);
 				}
 			}
+			
+			if (node instanceof PropertyVisit || node instanceof PropertyObject) {
+				return false;
+			}
+			
 			URI uri = uriTools.relativeUriForBean(node, wf);
 
 			if (node instanceof InputWorkflowPort) {
