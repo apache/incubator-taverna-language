@@ -172,7 +172,7 @@ public class UCFPackage {
 		try {
 			open(tempFile);
 		} catch (Exception e) {
-			throw new IOException("Could not reload package from " + tempFile);
+			throw new IOException("Could not reload package from " + tempFile, e);
 		}
 		 
 	}
