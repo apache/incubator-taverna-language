@@ -6,6 +6,7 @@ import static uk.org.taverna.scufl2.translator.t2flow.T2FlowReader.APPLICATION_V
 
 import java.io.ByteArrayOutputStream;
 import java.net.URL;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
@@ -14,9 +15,11 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
 import uk.org.taverna.scufl2.api.io.structure.StructureReader;
 import uk.org.taverna.scufl2.api.profiles.Profile;
+import uk.org.taverna.scufl2.ucfpackage.UCFPackage.ResourceEntry;
 
 public class TestT2FlowReader {
 	
+	private static final String AS_UUID = "92c5e8d5-8360-4f86-a845-09c9849cbdc5";
 	WorkflowBundleIO io = new WorkflowBundleIO();
 	private static final String AS_T2FLOW = "/as.t2flow";
 
@@ -24,16 +27,16 @@ public class TestT2FlowReader {
 	public void readSimpleWorkflow() throws Exception {
 		URL wfResource = getClass().getResource(AS_T2FLOW);
 		assertNotNull("Could not find workflow " + AS_T2FLOW, wfResource);
-		WorkflowBundle researchObj = io.readBundle(wfResource,
+		WorkflowBundle wfBundle = io.readBundle(wfResource,
 				APPLICATION_VND_TAVERNA_T2FLOW_XML);
-		Profile profile = researchObj.getMainProfile();
-		assertEquals(1, researchObj.getProfiles().size());
+		Profile profile = wfBundle.getMainProfile();
+		assertEquals(1, wfBundle.getProfiles().size());
 		assertEquals(profile,
-				researchObj.getProfiles().getByName("taverna-2.1.0"));
+				wfBundle.getProfiles().getByName("taverna-2.1.0"));
 		
 		String report = IOUtils.toString(getClass().getResourceAsStream("/as.txt"));
 		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-		io.writeBundle(researchObj, byteStream, StructureReader.TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
+		io.writeBundle(wfBundle, byteStream, StructureReader.TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
 		assertEquals(report, byteStream.toString("utf-8"));		
 	}
 	
@@ -48,5 +51,29 @@ public class TestT2FlowReader {
 		firstBytes[49] = 32;
 		assertEquals(null, io.guessMediaTypeForSignature(firstBytes));
 	}
+
+	@Test
+	public void preservedOriginalT2flow() throws Exception {
+		URL wfResource = getClass().getResource(AS_T2FLOW);
+		assertNotNull("Could not find workflow " + AS_T2FLOW, wfResource);
+		WorkflowBundle wfBundle = io.readBundle(wfResource,
+				APPLICATION_VND_TAVERNA_T2FLOW_XML);
+		Map<String, ResourceEntry> history = wfBundle.getResources()
+				.listResources("history");
+		assertEquals(1, history.size());
+		assertEquals(AS_UUID + ".t2flow", history.keySet().iterator().next());
+		ResourceEntry r = history.get(AS_UUID + ".t2flow");
+		assertEquals("application/vnd.taverna.t2flow+xml", r.getMediaType());
+		String original = IOUtils.toString(getClass().getResourceAsStream(
+				AS_T2FLOW));
+		String shouldBeOriginal = wfBundle.getResources().getResourceAsString(
+				"history/" + AS_UUID + ".t2flow");
+		assertEquals(shouldBeOriginal, original);
+
+	}
+	
+
+	
+	
 	
 }
