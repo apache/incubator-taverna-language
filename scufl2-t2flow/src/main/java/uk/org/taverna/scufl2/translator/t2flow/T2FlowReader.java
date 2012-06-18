@@ -75,9 +75,7 @@ public class T2FlowReader implements WorkflowBundleReader {
 
 	protected void preserveOriginal(WorkflowBundle bundle, InputStream t2flowStream) throws IOException {
 		String path = "history/" + bundleUUID(bundle) + ".t2flow";
-		bundle.getResources().addResource(t2flowStream, path, APPLICATION_VND_TAVERNA_T2FLOW_XML);
-		System.out.println("Added " + path);
-		System.out.println(bundle.getResources().listAllResources());
+		bundle.getResources().addResource(t2flowStream, path, APPLICATION_VND_TAVERNA_T2FLOW_XML);		
 		// TODO: Add annotation recording the provenance of this history file
 //		PropertyResource original = new PropertyResource();
 //		original.setTypeURI(ENTITY);
