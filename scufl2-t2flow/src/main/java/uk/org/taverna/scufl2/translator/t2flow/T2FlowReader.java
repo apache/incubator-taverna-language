@@ -21,6 +21,22 @@ import uk.org.taverna.scufl2.api.io.WorkflowBundleReader;
 
 public class T2FlowReader implements WorkflowBundleReader {
 	
+	private final class DelayedCloseBufferedInputStream extends
+			BufferedInputStream {
+		private DelayedCloseBufferedInputStream(InputStream in, int size) {
+			super(in, size);
+		}
+
+		@Override
+		public void close() throws IOException {
+			return;
+		}
+
+		public void reallyClose() throws IOException {
+			super.close();
+		}
+	}
+
 	protected static final URI PROV = URI.create("http://www.w3.org/ns/prov#");
 
 	protected static final URI HAD_ORIGINAL_SOURCE = PROV.resolve("#hadOriginalSource");
@@ -60,6 +76,8 @@ public class T2FlowReader implements WorkflowBundleReader {
 	protected void preserveOriginal(WorkflowBundle bundle, InputStream t2flowStream) throws IOException {
 		String path = "history/" + bundleUUID(bundle) + ".t2flow";
 		bundle.getResources().addResource(t2flowStream, path, APPLICATION_VND_TAVERNA_T2FLOW_XML);
+		System.out.println("Added " + path);
+		System.out.println(bundle.getResources().listAllResources());
 		// TODO: Add annotation recording the provenance of this history file
 //		PropertyResource original = new PropertyResource();
 //		original.setTypeURI(ENTITY);
@@ -80,31 +98,37 @@ public class T2FlowReader implements WorkflowBundleReader {
 	@Override
 	public WorkflowBundle readBundle(InputStream inputStream, String mediaType)
 			throws ReaderException, IOException {
-		BufferedInputStream buffered = new BufferedInputStream(inputStream, PRESERVE_ORIGINAL_MAXIMUM_BYTES);
-		buffered.mark(PRESERVE_ORIGINAL_MAXIMUM_BYTES);
-		WorkflowBundle bundle;
+		DelayedCloseBufferedInputStream buffered = new DelayedCloseBufferedInputStream(
+				inputStream, PRESERVE_ORIGINAL_MAXIMUM_BYTES);
 		try {
-			bundle = getParser().parseT2Flow(buffered);
-			scufl2Tools.setParents(bundle);
-		} catch (JAXBException e) {
-			if (e.getCause() instanceof IOException) {
-				IOException ioException = (IOException) e.getCause();
-				throw ioException;
+			buffered.mark(PRESERVE_ORIGINAL_MAXIMUM_BYTES);
+			WorkflowBundle bundle;
+			try {
+				bundle = getParser().parseT2Flow(buffered);
+				scufl2Tools.setParents(bundle);
+			} catch (JAXBException e) {
+				if (e.getCause() instanceof IOException) {
+					IOException ioException = (IOException) e.getCause();
+					throw ioException;
+				}
+				throw new ReaderException("Can't parse t2flow", e);
 			}
-			throw new ReaderException("Can't parse t2flow", e);
+
+			// Rewind and try to copy out the original t2flow
+			try {
+				buffered.reset();
+			} catch (IOException ex) {
+				// Too big workflow, can't preserve it.
+				// TODO: Store to Bundle first?
+				// FIXME: Can we close BufferedInputStream without closing
+				// inputStream from our parameter?
+				return bundle;
+			}
+			preserveOriginal(bundle, buffered);
+			return bundle;
+		} finally {
+			buffered.reallyClose();
 		}
-			
-		// Rewind and try to copy out the original t2flow
-		try { 
-			buffered.reset();			
-		} catch (IOException ex) {
-			// Too big workflow, can't preserve it.
-			// TODO: Store to Bundle first?		
-			// FIXME: Can we close BufferedInputStream without closing inputStream from our parameter?
-			return bundle;			
-		}
-		preserveOriginal(bundle, buffered);					
-		return bundle;
 	}
 
 	public void setParser(T2FlowParser parser) {
