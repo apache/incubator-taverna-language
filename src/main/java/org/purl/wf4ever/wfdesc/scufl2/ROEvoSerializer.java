@@ -48,11 +48,11 @@ public class ROEvoSerializer {
 			previous = revision.getPreviousRevision();
 		}
 		
-		
 		java.net.URI baseURI = Workflow.WORKFLOW_ROOT;
 		
 		try {
 			con.setNamespace("roevo", "http://purl.org/wf4ever/roevo#");
+			con.setNamespace("prov", "http://www.w3.org/ns/prov#");
 //			con.setNamespace("wfdesc",
 //					"http://purl.org/wf4ever/wfdesc#");
 //			con.setNamespace("wf4ever",
@@ -74,8 +74,10 @@ public class ROEvoSerializer {
 		URI revisionURI = factory.createURI(revision.getResourceURI().toASCIIString());			
 		
 		URI version = factory.createURI("http://purl.org/wf4ever/roevo#Version");		
+		URI entity = factory.createURI("http://www.w3.org/ns/prov#Entity");		
 		try {
 			con.add(revisionURI, RDF.TYPE, version);
+			con.add(revisionURI, RDF.TYPE, entity);
 		} catch (RepositoryException e1) {
 			throw new IllegalStateException("Can't add triple to repository", e1);
 		}
@@ -87,7 +89,7 @@ public class ROEvoSerializer {
 		URI revisionURI = factory.createURI(revision.getResourceURI().toASCIIString());			
 		URI previousURI = factory.createURI(previous.getResourceURI().toASCIIString());
 		
-		URI prev = factory.createURI("http://purl.org/wf4ever/roevo#hasPreviousVersion");
+		URI prev = factory.createURI("http://www.w3.org/ns/prov#wasRevisionOf");
 		
 		try {
 			con.add(revisionURI, prev, previousURI);
