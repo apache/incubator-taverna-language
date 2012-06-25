@@ -73,7 +73,7 @@ public class ROEvoSerializer {
 			Revision revision) {
 		URI revisionURI = factory.createURI(revision.getResourceURI().toASCIIString());			
 		
-		URI version = factory.createURI("http://purl.org/wf4ever/roevo#Version");		
+		URI version = factory.createURI("http://purl.org/wf4ever/roevo#VersionableResource");		
 		URI entity = factory.createURI("http://www.w3.org/ns/prov#Entity");		
 		try {
 			con.add(revisionURI, RDF.TYPE, version);
