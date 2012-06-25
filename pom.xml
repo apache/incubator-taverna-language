@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.purl.wf4ever</groupId>
 	<artifactId>scufl2-wfdesc</artifactId>
-	<version>0.2</version>
+	<version>0.3-SNAPSHOT</version>
 	<name>SCUFL2 to wfdesc</name>
 	<description>Convert Scufl2 workflow to wfdesc structure (from Wf4Ever RO ontology)</description>
 	<properties>
