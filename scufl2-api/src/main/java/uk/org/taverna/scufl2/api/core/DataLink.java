@@ -2,6 +2,7 @@ package uk.org.taverna.scufl2.api.core;
 
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Visitor;
+import uk.org.taverna.scufl2.api.impl.NullSafeComparator;
 import uk.org.taverna.scufl2.api.port.ReceiverPort;
 import uk.org.taverna.scufl2.api.port.SenderPort;
 
@@ -22,6 +23,9 @@ import uk.org.taverna.scufl2.api.port.SenderPort;
  */
 public class DataLink implements Child<Workflow>, Comparable {
 
+	@SuppressWarnings("rawtypes")
+	private static NullSafeComparator nullSafeCompare = new NullSafeComparator();
+	
 	private ReceiverPort sendsTo;
 
 	private SenderPort receivesFrom;
@@ -70,28 +74,20 @@ public class DataLink implements Child<Workflow>, Comparable {
 		}
 		DataLink o1 = this;
 		DataLink o2 = (DataLink) o;
-
-		int senderCompare = o1.getReceivesFrom().compareTo(o2.getReceivesFrom());
+		
+		int senderCompare = nullSafeCompare.compare(o1.getReceivesFrom(), o2.getReceivesFrom());
 		if (senderCompare != 0) {
 			return senderCompare;
 		}
 
-		int receiverCompare = o1.getSendsTo().compareTo(o2.getSendsTo());
+		int receiverCompare = nullSafeCompare.compare(o1.getSendsTo(), o2.getSendsTo());
 		if (receiverCompare != 0) {
 			return receiverCompare;
 		}
-
-		if (o1.getMergePosition() == null) {
-			if (o2.getMergePosition() == null) {
-				return 0;
-			}
-		}
-		if (o2.getMergePosition() == null) {
-			return -1;
-		}
-		return o1.getMergePosition().compareTo(o2.getMergePosition());
+		return nullSafeCompare.compare(o1.getMergePosition(), o2.getMergePosition());
 	}
 
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -117,7 +113,16 @@ public class DataLink implements Child<Workflow>, Comparable {
 			}
 		} else if (!getReceivesFrom().equals(other.getReceivesFrom())) {
 			return false;
+		}		
+		if (getMergePosition() == null) {
+			if (other.getMergePosition() != null) {
+				return false;
+			}
+		} else if (!getMergePosition().equals(other.getMergePosition())) {
+			return false;
 		}
+		
+		
 		return true;
 	}
 
