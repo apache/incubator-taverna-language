@@ -10,7 +10,7 @@ import org.junit.Test;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
 
-public class EmptyStackTest {
+public class EmptyStackIT {
 
 	/* From http://dev.mygrid.org.uk/issues/browse/SCUFL2-121 */
 
