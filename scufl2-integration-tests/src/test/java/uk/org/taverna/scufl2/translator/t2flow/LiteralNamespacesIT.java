@@ -1,5 +1,6 @@
 package uk.org.taverna.scufl2.translator.t2flow;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
@@ -29,6 +30,10 @@ public class LiteralNamespacesIT {
 		WorkflowBundle wfBundle = workflowBundleIO.readBundle(wfResource, null);		
 		workflowBundleIO.writeBundle(wfBundle, bundleFile, "application/vnd.taverna.scufl2.workflow-bundle");
 		wfBundle = workflowBundleIO.readBundle(bundleFile, null);
+		String profile = wfBundle.getResources().getResourceAsString("profile/taverna-2.3.0.rdf");		
+		// Quick and rude way to check that prefixes were used
+		assertTrue(profile.contains("<rdf:li rdf:datatype="));
+		assertTrue(profile.contains("rdf:parseType="));
 	}
 	
 }
