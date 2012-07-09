@@ -64,7 +64,31 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 		}
 
 		elementStack.push(element);
+		printStatus(false);
 	}
+
+	private final void printStatus(boolean isClosing) {};
+	/*
+	private final void printStatus(boolean isClosing) {
+		StackTraceElement[] st = new Exception().getStackTrace();
+		StackTraceElement caller = st[1];
+
+		// indent by stack depth
+		for (Element e : elementStack) {
+			System.out.print("-");
+		}
+		System.out.print(isClosing ? "<" : ">");
+		System.out.print(" " + getCurrentNode().getClass().getSimpleName()
+				+ ": ");
+		for (Element e : elementStack) {
+			System.out.print("<" + e.getNodeName() + "> ");
+		}
+		System.out.print("\t\t-- " + caller.getMethodName() + "(..) in ("
+				+ caller.getFileName() + ":" + caller.getLineNumber() + ")");
+		System.out.println("\t" + getCurrentPath());
+		
+	}
+	*/
 
 	public Element getRootElement() {
 		return rootElement;
@@ -179,6 +203,7 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 
 	@Override
 	public boolean visitLeave() {
+
 		Stack<WorkflowBean> currentPath = getCurrentPath();
 		if (currentPath.size() > 1
 				&& currentPath.get(currentPath.size() - 2) instanceof PropertyVisit
@@ -189,6 +214,7 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 		}
 		if (getCurrentNode() instanceof PropertyResource) {
 			// We need to pop the <Class> before <predicate>
+			printStatus(true);
 			elementStack.pop();
 		}
 
@@ -196,12 +222,15 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 			// System.out.println("Stack empty! " + getCurrentNode());
 			return true;
 		}
-		Element element = elementStack.pop();
-		// System.out.println("Popping " + element + " current:"
-		// + getCurrentNode());
-
-		if (elementStack.isEmpty()) {
-			elementStack.push(element);
+		Element element;
+		if (getCurrentPath().size() > 3 && getCurrentPath().get(
+				getCurrentPath().size() - 3) instanceof PropertyList) {
+			return true;
+		}
+		
+		if (elementStack.size() > 1) {		
+			printStatus(true);
+			elementStack.pop();
 		}
 		// System.out.println();
 		return true;
