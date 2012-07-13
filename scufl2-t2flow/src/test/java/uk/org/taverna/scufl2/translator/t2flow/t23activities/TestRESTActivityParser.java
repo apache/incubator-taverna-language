@@ -39,6 +39,7 @@ import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.T2Parser;
 
+@Ignore
 public class TestRESTActivityParser {
 
 	private static Scufl2Tools scufl2Tools = new Scufl2Tools();

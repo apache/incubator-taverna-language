@@ -18,6 +18,7 @@ import java.util.Set;
 import javax.xml.bind.JAXBException;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
@@ -32,6 +33,7 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
 
+@Ignore
 public class TestActivityParsingRshell {
 
 	private static final String WF_RSHELL_2_2 = "/rshell-2-2.t2flow";

@@ -35,6 +35,7 @@ import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.T2Parser;
 
+@Ignore
 public class TestExternalToolActivityParser {
 	private static final String WF_2_2 = "/tool-2-2.t2flow";
 	private static final String WF_2_3 = "/tool-2-3.t2flow";
