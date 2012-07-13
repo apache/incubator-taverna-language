@@ -182,6 +182,8 @@
 
 		<module>scufl2-validation-correctness</module>
 		<!-- Disabled until unit tests work <module>scufl2-validation-integration</module> -->
+		
+		<module>scufl2-integration-tests</module>
 	</modules>
 	<licenses>
 		<license>
