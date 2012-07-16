@@ -181,7 +181,7 @@
 					<assembleDirectory>${project.build.directory}/${project.artifactId}</assembleDirectory>
 					<programs>
 						<program>
-							<mainClass>org.purl.wf4ever.wfdesc.scufl.ConvertToWfdesc</mainClass>
+							<mainClass>org.purl.wf4ever.wfdesc.scufl2.ConvertToWfdesc</mainClass>
 							<name>scufl2-to-wfdesc</name>
 						</program>
 					</programs>
