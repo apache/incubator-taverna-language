@@ -3,6 +3,7 @@ package uk.org.taverna.scufl2.api.core;
 import java.text.MessageFormat;
 
 import uk.org.taverna.scufl2.api.common.Visitor;
+import uk.org.taverna.scufl2.api.impl.NullSafeComparator;
 
 /**
  * A {@link ControlLink} that blocks a {@link Processor} from starting until another
@@ -14,6 +15,8 @@ import uk.org.taverna.scufl2.api.common.Visitor;
 @SuppressWarnings("rawtypes")
 public class BlockingControlLink implements ControlLink {
 
+	private static NullSafeComparator nullSafeCompare = new NullSafeComparator();
+	
 	private Workflow parent;
 	private Processor block;
 	private Processor untilFinished;
@@ -46,42 +49,19 @@ public class BlockingControlLink implements ControlLink {
 		return visitor.visit(this);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public int compareTo(Object o) {
 		if (!(o instanceof BlockingControlLink)) {
 			return o.getClass().getCanonicalName().compareTo(getClass().getCanonicalName());
 		}
 		BlockingControlLink o1 = this;		
-		BlockingControlLink o2 = (BlockingControlLink) o;
-		
-		if (o1.getUntilFinished() == null) {
-			if (o2.getUntilFinished() != null) {
-				return -1;
-			}
-		} else { 
-			if (o2.getUntilFinished() == null) {
-				return 1;
-			}
-			int untilFinished = o1.getUntilFinished().compareTo(o2.getUntilFinished());
-			if (untilFinished != 0) {
-				return untilFinished;
-			}
+		BlockingControlLink o2 = (BlockingControlLink) o;		
+		int untilFinishedCompare = nullSafeCompare.compare(o1.getUntilFinished(), o2.getUntilFinished());
+		if (untilFinishedCompare != 0) {
+			return untilFinishedCompare;
 		}
-
-		if (o1.getBlock() == null) {
-			if (o2.getBlock() != null) {
-				return -1;
-			}
-		} else { 
-			if (o2.getBlock() == null) {
-				return 1;
-			}
-			int block = o1.getBlock().compareTo(o2.getBlock());
-			if (block != 0) {
-				return block;
-			}
-		}		
-		return 0;
+		return nullSafeCompare.compare(o1.getBlock(), o2.getBlock());
 	}
 
 	@Override
@@ -186,8 +166,10 @@ public class BlockingControlLink implements ControlLink {
 
 	@Override
 	public String toString() {
-		return MessageFormat.format("block {0} until {1} is finished", getBlock(),
-				getUntilFinished());
+		String blockName = getBlock() != null ? getBlock().getName() : null;
+		String untilName = getUntilFinished() != null ? getUntilFinished().getName() : null;
+		
+		return MessageFormat.format("{0}-blocks-{1}", untilName, blockName);
 	}
 
 }

@@ -22,6 +22,7 @@ import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.api.property.PropertyResource.PropertyVisit;
 
 public class PropertyResourceSerialiser extends VisitorWithPath {
+	public static final String ABOUT = "about";
 	public static final String DESCRIPTION = "Description";
 	public static final String RESOURCE = "resource";
 	public static final String LITERAL = "Literal";
@@ -30,6 +31,15 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 	public static final String PARSE_TYPE = "parseType";
 	public static final String COLLECTION = "Collection";
 	public static final String RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+	
+	public static final String RDF_ = "rdf:";
+	public static final String RDF_ABOUT = RDF_ + ABOUT;
+	public static final String RDF_DESCRIPTION = RDF_ + DESCRIPTION ;		
+	public static final String RDF_DATATYPE = RDF_ + DATATYPE;
+	public static final String RDF_LI = RDF_ + LI;
+	public static final String RDF_PARSE_TYPE = RDF_ + PARSE_TYPE;
+	private static final String RDF_RESOURCE = RDF_ + RESOURCE;
+	
 	protected Stack<Element> elementStack = new Stack<Element>();
 	protected DocumentBuilder docBuilder;
 	protected Document doc;
@@ -64,7 +74,31 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 		}
 
 		elementStack.push(element);
+		printStatus(false);
 	}
+
+	private final void printStatus(boolean isClosing) {};
+	/*
+	private final void printStatus(boolean isClosing) {
+		StackTraceElement[] st = new Exception().getStackTrace();
+		StackTraceElement caller = st[1];
+
+		// indent by stack depth
+		for (Element e : elementStack) {
+			System.out.print("-");
+		}
+		System.out.print(isClosing ? "<" : ">");
+		System.out.print(" " + getCurrentNode().getClass().getSimpleName()
+				+ ": ");
+		for (Element e : elementStack) {
+			System.out.print("<" + e.getNodeName() + "> ");
+		}
+		System.out.print("\t\t-- " + caller.getMethodName() + "(..) in ("
+				+ caller.getFileName() + ":" + caller.getLineNumber() + ")");
+		System.out.println("\t" + getCurrentPath());
+		
+	}
+	*/
 
 	public Element getRootElement() {
 		return rootElement;
@@ -72,7 +106,7 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 
 	protected void list(PropertyList node) {
 		Element element = elementStack.peek();
-		element.setAttributeNS(RDF, PARSE_TYPE, COLLECTION);
+		element.setAttributeNS(RDF, RDF_PARSE_TYPE, COLLECTION);
 	}
 
 	protected void literal(PropertyLiteral node) {
@@ -80,11 +114,11 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 		if (node.getLiteralType().equals(PropertyLiteral.XML_LITERAL)) {
 			Element nodeElement = node.getLiteralValueAsElement();
 			element.appendChild(doc.importNode(nodeElement, true));
-			element.setAttributeNS(RDF, PARSE_TYPE, LITERAL);
+			element.setAttributeNS(RDF, RDF_PARSE_TYPE, LITERAL);
 		} else {
 			element.setTextContent(node.getLiteralValue());
 			if (!node.getLiteralType().equals(PropertyLiteral.XSD_STRING)) {
-				element.setAttributeNS(RDF, DATATYPE, node.getLiteralType()
+				element.setAttributeNS(RDF, RDF_DATATYPE, node.getLiteralType()
 						.toASCIIString());
 			}
 		}
@@ -97,7 +131,7 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 
 	protected void reference(PropertyReference node) {
 		Element element = elementStack.peek();
-		element.setAttributeNS(RDF, RESOURCE, node.getResourceURI()
+		element.setAttributeNS(RDF, RDF_RESOURCE, node.getResourceURI()
 				.toASCIIString());
 	}
 
@@ -108,10 +142,10 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 			element = uriToElement(typeUri);
 		} else {
 			// Anonymous - give warning?
-			element = doc.createElementNS(RDF, DESCRIPTION);
+			element = doc.createElementNS(RDF, RDF_DESCRIPTION);
 		}
 		if (node.getResourceURI() != null) {
-			element.setAttributeNS(RDF, "about", node.getResourceURI()
+			element.setAttributeNS(RDF, RDF_ABOUT, node.getResourceURI()
 					.toASCIIString());
 		}
 		addElement(element);
@@ -158,7 +192,7 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 				Element element = uriToElement(propertyVisit.getPredicateUri());
 				addElement(element);
 			} else if (parent instanceof PropertyList) {
-				addElement(doc.createElementNS(RDF, LI));
+				addElement(doc.createElementNS(RDF, RDF_LI));
 			}
 		}
 		if (node instanceof PropertyList) {
@@ -179,6 +213,7 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 
 	@Override
 	public boolean visitLeave() {
+
 		Stack<WorkflowBean> currentPath = getCurrentPath();
 		if (currentPath.size() > 1
 				&& currentPath.get(currentPath.size() - 2) instanceof PropertyVisit
@@ -189,6 +224,7 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 		}
 		if (getCurrentNode() instanceof PropertyResource) {
 			// We need to pop the <Class> before <predicate>
+			printStatus(true);
 			elementStack.pop();
 		}
 
@@ -196,12 +232,15 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 			// System.out.println("Stack empty! " + getCurrentNode());
 			return true;
 		}
-		Element element = elementStack.pop();
-		// System.out.println("Popping " + element + " current:"
-		// + getCurrentNode());
-
-		if (elementStack.isEmpty()) {
-			elementStack.push(element);
+		Element element;
+		if (getCurrentPath().size() > 3 && getCurrentPath().get(
+				getCurrentPath().size() - 3) instanceof PropertyList) {
+			return true;
+		}
+		
+		if (elementStack.size() > 1) {		
+			printStatus(true);
+			elementStack.pop();
 		}
 		// System.out.println();
 		return true;

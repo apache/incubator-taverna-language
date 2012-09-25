@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import uk.org.taverna.scufl2.api.property.PropertyList;
 import uk.org.taverna.scufl2.api.property.PropertyLiteral;
@@ -130,7 +131,7 @@ public class TestPropertySerialisation {
 		
 		propResource.accept(serialiser);
 		Element elem = serialiser.getRootElement();
-		assertEquals("Description", elem.getTagName());
+		assertEquals("rdf:Description", elem.getTagName());
 		assertEquals(PropertyResourceSerialiser.RDF, elem.getNamespaceURI());
 		assertEquals(0, elem.getAttributes().getLength());
 		assertEquals(0, elem.getChildNodes().getLength());		
@@ -142,7 +143,7 @@ public class TestPropertySerialisation {
 		
 		propResource.accept(serialiser);
 		Element elem = serialiser.getRootElement();
-		assertEquals("Description", elem.getTagName());
+		assertEquals("rdf:Description", elem.getTagName());
 		assertEquals(PropertyResourceSerialiser.RDF, elem.getNamespaceURI());
 		assertEquals(1, elem.getAttributes().getLength());
 		assertEquals(0, elem.getChildNodes().getLength());
@@ -234,6 +235,45 @@ public class TestPropertySerialisation {
 		assertEquals(1, elem.getAttributes().getLength());
 		assertEquals(1, elem.getChildNodes().getLength());
 	}
+	
+
+
+	@Test
+	public void literalIntegerInList() throws Exception {
+		
+		PropertyList propList = new PropertyList();
+		propResource.addProperty(property.resolve("#list"), propList);
+				
+		PropertyLiteral literal = new PropertyLiteral(1337);
+		propList.add(literal);
+		
+		propResource.accept(serialiser);
+		Element elem = serialiser.getRootElement();
+		elem = (Element) elem.getChildNodes().item(0);
+		assertEquals("list", elem.getTagName());
+		assertEquals("http://example.com/property#", elem.getNamespaceURI());
+		assertEquals(1, elem.getAttributes().getLength());		
+		Attr collection = elem.getAttributeNodeNS(
+				"http://www.w3.org/1999/02/22-rdf-syntax-ns#", "parseType");
+		assertEquals("Collection", collection.getValue());
+		assertEquals("rdf", collection.getPrefix());
+		
+		assertEquals(1, elem.getChildNodes().getLength());
+		Element liElem = (Element) elem.getChildNodes().item(0);
+		assertEquals("li", liElem.getLocalName());
+		assertEquals("http://www.w3.org/1999/02/22-rdf-syntax-ns#", liElem.getNamespaceURI());
+		assertEquals("rdf", liElem.getPrefix());
+		assertEquals("rdf:li", liElem.getTagName());
+		System.out.println(liElem.getAttributes().item(0).getPrefix());
+		assertEquals("1337", elem.getTextContent());
+		Attr datatype = liElem.getAttributeNodeNS(
+				"http://www.w3.org/1999/02/22-rdf-syntax-ns#", "datatype");
+		assertEquals("rdf", datatype.getPrefix());
+		assertEquals(PropertyLiteral.XSD_INT.toASCIIString(), datatype.getValue());
+		assertEquals(1, liElem.getAttributes().getLength());
+		assertEquals(1, liElem.getChildNodes().getLength());
+	}
+	
 
 	@Test
 	public void literalDate() throws Exception {
