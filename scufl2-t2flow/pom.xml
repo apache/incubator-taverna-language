@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>scufl2-t2flow</artifactId>
 	<packaging>bundle</packaging>
-	<name>Taverna Scufl 2 t2Flow parser</name>
+	<name>Taverna Scufl 2 t2flow parser</name>
 	<description>Parser for .t2flow file format (Taverna 2.x)</description>
 	<build>
 		<plugins>
