@@ -20,6 +20,7 @@ import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.ucfpackage.UCFPackage;
+import uk.org.taverna.scufl2.ucfpackage.UCFPackage.ResourceEntry;
 
 /**
  * @author Alan R Williams
@@ -114,6 +115,23 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 	public void setResources(UCFPackage resources) {
 		this.resources = resources;
 	}
+
+	/**
+	 * Return the folder for annotation resources.
+	 * <p>
+	 * This folder name can be used with
+	 * getResources().listResources(folderPath) to retrieve the annotation
+	 * resources, or used with getResources().addResource(..) for adding
+	 * annotation resources.
+	 * <p>
+	 * The annotation folder is normally fixed to be <code>"annotations/"</code>.
+	 * 
+	 * @return Folder name for annotations
+	 */
+	public String getAnnotationResourcesFolder() {
+		return "annotations/";
+	}
+	
 
 	@Override
 	public void setGlobalBaseURI(URI globalBaseURI) {
