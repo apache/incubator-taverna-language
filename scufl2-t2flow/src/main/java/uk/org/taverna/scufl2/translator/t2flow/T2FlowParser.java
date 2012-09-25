@@ -34,9 +34,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
@@ -50,6 +47,7 @@ import uk.org.taverna.scufl2.api.common.Named;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.common.URITools;
+import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.BlockingControlLink;
@@ -77,6 +75,7 @@ import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.api.property.PropertyObject;
+import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Activity;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedGranularDepthPort;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedGranularDepthPorts;
@@ -112,6 +111,7 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.TopIterationNode;
 
 public class T2FlowParser {
 
+	private static final String IDENTIFICATION_ASSERTION = "net.sf.taverna.t2.annotation.annotationbeans.IdentificationAssertion";
 	private static final String T2FLOW_EXTENDED_XSD = "xsd/t2flow-extended.xsd";
 	@SuppressWarnings("unused")
 	private static final String T2FLOW_XSD = "xsd/t2flow.xsd";
@@ -124,6 +124,11 @@ public class T2FlowParser {
 
 	public static final URI configBeanURI = URI
 			.create("http://ns.taverna.org.uk/2010/xml/t2flow/configbean/");
+	
+	// TODO: Find better example predicate
+	public static final URI exampleDataURI = URI
+			.create("http://biocatalogue.org/attribute/exampleData");
+	
 
 	public static <T extends Named> T findNamed(Collection<T> namedObjects,
 			String name) {
@@ -161,6 +166,7 @@ public class T2FlowParser {
 
 	protected ServiceLoader<T2Parser> discoveredT2Parsers;
 	protected final ThreadLocal<Unmarshaller> unmarshaller;
+	private Map<String, URI> predicates;
 
 	public T2FlowParser() throws JAXBException {
 		jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
@@ -615,9 +621,86 @@ public class T2FlowParser {
 		if (revision != null) {
 			wf.setCurrentRevision(revision);
 		}
-		
+		parseAnnotations(wf, df.getAnnotations());
+
 		parserState.get().setCurrentWorkflow(null);
 		return wf;
+	}
+
+	public void parseAnnotations(WorkflowBean annotatedBean, Annotations annotations) {
+		URI annotatedSubject = uriTools.relativeUriForBean(annotatedBean,
+				parserState.get().getCurrentWorkflowBundle());
+		logger.info("Checking annotations for " + annotatedSubject);
+		
+		Map<String, NetSfTavernaT2AnnotationAnnotationAssertionImpl> annotationElems = new HashMap<String, NetSfTavernaT2AnnotationAnnotationAssertionImpl>();
+		for (JAXBElement<AnnotationChain> el : annotations
+				.getAnnotationChainOrAnnotationChain22()) {
+			NetSfTavernaT2AnnotationAnnotationAssertionImpl ann = el.getValue()
+					.getNetSfTavernaT2AnnotationAnnotationChainImpl()
+					.getAnnotationAssertions()
+					.getNetSfTavernaT2AnnotationAnnotationAssertionImpl();
+			String annClass = ann.getAnnotationBean().getClazz();
+			if (annotationElems.containsKey(annClass) && annotationElems.get(annClass).getDate().compareToIgnoreCase(ann.getDate()) > 0) {
+				// ann.getDate() is less than current 'latest' annotation, skip
+				continue;
+			}
+			annotationElems.put(annClass, ann);
+		}
+		
+		
+		for (String clazz : annotationElems.keySet()) {			
+			NetSfTavernaT2AnnotationAnnotationAssertionImpl ann = annotationElems.get(clazz);
+			Calendar cal = parseDate(ann.getDate());					
+			String value = null;
+			for (Object obj : ann.getAnnotationBean().getAny()) {
+				if (!(obj instanceof Element)) {
+					continue;
+				}
+				Element elem = (Element) obj;
+				if (elem.getNamespaceURI() == null
+						&& elem.getLocalName().equals("text")) {
+					value = elem.getTextContent().trim();
+					break;
+				}
+			}
+			if (value != null) {
+				// Add the annotation
+				PropertyResource p = new PropertyResource();
+				p.setResourceURI(annotatedSubject);
+				URI predicate = getPredicatesForClass().get(clazz);
+				if (predicate != null) {
+					p.addPropertyAsString(predicate, value);
+				}
+			}
+		}
+	}
+
+	private Map<String, URI> getPredicatesForClass() {
+		if (this.predicates != null) {
+			return this.predicates;
+		}
+		synchronized (this) {
+			if (this.predicates != null) {
+				return this.predicates;
+			}
+			Map<String, URI> predicates = new HashMap<String, URI>();
+			predicates.put("net.sf.taverna.t2.annotation.annotationbeans.DescriptiveTitle", 
+					URI.create("http://purl.org/dc/terms/title"));
+			
+			predicates.put("net.sf.taverna.t2.annotation.annotationbeans.Author", 
+					URI.create("http://purl.org/dc/elements/1.1/creator"));
+			
+			predicates.put("net.sf.taverna.t2.annotation.annotationbeans.FreeTextDescription", 
+					URI.create("http://purl.org/dc/terms/description"));
+			
+			predicates.put("net.sf.taverna.t2.annotation.annotationbeans.MimeType", 
+					URI.create("http://purl.org/dc/elements/1.1/format"));
+			
+			predicates.put("net.sf.taverna.t2.annotation.annotationbeans.ExampleValue", 
+					exampleDataURI);
+			this.predicates = predicates;
+			return this.predicates;
+		}
 	}
 
 	protected Revision parseIdentificationAnnotations(Annotations annotations) {
@@ -631,7 +714,7 @@ public class T2FlowParser {
 					.getNetSfTavernaT2AnnotationAnnotationAssertionImpl();
 			String annClass = ann.getAnnotationBean().getClazz();
 			if (!annClass
-					.equals("net.sf.taverna.t2.annotation.annotationbeans.IdentificationAssertion")) {
+					.equals(IDENTIFICATION_ASSERTION)) {
 				continue;
 			}
 			for (Object obj : ann.getAnnotationBean().getAny()) {
