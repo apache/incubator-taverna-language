@@ -42,6 +42,7 @@ import javax.xml.validation.SchemaFactory;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import uk.org.taverna.scufl2.api.annotation.Annotation;
 import uk.org.taverna.scufl2.api.annotation.Revision;
 import uk.org.taverna.scufl2.api.common.Named;
 import uk.org.taverna.scufl2.api.common.NamedSet;
@@ -124,6 +125,8 @@ public class T2FlowParser {
 
 	public static final URI configBeanURI = URI
 			.create("http://ns.taverna.org.uk/2010/xml/t2flow/configbean/");
+	
+	public static final URI t2flowParserURI = URI.create("http://ns.taverna.org.uk/2012/scufl2/t2flowParser");
 	
 	// TODO: Find better example predicate
 	public static final URI exampleDataURI = URI
@@ -630,7 +633,7 @@ public class T2FlowParser {
 	public void parseAnnotations(WorkflowBean annotatedBean, Annotations annotations) {
 		URI annotatedSubject = uriTools.relativeUriForBean(annotatedBean,
 				parserState.get().getCurrentWorkflowBundle());
-		logger.info("Checking annotations for " + annotatedSubject);
+		logger.fine("Checking annotations for " + annotatedSubject);
 		
 		Map<String, NetSfTavernaT2AnnotationAnnotationAssertionImpl> annotationElems = new HashMap<String, NetSfTavernaT2AnnotationAnnotationAssertionImpl>();
 		for (JAXBElement<AnnotationChain> el : annotations
@@ -671,6 +674,14 @@ public class T2FlowParser {
 				if (predicate != null) {
 					p.addPropertyAsString(predicate, value);
 				}
+				Annotation annotation = new Annotation();
+				annotation.setTarget(annotatedBean);
+				annotation.getBodyStatements().add(p);
+				annotation.setAnnotated(cal);
+				//annotation.setAnnotator();
+				annotation.setGenerator(t2flowParserURI);
+				annotation.setGenerated(new GregorianCalendar());
+				parserState.get().getCurrentWorkflowBundle().getAnnotations().add(annotation);
 			}
 		}
 	}
