@@ -7,6 +7,7 @@ import java.util.Map;
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.ucfpackage.UCFPackage;
 import uk.org.taverna.scufl2.ucfpackage.UCFPackage.ResourceEntry;
 
@@ -23,4 +24,12 @@ public class TestAnnotations {
 		assertEquals(1, annotations.size());
 		assertEquals("test.txt", annotations.keySet().iterator().next());
 	}
+	
+	public void addAnnotation() {
+		WorkflowBundle wfBundle = new WorkflowBundle();
+		Annotation ann = new Annotation();
+		wfBundle.getAnnotations().add(ann);
+		
+	}
+	
 }

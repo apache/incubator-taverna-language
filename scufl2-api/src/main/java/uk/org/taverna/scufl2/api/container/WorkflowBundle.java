@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
+import uk.org.taverna.scufl2.api.annotation.Annotation;
 import uk.org.taverna.scufl2.api.common.AbstractNamed;
 import uk.org.taverna.scufl2.api.common.Named;
 import uk.org.taverna.scufl2.api.common.NamedSet;
@@ -36,6 +37,7 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 		return WORKFLOW_BUNDLE_ROOT.resolve(UUID.randomUUID().toString() + "/");
 	}
 
+	private NamedSet<Annotation> annotations = new NamedSet<Annotation>();
 	private URI globalBaseURI = generateIdentifier();
 	private final NamedSet<Profile> profiles = new NamedSet<Profile>();
 	private final NamedSet<Workflow> workflows = new NamedSet<Workflow>();
@@ -49,6 +51,7 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 			List<Iterable<? extends WorkflowBean>> children = new ArrayList<Iterable<? extends WorkflowBean>>();
 			children.add(getWorkflows());
 			children.add(getProfiles());
+			children.add(getAnnotations());
 			outer: for (Iterable<? extends WorkflowBean> it : children) {
 				for (WorkflowBean bean : it) {
 					if (!bean.accept(visitor)) {
@@ -212,6 +215,15 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 		}
 		builder.append("]");
 		return builder.toString();
+	}
+
+	public NamedSet<Annotation> getAnnotations() {
+		return annotations;
+	}
+
+	public void setAnnotations(NamedSet<Annotation> annotations) {
+		this.annotations.clear();
+		this.annotations.addAll(annotations);
 	}
 
 }

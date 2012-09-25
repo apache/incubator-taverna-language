@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import uk.org.taverna.scufl2.api.annotation.Annotation;
 import uk.org.taverna.scufl2.api.common.Visitor.VisitorWithPath;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
@@ -171,7 +172,7 @@ public class URITools {
 			if (bean instanceof Named) {
 				Named named = (Named) bean;
 				String name = validFilename(named.getName());
-				if (!(bean instanceof Port)) {
+				if (!(bean instanceof Port || bean instanceof Annotation)) {
 					name = name + "/";
 				}
 				return relationURI.resolve(name);
