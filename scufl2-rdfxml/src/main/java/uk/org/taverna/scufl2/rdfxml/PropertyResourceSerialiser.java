@@ -41,19 +41,19 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 	private static final String RDF_RESOURCE = RDF_ + RESOURCE;
 	
 	protected Stack<Element> elementStack = new Stack<Element>();
-	protected DocumentBuilder docBuilder;
-	protected Document doc;
+	private DocumentBuilder docBuilder;
+	private Document doc;
 	private Element rootElement;
 
 	public PropertyResourceSerialiser(URI baseUri) {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(true);
 		try {
-			docBuilder = factory.newDocumentBuilder();
+			setDocBuilder(factory.newDocumentBuilder());
 		} catch (ParserConfigurationException e) {
 			throw new IllegalStateException("Can't create DocumentBuilder", e);
 		}
-		doc = docBuilder.newDocument();
+		setDoc(getDocBuilder().newDocument());
 
 	}
 
@@ -113,7 +113,7 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 		Element element = elementStack.peek();
 		if (node.getLiteralType().equals(PropertyLiteral.XML_LITERAL)) {
 			Element nodeElement = node.getLiteralValueAsElement();
-			element.appendChild(doc.importNode(nodeElement, true));
+			element.appendChild(getDoc().importNode(nodeElement, true));
 			element.setAttributeNS(RDF, RDF_PARSE_TYPE, LITERAL);
 		} else {
 			element.setTextContent(node.getLiteralValue());
@@ -142,7 +142,7 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 			element = uriToElement(typeUri);
 		} else {
 			// Anonymous - give warning?
-			element = doc.createElementNS(RDF, RDF_DESCRIPTION);
+			element = getDoc().createElementNS(RDF, RDF_DESCRIPTION);
 		}
 		if (node.getResourceURI() != null) {
 			element.setAttributeNS(RDF, RDF_ABOUT, node.getResourceURI()
@@ -157,7 +157,7 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 
 	protected Element uriToElement(URI uri) {
 		QName propertyQname = uriToQName(uri);
-		return doc.createElementNS(propertyQname.getNamespaceURI(),
+		return getDoc().createElementNS(propertyQname.getNamespaceURI(),
 				propertyQname.getLocalPart());
 	}
 
@@ -192,7 +192,7 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 				Element element = uriToElement(propertyVisit.getPredicateUri());
 				addElement(element);
 			} else if (parent instanceof PropertyList) {
-				addElement(doc.createElementNS(RDF, RDF_LI));
+				addElement(getDoc().createElementNS(RDF, RDF_LI));
 			}
 		}
 		if (node instanceof PropertyList) {
@@ -244,6 +244,22 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 		}
 		// System.out.println();
 		return true;
+	}
+
+	public Document getDoc() {
+		return doc;
+	}
+
+	public void setDoc(Document doc) {
+		this.doc = doc;
+	}
+
+	public DocumentBuilder getDocBuilder() {
+		return docBuilder;
+	}
+
+	public void setDocBuilder(DocumentBuilder docBuilder) {
+		this.docBuilder = docBuilder;
 	}
 
 }

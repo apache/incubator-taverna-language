@@ -1,5 +1,8 @@
 package uk.org.taverna.scufl2.rdfxml;
 
+import static uk.org.taverna.scufl2.rdfxml.RDFXMLReader.APPLICATION_RDF_XML;
+
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.HashMap;
@@ -25,6 +28,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
+import uk.org.taverna.scufl2.api.annotation.Annotation;
 import uk.org.taverna.scufl2.api.common.Typed;
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.common.Visitor;
@@ -53,6 +57,7 @@ import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
+import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.api.property.PropertyObject;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.api.property.PropertyResource.PropertyVisit;
@@ -77,6 +82,10 @@ import uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowBundleDocument;
 import uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowDocument;
 
 public class RDFXMLSerializer {
+
+	private static final String DOT_RDF = ".rdf";
+
+	protected static final URI OA = URI.create("http://www.w3.org/ns/openannotation/core/");
 
 	private static boolean warnedOnce = false;
 	
@@ -250,6 +259,9 @@ public class RDFXMLSerializer {
 				processorOutputPortBinding((ProcessorOutputPortBinding) node);
 			} else if (node instanceof Configuration) {
 				configuration((Configuration) node);
+				return false;
+			} else if (node instanceof Annotation) {
+				annotation((Annotation) node);
 				return false;
 			} else {
 				throw new IllegalStateException("Unexpected node " + node);
@@ -566,6 +578,65 @@ public class RDFXMLSerializer {
 			jaxbContextStatic = JAXBContext.newInstance(packages);
 		}
 		return jaxbContextStatic;
+	}
+
+	public void annotation(final Annotation ann) {
+		
+		final URI annUri = uriTools.uriForBean(ann);
+		PropertyResourceSerialiser visitor = new PropertyResourceSerialiser(
+				annUri) {
+			@Override
+			public boolean visit() {
+				if (! (getCurrentNode() instanceof Annotation)) {
+					return super.visit();
+				}
+					// Miniature OA description for now
+					// See http://openannotation.org/spec/core/20120509.html
+					PropertyResource annProv = new PropertyResource();
+					annProv.setResourceURI(annUri);
+					annProv.setTypeURI(OA.resolve("Annotation"));
+					if (ann.getAnnotated() != null) {
+						annProv.addProperty(OA.resolve("annoted"),
+								new PropertyLiteral(ann.getAnnotated()));
+					}
+					if (ann.getGenerated() != null) {
+						annProv.addProperty(OA.resolve("created"),
+								new PropertyLiteral(ann.getGenerated()));
+					}
+					if (ann.getAnnotator() != null) {
+						annProv.addPropertyReference(OA.resolve("annotator"),
+								ann.getAnnotator());
+					}
+					if (ann.getGenerator() != null) {
+						annProv.addPropertyReference(OA.resolve("generator"),
+								ann.getGenerator());
+					}
+					// FIXME: Hack - Our body is also the annotation!
+					annProv.addPropertyReference(OA.resolve("hasBody"), annUri);
+					
+					// CHECK: should this be a relative reference instead?
+					annProv.addPropertyReference(OA.resolve("hasTarget"), 
+							uriTools.uriForBean(ann.getTarget()));					
+					// Serialize the metadata
+					visit(annProv);
+					// And visit our children, serialized as normal by superclass
+					return true;	
+			}
+		};
+		ann.accept(visitor);
+
+		String name = uriTools.validFilename(ann.getName());
+		if (! name.toLowerCase().endsWith(DOT_RDF)) {
+			name = name + DOT_RDF;
+		}
+		String path = wfBundle.getAnnotationResourcesFolder() + name;
+		try {
+			wfBundle.getResources()
+					.addResource(visitor.getDoc(), path, APPLICATION_RDF_XML);
+		} catch (IOException e) {
+			logger.log(Level.WARNING, "Can't write annotation to " + path, e);
+		}
+		
 	}
 
 	private ObjectFactory objectFactory = new ObjectFactory();
