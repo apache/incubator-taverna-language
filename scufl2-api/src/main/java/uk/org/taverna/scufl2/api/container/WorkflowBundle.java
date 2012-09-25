@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -18,16 +19,17 @@ import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.ucfpackage.UCFPackage;
+import uk.org.taverna.scufl2.ucfpackage.UCFPackage.ResourceEntry;
 
 /**
  * @author Alan R Williams
- *
+ * 
  */
 public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
-Named, Root {
+		Named, Root {
 
 	public static final URI WORKFLOW_BUNDLE_ROOT = URI
-	.create("http://ns.taverna.org.uk/2010/workflowBundle/");
+			.create("http://ns.taverna.org.uk/2010/workflowBundle/");
 
 	public static URI generateIdentifier() {
 		return WORKFLOW_BUNDLE_ROOT.resolve(UUID.randomUUID().toString() + "/");
@@ -113,6 +115,23 @@ Named, Root {
 		this.resources = resources;
 	}
 
+	/**
+	 * Return the folder for annotation resources.
+	 * <p>
+	 * This folder name can be used with
+	 * getResources().listResources(folderPath) to retrieve the annotation
+	 * resources, or used with getResources().addResource(..) for adding
+	 * annotation resources.
+	 * <p>
+	 * The annotation folder is normally fixed to be <code>"annotations/"</code>.
+	 * 
+	 * @return Folder name for annotations
+	 */
+	public String getAnnotationResourcesFolder() {
+		return "annotations/";
+	}
+	
+
 	@Override
 	public void setGlobalBaseURI(URI globalBaseURI) {
 		this.globalBaseURI = globalBaseURI;
@@ -127,8 +146,8 @@ Named, Root {
 	public String toString() {
 		final int maxLen = 6;
 		return "TavernaResearchObject [" + "profiles="
-		+ (profiles != null ? toString(profiles, maxLen) : null)
-		+ ", mainWorkflow=" + mainWorkflow + "]";
+				+ (profiles != null ? toString(profiles, maxLen) : null)
+				+ ", mainWorkflow=" + mainWorkflow + "]";
 	}
 
 	private String toString(Collection<?> collection, int maxLen) {
@@ -136,7 +155,7 @@ Named, Root {
 		builder.append("[");
 		int i = 0;
 		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext()
-		&& i < maxLen; i++) {
+				&& i < maxLen; i++) {
 			if (i > 0) {
 				builder.append(", ");
 			}
