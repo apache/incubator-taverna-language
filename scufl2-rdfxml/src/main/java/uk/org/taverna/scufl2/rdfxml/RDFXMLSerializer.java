@@ -629,12 +629,14 @@ public class RDFXMLSerializer {
 				annUri) {
 			@Override
 			public boolean visit() {
-				if (! (getCurrentNode() instanceof Annotation)) {
-					return super.visit();
-				}
-					visit(annProv);
-					// And visit our children, serialized as normal by superclass
+				if (getCurrentNode() instanceof Annotation) {
+					annProv.accept(this);
+					// visit our children, serialized as normal by superclass
+					// -- but don't call super.visit() which don't understand
+					// Annotation
 					return true;
+				}
+				return super.visit();
 			}
 		};
 		ann.accept(visitor);
