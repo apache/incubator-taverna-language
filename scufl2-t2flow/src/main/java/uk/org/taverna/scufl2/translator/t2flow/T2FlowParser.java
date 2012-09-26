@@ -631,9 +631,8 @@ public class T2FlowParser {
 	}
 
 	public void parseAnnotations(WorkflowBean annotatedBean, Annotations annotations) {
-		URI annotatedSubject = uriTools.relativeUriForBean(annotatedBean,
-				parserState.get().getCurrentWorkflowBundle());
-		logger.fine("Checking annotations for " + annotatedSubject);
+		
+		//logger.fine("Checking annotations for " + annotatedSubject);
 		
 		Map<String, NetSfTavernaT2AnnotationAnnotationAssertionImpl> annotationElems = new HashMap<String, NetSfTavernaT2AnnotationAnnotationAssertionImpl>();
 		for (JAXBElement<AnnotationChain> el : annotations
@@ -668,20 +667,26 @@ public class T2FlowParser {
 			}
 			if (value != null) {
 				// Add the annotation
+				Annotation annotation = new Annotation();
+				annotation.setParent(parserState.get().getCurrentWorkflowBundle());
+				
+				
+				annotation.setTarget(annotatedBean);
+				annotation.setAnnotated(cal);
+				//annotation.setAnnotator();
+				annotation.setGenerator(t2flowParserURI);
+				annotation.setGenerated(new GregorianCalendar());
+				
 				PropertyResource p = new PropertyResource();
+				URI annotatedSubject = uriTools.relativeUriForBean(annotatedBean,
+						annotation);
 				p.setResourceURI(annotatedSubject);
 				URI predicate = getPredicatesForClass().get(clazz);
 				if (predicate != null) {
 					p.addPropertyAsString(predicate, value);
 				}
-				Annotation annotation = new Annotation();
-				annotation.setTarget(annotatedBean);
 				annotation.getBodyStatements().add(p);
-				annotation.setAnnotated(cal);
-				//annotation.setAnnotator();
-				annotation.setGenerator(t2flowParserURI);
-				annotation.setGenerated(new GregorianCalendar());
-				parserState.get().getCurrentWorkflowBundle().getAnnotations().add(annotation);
+				
 			}
 		}
 	}
