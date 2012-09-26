@@ -805,7 +805,12 @@ public class T2FlowParser {
 								+ control);
 			}
 
-			links.add(new BlockingControlLink(block, untilFinished));
+			BlockingControlLink newLink = new BlockingControlLink(block, untilFinished);
+
+			// FIXME: missing from schema?
+			//parseAnnotations(newLink, condition.getAnnotations());
+
+			links.add(newLink);
 		}
 		return links;
 	}
@@ -845,6 +850,10 @@ public class T2FlowParser {
 					}
 					mergeCounts.put(receiverPort, new AtomicInteger(-1));
 				}
+
+				// FIXME: annotations missing from schema?
+				//parseAnnotations(newLink, origLink.getAnnotations());
+
 				newLinks.add(newLink);
 			} catch (ReaderException ex) {
 				logger.log(Level.WARNING, "Could not translate link:\n"
@@ -915,6 +924,8 @@ public class T2FlowParser {
 					throw new ReaderException(message);
 				}
 			}
+			parseAnnotations(newPort, originalPort.getAnnotations());
+			
 			createdPorts.add(newPort);
 		}
 		return createdPorts;
@@ -988,6 +999,9 @@ public class T2FlowParser {
 		for (Port originalPort : originalPorts.getPort()) {
 			OutputWorkflowPort newPort = new OutputWorkflowPort(parserState
 					.get().getCurrentWorkflow(), originalPort.getName());
+			// FIXME: annotations() missing in schema?
+			//parseAnnotations(newPort, originalPort.getAnnotations());
+
 			createdPorts.add(newPort);
 		}
 		return createdPorts;
@@ -1038,6 +1052,9 @@ public class T2FlowParser {
 					.getDispatchStack()));
 			newProc.setIterationStrategyStack(parseIterationStrategyStack(origProc
 					.getIterationStrategyStack()));
+			parseAnnotations(newProc, origProc.getAnnotations());
+
+			
 			newProcessors.add(newProc);
 			int i = 0;
 			for (Activity origActivity : origProc.getActivities().getActivity()) {
