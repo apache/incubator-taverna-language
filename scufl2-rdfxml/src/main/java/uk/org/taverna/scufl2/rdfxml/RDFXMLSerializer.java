@@ -260,9 +260,6 @@ public class RDFXMLSerializer {
 			} else if (node instanceof Configuration) {
 				configuration((Configuration) node);
 				return false;
-			} else if (node instanceof Annotation) {
-				annotation((Annotation) node);
-				return false;
 			} else {
 				throw new IllegalStateException("Unexpected node " + node);
 			}
@@ -798,6 +795,10 @@ public class RDFXMLSerializer {
 			}
 		}
 
+		for (Annotation ann : wfBundle.getAnnotations()) {
+			annotation(ann);
+		}
+		
 		return bundle;
 	}
 
