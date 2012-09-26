@@ -1,6 +1,5 @@
-package uk.org.taverna.scufl2.wfdesc;
+package org.purl.wf4ever.wfdesc.scufl2;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 
@@ -13,11 +12,7 @@ import org.openrdf.elmo.sesame.SesameManagerFactory;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.contextaware.ContextAwareConnection;
-import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.helpers.OrganizedRDFWriter;
-import org.openrdf.rio.turtle.TurtleUtil;
-import org.openrdf.rio.turtle.TurtleWriter;
-import org.openrdf.sail.memory.model.MemURI;
 import org.purl.wf4ever.wf4ever.BeanshellScript;
 import org.purl.wf4ever.wf4ever.CommandLineTool;
 import org.purl.wf4ever.wf4ever.RScript;
@@ -61,42 +56,6 @@ public class WfdescSerialiser {
 	public static URI TOOL = URI
 	.create("http://ns.taverna.org.uk/2010/activity/tool");
 	
-	private static final class TurtleWriterWithBase extends TurtleWriter {
-		private URITools uriTools = new URITools();
-		private final URI baseURI;
-
-		private TurtleWriterWithBase(OutputStream out, URI baseURI) {
-			super(out);
-			this.baseURI = baseURI;
-		}
-
-		@Override
-		public void startRDF() throws RDFHandlerException {
-			super.startRDF();
-			try {
-				writeBase();
-			} catch (IOException e) {
-				throw new RDFHandlerException(e);
-			}
-		}
-
-		@Override
-		protected void writeURI(org.openrdf.model.URI uri) throws IOException {
-
-			final String uriString = uriTools.relativePath(baseURI,
-					URI.create(uri.toString())).toASCIIString();
-			super.writeURI(new MemURI(null, uriString, ""));
-		}
-
-		protected void writeBase() throws IOException {
-			writer.write("@base ");
-			writer.write("<");
-			writer.write(TurtleUtil.encodeURIString(baseURI.toASCIIString()));
-			writer.write("> .");
-			writer.writeEOL();
-		}
-	}
-
 	private Scufl2Tools scufl2Tools = new Scufl2Tools();
 	private SesameManager sesameManager;
 	private URITools uriTools = new URITools();
@@ -149,7 +108,7 @@ public class WfdescSerialiser {
 					sesameManager
 							.designate(parentQName,
 									org.purl.wf4ever.wfdesc.Workflow.class)
-							.getHasSubProcess().add(process);
+							.getWfHasSubProcess().add(process);
 					if (profile != null) {
 						for (ProcessorBinding b : scufl2Tools.processorBindingsForProcessor((Processor)node, profile)) {							
 							Activity a = b.getBoundActivity();
@@ -160,23 +119,23 @@ public class WfdescSerialiser {
 							if (type.equals(BEANSHELL)) { 									
 								BeanshellScript script = sesameManager.designateEntity(process, BeanshellScript.class);							
 								String s = props.getPropertyAsString(BEANSHELL.resolve("#script"));
-								script.getScripts().add(s);
+								script.getWfScript().add(s);
 							}
 							if (type.equals(RSHELL)) { 									
 								RScript script = sesameManager.designateEntity(process, RScript.class);
 								String s = props.getPropertyAsString(RSHELL.resolve("#script"));
-								script.getScripts().add(s);
+								script.getWfScript().add(s);
 							}
 							if (type.equals(WSDL)) {
 								SOAPService soap = sesameManager.designateEntity(process, SOAPService.class);
 								PropertyResource operation = props.getPropertyAsResource(WSDL.resolve("#operation"));
-								soap.getWsdlURI().add(operation.getPropertyAsResourceURI(OPERATION.resolve("#wsdl")));
-								soap.getWsdlOperationName().add(operation.getPropertyAsReference(OPERATION.resolve("#name")));								
+								soap.getWfWsdlURI().add(operation.getPropertyAsResourceURI(OPERATION.resolve("#wsdl")));
+								soap.getWfWsdlOperationName().add(operation.getPropertyAsReference(OPERATION.resolve("#name")));								
 							} 
 							if (type.equals(TOOL)) {
 								CommandLineTool cmd = sesameManager.designateEntity(process, CommandLineTool.class);
 								PropertyResource desc = props.getPropertyAsResource(TOOL.resolve("#toolDescription"));
-								cmd.getCommands().add(desc.getPropertyAsString(TOOL.resolve("#command")));
+								cmd.getWfCommand().add(desc.getPropertyAsString(TOOL.resolve("#command")));
 							} 
 							} catch (IndexOutOfBoundsException ex) {
 								continue;
@@ -190,11 +149,11 @@ public class WfdescSerialiser {
 					Input input = sesameManager.create(qName, Input.class);
 					Process process = sesameManager.designate(parentQName,
 							Process.class);
-					process.getHasInput().add(input);
+					process.getWfHasInput().add(input);
 				} else if (node instanceof OutputPort) {
 					Output output = sesameManager.create(qName, Output.class);
 					sesameManager.designate(parentQName, Process.class)
-							.getHasOutput().add(output);
+							.getWfHasOutput().add(output);
 				} else if (node instanceof DataLink) {
 					DataLink link = (DataLink) node;
 					org.purl.wf4ever.wfdesc.DataLink dl = sesameManager.create(
@@ -202,14 +161,14 @@ public class WfdescSerialiser {
 							org.purl.wf4ever.wfdesc.DataLink.class);
 					Output source = sesameManager.designate(
 							qnameForBean(link.getReceivesFrom()), Output.class);
-					dl.getHasSource().add(source);
+					dl.getWfHasSource().add(source);
 					Input sink = sesameManager.designate(
 							qnameForBean(link.getSendsTo()), Input.class);
-					dl.getHasSink().add(sink);
+					dl.getWfHasSink().add(sink);
 					sesameManager
 							.designate(parentQName,
 									org.purl.wf4ever.wfdesc.Workflow.class)
-							.getHasDataLink().add(dl);
+							.getWfHasDataLink().add(dl);
 				} else {
 					return false;
 				}

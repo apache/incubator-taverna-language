@@ -1,6 +1,6 @@
-package uk.org.taverna.scufl2.wfdesc;
+package org.purl.wf4ever.wfdesc.scufl2;
 
-import static uk.org.taverna.scufl2.wfdesc.WfdescReader.TEXT_VND_WF4EVER_WFDESC_TURTLE;
+import static org.purl.wf4ever.wfdesc.scufl2.WfdescReader.TEXT_VND_WF4EVER_WFDESC_TURTLE;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
