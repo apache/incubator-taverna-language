@@ -622,11 +622,18 @@ public class RDFXMLSerializer {
 		};
 		ann.accept(visitor);
 
+		URI wfBundleURI = uriTools.uriForBean(wfBundle);
 		if (ann.getBody() == null && ! ann.getBodyStatements().isEmpty()) {
-			ann.setBody(annUri.resolve(uriTools.validFilename(ann.getName()) + DOT_RDF));
+			URI bodyRDF = annUri.resolve(uriTools.validFilename(ann.getName()) + DOT_RDF);
+			// Make it relative so it survives across wfbundle uuid update
+			// FIXME: What should this URI be relative to? Currently wfBundle
+			// If you change this, update pathUri below to include 'annotation/'.
+			URI path = uriTools.relativePath(bodyRDF, wfBundleURI);
+			ann.setBody(path);
 		}
-		URI pathUri = uriTools.relativePath(ann.getBody(), uriTools.uriForBean(wfBundle));
+		URI pathUri = uriTools.relativePath(ann.getBody(), wfBundleURI);
 		if (pathUri.isAbsolute()) {
+			// Workaround with separate file for the annotation alone
 			pathUri = annUri.resolve(uriTools.validFilename(ann.getName()) + DOT_RDF);
 		} 
 		try {
