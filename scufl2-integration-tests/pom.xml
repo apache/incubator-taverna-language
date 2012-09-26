@@ -7,7 +7,6 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>scufl2-integration-tests</artifactId>
-  <version>0.9.4-SNAPSHOT</version>
 	<name>Taverna Scufl 2 Integration tests</name>
 	<description>Integration tests depending on multiple modules</description>
 	<build>
