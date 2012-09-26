@@ -119,23 +119,6 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 		this.resources = resources;
 	}
 
-	/**
-	 * Return the folder for annotation resources.
-	 * <p>
-	 * This folder name can be used with
-	 * getResources().listResources(folderPath) to retrieve the annotation
-	 * resources, or used with getResources().addResource(..) for adding
-	 * annotation resources.
-	 * <p>
-	 * The annotation folder is normally fixed to be <code>"annotations/"</code>.
-	 * 
-	 * @return Folder name for annotations
-	 */
-	public String getAnnotationResourcesFolder() {
-		return "annotations/";
-	}
-	
-
 	@Override
 	public void setGlobalBaseURI(URI globalBaseURI) {
 		this.globalBaseURI = globalBaseURI;

@@ -10,6 +10,7 @@ import uk.org.taverna.scufl2.api.common.AbstractNamed;
 import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Named;
+import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
@@ -32,7 +33,9 @@ public class Annotation extends AbstractNamed implements Named, Child<WorkflowBu
 	private URI generator;
 	private WorkflowBean target;
 	private WorkflowBundle parent;
-
+	private URI body;
+	
+	
 	public Annotation(WorkflowBean target) {
 		setTarget(target);
 	}
@@ -112,6 +115,14 @@ public class Annotation extends AbstractNamed implements Named, Child<WorkflowBu
 			parent.getAnnotations().add(this);
 		}
 
+	}
+
+	public URI getBody() {
+		return body;
+	}
+
+	public void setBody(URI body) {
+		this.body = body;
 	}
 
 

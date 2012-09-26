@@ -617,21 +617,27 @@ public class RDFXMLSerializer {
 					// Serialize the metadata
 					visit(annProv);
 					// And visit our children, serialized as normal by superclass
-					return true;	
+					return true;
 			}
 		};
 		ann.accept(visitor);
 
-		String name = uriTools.validFilename(ann.getName());
-		if (! name.toLowerCase().endsWith(DOT_RDF)) {
-			name = name + DOT_RDF;
+		if (ann.getBody() == null && ! ann.getBodyStatements().isEmpty()) {
+			ann.setBody(annUri.resolve(uriTools.validFilename(ann.getName()) + DOT_RDF));
 		}
-		String path = wfBundle.getAnnotationResourcesFolder() + name;
+		URI pathUri = uriTools.relativePath(ann.getBody(), uriTools.uriForBean(wfBundle));
+		if (pathUri.isAbsolute()) {
+			pathUri = annUri.resolve(uriTools.validFilename(ann.getName()) + DOT_RDF);
+		} 
 		try {
+			/*
+			 * TODO: Serialize manually with nicer indentation/namespaces etc.,
+			 * as done for our other RDF/XML documents
+			 */
 			wfBundle.getResources()
-					.addResource(visitor.getDoc(), path, APPLICATION_RDF_XML);
+					.addResource(visitor.getDoc(), pathUri.toASCIIString(), APPLICATION_RDF_XML);
 		} catch (IOException e) {
-			logger.log(Level.WARNING, "Can't write annotation to " + path, e);
+			logger.log(Level.WARNING, "Can't write annotation to " + pathUri, e);
 		}
 		
 	}
