@@ -6,10 +6,13 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import uk.org.taverna.scufl2.api.common.AbstractNamed;
 import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
+import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Named;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
+import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.property.PropertyObject;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
 
@@ -21,13 +24,14 @@ import uk.org.taverna.scufl2.api.property.PropertyResource;
  * @author Stian Soiland-Reyes
  *
  */
-public class Annotation extends AbstractNamedChild implements Named {
+public class Annotation extends AbstractNamed implements Named, Child<WorkflowBundle> {
 	private Calendar annotated;
 	private URI annotator;
 	private List<PropertyObject> bodyStatements = new ArrayList<PropertyObject>();
 	private Calendar generated = new GregorianCalendar();
 	private URI generator;
 	private WorkflowBean target;
+	private WorkflowBundle parent;
 
 	public Annotation(WorkflowBean target) {
 		setTarget(target);
@@ -92,6 +96,24 @@ public class Annotation extends AbstractNamedChild implements Named {
 		}
 		this.target = target;
 	}
+
+	@Override
+	public WorkflowBundle getParent() {
+		return this.parent;
+	}
+
+	@Override
+	public void setParent(WorkflowBundle parent) {
+		if (this.parent != null && this.parent != parent) {
+			this.parent.getAnnotations().remove(this);
+		}
+		this.parent = parent;
+		if (parent != null) {
+			parent.getAnnotations().add(this);
+		}
+
+	}
+
 
 	
 }
