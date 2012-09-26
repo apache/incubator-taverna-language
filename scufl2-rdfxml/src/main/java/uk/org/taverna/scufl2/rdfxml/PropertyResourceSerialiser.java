@@ -31,19 +31,19 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 	public static final String PARSE_TYPE = "parseType";
 	public static final String COLLECTION = "Collection";
 	public static final String RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
-	
+
 	public static final String RDF_ = "rdf:";
+	public static final String RDF_ELEM = RDF_ + "RDF";
 	public static final String RDF_ABOUT = RDF_ + ABOUT;
-	public static final String RDF_DESCRIPTION = RDF_ + DESCRIPTION ;		
+	public static final String RDF_DESCRIPTION = RDF_ + DESCRIPTION;
 	public static final String RDF_DATATYPE = RDF_ + DATATYPE;
 	public static final String RDF_LI = RDF_ + LI;
 	public static final String RDF_PARSE_TYPE = RDF_ + PARSE_TYPE;
 	private static final String RDF_RESOURCE = RDF_ + RESOURCE;
-	
+
 	protected Stack<Element> elementStack = new Stack<Element>();
 	private DocumentBuilder docBuilder;
 	private Document doc;
-	private Element rootElement;
 
 	public PropertyResourceSerialiser(URI baseUri) {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -60,13 +60,17 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 	private void addElement(Element element) {
 		if (elementStack.isEmpty()) {
 			// Top level
-			if (getRootElement() == null) {
+			Element existingRoot = getRootElement();
+			if (existingRoot == null) {
 				setRootElement(element);
 			} else {
-				if (getRootElement() != element) {
-					throw new IllegalStateException("Unexpected root element "
-							+ element + " has: " + getRootElement());
+				if (!existingRoot.getNodeName().equals(RDF_ELEM)) {
+					// Wrap existingRoot in <rdf:RDF>
+					Element rootElem = doc.createElementNS(RDF, RDF_ELEM);
+					setRootElement(rootElem);
+					rootElem.appendChild(existingRoot);
 				}
+				getRootElement().appendChild(element);
 			}
 		} else {
 			// System.out.println("Appending to " + elementStack.peek());
@@ -77,31 +81,27 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 		printStatus(false);
 	}
 
-	private final void printStatus(boolean isClosing) {};
-	/*
 	private final void printStatus(boolean isClosing) {
-		StackTraceElement[] st = new Exception().getStackTrace();
-		StackTraceElement caller = st[1];
+	};
 
-		// indent by stack depth
-		for (Element e : elementStack) {
-			System.out.print("-");
-		}
-		System.out.print(isClosing ? "<" : ">");
-		System.out.print(" " + getCurrentNode().getClass().getSimpleName()
-				+ ": ");
-		for (Element e : elementStack) {
-			System.out.print("<" + e.getNodeName() + "> ");
-		}
-		System.out.print("\t\t-- " + caller.getMethodName() + "(..) in ("
-				+ caller.getFileName() + ":" + caller.getLineNumber() + ")");
-		System.out.println("\t" + getCurrentPath());
-		
-	}
-	*/
+	/*
+	 * private final void printStatus(boolean isClosing) { StackTraceElement[]
+	 * st = new Exception().getStackTrace(); StackTraceElement caller = st[1];
+	 * 
+	 * // indent by stack depth for (Element e : elementStack) {
+	 * System.out.print("-"); } System.out.print(isClosing ? "<" : ">");
+	 * System.out.print(" " + getCurrentNode().getClass().getSimpleName() +
+	 * ": "); for (Element e : elementStack) { System.out.print("<" +
+	 * e.getNodeName() + "> "); } System.out.print("\t\t-- " +
+	 * caller.getMethodName() + "(..) in (" + caller.getFileName() + ":" +
+	 * caller.getLineNumber() + ")"); System.out.println("\t" +
+	 * getCurrentPath());
+	 * 
+	 * }
+	 */
 
 	public Element getRootElement() {
-		return rootElement;
+		return getDoc().getDocumentElement();
 	}
 
 	protected void list(PropertyList node) {
@@ -152,7 +152,11 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 	}
 
 	public void setRootElement(Element rootElement) {
-		this.rootElement = rootElement;
+		Element oldRoot = getRootElement();
+		if (oldRoot != null) {
+			doc.removeChild(oldRoot);
+		}
+		doc.appendChild(rootElement);
 	}
 
 	protected Element uriToElement(URI uri) {
@@ -233,12 +237,12 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 			return true;
 		}
 		Element element;
-		if (getCurrentPath().size() > 3 && getCurrentPath().get(
-				getCurrentPath().size() - 3) instanceof PropertyList) {
+		if (getCurrentPath().size() > 3
+				&& getCurrentPath().get(getCurrentPath().size() - 3) instanceof PropertyList) {
 			return true;
 		}
-		
-		if (elementStack.size() > 1) {		
+
+		if (elementStack.size() > 1) {
 			printStatus(true);
 			elementStack.pop();
 		}
