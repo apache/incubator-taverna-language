@@ -80,6 +80,7 @@ import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Activity;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedGranularDepthPort;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedGranularDepthPorts;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedPort;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedPorts;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotationAssertionImpl.NetSfTavernaT2AnnotationAnnotationAssertionImpl;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotationChain;
@@ -103,7 +104,6 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.Link;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.LinkType;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Mapping;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ObjectFactory;
-import uk.org.taverna.scufl2.xml.t2flow.jaxb.Port;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.PortProduct;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Processors;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Raven;
@@ -807,7 +807,7 @@ public class T2FlowParser {
 
 			BlockingControlLink newLink = new BlockingControlLink(block, untilFinished);
 
-			// FIXME: missing from schema?
+			// FIXME: missing from t2flow and schema
 			//parseAnnotations(newLink, condition.getAnnotations());
 
 			links.add(newLink);
@@ -851,7 +851,7 @@ public class T2FlowParser {
 					mergeCounts.put(receiverPort, new AtomicInteger(-1));
 				}
 
-				// FIXME: annotations missing from schema?
+				// FIXME: missing from t2flow and schema
 				//parseAnnotations(newLink, origLink.getAnnotations());
 
 				newLinks.add(newLink);
@@ -996,11 +996,11 @@ public class T2FlowParser {
 	protected Set<OutputWorkflowPort> parseOutputPorts(
 			AnnotatedPorts originalPorts) {
 		Set<OutputWorkflowPort> createdPorts = new HashSet<OutputWorkflowPort>();
-		for (Port originalPort : originalPorts.getPort()) {
+		for (AnnotatedPort originalPort : originalPorts.getPort()) {
 			OutputWorkflowPort newPort = new OutputWorkflowPort(parserState
 					.get().getCurrentWorkflow(), originalPort.getName());
-			// FIXME: annotations() missing in schema?
-			//parseAnnotations(newPort, originalPort.getAnnotations());
+
+			parseAnnotations(newPort, originalPort.getAnnotations());
 
 			createdPorts.add(newPort);
 		}
