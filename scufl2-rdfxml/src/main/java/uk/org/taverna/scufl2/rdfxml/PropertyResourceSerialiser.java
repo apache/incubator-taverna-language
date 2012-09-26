@@ -14,6 +14,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import uk.org.taverna.scufl2.api.common.Visitor.VisitorWithPath;
+import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.property.PropertyList;
 import uk.org.taverna.scufl2.api.property.PropertyLiteral;
@@ -41,11 +42,15 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 	public static final String RDF_PARSE_TYPE = RDF_ + PARSE_TYPE;
 	private static final String RDF_RESOURCE = RDF_ + RESOURCE;
 
+	private static URITools uriTools = new URITools();
+	
 	protected Stack<Element> elementStack = new Stack<Element>();
 	private DocumentBuilder docBuilder;
 	private Document doc;
+	private final URI baseUri;
 
 	public PropertyResourceSerialiser(URI baseUri) {
+		this.baseUri = baseUri;
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(true);
 		try {
@@ -131,8 +136,12 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 
 	protected void reference(PropertyReference node) {
 		Element element = elementStack.peek();
-		element.setAttributeNS(RDF, RDF_RESOURCE, node.getResourceURI()
+		element.setAttributeNS(RDF, RDF_RESOURCE, relativize(node.getResourceURI())
 				.toASCIIString());
+	}
+
+	protected URI relativize(URI resourceURI) {
+		return uriTools.relativePath(baseUri, resourceURI);
 	}
 
 	protected void resource(PropertyResource node) {
@@ -145,7 +154,7 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 			element = getDoc().createElementNS(RDF, RDF_DESCRIPTION);
 		}
 		if (node.getResourceURI() != null) {
-			element.setAttributeNS(RDF, RDF_ABOUT, node.getResourceURI()
+			element.setAttributeNS(RDF, RDF_ABOUT, relativize(node.getResourceURI())
 					.toASCIIString());
 		}
 		addElement(element);

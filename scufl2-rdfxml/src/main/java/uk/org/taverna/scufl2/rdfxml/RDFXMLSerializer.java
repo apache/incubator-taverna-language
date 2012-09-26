@@ -578,8 +578,53 @@ public class RDFXMLSerializer {
 	}
 
 	public void annotation(final Annotation ann) {
+		URI wfBundleURI = uriTools.uriForBean(wfBundle);
+		URI annUri = uriTools.uriForBean(ann);
+		URI bodyURI = ann.getBody();
+		if (bodyURI == null || bodyURI.isAbsolute()) {
+			// Workaround with separate file for the annotation alone
+			bodyURI = annUri.resolve(uriTools.validFilename(ann.getName()) + DOT_RDF);
+		}
+		URI pathUri = uriTools.relativePath(wfBundleURI, bodyURI);			
+		if (ann.getBody() == null || ann.getBody().equals(wfBundleURI.resolve(pathUri))) {
+			// Set the relative path
+			ann.setBody(pathUri);
+		}
+
+		// Miniature OA description for now
+		// See http://openannotation.org/spec/core/20120509.html
+		final PropertyResource annProv = new PropertyResource();
+		annProv.setResourceURI(annUri);
+		annProv.setTypeURI(OA.resolve("Annotation"));
+		if (ann.getAnnotated() != null) {
+			annProv.addProperty(OA.resolve("annoted"),
+					new PropertyLiteral(ann.getAnnotated()));
+		}
+		if (ann.getGenerated() != null) {
+			annProv.addProperty(OA.resolve("created"),
+					new PropertyLiteral(ann.getGenerated()));
+		}
+		if (ann.getAnnotator() != null) {
+			annProv.addPropertyReference(OA.resolve("annotator"),
+					ann.getAnnotator());
+		}
+		if (ann.getGenerator() != null) {
+			annProv.addPropertyReference(OA.resolve("generator"),
+					ann.getGenerator());
+		}
+		if (ann.getBody() != null) {
+			annProv.addPropertyReference(OA.resolve("hasBody"), ann.getBody());
+		} else if (! ann.getBodyStatements().isEmpty()){						
+			// FIXME: Hack - Our body is also the annotation!
+			annProv.addPropertyReference(OA.resolve("hasBody"), pathUri);
+		}
 		
-		final URI annUri = uriTools.uriForBean(ann);
+		// CHECK: should this be a relative reference instead?
+		annProv.addPropertyReference(OA.resolve("hasTarget"), 
+				uriTools.uriForBean(ann.getTarget()));					
+		// Serialize the metadata
+
+		
 		PropertyResourceSerialiser visitor = new PropertyResourceSerialiser(
 				annUri) {
 			@Override
@@ -587,34 +632,6 @@ public class RDFXMLSerializer {
 				if (! (getCurrentNode() instanceof Annotation)) {
 					return super.visit();
 				}
-					// Miniature OA description for now
-					// See http://openannotation.org/spec/core/20120509.html
-					PropertyResource annProv = new PropertyResource();
-					annProv.setResourceURI(annUri);
-					annProv.setTypeURI(OA.resolve("Annotation"));
-					if (ann.getAnnotated() != null) {
-						annProv.addProperty(OA.resolve("annoted"),
-								new PropertyLiteral(ann.getAnnotated()));
-					}
-					if (ann.getGenerated() != null) {
-						annProv.addProperty(OA.resolve("created"),
-								new PropertyLiteral(ann.getGenerated()));
-					}
-					if (ann.getAnnotator() != null) {
-						annProv.addPropertyReference(OA.resolve("annotator"),
-								ann.getAnnotator());
-					}
-					if (ann.getGenerator() != null) {
-						annProv.addPropertyReference(OA.resolve("generator"),
-								ann.getGenerator());
-					}
-					// FIXME: Hack - Our body is also the annotation!
-					annProv.addPropertyReference(OA.resolve("hasBody"), annUri);
-					
-					// CHECK: should this be a relative reference instead?
-					annProv.addPropertyReference(OA.resolve("hasTarget"), 
-							uriTools.uriForBean(ann.getTarget()));					
-					// Serialize the metadata
 					visit(annProv);
 					// And visit our children, serialized as normal by superclass
 					return true;
@@ -622,20 +639,7 @@ public class RDFXMLSerializer {
 		};
 		ann.accept(visitor);
 
-		URI wfBundleURI = uriTools.uriForBean(wfBundle);
-		if (ann.getBody() == null && ! ann.getBodyStatements().isEmpty()) {
-			URI bodyRDF = annUri.resolve(uriTools.validFilename(ann.getName()) + DOT_RDF);
-			// Make it relative so it survives across wfbundle uuid update
-			// FIXME: What should this URI be relative to? Currently wfBundle
-			// If you change this, update pathUri below to include 'annotation/'.
-			URI path = uriTools.relativePath(bodyRDF, wfBundleURI);
-			ann.setBody(path);
-		}
-		URI pathUri = uriTools.relativePath(ann.getBody(), wfBundleURI);
-		if (pathUri.isAbsolute()) {
-			// Workaround with separate file for the annotation alone
-			pathUri = annUri.resolve(uriTools.validFilename(ann.getName()) + DOT_RDF);
-		} 
+
 		try {
 			/*
 			 * TODO: Serialize manually with nicer indentation/namespaces etc.,
