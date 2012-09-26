@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>uk.org.taverna.scufl2</groupId>
 	<artifactId>scufl2-wfdesc</artifactId>
-	<version>0.1-SNAPSHOT</version>
+	<version>0.2-SNAPSHOT</version>
 	<name>SCUFL2 to wfdesc</name>
 	<description>Convert Scufl2 workflow to wfdesc structure (from Wf4Ever RO ontology)</description>
 	<properties>
-		<scufl2.version>0.9-SNAPSHOT</scufl2.version>
+		<scufl2.version>0.11-SNAPSHOT</scufl2.version>
 		<elmo.version>1.5</elmo.version>
 		<sesame.version>2.3.2</sesame.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -98,7 +98,7 @@
 									<arg value="target/wfdesc-ontology.jar" />
 									
 									<arg value="-p" />
-									<arg value='""' /> <!-- Windows freaks out if this is really empty -->
+									<arg value="wf" /> <!-- Windows freaks out if this is really empty -->
 									
 									<!-- <arg value="http://purl.org/wf4ever/wfdesc" /> -->
 									<arg value="src/main/resources/org/purl/wf4ever/wfdesc/wfdesc.ttl" />
