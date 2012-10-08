@@ -21,7 +21,6 @@ import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.ucfpackage.UCFPackage;
-import uk.org.taverna.scufl2.ucfpackage.UCFPackage.ResourceEntry;
 
 /**
  * @author Alan R Williams
