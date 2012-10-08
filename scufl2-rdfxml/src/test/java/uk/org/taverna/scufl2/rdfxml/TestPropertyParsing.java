@@ -67,7 +67,7 @@ public class TestPropertyParsing {
 		assertEquals(profile.getActivities().getByName("Get_XML_result"),
 				get_XML_result.getConfigures());
 		assertEquals("http://ns.taverna.org.uk/2010/activity/wsdl#Config",
-				get_XML_result.getConfigurableType().toASCIIString());
+				get_XML_result.getType().toASCIIString());
 	}
 
 	public void loadProfileDocument() {

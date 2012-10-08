@@ -71,7 +71,7 @@ public class TestExternalToolActivityParser {
 		assertNotNull(proc);
 		Configuration config = scufl2Tools.configurationForActivityBoundToProcessor(proc, profile);
 		assertNotNull(config);
-		assertEquals(ACTIVITY_URI.resolve("#Config"), config.getConfigurableType());
+		assertEquals(ACTIVITY_URI.resolve("#Config"), config.getType());
 
 		Activity activity = (Activity) config.getConfigures();
 		assertEquals(ACTIVITY_URI, activity.getConfigurableType());
@@ -99,7 +99,7 @@ public class TestExternalToolActivityParser {
 		assertNotNull(proc);
 		Configuration config = scufl2Tools.configurationForActivityBoundToProcessor(proc, profile);
 		assertNotNull(config);
-		assertEquals(ACTIVITY_URI.resolve("#Config"), config.getConfigurableType());
+		assertEquals(ACTIVITY_URI.resolve("#Config"), config.getType());
 		PropertyResource resource = config.getPropertyResource();
 		assertTrue(resource.hasProperty(ACTIVITY_URI.resolve("#toolId")));
 		URI toolId = resource.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#toolId"));
@@ -217,7 +217,7 @@ public class TestExternalToolActivityParser {
 		assertNotNull(proc);
 		Configuration config = scufl2Tools.configurationForActivityBoundToProcessor(proc, profile);
 		assertNotNull(config);
-		assertEquals(ACTIVITY_URI.resolve("#Config"), config.getConfigurableType());
+		assertEquals(ACTIVITY_URI.resolve("#Config"), config.getType());
 		PropertyResource resource = config.getPropertyResource();
 		assertTrue(resource.hasProperty(ACTIVITY_URI.resolve("#repositoryUrl")));
 		String repositoryUrl = resource.getPropertyAsString(ACTIVITY_URI.resolve("#repositoryUrl"));
@@ -328,7 +328,7 @@ public class TestExternalToolActivityParser {
 		assertNotNull(proc);
 		Configuration config = scufl2Tools.configurationForActivityBoundToProcessor(proc, profile);
 		assertNotNull(config);
-		assertEquals(ACTIVITY_URI.resolve("#Config"), config.getConfigurableType());
+		assertEquals(ACTIVITY_URI.resolve("#Config"), config.getType());
 		PropertyResource resource = config.getPropertyResource();
 		URI toolId = resource.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#toolId"));
 		assertEquals(ACTIVITY_URI.resolve("#2cd545bf-64ae-4cda-84fc-8cfe2faed772"), toolId);

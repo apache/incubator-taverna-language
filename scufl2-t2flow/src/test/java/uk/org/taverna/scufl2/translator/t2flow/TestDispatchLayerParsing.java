@@ -71,7 +71,7 @@ public class TestDispatchLayerParsing {
 		URI RETRY = DISPATCH_LAYER.resolve("Retry");
 		DispatchStackLayer retry = scufl2Tools.dispatchStackByType(parallelise, RETRY);
 		Configuration retryConfig = scufl2Tools.configurationFor(retry, profile);
-		assertEquals(RETRY.resolve("#Config"), retryConfig.getConfigurableType());
+		assertEquals(RETRY.resolve("#Config"), retryConfig.getType());
 		assertTrue(retryConfig.getPropertyResource().getProperties().isEmpty());				
 	}
 	
@@ -81,7 +81,7 @@ public class TestDispatchLayerParsing {
 		URI RETRY = DISPATCH_LAYER.resolve("Retry");
 		DispatchStackLayer retry = scufl2Tools.dispatchStackByType(alternates, RETRY);
 		Configuration retryConfig = scufl2Tools.configurationFor(retry, profile);
-		assertEquals(RETRY.resolve("#Config"), retryConfig.getConfigurableType());
+		assertEquals(RETRY.resolve("#Config"), retryConfig.getType());
 		assertTrue(retryConfig.getPropertyResource().getProperties().isEmpty());				
 	}
 	
@@ -92,7 +92,7 @@ public class TestDispatchLayerParsing {
 		URI PARALLELIZE = DISPATCH_LAYER.resolve("Parallelize");
 		DispatchStackLayer parallelize = scufl2Tools.dispatchStackByType(retry, PARALLELIZE);
 		Configuration parallelizeConfig = scufl2Tools.configurationFor(parallelize, profile);
-		assertEquals(PARALLELIZE.resolve("#Config"), parallelizeConfig.getConfigurableType());
+		assertEquals(PARALLELIZE.resolve("#Config"), parallelizeConfig.getType());
 		assertTrue(parallelizeConfig.getPropertyResource().getProperties().isEmpty());				
 	}
 	
@@ -131,7 +131,7 @@ public class TestDispatchLayerParsing {
 		URI PARALLELIZE = DISPATCH_LAYER.resolve("Parallelize");
 		DispatchStackLayer parallelize = scufl2Tools.dispatchStackByType(alternates, PARALLELIZE);
 		Configuration parallelizeConfig = scufl2Tools.configurationFor(parallelize, profile);
-		assertEquals(PARALLELIZE.resolve("#Config"), parallelizeConfig.getConfigurableType());
+		assertEquals(PARALLELIZE.resolve("#Config"), parallelizeConfig.getType());
 		assertTrue(parallelizeConfig.getPropertyResource().getProperties().isEmpty());				
 	}
 	
@@ -141,7 +141,7 @@ public class TestDispatchLayerParsing {
 		URI PARALLELIZE = DISPATCH_LAYER.resolve("Parallelize");
 		DispatchStackLayer parallelize = scufl2Tools.dispatchStackByType(retry, PARALLELIZE);
 		Configuration parallelizeConfig = scufl2Tools.configurationFor(parallelize, profile);
-		assertEquals(PARALLELIZE.resolve("#Config"), parallelizeConfig.getConfigurableType());
+		assertEquals(PARALLELIZE.resolve("#Config"), parallelizeConfig.getType());
 		assertFalse(parallelizeConfig.getPropertyResource().getProperties().isEmpty());				
 		assertEquals(5, parallelizeConfig.getPropertyResource().getPropertyAsLiteral(PARALLELIZE.resolve("#maxJobs")).getLiteralValueAsInt());
 	}
@@ -153,7 +153,7 @@ public class TestDispatchLayerParsing {
 		URI RETRY = DISPATCH_LAYER.resolve("Retry");
 		DispatchStackLayer retry = scufl2Tools.dispatchStackByType(retries, RETRY);
 		Configuration retryConfig = scufl2Tools.configurationFor(retry, profile);
-		assertEquals(RETRY.resolve("#Config"), retryConfig.getConfigurableType());
+		assertEquals(RETRY.resolve("#Config"), retryConfig.getType());
 
 		assertTrue(retryConfig.getPropertyResource().hasProperty(RETRY.resolve("#maxRetries")));
 		assertTrue(retryConfig.getPropertyResource().hasProperty(RETRY.resolve("#initialDelay")));
@@ -174,7 +174,7 @@ public class TestDispatchLayerParsing {
 		URI RETRY = DISPATCH_LAYER.resolve("Retry");
 		DispatchStackLayer retry = scufl2Tools.dispatchStackByType(retries, RETRY);
 		Configuration retryConfig = scufl2Tools.configurationFor(retry, profile);
-		assertEquals(RETRY.resolve("#Config"), retryConfig.getConfigurableType());
+		assertEquals(RETRY.resolve("#Config"), retryConfig.getType());
 		assertEquals(3, retryConfig.getPropertyResource().getPropertyAsLiteral(RETRY.resolve("#maxRetries")).getLiteralValueAsInt());
 
 		assertFalse(retryConfig.getPropertyResource().hasProperty(RETRY.resolve("#initialDelay")));

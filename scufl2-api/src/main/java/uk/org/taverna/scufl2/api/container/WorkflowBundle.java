@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.annotation.Annotation;
 import uk.org.taverna.scufl2.api.common.AbstractNamed;
 import uk.org.taverna.scufl2.api.common.Named;
@@ -126,6 +127,54 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 	public void setWorkflows(Set<Workflow> workflows) {
 		this.workflows.clear();
 		this.workflows.addAll(workflows);
+	}
+
+	/**
+	 * WorkflowBundles are only equal by instance identity.
+	 * <p>
+	 * Thus, if you load or construct the same workflow bundle twice, say as
+	 * <code>wb1</code> and <code>wb2</code>, then
+	 * <code>wb1.equals(wb2) == false</code>.
+	 * <p>
+	 * There are two reasons for this. Firstly, a workflow bundle is a complex
+	 * object, as it bundles not just the {@link #getWorkflows()} and
+	 * {@link #getProfiles()}, but also arbitrary resources in
+	 * {@link #getResources()}. Two workflow bundles can for most purposes be
+	 * assumed "equal" if they have the same identifier in
+	 * {@link #getGlobalBaseURI()} - they might however vary in which
+	 * annotations they carry.
+	 * <p>
+	 * The second is that applications might use {@link WorkflowBundle}
+	 * instances as keys in a {@link Map} of open workflows, and want to
+	 * distinguish between two workflow bundles from two different (but possibly
+	 * identical) files; for instance a .t2flow and a .wfbundle.
+	 * <p>
+	 * Note that contained workflow beans such as {@link Workflow} and
+	 * {@link Activity} will likewise not be
+	 * {@link AbstractNamed#equals(Object)} across workflow bundles, as a named
+	 * bean is considered equal only if its name matches and its parents are
+	 * (recursively) equal. You may however detach the children by setting their
+	 * parents to <code>null</code> and check for equality in isolation.
+	 * 
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		return this == obj;
+	}
+
+	@Override
+	public int hashCode() {
+		// TODO: Is there a way to call Object.hashCode() from here?
+		// Our super is hiding it.
+
+		// Possible workaround:
+		/*
+		 * private int hashCode = new Object().hashCode();
+		 * 
+		 * @Override public int hashCode() { return hashCode; }
+		 */
+
+		return super.hashCode();
 	}
 
 	@Override

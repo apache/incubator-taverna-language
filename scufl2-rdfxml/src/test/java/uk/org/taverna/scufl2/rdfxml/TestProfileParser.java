@@ -71,7 +71,7 @@ public class TestProfileParser {
 				hello.getConfigures());
 		assertEquals(
 "http://ns.taverna.org.uk/2010/activity/beanshell#Config",
-				hello.getConfigurableType().toASCIIString());
+				hello.getType().toASCIIString());
 	}
 
 	public void loadProfileDocument() {

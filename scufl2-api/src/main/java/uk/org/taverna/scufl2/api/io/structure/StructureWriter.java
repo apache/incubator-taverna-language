@@ -210,9 +210,9 @@ public class StructureWriter implements WorkflowBundleWriter {
 				append(config);
 
 				newLine(3);
-				if (config.getConfigurableType() != null) {
+				if (config.getType() != null) {
 					append("Type");
-					append(config.getConfigurableType());
+					append(config.getType());
 				}
 				newLine(3);
 				append("Configures");

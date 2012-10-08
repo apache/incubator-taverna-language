@@ -23,18 +23,33 @@ import uk.org.taverna.scufl2.api.property.PropertyResource;
  * Configuration of a {@link Configurable} workflow bean.
  * <p>
  * A configuration is activated by a {@link Profile}, and provides a link to the
- * {@link #getPropertyResource()} containing the properties to configure the bean, like an
- * {@link Activity}.
+ * {@link #getPropertyResource()} containing the properties to configure the
+ * bean, like an {@link Activity}.
  * <p>
  * A configuration is of a certain (RDF) <strong>type</strong>, as defined by
- * {@link PropertyResource#getTypeURI()} on the - which determines which properties are required and
- * optional. For instance, the type
- * <code>http://ns.taverna.org.uk/2010/activity/wsdl/ConfigType</code> requires the property
+ * {@link PropertyResource#getTypeURI()} on the - which determines which
+ * properties are required and optional. For instance, the type
+ * <code>http://ns.taverna.org.uk/2010/activity/wsdl/ConfigType</code> requires
+ * the property
  * <code>http://ns.taverna.org.uk/2010/activity/wsdl/operation</code>.
  * <p>
- * These requirements are described in the {@link ConfigurationDefinition} which
- * {@link ConfigurationDefinition#getConfigurableType()} matches this configuration's
- * {@link #getTypeURI()}. <strong>TODO: Where are the ConfigurationDefinitions found?</strong>
+ * These requirements are described in the {@link ConfigurationDefinition} that
+ * matches the getConfigurableType() of the {@link Configurable} found by
+ * {@link #getConfigures()}. Its
+ * {@link ConfigurationDefinition#getPropertyResourceDefinition()} should in
+ * {@link PropertyResourceDefinition#getTypeURI()} should match the
+ * {@link #getType()} of this {@link Configuration}.
+ * <p>
+ * Note: {@link #getType()} (and the potentially misleading
+ * {@link #getConfigurableType()}) return the type of <b>this</b> Configuration,
+ * not the type of the {@link Configurable} bean that it happens to configure.
+ * For instance, a Configuration typed
+ * <code>http://example.com/WSDLConfiguration</code> might configure an activity
+ * typed <code>http://example.com/WSDLActivity</code>, but could also have
+ * configured an activity typed
+ * <code>http://example.com/GlobusWSDLActivity</code>.
+ * <p>
+ * <strong>TODO: Where are the ConfigurationDefinitions found?</strong>
  * 
  * @author Alan R Williams
  * @author Stian Soiland-Reyes
@@ -53,7 +68,7 @@ public class Configuration extends AbstractNamedChild implements Child<Profile>,
 	}
 
 	/**
-	 * Constructs a <code>Configuration</code> with the specified name.
+	 * Construct a <code>Configuration</code> with the specified name.
 	 * 
 	 * @param name
 	 *            the name of the <code>Configuration</code>. <strong>Must not</strong> be
@@ -72,17 +87,25 @@ public class Configuration extends AbstractNamedChild implements Child<Profile>,
 	}
 
 	/**
-	 * Returns the type of the <code>Configuration</code>.
+	 * Return the type of the <code>Configuration</code>.
+	 * <p>
+	 * Note that this method name (inherited from {@link Typed}) can be
+	 * misleading, as this is the type of the {@link Configuration}, not the
+	 * {@link Configurable}. To avoid ambiguous code, 
+	 * you may use the {@link #getType()} method instead.
+	 * 
+	 * @deprecated Use {@link #getType()} to avoid ambiguous code
 	 * 
 	 * @return the type of the <code>Configuration</code>
 	 */
+	@Deprecated
 	@Override
 	public URI getConfigurableType() {
-		return getPropertyResource().getTypeURI();
+		return getType();
 	}
 
 	/**
-	 * Returns the {@link Configurable} workflow bean that is configured. Typically an
+	 * Return the {@link Configurable} workflow bean that is configured. Typically an
 	 * {@link Activity} or {@link DispatchStackLayer}, but in theory also {@link Processor},
 	 * {@link Workflow} and {@link Port} can be configured.
 	 * 
@@ -98,7 +121,7 @@ public class Configuration extends AbstractNamedChild implements Child<Profile>,
 	}
 
 	/**
-	 * Returns the underlying {@link PropertyResource} which contains the properties set by this
+	 * Return the underlying {@link PropertyResource} which contains the properties set by this
 	 * configuration.
 	 * 
 	 * @return the backing {@link PropertyResource}.
@@ -108,18 +131,36 @@ public class Configuration extends AbstractNamedChild implements Child<Profile>,
 	}
 
 	/**
-	 * Sets the type of the <code>Configuration</code>.
+	 * Return the type of the <code>Configuration</code>.
+	 * <p>
+	 * The URI will match the {@link PropertyResource#getTypeURI()}.
 	 * 
-	 * @param type
-	 *            the type of the <code>Configuration</code>.
+	 * @return the type of the <code>Configuration</code>
 	 */
-	@Override
-	public void setConfigurableType(URI type) {
-		getPropertyResource().setTypeURI(type);
+	public URI getType() {
+		return getPropertyResource().getTypeURI();
 	}
 
 	/**
-	 * Sets the {@link Configurable} {@link WorkflowBean} that is configured.
+	 * Set the type of the <code>Configuration</code>.
+	 * <p>
+	 * Note that this method name (inherited from {@link Typed}) can be
+	 * misleading, as this is the type of the {@link Configuration}, not the
+	 * {@link Configurable}. To avoid ambiguous code, you may use the
+	 * {@link #setType(URI)} method instead.
+	 * 
+	 * @deprecated Use {@link #setType(URI)} to avoid ambiguous code
+	 * @param type
+	 *             the type of the <code>Configuration</code>.
+	 */
+	@Deprecated
+	@Override
+	public void setConfigurableType(URI type) {
+		setType(type);
+	}
+
+	/**
+	 * Set the {@link Configurable} {@link WorkflowBean} that is configured.
 	 * 
 	 * @param configurable
 	 *            the <code>Configurable</code> <code>WorkflowBean</code> that is configured
@@ -141,7 +182,7 @@ public class Configuration extends AbstractNamedChild implements Child<Profile>,
 	}
 
 	/**
-	 * Sets the underlying {@link PropertyResource} which contains the properties set by this
+	 * Se the underlying {@link PropertyResource} which contains the properties set by this
 	 * configuration.
 	 * 
 	 * @param propertyResource
@@ -150,6 +191,18 @@ public class Configuration extends AbstractNamedChild implements Child<Profile>,
 	 */
 	public void setPropertyResource(PropertyResource propertyResource) {
 		this.propertyResource = propertyResource;
+	}
+
+	/**
+	 * Set the type of the <code>Configuration</code>.
+	 * <p>
+	 * This will also set {@link PropertyResource#setTypeURI(URI)}.
+	 * 
+	 * @param type
+	 *             the type of the <code>Configuration</code>.
+	 */
+	public void setType(URI type) {
+		getPropertyResource().setTypeURI(type);
 	}
 
 }
