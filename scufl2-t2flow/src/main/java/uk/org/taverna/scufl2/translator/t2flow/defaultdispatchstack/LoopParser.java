@@ -2,16 +2,48 @@ package uk.org.taverna.scufl2.translator.t2flow.defaultdispatchstack;
 
 import java.net.URI;
 
+import javax.xml.bind.JAXBException;
+
+import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.defaultactivities.AbstractActivityParser;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.Activity;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.LoopConfig;
 
 public class LoopParser extends AbstractActivityParser {
+	private static URITools uriTools = new URITools();
+	
+	/**
+	 * Expose some of the useful activity/config parser methods to LoopParser
+	 * with a different parser state.
+	 * <p>
+	 * TODO: Refactor T2FlowParser to avoid the need for this 
+	 *
+	 */
+	protected class ConditionalActivityParser extends T2FlowParser {
+		public ConditionalActivityParser(ParserState origState) throws JAXBException {
+			super();
+			parserState.get().setCurrentProfile(origState.getCurrentProfile());
+			parserState.get().setCurrentProcessor(origState.getCurrentProcessor());
+		}
+		@Override
+		public uk.org.taverna.scufl2.api.activity.Activity parseActivity(
+				Activity origActivity) throws ReaderException {
+			uk.org.taverna.scufl2.api.activity.Activity parsed = super.parseActivity(origActivity);
+			parserState.get().setCurrentActivity(parsed);
+			return parsed;
+		}
+		@Override
+		protected Configuration parseConfiguration(ConfigBean configBean)
+				throws JAXBException, ReaderException {
+			return super.parseConfiguration(configBean);
+		}
+	}
 
 	private static URI ravenURI =
 		T2FlowParser.ravenURI.resolve("net.sf.taverna.t2.core/workflowmodel-impl/");
@@ -43,24 +75,35 @@ public class LoopParser extends AbstractActivityParser {
 
 		
 		final Configuration c = new Configuration();		
-		c.setConfigurableType(scufl2Uri.resolve("#Config"));
+		c.setType(scufl2Uri.resolve("Config"));
 
 		final PropertyResource resource = c.getPropertyResource();
 
+		
+		
 		String conditionXml = loopConfig.getConditionXML();		
-//		Activity conditionActivity = unmarshallXml(getParserState().getT2FlowParser(), conditionXml, Activity.class);		
-		
-//		getParserState().parseLater(conditionActivity, new ParseLaterCallback<Activity>(){
-//			@Override
-//			public void parsed(Activity original, WorkflowBean parsedActivity,
-//					ParserState parserState) {
-//				URI uriActivity = new URITools().relativeUriForBean(parsedActivity, c);
-//				resource.addPropertyReference(scufl2Uri.resolve("#condition"), uriActivity);
-//			}			
-//		});
+		Activity conditionActivity = unmarshallXml(parserState.getT2FlowParser(), conditionXml, Activity.class);				
+		try {
+			ConditionalActivityParser internalParser = new ConditionalActivityParser(parserState);
+			
+			uk.org.taverna.scufl2.api.activity.Activity newActivity = internalParser.parseActivity(conditionActivity);
+			String procName = parserState.getCurrentProcessor().getName();
+			newActivity.setName(procName + "-loop");			
+			parserState.getCurrentProfile().getActivities().addWithUniqueName(newActivity);
+			newActivity.setParent(parserState.getCurrentProfile());
 
-		
-		
+			Configuration newConfig = internalParser.parseConfiguration(conditionActivity.getConfigBean());
+			newConfig.setName(procName + "-loop-config");
+			newConfig.setConfigures(newActivity);
+			parserState.getCurrentProfile().getConfigurations().addWithUniqueName(newConfig);
+			newConfig.setParent(parserState.getCurrentProfile());
+			c.setParent(parserState.getCurrentProfile());
+			
+			URI uriActivity = uriTools.relativeUriForBean(newActivity, c);
+			resource.addPropertyReference(scufl2Uri.resolve("#condition"), uriActivity);
+		} catch (JAXBException e) {
+			throw new ReaderException("Can't parse conditional loop activity", e);
+		}
 			
 		return c;
 	}
