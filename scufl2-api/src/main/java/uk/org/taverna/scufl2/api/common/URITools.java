@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import uk.org.taverna.scufl2.api.annotation.Annotation;
 import uk.org.taverna.scufl2.api.common.Visitor.VisitorWithPath;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
@@ -23,6 +24,7 @@ import uk.org.taverna.scufl2.api.port.Port;
 import uk.org.taverna.scufl2.api.port.ProcessorPort;
 import uk.org.taverna.scufl2.api.profiles.ProcessorPortBinding;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
+import uk.org.taverna.scufl2.api.property.PropertyResource.PropertyVisit;
 
 /**
  * Utility methods for dealing with URIs.
@@ -170,7 +172,7 @@ public class URITools {
 			if (bean instanceof Named) {
 				Named named = (Named) bean;
 				String name = validFilename(named.getName());
-				if (!(bean instanceof Port)) {
+				if (!(bean instanceof Port || bean instanceof Annotation)) {
 					name = name + "/";
 				}
 				return relationURI.resolve(name);
@@ -232,7 +234,7 @@ public class URITools {
 				return parentUri.resolve(procPortUri);
 			} else {
 				throw new IllegalStateException(
-						"Can't create URIs for non-named child: " + bean);
+						"Can't create URIs for child of unrecogized type " + bean.getClass());
 			}
 
 		}

@@ -6,15 +6,26 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TimeZone;
+import java.util.TreeMap;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,10 +42,13 @@ import javax.xml.validation.SchemaFactory;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import uk.org.taverna.scufl2.api.annotation.Annotation;
+import uk.org.taverna.scufl2.api.annotation.Revision;
 import uk.org.taverna.scufl2.api.common.Named;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.common.URITools;
+import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.BlockingControlLink;
@@ -62,10 +76,15 @@ import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.api.property.PropertyObject;
+import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Activity;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedGranularDepthPort;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedGranularDepthPorts;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedPort;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedPorts;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotationAssertionImpl.NetSfTavernaT2AnnotationAnnotationAssertionImpl;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotationChain;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.Annotations;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Condition;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Conditions;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
@@ -85,7 +104,6 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.Link;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.LinkType;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Mapping;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ObjectFactory;
-import uk.org.taverna.scufl2.xml.t2flow.jaxb.Port;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.PortProduct;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Processors;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Raven;
@@ -94,6 +112,7 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.TopIterationNode;
 
 public class T2FlowParser {
 
+	private static final String IDENTIFICATION_ASSERTION = "net.sf.taverna.t2.annotation.annotationbeans.IdentificationAssertion";
 	private static final String T2FLOW_EXTENDED_XSD = "xsd/t2flow-extended.xsd";
 	@SuppressWarnings("unused")
 	private static final String T2FLOW_XSD = "xsd/t2flow.xsd";
@@ -106,6 +125,13 @@ public class T2FlowParser {
 
 	public static final URI configBeanURI = URI
 			.create("http://ns.taverna.org.uk/2010/xml/t2flow/configbean/");
+	
+	public static final URI t2flowParserURI = URI.create("http://ns.taverna.org.uk/2012/scufl2/t2flowParser");
+	
+	// TODO: Find better example predicate
+	public static final URI exampleDataURI = URI
+			.create("http://biocatalogue.org/attribute/exampleData");
+	
 
 	public static <T extends Named> T findNamed(Collection<T> namedObjects,
 			String name) {
@@ -143,6 +169,7 @@ public class T2FlowParser {
 
 	protected ServiceLoader<T2Parser> discoveredT2Parsers;
 	protected final ThreadLocal<Unmarshaller> unmarshaller;
+	private Map<String, URI> predicates;
 
 	public T2FlowParser() throws JAXBException {
 		jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
@@ -312,13 +339,9 @@ public class T2FlowParser {
 		return t2Parser.mapT2flowRavenIdToScufl2URI(classURI);
 	}
 
-	protected uk.org.taverna.scufl2.api.activity.Activity parseActivity(
+	protected uk.org.taverna.scufl2.api.activity.Activity parseActivityAndAddToProfile(
 			Activity origActivity) throws ReaderException {
-		Raven raven = origActivity.getRaven();
-		String activityClass = origActivity.getClazz();
-		URI activityId = mapTypeFromRaven(raven, activityClass);
-		uk.org.taverna.scufl2.api.activity.Activity newActivity = new uk.org.taverna.scufl2.api.activity.Activity();
-		newActivity.setConfigurableType(activityId);
+		uk.org.taverna.scufl2.api.activity.Activity newActivity = parseActivity(origActivity);
 		newActivity.setName(parserState.get().getCurrentProcessorBinding()
 				.getName());
 		parserState.get().getCurrentProfile().getActivities()
@@ -327,6 +350,17 @@ public class T2FlowParser {
 		return newActivity;
 	}
 
+	protected uk.org.taverna.scufl2.api.activity.Activity parseActivity(
+			Activity origActivity) throws ReaderException {
+		Raven raven = origActivity.getRaven();
+		String activityClass = origActivity.getClazz();
+		URI activityId = mapTypeFromRaven(raven, activityClass);
+		uk.org.taverna.scufl2.api.activity.Activity newActivity = new uk.org.taverna.scufl2.api.activity.Activity();
+		newActivity.setConfigurableType(activityId);
+		return newActivity;
+	}
+
+	
 	protected void parseActivityBinding(Activity origActivity,
 			int activityPosition) throws ReaderException, JAXBException {
 		ProcessorBinding processorBinding = new ProcessorBinding();
@@ -339,7 +373,7 @@ public class T2FlowParser {
 		processorBinding.setBoundProcessor(parserState.get()
 				.getCurrentProcessor());
 		parserState.get().setCurrentProcessorBinding(processorBinding);
-		uk.org.taverna.scufl2.api.activity.Activity newActivity = parseActivity(origActivity);
+		uk.org.taverna.scufl2.api.activity.Activity newActivity = parseActivityAndAddToProfile(origActivity);
 		parserState.get().setCurrentActivity(newActivity);
 
 		parserState.get().getCurrentProfile().getActivities().add(newActivity);
@@ -349,7 +383,7 @@ public class T2FlowParser {
 		parserState.get().setCurrentConfigurable(newActivity);
 
 		try {
-			parseConfiguration(origActivity.getConfigBean(),
+			parseConfigurationAndAddToProfile(origActivity.getConfigBean(),
 					Configures.activity);
 		} catch (JAXBException e) {
 			if (isStrict()) {
@@ -367,24 +401,44 @@ public class T2FlowParser {
 		parserState.get().setCurrentProcessorBinding(null);
 	}
 
-	enum Configures {
+	protected enum Configures {
 		activity, dispatchLayer
 	};
 
-	protected void parseConfiguration(ConfigBean configBean,
+	protected void parseConfigurationAndAddToProfile(ConfigBean configBean,
 			Configures configures) throws JAXBException, ReaderException {
+		Configuration configuration = parseConfiguration(configBean);
+		if (configuration == null) { 
+			return;
+		}
+		if (configures == Configures.activity) {
+			configuration.setName(parserState.get().getCurrentActivity()
+					.getName());
+		} else {
+			DispatchStackLayer layer = (DispatchStackLayer) parserState.get().getCurrentConfigurable();
+			configuration.setName(parserState.get().getCurrentProcessor().getName() +
+					"-dispatch-" + parserState.get().getCurrentDispatchStack().size());
 
+		}
+		parserState.get().getCurrentProfile().getConfigurations()
+				.addWithUniqueName(configuration);
+		configuration.setConfigures(parserState.get().getCurrentConfigurable());
+		parserState.get().getCurrentProfile().getConfigurations().addWithUniqueName(configuration);
+		
+	}
+	
+	protected Configuration parseConfiguration(ConfigBean configBean) throws JAXBException, ReaderException {
 		// Placeholder to check later if no configuration have been provided
 		Configuration UNCONFIGURED = new Configuration();
 		
 		Configuration configuration = UNCONFIGURED;
 		if (parserState.get().getCurrentT2Parser() == null) {
-			String message = "No config parser for " + configures
+			String message = "No config parser for " 
 					+ parserState.get().getCurrentConfigurable();
 			if (isStrict()) {
 				throw new ReaderException(message);
 			}
-			return;
+			return null;
 		}
 
 		try {
@@ -397,14 +451,13 @@ public class T2FlowParser {
 		}
 		if (configuration == null) {
 			// Perfectly valid - true for say Invoke layer
-			return;
+			return null;
 		}
 		
 		if (configuration == UNCONFIGURED) {
 			if (isStrict()) {
 				throw new ReaderException("No configuration returned from "
-						+ parserState.get().getCurrentT2Parser() + " for "
-						+ configures
+						+ parserState.get().getCurrentT2Parser() + " for "						
 						+ parserState.get().getCurrentConfigurable());
 			}
 			// We'll have to fake it
@@ -421,22 +474,10 @@ public class T2FlowParser {
 			// literal.setLiteralValue(configBean.getAny().toString());
 			// literal.setLiteralType(PropertyLiteral.XML_LITERAL);
 			properties.get(fallBackURI).add(literal);
-
 		}
+		return configuration;
 		
-		if (configures == Configures.activity) {
-			configuration.setName(parserState.get().getCurrentActivity()
-					.getName());
-		} else {
-			DispatchStackLayer layer = (DispatchStackLayer) parserState.get().getCurrentConfigurable();
-			configuration.setName(parserState.get().getCurrentProcessor().getName() +
-					"-dispatch-" + parserState.get().getCurrentDispatchStack().size());
-
-		}
-		parserState.get().getCurrentProfile().getConfigurations()
-				.addWithUniqueName(configuration);
-		configuration.setConfigures(parserState.get().getCurrentConfigurable());
-		parserState.get().getCurrentProfile().getConfigurations().addWithUniqueName(configuration);
+		
 	}
 
 	public Unmarshaller getUnmarshaller() {
@@ -592,10 +633,174 @@ public class T2FlowParser {
 		wf.setOutputPorts(parseOutputPorts(df.getOutputPorts()));
 		wf.setProcessors(parseProcessors(df.getProcessors()));
 		wf.setDataLinks(parseDatalinks(df.getDatalinks()));
-		wf.setControlLinks(parseControlLinks(df.getConditions()));
-		// TODO: annotations
+		wf.setControlLinks(parseControlLinks(df.getConditions()));		
+		Revision revision = parseIdentificationAnnotations(df.getAnnotations());
+		if (revision != null) {
+			wf.setCurrentRevision(revision);
+		}
+		parseAnnotations(wf, df.getAnnotations());
+
 		parserState.get().setCurrentWorkflow(null);
 		return wf;
+	}
+
+	public void parseAnnotations(WorkflowBean annotatedBean, Annotations annotations) {
+		
+		//logger.fine("Checking annotations for " + annotatedSubject);
+		
+		Map<String, NetSfTavernaT2AnnotationAnnotationAssertionImpl> annotationElems = new HashMap<String, NetSfTavernaT2AnnotationAnnotationAssertionImpl>();
+		if (annotations == null || annotations.getAnnotationChainOrAnnotationChain22() == null) {
+			return;
+		}
+		for (JAXBElement<AnnotationChain> el : annotations
+				.getAnnotationChainOrAnnotationChain22()) {
+			NetSfTavernaT2AnnotationAnnotationAssertionImpl ann = el.getValue()
+					.getNetSfTavernaT2AnnotationAnnotationChainImpl()
+					.getAnnotationAssertions()
+					.getNetSfTavernaT2AnnotationAnnotationAssertionImpl();
+			String annClass = ann.getAnnotationBean().getClazz();
+			if (annotationElems.containsKey(annClass) && annotationElems.get(annClass).getDate().compareToIgnoreCase(ann.getDate()) > 0) {
+				// ann.getDate() is less than current 'latest' annotation, skip
+				continue;
+			}
+			annotationElems.put(annClass, ann);
+		}
+		
+		
+		for (String clazz : annotationElems.keySet()) {			
+			NetSfTavernaT2AnnotationAnnotationAssertionImpl ann = annotationElems.get(clazz);
+			Calendar cal = parseDate(ann.getDate());					
+			String value = null;
+			for (Object obj : ann.getAnnotationBean().getAny()) {
+				if (!(obj instanceof Element)) {
+					continue;
+				}
+				Element elem = (Element) obj;
+				if (elem.getNamespaceURI() == null
+						&& elem.getLocalName().equals("text")) {
+					value = elem.getTextContent().trim();
+					break;
+				}
+			}
+			if (value != null) {
+				// Add the annotation
+				Annotation annotation = new Annotation();
+				annotation.setParent(parserState.get().getCurrentWorkflowBundle());
+				
+				
+				annotation.setTarget(annotatedBean);
+				annotation.setAnnotated(cal);
+				//annotation.setAnnotator();
+				annotation.setGenerator(t2flowParserURI);
+				annotation.setGenerated(new GregorianCalendar());
+				
+				PropertyResource p = new PropertyResource();
+				URI annotatedSubject = uriTools.relativeUriForBean(annotatedBean,
+						annotation);
+				p.setResourceURI(annotatedSubject);
+				URI predicate = getPredicatesForClass().get(clazz);
+				if (predicate != null) {
+					p.addPropertyAsString(predicate, value);
+				}
+				annotation.getBodyStatements().add(p);
+				
+			}
+		}
+	}
+
+	private Map<String, URI> getPredicatesForClass() {
+		if (this.predicates != null) {
+			return this.predicates;
+		}
+		synchronized (this) {
+			if (this.predicates != null) {
+				return this.predicates;
+			}
+			Map<String, URI> predicates = new HashMap<String, URI>();
+			predicates.put("net.sf.taverna.t2.annotation.annotationbeans.DescriptiveTitle", 
+					URI.create("http://purl.org/dc/terms/title"));
+			
+			predicates.put("net.sf.taverna.t2.annotation.annotationbeans.Author", 
+					URI.create("http://purl.org/dc/elements/1.1/creator"));
+			
+			predicates.put("net.sf.taverna.t2.annotation.annotationbeans.FreeTextDescription", 
+					URI.create("http://purl.org/dc/terms/description"));
+			
+			predicates.put("net.sf.taverna.t2.annotation.annotationbeans.MimeType", 
+					URI.create("http://purl.org/dc/elements/1.1/format"));
+			
+			predicates.put("net.sf.taverna.t2.annotation.annotationbeans.ExampleValue", 
+					exampleDataURI);
+			this.predicates = predicates;
+			return this.predicates;
+		}
+	}
+
+	protected Revision parseIdentificationAnnotations(Annotations annotations) {
+		SortedMap<Calendar, UUID> revisions = new TreeMap<Calendar, UUID>();
+		if (annotations == null || annotations.getAnnotationChainOrAnnotationChain22() == null) {
+			return null;
+		}
+		for (JAXBElement<AnnotationChain> el : annotations
+				.getAnnotationChainOrAnnotationChain22()) {
+			NetSfTavernaT2AnnotationAnnotationAssertionImpl ann = el.getValue()
+					.getNetSfTavernaT2AnnotationAnnotationChainImpl()
+					.getAnnotationAssertions()
+					.getNetSfTavernaT2AnnotationAnnotationAssertionImpl();
+			String annClass = ann.getAnnotationBean().getClazz();
+			if (!annClass
+					.equals(IDENTIFICATION_ASSERTION)) {
+				continue;
+			}
+			for (Object obj : ann.getAnnotationBean().getAny()) {
+				if (!(obj instanceof Element)) {
+					continue;
+				}
+				Element elem = (Element) obj;
+				if (elem.getNamespaceURI() == null
+						&& elem.getLocalName().equals("identification")) {
+					String uuid = elem.getTextContent().trim();
+					String date = ann.getDate();
+					Calendar cal = parseDate(date);					
+					revisions.put(cal, UUID.fromString(uuid));
+				}				
+			}
+		}
+		
+		Revision rev = null;
+		for (Entry<Calendar, UUID> entry : revisions.entrySet()) {			
+			Calendar cal = entry.getKey();
+			UUID uuid = entry.getValue();
+			URI uri = Workflow.WORKFLOW_ROOT.resolve(uuid.toString() + "/");
+			rev = new Revision(uri, rev);
+			rev.setCreated(cal);			
+		}
+		return rev;
+	}
+
+	private Calendar parseDate(String dateStr) {
+		// Based briefly on patterns used by 
+		// com.thoughtworks.xstream.converters.basic.DateConverter
+		
+		List<String> patterns = new ArrayList<String>();
+		patterns.add("yyyy-MM-dd HH:mm:ss.S z");
+		patterns.add("yyyy-MM-dd HH:mm:ss z");
+		patterns.add("yyyy-MM-dd HH:mm:ssz");
+		patterns.add("yyyy-MM-dd HH:mm:ss.S 'UTC'");
+		patterns.add("yyyy-MM-dd HH:mm:ss 'UTC'");
+        Date date;
+		for (String pattern : patterns) {
+        	SimpleDateFormat dateFormat = new SimpleDateFormat(pattern, Locale.ENGLISH);
+        	try {        		
+				date = dateFormat.parse(dateStr);
+				GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("UTC"), Locale.ENGLISH);
+				cal.setTime(date);
+				return cal;
+			} catch (ParseException e) {
+				continue;
+			}
+        }
+        throw new IllegalArgumentException("Can't parse date: " + dateStr);		
 	}
 
 	private Set<ControlLink> parseControlLinks(Conditions conditions)
@@ -619,7 +824,12 @@ public class T2FlowParser {
 								+ control);
 			}
 
-			links.add(new BlockingControlLink(block, untilFinished));
+			BlockingControlLink newLink = new BlockingControlLink(block, untilFinished);
+
+			// FIXME: missing from t2flow and schema
+			//parseAnnotations(newLink, condition.getAnnotations());
+
+			links.add(newLink);
 		}
 		return links;
 	}
@@ -659,6 +869,10 @@ public class T2FlowParser {
 					}
 					mergeCounts.put(receiverPort, new AtomicInteger(-1));
 				}
+
+				// FIXME: missing from t2flow and schema
+				//parseAnnotations(newLink, origLink.getAnnotations());
+
 				newLinks.add(newLink);
 			} catch (ReaderException ex) {
 				logger.log(Level.WARNING, "Could not translate link:\n"
@@ -695,7 +909,7 @@ public class T2FlowParser {
 		dispatchStackLayer.setConfigurableType(typeUri);
 		parserState.get().setCurrentConfigurable(dispatchStackLayer);
 		try {
-			parseConfiguration(dispatchLayer.getConfigBean(),
+			parseConfigurationAndAddToProfile(dispatchLayer.getConfigBean(),
 					Configures.dispatchLayer);
 		} catch (JAXBException ex) {
 			String message = "Can't parse configuration for dispatch layer in "
@@ -729,6 +943,8 @@ public class T2FlowParser {
 					throw new ReaderException(message);
 				}
 			}
+			parseAnnotations(newPort, originalPort.getAnnotations());
+			
 			createdPorts.add(newPort);
 		}
 		return createdPorts;
@@ -799,9 +1015,12 @@ public class T2FlowParser {
 	protected Set<OutputWorkflowPort> parseOutputPorts(
 			AnnotatedPorts originalPorts) {
 		Set<OutputWorkflowPort> createdPorts = new HashSet<OutputWorkflowPort>();
-		for (Port originalPort : originalPorts.getPort()) {
+		for (AnnotatedPort originalPort : originalPorts.getPort()) {
 			OutputWorkflowPort newPort = new OutputWorkflowPort(parserState
 					.get().getCurrentWorkflow(), originalPort.getName());
+
+			parseAnnotations(newPort, originalPort.getAnnotations());
+
 			createdPorts.add(newPort);
 		}
 		return createdPorts;
@@ -852,6 +1071,9 @@ public class T2FlowParser {
 					.getDispatchStack()));
 			newProc.setIterationStrategyStack(parseIterationStrategyStack(origProc
 					.getIterationStrategyStack()));
+			parseAnnotations(newProc, origProc.getAnnotations());
+
+			
 			newProcessors.add(newProc);
 			int i = 0;
 			for (Activity origActivity : origProc.getActivities().getActivity()) {

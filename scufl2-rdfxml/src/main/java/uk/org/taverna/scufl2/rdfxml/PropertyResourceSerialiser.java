@@ -14,6 +14,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import uk.org.taverna.scufl2.api.common.Visitor.VisitorWithPath;
+import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.property.PropertyList;
 import uk.org.taverna.scufl2.api.property.PropertyLiteral;
@@ -22,6 +23,7 @@ import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.api.property.PropertyResource.PropertyVisit;
 
 public class PropertyResourceSerialiser extends VisitorWithPath {
+	public static final String ABOUT = "about";
 	public static final String DESCRIPTION = "Description";
 	public static final String RESOURCE = "resource";
 	public static final String LITERAL = "Literal";
@@ -30,33 +32,50 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 	public static final String PARSE_TYPE = "parseType";
 	public static final String COLLECTION = "Collection";
 	public static final String RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+
+	public static final String RDF_ = "rdf:";
+	public static final String RDF_ELEM = RDF_ + "RDF";
+	public static final String RDF_ABOUT = RDF_ + ABOUT;
+	public static final String RDF_DESCRIPTION = RDF_ + DESCRIPTION;
+	public static final String RDF_DATATYPE = RDF_ + DATATYPE;
+	public static final String RDF_LI = RDF_ + LI;
+	public static final String RDF_PARSE_TYPE = RDF_ + PARSE_TYPE;
+	private static final String RDF_RESOURCE = RDF_ + RESOURCE;
+
+	private static URITools uriTools = new URITools();
+	
 	protected Stack<Element> elementStack = new Stack<Element>();
-	protected DocumentBuilder docBuilder;
-	protected Document doc;
-	private Element rootElement;
+	private DocumentBuilder docBuilder;
+	private Document doc;
+	private final URI baseUri;
 
 	public PropertyResourceSerialiser(URI baseUri) {
+		this.baseUri = baseUri;
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(true);
 		try {
-			docBuilder = factory.newDocumentBuilder();
+			setDocBuilder(factory.newDocumentBuilder());
 		} catch (ParserConfigurationException e) {
 			throw new IllegalStateException("Can't create DocumentBuilder", e);
 		}
-		doc = docBuilder.newDocument();
+		setDoc(getDocBuilder().newDocument());
 
 	}
 
 	private void addElement(Element element) {
 		if (elementStack.isEmpty()) {
 			// Top level
-			if (getRootElement() == null) {
+			Element existingRoot = getRootElement();
+			if (existingRoot == null) {
 				setRootElement(element);
 			} else {
-				if (getRootElement() != element) {
-					throw new IllegalStateException("Unexpected root element "
-							+ element + " has: " + getRootElement());
+				if (!existingRoot.getNodeName().equals(RDF_ELEM)) {
+					// Wrap existingRoot in <rdf:RDF>
+					Element rootElem = doc.createElementNS(RDF, RDF_ELEM);
+					setRootElement(rootElem);
+					rootElem.appendChild(existingRoot);
 				}
+				getRootElement().appendChild(element);
 			}
 		} else {
 			// System.out.println("Appending to " + elementStack.peek());
@@ -64,27 +83,47 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 		}
 
 		elementStack.push(element);
+		printStatus(false);
 	}
 
+	private final void printStatus(boolean isClosing) {
+	};
+
+	/*
+	 * private final void printStatus(boolean isClosing) { StackTraceElement[]
+	 * st = new Exception().getStackTrace(); StackTraceElement caller = st[1];
+	 * 
+	 * // indent by stack depth for (Element e : elementStack) {
+	 * System.out.print("-"); } System.out.print(isClosing ? "<" : ">");
+	 * System.out.print(" " + getCurrentNode().getClass().getSimpleName() +
+	 * ": "); for (Element e : elementStack) { System.out.print("<" +
+	 * e.getNodeName() + "> "); } System.out.print("\t\t-- " +
+	 * caller.getMethodName() + "(..) in (" + caller.getFileName() + ":" +
+	 * caller.getLineNumber() + ")"); System.out.println("\t" +
+	 * getCurrentPath());
+	 * 
+	 * }
+	 */
+
 	public Element getRootElement() {
-		return rootElement;
+		return getDoc().getDocumentElement();
 	}
 
 	protected void list(PropertyList node) {
 		Element element = elementStack.peek();
-		element.setAttributeNS(RDF, PARSE_TYPE, COLLECTION);
+		element.setAttributeNS(RDF, RDF_PARSE_TYPE, COLLECTION);
 	}
 
 	protected void literal(PropertyLiteral node) {
 		Element element = elementStack.peek();
 		if (node.getLiteralType().equals(PropertyLiteral.XML_LITERAL)) {
 			Element nodeElement = node.getLiteralValueAsElement();
-			element.appendChild(doc.importNode(nodeElement, true));
-			element.setAttributeNS(RDF, PARSE_TYPE, LITERAL);
+			element.appendChild(getDoc().importNode(nodeElement, true));
+			element.setAttributeNS(RDF, RDF_PARSE_TYPE, LITERAL);
 		} else {
 			element.setTextContent(node.getLiteralValue());
 			if (!node.getLiteralType().equals(PropertyLiteral.XSD_STRING)) {
-				element.setAttributeNS(RDF, DATATYPE, node.getLiteralType()
+				element.setAttributeNS(RDF, RDF_DATATYPE, node.getLiteralType()
 						.toASCIIString());
 			}
 		}
@@ -97,8 +136,12 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 
 	protected void reference(PropertyReference node) {
 		Element element = elementStack.peek();
-		element.setAttributeNS(RDF, RESOURCE, node.getResourceURI()
+		element.setAttributeNS(RDF, RDF_RESOURCE, relativize(node.getResourceURI())
 				.toASCIIString());
+	}
+
+	protected URI relativize(URI resourceURI) {
+		return uriTools.relativePath(baseUri, resourceURI);
 	}
 
 	protected void resource(PropertyResource node) {
@@ -108,22 +151,26 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 			element = uriToElement(typeUri);
 		} else {
 			// Anonymous - give warning?
-			element = doc.createElementNS(RDF, DESCRIPTION);
+			element = getDoc().createElementNS(RDF, RDF_DESCRIPTION);
 		}
 		if (node.getResourceURI() != null) {
-			element.setAttributeNS(RDF, "about", node.getResourceURI()
+			element.setAttributeNS(RDF, RDF_ABOUT, relativize(node.getResourceURI())
 					.toASCIIString());
 		}
 		addElement(element);
 	}
 
 	public void setRootElement(Element rootElement) {
-		this.rootElement = rootElement;
+		Element oldRoot = getRootElement();
+		if (oldRoot != null) {
+			doc.removeChild(oldRoot);
+		}
+		doc.appendChild(rootElement);
 	}
 
 	protected Element uriToElement(URI uri) {
 		QName propertyQname = uriToQName(uri);
-		return doc.createElementNS(propertyQname.getNamespaceURI(),
+		return getDoc().createElementNS(propertyQname.getNamespaceURI(),
 				propertyQname.getLocalPart());
 	}
 
@@ -158,7 +205,7 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 				Element element = uriToElement(propertyVisit.getPredicateUri());
 				addElement(element);
 			} else if (parent instanceof PropertyList) {
-				addElement(doc.createElementNS(RDF, LI));
+				addElement(getDoc().createElementNS(RDF, RDF_LI));
 			}
 		}
 		if (node instanceof PropertyList) {
@@ -179,6 +226,7 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 
 	@Override
 	public boolean visitLeave() {
+
 		Stack<WorkflowBean> currentPath = getCurrentPath();
 		if (currentPath.size() > 1
 				&& currentPath.get(currentPath.size() - 2) instanceof PropertyVisit
@@ -189,6 +237,7 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 		}
 		if (getCurrentNode() instanceof PropertyResource) {
 			// We need to pop the <Class> before <predicate>
+			printStatus(true);
 			elementStack.pop();
 		}
 
@@ -196,15 +245,34 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 			// System.out.println("Stack empty! " + getCurrentNode());
 			return true;
 		}
-		Element element = elementStack.pop();
-		// System.out.println("Popping " + element + " current:"
-		// + getCurrentNode());
+		Element element;
+		if (getCurrentPath().size() > 3
+				&& getCurrentPath().get(getCurrentPath().size() - 3) instanceof PropertyList) {
+			return true;
+		}
 
-		if (elementStack.isEmpty()) {
-			elementStack.push(element);
+		if (elementStack.size() > 1) {
+			printStatus(true);
+			elementStack.pop();
 		}
 		// System.out.println();
 		return true;
+	}
+
+	public Document getDoc() {
+		return doc;
+	}
+
+	public void setDoc(Document doc) {
+		this.doc = doc;
+	}
+
+	public DocumentBuilder getDocBuilder() {
+		return docBuilder;
+	}
+
+	public void setDocBuilder(DocumentBuilder docBuilder) {
+		this.docBuilder = docBuilder;
 	}
 
 }

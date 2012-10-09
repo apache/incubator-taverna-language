@@ -3,7 +3,7 @@
   <parent>
     <artifactId>scufl2</artifactId>
     <groupId>uk.org.taverna.scufl2</groupId>
-    <version>0.9-SNAPSHOT</version>
+    <version>0.11.0-SNAPSHOT</version>
   </parent>
   <packaging>bundle</packaging>
   <artifactId>scufl2-validation</artifactId>
@@ -12,7 +12,7 @@
   	<dependency>
   		<groupId>uk.org.taverna.scufl2</groupId>
   		<artifactId>scufl2-api</artifactId>
-  		<version>0.9-SNAPSHOT</version>
+  		<version>${project.version}</version>
   		<type>bundle</type>
   	</dependency>
   </dependencies>

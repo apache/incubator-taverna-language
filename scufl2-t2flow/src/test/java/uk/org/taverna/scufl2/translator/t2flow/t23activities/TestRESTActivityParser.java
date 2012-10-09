@@ -71,7 +71,7 @@ public class TestRESTActivityParser {
 				.configurationForActivityBoundToProcessor(proc, profile);
 		assertNotNull(config);
 		assertEquals(ACTIVITY_URI.resolve("#Config"),
-				config.getConfigurableType());
+				config.getType());
 
 		Activity activity = (Activity) config.getConfigures();
 		assertEquals(ACTIVITY_URI, activity.getConfigurableType());
@@ -156,7 +156,7 @@ public class TestRESTActivityParser {
 				.configurationForActivityBoundToProcessor(proc, profile);
 		assertNotNull(config);
 		assertEquals(ACTIVITY_URI.resolve("#Config"),
-				config.getConfigurableType());
+				config.getType());
 
 		Activity activity = (Activity) config.getConfigures();
 		assertEquals(ACTIVITY_URI, activity.getConfigurableType());
@@ -241,7 +241,7 @@ public class TestRESTActivityParser {
 				.configurationForActivityBoundToProcessor(proc, profile);
 		assertNotNull(config);
 		assertEquals(ACTIVITY_URI.resolve("#Config"),
-				config.getConfigurableType());
+				config.getType());
 
 		Activity activity = (Activity) config.getConfigures();
 		assertEquals(ACTIVITY_URI, activity.getConfigurableType());
@@ -424,7 +424,7 @@ public class TestRESTActivityParser {
 				.configurationForActivityBoundToProcessor(proc, profile);
 		assertNotNull(config);
 		assertEquals(ACTIVITY_URI.resolve("#Config"),
-				config.getConfigurableType());
+				config.getType());
 
 		Activity activity = (Activity) config.getConfigures();
 		assertEquals(ACTIVITY_URI, activity.getConfigurableType());
@@ -532,7 +532,7 @@ public class TestRESTActivityParser {
 					.configurationForActivityBoundToProcessor(proc, profile);
 			assertNotNull(config);
 			assertEquals(ACTIVITY_URI.resolve("#Config"),
-					config.getConfigurableType());
+					config.getType());
 
 			Activity activity = (Activity) config.getConfigures();
 			assertEquals(ACTIVITY_URI, activity.getConfigurableType());
@@ -640,7 +640,7 @@ public class TestRESTActivityParser {
 					.configurationForActivityBoundToProcessor(proc, profile);
 			assertNotNull(config);
 			assertEquals(ACTIVITY_URI.resolve("#Config"),
-					config.getConfigurableType());
+					config.getType());
 
 			Activity activity = (Activity) config.getConfigures();
 			assertEquals(ACTIVITY_URI, activity.getConfigurableType());
@@ -750,7 +750,7 @@ public class TestRESTActivityParser {
 					.configurationForActivityBoundToProcessor(proc, profile);
 			assertNotNull(config);
 			assertEquals(ACTIVITY_URI.resolve("#Config"),
-					config.getConfigurableType());
+					config.getType());
 
 			Activity activity = (Activity) config.getConfigures();
 			assertEquals(ACTIVITY_URI, activity.getConfigurableType());
@@ -847,7 +847,7 @@ public class TestRESTActivityParser {
 						.configurationForActivityBoundToProcessor(proc, profile);
 				assertNotNull(config);
 				assertEquals(ACTIVITY_URI.resolve("#Config"),
-						config.getConfigurableType());
+						config.getType());
 
 				Activity activity = (Activity) config.getConfigures();
 				assertEquals(ACTIVITY_URI, activity.getConfigurableType());
@@ -944,7 +944,7 @@ public class TestRESTActivityParser {
 						.configurationForActivityBoundToProcessor(proc, profile);
 				assertNotNull(config);
 				assertEquals(ACTIVITY_URI.resolve("#Config"),
-						config.getConfigurableType());
+						config.getType());
 
 				Activity activity = (Activity) config.getConfigures();
 				assertEquals(ACTIVITY_URI, activity.getConfigurableType());

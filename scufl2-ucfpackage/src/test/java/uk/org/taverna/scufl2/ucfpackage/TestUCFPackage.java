@@ -208,7 +208,7 @@ public class TestUCFPackage {
 		String s = loaded.getResourceAsString("helloworld.txt");
 		assertEquals("Hello there þĸł", s);
 	}
-
+	
 	@Test
 	public void doubleSave() throws Exception {
 		UCFPackage container = new UCFPackage();
@@ -432,6 +432,7 @@ public class TestUCFPackage {
 		assertNull("sub/2.txt still in zip file", zipFile.getEntry("sub/2.txt"));
 		assertNull("sub/3.txt still in zip file", zipFile.getEntry("sub/3.txt"));
 		assertNull("sub/ still in zip file", zipFile.getEntry("sub/"));
+		zipFile.close();
 
 		UCFPackage loaded = new UCFPackage(tmpFile);
 		assertFalse(loaded.listAllResources().keySet().contains("soup.txt"));
@@ -445,7 +446,6 @@ public class TestUCFPackage {
 			// OK
 		}
 		loaded.save(tmpFile);
-
 	}
 
 	@Test

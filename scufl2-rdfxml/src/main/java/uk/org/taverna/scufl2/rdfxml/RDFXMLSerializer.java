@@ -1,11 +1,15 @@
 package uk.org.taverna.scufl2.rdfxml;
 
+import static uk.org.taverna.scufl2.rdfxml.RDFXMLReader.APPLICATION_RDF_XML;
+
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.XMLConstants;
@@ -24,6 +28,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
+import uk.org.taverna.scufl2.api.annotation.Annotation;
 import uk.org.taverna.scufl2.api.common.Typed;
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.common.Visitor;
@@ -52,6 +57,10 @@ import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
+import uk.org.taverna.scufl2.api.property.PropertyLiteral;
+import uk.org.taverna.scufl2.api.property.PropertyObject;
+import uk.org.taverna.scufl2.api.property.PropertyResource;
+import uk.org.taverna.scufl2.api.property.PropertyResource.PropertyVisit;
 import uk.org.taverna.scufl2.rdfxml.impl.NamespacePrefixMapperJAXB_RI;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Blocking;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Control;
@@ -74,6 +83,12 @@ import uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowDocument;
 
 public class RDFXMLSerializer {
 
+	private static final String DOT_RDF = ".rdf";
+
+	protected static final URI OA = URI.create("http://www.w3.org/ns/openannotation/core/");
+
+	private static boolean warnedOnce = false;
+	
 	public class ProfileSerialisationVisitor implements Visitor {
 
 		private uk.org.taverna.scufl2.rdfxml.jaxb.Activity activity;
@@ -318,6 +333,11 @@ public class RDFXMLSerializer {
 					workflow.setWorkflowIdentifier(wfId);
 				}
 			}
+			
+			if (node instanceof PropertyVisit || node instanceof PropertyObject) {
+				return false;
+			}
+			
 			URI uri = uriTools.relativeUriForBean(node, wf);
 
 			if (node instanceof InputWorkflowPort) {
@@ -557,6 +577,84 @@ public class RDFXMLSerializer {
 		return jaxbContextStatic;
 	}
 
+	public void annotation(final Annotation ann) {
+		URI wfBundleURI = uriTools.uriForBean(wfBundle);
+		URI annUri = uriTools.uriForBean(ann);
+		URI bodyURI = ann.getBody();
+		if (bodyURI == null || bodyURI.isAbsolute()) {
+			// Workaround with separate file for the annotation alone
+			bodyURI = annUri.resolve(uriTools.validFilename(ann.getName()) + DOT_RDF);
+		}
+		URI pathUri = uriTools.relativePath(wfBundleURI, bodyURI);			
+		if (ann.getBody() == null || ann.getBody().equals(wfBundleURI.resolve(pathUri))) {
+			// Set the relative path
+			ann.setBody(pathUri);
+		}
+
+		// Miniature OA description for now
+		// See http://openannotation.org/spec/core/20120509.html
+		final PropertyResource annProv = new PropertyResource();
+		annProv.setResourceURI(annUri);
+		annProv.setTypeURI(OA.resolve("Annotation"));
+		if (ann.getAnnotated() != null) {
+			annProv.addProperty(OA.resolve("annoted"),
+					new PropertyLiteral(ann.getAnnotated()));
+		}
+		if (ann.getGenerated() != null) {
+			annProv.addProperty(OA.resolve("created"),
+					new PropertyLiteral(ann.getGenerated()));
+		}
+		if (ann.getAnnotator() != null) {
+			annProv.addPropertyReference(OA.resolve("annotator"),
+					ann.getAnnotator());
+		}
+		if (ann.getGenerator() != null) {
+			annProv.addPropertyReference(OA.resolve("generator"),
+					ann.getGenerator());
+		}
+		if (ann.getBody() != null) {
+			annProv.addPropertyReference(OA.resolve("hasBody"), ann.getBody());
+		} else if (! ann.getBodyStatements().isEmpty()){						
+			// FIXME: Hack - Our body is also the annotation!
+			annProv.addPropertyReference(OA.resolve("hasBody"), pathUri);
+		}
+		
+		// CHECK: should this be a relative reference instead?
+		annProv.addPropertyReference(OA.resolve("hasTarget"), 
+				uriTools.uriForBean(ann.getTarget()));					
+		// Serialize the metadata
+
+		
+		PropertyResourceSerialiser visitor = new PropertyResourceSerialiser(
+				annUri) {
+			@Override
+			public boolean visit() {
+				if (getCurrentNode() instanceof Annotation) {
+					annProv.accept(this);
+					// visit our children, serialized as normal by superclass
+					// -- but don't call super.visit() which don't understand
+					// Annotation
+					return true;
+				}
+				return super.visit();
+			}
+		};
+		ann.accept(visitor);
+
+
+		try {
+			/*
+			 * TODO: Serialize manually with nicer indentation/namespaces etc.,
+			 * as done for our other RDF/XML documents
+			 */
+			wfBundle.getResources()
+					.addResource(visitor.getDoc(), pathUri.toASCIIString(), APPLICATION_RDF_XML);
+		} catch (IOException e) {
+			logger.log(Level.WARNING, "Can't write annotation to " + pathUri, e);
+		}
+		
+	}
+
 	private ObjectFactory objectFactory = new ObjectFactory();
 
 	private org.w3._2000._01.rdf_schema.ObjectFactory rdfsObjectFactory = new org.w3._2000._01.rdf_schema.ObjectFactory();
@@ -716,6 +814,10 @@ public class RDFXMLSerializer {
 			}
 		}
 
+		for (Annotation ann : wfBundle.getAnnotations()) {
+			annotation(ann);
+		}
+		
 		return bundle;
 	}
 
@@ -759,12 +861,13 @@ public class RDFXMLSerializer {
 			// Maven.
 			setPrefixMapper = true;
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.log(Level.FINE, "Can't find NamespacePrefixMapper", e);
 		}
 
-		if (!setPrefixMapper) {
-			logger.warning("Could not set prefix mapper (incompatible JAXB) "
+		if (!setPrefixMapper && ! warnedOnce) {
+			logger.info("Could not set prefix mapper (missing or incompatible JAXB) "
 					+ "- will use prefixes ns0, ns1, ..");
+			warnedOnce = true;
 		}
 	}
 

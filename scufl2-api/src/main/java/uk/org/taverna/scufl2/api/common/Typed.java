@@ -4,9 +4,13 @@ import java.net.URI;
 
 /**
  * A typed {@link WorkflowBean}.
+ * 
+ * @author Stian Soiland-Reyes
  */
 public interface Typed extends WorkflowBean {
 
+	// TODO: Change back to getType/setType()
+	
 	/**
 	 * Returns the type of the {@link WorkflowBean}.
 	 * 

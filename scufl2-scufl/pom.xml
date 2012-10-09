@@ -3,12 +3,13 @@
   <parent>
     <groupId>uk.org.taverna.scufl2</groupId>
     <artifactId>scufl2</artifactId>
-    <version>0.9-SNAPSHOT</version>
+    <version>0.11.0-SNAPSHOT</version>
   </parent>
   <artifactId>scufl2-scufl</artifactId>
   <packaging>bundle</packaging>
   <name>Taverna Scufl 2 SCUFL parser</name>
-  	<build>
+  <description>Parse Taverna 1.x workflows (Status: Experimental)</description>
+  <build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.felix</groupId>

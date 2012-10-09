@@ -1,7 +1,9 @@
 package uk.org.taverna.scufl2.ucfpackage;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -63,18 +65,23 @@ public class UCFPackage {
 	}
 
 	public UCFPackage(File containerFile) throws IOException {
+		open(containerFile);
+	}
+
+	protected void open(File containerFile) throws IOException {
+		BufferedInputStream stream = new BufferedInputStream(new FileInputStream(containerFile));
 		try {
-			odfPackage = OdfPackage.loadPackage(containerFile);
-			parseContainerXML();
-		} catch (IOException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new IOException("Could not load UCF Package from "
-					+ containerFile, e);
+			open(stream);
+		} finally {
+			stream.close();
 		}
 	}
 
 	public UCFPackage(InputStream inputStream) throws IOException {
+		open(inputStream);
+	}
+
+	protected void open(InputStream inputStream) throws IOException {
 		try {
 			odfPackage = OdfPackage.loadPackage(inputStream);
 			parseContainerXML();
@@ -84,7 +91,6 @@ public class UCFPackage {
 			throw new IOException(
 					"Could not load UCF Package from input stream", e);
 		}
-
 	}
 
 	@SuppressWarnings("unchecked")
@@ -126,9 +132,20 @@ public class UCFPackage {
 
 	public void save(File packageFile) throws IOException {
 		File tempFile = File.createTempFile("." + packageFile.getName(),
-				".tmp", packageFile.getParentFile());
+				".tmp", packageFile.getCanonicalFile().getParentFile());
 		prepareAndSave(tempFile);
-		if (!tempFile.renameTo(packageFile)) {
+		boolean renamed = tempFile.renameTo(packageFile);
+		if (!renamed) {
+			if (packageFile.exists() && tempFile.exists()) {
+				// Could happen on Windows
+				if (! packageFile.delete()) {
+					// Could have been permission problem
+					throw new IOException("Could not delete existing " + packageFile);
+				}
+				renamed = tempFile.renameTo(packageFile);
+			}
+		}
+		if (! renamed) {
 			throw new IOException("Could not rename temp file " + tempFile
 					+ " to " + packageFile);
 		}
@@ -151,12 +168,13 @@ public class UCFPackage {
 		} finally {
 			odfPackage.close();
 		}
+		
 		try {
-			// To be safe we'll reload from 'our' tempFile
-			odfPackage = OdfPackage.loadPackage(tempFile);
+			open(tempFile);
 		} catch (Exception e) {
-			throw new IOException("Could not reload package from " + tempFile);
+			throw new IOException("Could not reload package from " + tempFile, e);
 		}
+		 
 	}
 
 	protected void prepareContainerXML() throws IOException {

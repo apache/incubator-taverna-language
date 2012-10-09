@@ -3,12 +3,12 @@
 	<parent>
 		<groupId>uk.org.taverna.scufl2</groupId>
 		<artifactId>scufl2</artifactId>
-		<version>0.9-SNAPSHOT</version>
+		<version>0.11.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>scufl2-t2flow</artifactId>
 	<packaging>bundle</packaging>
-	<name>Taverna Scufl 2 t2Flow parser</name>
-	<description>Parser for .t2flow file format</description>
+	<name>Taverna Scufl 2 t2flow parser</name>
+	<description>Parser for .t2flow file format (Taverna 2.x)</description>
 	<build>
 		<plugins>
 			<plugin>
@@ -31,7 +31,61 @@
 					<schemaDirectory>src/main/resources/uk/org/taverna/scufl2/translator/t2flow/xsd/</schemaDirectory>
 				</configuration>
 			</plugin>
+			<plugin>
+				<!-- So that Eclipse m2e (with the buildhelper m2e connector) can find 
+					the generated sources -->
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.build.directory}/generated-sources/jaxb/</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
+
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.codehaus.mojo</groupId>
+										<artifactId>jaxb2-maven-plugin</artifactId>
+										<versionRange>[1.3.1,)</versionRange>
+										<goals>
+											<goal>xjc</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<execute>
+											<runOnIncremental>false</runOnIncremental>
+										</execute>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 	<dependencies>
 		<dependency>

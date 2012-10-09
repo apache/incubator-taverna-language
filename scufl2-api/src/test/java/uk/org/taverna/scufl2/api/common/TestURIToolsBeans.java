@@ -328,6 +328,7 @@ public class TestURIToolsBeans {
 						+ "    datalink?from=in/yourName&to=processor/Hello/in/name\n"
 						+ "    datalink?from=in/yourName&to=out/results&mergePosition=1\n"
 						+ "    control?block=processor/Hello/&untilFinished=processor/wait4me/\n"
+					    + "    ../../../../workflow/00626652-55ae-4a9e-80d4-c8e9ac84e2ca/\n"
 						+ "  profile/tavernaServer/\n"
 						+ "    activity/HelloScript/\n"
 						+ "      in/personName\n"

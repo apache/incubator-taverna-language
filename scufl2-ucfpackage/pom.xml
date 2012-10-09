@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>uk.org.taverna.scufl2</groupId>
 		<artifactId>scufl2</artifactId>
-		<version>0.9-SNAPSHOT</version>
+		<version>0.11.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>scufl2-ucfpackage</artifactId>
 	<packaging>bundle</packaging>
@@ -36,7 +36,8 @@
 			<name>Apache 2</name>
 			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
 			<comments>The package uk.org.taverna.scul2.ucfpackage.impl.odfdom 
-				contains a patched subset of ODFDOM 0.8.6, 
+				contains a patched subset of ODFDOM 0.8.6 - 
+				http://odftoolkit.org/projects/odfdom/pages/Home
 				Copyright 2008, 2010 Oracle and/or its affiliates. 
 				All rights reserved. Copyright 2009 IBM. All rights reserved.</comments>
 		</license>
@@ -49,13 +50,15 @@
 				<artifactId>jaxb2-maven-plugin</artifactId>
 				<executions>
 					<execution>
+						<id>jaxb</id>
+						<phase>generate-sources</phase>
 						<goals>
 							<goal>xjc</goal>
 						</goals>
+						<configuration>
+						</configuration>
 					</execution>
 				</executions>
-				<configuration>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
