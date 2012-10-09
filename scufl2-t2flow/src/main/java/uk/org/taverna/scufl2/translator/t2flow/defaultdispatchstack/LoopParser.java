@@ -87,19 +87,17 @@ public class LoopParser extends AbstractActivityParser {
 			ConditionalActivityParser internalParser = new ConditionalActivityParser(parserState);
 			
 			uk.org.taverna.scufl2.api.activity.Activity newActivity = internalParser.parseActivity(conditionActivity);
-			String procName = parserState.getCurrentProcessor().getName();
-			newActivity.setName(procName + "-loop");			
+			String name = parserState.getCurrentProcessor().getName() +  "-loop";
+			newActivity.setName(name);			
 			parserState.getCurrentProfile().getActivities().addWithUniqueName(newActivity);
 			newActivity.setParent(parserState.getCurrentProfile());
 
 			Configuration newConfig = internalParser.parseConfiguration(conditionActivity.getConfigBean());
-			newConfig.setName(procName + "-loop-config");
+			newConfig.setName(name);
 			newConfig.setConfigures(newActivity);
 			parserState.getCurrentProfile().getConfigurations().addWithUniqueName(newConfig);
-			newConfig.setParent(parserState.getCurrentProfile());
-			c.setParent(parserState.getCurrentProfile());
 			
-			URI uriActivity = uriTools.relativeUriForBean(newActivity, c);
+			URI uriActivity = uriTools.relativeUriForBean(newActivity, parserState.getCurrentProfile());
 			resource.addPropertyReference(scufl2Uri.resolve("#condition"), uriActivity);
 		} catch (JAXBException e) {
 			throw new ReaderException("Can't parse conditional loop activity", e);
