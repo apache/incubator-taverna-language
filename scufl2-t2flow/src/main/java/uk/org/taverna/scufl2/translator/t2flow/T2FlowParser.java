@@ -635,6 +635,9 @@ public class T2FlowParser {
 		//logger.fine("Checking annotations for " + annotatedSubject);
 		
 		Map<String, NetSfTavernaT2AnnotationAnnotationAssertionImpl> annotationElems = new HashMap<String, NetSfTavernaT2AnnotationAnnotationAssertionImpl>();
+		if (annotations == null || annotations.getAnnotationChainOrAnnotationChain22() == null) {
+			return;
+		}
 		for (JAXBElement<AnnotationChain> el : annotations
 				.getAnnotationChainOrAnnotationChain22()) {
 			NetSfTavernaT2AnnotationAnnotationAssertionImpl ann = el.getValue()
@@ -721,7 +724,9 @@ public class T2FlowParser {
 
 	protected Revision parseIdentificationAnnotations(Annotations annotations) {
 		SortedMap<Calendar, UUID> revisions = new TreeMap<Calendar, UUID>();
-
+		if (annotations == null || annotations.getAnnotationChainOrAnnotationChain22() == null) {
+			return null;
+		}
 		for (JAXBElement<AnnotationChain> el : annotations
 				.getAnnotationChainOrAnnotationChain22()) {
 			NetSfTavernaT2AnnotationAnnotationAssertionImpl ann = el.getValue()
