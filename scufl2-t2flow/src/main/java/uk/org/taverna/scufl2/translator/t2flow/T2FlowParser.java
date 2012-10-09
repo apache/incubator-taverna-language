@@ -339,13 +339,9 @@ public class T2FlowParser {
 		return t2Parser.mapT2flowRavenIdToScufl2URI(classURI);
 	}
 
-	protected uk.org.taverna.scufl2.api.activity.Activity parseActivity(
+	protected uk.org.taverna.scufl2.api.activity.Activity parseActivityAndAddToProfile(
 			Activity origActivity) throws ReaderException {
-		Raven raven = origActivity.getRaven();
-		String activityClass = origActivity.getClazz();
-		URI activityId = mapTypeFromRaven(raven, activityClass);
-		uk.org.taverna.scufl2.api.activity.Activity newActivity = new uk.org.taverna.scufl2.api.activity.Activity();
-		newActivity.setConfigurableType(activityId);
+		uk.org.taverna.scufl2.api.activity.Activity newActivity = parseActivity(origActivity);
 		newActivity.setName(parserState.get().getCurrentProcessorBinding()
 				.getName());
 		parserState.get().getCurrentProfile().getActivities()
@@ -354,6 +350,17 @@ public class T2FlowParser {
 		return newActivity;
 	}
 
+	protected uk.org.taverna.scufl2.api.activity.Activity parseActivity(
+			Activity origActivity) throws ReaderException {
+		Raven raven = origActivity.getRaven();
+		String activityClass = origActivity.getClazz();
+		URI activityId = mapTypeFromRaven(raven, activityClass);
+		uk.org.taverna.scufl2.api.activity.Activity newActivity = new uk.org.taverna.scufl2.api.activity.Activity();
+		newActivity.setConfigurableType(activityId);
+		return newActivity;
+	}
+
+	
 	protected void parseActivityBinding(Activity origActivity,
 			int activityPosition) throws ReaderException, JAXBException {
 		ProcessorBinding processorBinding = new ProcessorBinding();
@@ -366,7 +373,7 @@ public class T2FlowParser {
 		processorBinding.setBoundProcessor(parserState.get()
 				.getCurrentProcessor());
 		parserState.get().setCurrentProcessorBinding(processorBinding);
-		uk.org.taverna.scufl2.api.activity.Activity newActivity = parseActivity(origActivity);
+		uk.org.taverna.scufl2.api.activity.Activity newActivity = parseActivityAndAddToProfile(origActivity);
 		parserState.get().setCurrentActivity(newActivity);
 
 		parserState.get().getCurrentProfile().getActivities().add(newActivity);
@@ -376,7 +383,7 @@ public class T2FlowParser {
 		parserState.get().setCurrentConfigurable(newActivity);
 
 		try {
-			parseConfiguration(origActivity.getConfigBean(),
+			parseConfigurationAndAddToProfile(origActivity.getConfigBean(),
 					Configures.activity);
 		} catch (JAXBException e) {
 			if (isStrict()) {
@@ -394,24 +401,44 @@ public class T2FlowParser {
 		parserState.get().setCurrentProcessorBinding(null);
 	}
 
-	enum Configures {
+	protected enum Configures {
 		activity, dispatchLayer
 	};
 
-	protected void parseConfiguration(ConfigBean configBean,
+	protected void parseConfigurationAndAddToProfile(ConfigBean configBean,
 			Configures configures) throws JAXBException, ReaderException {
+		Configuration configuration = parseConfiguration(configBean);
+		if (configuration == null) { 
+			return;
+		}
+		if (configures == Configures.activity) {
+			configuration.setName(parserState.get().getCurrentActivity()
+					.getName());
+		} else {
+			DispatchStackLayer layer = (DispatchStackLayer) parserState.get().getCurrentConfigurable();
+			configuration.setName(parserState.get().getCurrentProcessor().getName() +
+					"-dispatch-" + parserState.get().getCurrentDispatchStack().size());
 
+		}
+		parserState.get().getCurrentProfile().getConfigurations()
+				.addWithUniqueName(configuration);
+		configuration.setConfigures(parserState.get().getCurrentConfigurable());
+		parserState.get().getCurrentProfile().getConfigurations().addWithUniqueName(configuration);
+		
+	}
+	
+	protected Configuration parseConfiguration(ConfigBean configBean) throws JAXBException, ReaderException {
 		// Placeholder to check later if no configuration have been provided
 		Configuration UNCONFIGURED = new Configuration();
 		
 		Configuration configuration = UNCONFIGURED;
 		if (parserState.get().getCurrentT2Parser() == null) {
-			String message = "No config parser for " + configures
+			String message = "No config parser for " 
 					+ parserState.get().getCurrentConfigurable();
 			if (isStrict()) {
 				throw new ReaderException(message);
 			}
-			return;
+			return null;
 		}
 
 		try {
@@ -424,14 +451,13 @@ public class T2FlowParser {
 		}
 		if (configuration == null) {
 			// Perfectly valid - true for say Invoke layer
-			return;
+			return null;
 		}
 		
 		if (configuration == UNCONFIGURED) {
 			if (isStrict()) {
 				throw new ReaderException("No configuration returned from "
-						+ parserState.get().getCurrentT2Parser() + " for "
-						+ configures
+						+ parserState.get().getCurrentT2Parser() + " for "						
 						+ parserState.get().getCurrentConfigurable());
 			}
 			// We'll have to fake it
@@ -448,22 +474,10 @@ public class T2FlowParser {
 			// literal.setLiteralValue(configBean.getAny().toString());
 			// literal.setLiteralType(PropertyLiteral.XML_LITERAL);
 			properties.get(fallBackURI).add(literal);
-
 		}
+		return configuration;
 		
-		if (configures == Configures.activity) {
-			configuration.setName(parserState.get().getCurrentActivity()
-					.getName());
-		} else {
-			DispatchStackLayer layer = (DispatchStackLayer) parserState.get().getCurrentConfigurable();
-			configuration.setName(parserState.get().getCurrentProcessor().getName() +
-					"-dispatch-" + parserState.get().getCurrentDispatchStack().size());
-
-		}
-		parserState.get().getCurrentProfile().getConfigurations()
-				.addWithUniqueName(configuration);
-		configuration.setConfigures(parserState.get().getCurrentConfigurable());
-		parserState.get().getCurrentProfile().getConfigurations().addWithUniqueName(configuration);
+		
 	}
 
 	public Unmarshaller getUnmarshaller() {
@@ -895,7 +909,7 @@ public class T2FlowParser {
 		dispatchStackLayer.setConfigurableType(typeUri);
 		parserState.get().setCurrentConfigurable(dispatchStackLayer);
 		try {
-			parseConfiguration(dispatchLayer.getConfigBean(),
+			parseConfigurationAndAddToProfile(dispatchLayer.getConfigBean(),
 					Configures.dispatchLayer);
 		} catch (JAXBException ex) {
 			String message = "Can't parse configuration for dispatch layer in "
