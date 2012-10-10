@@ -41,7 +41,7 @@ public class DataflowActivityParser extends AbstractActivityParser {
 		DataflowConfig dataflowConfig = unmarshallConfig(t2FlowParser,
 				configBean, "dataflow", DataflowConfig.class);
 		Configuration configuration = new Configuration();
-		configuration.setConfigurableType(nestedUri.resolve("#Config"));		
+		configuration.setType(nestedUri.resolve("#Config"));		
 
 		String wfId = dataflowConfig.getRef();
 		URI wfUri = Workflow.WORKFLOW_ROOT.resolve(wfId + "/");
