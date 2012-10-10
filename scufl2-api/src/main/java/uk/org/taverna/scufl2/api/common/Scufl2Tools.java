@@ -106,7 +106,7 @@ public class Scufl2Tools {
 	 * @return the list of <code>Configurations</code> for a <code>Configurable</code> in the given
 	 *         <code>Profile</code>
 	 */
-	@SuppressWarnings("unchecked")
+//	@SuppressWarnings("unchecked")
 	public List<Configuration> configurationsFor(Configurable configurable, Profile profile) {
 		List<Configuration> configurations = new ArrayList<Configuration>();
 		for (Configuration config : profile.getConfigurations()) {
@@ -118,6 +118,7 @@ public class Scufl2Tools {
 		return configurations;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<BlockingControlLink> controlLinksBlocking(Processor blocked) {
 		List<BlockingControlLink> controlLinks = new ArrayList<BlockingControlLink>();
 		for (ControlLink link : blocked.getParent().getControlLinks()) {
@@ -133,6 +134,7 @@ public class Scufl2Tools {
 		return controlLinks;
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<BlockingControlLink> controlLinksWaitingFor(Processor untilFinished) {
 		List<BlockingControlLink> controlLinks = new ArrayList<BlockingControlLink>();
 		for (ControlLink link : untilFinished.getParent().getControlLinks()) {
@@ -149,9 +151,8 @@ public class Scufl2Tools {
 
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public List<DataLink> datalinksFrom(SenderPort senderPort) {
-		@SuppressWarnings("rawtypes")
 		Workflow wf = findParent(Workflow.class, (Child) senderPort);
 		List<DataLink> links = new ArrayList();
 		for (DataLink link : wf.getDataLinks()) {
@@ -163,9 +164,8 @@ public class Scufl2Tools {
 		return links;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public List<DataLink> datalinksTo(ReceiverPort receiverPort) {
-		@SuppressWarnings("rawtypes")
 		Workflow wf = findParent(Workflow.class, (Child) receiverPort);
 		List<DataLink> links = new ArrayList<DataLink>();
 		for (DataLink link : wf.getDataLinks()) {
@@ -236,9 +236,6 @@ public class Scufl2Tools {
 
 	public List<ProcessorBinding> processorBindingsForProcessor(Processor processor, Profile profile) {
 		List<ProcessorBinding> bindings = new ArrayList<ProcessorBinding>();
-		if (profile == null) {
-			profile = processor.getParent().getParent().getMainProfile();
-		}
 		for (ProcessorBinding pb : profile.getProcessorBindings()) {
 			if (pb.getBoundProcessor().equals(processor)) {
 				bindings.add(pb);
@@ -305,6 +302,7 @@ public class Scufl2Tools {
 
 	public void setParents(WorkflowBundle bundle) {
 		bundle.accept(new VisitorWithPath() {
+			@SuppressWarnings({ "unchecked", "rawtypes" })
 			@Override
 			public boolean visit() {
 				WorkflowBean node = getCurrentNode();
