@@ -2,8 +2,10 @@ package uk.org.taverna.scufl2.api.common;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -19,7 +21,9 @@ import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
 import uk.org.taverna.scufl2.api.port.ActivityPort;
 import uk.org.taverna.scufl2.api.port.InputPort;
+import uk.org.taverna.scufl2.api.port.InputProcessorPort;
 import uk.org.taverna.scufl2.api.port.OutputPort;
+import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
 import uk.org.taverna.scufl2.api.port.Port;
 import uk.org.taverna.scufl2.api.port.ProcessorPort;
 import uk.org.taverna.scufl2.api.port.ReceiverPort;
@@ -45,8 +49,9 @@ public class Scufl2Tools {
 			.create("http://ns.taverna.org.uk/2010/scufl2#portDefinition");
 	
 	private static URITools uriTools = new URITools();
-
 	
+	public static URI NESTED_WORKFLOW = URI
+			.create("http://ns.taverna.org.uk/2010/activity/nested-workflow");
 	/**
 	 * Compare {@link ProcessorBinding}s by their {@link ProcessorBinding#getActivityPosition()}.
 	 * 
@@ -84,8 +89,8 @@ public class Scufl2Tools {
 		return configurations.get(0);
 	}
 
-	public Configuration configurationForActivityBoundToProcessor(Processor concat, Profile profile) {
-		ProcessorBinding binding = processorBindingForProcessor(concat, profile);
+	public Configuration configurationForActivityBoundToProcessor(Processor processor, Profile profile) {
+		ProcessorBinding binding = processorBindingForProcessor(processor, profile);
 		Configuration config = configurationFor(binding.getBoundActivity(), profile);
 		return config;
 	}
@@ -231,6 +236,9 @@ public class Scufl2Tools {
 
 	public List<ProcessorBinding> processorBindingsForProcessor(Processor processor, Profile profile) {
 		List<ProcessorBinding> bindings = new ArrayList<ProcessorBinding>();
+		if (profile == null) {
+			profile = processor.getParent().getParent().getMainProfile();
+		}
 		for (ProcessorBinding pb : profile.getProcessorBindings()) {
 			if (pb.getBoundProcessor().equals(processor)) {
 				bindings.add(pb);
@@ -328,4 +336,242 @@ public class Scufl2Tools {
 		
 	}
 
+	/**
+	 * Find processors that a given processor can connect to downstream.
+	 * <p>
+	 * This is calculated as all processors in the dataflow, except the
+	 * processor itself, and any processor <em>upstream</em>, following both
+	 * data links and conditional links.
+	 * 
+	 * @see #possibleUpStreamProcessors(Dataflow, Processor)
+	 * @see #splitProcessors(Collection, Processor)
+	 * 
+	 * @param dataflow
+	 *            Dataflow from where to find processors
+	 * @param processor
+	 *            Processor which is to be connected
+	 * @return A set of possible downstream processors
+	 */
+	public Set<Processor> possibleDownStreamProcessors(
+			Workflow dataflow, Processor processor) {
+		ProcessorSplit splitProcessors = splitProcessors(dataflow
+				.getProcessors(), processor);
+		Set<Processor> possibles = new HashSet<Processor>(splitProcessors
+				.getUnconnected());
+		possibles.addAll(splitProcessors.getDownStream());
+		return possibles;
+	}
+
+	/**
+	 * Find processors that a given processor can connect to upstream.
+	 * <p>
+	 * This is calculated as all processors in the dataflow, except the
+	 * processor itself, and any processor <em>downstream</em>, following both
+	 * data links and conditional links.
+	 * 
+	 * @see #possibleDownStreamProcessors(Dataflow, Processor)
+	 * @see #splitProcessors(Collection, Processor)
+	 * 
+	 * @param dataflow
+	 *            Dataflow from where to find processors
+	 * @param processor
+	 *            Processor which is to be connected
+	 * @return A set of possible downstream processors
+	 */
+	public Set<Processor> possibleUpStreamProcessors(Workflow dataflow,
+			Processor firstProcessor) {
+		ProcessorSplit splitProcessors = splitProcessors(dataflow
+				.getProcessors(), firstProcessor);
+		Set<Processor> possibles = new HashSet<Processor>(splitProcessors
+				.getUnconnected());
+		possibles.addAll(splitProcessors.getUpStream());
+		return possibles;
+	}
+
+	/**
+	 * 
+	 * @param processors
+	 * @param splitPoint
+	 * @return
+	 */
+	public ProcessorSplit splitProcessors(
+			Collection<Processor> processors, Processor splitPoint) {
+		Set<Processor> upStream = new HashSet<Processor>();
+		Set<Processor> downStream = new HashSet<Processor>();
+		Set<Processor> queue = new HashSet<Processor>();
+	
+		queue.add(splitPoint);
+	
+		// First let's go upstream
+		while (!queue.isEmpty()) {
+			Processor processor = queue.iterator().next();
+			queue.remove(processor);
+			List<BlockingControlLink> preConditions = controlLinksBlocking(processor);
+			for (BlockingControlLink condition : preConditions) {
+				Processor upstreamProc = condition.getUntilFinished();
+				if (!upStream.contains(upstreamProc)) {
+					upStream.add(upstreamProc);
+					queue.add(upstreamProc);
+				}
+			}
+			for (InputProcessorPort inputPort : processor.getInputPorts()) {
+				for (DataLink incomingLink : datalinksTo(inputPort)) {
+					SenderPort source = incomingLink.getReceivesFrom();
+					if (! (source instanceof OutputProcessorPort)) {
+						continue;
+					}
+					Processor upstreamProc = ((OutputProcessorPort) source)
+							.getParent();
+					if (!upStream.contains(upstreamProc)) {
+						upStream.add(upstreamProc);
+						queue.add(upstreamProc);
+					}
+				}
+			}
+		}
+		// Our split
+		queue.add(splitPoint);
+		// Then downstream
+		while (!queue.isEmpty()) {
+			Processor processor = queue.iterator().next();
+			queue.remove(processor);			
+			List<BlockingControlLink> controlledConditions = controlLinksWaitingFor(processor);				
+			for (BlockingControlLink condition : controlledConditions) {
+				Processor downstreamProc = condition.getBlock();
+				if (!downStream.contains(downstreamProc)) {
+					downStream.add(downstreamProc);
+					queue.add(downstreamProc);
+				}
+			}
+			for (OutputProcessorPort outputPort : processor.getOutputPorts()) {
+				for (DataLink datalink : datalinksFrom(outputPort)) {
+					ReceiverPort sink = datalink.getSendsTo();
+					if (! (sink instanceof InputProcessorPort)) {
+						continue;
+					}
+					Processor downstreamProcc = ((InputProcessorPort) sink)
+							.getParent();
+					if (!downStream.contains(downstreamProcc)) {
+						downStream.add(downstreamProcc);
+						queue.add(downstreamProcc);
+					}
+				}
+			}
+		}
+		Set<Processor> undecided = new HashSet<Processor>(processors);
+		undecided.remove(splitPoint);
+		undecided.removeAll(upStream);
+		undecided.removeAll(downStream);
+		return new ProcessorSplit(splitPoint, upStream, downStream, undecided);
+	}
+
+	/**
+	 * Result bean returned from
+	 * {@link Scufl2Tools#splitProcessors(Collection, Processor)}.
+	 * 
+	 * @author Stian Soiland-Reyes
+	 * 
+	 */
+	public static class ProcessorSplit {
+
+		private final Processor splitPoint;
+		private final Set<Processor> upStream;
+		private final Set<Processor> downStream;
+		private final Set<Processor> unconnected;
+
+		/**
+		 * Processor that was used as a split point.
+		 * 
+		 * @return Split point processor
+		 */
+		public Processor getSplitPoint() {
+			return splitPoint;
+		}
+
+		/**
+		 * Processors that are upstream from the split point.
+		 * 
+		 * @return Upstream processors
+		 */
+		public Set<Processor> getUpStream() {
+			return upStream;
+		}
+
+		/**
+		 * Processors that are downstream from the split point.
+		 * 
+		 * @return Downstream processors
+		 */
+		public Set<Processor> getDownStream() {
+			return downStream;
+		}
+
+		/**
+		 * Processors that are unconnected to the split point.
+		 * <p>
+		 * These are processors in the dataflow that are neither upstream,
+		 * downstream or the split point itself.
+		 * <p>
+		 * Note that this does not imply a total graph separation, for instance
+		 * processors in {@link #getUpStream()} might have some of these
+		 * unconnected processors downstream, but not along the path to the
+		 * {@link #getSplitPoint()}, or they could be upstream from any
+		 * processor in {@link #getDownStream()}.
+		 * 
+		 * @return Processors unconnected from the split point
+		 */
+		public Set<Processor> getUnconnected() {
+			return unconnected;
+		}
+
+		/**
+		 * Construct a new processor split result.
+		 * 
+		 * @param splitPoint
+		 *            Processor used as split point
+		 * @param upStream
+		 *            Processors that are upstream from split point
+		 * @param downStream
+		 *            Processors that are downstream from split point
+		 * @param unconnected
+		 *            The rest of the processors, that are by definition
+		 *            unconnected to split point
+		 */
+		public ProcessorSplit(Processor splitPoint, Set<Processor> upStream,
+				Set<Processor> downStream, Set<Processor> unconnected) {
+			this.splitPoint = splitPoint;
+			this.upStream = upStream;
+			this.downStream = downStream;
+			this.unconnected = unconnected;
+		}
+
+	}
+
+	/**
+	 * Returns true if processor contains a nested workflow in any of its
+	 * activities in any of its profiles.
+	 */
+	public boolean containsNestedWorkflow(Processor processor) {
+		for (Profile profile : processor.getParent().getParent().getProfiles()) {
+			if (containsNestedWorkflow(processor, profile)) { 
+				return true;
+			}
+		}
+		return false;		
+	}
+	
+	/**
+	 * Returns true if processor contains a nested workflow in the specified profile.
+	 * 
+	 */
+	public boolean containsNestedWorkflow(Processor processor, Profile profile) {
+		for (ProcessorBinding binding : 
+			processorBindingsForProcessor(processor, profile)) {
+			if (binding.getBoundActivity().getConfigurableType().equals(NESTED_WORKFLOW)) {
+				return true;
+			}
+		}
+		return false;		
+	}
+	
 }
