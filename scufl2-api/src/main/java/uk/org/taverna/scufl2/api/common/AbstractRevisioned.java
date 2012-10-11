@@ -6,15 +6,12 @@ import java.util.UUID;
 
 import uk.org.taverna.scufl2.api.annotation.Revision;
 import uk.org.taverna.scufl2.api.annotation.Revisioned;
-import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 
 public abstract class AbstractRevisioned extends AbstractNamedChild implements Revisioned {
 
-	
-
 	private Revision currentRevision;
 
-	public URI generateIdentifier() {
+	protected URI generateNewIdentifier() {
 		return getIdentifierRoot().resolve(UUID.randomUUID().toString() + "/");
 	}
 
@@ -29,6 +26,7 @@ public abstract class AbstractRevisioned extends AbstractNamedChild implements R
 		newRevision();
 	}
 
+	@Override
 	public void setCurrentRevision(Revision currentRevision) {
 		this.currentRevision = currentRevision;
 		if (currentRevision == null) {
@@ -45,7 +43,7 @@ public abstract class AbstractRevisioned extends AbstractNamedChild implements R
 	public Revision newRevision(URI revisionIdentifier) {
 		GregorianCalendar created = null;
 		if (revisionIdentifier == null) {
-			revisionIdentifier = generateIdentifier();
+			revisionIdentifier = generateNewIdentifier();
 			created = new GregorianCalendar();
 		}
 		Revision newRevision = new Revision(revisionIdentifier,
@@ -85,12 +83,12 @@ public abstract class AbstractRevisioned extends AbstractNamedChild implements R
 	 * @see #getIdentifier()
 	 * @see #getCurrentRevision()
 	 * 
-	 * @param workflowIdentifier
+	 * @param identifier
 	 *            the identifier
 	 */
 	@Override
-	public void setIdentifier(URI workflowIdentifier) {
-		setCurrentRevision(new Revision(workflowIdentifier));
+	public void setIdentifier(URI identifier) {
+		setCurrentRevision(new Revision(identifier));
 	}
 
 }
