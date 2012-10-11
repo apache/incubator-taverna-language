@@ -9,12 +9,11 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Set;
-import java.util.logging.Level;
 
 import javax.xml.bind.JAXBException;
 
-import uk.org.taverna.scufl2.api.annotation.Annotation;
 import uk.org.taverna.scufl2.api.annotation.Revision;
+import uk.org.taverna.scufl2.api.annotation.Revisioned;
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Workflow;
@@ -96,6 +95,9 @@ public class RDFXMLWriter implements WorkflowBundleWriter {
 			} finally {
 				outputStream.close();
 			}
+			path = HISTORY + "pf-" +  
+					uriTools.validFilename(pf.getName()) + REVISIONS + RDF;
+			addRevisions(pf, path, wfBundle);
 
 		}
 
@@ -120,12 +122,12 @@ public class RDFXMLWriter implements WorkflowBundleWriter {
 	}
 
 
-	protected void addRevisions(Workflow wf, String path, WorkflowBundle wfBundle) throws WriterException {
+	protected void addRevisions(Revisioned revisioned, String path, WorkflowBundle wfBundle) throws WriterException {
 		URI uriBase = uriTools.uriForBean(wfBundle).resolve(path);
 		PropertyResourceSerialiser visitor = new PropertyResourceSerialiser(uriBase);
 		visitor.includeBase();
 		
-		Revision currentRevision = wf.getCurrentRevision();
+		Revision currentRevision = revisioned.getCurrentRevision();
 		if (currentRevision == null) {
 			return;
 		}
