@@ -12,7 +12,9 @@ import java.util.UUID;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.annotation.Annotation;
+import uk.org.taverna.scufl2.api.annotation.Revisioned;
 import uk.org.taverna.scufl2.api.common.AbstractNamed;
+import uk.org.taverna.scufl2.api.common.AbstractRevisioned;
 import uk.org.taverna.scufl2.api.common.Named;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.Root;
@@ -23,11 +25,27 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.ucfpackage.UCFPackage;
 
 /**
+ * A workflow bundle is a collection of workflows, profiles and their
+ * annotations.
+ * <p>
+ * A Workflow Bundle represents these resources as a whole, and have its own
+ * identifier.
+ * <p>
+ * Workflows are listed under {@link #getWorkflows()}, one of which SHOULD be
+ * {@link #setMainWorkflow(Workflow)}.
+ * <p>
+ * Similarly, profiles are listed under {@link #getProfiles()}, one of which
+ * SHOULD be {@link #setMainProfile(Profile)}.
+ * <p>
+ * Annotations are included under {@link #getAnnotations()}, and additional
+ * resources inside {@link #getResources()}.
+ * 
  * @author Alan R Williams
+ * @author Stian Soiland-Reyes
  * 
  */
-public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
-		Named, Root {
+public class WorkflowBundle extends AbstractRevisioned implements WorkflowBean,
+		Named, Root, Revisioned {
 
 	public static final URI WORKFLOW_BUNDLE_ROOT = URI
 			.create("http://ns.taverna.org.uk/2010/workflowBundle/");
@@ -37,7 +55,6 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 	}
 
 	private NamedSet<Annotation> annotations = new NamedSet<Annotation>();
-	private URI globalBaseURI = generateIdentifier();
 	private final NamedSet<Profile> profiles = new NamedSet<Profile>();
 	private final NamedSet<Workflow> workflows = new NamedSet<Workflow>();
 	private Workflow mainWorkflow;
@@ -88,7 +105,7 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 
 	@Override
 	public URI getGlobalBaseURI() {
-		return globalBaseURI;
+		return getIdentifier();
 	}
 
 	public NamedSet<Workflow> getWorkflows() {
@@ -120,7 +137,7 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 
 	@Override
 	public void setGlobalBaseURI(URI globalBaseURI) {
-		this.globalBaseURI = globalBaseURI;
+		setIdentifier(globalBaseURI);
 	}
 
 	public void setWorkflows(Set<Workflow> workflows) {
@@ -173,6 +190,7 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 		 * @Override public int hashCode() { return hashCode; }
 		 */
 
+		// We're overriding hashCode() as we also override equals(Object)  
 		return super.hashCode();
 	}
 
@@ -206,6 +224,11 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 	public void setAnnotations(NamedSet<Annotation> annotations) {
 		this.annotations.clear();
 		this.annotations.addAll(annotations);
+	}
+
+	@Override
+	protected URI getIdentifierRoot() {
+		return WORKFLOW_BUNDLE_ROOT;
 	}
 
 }

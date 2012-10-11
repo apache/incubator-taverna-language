@@ -117,6 +117,9 @@ public class RDFXMLWriter implements WorkflowBundleWriter {
 			ucfPackage.setRootFile(WORKFLOW_BUNDLE_RDF);
 		}
 
+		String path = HISTORY + "wfbundle" + REVISIONS + RDF;
+		addRevisions(wfBundle, path, wfBundle);
+		
 		return ucfPackage;
 
 	}
