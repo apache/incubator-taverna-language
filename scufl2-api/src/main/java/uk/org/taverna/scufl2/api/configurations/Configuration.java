@@ -6,7 +6,7 @@ package uk.org.taverna.scufl2.api.configurations;
 import java.net.URI;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
-import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
+import uk.org.taverna.scufl2.api.common.AbstractNamed;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.common.Typed;
@@ -55,7 +55,7 @@ import uk.org.taverna.scufl2.api.property.PropertyResource;
  * @author Stian Soiland-Reyes
  * 
  */
-public class Configuration extends AbstractNamedChild implements Child<Profile>, Typed {
+public class Configuration extends AbstractNamed implements Child<Profile>, Typed {
 	private Configurable configures;
 	private Profile parent;
 	private PropertyResource propertyResource = new PropertyResource();

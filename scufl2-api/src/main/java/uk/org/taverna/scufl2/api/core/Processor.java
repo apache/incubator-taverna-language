@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
-import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
+import uk.org.taverna.scufl2.api.common.AbstractNamed;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.Ported;
@@ -29,7 +29,7 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
  * 
  * @author Alan R Williams
  */
-public class Processor extends AbstractNamedChild implements Child<Workflow>, Ported {
+public class Processor extends AbstractNamed implements Child<Workflow>, Ported {
 
 	private final NamedSet<OutputProcessorPort> outputPorts = new NamedSet<OutputProcessorPort>();
 	private final NamedSet<InputProcessorPort> inputPorts = new NamedSet<InputProcessorPort>();

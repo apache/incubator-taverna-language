@@ -7,7 +7,7 @@ import java.util.UUID;
 import uk.org.taverna.scufl2.api.annotation.Revision;
 import uk.org.taverna.scufl2.api.annotation.Revisioned;
 
-public abstract class AbstractRevisioned extends AbstractNamedChild implements Revisioned {
+public abstract class AbstractRevisioned extends AbstractNamed implements Revisioned {
 
 	private Revision currentRevision;
 
