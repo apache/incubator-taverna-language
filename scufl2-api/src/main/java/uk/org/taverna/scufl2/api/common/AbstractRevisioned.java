@@ -22,13 +22,11 @@ public abstract class AbstractRevisioned extends AbstractNamedChild implements R
 
 	public AbstractRevisioned() {
 		newRevision();
-		String workflowId = getIdentifierRoot().relativize(getIdentifier())
-				.toASCIIString();
-		setName("wf-" + workflowId);
 	}
 
 	public AbstractRevisioned(String name) {
 		super(name);
+		newRevision();
 	}
 
 	public void setCurrentRevision(Revision currentRevision) {

@@ -1,11 +1,13 @@
 package uk.org.taverna.scufl2.api.profiles;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
-import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
+import uk.org.taverna.scufl2.api.annotation.Revisioned;
+import uk.org.taverna.scufl2.api.common.AbstractRevisioned;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.Visitor;
@@ -22,7 +24,7 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
  * 
  * @author Alan R Williams
  */
-public class Profile extends AbstractNamedChild implements Child<WorkflowBundle> {
+public class Profile extends AbstractRevisioned implements Child<WorkflowBundle>, Revisioned {
 
 	private final NamedSet<ProcessorBinding> processorBindings = new NamedSet<ProcessorBinding>();
 
@@ -39,6 +41,9 @@ public class Profile extends AbstractNamedChild implements Child<WorkflowBundle>
 	 */
 	public Profile() {
 		super();
+		String profileId = getIdentifierRoot().relativize(getIdentifier())
+				.toASCIIString();
+		setName("pf-" + profileId);
 	}
 
 	/**
@@ -173,6 +178,21 @@ public class Profile extends AbstractNamedChild implements Child<WorkflowBundle>
 	 */
 	public final void setProfilePosition(Integer profilePosition) {
 		this.profilePosition = profilePosition;
+	}
+
+	public static final URI PROFILE_ROOT = URI
+			.create("http://ns.taverna.org.uk/2012/scufl2-profile/");
+
+	@Override
+	protected URI getIdentifierRoot() {
+		return PROFILE_ROOT;
+	}
+
+	public void setIdentifier(URI workflowIdentifier) {
+	}
+
+	public URI getIdentifier() {
+		return null;
 	}
 
 }

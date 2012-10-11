@@ -48,6 +48,9 @@ public class Workflow extends AbstractRevisioned implements
 	 * Constructs a <code>Workflow</code> with a name based on a random UUID.
 	 */
 	public Workflow() {	
+		String workflowId = getIdentifierRoot().relativize(getIdentifier())
+				.toASCIIString();
+		setName("wf-" + workflowId);
 	}
 
 	@Override
