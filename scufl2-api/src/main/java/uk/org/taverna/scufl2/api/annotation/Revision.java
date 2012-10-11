@@ -21,12 +21,8 @@ public class Revision extends PropertyResource {
 	 **/
 	protected static final URI PROV = URI.create("http://www.w3.org/ns/prov#");
 
-	protected static final URI AT_TIME = PROV.resolve("#atTime");
+	protected static final URI AT_TIME = PROV.resolve("#generatedAtTime");
 	protected static final URI ENTITY = PROV.resolve("#Entity");
-	protected static final URI GENERATION = PROV.resolve("#Generation");
-
-	protected static final URI QUALIFIED_GENERATION = PROV
-			.resolve("#qualifiedGeneration");
 	protected static final URI WAS_ATTRIBUTED_TO = PROV
 			.resolve("#wasAttributedTo");
 	protected static final URI WAS_REVISION_OF = PROV.resolve("#wasRevisionOf");
@@ -64,19 +60,16 @@ public class Revision extends PropertyResource {
 	}
 
 	public Calendar getCreated() {
-		PropertyResource generation;
 		try {
-			generation = getPropertyAsResource(QUALIFIED_GENERATION);
-			return generation.getPropertyAsLiteral(AT_TIME)
-					.getLiteralValueAsCalendar();
+			return getPropertyAsLiteral(AT_TIME).getLiteralValueAsCalendar();
 		} catch (PropertyNotFoundException e) {
 			return null;
 		} catch (UnexpectedPropertyException e) {
-			throw new IllegalStateException(String.format("Invalid %s or %s",
-					QUALIFIED_GENERATION, AT_TIME), e);
+			throw new IllegalStateException(String.format("Invalid %s",
+					AT_TIME), e);
 		} catch (MultiplePropertiesException e) {
-			throw new IllegalStateException(String.format("Multiple %s or %s",
-					QUALIFIED_GENERATION, AT_TIME), e);
+			throw new IllegalStateException(String.format("Multiple %s",
+					AT_TIME), e);
 		}
 	}
 
@@ -118,21 +111,8 @@ public class Revision extends PropertyResource {
 	}
 
 	public void setCreated(Calendar created) {
-		PropertyResource generation;
-		try {
-			generation = getPropertyAsResource(QUALIFIED_GENERATION);
-		} catch (PropertyNotFoundException e) {
-			generation = addPropertyAsNewResource(QUALIFIED_GENERATION,
-					GENERATION);
-		} catch (UnexpectedPropertyException e) {
-			throw new IllegalStateException(String.format("Invalid %s",
-					QUALIFIED_GENERATION), e);
-		} catch (MultiplePropertiesException e) {
-			throw new IllegalStateException(String.format("Multiple %s",
-					QUALIFIED_GENERATION), e);
-		}
-		generation.clearProperties(AT_TIME);
-		generation.addProperty(AT_TIME, new PropertyLiteral(created));
+		clearProperties(AT_TIME);
+		addProperty(AT_TIME, new PropertyLiteral(created));
 	}
 
 	public void setCreators(Set<URI> creators) {
