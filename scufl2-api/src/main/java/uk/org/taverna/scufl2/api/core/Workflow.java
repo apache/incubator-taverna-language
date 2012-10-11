@@ -306,11 +306,4 @@ public class Workflow extends AbstractRevisioned implements
 		return WORKFLOW_ROOT;
 	}
 
-	public void setIdentifier(URI workflowIdentifier) {
-	}
-
-	public URI getIdentifier() {
-		return null;
-	}
-
 }
