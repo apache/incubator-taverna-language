@@ -12,6 +12,7 @@ import java.util.TreeSet;
 import java.util.UUID;
 
 import uk.org.taverna.scufl2.api.annotation.Revision;
+import uk.org.taverna.scufl2.api.annotation.Revisioned;
 import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.NamedSet;
@@ -28,9 +29,10 @@ import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
  * input and output ports.
  * 
  * @author Alan R Williams
+ * @author Stian Soiland-Reyes
  */
 public class Workflow extends AbstractNamedChild implements
-		Child<WorkflowBundle>, Ported {
+		Child<WorkflowBundle>, Ported, Revisioned {
 
 	public static final URI WORKFLOW_ROOT = URI
 			.create("http://ns.taverna.org.uk/2010/workflow/");
@@ -324,40 +326,12 @@ public class Workflow extends AbstractNamedChild implements
 		return builder.toString();
 	}
 
-	/**
-	 * Make a new Revision to mark structural changes to this {@link Workflow}.
-	 * <p>
-	 * {@link #getWorkflowIdentifier()} will match the identifier of the new
-	 * {@link #getCurrentRevision()}. The new revision will include the previous
-	 * revision as {@link Revision#getPreviousRevision()} and
-	 * {@link Revision#getCreated()} on the new revision will match the current
-	 * {@link GregorianCalendar}.
-	 * </p>
-	 * 
-	 * @return The new {@link #getCurrentRevision()}, for setting any
-	 *         further details.
-	 */
+	@Override
 	public Revision newRevision() {
 		return newRevision(null);
 	}
 
-	/**
-	 * Make a new Revision to mark structural changes to this workflow
-	 * with the given identifier.
-	 * <p>
-	 * {@link #getWorkflowIdentifier()} will match the new identifier. The new
-	 * {@link #getCurrentRevision()} will include the previous revision as
-	 * {@link Revision#getPreviousRevision()}.
-	 * <p>
-	 * Note, unlike the convenience method {@link #newRevision()} this method
-	 * will not update {@link Revision#getCreated()}.
-	 * </p>
-	 * 
-	 * @param revisionIdentifier
-	 *            The new workflow identifier
-	 * @return The new {@link #getCurrentRevision()}, for setting any further
-	 *         details.
-	 */
+	@Override
 	public Revision newRevision(URI revisionIdentifier) {
 		GregorianCalendar created = null;
 		if (revisionIdentifier == null) {
