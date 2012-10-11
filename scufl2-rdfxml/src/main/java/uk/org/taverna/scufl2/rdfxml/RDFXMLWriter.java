@@ -9,9 +9,12 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.Collections;
 import java.util.Set;
+import java.util.logging.Level;
 
 import javax.xml.bind.JAXBException;
 
+import uk.org.taverna.scufl2.api.annotation.Annotation;
+import uk.org.taverna.scufl2.api.annotation.Revision;
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Workflow;
@@ -22,8 +25,11 @@ import uk.org.taverna.scufl2.ucfpackage.UCFPackage;
 
 public class RDFXMLWriter implements WorkflowBundleWriter {
 
+	private static final String WF = "wf-";
+	private static final String REVISIONS = "-revisions";
 	protected static final String RDF = ".rdf";
 	protected static final String WORKFLOW = "workflow/";
+	protected static final String HISTORY = "history/";
 	protected static final String PROFILE = "profile/";
 	protected static final String WORKFLOW_BUNDLE_RDF = "workflowBundle.rdf";
 
@@ -70,8 +76,13 @@ public class RDFXMLWriter implements WorkflowBundleWriter {
 				serializer.workflowDoc(outputStream, wf, URI.create(path));
 			} catch (JAXBException e) {
 				throw new WriterException("Can't generate " + path, e);
+			} finally {
+				outputStream.close();
 			}
-			outputStream.close();
+			
+			path = HISTORY + WF +  
+					uriTools.validFilename(wf.getName()) + REVISIONS + RDF;
+			addRevisions(wf, path, wfBundle);
 		}
 
 		for (Profile pf : wfBundle.getProfiles()) {
@@ -82,8 +93,9 @@ public class RDFXMLWriter implements WorkflowBundleWriter {
 				serializer.profileDoc(outputStream, pf, URI.create(path));
 			} catch (JAXBException e) {
 				throw new WriterException("Can't generate " + path, e);
+			} finally {
+				outputStream.close();
 			}
-			outputStream.close();
 
 		}
 
@@ -95,8 +107,9 @@ public class RDFXMLWriter implements WorkflowBundleWriter {
 		} catch (JAXBException e) {
 			throw new WriterException("Can't generate " + WORKFLOW_BUNDLE_RDF,
 					e);
+		} finally {
+			outputStream.close();
 		}
-		outputStream.close();
 		
 		if (ucfPackage.getPackageMediaType().equals(APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE)) {
 			ucfPackage.setRootFile(WORKFLOW_BUNDLE_RDF);
@@ -106,6 +119,26 @@ public class RDFXMLWriter implements WorkflowBundleWriter {
 
 	}
 
+
+	protected void addRevisions(Workflow wf, String path, WorkflowBundle wfBundle) throws WriterException {
+		URI uriBase = uriTools.uriForBean(wfBundle).resolve(path);
+		PropertyResourceSerialiser visitor = new PropertyResourceSerialiser(uriBase);
+		Revision currentRevision = wf.getCurrentRevision();
+		if (currentRevision == null) {
+			return;
+		}
+		currentRevision.accept(visitor);
+		try {
+			/*
+			 * TODO: Serialize manually with nicer indentation/namespaces etc.,
+			 * as done for our other RDF/XML documents
+			 */
+			wfBundle.getResources()
+					.addResource(visitor.getDoc(), path, APPLICATION_RDF_XML);
+		} catch (IOException e) {
+			throw new WriterException("Can't write revisions to " + path, e);
+		}
+	}
 
 	@Override
 	public void writeBundle(WorkflowBundle wfBundle, OutputStream output,
