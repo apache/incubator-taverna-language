@@ -65,16 +65,10 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 	private void addElement(Element element) {
 		if (elementStack.isEmpty()) {
 			// Top level
-			Element existingRoot = getRootElement();
-			if (existingRoot == null) {
+			if (getRootElement() == null) {
 				setRootElement(element);
 			} else {
-				if (!existingRoot.getNodeName().equals(RDF_ELEM)) {
-					// Wrap existingRoot in <rdf:RDF>
-					Element rootElem = doc.createElementNS(RDF, RDF_ELEM);
-					setRootElement(rootElem);
-					rootElem.appendChild(existingRoot);
-				}
+				ensureRDFRootElem();
 				getRootElement().appendChild(element);
 			}
 		} else {
@@ -84,6 +78,18 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 
 		elementStack.push(element);
 		printStatus(false);
+	}
+
+	public void ensureRDFRootElem() {
+		Element existingRoot = getRootElement();
+		if (existingRoot == null || !existingRoot.getNodeName().equals(RDF_ELEM)) {
+			// Wrap existingRoot in <rdf:RDF>
+			Element rootElem = doc.createElementNS(RDF, RDF_ELEM);
+			setRootElement(rootElem);
+			if (existingRoot != null) {
+				rootElem.appendChild(existingRoot);
+			}
+		}
 	}
 
 	private final void printStatus(boolean isClosing) {
@@ -273,6 +279,12 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 
 	public void setDocBuilder(DocumentBuilder docBuilder) {
 		this.docBuilder = docBuilder;
+	}
+
+	public void includeBase() {
+		ensureRDFRootElem();
+		getRootElement().setAttribute("xml:base", baseUri.toASCIIString());
+		
 	}
 
 }

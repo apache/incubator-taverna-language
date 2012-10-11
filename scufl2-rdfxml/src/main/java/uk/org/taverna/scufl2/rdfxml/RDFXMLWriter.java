@@ -123,6 +123,8 @@ public class RDFXMLWriter implements WorkflowBundleWriter {
 	protected void addRevisions(Workflow wf, String path, WorkflowBundle wfBundle) throws WriterException {
 		URI uriBase = uriTools.uriForBean(wfBundle).resolve(path);
 		PropertyResourceSerialiser visitor = new PropertyResourceSerialiser(uriBase);
+		visitor.includeBase();
+		
 		Revision currentRevision = wf.getCurrentRevision();
 		if (currentRevision == null) {
 			return;
