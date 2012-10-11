@@ -70,6 +70,30 @@ public interface Revisioned extends WorkflowBean {
 	 * @return The new {@link #getCurrentRevision()}, for setting any further
 	 *         details.
 	 */
-	Revision newRevision(URI revisionIdentifier);
+	public Revision newRevision(URI revisionIdentifier);
+
+	/**
+	 * Set the identifier.
+	 * <p>
+	 * This will delete any previous revisions in {@link #getCurrentRevision()}
+	 * 
+	 * @see #getIdentifier()
+	 * @see #getCurrentRevision()
+	 * 
+	 * @param workflowIdentifier
+	 *            the identifier
+	 */
+	public void setIdentifier(URI workflowIdentifier);
+
+	/**
+	 * Returns the identifier.
+	 * <p>
+	 * The the default identifier is based on #getIdentifierRoot() plus a random UUID.
+	 * 
+	 * @see {@link #setIdentifier(URI)}
+	 * 
+	 * @return the identifier
+	 */
+	public URI getIdentifier();
 
 }

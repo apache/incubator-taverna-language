@@ -4,16 +4,14 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.UUID;
 
 import uk.org.taverna.scufl2.api.annotation.Revision;
 import uk.org.taverna.scufl2.api.annotation.Revisioned;
-import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
+import uk.org.taverna.scufl2.api.common.AbstractRevisioned;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.Ported;
@@ -31,15 +29,11 @@ import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
  * @author Alan R Williams
  * @author Stian Soiland-Reyes
  */
-public class Workflow extends AbstractNamedChild implements
+public class Workflow extends AbstractRevisioned implements
 		Child<WorkflowBundle>, Ported, Revisioned {
 
 	public static final URI WORKFLOW_ROOT = URI
 			.create("http://ns.taverna.org.uk/2010/workflow/");
-
-	public static URI generateIdentifier() {
-		return WORKFLOW_ROOT.resolve(UUID.randomUUID().toString() + "/");
-	}
 
 	private final TreeSet<DataLink> dataLinks = new TreeSet<DataLink>();
 
@@ -49,17 +43,11 @@ public class Workflow extends AbstractNamedChild implements
 	private final NamedSet<OutputWorkflowPort> outputPorts = new NamedSet<OutputWorkflowPort>();
 	private final NamedSet<Processor> processors = new NamedSet<Processor>();
 	private WorkflowBundle parent;
-	private Revision currentRevision;
-
 
 	/**
 	 * Constructs a <code>Workflow</code> with a name based on a random UUID.
 	 */
 	public Workflow() {	
-		newRevision();
-		String workflowId = WORKFLOW_ROOT.relativize(getWorkflowIdentifier())
-				.toASCIIString();
-		setName("wf-" + workflowId);
 	}
 
 	@Override
@@ -94,12 +82,6 @@ public class Workflow extends AbstractNamedChild implements
 		return controlLinks;
 	}
 	
-
-	public Revision getCurrentRevision() {
-		return currentRevision;
-	}
-
-
 	/**
 	 * Returns the <code>DataLink</code>s.
 	 * 
@@ -154,18 +136,14 @@ public class Workflow extends AbstractNamedChild implements
 
 	/**
 	 * Returns the workflow identifier.
-	 * <p>
-	 * The the default identifier is {@value #WORKFLOW_ROOT} plus a random UUID.
-	 * 
-	 * @see {@link #setWorkflowIdentifier(URI)}
+	 *
+	 * @deprecated for {@link #getIdentifier()} 
 	 * 
 	 * @return the workflow identifier
 	 */
+	@Deprecated
 	public URI getWorkflowIdentifier() {
-		if (getCurrentRevision() == null) {
-			return null;
-		}
-		return getCurrentRevision().getResourceURI();
+		return getIdentifier();
 	}
 
 	/**
@@ -184,13 +162,6 @@ public class Workflow extends AbstractNamedChild implements
 		this.controlLinks.addAll(controlLinks);
 	}
 	
-	public void setCurrentRevision(Revision currentRevision) {
-		this.currentRevision = currentRevision;
-		if (currentRevision == null) {
-			newRevision();		
-		}
-	}
-
 	/**
 	 * Set the <code>DataLink</code>s to be the contents of the specified set.
 	 * <p>
@@ -271,12 +242,13 @@ public class Workflow extends AbstractNamedChild implements
 
 	/**
 	 * Set the workflow identifier.
-	 * <p>
-	 * This will delete any previous revisions in getRevision
+     *
+	 * @deprecated for {@link #setIdentifier(URI)}
 	 * 
 	 * @param workflowIdentifier
 	 *            the workflow identifier
 	 */
+	@Deprecated
 	public void setWorkflowIdentifier(URI workflowIdentifier) {
 		setCurrentRevision(new Revision(workflowIdentifier));
 	}
@@ -327,22 +299,15 @@ public class Workflow extends AbstractNamedChild implements
 	}
 
 	@Override
-	public Revision newRevision() {
-		return newRevision(null);
+	protected URI getIdentifierRoot() {
+		return WORKFLOW_ROOT;
 	}
 
-	@Override
-	public Revision newRevision(URI revisionIdentifier) {
-		GregorianCalendar created = null;
-		if (revisionIdentifier == null) {
-			revisionIdentifier = generateIdentifier();
-			created = new GregorianCalendar();
-		}
-		Revision newRevision = new Revision(revisionIdentifier,
-				getCurrentRevision());
-		newRevision.setCreated(created);
-		setCurrentRevision(newRevision);
-		return newRevision;
+	public void setIdentifier(URI workflowIdentifier) {
+	}
+
+	public URI getIdentifier() {
+		return null;
 	}
 
 }
