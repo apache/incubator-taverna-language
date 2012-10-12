@@ -24,9 +24,13 @@
 		</xs:complexType>
 	</xs:element>
 	
-	<xs:attributeGroup name="about">
-	
+	<xs:attributeGroup name="about">	
 		<xs:attribute name="about" use="required" form="qualified"
+			type="xs:anyURI" />
+	</xs:attributeGroup>
+	
+	<xs:attributeGroup name="aboutOptional">	
+		<xs:attribute name="about" use="optional" form="qualified"
 			type="xs:anyURI" />
 	</xs:attributeGroup>
 	

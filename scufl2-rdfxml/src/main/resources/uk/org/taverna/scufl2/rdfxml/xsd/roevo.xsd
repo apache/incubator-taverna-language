@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified" targetNamespace="http://purl.org/wf4ever/roevo#"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:owl="http://www.w3.org/2002/07/owl#"
+	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:roevo="http://purl.org/wf4ever/roevo#"
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+	jxb:version="1.0">
+
+	<xs:annotation>
+		<xs:appinfo>
+			<!-- See http://docs.rakeshv.org/java/jaxb/users-guide/jaxb-custom.html -->
+			<jxb:globalBindings />
+			<jxb:schemaBindings>
+				<jxb:package name="org.purl.wf4ever.roevo.jaxb" />
+			</jxb:schemaBindings>
+		</xs:appinfo>
+	</xs:annotation>
+
+	<xs:import namespace="http://www.w3.org/XML/1998/namespace"
+		schemaLocation="http://www.w3.org/2001/03/xml.xsd" />
+
+	<xs:import namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		schemaLocation="rdf.xsd" />
+	<xs:import namespace="http://www.w3.org/2000/01/rdf-schema#"
+		schemaLocation="rdfs.xsd" />
+	<xs:import namespace="http://www.w3.org/2002/07/owl#"
+		schemaLocation="owl.xsd" />
+
+
+	<xs:complexType name="RoEvoDocument">
+		<xs:complexContent>
+			<xs:restriction base="rdf:RDF">
+				<xs:sequence>
+					<xs:element ref="roevo:VersionableResource" minOccurs="0" maxOccurs="unbounded" />
+					<xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"
+					processContents="lax" />					
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:element name="VersionableResource">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="rdf:type" minOccurs="0"/>
+				<xs:element name="wasChangedBy">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="roevo:ChangeSpecification" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="rdfs:seeAlso" minOccurs="0" maxOccurs="unbounded" />
+			</xs:sequence>
+			<xs:attributeGroup ref="rdf:about" />			
+		</xs:complexType>
+	</xs:element>
+
+
+	<xs:element name="ChangeSpecification">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="fromVersion" type="rdf:Resource" minOccurs="0" />
+				<xs:element name="toVersion" type="rdf:Resource" minOccurs="0" />
+				<xs:element name="hasChange" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:choice>
+						<xs:element name="Addition" type="roevo:Change" />
+						<xs:element name="Modification" type="roevo:Change" />
+						<xs:element name="Removal" type="roevo:Change" />
+						<xs:element name="Change" type="roevo:Change" />
+					</xs:choice>
+				</xs:complexType>
+				</xs:element>	
+				<xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"
+					processContents="lax" />
+			</xs:sequence>
+			<xs:attributeGroup ref="rdf:aboutOptional" />
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="Change">
+		<xs:sequence>
+			<xs:element ref="rdf:type" minOccurs="0"/>
+			<xs:element name="hasPreviousChange" type="rdf:Resource" minOccurs="0"/>
+			<xs:element name="relatedResource" type="rdf:Resource" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attributeGroup ref="rdf:aboutOptional" />
+	</xs:complexType>
+
+</xs:schema>
