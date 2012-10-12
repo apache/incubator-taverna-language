@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<rdf:RDF xmlns="http://purl.org/wf4ever/roevo#" 
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:prov="http://www.w3.org/ns/prov#"
+	xmlns:dcterms="http://purl.org/dc/terms/" xmlns:owl="http://www.w3.org/2002/07/owl#"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="RoEvoDocument"
+	xml:base="http://example.com/test/base"
+	xsi:schemaLocation="http://purl.org/wf4ever/roevo# ../../main/resources/uk/org/taverna/scufl2/rdfxml/xsd/roevo.xsd">
+	<VersionableResource rdf:about="joint-v3">		
+		<rdf:type rdf:resource="http://google.com/adsf"/>
+		<wasChangedBy>
+			<ChangeSpecification rdf:about="change-spec">
+				<fromVersion rdf:resource="joint-v2" />
+				<hasChange>
+					<Removal rdf:about="removal">
+						<relatedResource rdf:resource="removed-item"/>
+					</Removal>
+				</hasChange>
+				<hasChange>						
+					<Addition rdf:about="v2-change">
+						<rdf:type rdf:resource="http://example.com/SpecificAddition/" />					
+						<hasPreviousChange rdf:resource="removal"/>
+						<relatedResource rdf:resource="nested-workflow1" />
+					</Addition>
+				</hasChange>
+				<hasChange>
+					<Modification rdf:about="mod1">
+						<relatedResource rdf:resource="modified"/>
+					</Modification>
+				</hasChange>
+				<hasChange>
+					<Change>
+						<rdf:type rdf:resource="http://example.com/OtherChange"/>
+						<hasPreviousChange rdf:resource="mod1"/>
+						<relatedResource rdf:resource="a"/>
+						<relatedResource rdf:resource="b"/>
+						<relatedResource rdf:resource="c"/>		
+						<prov:wasAssociatedWith rdf:resource="Sue" />										
+					</Change>
+				</hasChange>
+				<prov:wasAssociatedWith rdf:resource="Fred" />
+			</ChangeSpecification>
+		</wasChangedBy>
+		<prov:generatedAtTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2012-12-24T18:00:00+01:00</prov:generatedAtTime>
+		<prov:wasRevisionOf rdf:resource="joint-v2" />
+		<rdfs:seeAlso rdf:resource="v3.t2flow"/>
+	</VersionableResource>
+	<VersionableResource rdf:about="joint-v2">		
+		<rdf:type rdf:resource="http://example.com/test"/>
+		<prov:generatedAtTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2010-01-15T11:00:00+01:00</prov:generatedAtTime>
+		<prov:wasRevisionOf rdf:resource="joint-v1" />
+		<rdfs:seeAlso rdf:resource="somethingelse"/>
+	</VersionableResource>
+	<VersionableResource rdf:about="joint-v1">		
+		<prov:generatedAtTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2010-01-15T11:00:00+01:00</prov:generatedAtTime>
+	</VersionableResource>
+</rdf:RDF>

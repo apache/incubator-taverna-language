@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="qualified"
 	elementFormDefault="qualified" targetNamespace="http://purl.org/wf4ever/roevo#"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:owl="http://www.w3.org/2002/07/owl#"
 	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:roevo="http://purl.org/wf4ever/roevo#"
+	xmlns:prov="http://www.w3.org/ns/prov#"
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
 	jxb:version="1.0">
 
@@ -19,21 +20,21 @@
 	<xs:import namespace="http://www.w3.org/XML/1998/namespace"
 		schemaLocation="http://www.w3.org/2001/03/xml.xsd" />
 
+
 	<xs:import namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 		schemaLocation="rdf.xsd" />
 	<xs:import namespace="http://www.w3.org/2000/01/rdf-schema#"
 		schemaLocation="rdfs.xsd" />
 	<xs:import namespace="http://www.w3.org/2002/07/owl#"
 		schemaLocation="owl.xsd" />
-
+	<xs:import namespace="http://www.w3.org/ns/prov#"
+			schemaLocation="prov.xsd" />
 
 	<xs:complexType name="RoEvoDocument">
 		<xs:complexContent>
 			<xs:restriction base="rdf:RDF">
 				<xs:sequence>
 					<xs:element ref="roevo:VersionableResource" minOccurs="0" maxOccurs="unbounded" />
-					<xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"
-					processContents="lax" />					
 				</xs:sequence>
 			</xs:restriction>
 		</xs:complexContent>
@@ -43,14 +44,17 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="rdf:type" minOccurs="0"/>
-				<xs:element name="wasChangedBy">
+				<xs:element name="wasChangedBy" minOccurs="0">
 					<xs:complexType>
 						<xs:sequence>
 							<xs:element ref="roevo:ChangeSpecification" />
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
-				<xs:element ref="rdfs:seeAlso" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element ref="prov:generatedAtTime" minOccurs="0" />
+				<xs:element ref="prov:wasRevisionOf" minOccurs="0" />	
+				<xs:element ref="prov:wasAttributedTo" minOccurs="0" />							
+				<xs:element ref="rdfs:seeAlso" minOccurs="0" maxOccurs="unbounded" />				
 			</xs:sequence>
 			<xs:attributeGroup ref="rdf:about" />			
 		</xs:complexType>
@@ -72,8 +76,7 @@
 					</xs:choice>
 				</xs:complexType>
 				</xs:element>	
-				<xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"
-					processContents="lax" />
+				<xs:element ref="prov:wasAssociatedWith" minOccurs="0" />
 			</xs:sequence>
 			<xs:attributeGroup ref="rdf:aboutOptional" />
 		</xs:complexType>
@@ -84,6 +87,7 @@
 			<xs:element ref="rdf:type" minOccurs="0"/>
 			<xs:element name="hasPreviousChange" type="rdf:Resource" minOccurs="0"/>
 			<xs:element name="relatedResource" type="rdf:Resource" minOccurs="0" maxOccurs="unbounded"/>
+			<xs:element ref="prov:wasAssociatedWith" minOccurs="0" />
 		</xs:sequence>
 		<xs:attributeGroup ref="rdf:aboutOptional" />
 	</xs:complexType>
