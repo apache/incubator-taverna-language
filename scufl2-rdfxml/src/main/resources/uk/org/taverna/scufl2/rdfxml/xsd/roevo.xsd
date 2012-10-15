@@ -43,7 +43,6 @@
 	<xs:element name="VersionableResource">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="rdf:type" minOccurs="0"/>
 				<xs:element name="wasChangedBy" minOccurs="0">
 					<xs:complexType>
 						<xs:sequence>
@@ -53,7 +52,7 @@
 				</xs:element>
 				<xs:element ref="prov:generatedAtTime" minOccurs="0" />
 				<xs:element ref="prov:wasRevisionOf" minOccurs="0" />
-				<xs:element ref="rdfs:seeAlso" minOccurs="0" maxOccurs="unbounded" />				
+				<xs:element ref="prov:hadOriginalSource" minOccurs="0" maxOccurs="unbounded"/>				
 			</xs:sequence>
 			<xs:attributeGroup ref="rdf:about" />			
 		</xs:complexType>
@@ -71,10 +70,9 @@
 						<xs:element name="Addition" type="roevo:Change" />
 						<xs:element name="Modification" type="roevo:Change" />
 						<xs:element name="Removal" type="roevo:Change" />
-						<xs:element name="Change" type="roevo:Change" />
 					</xs:choice>
 				</xs:complexType>
-				</xs:element>	
+				</xs:element>
 				<xs:element ref="prov:wasAssociatedWith" minOccurs="0" />
 			</xs:sequence>			
 		</xs:complexType>
@@ -83,7 +81,6 @@
 	<xs:complexType name="Change">
 		<xs:sequence>
 			<xs:element name="relatedResource" type="rdf:Resource" minOccurs="0" maxOccurs="unbounded"/>
-			<xs:element ref="prov:wasAssociatedWith" minOccurs="0" />
 		</xs:sequence>
 	</xs:complexType>
 	

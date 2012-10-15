@@ -39,5 +39,5 @@
 	<xs:element name="wasRevisionOf" type="rdf:Resource"  />
 	<xs:element name="wasAssociatedWith" type="rdf:Resource"  />
 	<xs:element name="wasAttributedTo" type="rdf:Resource"  />
-
+	<xs:element name="hadOriginalSource" type="rdf:Resource"  />
 </xs:schema>
