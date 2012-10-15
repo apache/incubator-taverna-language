@@ -1,8 +1,8 @@
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix : <http://ns.taverna.org.uk/2010/scufl2#> .
-@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @base <http://ns.taverna.org.uk/2010/scufl2> .
@@ -13,13 +13,10 @@
                                        
                                        rdfs:comment "The ontology defining SCUFL2 - a model for describing Taverna workflows."@en ;
                                        
-                                       owl:imports <http://purl.org/NET/dc_owl2dl/terms_od> ;
+                                       owl:imports <http://purl.org/dc/terms/> ;
                                        
                                        rdfs:seeAlso <http://www.mygrid.org.uk/dev/wiki/display/developer/Scufl2+Ontology> ,
-                                                    <http://www.taverna.org.uk/> ;
-                                       
-                                       owl:imports <http://www.w3.org/1999/02/22-rdf-syntax-ns> ,
-                                                   <http://www.w3.org/2000/01/rdf-schema> .
+                                                    <http://www.taverna.org.uk/> .
 
 
 #################################################################
@@ -736,6 +733,42 @@
 
 
 
+###  http://purl.org/dc/terms/hasPart
+
+dcterms:hasPart rdf:type owl:ObjectProperty .
+
+
+
+###  http://purl.org/dc/terms/isPartOf
+
+dcterms:isPartOf rdf:type owl:ObjectProperty .
+
+
+
+###  http://purl.org/dc/terms/isVersionOf
+
+dcterms:isVersionOf rdf:type owl:ObjectProperty .
+
+
+
+###  http://purl.org/dc/terms/relation
+
+dcterms:relation rdf:type owl:ObjectProperty .
+
+
+
+###  http://www.w3.org/1999/02/22-rdf-syntax-ns#first
+
+rdf:first rdf:type owl:ObjectProperty .
+
+
+
+###  http://www.w3.org/1999/02/22-rdf-syntax-ns#rest
+
+rdf:rest rdf:type owl:ObjectProperty .
+
+
+
 
 
 #################################################################
@@ -877,14 +910,14 @@
               
               rdfs:subClassOf :Child ,
                               :Port ,
-                              [ rdf:type owl:Restriction ;
-                                owl:onProperty :parent ;
-                                owl:someValuesFrom :Activity
-                              ] ,
                               [ rdf:type owl:Class ;
                                 owl:unionOf ( :InputActivityPort
                                               :OutputActivityPort
                                             )
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :parent ;
+                                owl:someValuesFrom :Activity
                               ] .
 
 
@@ -897,11 +930,11 @@
           
           rdfs:subClassOf :Control ,
                           [ rdf:type owl:Restriction ;
-                            owl:onProperty :block ;
+                            owl:onProperty :untilFinished ;
                             owl:someValuesFrom :Processor
                           ] ,
                           [ rdf:type owl:Restriction ;
-                            owl:onProperty :untilFinished ;
+                            owl:onProperty :block ;
                             owl:someValuesFrom :Processor
                           ] .
 
@@ -957,11 +990,11 @@ The Child-relationship also gives a strong hint that the entity should be serial
          
          rdfs:subClassOf :WorkflowElement ,
                          [ rdf:type owl:Restriction ;
-                           owl:onProperty :controlledProcessor ;
+                           owl:onProperty :controllingProcessor ;
                            owl:someValuesFrom :Processor
                          ] ,
                          [ rdf:type owl:Restriction ;
-                           owl:onProperty :controllingProcessor ;
+                           owl:onProperty :controlledProcessor ;
                            owl:someValuesFrom :Processor
                          ] .
 
@@ -1003,6 +1036,10 @@ The Child-relationship also gives a strong hint that the entity should be serial
                
                rdfs:subClassOf :WorkflowElement ,
                                rdf:List ,
+                               [ rdf:type owl:Restriction ;
+                                 owl:onProperty rdf:first ;
+                                 owl:allValuesFrom :DispatchStackLayer
+                               ] ,
                                [ rdf:type owl:Class ;
                                  owl:unionOf ( [ rdf:type owl:Restriction ;
                                                  owl:onProperty rdf:rest ;
@@ -1013,10 +1050,6 @@ The Child-relationship also gives a strong hint that the entity should be serial
                                                  owl:hasValue rdf:nil
                                                ]
                                              )
-                               ] ,
-                               [ rdf:type owl:Restriction ;
-                                 owl:onProperty rdf:first ;
-                                 owl:allValuesFrom :DispatchStackLayer
                                ] .
 
 
@@ -1065,12 +1098,12 @@ The Child-relationship also gives a strong hint that the entity should be serial
                   
                   rdfs:subClassOf :PortBinding ,
                                   [ rdf:type owl:Restriction ;
-                                    owl:onProperty :bindInputProcessorPort ;
-                                    owl:someValuesFrom :InputProcessorPort
-                                  ] ,
-                                  [ rdf:type owl:Restriction ;
                                     owl:onProperty :bindInputActivityPort ;
                                     owl:someValuesFrom :InputActivityPort
+                                  ] ,
+                                  [ rdf:type owl:Restriction ;
+                                    owl:onProperty :bindInputProcessorPort ;
+                                    owl:someValuesFrom :InputProcessorPort
                                   ] ;
                   
                   owl:disjointWith :OutputPortBinding .
@@ -1119,6 +1152,10 @@ This is considered a SenderPort within the workflow, so that it can be connected
                            
                            rdfs:subClassOf :WorkflowElement ,
                                            rdf:List ,
+                                           [ rdf:type owl:Restriction ;
+                                             owl:onProperty rdf:first ;
+                                             owl:allValuesFrom :IterationStrategyNode
+                                           ] ,
                                            [ rdf:type owl:Class ;
                                              owl:unionOf ( [ rdf:type owl:Restriction ;
                                                              owl:onProperty rdf:rest ;
@@ -1129,10 +1166,6 @@ This is considered a SenderPort within the workflow, so that it can be connected
                                                              owl:hasValue rdf:nil
                                                            ]
                                                          )
-                                           ] ,
-                                           [ rdf:type owl:Restriction ;
-                                             owl:onProperty rdf:first ;
-                                             owl:allValuesFrom :IterationStrategyNode
                                            ] .
 
 
@@ -1222,11 +1255,11 @@ This is considered a SenderPort within the workflow, so that it can be connected
                     
                     rdfs:subClassOf :ActivityPort ,
                                     [ rdf:type owl:Restriction ;
-                                      owl:onProperty :portDepth ;
+                                      owl:onProperty :granularPortDepth ;
                                       owl:someValuesFrom xsd:nonNegativeInteger
                                     ] ,
                                     [ rdf:type owl:Restriction ;
-                                      owl:onProperty :granularPortDepth ;
+                                      owl:onProperty :portDepth ;
                                       owl:someValuesFrom xsd:nonNegativeInteger
                                     ] .
 
@@ -1259,11 +1292,11 @@ This is considered a SenderPort within the workflow, so that it can be connected
                      rdfs:subClassOf :ProcessorPort ,
                                      :SenderPort ,
                                      [ rdf:type owl:Restriction ;
-                                       owl:onProperty :granularPortDepth ;
+                                       owl:onProperty :portDepth ;
                                        owl:someValuesFrom xsd:nonNegativeInteger
                                      ] ,
                                      [ rdf:type owl:Restriction ;
-                                       owl:onProperty :portDepth ;
+                                       owl:onProperty :granularPortDepth ;
                                        owl:someValuesFrom xsd:nonNegativeInteger
                                      ] .
 
@@ -1301,15 +1334,15 @@ This is considered a ReceiverPort within the workflow, so that it can be connect
       rdfs:label "Port"@en ;
       
       rdfs:subClassOf :Named ,
-                      [ rdf:type owl:Restriction ;
-                        owl:onProperty :name ;
-                        owl:someValuesFrom xsd:string
-                      ] ,
                       [ rdf:type owl:Class ;
                         owl:unionOf ( :ActivityPort
                                       :ProcessorPort
                                       :WorkflowPort
                                     )
+                      ] ,
+                      [ rdf:type owl:Restriction ;
+                        owl:onProperty :name ;
+                        owl:someValuesFrom xsd:string
                       ] ;
       
       rdfs:comment "A port is an input or output to a Processor, Workflow or Activity. "@en .
@@ -1323,14 +1356,14 @@ This is considered a ReceiverPort within the workflow, so that it can be connect
              rdfs:label "Port Binding"@en ;
              
              rdfs:subClassOf :Child ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :parent ;
+                               owl:someValuesFrom :ProcessorBinding
+                             ] ,
                              [ rdf:type owl:Class ;
                                owl:unionOf ( :InputPortBinding
                                              :OutputPortBinding
                                            )
-                             ] ,
-                             [ rdf:type owl:Restriction ;
-                               owl:onProperty :parent ;
-                               owl:someValuesFrom :ProcessorBinding
                              ] .
 
 
@@ -1417,14 +1450,14 @@ A processor is bound to an Activity which specifies how to execute the task. Thi
          rdfs:label "Product"@en ;
          
          rdfs:subClassOf :IterationStrategyNode ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :productOf ;
+                           owl:someValuesFrom :IterationStrategyChildren
+                         ] ,
                          [ rdf:type owl:Class ;
                            owl:unionOf ( :CrossProduct
                                          :DotProduct
                                        )
-                         ] ,
-                         [ rdf:type owl:Restriction ;
-                           owl:onProperty :productOf ;
-                           owl:someValuesFrom :IterationStrategyChildren
                          ] .
 
 
@@ -1485,12 +1518,12 @@ A processor is bound to an Activity which specifies how to execute the task. Thi
           
           rdfs:subClassOf :Named ,
                           [ rdf:type owl:Restriction ;
-                            owl:onProperty :name ;
-                            owl:someValuesFrom xsd:string
-                          ] ,
-                          [ rdf:type owl:Restriction ;
                             owl:onProperty :workflowIdentifier ;
                             owl:someValuesFrom owl:Thing
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :name ;
+                            owl:someValuesFrom xsd:string
                           ] ;
           
           owl:hasKey ( :workflowIdentifier
@@ -1535,17 +1568,23 @@ Super-class for any Scufl2 class. """@en .
               rdfs:label "Workflow Port"@en ;
               
               rdfs:subClassOf :Port ,
-                              [ rdf:type owl:Restriction ;
-                                owl:onProperty :parent ;
-                                owl:someValuesFrom :Workflow
-                              ] ,
                               [ rdf:type owl:Class ;
                                 owl:unionOf ( :InputWorkflowPort
                                               :OutputWorkflowPort
                                             )
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :parent ;
+                                owl:someValuesFrom :Workflow
                               ] ;
               
               rdfs:comment "Ports of a Workflow. "@en .
+
+
+
+###  http://www.w3.org/1999/02/22-rdf-syntax-ns#List
+
+rdf:List rdf:type owl:Class .
 
 
 
@@ -1565,5 +1604,5 @@ rdf:nil rdf:type owl:NamedIndividual .
 
 
 
-###  Generated by the OWL API (version 3.2.3.1824) http://owlapi.sourceforge.net
+###  Generated by the OWL API (version 3.2.5.1928) http://owlapi.sourceforge.net
 
