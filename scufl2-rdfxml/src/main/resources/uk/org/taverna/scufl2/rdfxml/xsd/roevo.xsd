@@ -52,8 +52,7 @@
 					</xs:complexType>
 				</xs:element>
 				<xs:element ref="prov:generatedAtTime" minOccurs="0" />
-				<xs:element ref="prov:wasRevisionOf" minOccurs="0" />	
-				<xs:element ref="prov:wasAttributedTo" minOccurs="0" />							
+				<xs:element ref="prov:wasRevisionOf" minOccurs="0" />
 				<xs:element ref="rdfs:seeAlso" minOccurs="0" maxOccurs="unbounded" />				
 			</xs:sequence>
 			<xs:attributeGroup ref="rdf:about" />			
@@ -64,8 +63,8 @@
 	<xs:element name="ChangeSpecification">
 		<xs:complexType>
 			<xs:sequence>
+				<xs:element ref="rdf:type" minOccurs="0"/>
 				<xs:element name="fromVersion" type="rdf:Resource" minOccurs="0" />
-				<xs:element name="toVersion" type="rdf:Resource" minOccurs="0" />
 				<xs:element name="hasChange" minOccurs="0" maxOccurs="unbounded">
 				<xs:complexType>
 					<xs:choice>
@@ -77,19 +76,15 @@
 				</xs:complexType>
 				</xs:element>	
 				<xs:element ref="prov:wasAssociatedWith" minOccurs="0" />
-			</xs:sequence>
-			<xs:attributeGroup ref="rdf:aboutOptional" />
+			</xs:sequence>			
 		</xs:complexType>
 	</xs:element>
 
 	<xs:complexType name="Change">
 		<xs:sequence>
-			<xs:element ref="rdf:type" minOccurs="0"/>
-			<xs:element name="hasPreviousChange" type="rdf:Resource" minOccurs="0"/>
 			<xs:element name="relatedResource" type="rdf:Resource" minOccurs="0" maxOccurs="unbounded"/>
 			<xs:element ref="prov:wasAssociatedWith" minOccurs="0" />
 		</xs:sequence>
-		<xs:attributeGroup ref="rdf:aboutOptional" />
 	</xs:complexType>
-
+	
 </xs:schema>

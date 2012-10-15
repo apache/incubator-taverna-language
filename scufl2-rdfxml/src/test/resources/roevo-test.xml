@@ -11,16 +11,15 @@
 		<rdf:type rdf:resource="http://google.com/adsf"/>
 		<wasChangedBy>
 			<ChangeSpecification rdf:about="change-spec">
+				<rdf:type rdf:resource="http://example.com/InsertNestedWorkflow"/>
 				<fromVersion rdf:resource="joint-v2" />
 				<hasChange>
-					<Removal rdf:about="removal">
+					<Removal>
 						<relatedResource rdf:resource="removed-item"/>
 					</Removal>
 				</hasChange>
-				<hasChange>						
-					<Addition rdf:about="v2-change">
-						<rdf:type rdf:resource="http://example.com/SpecificAddition/" />					
-						<hasPreviousChange rdf:resource="removal"/>
+				<hasChange>
+					<Addition>
 						<relatedResource rdf:resource="nested-workflow1" />
 					</Addition>
 				</hasChange>
@@ -31,7 +30,6 @@
 				</hasChange>
 				<hasChange>
 					<Change>
-						<rdf:type rdf:resource="http://example.com/OtherChange"/>
 						<hasPreviousChange rdf:resource="mod1"/>
 						<relatedResource rdf:resource="a"/>
 						<relatedResource rdf:resource="b"/>
