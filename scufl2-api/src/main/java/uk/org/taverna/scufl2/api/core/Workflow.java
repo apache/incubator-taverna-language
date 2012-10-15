@@ -253,7 +253,7 @@ public class Workflow extends AbstractRevisioned implements
 	 */
 	@Deprecated
 	public void setWorkflowIdentifier(URI workflowIdentifier) {
-		setCurrentRevision(new Revision(workflowIdentifier));
+		setIdentifier(workflowIdentifier);
 	}
 
 	@Override

@@ -48,7 +48,7 @@ public abstract class AbstractRevisioned extends AbstractNamed implements Revisi
 		}
 		Revision newRevision = new Revision(revisionIdentifier,
 				getCurrentRevision());
-		newRevision.setCreated(created);
+		newRevision.setGeneratedAtTime(created);
 		setCurrentRevision(newRevision);
 		return newRevision;
 	}
@@ -72,7 +72,7 @@ public abstract class AbstractRevisioned extends AbstractNamed implements Revisi
 		if (getCurrentRevision() == null) {
 			return null;
 		}
-		return getCurrentRevision().getResourceURI();
+		return getCurrentRevision().getIdentifier();
 	}
 
 	/**
@@ -88,7 +88,7 @@ public abstract class AbstractRevisioned extends AbstractNamed implements Revisi
 	 */
 	@Override
 	public void setIdentifier(URI identifier) {
-		setCurrentRevision(new Revision(identifier));
+		setCurrentRevision(new Revision(identifier, null));
 	}
 
 }

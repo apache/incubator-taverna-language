@@ -2,10 +2,14 @@ package uk.org.taverna.scufl2.api.annotation;
 
 import java.net.URI;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.processing.Processor;
 
+import uk.org.taverna.scufl2.api.common.Child;
+import uk.org.taverna.scufl2.api.common.Visitor;
+import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Workflow;
@@ -51,7 +55,7 @@ import uk.org.taverna.scufl2.api.core.Workflow;
  * @author Stian Soiland-Reyes
  * 
  */
-public class Revision {
+public class Revision implements WorkflowBean {
 
 	private Set<URI> additionOf;
 	private URI changeSpecificationType;
@@ -66,6 +70,14 @@ public class Revision {
 	private Set<URI> removalOf;
 
 	private Set<URI> wasAttributedTo;
+
+	public Revision() {
+	}
+	
+	public Revision(URI identifier, Revision previousRevision) {
+		this.identifier = identifier;
+		this.previousRevision = previousRevision;
+	}
 
 	public Set<URI> getAdditionOf() {
 		return additionOf;
@@ -137,6 +149,31 @@ public class Revision {
 
 	public void setWasAttributedTo(Set<URI> wasAttributedTo) {
 		this.wasAttributedTo = wasAttributedTo;
+	}
+
+	@Override
+	public boolean accept(Visitor visitor) {
+		return accept(visitor, new HashSet<Revision>());
+	}
+
+	protected boolean accept(Visitor visitor, HashSet<Revision> visited) {
+		if (!visited.add(this)) {
+			// Ignore this Revision, visitor has already seen it
+			return true;
+		}
+		boolean recurse = visitor.visitEnter(this);
+		if (recurse) {
+			if (getPreviousRevision() != null) {
+				recurse = getPreviousRevision().accept(visitor, visited);
+			}
+			for (Revision rev : getHadOriginalSources()) {
+				if (! recurse) {
+					break;
+				}
+				recurse = rev.accept(visitor, visited);						
+			}
+		}
+		return visitor.visitLeave(this);	
 	}
 
 }
