@@ -39,7 +39,7 @@ import uk.org.taverna.scufl2.api.property.PropertyResource;
 
 /**
  * Utility methods for dealing with SCUFL2 models
- * 
+ *
  * @author Stian Soiland-Reyes
  */
 public class Scufl2Tools {
@@ -47,16 +47,16 @@ public class Scufl2Tools {
 
 	public static URI PORT_DEFINITION = URI
 			.create("http://ns.taverna.org.uk/2010/scufl2#portDefinition");
-	
+
 	private static URITools uriTools = new URITools();
-	
+
 	public static URI NESTED_WORKFLOW = URI
 			.create("http://ns.taverna.org.uk/2010/activity/nested-workflow");
 	/**
 	 * Compare {@link ProcessorBinding}s by their {@link ProcessorBinding#getActivityPosition()}.
-	 * 
+	 *
 	 * Note: this comparator imposes orderings that are inconsistent with equals.
-	 * 
+	 *
 	 * @author Stian Soiland-Reyes
 	 */
 	public static class BindingComparator implements Comparator<ProcessorBinding> {
@@ -70,7 +70,7 @@ public class Scufl2Tools {
 
 	/**
 	 * Returns the {@link Configuration} for a {@link Configurable} in the given {@link Profile}.
-	 * 
+	 *
 	 * @param configurable
 	 *            the <code>Configurable</code> to find a <code>Configuration</code> for
 	 * @param profile
@@ -98,7 +98,7 @@ public class Scufl2Tools {
 	/**
 	 * Returns the list of {@link Configuration Configurations} for a {@link Configurable} in the
 	 * given {@link Profile}.
-	 * 
+	 *
 	 * @param configurable
 	 *            the <code>Configurable</code> to find a <code>Configuration</code> for
 	 * @param profile
@@ -110,7 +110,7 @@ public class Scufl2Tools {
 	public List<Configuration> configurationsFor(Configurable configurable, Profile profile) {
 		List<Configuration> configurations = new ArrayList<Configuration>();
 		for (Configuration config : profile.getConfigurations()) {
-			if (config.getConfigures().equals(configurable)) {
+			if (configurable.equals(config.getConfigures())) {
 				configurations.add(config);
 			}
 		}
@@ -193,14 +193,14 @@ public class Scufl2Tools {
 		return null;
 
 	}
-	
+
 	public PropertyResource portDefinitionFor(ActivityPort activityPort, Profile profile) throws PropertyException {
 		Configuration actConfig = configurationFor(activityPort.getParent(), profile);
-		
+
 		URI portURI = uriTools.uriForBean(activityPort);
 		URI configURI = uriTools.uriForBean(actConfig);
 
-		
+
 		URI portDefinition;
 		URI definesPort;
 		if (activityPort instanceof InputPort) {
@@ -210,8 +210,8 @@ public class Scufl2Tools {
 			portDefinition = PORT_DEFINITION.resolve("#outputPortDefinition");
 			definesPort = PORT_DEFINITION.resolve("#definesOutputPort");
 		}
-		for (PropertyResource portDef : 
-			actConfig.getPropertyResource().getPropertiesAsResources(portDefinition)) {			
+		for (PropertyResource portDef :
+			actConfig.getPropertyResource().getPropertiesAsResources(portDefinition)) {
 			URI portDefURI = portDef.getPropertyAsResourceURI(definesPort);
 			// We'll compare the URIs as absolute URIs - but portDefURI is most likely relative
 			// to the config
@@ -220,7 +220,7 @@ public class Scufl2Tools {
 			}
 		}
 		return null;
-		
+
 	}
 
 	public ProcessorBinding processorBindingForProcessor(Processor processor, Profile profile) {
@@ -331,7 +331,7 @@ public class Scufl2Tools {
 			}
 		}
 		return candidate;
-		
+
 	}
 
 	/**
@@ -340,10 +340,10 @@ public class Scufl2Tools {
 	 * This is calculated as all processors in the dataflow, except the
 	 * processor itself, and any processor <em>upstream</em>, following both
 	 * data links and conditional links.
-	 * 
+	 *
 	 * @see #possibleUpStreamProcessors(Dataflow, Processor)
 	 * @see #splitProcessors(Collection, Processor)
-	 * 
+	 *
 	 * @param dataflow
 	 *            Dataflow from where to find processors
 	 * @param processor
@@ -366,10 +366,10 @@ public class Scufl2Tools {
 	 * This is calculated as all processors in the dataflow, except the
 	 * processor itself, and any processor <em>downstream</em>, following both
 	 * data links and conditional links.
-	 * 
+	 *
 	 * @see #possibleDownStreamProcessors(Dataflow, Processor)
 	 * @see #splitProcessors(Collection, Processor)
-	 * 
+	 *
 	 * @param dataflow
 	 *            Dataflow from where to find processors
 	 * @param processor
@@ -387,7 +387,7 @@ public class Scufl2Tools {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param processors
 	 * @param splitPoint
 	 * @return
@@ -397,9 +397,9 @@ public class Scufl2Tools {
 		Set<Processor> upStream = new HashSet<Processor>();
 		Set<Processor> downStream = new HashSet<Processor>();
 		Set<Processor> queue = new HashSet<Processor>();
-	
+
 		queue.add(splitPoint);
-	
+
 		// First let's go upstream
 		while (!queue.isEmpty()) {
 			Processor processor = queue.iterator().next();
@@ -432,8 +432,8 @@ public class Scufl2Tools {
 		// Then downstream
 		while (!queue.isEmpty()) {
 			Processor processor = queue.iterator().next();
-			queue.remove(processor);			
-			List<BlockingControlLink> controlledConditions = controlLinksWaitingFor(processor);				
+			queue.remove(processor);
+			List<BlockingControlLink> controlledConditions = controlLinksWaitingFor(processor);
 			for (BlockingControlLink condition : controlledConditions) {
 				Processor downstreamProc = condition.getBlock();
 				if (!downStream.contains(downstreamProc)) {
@@ -466,9 +466,9 @@ public class Scufl2Tools {
 	/**
 	 * Result bean returned from
 	 * {@link Scufl2Tools#splitProcessors(Collection, Processor)}.
-	 * 
+	 *
 	 * @author Stian Soiland-Reyes
-	 * 
+	 *
 	 */
 	public static class ProcessorSplit {
 
@@ -479,7 +479,7 @@ public class Scufl2Tools {
 
 		/**
 		 * Processor that was used as a split point.
-		 * 
+		 *
 		 * @return Split point processor
 		 */
 		public Processor getSplitPoint() {
@@ -488,7 +488,7 @@ public class Scufl2Tools {
 
 		/**
 		 * Processors that are upstream from the split point.
-		 * 
+		 *
 		 * @return Upstream processors
 		 */
 		public Set<Processor> getUpStream() {
@@ -497,7 +497,7 @@ public class Scufl2Tools {
 
 		/**
 		 * Processors that are downstream from the split point.
-		 * 
+		 *
 		 * @return Downstream processors
 		 */
 		public Set<Processor> getDownStream() {
@@ -515,7 +515,7 @@ public class Scufl2Tools {
 		 * unconnected processors downstream, but not along the path to the
 		 * {@link #getSplitPoint()}, or they could be upstream from any
 		 * processor in {@link #getDownStream()}.
-		 * 
+		 *
 		 * @return Processors unconnected from the split point
 		 */
 		public Set<Processor> getUnconnected() {
@@ -524,7 +524,7 @@ public class Scufl2Tools {
 
 		/**
 		 * Construct a new processor split result.
-		 * 
+		 *
 		 * @param splitPoint
 		 *            Processor used as split point
 		 * @param upStream
@@ -551,25 +551,25 @@ public class Scufl2Tools {
 	 */
 	public boolean containsNestedWorkflow(Processor processor) {
 		for (Profile profile : processor.getParent().getParent().getProfiles()) {
-			if (containsNestedWorkflow(processor, profile)) { 
+			if (containsNestedWorkflow(processor, profile)) {
 				return true;
 			}
 		}
-		return false;		
+		return false;
 	}
-	
+
 	/**
 	 * Returns true if processor contains a nested workflow in the specified profile.
-	 * 
+	 *
 	 */
 	public boolean containsNestedWorkflow(Processor processor, Profile profile) {
-		for (ProcessorBinding binding : 
+		for (ProcessorBinding binding :
 			processorBindingsForProcessor(processor, profile)) {
 			if (binding.getBoundActivity().getConfigurableType().equals(NESTED_WORKFLOW)) {
 				return true;
 			}
 		}
-		return false;		
+		return false;
 	}
-	
+
 }
