@@ -207,8 +207,10 @@ PropertyObject {
 		@Override
 		public WorkflowBean cloned() {
 			CopyVisitor copyVisitor = new CopyVisitor();
+			PropertyVisit clone = new PropertyVisit(predicateUri);
+			copyVisitor.knownClone(this, clone);
 			accept(copyVisitor);
-			return copyVisitor.getCloned(this);
+			return clone;
 		}
 
 	}
@@ -232,12 +234,16 @@ PropertyObject {
 		if (visitor.visitEnter(this)) {
 			Set<URI> uris = getProperties().keySet();
 			for (URI uri : uris) {
-				if (!new PropertyVisit(uri).accept(visitor)) {
+				if (!makePropertyVisit(uri).accept(visitor)) {
 					break;
 				}
 			}
 		}
 		return visitor.visitLeave(this);
+	}
+
+	protected PropertyVisit makePropertyVisit(URI uri) {
+		return new PropertyVisit(uri);
 	}
 
 	/**
