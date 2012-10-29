@@ -112,7 +112,9 @@ public class Revision extends PropertyResource {
 
 	public void setCreated(Calendar created) {
 		clearProperties(AT_TIME);
-		addProperty(AT_TIME, new PropertyLiteral(created));
+		if (created != null) {
+			addProperty(AT_TIME, new PropertyLiteral(created));
+		}
 	}
 
 	public void setCreators(Set<URI> creators) {
