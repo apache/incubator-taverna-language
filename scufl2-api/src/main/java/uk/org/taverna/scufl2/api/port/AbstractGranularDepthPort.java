@@ -13,7 +13,7 @@ package uk.org.taverna.scufl2.api.port;
  * 
  */
 public abstract class AbstractGranularDepthPort extends AbstractDepthPort implements GranularDepthPort {
-
+	
 	private Integer granularDepth;
 
 	/**

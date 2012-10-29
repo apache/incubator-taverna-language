@@ -1,5 +1,6 @@
 package uk.org.taverna.scufl2.api.core;
 
+import uk.org.taverna.scufl2.api.common.AbstractCloneable;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.impl.NullSafeComparator;
@@ -21,7 +22,7 @@ import uk.org.taverna.scufl2.api.port.SenderPort;
  * 
  * @author Alan R Williams
  */
-public class DataLink implements Child<Workflow>, Comparable {
+public class DataLink extends AbstractCloneable implements Child<Workflow>, Comparable {
 
 	@SuppressWarnings("rawtypes")
 	private static NullSafeComparator nullSafeCompare = new NullSafeComparator();

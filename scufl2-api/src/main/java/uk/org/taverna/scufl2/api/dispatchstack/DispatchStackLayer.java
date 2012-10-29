@@ -2,6 +2,7 @@ package uk.org.taverna.scufl2.api.dispatchstack;
 
 import java.net.URI;
 
+import uk.org.taverna.scufl2.api.common.AbstractCloneable;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.common.Typed;
@@ -15,8 +16,8 @@ import uk.org.taverna.scufl2.api.common.Visitor;
  * http://ns.taverna.org.uk/2010/scufl2/taverna#Failover) adds the functionality
  * to retry an Activity if an invocation fails.
  */
-public class DispatchStackLayer implements Typed, Child<DispatchStack>,
-		Configurable {
+public class DispatchStackLayer extends AbstractCloneable
+	implements Typed, Child<DispatchStack>, Configurable {
 
 	private DispatchStack parent;
 	private URI configurableType;

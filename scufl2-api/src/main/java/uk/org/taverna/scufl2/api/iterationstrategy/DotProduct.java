@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.org.taverna.scufl2.api.common.Visitor;
+import uk.org.taverna.scufl2.api.common.WorkflowBean;
+import uk.org.taverna.scufl2.api.common.AbstractCloneable.CopyVisitor;
 
 /**
  * @author Stian Soiland-Reyes
@@ -75,6 +77,13 @@ public class DotProduct extends ArrayList<IterationStrategyNode> implements
 							+ parent);
 		}
 
+	}
+	
+	@Override
+	public WorkflowBean cloned() {		
+		CopyVisitor copyVisitor = new CopyVisitor();
+		accept(copyVisitor);
+		return copyVisitor.getCloned(this);
 	}
 
 }

@@ -3,6 +3,7 @@
  */
 package uk.org.taverna.scufl2.api.profiles;
 
+import uk.org.taverna.scufl2.api.common.AbstractCloneable;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
@@ -21,7 +22,7 @@ import uk.org.taverna.scufl2.api.port.InputProcessorPort;
  * @author Alan R Williams
  * @author Stian Soiland-Reyes
  */
-public class ProcessorInputPortBinding implements
+public class ProcessorInputPortBinding extends AbstractCloneable implements
 ProcessorPortBinding<InputActivityPort, InputProcessorPort> {
 	private ProcessorBinding parent;
 	private InputProcessorPort boundProcessorPort;

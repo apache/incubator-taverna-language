@@ -23,6 +23,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import uk.org.taverna.scufl2.api.common.AbstractCloneable;
 import uk.org.taverna.scufl2.api.common.Visitor;
 
 /**
@@ -46,7 +47,7 @@ import uk.org.taverna.scufl2.api.common.Visitor;
  * @see DatatypeConverter
  * @author Stian Soiland-Reyes
  */
-public class PropertyLiteral implements PropertyObject {
+public class PropertyLiteral extends AbstractCloneable implements PropertyObject {
 
 	/* TODO: Move these constants to separate class */
 

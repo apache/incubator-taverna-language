@@ -2,6 +2,7 @@ package uk.org.taverna.scufl2.api.core;
 
 import java.text.MessageFormat;
 
+import uk.org.taverna.scufl2.api.common.AbstractCloneable;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.impl.NullSafeComparator;
 
@@ -13,7 +14,7 @@ import uk.org.taverna.scufl2.api.impl.NullSafeComparator;
  * @author Stian Soiland-Reyes
  */
 @SuppressWarnings("rawtypes")
-public class BlockingControlLink implements ControlLink {
+public class BlockingControlLink extends AbstractCloneable implements ControlLink {
 
 	private static NullSafeComparator nullSafeCompare = new NullSafeComparator();
 	

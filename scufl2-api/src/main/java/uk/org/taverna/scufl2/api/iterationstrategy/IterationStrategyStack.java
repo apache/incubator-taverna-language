@@ -3,8 +3,10 @@ package uk.org.taverna.scufl2.api.iterationstrategy;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.org.taverna.scufl2.api.common.AbstractCloneable.CopyVisitor;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Visitor;
+import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.core.Processor;
 
 public class IterationStrategyStack extends ArrayList<IterationStrategyTopNode>
@@ -52,4 +54,11 @@ public class IterationStrategyStack extends ArrayList<IterationStrategyTopNode>
 		}
 	}
 
+	@Override
+	public WorkflowBean cloned() {		
+		CopyVisitor copyVisitor = new CopyVisitor();
+		accept(copyVisitor);
+		return copyVisitor.getCloned(this);
+	}
+	
 }

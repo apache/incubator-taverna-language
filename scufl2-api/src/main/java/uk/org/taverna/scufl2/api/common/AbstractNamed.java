@@ -9,7 +9,7 @@ import java.util.UUID;
  * @author Alan R Williams
  * @author Stian Soiland-Reyes
  */
-public abstract class AbstractNamed implements Named {
+public abstract class AbstractNamed extends AbstractCloneable implements Named  {
 
 	private String name;
 
