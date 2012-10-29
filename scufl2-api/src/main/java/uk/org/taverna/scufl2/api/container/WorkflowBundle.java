@@ -179,7 +179,7 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 	@Override
 	public String toString() {
 		final int maxLen = 6;
-		return "TavernaResearchObject [" + "profiles="
+		return "WorkflowBundle [" + "profiles="
 				+ (profiles != null ? toString(profiles, maxLen) : null)
 				+ ", mainWorkflow=" + mainWorkflow + "]";
 	}
