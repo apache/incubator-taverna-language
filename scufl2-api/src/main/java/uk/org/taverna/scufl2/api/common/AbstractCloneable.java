@@ -33,7 +33,7 @@ public abstract class AbstractCloneable implements WorkflowBean {
 
 		public void cloneNode(WorkflowBean node) {
 			WorkflowBean clone = cloneIfNotInCache((WorkflowBean)node);
-			if (node instanceof Child) {
+			if (node instanceof Child && clone instanceof Child) {
 				Child child = (Child) node;
 				Child childClone = (Child)clone;
 				WorkflowBean oldParent = child.getParent();
@@ -55,12 +55,14 @@ public abstract class AbstractCloneable implements WorkflowBean {
 			try {
 				clone = original.getClass().newInstance();
 			} catch (InstantiationException e) {
-				throw new RuntimeException(e);
+				System.err.println("Can't do this one.. " + original);
+				return null;
 			} catch (IllegalAccessException e) {
 				throw new RuntimeException(e);
 			}
 			cloned.put(original, clone);
 			clonePropertiesInto(original, clone, cloned);
+			System.out.println("Cloned " + clone);
 			return clone;	
 		}
 		
@@ -68,7 +70,7 @@ public abstract class AbstractCloneable implements WorkflowBean {
 				WorkflowBean clone, HashMap<WorkflowBean, WorkflowBean> cloned) {
 			BeanInfo beanInfo;
 			try {
-				beanInfo = Introspector.getBeanInfo(original.getClass(), AbstractCloneable.class);
+				beanInfo = Introspector.getBeanInfo(original.getClass(), Object.class);
 			} catch (IntrospectionException e) {
 				throw new RuntimeException(e);
 			}
@@ -79,6 +81,20 @@ public abstract class AbstractCloneable implements WorkflowBean {
 
 		private void copyProperty(PropertyDescriptor p,
 				WorkflowBean original, WorkflowBean clone) {
+			if (p.getWriteMethod() == null) {
+				System.err.println("Skipping writing to " + p.getName());
+				return;
+			}
+			if (p.getReadMethod() == null) {
+				System.err.println("Can't read " + p.getName());
+				return;
+			}
+			if (p.getName().equals("parent")) {
+				System.err.println("Skipping 'parent' property");
+				return;
+			}
+			
+			
 			Object oldValue;
 			try {
 				oldValue = p.getReadMethod().invoke(original);
@@ -90,7 +106,10 @@ public abstract class AbstractCloneable implements WorkflowBean {
 			}
 			Object newValue = oldValue;
 			if (oldValue instanceof WorkflowBean) {
-				newValue = cloneIfNotInCache((WorkflowBean)oldValue);
+				newValue = getCloned((WorkflowBean)oldValue);
+				if (newValue == null) {
+					newValue = oldValue;
+				}
 			} else if (oldValue instanceof Cloneable) {				
 				try {
 					Method cloneMethod = oldValue.getClass().getMethod("clone");
@@ -99,19 +118,25 @@ public abstract class AbstractCloneable implements WorkflowBean {
 					// ignore
 				}
 			}
-			
 			try {
 				p.getWriteMethod().invoke(clone, newValue);
 			} catch (Exception e) {
 				throw new RuntimeException("Could not invoke write method for " + p.getName() 
 						+ " on " + original, e);
 			}
+			String asClone = newValue != oldValue ? " as clone" : " as is" ;
+			System.out.println("Copied " + p.getName() + asClone + " from " + original);
 		}
 
 		@SuppressWarnings("unchecked")
 		public <T extends WorkflowBean> T getCloned(T originalBean) {
 			return (T) cloned.get(originalBean);
-		}		
+		}
+		
+		public <T extends WorkflowBean> void knownClone(T original, T clone) {
+			cloned.put(original, clone);
+		}
+		
 	}
 	
 	@Override
