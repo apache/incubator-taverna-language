@@ -1,6 +1,7 @@
 package uk.org.taverna.scufl2.api.port;
 
 import uk.org.taverna.scufl2.api.core.Processor;
+import uk.org.taverna.scufl2.api.core.Workflow;
 
 /**
  * An <code>InputProcessorPort</code> is a <Port> that inputs data to a {@link Processor}.
@@ -68,7 +69,8 @@ ReceiverPort, ProcessorPort, InputPort {
 
 	@Override
 	public String toString() {
-		return parent.getName() + ":" + getName();
+		Processor p = getParent();
+		return ( p != null  ? p.getName() + ":" : "")  + getName();
 	}
 
 }

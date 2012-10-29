@@ -63,6 +63,7 @@ SenderPort, ProcessorPort, OutputPort, GranularDepthPort {
 
 	@Override
 	public String toString() {
-		return getParent().getName() + "." + getName();
+		Processor p = getParent();
+		return ( p != null  ? p.getName() + ":" : "")  + getName();
 	}
 }

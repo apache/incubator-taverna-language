@@ -63,6 +63,7 @@ OutputPort {
 
 	@Override
 	public String toString() {
-		return getParent().getName() + "." + getName();
+		Workflow p = getParent();
+		return ( p != null  ? p.getName() + ":" : "")  + getName();
 	}
 }
