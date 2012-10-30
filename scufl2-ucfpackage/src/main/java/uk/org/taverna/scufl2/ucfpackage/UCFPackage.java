@@ -3,10 +3,11 @@ package uk.org.taverna.scufl2.ucfpackage;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -15,6 +16,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -31,8 +34,8 @@ import org.w3c.dom.Document;
 import uk.org.taverna.scufl2.ucfpackage.impl.odfdom.pkg.OdfPackage;
 import uk.org.taverna.scufl2.ucfpackage.impl.odfdom.pkg.manifest.OdfFileEntry;
 
-public class UCFPackage {
-
+public class UCFPackage implements Cloneable {
+	private static Logger logger = Logger.getLogger(UCFPackage.class.getName());
 	private static final String CONTAINER_XML = "META-INF/container.xml";
 	private static final Charset UTF_8 = Charset.forName("utf-8");
 	public static final String MIME_BINARY = "application/octet-stream";
@@ -69,7 +72,8 @@ public class UCFPackage {
 	}
 
 	protected void open(File containerFile) throws IOException {
-		BufferedInputStream stream = new BufferedInputStream(new FileInputStream(containerFile));
+		BufferedInputStream stream = new BufferedInputStream(
+				new FileInputStream(containerFile));
 		try {
 			open(stream);
 		} finally {
@@ -138,14 +142,15 @@ public class UCFPackage {
 		if (!renamed) {
 			if (packageFile.exists() && tempFile.exists()) {
 				// Could happen on Windows
-				if (! packageFile.delete()) {
+				if (!packageFile.delete()) {
 					// Could have been permission problem
-					throw new IOException("Could not delete existing " + packageFile);
+					throw new IOException("Could not delete existing "
+							+ packageFile);
 				}
 				renamed = tempFile.renameTo(packageFile);
 			}
 		}
-		if (! renamed) {
+		if (!renamed) {
 			throw new IOException("Could not rename temp file " + tempFile
 					+ " to " + packageFile);
 		}
@@ -168,13 +173,14 @@ public class UCFPackage {
 		} finally {
 			odfPackage.close();
 		}
-		
+
 		try {
 			open(tempFile);
 		} catch (Exception e) {
-			throw new IOException("Could not reload package from " + tempFile, e);
+			throw new IOException("Could not reload package from " + tempFile,
+					e);
 		}
-		 
+
 	}
 
 	protected void prepareContainerXML() throws IOException {
@@ -256,8 +262,9 @@ public class UCFPackage {
 	protected static synchronized JAXBContext getJaxbContext()
 			throws JAXBException {
 		if (jaxbContext == null) {
-			jaxbContext = JAXBContext.newInstance(
-					org.oasis_open.names.tc.opendocument.xmlns.container.ObjectFactory.class,					
+			jaxbContext = JAXBContext
+					.newInstance(
+							org.oasis_open.names.tc.opendocument.xmlns.container.ObjectFactory.class,
 							org.w3._2000._09.xmldsig.ObjectFactory.class,
 							org.w3._2001._04.xmlenc.ObjectFactory.class);
 		}
@@ -346,7 +353,7 @@ public class UCFPackage {
 
 	public byte[] getResourceAsBytes(String path) throws IOException {
 		try {
-		return odfPackage.getBytes(path);
+			return odfPackage.getBytes(path);
 		} catch (IOException e) {
 			throw e;
 		} catch (Exception e) {
@@ -599,10 +606,12 @@ public class UCFPackage {
 			tempFile.delete();
 		}
 	}
+
 	public OutputStream addResourceUsingOutputStream(String path,
 			String mediaType) throws IOException {
 		if (path.equals(CONTAINER_XML)) {
-			throw new IllegalArgumentException("Can't add " + CONTAINER_XML + " using OutputStream");
+			throw new IllegalArgumentException("Can't add " + CONTAINER_XML
+					+ " using OutputStream");
 			// as we need to parse it after insertion
 		}
 		try {
@@ -612,6 +621,44 @@ public class UCFPackage {
 		} catch (Exception e) {
 			throw new IOException("Could not add " + path, e);
 		}
-		
 	}
+
+	@Override
+	protected UCFPackage clone() {
+		final PipedOutputStream outputStream = new PipedOutputStream();
+		PipedInputStream inputStream = null;
+		try {
+			try {
+				inputStream = copyToOutputStream(outputStream);
+				return new UCFPackage(inputStream);
+			} finally {
+				if (inputStream != null) {
+					inputStream.close();
+				}
+			}
+		} catch (IOException e) {
+			throw new RuntimeException("Could not clone UCFPackage", e);
+		}
+	}
+
+	private PipedInputStream copyToOutputStream(
+			final PipedOutputStream outputStream) throws IOException {
+		PipedInputStream inputStream = new PipedInputStream(outputStream);
+		new Thread("Cloning " + this) {
+			@Override
+			public void run() {
+				try {
+					try {
+						save(outputStream);
+					} finally {
+						outputStream.close();
+					}
+				} catch (IOException e) {
+					logger.log(Level.INFO, "Could not save/close UCF package while cloning", e);
+				}
+			}
+		}.start();
+		return inputStream;
+	}
+
 }
