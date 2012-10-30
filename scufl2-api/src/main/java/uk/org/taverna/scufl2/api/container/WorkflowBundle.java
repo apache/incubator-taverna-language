@@ -207,5 +207,15 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 		this.annotations.clear();
 		this.annotations.addAll(annotations);
 	}
+	
+	@Override
+	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		WorkflowBundle cloneBundle = cloning.getCloned(this);
+		cloneBundle.setGlobalBaseURI(getGlobalBaseURI());
+		cloneBundle.setMainWorkflow(cloning.cloneIfNotInCache(getMainWorkflow()));
+		cloneBundle.setMainProfile(cloning.cloneIfNotInCache(getMainProfile()));
+		cloneBundle.setResources(getResources().clone());
+		
+	}
 
 }

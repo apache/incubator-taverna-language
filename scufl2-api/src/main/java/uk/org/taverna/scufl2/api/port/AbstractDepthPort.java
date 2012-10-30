@@ -1,8 +1,12 @@
 package uk.org.taverna.scufl2.api.port;
 
+import java.util.HashMap;
+
 import uk.org.taverna.scufl2.api.common.AbstractNamed;
 import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
 import uk.org.taverna.scufl2.api.common.Visitor;
+import uk.org.taverna.scufl2.api.common.WorkflowBean;
+import uk.org.taverna.scufl2.api.common.AbstractCloneable.Cloning;
 
 /**
  * Abstract implementation of a <code>Port</code> that has a depth property.
@@ -59,4 +63,11 @@ public abstract class AbstractDepthPort extends AbstractNamedChild implements De
 		this.depth = depth;
 	}
 
+	@Override
+	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		super.cloneInto(clone, cloning);
+		AbstractDepthPort clonePort = (AbstractDepthPort)clone;
+		clonePort.setDepth(getDepth());
+	}
+	
 }

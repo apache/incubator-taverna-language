@@ -1,5 +1,9 @@
 package uk.org.taverna.scufl2.api.port;
 
+import java.util.HashMap;
+
+import uk.org.taverna.scufl2.api.common.WorkflowBean;
+
 /**
  * Abstract implementation of a <code>Port</code> that has a granular depth property.
  * <p>
@@ -52,5 +56,13 @@ public abstract class AbstractGranularDepthPort extends AbstractDepthPort implem
 	public void setGranularDepth(Integer granularDepth) {
 		this.granularDepth = granularDepth;
 	}
-
+	
+	@Override
+	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		super.cloneInto(clone, cloning);
+		AbstractGranularDepthPort clonePort = (AbstractGranularDepthPort)clone;
+		clonePort.setGranularDepth(getGranularDepth());
+	}
+	
+	
 }

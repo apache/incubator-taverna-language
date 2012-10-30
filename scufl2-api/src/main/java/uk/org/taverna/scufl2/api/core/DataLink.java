@@ -1,8 +1,11 @@
 package uk.org.taverna.scufl2.api.core;
 
+import java.util.HashMap;
+
 import uk.org.taverna.scufl2.api.common.AbstractCloneable;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Visitor;
+import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.impl.NullSafeComparator;
 import uk.org.taverna.scufl2.api.port.ReceiverPort;
 import uk.org.taverna.scufl2.api.port.SenderPort;
@@ -233,6 +236,15 @@ public class DataLink extends AbstractCloneable implements Child<Workflow>, Comp
 	@Override
 	public String toString() {
 		return getReceivesFrom() + "=>" + getSendsTo();
+	}
+	
+	@Override
+	protected void cloneInto(WorkflowBean clone,
+			HashMap<WorkflowBean, WorkflowBean> cloned) {
+		DataLink cloneLink = (DataLink)clone;
+		cloneLink.setMergePosition(getMergePosition());
+		cloneLink.setReceivesFrom((SenderPort) cloned.get(getReceivesFrom()));
+		cloneLink.setSendsTo((ReceiverPort) cloned.get(getSendsTo()));
 	}
 
 }

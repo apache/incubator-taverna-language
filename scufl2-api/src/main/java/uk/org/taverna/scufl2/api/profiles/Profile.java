@@ -175,4 +175,11 @@ public class Profile extends AbstractNamedChild implements Child<WorkflowBundle>
 		this.profilePosition = profilePosition;
 	}
 
+	@Override
+	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		Profile cloneProfile = (Profile)clone;
+		cloneProfile.setProfilePosition(getProfilePosition());
+	}
+
+	
 }

@@ -2,6 +2,8 @@ package uk.org.taverna.scufl2.api.port;
 
 import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
 import uk.org.taverna.scufl2.api.common.Visitor;
+import uk.org.taverna.scufl2.api.common.WorkflowBean;
+import uk.org.taverna.scufl2.api.common.AbstractCloneable.Cloning;
 import uk.org.taverna.scufl2.api.core.Workflow;
 
 /**
@@ -66,4 +68,5 @@ OutputPort {
 		Workflow p = getParent();
 		return ( p != null  ? p.getName() + ":" : "")  + getName();
 	}
+	
 }

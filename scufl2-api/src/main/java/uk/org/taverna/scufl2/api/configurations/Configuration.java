@@ -12,6 +12,7 @@ import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.common.Typed;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
+import uk.org.taverna.scufl2.api.common.AbstractCloneable.Cloning;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
@@ -205,4 +206,10 @@ public class Configuration extends AbstractNamedChild implements Child<Profile>,
 		getPropertyResource().setTypeURI(type);
 	}
 
+	@Override
+	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		Configuration cloneConfig = (Configuration) clone;
+		cloneConfig.setConfigures(cloning.cloneOrOriginal(getConfigures()));
+	}
+	
 }

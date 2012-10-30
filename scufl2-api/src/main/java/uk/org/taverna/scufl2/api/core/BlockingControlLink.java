@@ -1,9 +1,11 @@
 package uk.org.taverna.scufl2.api.core;
 
 import java.text.MessageFormat;
+import java.util.HashMap;
 
 import uk.org.taverna.scufl2.api.common.AbstractCloneable;
 import uk.org.taverna.scufl2.api.common.Visitor;
+import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.impl.NullSafeComparator;
 
 /**
@@ -173,4 +175,13 @@ public class BlockingControlLink extends AbstractCloneable implements ControlLin
 		return MessageFormat.format("{0}-blocks-{1}", untilName, blockName);
 	}
 
+	@Override
+	protected void cloneInto(WorkflowBean clone,
+			HashMap<WorkflowBean, WorkflowBean> cloned) {
+		BlockingControlLink cloneLink = (BlockingControlLink)clone;
+		cloneLink.setBlock((Processor) cloned.get(getBlock()));
+		cloneLink.setUntilFinished((Processor) cloned.get(getUntilFinished()));
+		
+	}
+	
 }

@@ -370,5 +370,11 @@ public class Workflow extends AbstractNamedChild implements
 		setCurrentRevision(newRevision);
 		return newRevision;
 	}
-
+	
+	@Override
+	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		Workflow cloneWorkflow = (Workflow)clone;
+		cloneWorkflow.setCurrentRevision(cloning.cloneIfNotInCache(getCurrentRevision()));		
+	}
+	
 }
