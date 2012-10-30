@@ -1,10 +1,5 @@
 package uk.org.taverna.scufl2.api.common;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 
 public abstract class AbstractCloneable implements WorkflowBean {
