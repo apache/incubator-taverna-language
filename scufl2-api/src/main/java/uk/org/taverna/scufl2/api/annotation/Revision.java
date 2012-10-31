@@ -3,6 +3,7 @@ package uk.org.taverna.scufl2.api.annotation;
 import java.net.URI;
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.annotation.processing.Processor;
@@ -57,19 +58,19 @@ import uk.org.taverna.scufl2.api.core.Workflow;
  */
 public class Revision extends AbstractCloneable implements WorkflowBean {
 
-	private Set<URI> additionOf;
+	private Set<URI> additionOf = new LinkedHashSet<URI>();
 	private URI changeSpecificationType;
 	private Calendar generatedAtTime;
-	private Set<Revision> hadOriginalSources;
+	private Set<Revision> hadOriginalSources = new LinkedHashSet<Revision>();
 	private URI identifier;
 
-	private Set<URI> modificationsOf;
+	private Set<URI> modificationsOf = new LinkedHashSet<URI>();
 
 	private Revision previousRevision;
 
-	private Set<URI> removalOf;
+	private Set<URI> removalOf = new LinkedHashSet<URI>();
 
-	private Set<URI> wasAttributedTo;
+	private Set<URI> wasAttributedTo = new LinkedHashSet<URI>();
 
 	public Revision() {
 	}
@@ -195,6 +196,18 @@ public class Revision extends AbstractCloneable implements WorkflowBean {
 
 	@Override
 	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		Revision cloneRevision = (Revision)clone;
+		cloneRevision.setAdditionOf(new LinkedHashSet<URI>(getAdditionOf()));
+		cloneRevision.setChangeSpecificationType(getChangeSpecificationType());
+		cloneRevision.setGeneratedAtTime((Calendar) getGeneratedAtTime().clone());
+		for (Revision source : getHadOriginalSources()) {
+			cloneRevision.getHadOriginalSources().add(cloning.cloneIfNotInCache(source));
+		}
+		cloneRevision.setIdentifier(getIdentifier());
+		cloneRevision.setModificationsOf(new LinkedHashSet<URI>(getModificationsOf()));
+		cloneRevision.setPreviousRevision(cloning.cloneIfNotInCache(getPreviousRevision()));		
+		cloneRevision.setRemovalOf(new LinkedHashSet<URI>(getRemovalOf()));
+		cloneRevision.setWasAttributedTo(new LinkedHashSet<URI>(getWasAttributedTo()));				
 	}
 	
 }
