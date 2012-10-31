@@ -20,7 +20,7 @@ import uk.org.taverna.scufl2.api.property.PropertyList;
 import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.api.property.PropertyReference;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
-import uk.org.taverna.scufl2.api.property.PropertyResource.PropertyVisit;
+import uk.org.taverna.scufl2.api.property.PropertyVisit;
 
 public class PropertyResourceSerialiser extends VisitorWithPath {
 	public static final String ABOUT = "about";

@@ -60,7 +60,7 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.api.property.PropertyObject;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
-import uk.org.taverna.scufl2.api.property.PropertyResource.PropertyVisit;
+import uk.org.taverna.scufl2.api.property.PropertyVisit;
 import uk.org.taverna.scufl2.rdfxml.impl.NamespacePrefixMapperJAXB_RI;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Blocking;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Control;

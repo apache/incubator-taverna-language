@@ -154,72 +154,6 @@ PropertyObject {
 
 	}
 
-	/**
-	 * A special {@link Child} used by {@link PropertyResource#accept(Visitor)}
-	 * when visiting the map of {@link PropertyResource#getProperties()}
-	 *
-	 * @author Stian Soiland-Reyes
-	 *
-	 */
-	public class PropertyVisit implements Child<PropertyResource> {
-
-		private final URI predicateUri;
-
-		PropertyVisit(URI uri) {
-			predicateUri = uri;
-		}
-
-		@Override
-		public boolean accept(Visitor visitor) {
-			if (visitor.visitEnter(this)) {
-				for (PropertyObject po : getPropertiesForPredicate()) {
-					if (!po.accept(visitor)) {
-						break;
-					}
-				}
-			}
-			return visitor.visitLeave(this);
-		}
-
-		@Override
-		public PropertyResource getParent() {
-			return PropertyResource.this;
-		}
-
-		public URI getPredicateUri() {
-			return predicateUri;
-		}
-
-		public Set<PropertyObject> getPropertiesForPredicate() {
-			return getProperties().get(predicateUri);
-		}
-
-		@Override
-		public void setParent(PropertyResource parent) {
-			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public String toString() {
-			return "PropertyVisit " + getPredicateUri();
-		}
-
-		@Override
-		public PropertyVisit clone() {			
-			// We'll have to do AbstractCloneable.cloneWorkflowBean(T) 
-			// manually in order to do the cloning ourself (in order to keep the
-			// link to PropertyResource)
-			
-			Cloning cloning = new Cloning(this);
-			PropertyVisit clone = new PropertyVisit(predicateUri);
-			cloning.knownClone(this, clone);
-			CopyVisitor copyVisitor = new CopyVisitor(cloning);
-			accept(copyVisitor);
-			return clone;
-		}
-
-	}
-
 	private URI typeURI;
 
 	private final Map<URI, SortedSet<PropertyObject>> properties = new LazyMap<URI, SortedSet<PropertyObject>>() {
@@ -246,9 +180,19 @@ PropertyObject {
 		}
 		return visitor.visitLeave(this);
 	}
+	
+	/**
+	 * Transitional deprecated interface wrapping {@link uk.org.taverna.scufl2.api.property.PropertyVisit}.
+	 */
+	@Deprecated
+	public interface PropertyVisit extends Child<PropertyResource> {
+		public URI getPredicateUri();
 
-	protected PropertyVisit makePropertyVisit(URI uri) {
-		return new PropertyVisit(uri);
+		public Set<PropertyObject> getPropertiesForPredicate();
+	}
+
+	protected uk.org.taverna.scufl2.api.property.PropertyVisit makePropertyVisit(URI uri) {
+		return new uk.org.taverna.scufl2.api.property.PropertyVisit(this, uri);
 	}
 
 	/**
@@ -455,8 +399,11 @@ PropertyObject {
 
 	@Override
 	public String toString() {
-		return "PropertyResource [getTypeURI()=" + getTypeURI()
-		+ ", getResourceURI()=" + getResourceURI() + "]";
+		if (getResourceURI() != null) {
+			return String.format("%s, <%s> a <%s>", 
+					getClass().getSimpleName(), getResourceURI(), getTypeURI());
+		} 
+		return String.format("%s [] a <%s>", getClass().getSimpleName(), getTypeURI());
 	}
 
 	public boolean hasProperty(URI predicate) {
@@ -480,6 +427,7 @@ PropertyObject {
 			}
 		}		
 	}
+	
 	
 
 
