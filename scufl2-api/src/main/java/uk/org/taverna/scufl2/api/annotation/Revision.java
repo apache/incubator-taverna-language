@@ -117,7 +117,8 @@ public class Revision extends AbstractCloneable implements WorkflowBean {
 	}
 
 	public void setAdditionOf(Set<URI> additionOf) {
-		this.additionOf = additionOf;
+		this.additionOf.clear();
+		this.additionOf.addAll(additionOf);
 	}
 
 	public void setChangeSpecificationType(URI changeSpecificationType) {
@@ -129,7 +130,8 @@ public class Revision extends AbstractCloneable implements WorkflowBean {
 	}
 
 	public void setHadOriginalSources(Set<Revision> hadOriginalSources) {
-		this.hadOriginalSources = hadOriginalSources;
+		this.hadOriginalSources.clear();	
+		this.hadOriginalSources.addAll(hadOriginalSources);
 	}
 
 	public void setIdentifier(URI identifier) {
@@ -137,7 +139,8 @@ public class Revision extends AbstractCloneable implements WorkflowBean {
 	}
 
 	public void setModificationsOf(Set<URI> modificationsOf) {
-		this.modificationsOf = modificationsOf;
+		this.modificationsOf.clear();
+		this.modificationsOf.addAll(modificationsOf);
 	}
 
 	public void setPreviousRevision(Revision previousRevision) {
@@ -145,11 +148,13 @@ public class Revision extends AbstractCloneable implements WorkflowBean {
 	}
 
 	public void setRemovalOf(Set<URI> removalOf) {
-		this.removalOf = removalOf;
+		this.removalOf.clear();
+		this.removalOf.addAll(removalOf);
 	}
 
 	public void setWasAttributedTo(Set<URI> wasAttributedTo) {
-		this.wasAttributedTo = wasAttributedTo;
+		this.wasAttributedTo.clear();
+		this.wasAttributedTo.addAll(wasAttributedTo);
 	}
 
 	@Override
@@ -199,7 +204,9 @@ public class Revision extends AbstractCloneable implements WorkflowBean {
 		Revision cloneRevision = (Revision)clone;
 		cloneRevision.setAdditionOf(new LinkedHashSet<URI>(getAdditionOf()));
 		cloneRevision.setChangeSpecificationType(getChangeSpecificationType());
-		cloneRevision.setGeneratedAtTime((Calendar) getGeneratedAtTime().clone());
+		if (getGeneratedAtTime() != null) {
+			cloneRevision.setGeneratedAtTime((Calendar) getGeneratedAtTime().clone());
+		}
 		for (Revision source : getHadOriginalSources()) {
 			cloneRevision.getHadOriginalSources().add(cloning.cloneIfNotInCache(source));
 		}
