@@ -130,9 +130,13 @@ public class TestUCFPackage {
 		byte[] expected = ("mimetype" + UCFPackage.MIME_EPUB + "PK")
 				.getBytes("ASCII");
 		FileInputStream in = new FileInputStream(tmpFile);
-		assertEquals(MIME_OFFSET, in.skip(MIME_OFFSET));
 		byte[] actual = new byte[expected.length];
-		assertEquals(expected.length, in.read(actual));
+		try {
+			assertEquals(MIME_OFFSET, in.skip(MIME_OFFSET));
+			assertEquals(expected.length, in.read(actual));
+		} finally {
+			in.close();
+		}
 		assertArrayEquals(expected, actual);
 	}
 
@@ -729,16 +733,16 @@ public class TestUCFPackage {
 		assertEquals("helloworld.txt", container.getRootFiles().get(1)
 				.getPath());
 		container.save(tmpFile);
-
-		String expectedContainerXml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-				+ "<container xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\" xmlns:ns2=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:ns3=\"http://www.w3.org/2001/04/xmlenc#\">\n"
-				+ "    <rootFiles>\n"
-				+ "        <rootFile xmlns:ex=\"http://example.com/\" media-type=\"text/html\" full-path=\"helloworld.html\" ex:extraAnnotation=\"hello\"/>\n"
-				+ "        <rootFile media-type=\"text/plain\" full-path=\"helloworld.txt\"/>\n"
-				+ "    </rootFiles>\n"
-				+ "    <ex:example xmlns:ex=\"http://example.com/\">more example</ex:example>\n"
-				+
-				"</container>\n";
+//
+//		String expectedContainerXml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+//				+ "<container xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\" xmlns:ns2=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:ns3=\"http://www.w3.org/2001/04/xmlenc#\">\n"
+//				+ "    <rootFiles>\n"
+//				+ "        <rootFile xmlns:ex=\"http://example.com/\" media-type=\"text/html\" full-path=\"helloworld.html\" ex:extraAnnotation=\"hello\"/>\n"
+//				+ "        <rootFile media-type=\"text/plain\" full-path=\"helloworld.txt\"/>\n"
+//				+ "    </rootFiles>\n"
+//				+ "    <ex:example xmlns:ex=\"http://example.com/\">more example</ex:example>\n"
+//				+
+//				"</container>\n";
 
 		ZipFile zipFile = new ZipFile(tmpFile);
 		ZipEntry manifestEntry = zipFile.getEntry("META-INF/container.xml");
