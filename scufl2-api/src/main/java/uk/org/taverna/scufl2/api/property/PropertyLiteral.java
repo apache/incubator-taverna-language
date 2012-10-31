@@ -25,6 +25,7 @@ import org.xml.sax.SAXException;
 
 import uk.org.taverna.scufl2.api.common.AbstractCloneable;
 import uk.org.taverna.scufl2.api.common.Visitor;
+import uk.org.taverna.scufl2.api.common.WorkflowBean;
 
 /**
  * A {@link PropertyObject} representing a literal, like a string.
@@ -421,6 +422,13 @@ public class PropertyLiteral extends AbstractCloneable implements PropertyObject
 	public String toString() {
 		return "PropertyLiteral [getLiteralType()=" + getLiteralType() + ", getLiteralValue()="
 		+ getLiteralValue() + "]";
+	}
+	
+	@Override
+	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		PropertyLiteral lit = (PropertyLiteral) clone;
+		lit.setLiteralType(getLiteralType());
+		lit.setLiteralValue(getLiteralValue());				
 	}
 
 }

@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -13,7 +14,6 @@ import java.util.TreeSet;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
-import uk.org.taverna.scufl2.api.common.AbstractCloneable.CopyVisitor;
 import uk.org.taverna.scufl2.api.impl.LazyMap;
 
 /**
@@ -205,10 +205,15 @@ PropertyObject {
 		}
 
 		@Override
-		public WorkflowBean cloned() {
-			CopyVisitor copyVisitor = new CopyVisitor();
+		public WorkflowBean cloned() {			
+			// We'll have to do AbstractCloneable.cloneWorkflowBean(T) 
+			// manually in order to do the cloning ourself (in order to keep the
+			// link to PropertyResource)
+			
+			Cloning cloning = new Cloning(this);
 			PropertyVisit clone = new PropertyVisit(predicateUri);
-			copyVisitor.knownClone(this, clone);
+			cloning.knownClone(this, clone);
+			CopyVisitor copyVisitor = new CopyVisitor(cloning);
 			accept(copyVisitor);
 			return clone;
 		}
@@ -463,7 +468,18 @@ PropertyObject {
 	}
 
 	
-
+	@Override
+	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		super.cloneInto(clone, cloning);
+		PropertyResource cloneResource = (PropertyResource) clone;
+		cloneResource.setTypeURI(getTypeURI());
+		for (Entry<URI, SortedSet<PropertyObject>> e : getProperties().entrySet()) {
+			URI predicate = e.getKey();
+			for (PropertyObject propObj : e.getValue()) {
+				cloneResource.addProperty(predicate, propObj);
+			}
+		}		
+	}
 	
 
 
