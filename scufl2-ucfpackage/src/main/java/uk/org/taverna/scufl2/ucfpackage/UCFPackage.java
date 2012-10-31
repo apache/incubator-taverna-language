@@ -451,6 +451,32 @@ public class UCFPackage implements Cloneable {
 			return path.endsWith("/");
 		}
 
+		public UCFPackage getUcfPackage() {
+			return UCFPackage.this;
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if (! (obj instanceof ResourceEntry)) {
+				return false;
+			}
+			ResourceEntry other = (ResourceEntry) obj;
+			
+			if (! getUcfPackage().equals(other.getUcfPackage())) {
+				return false;
+			}
+			return getPath().equals(other.getPath());
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getUcfPackage().hashCode();
+			result = prime * result + ((path == null) ? 0 : path.hashCode());
+			return result;
+		}
+
 	}
 
 	public Map<String, ResourceEntry> listAllResources() {
@@ -624,7 +650,7 @@ public class UCFPackage implements Cloneable {
 	}
 
 	@Override
-	protected UCFPackage clone() {
+	public UCFPackage clone() {
 		final PipedOutputStream outputStream = new PipedOutputStream();
 		PipedInputStream inputStream = null;
 		try {
