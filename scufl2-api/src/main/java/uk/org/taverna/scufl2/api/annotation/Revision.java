@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.annotation.processing.Processor;
 
+import uk.org.taverna.scufl2.api.common.AbstractCloneable;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
@@ -55,7 +56,7 @@ import uk.org.taverna.scufl2.api.core.Workflow;
  * @author Stian Soiland-Reyes
  * 
  */
-public class Revision implements WorkflowBean {
+public class Revision extends AbstractCloneable implements WorkflowBean {
 
 	private Set<URI> additionOf;
 	private URI changeSpecificationType;
@@ -175,5 +176,26 @@ public class Revision implements WorkflowBean {
 		}
 		return visitor.visitLeave(this);	
 	}
+	
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " " + getIdentifier();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (! (obj instanceof Revision)) {
+			return false;
+		}
+		Revision other = (Revision) obj;
+		if (getIdentifier() == null) {
+			return obj == this;
+		}
+		return getIdentifier().equals(other.getIdentifier());		
+	}
 
+	@Override
+	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+	}
+	
 }

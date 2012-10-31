@@ -28,6 +28,7 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
  * and may have {@link InputProcessorPort input} and {@link OutputProcessorPort output} ports.
  * 
  * @author Alan R Williams
+ * @author Stian Soiland-Reyes
  */
 public class Processor extends AbstractNamed implements Child<Workflow>, Ported {
 
@@ -193,12 +194,6 @@ public class Processor extends AbstractNamed implements Child<Workflow>, Ported 
 		if (parent != null) {
 			parent.getProcessors().add(this);
 		}
-	}
-
-	@Override
-	public String toString() {
-		return super.toString() + "[" + "getInputPorts()=" + getInputPorts() + ", "
-		+ "getOutputPorts()=" + getOutputPorts() + ", " + "]";
 	}
 
 }

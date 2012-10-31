@@ -3,6 +3,7 @@ package uk.org.taverna.scufl2.api;
 import java.net.URI;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
+import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.BlockingControlLink;
@@ -236,6 +237,10 @@ public class ExampleWorkflow {
 		workflowBundle.setMainProfile(profile);
 		Profile secondaryProfile = makeSecondaryProfile();
 		secondaryProfile.setParent(workflowBundle);
+		
+		Scufl2Tools scufl2Tools = new Scufl2Tools();
+		scufl2Tools.setParents(workflowBundle);
+		
 		return workflowBundle;
 	}
 

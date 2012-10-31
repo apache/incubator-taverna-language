@@ -256,25 +256,6 @@ public class Workflow extends AbstractRevisioned implements
 		setIdentifier(workflowIdentifier);
 	}
 
-	@Override
-	public String toString() {
-		final int maxLen = 6;
-		return "Workflow [getName()="
-				+ getName()
-				+ ", getDatalinks()="
-				+ (getDataLinks() != null ? toString(getDataLinks(), maxLen)
-						: null)
-				+ ", getInputPorts()="
-				+ (getInputPorts() != null ? toString(getInputPorts(), maxLen)
-						: null)
-				+ ", getOutputPorts()="
-				+ (getOutputPorts() != null ? toString(getOutputPorts(), maxLen)
-						: null)
-				+ ", getProcessors()="
-				+ (getProcessors() != null ? toString(getProcessors(), maxLen)
-						: null) + "]";
-	}
-
 	/**
 	 * Updates the workflow identifier.
 	 * <p>
@@ -305,5 +286,12 @@ public class Workflow extends AbstractRevisioned implements
 	protected URI getIdentifierRoot() {
 		return WORKFLOW_ROOT;
 	}
-
+	
+	@Override
+	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		super.cloneInto(clone, cloning);
+		Workflow cloneWorkflow = (Workflow)clone;
+		cloneWorkflow.setCurrentRevision(cloning.cloneIfNotInCache(getCurrentRevision()));		
+	}
+	
 }

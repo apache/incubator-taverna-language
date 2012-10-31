@@ -23,7 +23,9 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import uk.org.taverna.scufl2.api.common.AbstractCloneable;
 import uk.org.taverna.scufl2.api.common.Visitor;
+import uk.org.taverna.scufl2.api.common.WorkflowBean;
 
 /**
  * A {@link PropertyObject} representing a literal, like a string.
@@ -46,7 +48,7 @@ import uk.org.taverna.scufl2.api.common.Visitor;
  * @see DatatypeConverter
  * @author Stian Soiland-Reyes
  */
-public class PropertyLiteral implements PropertyObject {
+public class PropertyLiteral extends AbstractCloneable implements PropertyObject {
 
 	/* TODO: Move these constants to separate class */
 
@@ -418,8 +420,19 @@ public class PropertyLiteral implements PropertyObject {
 
 	@Override
 	public String toString() {
-		return "PropertyLiteral [getLiteralType()=" + getLiteralType() + ", getLiteralValue()="
-		+ getLiteralValue() + "]";
+		if (getLiteralType().equals(XSD_STRING)) {
+			return String.format("%s \"%s\"", getClass().getSimpleName(),
+					getLiteralValue());
+		}
+		return String.format("%s \"%s\"^^<%s>", getClass().getSimpleName(),
+				getLiteralValue(), getLiteralType());
+	}
+	
+	@Override
+	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		PropertyLiteral lit = (PropertyLiteral) clone;
+		lit.setLiteralType(getLiteralType());
+		lit.setLiteralValue(getLiteralValue());				
 	}
 
 }

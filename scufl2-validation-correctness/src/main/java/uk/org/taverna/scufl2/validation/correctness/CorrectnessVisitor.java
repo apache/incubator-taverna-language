@@ -58,7 +58,7 @@ import uk.org.taverna.scufl2.api.profiles.ProcessorPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.api.property.PropertyObject;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
-import uk.org.taverna.scufl2.api.property.PropertyResource.PropertyVisit;
+import uk.org.taverna.scufl2.api.property.PropertyVisit;
 
 /**
  * @author alanrw

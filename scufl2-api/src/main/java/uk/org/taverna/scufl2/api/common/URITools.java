@@ -24,7 +24,6 @@ import uk.org.taverna.scufl2.api.port.Port;
 import uk.org.taverna.scufl2.api.port.ProcessorPort;
 import uk.org.taverna.scufl2.api.profiles.ProcessorPortBinding;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
-import uk.org.taverna.scufl2.api.property.PropertyResource.PropertyVisit;
 
 /**
  * Utility methods for dealing with URIs.
@@ -140,6 +139,7 @@ public class URITools {
 			return root.getGlobalBaseURI();
 		}
 		if (bean instanceof Child) {
+			@SuppressWarnings("rawtypes")
 			Child child = (Child) bean;
 			WorkflowBean parent = child.getParent();
 			if (parent == null) {
@@ -166,6 +166,7 @@ public class URITools {
 
 			URI relationURI = parentUri.resolve(relation.toLowerCase());
 			if (parent instanceof List) {
+				@SuppressWarnings("rawtypes")
 				int index = ((List) parent).indexOf(child);
 				return parentUri.resolve(index + "/");
 			}
@@ -210,12 +211,17 @@ public class URITools {
 				return relationURI;
 			} else if (bean instanceof DispatchStackLayer) {
 				DispatchStackLayer dispatchStackLayer = (DispatchStackLayer) bean;
-
+				parent = dispatchStackLayer.getParent();
+				@SuppressWarnings("unchecked")
+				List<IterationStrategyNode> parentList = (List<IterationStrategyNode>) parent;
+				int index = parentList.indexOf(dispatchStackLayer);
+				return parentUri.resolve(index + "/");
 			} else if (bean instanceof IterationStrategyStack) {
 				return relationURI;
 			} else if (bean instanceof IterationStrategyNode) {
 				IterationStrategyNode iterationStrategyNode = (IterationStrategyNode) bean;
 				parent = iterationStrategyNode.getParent();
+				@SuppressWarnings("unchecked")
 				List<IterationStrategyNode> parentList = (List<IterationStrategyNode>) parent;
 				int index = parentList.indexOf(iterationStrategyNode);
 				return parentUri.resolve(index + "/");

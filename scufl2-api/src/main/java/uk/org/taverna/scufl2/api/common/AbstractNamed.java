@@ -9,7 +9,7 @@ import java.util.UUID;
  * @author Alan R Williams
  * @author Stian Soiland-Reyes
  */
-public abstract class AbstractNamed implements Named {
+public abstract class AbstractNamed extends AbstractCloneable implements Named  {
 
 	private String name;
 
@@ -31,6 +31,7 @@ public abstract class AbstractNamed implements Named {
 		setName(name);
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public int compareTo(Object o) {
 		if (!(o instanceof AbstractNamed)) {
@@ -119,6 +120,7 @@ public abstract class AbstractNamed implements Named {
 		return name;
 	}
 
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -139,7 +141,7 @@ public abstract class AbstractNamed implements Named {
 	 * 
 	 * @see uk.org.taverna.scufl2.api.common.Named#setName(java.lang.String)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void setName(String name) {
 		if (name == null) {
 			throw new NullPointerException("Name can't be null");
@@ -164,6 +166,12 @@ public abstract class AbstractNamed implements Named {
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + " \"" + getName() + '"';
+	}
+	
+	@Override
+	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		AbstractNamed namedClone = (AbstractNamed)clone;
+		namedClone.setName(getName());
 	}
 
 }

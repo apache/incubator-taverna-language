@@ -47,6 +47,8 @@ import uk.org.taverna.scufl2.ucfpackage.UCFPackage;
 public class WorkflowBundle extends AbstractRevisioned implements WorkflowBean,
 		Named, Root, Revisioned {
 
+	public static final String APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE = "application/vnd.taverna.scufl2.workflow-bundle";
+	
 	public static final URI WORKFLOW_BUNDLE_ROOT = URI
 			.create("http://ns.taverna.org.uk/2010/workflowBundle/");
 
@@ -95,6 +97,7 @@ public class WorkflowBundle extends AbstractRevisioned implements WorkflowBean,
 		if (resources == null) {
 			try {
 				resources = new UCFPackage();
+				resources.setPackageMediaType(APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE);
 			} catch (IOException e) {
 				throw new IllegalStateException(
 						"Can't create new UCF package, no access to tmpdir?", e);
@@ -194,29 +197,6 @@ public class WorkflowBundle extends AbstractRevisioned implements WorkflowBean,
 		return super.hashCode();
 	}
 
-	@Override
-	public String toString() {
-		final int maxLen = 6;
-		return "TavernaResearchObject [" + "profiles="
-				+ (profiles != null ? toString(profiles, maxLen) : null)
-				+ ", mainWorkflow=" + mainWorkflow + "]";
-	}
-
-	private String toString(Collection<?> collection, int maxLen) {
-		StringBuilder builder = new StringBuilder();
-		builder.append("[");
-		int i = 0;
-		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext()
-				&& i < maxLen; i++) {
-			if (i > 0) {
-				builder.append(", ");
-			}
-			builder.append(iterator.next());
-		}
-		builder.append("]");
-		return builder.toString();
-	}
-
 	public NamedSet<Annotation> getAnnotations() {
 		return annotations;
 	}
@@ -224,6 +204,17 @@ public class WorkflowBundle extends AbstractRevisioned implements WorkflowBean,
 	public void setAnnotations(NamedSet<Annotation> annotations) {
 		this.annotations.clear();
 		this.annotations.addAll(annotations);
+	}
+	
+	@Override
+	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		super.cloneInto(clone, cloning);
+		WorkflowBundle cloneBundle = cloning.getCloned(this);
+		cloneBundle.setGlobalBaseURI(getGlobalBaseURI());
+		cloneBundle.setMainWorkflow(cloning.cloneIfNotInCache(getMainWorkflow()));
+		cloneBundle.setMainProfile(cloning.cloneIfNotInCache(getMainProfile()));
+		cloneBundle.setResources(getResources().clone());
+		
 	}
 
 	@Override

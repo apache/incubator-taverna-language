@@ -2,10 +2,12 @@ package uk.org.taverna.scufl2.api.dispatchstack;
 
 import java.net.URI;
 
+import uk.org.taverna.scufl2.api.common.AbstractCloneable;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.common.Typed;
 import uk.org.taverna.scufl2.api.common.Visitor;
+import uk.org.taverna.scufl2.api.common.WorkflowBean;
 
 /**
  * A <code>DispatchStackLayer</code> adds functionality to a
@@ -15,8 +17,8 @@ import uk.org.taverna.scufl2.api.common.Visitor;
  * http://ns.taverna.org.uk/2010/scufl2/taverna#Failover) adds the functionality
  * to retry an Activity if an invocation fails.
  */
-public class DispatchStackLayer implements Typed, Child<DispatchStack>,
-		Configurable {
+public class DispatchStackLayer extends AbstractCloneable
+	implements Typed, Child<DispatchStack>, Configurable {
 
 	private DispatchStack parent;
 	private URI configurableType;
@@ -94,14 +96,12 @@ public class DispatchStackLayer implements Typed, Child<DispatchStack>,
 			sb.append(" ");
 			sb.append(getConfigurableType());
 		}
-		if (getParent() != null && getParent().getParent() != null) {
-			int index = getParent().indexOf(this);
-			sb.append(" #");
-			sb.append(index);
-			sb.append(" in ");
-			sb.append(getParent().getParent());
-		}
 		return sb.toString();
 	}
 	
+	@Override
+	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		DispatchStackLayer cloneLayer = (DispatchStackLayer)clone;
+		cloneLayer.setConfigurableType(getConfigurableType());		
+	}
 }

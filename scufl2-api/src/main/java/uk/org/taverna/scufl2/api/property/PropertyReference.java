@@ -2,12 +2,14 @@ package uk.org.taverna.scufl2.api.property;
 
 import java.net.URI;
 
+import uk.org.taverna.scufl2.api.common.AbstractCloneable;
 import uk.org.taverna.scufl2.api.common.Visitor;
+import uk.org.taverna.scufl2.api.common.WorkflowBean;
 
 /**
  * A {@link PropertyObject} representing a reference to a value.
  */
-public class PropertyReference implements PropertyObject {
+public class PropertyReference extends AbstractCloneable implements PropertyObject {
 
 	private URI resourceURI;
 
@@ -34,7 +36,13 @@ public class PropertyReference implements PropertyObject {
 
 	@Override
 	public String toString() {
-		return "PropertyReference [getResourceURI()=" + getResourceURI() + "]";
+		return String.format("<%s>", getResourceURI());
+	}
+	
+	@Override
+	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		PropertyReference clonePropRef = (PropertyReference) clone;
+		clonePropRef.setResourceURI(getResourceURI());		
 	}
 
 }

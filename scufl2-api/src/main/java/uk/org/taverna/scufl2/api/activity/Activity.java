@@ -159,4 +159,11 @@ Ported {
 	public String toString() {
 		return "Activity " + getConfigurableType() + " \"" + getName() + '"';
 	}
+	
+	@Override
+	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		super.cloneInto(clone, cloning);
+		Activity cloneActivity = (Activity) clone;
+		cloneActivity.setConfigurableType(getConfigurableType());
+	}
 }

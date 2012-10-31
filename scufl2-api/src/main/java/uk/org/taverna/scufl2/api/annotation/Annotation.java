@@ -122,6 +122,23 @@ public class Annotation extends AbstractNamed implements Named, Child<WorkflowBu
 		this.body = body;
 	}
 
-
+	@Override
+	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		super.cloneInto(clone, cloning);
+		Annotation cloneAnnotation = (Annotation)clone;
+		if (getAnnotated() != null) {
+			cloneAnnotation.setAnnotated((Calendar) getAnnotated().clone());
+		}
+		cloneAnnotation.setAnnotator(getAnnotator());
+		cloneAnnotation.setBody(getBody());
+		for (PropertyObject statement : getBodyStatements()) {
+			cloneAnnotation.getBodyStatements().add(cloning.cloneIfNotInCache(statement));
+		}		
+		if (getGenerated() != null) {
+			cloneAnnotation.setGenerated((Calendar) getGenerated().clone());
+		}
+		cloneAnnotation.setGenerator(getGenerator());
+		cloneAnnotation.setTarget(cloning.cloneOrOriginal(getTarget()));		
+	}
 	
 }

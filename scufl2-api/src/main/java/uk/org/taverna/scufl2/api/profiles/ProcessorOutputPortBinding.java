@@ -21,11 +21,9 @@ import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
  * @author Alan R Williams
  * @author Stian Soiland-Reyes
  */
-public class ProcessorOutputPortBinding implements
-ProcessorPortBinding<OutputActivityPort, OutputProcessorPort> {
+public class ProcessorOutputPortBinding extends
+		ProcessorPortBinding<OutputActivityPort, OutputProcessorPort> {
 	private ProcessorBinding parent;
-	private OutputProcessorPort boundProcessorPort;
-	private OutputActivityPort boundActivityPort;
 
 	/**
 	 * Constructs a <code>ProcessorOutputPortBinding</code> with no binding set.
@@ -66,7 +64,7 @@ ProcessorPortBinding<OutputActivityPort, OutputProcessorPort> {
 	 */
 	@Override
 	public OutputActivityPort getBoundActivityPort() {
-		return boundActivityPort;
+		return super.getBoundActivityPort();
 	}
 
 	/**
@@ -76,7 +74,7 @@ ProcessorPortBinding<OutputActivityPort, OutputProcessorPort> {
 	 */
 	@Override
 	public OutputProcessorPort getBoundProcessorPort() {
-		return boundProcessorPort;
+		return super.getBoundProcessorPort();
 	}
 
 	/*
@@ -84,7 +82,6 @@ ProcessorPortBinding<OutputActivityPort, OutputProcessorPort> {
 	 * 
 	 * @see uk.org.taverna.scufl2.api.common.Child#getParent()
 	 */
-	@Override
 	public ProcessorBinding getParent() {
 		return parent;
 	}
@@ -99,7 +96,7 @@ ProcessorPortBinding<OutputActivityPort, OutputProcessorPort> {
 	 */
 	@Override
 	public void setBoundActivityPort(OutputActivityPort boundActivityPort) {
-		this.boundActivityPort = boundActivityPort;
+		super.setBoundActivityPort(boundActivityPort);
 	}
 
 	/**
@@ -110,7 +107,7 @@ ProcessorPortBinding<OutputActivityPort, OutputProcessorPort> {
 	 */
 	@Override
 	public void setBoundProcessorPort(OutputProcessorPort boundProcessorPort) {
-		this.boundProcessorPort = boundProcessorPort;
+		super.setBoundProcessorPort(boundProcessorPort);
 	}
 
 	/*
@@ -120,7 +117,6 @@ ProcessorPortBinding<OutputActivityPort, OutputProcessorPort> {
 	 * uk.org.taverna.scufl2.api.common.Child#setParent(uk.org.taverna.scufl2.api.common.WorkflowBean
 	 * )
 	 */
-	@Override
 	public void setParent(ProcessorBinding parent) {
 		if (this.parent != null && this.parent != parent) {
 			this.parent.getOutputPortBindings().remove(this);
@@ -133,8 +129,7 @@ ProcessorPortBinding<OutputActivityPort, OutputProcessorPort> {
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + " " + getBoundActivityPort() + " -> "
-		+ getBoundProcessorPort();
+		return getBoundProcessorPort() + "<-" + getBoundActivityPort();
 	}
 
 }

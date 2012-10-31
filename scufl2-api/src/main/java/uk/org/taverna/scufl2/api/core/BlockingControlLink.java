@@ -1,8 +1,11 @@
 package uk.org.taverna.scufl2.api.core;
 
 import java.text.MessageFormat;
+import java.util.HashMap;
 
+import uk.org.taverna.scufl2.api.common.AbstractCloneable;
 import uk.org.taverna.scufl2.api.common.Visitor;
+import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.impl.NullSafeComparator;
 
 /**
@@ -13,7 +16,7 @@ import uk.org.taverna.scufl2.api.impl.NullSafeComparator;
  * @author Stian Soiland-Reyes
  */
 @SuppressWarnings("rawtypes")
-public class BlockingControlLink implements ControlLink {
+public class BlockingControlLink extends AbstractCloneable implements ControlLink {
 
 	private static NullSafeComparator nullSafeCompare = new NullSafeComparator();
 	
@@ -166,10 +169,20 @@ public class BlockingControlLink implements ControlLink {
 
 	@Override
 	public String toString() {
-		String blockName = getBlock() != null ? getBlock().getName() : null;
-		String untilName = getUntilFinished() != null ? getUntilFinished().getName() : null;
+		String blockName = getBlock() != null ? getBlock().getName() : "";
+		String untilName = getUntilFinished() != null ? getUntilFinished().getName() : "";
 		
-		return MessageFormat.format("{0}-blocks-{1}", untilName, blockName);
+		return String.format("%s %s-|%s", getClass().getSimpleName(), 
+				untilName, blockName);
 	}
 
+	@Override
+	protected void cloneInto(WorkflowBean clone,
+			Cloning cloning) {
+		BlockingControlLink cloneLink = (BlockingControlLink)clone;
+		cloneLink.setBlock(cloning.cloneOrOriginal(getBlock()));
+		cloneLink.setUntilFinished(cloning.cloneOrOriginal(getUntilFinished()));
+		
+	}
+	
 }

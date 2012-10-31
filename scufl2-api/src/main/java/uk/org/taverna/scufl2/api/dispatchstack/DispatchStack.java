@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.org.taverna.scufl2.api.common.AbstractCloneable;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
@@ -20,6 +21,8 @@ import uk.org.taverna.scufl2.api.core.Processor;
  */
 public class DispatchStack extends ArrayList<DispatchStackLayer> implements
 List<DispatchStackLayer>, Child<Processor> {
+
+	private static final long serialVersionUID = 1L;
 
 	private URI type;
 
@@ -85,6 +88,16 @@ List<DispatchStackLayer>, Child<Processor> {
 	 */
 	public void setType(URI type) {
 		this.type = type;
+	}
+
+	@Override
+	public WorkflowBean clone() {
+		return AbstractCloneable.cloneWorkflowBean(this);
+	}
+	
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " for " + getParent();
 	}
 
 }

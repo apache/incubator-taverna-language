@@ -205,4 +205,11 @@ public class Configuration extends AbstractNamed implements Child<Profile>, Type
 		getPropertyResource().setTypeURI(type);
 	}
 
+	@Override
+	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		super.cloneInto(clone, cloning);
+		Configuration cloneConfig = (Configuration) clone;
+		cloneConfig.setConfigures(cloning.cloneOrOriginal(getConfigures()));
+	}
+	
 }

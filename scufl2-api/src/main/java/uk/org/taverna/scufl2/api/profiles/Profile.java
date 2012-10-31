@@ -195,4 +195,10 @@ public class Profile extends AbstractRevisioned implements Child<WorkflowBundle>
 		return null;
 	}
 
+	@Override
+	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		super.cloneInto(clone, cloning);
+		Profile cloneProfile = (Profile)clone;
+		cloneProfile.setProfilePosition(getProfilePosition());
+	}
 }

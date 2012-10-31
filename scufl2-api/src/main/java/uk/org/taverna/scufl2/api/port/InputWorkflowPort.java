@@ -54,9 +54,4 @@ SenderPort, WorkflowPort, InputPort {
 		}
 	}
 
-	@Override
-	public String toString() {
-		return getParent().getName() + ":" + getName();
-	}
-
 }

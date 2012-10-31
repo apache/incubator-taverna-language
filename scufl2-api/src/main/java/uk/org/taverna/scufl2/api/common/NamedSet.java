@@ -120,7 +120,7 @@ public class NamedSet<T extends Named> extends AbstractSet<T> implements SortedS
 		namedMap.clear();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public NamedSet<T> clone() {
 		NamedSet<T> copy;

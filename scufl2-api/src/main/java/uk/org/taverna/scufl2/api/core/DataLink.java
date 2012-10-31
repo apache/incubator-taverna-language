@@ -1,7 +1,11 @@
 package uk.org.taverna.scufl2.api.core;
 
+import java.util.HashMap;
+
+import uk.org.taverna.scufl2.api.common.AbstractCloneable;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Visitor;
+import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.impl.NullSafeComparator;
 import uk.org.taverna.scufl2.api.port.ReceiverPort;
 import uk.org.taverna.scufl2.api.port.SenderPort;
@@ -21,7 +25,7 @@ import uk.org.taverna.scufl2.api.port.SenderPort;
  * 
  * @author Alan R Williams
  */
-public class DataLink implements Child<Workflow>, Comparable {
+public class DataLink extends AbstractCloneable implements Child<Workflow>, Comparable {
 
 	@SuppressWarnings("rawtypes")
 	private static NullSafeComparator nullSafeCompare = new NullSafeComparator();
@@ -231,7 +235,17 @@ public class DataLink implements Child<Workflow>, Comparable {
 
 	@Override
 	public String toString() {
-		return getReceivesFrom() + "=>" + getSendsTo();
+		return String.format("%s %s=>%s", getClass().getSimpleName(),
+				getReceivesFrom() != null ? getReceivesFrom().getName() : "",
+				getSendsTo() != null ? getSendsTo().getName() : "");
+	}
+	
+	@Override
+	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		DataLink cloneLink = (DataLink)clone;
+		cloneLink.setMergePosition(getMergePosition());
+		cloneLink.setReceivesFrom(cloning.cloneIfNotInCache(getReceivesFrom()));
+		cloneLink.setSendsTo(cloning.cloneIfNotInCache(getSendsTo()));
 	}
 
 }

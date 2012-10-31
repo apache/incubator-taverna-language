@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.org.taverna.scufl2.api.common.Visitor;
+import uk.org.taverna.scufl2.api.common.WorkflowBean;
 
 /**
  * A List of <code>PropertyObject</code>s.
  */
+@SuppressWarnings("serial")
 public class PropertyList extends ArrayList<PropertyObject> implements
 PropertyObject, List<PropertyObject> {
 
@@ -26,6 +28,16 @@ PropertyObject, List<PropertyObject> {
 	@Override
 	public String toString() {
 		return "PropertyList [" + super.toString() + "]";
+	}
+
+	@Override
+	public WorkflowBean clone() {
+		// FIXME: PropertyList should also use AbstractCloneable
+		PropertyList clone = new PropertyList();
+		for (PropertyObject po : this) {
+			clone.add((PropertyObject) po.clone());
+		}
+		return this;
 	}
 
 }

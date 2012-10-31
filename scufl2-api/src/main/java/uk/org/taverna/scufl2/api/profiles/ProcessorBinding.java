@@ -179,4 +179,13 @@ public class ProcessorBinding extends AbstractNamed implements Child<Profile> {
 		return getClass().getSimpleName() + " " + getBoundProcessor() + " " + getBoundActivity();
 	}
 
+	@Override
+	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		super.cloneInto(clone, cloning);
+		ProcessorBinding cloneBinding = (ProcessorBinding)clone;
+		cloneBinding.setActivityPosition(getActivityPosition());
+		cloneBinding.setBoundProcessor(cloning.cloneOrOriginal(getBoundProcessor()));
+		cloneBinding.setBoundActivity(cloning.cloneOrOriginal(getBoundActivity()));		
+	}
+	
 }

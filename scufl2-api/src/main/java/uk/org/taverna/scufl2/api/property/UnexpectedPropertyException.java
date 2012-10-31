@@ -7,6 +7,11 @@ import java.net.URI;
  */
 public class UnexpectedPropertyException extends PropertyException {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4036096310976859256L;
+
 	public UnexpectedPropertyException(String message, URI predicate,
 			PropertyResource propertyResource) {
 		super(message, predicate, propertyResource);
