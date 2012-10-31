@@ -8,7 +8,6 @@ import java.util.Set;
 import javax.annotation.processing.Processor;
 
 import uk.org.taverna.scufl2.api.common.AbstractCloneable;
-import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.configurations.Configuration;

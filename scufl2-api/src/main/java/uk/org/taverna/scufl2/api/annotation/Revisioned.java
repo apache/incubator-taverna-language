@@ -4,8 +4,6 @@ import java.net.URI;
 import java.util.GregorianCalendar;
 
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
-import uk.org.taverna.scufl2.api.container.WorkflowBundle;
-import uk.org.taverna.scufl2.api.core.Workflow;
 
 /**
  * A WorkflowBean that is revisioned.
