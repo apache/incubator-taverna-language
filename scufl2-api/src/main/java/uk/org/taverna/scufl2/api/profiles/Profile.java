@@ -188,13 +188,6 @@ public class Profile extends AbstractRevisioned implements Child<WorkflowBundle>
 		return PROFILE_ROOT;
 	}
 
-	public void setIdentifier(URI workflowIdentifier) {
-	}
-
-	public URI getIdentifier() {
-		return null;
-	}
-
 	@Override
 	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
 		super.cloneInto(clone, cloning);
