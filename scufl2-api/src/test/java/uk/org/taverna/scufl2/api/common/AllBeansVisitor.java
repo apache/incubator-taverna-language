@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.org.taverna.scufl2.api.common.Visitor.VisitorWithPath;
+import uk.org.taverna.scufl2.api.property.PropertyVisit;
 
 public class AllBeansVisitor extends VisitorWithPath implements Visitor {
 
@@ -11,7 +12,9 @@ public class AllBeansVisitor extends VisitorWithPath implements Visitor {
 	
 	@Override
 	public boolean visit() {
-		getAllBeans().add(getCurrentNode());
+		if (! (getCurrentNode() instanceof PropertyVisit)) {
+			getAllBeans().add(getCurrentNode());
+		}
 		return true;
 	}
 

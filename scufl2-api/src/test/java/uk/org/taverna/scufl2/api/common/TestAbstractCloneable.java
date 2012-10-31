@@ -1,20 +1,17 @@
 package uk.org.taverna.scufl2.api.common;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.TestWorkflowBundleIO;
-import uk.org.taverna.scufl2.api.property.PropertyVisit;
 
 public class TestAbstractCloneable {
 	private WorkflowBundle originalWfBundle;
@@ -23,17 +20,9 @@ public class TestAbstractCloneable {
 	@Before
 	public void makeExampleWorkflow() {
 		originalWfBundle = new TestWorkflowBundleIO().makeWorkflowBundle();
-		originalBeans = AllBeansVisitor.allBeansFrom(originalWfBundle);
-		removePropertyVisits(originalBeans);
+		originalBeans = AllBeansVisitor.allBeansFrom(originalWfBundle);		
 	}
-	private void removePropertyVisits(List<WorkflowBean> originalBeans) {
-		for (Iterator<WorkflowBean> it=originalBeans.iterator(); it.hasNext();) {			
-			if (it.next() instanceof PropertyVisit) {
-				it.remove();
-			}
-		}
-		
-	}
+
 	@Test
 	public void megaClone() throws Exception {
 		AbstractCloneable clone = originalWfBundle.clone();
@@ -42,19 +31,23 @@ public class TestAbstractCloneable {
 		
 		List<WorkflowBean> stillOriginalBeans = AllBeansVisitor.allBeansFrom(originalWfBundle);
 		System.out.println(stillOriginalBeans);
-		removePropertyVisits(stillOriginalBeans);
 		assertEquals(originalBeans.size(), stillOriginalBeans.size());
 		// All original beans should be identical
 		assertEquals(originalBeans.size(), findCommonById(originalBeans, stillOriginalBeans).size());
 		
 		
 		List<WorkflowBean> clonedBeans = AllBeansVisitor.allBeansFrom(clone);
-		removePropertyVisits(clonedBeans);
 		List<WorkflowBean> common = findCommonById(originalBeans, clonedBeans);
 		assertTrue("Found some common beans: " + common, common.isEmpty());
 //		
-		// Check parents
-		for (WorkflowBean b : originalBeans) {
+		// Check parents are present
+		checkParents(originalBeans);
+		checkParents(stillOriginalBeans);
+		checkParents(clonedBeans);
+	}
+
+	private void checkParents(List<WorkflowBean> beans) {
+		for (WorkflowBean b : beans) {
 			if (b instanceof Child) {
 				@SuppressWarnings("rawtypes")
 				Child child = (Child) b;
@@ -62,11 +55,11 @@ public class TestAbstractCloneable {
 					System.err.println("No parent? " + child);
 					continue;
 				}
-				if (! originalBeans.contains(child.getParent())) {
+				if (! beans.contains(child.getParent())) {
 					fail("Unknown parent for " + child + " " + child.getParent());
 				}
 			}
-		}		
+		}
 	}
 	
 	private <T> List<T> findCommonById(
@@ -82,7 +75,7 @@ public class TestAbstractCloneable {
 			if (a == b) {
 				common.add(a);
 			} else {
-				System.err.println("Non-identical equals " + a + " " + b);
+//				System.err.println("Non-identical equals " + a + " " + b);
 			}
 		}
 		return common;		
