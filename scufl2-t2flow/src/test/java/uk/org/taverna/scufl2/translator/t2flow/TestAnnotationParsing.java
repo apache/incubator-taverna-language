@@ -40,7 +40,7 @@ public class TestAnnotationParsing {
 
 		Revision revision = wfBundle.getMainWorkflow().getCurrentRevision();
 		while (revision != null) {
-			URI revisionUri = revision.getResourceURI();
+			URI revisionUri = revision.getIdentifier();
 			String revisionUUID = uriTools
 					.relativePath(Workflow.WORKFLOW_ROOT, revisionUri)
 					.toASCIIString().replace("/", "");

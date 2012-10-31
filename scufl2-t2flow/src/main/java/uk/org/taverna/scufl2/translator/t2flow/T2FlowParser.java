@@ -773,7 +773,7 @@ public class T2FlowParser {
 			UUID uuid = entry.getValue();
 			URI uri = Workflow.WORKFLOW_ROOT.resolve(uuid.toString() + "/");
 			rev = new Revision(uri, rev);
-			rev.setCreated(cal);			
+			rev.setGeneratedAtTime(cal);		
 		}
 		return rev;
 	}
