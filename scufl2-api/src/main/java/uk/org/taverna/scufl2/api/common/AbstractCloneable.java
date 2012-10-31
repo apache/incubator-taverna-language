@@ -86,6 +86,9 @@ public abstract class AbstractCloneable implements WorkflowBean {
 
 		@SuppressWarnings("unchecked")
 		public <T extends WorkflowBean> T cloneIfNotInCache(T original) {
+			if (original == null) {
+				return null;
+			}
 			if (cloned.containsKey(original)) {
 				return (T) cloned.get(original);
 			}		
