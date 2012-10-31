@@ -4,7 +4,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.org.taverna.scufl2.api.common.AbstractCloneable.CopyVisitor;
+import uk.org.taverna.scufl2.api.common.AbstractCloneable;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
@@ -91,10 +91,8 @@ List<DispatchStackLayer>, Child<Processor> {
 	}
 
 	@Override
-	public WorkflowBean cloned() {		
-		CopyVisitor copyVisitor = new CopyVisitor();
-		accept(copyVisitor);
-		return copyVisitor.getCloned(this);
+	public WorkflowBean cloned() {
+		return AbstractCloneable.cloneWorkflowBean(this);
 	}
 
 }

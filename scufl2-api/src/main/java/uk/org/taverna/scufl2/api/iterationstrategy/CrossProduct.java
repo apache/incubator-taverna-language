@@ -3,15 +3,15 @@ package uk.org.taverna.scufl2.api.iterationstrategy;
 import java.util.ArrayList;
 import java.util.List;
 
+import uk.org.taverna.scufl2.api.common.AbstractCloneable;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
-import uk.org.taverna.scufl2.api.common.AbstractCloneable.CopyVisitor;
-import uk.org.taverna.scufl2.api.dispatchstack.DispatchStack;
 
 /**
  * @author Stian Soiland-Reyes
  *
  */
+@SuppressWarnings("serial")
 public class CrossProduct extends ArrayList<IterationStrategyNode> implements
 		IterationStrategyTopNode {
 
@@ -83,8 +83,6 @@ public class CrossProduct extends ArrayList<IterationStrategyNode> implements
 
 	@Override
 	public WorkflowBean cloned() {
-		CopyVisitor copyVisitor = new CopyVisitor();
-		accept(copyVisitor);
-		return copyVisitor.getCloned(this);
+		return AbstractCloneable.cloneWorkflowBean(this);
 	}
 }
