@@ -11,7 +11,6 @@ public abstract class AbstractCloneable implements WorkflowBean {
 			this.cloning = cloning;
 		}
 
-		@SuppressWarnings({ "rawtypes", "unchecked" })
 		@Override
 		public boolean visit(WorkflowBean node) {
 			cloneNode(node);
@@ -29,6 +28,7 @@ public abstract class AbstractCloneable implements WorkflowBean {
 			return true;
 		}
 
+		@SuppressWarnings({ "rawtypes", "unchecked" })
 		public void cloneNode(WorkflowBean node) {
 			WorkflowBean clone = cloning.cloneIfNotInCache((WorkflowBean)node);
 			if (node instanceof Child && clone instanceof Child) {
