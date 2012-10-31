@@ -1,12 +1,8 @@
 package uk.org.taverna.scufl2.api.port;
 
-import java.util.HashMap;
-
-import uk.org.taverna.scufl2.api.common.AbstractNamed;
 import uk.org.taverna.scufl2.api.common.AbstractNamedChild;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
-import uk.org.taverna.scufl2.api.common.AbstractCloneable.Cloning;
 
 /**
  * Abstract implementation of a <code>Port</code> that has a depth property.
