@@ -24,7 +24,12 @@ public interface WorkflowBean extends Cloneable {
 	 * The cloned bean will have equivalent properties as the original bean. Any
 	 * {@link Child} beans which parent match this bean will be cloned as well
 	 * (recursively), non-child beans will remain the same. If this bean is a
-	 * {@link Child}, the returnbed clone will not have a parent set.
+	 * {@link Child}, the returned clone will not have a parent set.
+	 * <p>
+	 * Note that children whose {@link Child#getParent()} is <code>null</code>
+	 * might not be cloned, to avoid this, use
+	 * {@link Scufl2Tools#setParents(uk.org.taverna.scufl2.api.container.WorkflowBundle)}
+	 * before cloning.
 	 * 
 	 * @return A cloned workflow bean
 	 */
