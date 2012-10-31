@@ -33,7 +33,7 @@ public class TestResourcesInZip {
 	@Test
 	public void singleFile() throws Exception {
 		UCFPackage resources = originalBundle.getResources();
-		assertNull(resources.getPackageMediaType());
+		assertEquals(APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE, resources.getPackageMediaType());
 		resources.addResource("Hello there", "hello.txt", "text/plain");
 		File bundleFile = tempFile();
 		bundleIO.writeBundle(originalBundle, bundleFile, APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE);		
