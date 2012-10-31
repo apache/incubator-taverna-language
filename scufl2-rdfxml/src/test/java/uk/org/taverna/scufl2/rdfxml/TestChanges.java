@@ -77,6 +77,7 @@ public class TestChanges {
 		v3.getGeneratedAtTime().setValue(today());
 		v3.setWasChangedBy(roevo.createVersionableResourceWasChangedBy());
 		Resource v2 = rdf.createResource();
+		v3.getWasChangedBy().setChangeSpecification(roevo.createChangeSpecification());
 		v3.getWasChangedBy().getChangeSpecification().setFromVersion(v2);		
 		HasChange hasChange = roevo.createChangeSpecificationHasChange();
 		v3.getWasChangedBy().getChangeSpecification().getHasChange().add(hasChange);
