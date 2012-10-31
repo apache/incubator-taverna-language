@@ -5,15 +5,29 @@ import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.port.ActivityPort;
+import uk.org.taverna.scufl2.api.port.InputActivityPort;
+import uk.org.taverna.scufl2.api.port.InputProcessorPort;
+import uk.org.taverna.scufl2.api.port.OutputActivityPort;
+import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
 import uk.org.taverna.scufl2.api.port.ProcessorPort;
 
 /**
- * The binding between an <code>ActivityPort</code> and a <code>ProcessorPort</code>.
+ * The binding between an <code>ActivityPort</code> and a
+ * <code>ProcessorPort</code>.
+ * <p>
+ * This abstract class is realized as either an
+ * {@link ProcessorInputPortBinding} or {@link ProcessorOutputPortBinding}. For
+ * an input port binding, the binding goes from an {@link InputProcessorPort} to
+ * an {@link InputActivityPort}, while for an output port binding the binding
+ * goes from an {@link OutputActivityPort} to an {@link OutputProcessorPort}.
  * 
+ * @author Alan R Williams
+ * @author Stian Soiland-Reyes
  * @param <A>
  *            the <code>ActivityPort</code>
  * @param <P>
  *            the <code>ProcessorPort</code>
+ *            
  */
 public abstract class ProcessorPortBinding<A extends ActivityPort, P extends ProcessorPort>
 		extends AbstractCloneable implements Child<ProcessorBinding> {
@@ -21,61 +35,65 @@ public abstract class ProcessorPortBinding<A extends ActivityPort, P extends Pro
 	private P boundProcessorPort;
 	private A boundActivityPort;
 
-	
 	@Override
 	public boolean accept(Visitor visitor) {
 		return visitor.visit(this);
 	}
 
 	/**
-	 * Returns the <code>InputActivityPort</code> to which data is actually sent when passed to the
-	 * bound <code>InputProcessorPort</code>.
+	 * Return the {@link ActivityPort} which is passing data from/to the
+	 * {@link #getBoundProcessorPort()}.
 	 * 
-	 * @return the <code>InputActivityPort</code> to which data is actually sent when passed to the
-	 *         bound <code>InputProcessorPort</code>
+	 * @return the <code>ActivityPort</code> to which data is passing from/to
+	 *         the bound <code>ProcessorPort</code>
 	 */
 	public A getBoundActivityPort() {
 		return boundActivityPort;
 	}
 
 	/**
-	 * Returns the <code>InputProcessorPort</code> that the binding is for.
+	 * Return the {@link ProcessorPort} which is passing data to/from the
+	 * {@link #getBoundActivityPort()}.
 	 * 
-	 * @return the <code>InputProcessorPort</code> that the binding is for
+	 * @return the <code>ProcessorPort</code> to which data is passing to/from
+	 *         the bound <code>ActivityPort</code>
 	 */
 	public P getBoundProcessorPort() {
 		return boundProcessorPort;
 	}
 
 	/**
-	 * Sets the <code>InputActivityPort</code> to which data is actually sent when passed to the
-	 * bound <code>InputProcessorPort</code>.
+	 * Sets the {@link ActivityPort} which is passing data from/to the
+	 * {@link #getBoundProcessorPort()}.
 	 * 
 	 * @param boundActivityPort
-	 *            the <code>InputActivityPort</code> to which data is actually sent when passed to
-	 *            the bound <code>InputProcessorPort</code>
+	 *            the <code>ActivityPort</code> to which data is passing from/to
+	 *            the bound <code>ProcessorPort</code>
 	 */
 	public void setBoundActivityPort(A boundActivityPort) {
 		this.boundActivityPort = boundActivityPort;
 	}
 
 	/**
-	 * Sets the InputProcessorPort that the binding is for.
+	 * Sets the {@link ProcessorPort} which is passing data to/from the
+	 * {@link #getBoundActivityPort()}.
 	 * 
 	 * @param boundProcessorPort
-	 *            the InputProcessorPort that the binding is for
+	 *            the <code>ProcessorPort</code> to which data is passing
+	 *            to/from the bound <code>ActivityPort</code>
 	 */
 	public void setBoundProcessorPort(P boundProcessorPort) {
 		this.boundProcessorPort = boundProcessorPort;
 	}
-	
+
 	@Override
 	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
 		@SuppressWarnings("unchecked")
-		ProcessorPortBinding<A,P> cloneBinding = (ProcessorPortBinding<A, P>) clone;
-		cloneBinding.setBoundActivityPort(cloning.cloneOrOriginal(getBoundActivityPort()));
-		cloneBinding.setBoundProcessorPort(cloning.cloneOrOriginal(getBoundProcessorPort()));
+		ProcessorPortBinding<A, P> cloneBinding = (ProcessorPortBinding<A, P>) clone;
+		cloneBinding.setBoundActivityPort(cloning
+				.cloneOrOriginal(getBoundActivityPort()));
+		cloneBinding.setBoundProcessorPort(cloning
+				.cloneOrOriginal(getBoundProcessorPort()));
 	}
-
 
 }
