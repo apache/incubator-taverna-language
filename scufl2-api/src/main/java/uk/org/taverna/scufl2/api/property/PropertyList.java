@@ -3,7 +3,6 @@ package uk.org.taverna.scufl2.api.property;
 import java.util.ArrayList;
 import java.util.List;
 
-import uk.org.taverna.scufl2.api.common.AbstractCloneable;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 
@@ -29,6 +28,16 @@ PropertyObject, List<PropertyObject> {
 	@Override
 	public String toString() {
 		return "PropertyList [" + super.toString() + "]";
+	}
+
+	@Override
+	public WorkflowBean cloned() {
+		// FIXME: PropertyList should also use AbstractCloneable
+		PropertyList clone = new PropertyList();
+		for (PropertyObject po : this) {
+			clone.add((PropertyObject) po.cloned());
+		}
+		return this;
 	}
 
 }
