@@ -93,7 +93,7 @@ public abstract class AbstractCloneable implements WorkflowBean {
 			try {
 				clone = (T) original.getClass().newInstance();
 			} catch (InstantiationException e) {
-				System.err.println("Can't do this one.. " + original);
+//				System.err.println("Can't do this one.. " + original);
 				return null;
 			} catch (IllegalAccessException e) {
 				throw new RuntimeException(e);
@@ -105,7 +105,7 @@ public abstract class AbstractCloneable implements WorkflowBean {
 				cloneable.cloneInto(clone, this);
 			}
 			
-			System.out.println("Cloned " + clone);
+//			System.out.println("Cloned " + clone);
 			return clone;	
 		}
 		
