@@ -13,7 +13,6 @@ import uk.org.taverna.scufl2.api.common.Ported;
 import uk.org.taverna.scufl2.api.common.Typed;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
-import uk.org.taverna.scufl2.api.common.AbstractCloneable.Cloning;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.api.profiles.Profile;
@@ -163,6 +162,7 @@ Ported {
 	
 	@Override
 	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		super.cloneInto(clone, cloning);
 		Activity cloneActivity = (Activity) clone;
 		cloneActivity.setConfigurableType(getConfigurableType());
 	}

@@ -239,12 +239,11 @@ public class DataLink extends AbstractCloneable implements Child<Workflow>, Comp
 	}
 	
 	@Override
-	protected void cloneInto(WorkflowBean clone,
-			HashMap<WorkflowBean, WorkflowBean> cloned) {
+	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
 		DataLink cloneLink = (DataLink)clone;
 		cloneLink.setMergePosition(getMergePosition());
-		cloneLink.setReceivesFrom((SenderPort) cloned.get(getReceivesFrom()));
-		cloneLink.setSendsTo((ReceiverPort) cloned.get(getSendsTo()));
+		cloneLink.setReceivesFrom(cloning.cloneIfNotInCache(getReceivesFrom()));
+		cloneLink.setSendsTo(cloning.cloneIfNotInCache(getSendsTo()));
 	}
 
 }

@@ -177,10 +177,10 @@ public class BlockingControlLink extends AbstractCloneable implements ControlLin
 
 	@Override
 	protected void cloneInto(WorkflowBean clone,
-			HashMap<WorkflowBean, WorkflowBean> cloned) {
+			Cloning cloning) {
 		BlockingControlLink cloneLink = (BlockingControlLink)clone;
-		cloneLink.setBlock((Processor) cloned.get(getBlock()));
-		cloneLink.setUntilFinished((Processor) cloned.get(getUntilFinished()));
+		cloneLink.setBlock(cloning.cloneOrOriginal(getBlock()));
+		cloneLink.setUntilFinished(cloning.cloneOrOriginal(getUntilFinished()));
 		
 	}
 	

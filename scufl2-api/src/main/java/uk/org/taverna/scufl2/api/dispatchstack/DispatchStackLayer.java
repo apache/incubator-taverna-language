@@ -7,6 +7,7 @@ import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.common.Typed;
 import uk.org.taverna.scufl2.api.common.Visitor;
+import uk.org.taverna.scufl2.api.common.WorkflowBean;
 
 /**
  * A <code>DispatchStackLayer</code> adds functionality to a
@@ -105,4 +106,9 @@ public class DispatchStackLayer extends AbstractCloneable
 		return sb.toString();
 	}
 	
+	@Override
+	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		DispatchStackLayer cloneLayer = (DispatchStackLayer)clone;
+		cloneLayer.setConfigurableType(getConfigurableType());		
+	}
 }

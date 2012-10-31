@@ -210,6 +210,7 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 	
 	@Override
 	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		super.cloneInto(clone, cloning);
 		WorkflowBundle cloneBundle = cloning.getCloned(this);
 		cloneBundle.setGlobalBaseURI(getGlobalBaseURI());
 		cloneBundle.setMainWorkflow(cloning.cloneIfNotInCache(getMainWorkflow()));

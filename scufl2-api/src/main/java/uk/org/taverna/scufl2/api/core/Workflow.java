@@ -373,6 +373,7 @@ public class Workflow extends AbstractNamedChild implements
 	
 	@Override
 	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		super.cloneInto(clone, cloning);
 		Workflow cloneWorkflow = (Workflow)clone;
 		cloneWorkflow.setCurrentRevision(cloning.cloneIfNotInCache(getCurrentRevision()));		
 	}
