@@ -85,4 +85,9 @@ public class DotProduct extends ArrayList<IterationStrategyNode> implements
 		return AbstractCloneable.cloneWorkflowBean(this);
 	}
 
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + super.toString();
+	}
+	
 }

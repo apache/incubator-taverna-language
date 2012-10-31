@@ -279,25 +279,6 @@ public class Workflow extends AbstractNamedChild implements
 		setCurrentRevision(new Revision(workflowIdentifier));
 	}
 
-	@Override
-	public String toString() {
-		final int maxLen = 6;
-		return "Workflow [getName()="
-				+ getName()
-				+ ", getDatalinks()="
-				+ (getDataLinks() != null ? toString(getDataLinks(), maxLen)
-						: null)
-				+ ", getInputPorts()="
-				+ (getInputPorts() != null ? toString(getInputPorts(), maxLen)
-						: null)
-				+ ", getOutputPorts()="
-				+ (getOutputPorts() != null ? toString(getOutputPorts(), maxLen)
-						: null)
-				+ ", getProcessors()="
-				+ (getProcessors() != null ? toString(getProcessors(), maxLen)
-						: null) + "]";
-	}
-
 	/**
 	 * Updates the workflow identifier.
 	 * <p>

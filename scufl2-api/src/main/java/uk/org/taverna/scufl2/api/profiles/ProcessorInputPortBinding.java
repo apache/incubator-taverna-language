@@ -113,5 +113,10 @@ public class ProcessorInputPortBinding extends
 			parent.getInputPortBindings().add(this);
 		}
 	}
+	
+	@Override
+	public String toString() {
+		return getBoundProcessorPort() + "->" + getBoundActivityPort();
+	}
 
 }

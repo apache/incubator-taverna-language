@@ -83,6 +83,11 @@ public class PortNode extends AbstractCloneable implements IterationStrategyNode
 	}
 	
 	@Override
+	public String toString() {
+		return getClass().getSimpleName()  + " for " + getInputProcessorPort();
+	}
+	
+	@Override
 	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
 		PortNode cloneNode = (PortNode)clone;
 		cloneNode.setDesiredDepth(getDesiredDepth());

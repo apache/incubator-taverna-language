@@ -196,10 +196,4 @@ public class Processor extends AbstractNamedChild implements Child<Workflow>, Po
 		}
 	}
 
-	@Override
-	public String toString() {
-		return super.toString() + "[" + "getInputPorts()=" + getInputPorts() + ", "
-		+ "getOutputPorts()=" + getOutputPorts() + ", " + "]";
-	}
-
 }

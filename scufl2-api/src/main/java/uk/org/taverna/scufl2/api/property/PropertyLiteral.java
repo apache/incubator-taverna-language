@@ -420,8 +420,12 @@ public class PropertyLiteral extends AbstractCloneable implements PropertyObject
 
 	@Override
 	public String toString() {
-		return "PropertyLiteral [getLiteralType()=" + getLiteralType() + ", getLiteralValue()="
-		+ getLiteralValue() + "]";
+		if (getLiteralType().equals(XSD_STRING)) {
+			return String.format("%s \"%s\"", getClass().getSimpleName(),
+					getLiteralValue());
+		}
+		return String.format("%s \"%s\"^^<%s>", getClass().getSimpleName(),
+				getLiteralValue(), getLiteralType());
 	}
 	
 	@Override

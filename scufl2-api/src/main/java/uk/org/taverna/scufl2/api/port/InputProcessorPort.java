@@ -67,10 +67,4 @@ ReceiverPort, ProcessorPort, InputPort {
 		}
 	}
 
-	@Override
-	public String toString() {
-		Processor p = getParent();
-		return ( p != null  ? p.getName() + ":" : "")  + getName();
-	}
-
 }

@@ -60,4 +60,9 @@ public class IterationStrategyStack extends ArrayList<IterationStrategyTopNode>
 		return AbstractCloneable.cloneWorkflowBean(this);
 	}
 
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " for " + getParent();		
+	}
+	
 }

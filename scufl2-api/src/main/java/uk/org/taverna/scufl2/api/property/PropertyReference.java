@@ -36,7 +36,7 @@ public class PropertyReference extends AbstractCloneable implements PropertyObje
 
 	@Override
 	public String toString() {
-		return "PropertyReference [getResourceURI()=" + getResourceURI() + "]";
+		return String.format("<%s>", getResourceURI());
 	}
 	
 	@Override

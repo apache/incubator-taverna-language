@@ -85,4 +85,10 @@ public class CrossProduct extends ArrayList<IterationStrategyNode> implements
 	public WorkflowBean clone() {
 		return AbstractCloneable.cloneWorkflowBean(this);
 	}
+	
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + super.toString();
+	}
+	
 }

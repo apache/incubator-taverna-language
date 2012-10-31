@@ -180,29 +180,6 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 		return super.hashCode();
 	}
 
-	@Override
-	public String toString() {
-		final int maxLen = 6;
-		return "WorkflowBundle [" + "profiles="
-				+ (profiles != null ? toString(profiles, maxLen) : null)
-				+ ", mainWorkflow=" + mainWorkflow + "]";
-	}
-
-	private String toString(Collection<?> collection, int maxLen) {
-		StringBuilder builder = new StringBuilder();
-		builder.append("[");
-		int i = 0;
-		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext()
-				&& i < maxLen; i++) {
-			if (i > 0) {
-				builder.append(", ");
-			}
-			builder.append(iterator.next());
-		}
-		builder.append("]");
-		return builder.toString();
-	}
-
 	public NamedSet<Annotation> getAnnotations() {
 		return annotations;
 	}

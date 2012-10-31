@@ -235,7 +235,9 @@ public class DataLink extends AbstractCloneable implements Child<Workflow>, Comp
 
 	@Override
 	public String toString() {
-		return getReceivesFrom() + "=>" + getSendsTo();
+		return String.format("%s %s=>%s", getClass().getSimpleName(),
+				getReceivesFrom() != null ? getReceivesFrom().getName() : "",
+				getSendsTo() != null ? getSendsTo().getName() : "");
 	}
 	
 	@Override

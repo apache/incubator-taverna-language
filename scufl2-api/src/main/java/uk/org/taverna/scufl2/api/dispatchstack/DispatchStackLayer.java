@@ -96,13 +96,6 @@ public class DispatchStackLayer extends AbstractCloneable
 			sb.append(" ");
 			sb.append(getConfigurableType());
 		}
-		if (getParent() != null && getParent().getParent() != null) {
-			int index = getParent().indexOf(this);
-			sb.append(" #");
-			sb.append(index);
-			sb.append(" in ");
-			sb.append(getParent().getParent());
-		}
 		return sb.toString();
 	}
 	

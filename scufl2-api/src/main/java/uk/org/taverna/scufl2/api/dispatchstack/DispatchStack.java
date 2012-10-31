@@ -94,5 +94,10 @@ List<DispatchStackLayer>, Child<Processor> {
 	public WorkflowBean clone() {
 		return AbstractCloneable.cloneWorkflowBean(this);
 	}
+	
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " for " + getParent();
+	}
 
 }

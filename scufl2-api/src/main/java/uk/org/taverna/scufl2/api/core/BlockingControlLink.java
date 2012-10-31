@@ -169,10 +169,11 @@ public class BlockingControlLink extends AbstractCloneable implements ControlLin
 
 	@Override
 	public String toString() {
-		String blockName = getBlock() != null ? getBlock().getName() : null;
-		String untilName = getUntilFinished() != null ? getUntilFinished().getName() : null;
+		String blockName = getBlock() != null ? getBlock().getName() : "";
+		String untilName = getUntilFinished() != null ? getUntilFinished().getName() : "";
 		
-		return MessageFormat.format("{0}-blocks-{1}", untilName, blockName);
+		return String.format("%s %s-|%s", getClass().getSimpleName(), 
+				untilName, blockName);
 	}
 
 	@Override

@@ -129,8 +129,7 @@ public class ProcessorOutputPortBinding extends
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + " " + getBoundActivityPort() + " -> "
-		+ getBoundProcessorPort();
+		return getBoundProcessorPort() + "<-" + getBoundActivityPort();
 	}
 
 }
