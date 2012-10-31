@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import uk.org.taverna.scufl2.api.annotation.Annotation;
+import uk.org.taverna.scufl2.api.annotation.Revision;
 import uk.org.taverna.scufl2.api.common.Visitor.VisitorWithPath;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
@@ -252,6 +253,10 @@ public class URITools {
 			}
 			throw new IllegalStateException(
 					"PropertyResource does not have a resourceURI");
+		}
+		if (bean instanceof Revision) {
+			Revision revision = (Revision) bean;
+			return revision.getIdentifier();
 		}
 		throw new IllegalArgumentException("Unsupported type "
 				+ bean.getClass() + " for bean " + bean);
