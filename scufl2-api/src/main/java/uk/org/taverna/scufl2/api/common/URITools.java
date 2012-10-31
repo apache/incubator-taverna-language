@@ -84,7 +84,7 @@ public class URITools {
 
 		// Check if it's a workflow URI
 		for (Workflow wf : wfBundle.getWorkflows()) {
-			if (wf.getWorkflowIdentifier().equals(uri)) {
+			if (wf.getIdentifier().equals(uri)) {
 				return wf;
 			}
 		}
