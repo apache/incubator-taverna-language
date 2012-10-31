@@ -24,11 +24,14 @@ import uk.org.taverna.scufl2.ucfpackage.UCFPackage;
 
 /**
  * @author Alan R Williams
+ * @author Stian Soiland-Reyes
  * 
  */
 public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 		Named, Root {
 
+	public static final String APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE = "application/vnd.taverna.scufl2.workflow-bundle";
+	
 	public static final URI WORKFLOW_BUNDLE_ROOT = URI
 			.create("http://ns.taverna.org.uk/2010/workflowBundle/");
 
@@ -78,6 +81,7 @@ public class WorkflowBundle extends AbstractNamed implements WorkflowBean,
 		if (resources == null) {
 			try {
 				resources = new UCFPackage();
+				resources.setPackageMediaType(APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE);
 			} catch (IOException e) {
 				throw new IllegalStateException(
 						"Can't create new UCF package, no access to tmpdir?", e);
