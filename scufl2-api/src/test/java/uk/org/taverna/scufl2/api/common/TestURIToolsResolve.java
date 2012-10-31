@@ -1,14 +1,17 @@
 package uk.org.taverna.scufl2.api.common;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
 import java.net.URI;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.ExampleWorkflow;
 import uk.org.taverna.scufl2.api.activity.Activity;
+import uk.org.taverna.scufl2.api.annotation.Revision;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.BlockingControlLink;
@@ -286,5 +289,27 @@ HELLO_URI.resolve("iterationstrategy/0/"),
 		assertSame(results, uriTools.resolveUri(
 				HELLOWORLD_URI.resolve("out/results"), wfBundle));
 	}
+	
+	@Test
+	public void revisionURIs() {
+		Revision r1 = wfBundle.newRevision();
+		assertEquals(r1.getIdentifier(), uriTools.uriForBean(r1));
+		
+//		assertEquals(r1, uriTools.resolveUri(r3.getIdentifier(), wfBundle));
+			
+	}
 
+	@Ignore
+	@Test
+	public void resolveRevisions() {
+		Revision r1 = wfBundle.newRevision();
+		Revision r2 = wfBundle.newRevision();
+		Revision r3 = wfBundle.newRevision();
+		assertEquals(wfBundle, uriTools.resolveUri(r3.getIdentifier(), wfBundle));
+		assertEquals(r2, uriTools.resolveUri(r2.getIdentifier(), wfBundle));
+		assertEquals(r1, uriTools.resolveUri(r1.getIdentifier(), wfBundle));	
+	}
+
+	
 }
+
