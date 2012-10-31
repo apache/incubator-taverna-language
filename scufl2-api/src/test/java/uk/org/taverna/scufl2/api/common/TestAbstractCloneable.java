@@ -1,5 +1,6 @@
 package uk.org.taverna.scufl2.api.common;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -11,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.io.TestWorkflowBundleIO;
 
 public class TestAbstractCloneable {
@@ -24,7 +26,7 @@ public class TestAbstractCloneable {
 	}
 
 	@Test
-	public void megaClone() throws Exception {
+	public void cloneBundle() throws Exception {
 		AbstractCloneable clone = originalWfBundle.clone();
 //		AbstractCloneable clone = originalWfBundle;
 		
@@ -46,7 +48,23 @@ public class TestAbstractCloneable {
 		checkParents(clonedBeans);
 	}
 
-	private void checkParents(List<WorkflowBean> beans) {
+	@Test
+	public void cloneWorkflow() throws Exception {
+		Workflow original = originalWfBundle.getMainWorkflow();
+		assertEquals(originalWfBundle, original.getParent());
+		Workflow clone = (Workflow) original.clone();		
+		assertNull(clone.getParent());
+		assertEquals(original.getName(), clone.getName());
+		assertNotSame(original.getProcessors().getByName("Hello"),
+				clone.getProcessors().getByName("Hello"));
+		assertNotSame(original.getCurrentRevision(), clone.getCurrentRevision());
+		assertEquals(original.getCurrentRevision(), clone.getCurrentRevision());
+		
+	}
+	
+	
+	
+	public static void checkParents(List<WorkflowBean> beans) {
 		for (WorkflowBean b : beans) {
 			if (b instanceof Child) {
 				@SuppressWarnings("rawtypes")
@@ -62,7 +80,7 @@ public class TestAbstractCloneable {
 		}
 	}
 	
-	private <T> List<T> findCommonById(
+	public static <T> List<T> findCommonById(
 			List<T> listA, List<T> listB) {
 		List<T> common = new ArrayList<T>();
 		for (T a : listA) {
