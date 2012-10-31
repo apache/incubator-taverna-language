@@ -22,8 +22,7 @@ import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
  * @author Stian Soiland-Reyes
  */
 public class ProcessorOutputPortBinding extends
-		AbstractProcessorPortBinding<OutputActivityPort, OutputProcessorPort>
-		implements ProcessorPortBinding<OutputActivityPort, OutputProcessorPort> {
+		ProcessorPortBinding<OutputActivityPort, OutputProcessorPort> {
 	private ProcessorBinding parent;
 
 	/**

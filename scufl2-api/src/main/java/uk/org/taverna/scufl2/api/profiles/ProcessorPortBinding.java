@@ -1,6 +1,9 @@
 package uk.org.taverna.scufl2.api.profiles;
 
+import uk.org.taverna.scufl2.api.common.AbstractCloneable;
 import uk.org.taverna.scufl2.api.common.Child;
+import uk.org.taverna.scufl2.api.common.Visitor;
+import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.port.ActivityPort;
 import uk.org.taverna.scufl2.api.port.ProcessorPort;
 
@@ -12,37 +15,67 @@ import uk.org.taverna.scufl2.api.port.ProcessorPort;
  * @param <P>
  *            the <code>ProcessorPort</code>
  */
-public interface ProcessorPortBinding<A extends ActivityPort, P extends ProcessorPort> extends
-Child<ProcessorBinding> {
+public abstract class ProcessorPortBinding<A extends ActivityPort, P extends ProcessorPort>
+		extends AbstractCloneable implements Child<ProcessorBinding> {
+
+	private P boundProcessorPort;
+	private A boundActivityPort;
+
+	
+	@Override
+	public boolean accept(Visitor visitor) {
+		return visitor.visit(this);
+	}
 
 	/**
-	 * Returns the bound <code>ActivityPort</code>
+	 * Returns the <code>InputActivityPort</code> to which data is actually sent when passed to the
+	 * bound <code>InputProcessorPort</code>.
 	 * 
-	 * @return the bound <code>ActivityPort</code>
+	 * @return the <code>InputActivityPort</code> to which data is actually sent when passed to the
+	 *         bound <code>InputProcessorPort</code>
 	 */
-	A getBoundActivityPort();
+	public A getBoundActivityPort() {
+		return boundActivityPort;
+	}
 
 	/**
-	 * Returns the bound <code>ProcessorPort</code>
+	 * Returns the <code>InputProcessorPort</code> that the binding is for.
 	 * 
-	 * @return the bound <code>ProcessorPort</code>
+	 * @return the <code>InputProcessorPort</code> that the binding is for
 	 */
-	P getBoundProcessorPort();
+	public P getBoundProcessorPort() {
+		return boundProcessorPort;
+	}
 
 	/**
-	 * Sets the bound <code>ProcessorPort</code>
+	 * Sets the <code>InputActivityPort</code> to which data is actually sent when passed to the
+	 * bound <code>InputProcessorPort</code>.
 	 * 
 	 * @param boundActivityPort
-	 *            the bound <code>ProcessorPort</code>
+	 *            the <code>InputActivityPort</code> to which data is actually sent when passed to
+	 *            the bound <code>InputProcessorPort</code>
 	 */
-	void setBoundActivityPort(A boundActivityPort);
+	public void setBoundActivityPort(A boundActivityPort) {
+		this.boundActivityPort = boundActivityPort;
+	}
 
 	/**
-	 * Sets the bound <code>ProcessorPort</code>
+	 * Sets the InputProcessorPort that the binding is for.
 	 * 
 	 * @param boundProcessorPort
-	 *            the bound <code>ProcessorPort</code>
+	 *            the InputProcessorPort that the binding is for
 	 */
-	void setBoundProcessorPort(P boundProcessorPort);
+	public void setBoundProcessorPort(P boundProcessorPort) {
+		this.boundProcessorPort = boundProcessorPort;
+	}
+	
+	@Override
+	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		@SuppressWarnings("unchecked")
+		ProcessorPortBinding<A,P> cloneBinding = (ProcessorPortBinding<A, P>) clone;
+		cloneBinding.setBoundActivityPort(cloning.cloneOrOriginal(getBoundActivityPort()));
+		cloneBinding.setBoundProcessorPort(cloning.cloneOrOriginal(getBoundProcessorPort()));
+	}
+
 
 }
