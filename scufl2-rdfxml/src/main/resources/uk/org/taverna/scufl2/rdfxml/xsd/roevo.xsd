@@ -64,15 +64,28 @@
 			<xs:sequence>
 				<xs:element ref="rdf:type" minOccurs="0"/>
 				<xs:element name="fromVersion" type="rdf:Resource" minOccurs="0" />
-				<xs:element name="hasChange" minOccurs="0" maxOccurs="unbounded">
-				<xs:complexType>
-					<xs:choice>
-						<xs:element name="Addition" type="roevo:Change" />
-						<xs:element name="Modification" type="roevo:Change" />
-						<xs:element name="Removal" type="roevo:Change" />
-					</xs:choice>
-				</xs:complexType>
-				</xs:element>
+				<xs:element name="hasChange" minOccurs="0" maxOccurs="3">
+					<xs:annotation>
+						<xs:documentation>
+							<p xmlns='http://www.w3.org/1999/xhtml'>
+							A ChangeSpecification can have up to 3 changes, 
+							one of Addition, one of Modificaton and one of Removal. 
+							Ironically, to 	avoid an 'non ambigious' XML Schema, this schema 
+							has to allow also say Addition, Addition, Removal. Clients MAY
+							parse additional changes of the same type, but SHOULD merge them 
+							to a single change per type when saving, ie. add the resources
+							from the second Addition to the resources of the first.							
+							</p>
+						</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:choice>
+							<xs:element name="Addition" type="roevo:Change" />
+							<xs:element name="Modification" type="roevo:Change" />
+							<xs:element name="Removal" type="roevo:Change" />
+						</xs:choice>
+					</xs:complexType>
+				</xs:element>			
 				<xs:element ref="prov:wasAssociatedWith" minOccurs="0" />
 			</xs:sequence>			
 		</xs:complexType>
