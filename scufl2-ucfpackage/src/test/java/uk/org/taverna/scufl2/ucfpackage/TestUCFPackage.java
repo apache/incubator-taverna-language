@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -888,4 +889,32 @@ public class TestUCFPackage {
 		assertEquals(0, container.getRootFiles().size());
 	}
 
+	@Test
+	public void cloneUcfPackage() throws Exception {
+		UCFPackage container = new UCFPackage();
+		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
+		container.addResource("Hello there", "helloworld.txt", "text/plain");
+		container.addResource("Soup for everyone", "soup.txt", "text/plain");
+		container.setRootFile("helloworld.txt");
+		assertEquals(2, container.listAllResources().size());
+
+		UCFPackage clone = container.clone();
+		
+		// Change the original to ensure independence
+		container.setPackageMediaType("text/other");
+		container.removeResource("soup.txt");
+		container.addResource("Something else", "helloworld.txt", "test/other");
+		container.addResource("extra", "extra1.txt", "text/plain");
+		container.addResource("extra", "extra2.txt", "text/plain");
+		container.setRootFile("extra1.txt");
+		
+		assertEquals(UCFPackage.MIME_WORKFLOW_BUNDLE, clone.getPackageMediaType());
+		assertEquals("Hello there", clone.getResourceAsString("helloworld.txt"));
+		ResourceEntry helloWorldEntry = clone.getResourceEntry("helloworld.txt");
+		assertEquals("text/plain", helloWorldEntry.getMediaType());
+		assertEquals("Soup for everyone", clone.getResourceAsString("soup.txt"));
+		assertEquals(Arrays.asList(helloWorldEntry), clone.getRootFiles());
+		assertEquals(2, clone.listAllResources().size());		
+	}
+	
 }
