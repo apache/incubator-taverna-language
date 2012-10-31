@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public abstract class AbstractCloneable implements WorkflowBean {
 	
-	public static class CopyVisitor implements Visitor {
+	protected static class CopyVisitor implements Visitor {
 		private Cloning cloning;
 
 		public CopyVisitor(Cloning cloning) {
@@ -48,13 +48,17 @@ public abstract class AbstractCloneable implements WorkflowBean {
 	
 	@Override
 	public AbstractCloneable cloned() {
-		Cloning cloning = new Cloning(this);
+		return cloneWorkflowBean(this);		
+	}
+
+	public static <T extends WorkflowBean> T cloneWorkflowBean(T obj) {
+		Cloning cloning = new Cloning(obj);
 		CopyVisitor copyVisitor = new CopyVisitor(cloning);
-		accept(copyVisitor);
-		return cloning.getCloned(this);
+		obj.accept(copyVisitor);
+		return cloning.getCloned(obj);
 	}
 	
-	protected class Cloning {
+	public static class Cloning {
 		private HashMap<WorkflowBean, WorkflowBean> cloned = new HashMap<WorkflowBean, WorkflowBean>();
 
 		
