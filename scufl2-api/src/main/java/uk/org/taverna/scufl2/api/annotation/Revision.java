@@ -137,5 +137,23 @@ public class Revision extends PropertyResource {
 			addPropertyReference(WAS_REVISION_OF, previous);
 		}		
 	}
-
+	
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " " + getResourceURI();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (! (obj instanceof Revision)) {
+			return false;
+		}
+		Revision other = (Revision) obj;
+		if (getResourceURI() == null) {
+			return obj == this;
+		}
+		return getResourceURI().equals(other.getResourceURI());
+		
+	}
+	
 }
