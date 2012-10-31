@@ -56,7 +56,7 @@ public class IterationStrategyStack extends ArrayList<IterationStrategyTopNode>
 	}
 
 	@Override
-	public WorkflowBean cloned() {
+	public WorkflowBean clone() {
 		return AbstractCloneable.cloneWorkflowBean(this);
 	}
 

@@ -82,7 +82,7 @@ public class CrossProduct extends ArrayList<IterationStrategyNode> implements
 	}
 
 	@Override
-	public WorkflowBean cloned() {
+	public WorkflowBean clone() {
 		return AbstractCloneable.cloneWorkflowBean(this);
 	}
 }

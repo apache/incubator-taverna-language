@@ -91,7 +91,7 @@ List<DispatchStackLayer>, Child<Processor> {
 	}
 
 	@Override
-	public WorkflowBean cloned() {
+	public WorkflowBean clone() {
 		return AbstractCloneable.cloneWorkflowBean(this);
 	}
 

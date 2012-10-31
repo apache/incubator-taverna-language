@@ -205,7 +205,7 @@ PropertyObject {
 		}
 
 		@Override
-		public WorkflowBean cloned() {			
+		public PropertyVisit clone() {			
 			// We'll have to do AbstractCloneable.cloneWorkflowBean(T) 
 			// manually in order to do the cloning ourself (in order to keep the
 			// link to PropertyResource)

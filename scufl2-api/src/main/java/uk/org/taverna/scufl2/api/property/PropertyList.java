@@ -31,11 +31,11 @@ PropertyObject, List<PropertyObject> {
 	}
 
 	@Override
-	public WorkflowBean cloned() {
+	public WorkflowBean clone() {
 		// FIXME: PropertyList should also use AbstractCloneable
 		PropertyList clone = new PropertyList();
 		for (PropertyObject po : this) {
-			clone.add((PropertyObject) po.cloned());
+			clone.add((PropertyObject) po.clone());
 		}
 		return this;
 	}

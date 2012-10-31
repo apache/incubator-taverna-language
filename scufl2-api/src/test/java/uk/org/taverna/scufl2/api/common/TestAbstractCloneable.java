@@ -25,7 +25,7 @@ public class TestAbstractCloneable {
 	}
 	@Test
 	public void megaClone() throws Exception {
-		AbstractCloneable clone = originalWfBundle.cloned();
+		AbstractCloneable clone = originalWfBundle.clone();
 //		AbstractCloneable clone = originalWfBundle;
 		
 		List<WorkflowBean> stillOriginalBeans = AllBeansVisitor.allBeansFrom(originalWfBundle);

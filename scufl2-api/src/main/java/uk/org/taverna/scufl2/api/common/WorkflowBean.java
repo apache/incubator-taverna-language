@@ -28,7 +28,7 @@ public interface WorkflowBean extends Cloneable {
 	 * 
 	 * @return A cloned workflow bean
 	 */
-//	@Override
-	public WorkflowBean cloned();
+	//@Override
+	public WorkflowBean clone();
 	
 }

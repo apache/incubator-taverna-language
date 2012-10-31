@@ -47,7 +47,7 @@ public abstract class AbstractCloneable implements WorkflowBean {
 	}
 	
 	@Override
-	public AbstractCloneable cloned() {
+	public AbstractCloneable clone() {
 		return cloneWorkflowBean(this);		
 	}
 
