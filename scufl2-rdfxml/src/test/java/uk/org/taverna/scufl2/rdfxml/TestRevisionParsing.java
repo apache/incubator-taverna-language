@@ -1,8 +1,8 @@
 package uk.org.taverna.scufl2.rdfxml;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.InputStream;
 import java.net.URI;
@@ -57,6 +57,19 @@ public class TestRevisionParsing {
 		List<Revision> originals = new ArrayList<Revision>(r3.getHadOriginalSources());
 		assertEquals("http://example.org/originalSource1", originals.get(0).getIdentifier().toASCIIString());
 		assertEquals("http://example.com/test/originalSource2", originals.get(1).getIdentifier().toASCIIString());
+
+		
+		assertEquals(2, r3.getAdditionOf().size());
+		assertTrue(r3.getAdditionOf().contains(URI.create("http://example.com/test/nested-workflow1")));
+		assertTrue(r3.getAdditionOf().contains(URI.create("http://example.net/nested-workflow2")));
+
+		assertEquals(2, r3.getRemovalOf().size());
+		assertTrue(r3.getRemovalOf().contains(URI.create("http://example.net/removed-item")));
+		assertTrue(r3.getRemovalOf().contains(URI.create("http://example.com/test/removed-item2")));
+
+		assertEquals(2, r3.getModificationsOf().size());
+		assertTrue(r3.getModificationsOf().contains(URI.create("http://example.com/test/modified")));
+		assertTrue(r3.getModificationsOf().contains(URI.create("http://example.net/modified2")));
 
 		
 	}

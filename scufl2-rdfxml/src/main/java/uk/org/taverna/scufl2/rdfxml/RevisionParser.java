@@ -2,6 +2,8 @@ package uk.org.taverna.scufl2.rdfxml;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -9,7 +11,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.purl.wf4ever.roevo.jaxb.Change;
 import org.purl.wf4ever.roevo.jaxb.ChangeSpecification;
+import org.purl.wf4ever.roevo.jaxb.ChangeSpecification.HasChange;
 import org.purl.wf4ever.roevo.jaxb.RoEvoDocument;
 import org.purl.wf4ever.roevo.jaxb.VersionableResource;
 import org.w3._1999._02._22_rdf_syntax_ns.Resource;
@@ -81,6 +85,23 @@ public class RevisionParser {
 				revision.setChangeSpecificationType(base.resolve(
 						changeSpec.getType().getResource()));
 			}
+			
+			for (HasChange hasChange : changeSpec.getHasChange()) {
+				if (hasChange.getAddition() != null) {
+					Set<URI> additions = parse(hasChange.getAddition(), base);
+					// Note: Use addAll in case a buggy XML has multiple <hasChange><Addition>
+					revision.getAdditionOf().addAll(additions);					
+				}
+				if (hasChange.getModification() != null) {
+					Set<URI> modifications = parse(hasChange.getModification(), base);
+					revision.getModificationsOf().addAll(modifications);					
+				}
+				if (hasChange.getRemoval() != null) {
+					Set<URI> removals = parse(hasChange.getRemoval(), base);
+					revision.getRemovalOf().addAll(removals);					
+				}
+			}
+
 		}
 			
 		for (Resource assoc : verResource.getWasAttributedTo()) {
@@ -94,9 +115,18 @@ public class RevisionParser {
 			r.setIdentifier(base.resolve(assoc.getResource()));
 			revision.getHadOriginalSources().add(r);
 		}
-			
+		
+		
 		
 		
 		return revision;
+	}
+
+	private Set<URI> parse(Change addition, URI base) {
+		Set<URI> uris = new LinkedHashSet<URI>();
+		for (Resource r : addition.getRelatedResource()) {
+			uris.add(base.resolve(r.getResource()));
+		}
+		return uris;
 	}
 }
