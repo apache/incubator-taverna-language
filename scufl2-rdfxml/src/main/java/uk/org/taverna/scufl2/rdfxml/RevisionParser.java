@@ -7,9 +7,11 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.purl.wf4ever.roevo.jaxb.RoEvoDocument;
 import org.purl.wf4ever.roevo.jaxb.VersionableResource;
+import org.w3._1999._02._22_rdf_syntax_ns.Resource;
 
 import uk.org.taverna.scufl2.api.annotation.Revision;
 import uk.org.taverna.scufl2.api.io.ReaderException;
@@ -50,7 +52,20 @@ public class RevisionParser {
 
 	private Revision parse(URI base, VersionableResource verResource) {
 		Revision revision = new Revision();
-		revision.setIdentifier(base.resolve(verResource.getAbout()));		
+		revision.setIdentifier(base.resolve(verResource.getAbout()));
+		if (verResource.getGeneratedAtTime() != null) {
+			XMLGregorianCalendar xmlCal = verResource.getGeneratedAtTime().getValue();
+			revision.setGeneratedAtTime(xmlCal.toGregorianCalendar());
+		}
+		
+		Resource wasRevisionOf = verResource.getWasRevisionOf();
+		if (wasRevisionOf != null) {
+			// TODO Put these in a map
+			Revision r = new Revision();
+			r.setIdentifier(base.resolve(wasRevisionOf.getResource()));
+			revision.setPreviousRevision(r);
+		}
+		
 		return revision;
 	}
 }

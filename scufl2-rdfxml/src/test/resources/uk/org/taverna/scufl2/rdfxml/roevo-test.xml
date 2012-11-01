@@ -18,7 +18,7 @@
 					</Removal>
 				</hasChange>
 				<hasChange>
-					<Addition>
+					<Addition> 
 						<relatedResource rdf:resource="nested-workflow1" />
 					</Addition>
 				</hasChange>
