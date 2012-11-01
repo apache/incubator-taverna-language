@@ -2,7 +2,9 @@ package uk.org.taverna.scufl2.rdfxml;
 
 import java.io.InputStream;
 import java.net.URI;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
@@ -38,7 +40,7 @@ public class RevisionParser {
 	}
 
 	@SuppressWarnings({ "unchecked" })
-	public Revision readRevisionChain(InputStream revisionDocumentStream, URI base) throws ReaderException {
+	public Map<URI, Revision> readRevisionChain(InputStream revisionDocumentStream, URI base) throws ReaderException {
 		JAXBElement<RoEvoDocument> roEvoDoc;
 		try {
 			Unmarshaller unmarshaller = getJaxbContext().createUnmarshaller();
@@ -51,13 +53,19 @@ public class RevisionParser {
 		if (document.getBase() != null) {
 			base = base.resolve(document.getBase());
 		}
-		VersionableResource verResource = (VersionableResource) document.getAny().get(0);
-		return parse(base, verResource);
+		Map<URI, Revision> revisions = new LinkedHashMap<URI, Revision>();
+		// NOTE: Silly hack to iterate/cast in one go.. will it work?
+		for (VersionableResource verResource : document.getAny().toArray(new VersionableResource[0])) {					
+			parse(base, verResource, revisions);
+		}
+		return revisions;
 	}
 
-	private Revision parse(URI base, VersionableResource verResource) {
-		Revision revision = new Revision();
-		revision.setIdentifier(base.resolve(verResource.getAbout()));
+	private Revision parse(URI base, VersionableResource verResource, Map<URI, Revision> revisions) throws ReaderException {
+		URI uri = base.resolve(verResource.getAbout());
+		Revision revision = addOrExisting(uri, revisions);
+
+		
 		if (verResource.getGeneratedAtTime() != null) {
 			XMLGregorianCalendar xmlCal = verResource.getGeneratedAtTime().getValue();
 			revision.setGeneratedAtTime(xmlCal.toGregorianCalendar());
@@ -66,19 +74,18 @@ public class RevisionParser {
 		Resource wasRevisionOf = verResource.getWasRevisionOf();
 		if (wasRevisionOf != null) {
 			// TODO Put these in a map
-			Revision r = new Revision();
-			r.setIdentifier(base.resolve(wasRevisionOf.getResource()));
+			Revision r = addOrExisting(base.resolve(wasRevisionOf.getResource()), revisions);			
 			revision.setPreviousRevision(r);
 		}
 		
 		if (verResource.getWasChangedBy() != null) {
 			ChangeSpecification changeSpec = verResource.getWasChangedBy().getChangeSpecification();
 			if (changeSpec.getFromVersion() != null) {
-				// TODO Put these in a map
-				Revision r = new Revision();
-				r.setIdentifier(base.resolve(changeSpec.getFromVersion().getResource()));
+				Revision r = addOrExisting(base.resolve(changeSpec.getFromVersion().getResource()), revisions);
+				if (revision.getPreviousRevision() != null && revision.getPreviousRevision() != r) {
+					throw new ReaderException("Inconsistent previous revision: " + revision.getPreviousRevision().getIdentifier() + " or " + r.getIdentifier());
+				}
 				revision.setPreviousRevision(r);
-				// TODO: Handle identifier conflict with wasRevisionOf
 			}
 			
 			if (changeSpec.getType() != null) {
@@ -101,7 +108,6 @@ public class RevisionParser {
 					revision.getRemovalOf().addAll(removals);					
 				}
 			}
-
 		}
 			
 		for (Resource assoc : verResource.getWasAttributedTo()) {
@@ -110,16 +116,23 @@ public class RevisionParser {
 		}
 			
 		for (Resource assoc : verResource.getHadOriginalSource()) {
-			// TODO Put these in a map
-			Revision r = new Revision();
-			r.setIdentifier(base.resolve(assoc.getResource()));
+			Revision r = addOrExisting(base.resolve(assoc.getResource()),
+					revisions);
 			revision.getHadOriginalSources().add(r);
 		}
 		
-		
-		
-		
 		return revision;
+	}
+
+	private Revision addOrExisting(URI uri,
+			Map<URI, Revision> revisions) {
+		Revision rev = revisions.get(uri);
+		if (rev != null) {
+			return rev;
+		}
+		rev = new Revision(uri, null);
+		revisions.put(uri, rev);
+		return rev;
 	}
 
 	private Set<URI> parse(Change addition, URI base) {

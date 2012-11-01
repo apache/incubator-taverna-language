@@ -33,7 +33,7 @@
 			</ChangeSpecification>
 		</wasChangedBy>
 		<prov:generatedAtTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2012-12-24T18:00:00+01:00</prov:generatedAtTime>
-		<prov:wasRevisionOf rdf:resource="v2#shouldhavebeenthesameasinFromVersion" />
+		<prov:wasRevisionOf rdf:resource="v2" />
 		<prov:hadOriginalSource rdf:resource="http://example.org/originalSource1"/>
 		<prov:hadOriginalSource rdf:resource="originalSource2"/>		
 		<prov:wasAttributedTo rdf:resource="../Fred" />

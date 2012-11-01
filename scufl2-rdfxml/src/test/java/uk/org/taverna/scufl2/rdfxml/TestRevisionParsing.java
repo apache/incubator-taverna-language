@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
 import org.junit.Test;
@@ -27,13 +28,14 @@ public class TestRevisionParsing {
 		URL base = getClass().getResource(ROEVO_TEST_XML);
 		assertNotNull("Could not find " + ROEVO_TEST_XML, base);
 		InputStream inStream = base.openStream();
-		Revision r3 = parser.readRevisionChain(inStream, base.toURI());
+		Map<URI, Revision> revisions = parser.readRevisionChain(inStream, base.toURI());
+		assertEquals(2, revisions.size());
+		
+		Revision r3 = revisions.get(URI.create("http://example.com/test/v3"));
 		assertNotNull("Did not return a Revision", r3);
 		assertEquals("http://example.com/test/v3", r3.getIdentifier().toASCIIString());	
 		
 		GregorianCalendar expectedTime = createTime(2012, 12, 24, 18, 0, 0);
-		// 3) Still they don't actually compare equal, even if they are at the point in time in
-		// milliseconds since epochs
 		assertEquals(expectedTime.getTimeInMillis(), r3.getGeneratedAtTime().getTimeInMillis());
 		
 		
@@ -67,7 +69,13 @@ public class TestRevisionParsing {
 		Revision r2 = r3.getPreviousRevision();
 		assertEquals("http://example.com/test/v2", r2.getIdentifier().toASCIIString());	
 		
-		
+		GregorianCalendar r2Time = createTime(2010, 1, 15, 11, 0, 0);
+		assertEquals(r2Time.getTimeInMillis(), r2.getGeneratedAtTime().getTimeInMillis());
+
+		Revision r1 = r2.getPreviousRevision();
+		assertEquals("http://example.com/test/v1", r1.getIdentifier().toASCIIString());
+		Revision r0 = r2.getPreviousRevision();
+		assertEquals("http://example.com/test/v0", r0.getIdentifier().toASCIIString());
 		
 	}
 
@@ -80,6 +88,8 @@ public class TestRevisionParsing {
 		// 2) Even if you set the time explicitly, we have to set the millis as well
 		// otherwise it would use the millisecond value at the point of construction (!!)
 		expectedTime.set(Calendar.MILLISECOND, 0);
+		// 3) Still they don't actually compare equal, even if they are at the point in time in
+		// milliseconds since epochs
 		return expectedTime;
 	}
 }
