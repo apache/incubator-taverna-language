@@ -29,7 +29,7 @@ public class TestRevisionParsing {
 		assertNotNull("Could not find " + ROEVO_TEST_XML, base);
 		InputStream inStream = base.openStream();
 		Map<URI, Revision> revisions = parser.readRevisionChain(inStream, base.toURI());
-		assertEquals(2, revisions.size());
+		assertTrue(revisions.size() > 3);
 		
 		Revision r3 = revisions.get(URI.create("http://example.com/test/v3"));
 		assertNotNull("Did not return a Revision", r3);
@@ -73,9 +73,10 @@ public class TestRevisionParsing {
 		assertEquals(r2Time.getTimeInMillis(), r2.getGeneratedAtTime().getTimeInMillis());
 
 		Revision r1 = r2.getPreviousRevision();
-		assertEquals("http://example.com/test/v1", r1.getIdentifier().toASCIIString());
-		Revision r0 = r2.getPreviousRevision();
-		assertEquals("http://example.com/test/v0", r0.getIdentifier().toASCIIString());
+		assertEquals("http://example.net/v1", r1.getIdentifier().toASCIIString());
+		Revision r0 = r1.getPreviousRevision();
+		assertEquals("http://example.net/v0", r0.getIdentifier().toASCIIString());
+		assertEquals(null, r0.getPreviousRevision());
 		
 	}
 
