@@ -6,7 +6,7 @@
 	xmlns:dcterms="http://purl.org/dc/terms/" xmlns:owl="http://www.w3.org/2002/07/owl#"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="RoEvoDocument"
 	xml:base="http://example.com/test/base"
-	xsi:schemaLocation="http://purl.org/wf4ever/roevo# ../../main/resources/uk/org/taverna/scufl2/rdfxml/xsd/roevo.xsd">
+	xsi:schemaLocation="http://purl.org/wf4ever/roevo# ../../../../../../../main/resources/uk/org/taverna/scufl2/rdfxml/xsd/roevo.xsd">
 	<VersionableResource rdf:about="v3">
 		<wasChangedBy>
 			<ChangeSpecification>
@@ -14,30 +14,37 @@
 				<fromVersion rdf:resource="v2" />
 				<hasChange>
 					<Removal>
-						<relatedResource rdf:resource="removed-item"/>
+						<relatedResource rdf:resource="http://example.net/removed-item"/>
+						<relatedResource rdf:resource="removed-item2"/>
 					</Removal>
 				</hasChange>
 				<hasChange>
 					<Addition> 
 						<relatedResource rdf:resource="nested-workflow1" />
+						<relatedResource rdf:resource="http://example.net/nested-workflow2" />
 					</Addition>
 				</hasChange>
 				<hasChange>
 					<Modification>
 						<relatedResource rdf:resource="modified"/>
+						<relatedResource rdf:resource="http://example.net/modified2"/>
 					</Modification>
 				</hasChange>
-				<prov:wasAssociatedWith rdf:resource="Fred" />
 			</ChangeSpecification>
 		</wasChangedBy>
 		<prov:generatedAtTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2012-12-24T18:00:00+01:00</prov:generatedAtTime>
-		<prov:wasRevisionOf rdf:resource="v2" />
+		<prov:wasRevisionOf rdf:resource="v2#shouldhavebeenthesameasinFromVersion" />
+		<prov:hadOriginalSource rdf:resource="http://example.org/originalSource1"/>
+		<prov:hadOriginalSource rdf:resource="originalSource2"/>		
+		<prov:wasAttributedTo rdf:resource="../Fred" />
+		<prov:wasAttributedTo rdf:resource="http://example.net/SomeoneElse#me" />
 	</VersionableResource>
 	<VersionableResource rdf:about="v2">		
 		<prov:generatedAtTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2010-01-15T11:00:00+01:00</prov:generatedAtTime>
-		<prov:wasRevisionOf rdf:resource="v1" />
+		<prov:wasRevisionOf rdf:resource="http://example.net/v1" />
 	</VersionableResource>
-	<VersionableResource rdf:about="v1">		
+	<VersionableResource rdf:about="http://example.net/v1">		
 		<prov:generatedAtTime rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2010-01-15T11:00:00+01:00</prov:generatedAtTime>
+		<prov:wasRevisionOf rdf:resource="http://example.net/v0" />
 	</VersionableResource>
 </rdf:RDF>

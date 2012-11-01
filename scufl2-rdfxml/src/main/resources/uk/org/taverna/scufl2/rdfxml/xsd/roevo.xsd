@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="qualified"
-	elementFormDefault="qualified" targetNamespace="http://purl.org/wf4ever/roevo#"
+	elementFormDefault="qualified" targetNamespace="http://purl.org/wf4ever/roevo#" 
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	xmlns:roevo="http://purl.org/wf4ever/roevo#"
 	xmlns:prov="http://www.w3.org/ns/prov#"
@@ -53,7 +53,8 @@
 				</xs:element>
 				<xs:element ref="prov:generatedAtTime" minOccurs="0" />
 				<xs:element ref="prov:wasRevisionOf" minOccurs="0" />
-				<xs:element ref="prov:hadOriginalSource" minOccurs="0" maxOccurs="unbounded"/>				
+				<xs:element ref="prov:hadOriginalSource" minOccurs="0" maxOccurs="unbounded"/>
+				<xs:element ref="prov:wasAttributedTo" minOccurs="0" maxOccurs="unbounded"/>							
 			</xs:sequence>
 			<xs:attributeGroup ref="rdf:about" />			
 		</xs:complexType>
@@ -86,8 +87,7 @@
 							<xs:element name="Removal" type="roevo:Change" />
 						</xs:choice>
 					</xs:complexType>
-				</xs:element>			
-				<xs:element ref="prov:wasAssociatedWith" minOccurs="0" />
+				</xs:element>
 			</xs:sequence>			
 		</xs:complexType>
 	</xs:element>

@@ -1,12 +1,16 @@
 package uk.org.taverna.scufl2.rdfxml;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.TimeZone;
 
 import org.junit.Test;
@@ -40,6 +44,20 @@ public class TestRevisionParsing {
 		
 		Revision r2 = r3.getPreviousRevision();
 		assertEquals("http://example.com/test/v2", r2.getIdentifier().toASCIIString());	
+		
+		assertEquals("http://example.com/InsertNestedWorkflow", 
+				r3.getChangeSpecificationType().toASCIIString());
+		
+		
+		assertEquals(2, r3.getWasAttributedTo().size());
+		assertTrue(r3.getWasAttributedTo().contains(URI.create("http://example.com/Fred")));
+		assertTrue(r3.getWasAttributedTo().contains(URI.create("http://example.net/SomeoneElse#me")));
+		
+		assertEquals(2, r3.getHadOriginalSources().size());
+		List<Revision> originals = new ArrayList<Revision>(r3.getHadOriginalSources());
+		assertEquals("http://example.org/originalSource1", originals.get(0).getIdentifier().toASCIIString());
+		assertEquals("http://example.com/test/originalSource2", originals.get(1).getIdentifier().toASCIIString());
+
 		
 	}
 }

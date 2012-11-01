@@ -9,6 +9,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.purl.wf4ever.roevo.jaxb.ChangeSpecification;
 import org.purl.wf4ever.roevo.jaxb.RoEvoDocument;
 import org.purl.wf4ever.roevo.jaxb.VersionableResource;
 import org.w3._1999._02._22_rdf_syntax_ns.Resource;
@@ -32,7 +33,7 @@ public class RevisionParser {
 		return jaxbContext;
 	}
 
-	@SuppressWarnings({ "unchecked", "unchecked" })
+	@SuppressWarnings({ "unchecked" })
 	public Revision readRevisionChain(InputStream revisionDocumentStream, URI base) throws ReaderException {
 		JAXBElement<RoEvoDocument> roEvoDoc;
 		try {
@@ -65,6 +66,36 @@ public class RevisionParser {
 			r.setIdentifier(base.resolve(wasRevisionOf.getResource()));
 			revision.setPreviousRevision(r);
 		}
+		
+		if (verResource.getWasChangedBy() != null) {
+			ChangeSpecification changeSpec = verResource.getWasChangedBy().getChangeSpecification();
+			if (changeSpec.getFromVersion() != null) {
+				// TODO Put these in a map
+				Revision r = new Revision();
+				r.setIdentifier(base.resolve(changeSpec.getFromVersion().getResource()));
+				revision.setPreviousRevision(r);
+				// TODO: Handle identifier conflict with wasRevisionOf
+			}
+			
+			if (changeSpec.getType() != null) {
+				revision.setChangeSpecificationType(base.resolve(
+						changeSpec.getType().getResource()));
+			}
+		}
+			
+		for (Resource assoc : verResource.getWasAttributedTo()) {
+			revision.getWasAttributedTo().add(
+					base.resolve(assoc.getResource()));
+		}
+			
+		for (Resource assoc : verResource.getHadOriginalSource()) {
+			// TODO Put these in a map
+			Revision r = new Revision();
+			r.setIdentifier(base.resolve(assoc.getResource()));
+			revision.getHadOriginalSources().add(r);
+		}
+			
+		
 		
 		return revision;
 	}
