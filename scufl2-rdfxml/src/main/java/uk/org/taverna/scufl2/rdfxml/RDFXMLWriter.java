@@ -126,25 +126,17 @@ public class RDFXMLWriter implements WorkflowBundleWriter {
 
 
 	protected void addRevisions(Revisioned revisioned, String path, WorkflowBundle wfBundle) throws WriterException {
-		URI uriBase = uriTools.uriForBean(wfBundle).resolve(path);
-		PropertyResourceSerialiser visitor = new PropertyResourceSerialiser(uriBase);
-		visitor.includeBase();
-		
+		URI uriBase = uriTools.uriForBean(wfBundle).resolve(path);		
 		Revision currentRevision = revisioned.getCurrentRevision();
 		if (currentRevision == null) {
 			return;
 		}
-		currentRevision.accept(visitor);
-		try {
-			/*
-			 * TODO: Serialize manually with nicer indentation/namespaces etc.,
-			 * as done for our other RDF/XML documents
-			 */
-			wfBundle.getResources()
-					.addResource(visitor.getDoc(), path, APPLICATION_RDF_XML);
-		} catch (IOException e) {
-			throw new WriterException("Can't write revisions to " + path, e);
-		}
+//		try {
+//			wfBundle.getResources()
+//					.addResource(visitor.getDoc(), path, APPLICATION_RDF_XML);
+//		} catch (IOException e) {
+//			throw new WriterException("Can't write revisions to " + path, e);
+//		}
 	}
 
 	@Override

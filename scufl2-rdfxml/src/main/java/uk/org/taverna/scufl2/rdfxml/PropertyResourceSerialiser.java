@@ -223,7 +223,7 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 		} else if (node instanceof PropertyReference) {
 			reference((PropertyReference) node);
 		} else if (node instanceof PropertyVisit) {
-			property((PropertyVisit) node);
+			property((PropertyVisit) node);			
 		} else {
 			throw new IllegalStateException("Did not expect " + node);
 		}

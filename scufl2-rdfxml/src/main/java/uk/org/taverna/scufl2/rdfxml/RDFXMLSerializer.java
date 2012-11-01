@@ -567,10 +567,7 @@ public class RDFXMLSerializer {
 			throws JAXBException {
 		if (jaxbContextStatic == null) {
 			Class<?>[] packages = { ObjectFactory.class,
-					org.purl.dc.elements._1.ObjectFactory.class,
-					org.purl.dc.terms.ObjectFactory.class,
 					org.w3._1999._02._22_rdf_syntax_ns.ObjectFactory.class,
-					org.w3._2002._07.owl.ObjectFactory.class,
 					org.w3._2000._01.rdf_schema.ObjectFactory.class };
 			jaxbContextStatic = JAXBContext.newInstance(packages);
 		}
@@ -658,9 +655,7 @@ public class RDFXMLSerializer {
 	private ObjectFactory objectFactory = new ObjectFactory();
 
 	private org.w3._2000._01.rdf_schema.ObjectFactory rdfsObjectFactory = new org.w3._2000._01.rdf_schema.ObjectFactory();
-
 	private org.w3._1999._02._22_rdf_syntax_ns.ObjectFactory rdfObjectFactory = new org.w3._1999._02._22_rdf_syntax_ns.ObjectFactory();
-	private org.w3._2002._07.owl.ObjectFactory owlObjectFactory = new org.w3._2002._07.owl.ObjectFactory();
 	private URITools uriTools = new URITools();
 	private boolean usingSchema = false;
 

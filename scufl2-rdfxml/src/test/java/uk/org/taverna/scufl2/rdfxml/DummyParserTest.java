@@ -70,10 +70,7 @@ public class DummyParserTest {
 	public void makeUnmarshaller() throws JAXBException {
 		
 		Class<?>[] packages = { ObjectFactory.class,
-				org.purl.dc.elements._1.ObjectFactory.class,
-				org.purl.dc.terms.ObjectFactory.class,
 				org.w3._1999._02._22_rdf_syntax_ns.ObjectFactory.class,
-				org.w3._2002._07.owl.ObjectFactory.class,
 				org.w3._2000._01.rdf_schema.ObjectFactory.class };
 		jaxbContext = JAXBContext.newInstance(packages);	
 		unmarshaller = jaxbContext.createUnmarshaller();

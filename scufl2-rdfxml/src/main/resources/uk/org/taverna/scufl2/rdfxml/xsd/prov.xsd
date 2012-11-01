@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="qualified"
 	elementFormDefault="qualified" targetNamespace="http://www.w3.org/ns/prov#"
-	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:owl="http://www.w3.org/2002/07/owl#"
-	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:prov="http://www.w3.org/ns/prov#"
-	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+	xmlns:prov="http://www.w3.org/ns/prov#"
+	xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
 	jxb:version="1.0">
 
 	<xs:annotation>
@@ -15,16 +15,17 @@
 			</jxb:schemaBindings>
 		</xs:appinfo>
 	</xs:annotation>
-
+<!-- 
 	<xs:import namespace="http://www.w3.org/XML/1998/namespace"
 		schemaLocation="http://www.w3.org/2001/03/xml.xsd" />
+	<xs:import namespace="http://www.w3.org/2002/07/owl#"
+		schemaLocation="owl.xsd" />
+	<xs:import namespace="http://www.w3.org/2000/01/rdf-schema#"
+		schemaLocation="rdfs.xsd" />
+ -->
 
 	<xs:import namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 		schemaLocation="rdf.xsd" />
-	<xs:import namespace="http://www.w3.org/2000/01/rdf-schema#"
-		schemaLocation="rdfs.xsd" />
-	<xs:import namespace="http://www.w3.org/2002/07/owl#"
-		schemaLocation="owl.xsd" />
 
 	<xs:element name="generatedAtTime">
 		<xs:complexType>
