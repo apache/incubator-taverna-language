@@ -31,19 +31,12 @@ public class TestRevisionParsing {
 		assertNotNull("Did not return a Revision", r3);
 		assertEquals("http://example.com/test/v3", r3.getIdentifier().toASCIIString());	
 		
-		// WARNING: java.util.GregorianCalendar is the most broken Calendar API I've ever come across.		
-		GregorianCalendar expectedTime = new GregorianCalendar(TimeZone.getTimeZone("GMT+01:00"));
-		// 1) Months (but only months) start at 0, not 1!
-		expectedTime.set(2012, 12-1, 24, 18, 0, 0);
-		// 2) Even if you set the time explicitly, we have to set the millis as well
-		// otherwise it would use the millisecond value at the point of construction (!!)
-		expectedTime.set(Calendar.MILLISECOND, 0);
+		GregorianCalendar expectedTime = createTime(2012, 12, 24, 18, 0, 0);
 		// 3) Still they don't actually compare equal, even if they are at the point in time in
 		// milliseconds since epochs
 		assertEquals(expectedTime.getTimeInMillis(), r3.getGeneratedAtTime().getTimeInMillis());
 		
-		Revision r2 = r3.getPreviousRevision();
-		assertEquals("http://example.com/test/v2", r2.getIdentifier().toASCIIString());	
+		
 		
 		assertEquals("http://example.com/InsertNestedWorkflow", 
 				r3.getChangeSpecificationType().toASCIIString());
@@ -71,6 +64,22 @@ public class TestRevisionParsing {
 		assertTrue(r3.getModificationsOf().contains(URI.create("http://example.com/test/modified")));
 		assertTrue(r3.getModificationsOf().contains(URI.create("http://example.net/modified2")));
 
+		Revision r2 = r3.getPreviousRevision();
+		assertEquals("http://example.com/test/v2", r2.getIdentifier().toASCIIString());	
 		
+		
+		
+	}
+
+	private GregorianCalendar createTime(int year, int month, int date, int hourOfDay, int minute,
+            int second) {		
+		// WARNING: java.util.GregorianCalendar is the most broken Calendar API I've ever come across.		
+		GregorianCalendar expectedTime = new GregorianCalendar(TimeZone.getTimeZone("GMT+01:00"));
+		// 1) Months (but only months) start at 0, not 1!
+		expectedTime.set(year, month-1, date, hourOfDay, minute, second);
+		// 2) Even if you set the time explicitly, we have to set the millis as well
+		// otherwise it would use the millisecond value at the point of construction (!!)
+		expectedTime.set(Calendar.MILLISECOND, 0);
+		return expectedTime;
 	}
 }
