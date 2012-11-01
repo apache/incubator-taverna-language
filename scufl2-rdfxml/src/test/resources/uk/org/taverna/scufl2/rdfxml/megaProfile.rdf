@@ -425,10 +425,10 @@ while(tok1.hasMoreElements()) {
         <name>Get_XML_result</name>
         <configure rdf:resource="activity/Get_XML_result/"/>
         <operation:operation xmlns:operation="http://ns.taverna.org.uk/2010/activity/wsdl#">
-            <ns9:operation xmlns:ns9="http://ns.taverna.org.uk/2010/activity/wsdl/">
+            <ns6:operation xmlns:ns6="http://ns.taverna.org.uk/2010/activity/wsdl/">
                 <name:name xmlns:name="http://ns.taverna.org.uk/2010/activity/wsdl/operation#">poll</name:name>
                 <wsdl:wsdl xmlns:wsdl="http://ns.taverna.org.uk/2010/activity/wsdl/operation#" rdf:resource="http://www.ebi.ac.uk/Tools/webservices/wsdl/WSInterProScan.wsdl"/>
-            </ns9:operation>
+            </ns6:operation>
         </operation:operation>
     </Configuration>
     <Configuration rdf:about="configuration/Get_XML_result_type_defaultValue/">
@@ -442,10 +442,10 @@ while(tok1.hasMoreElements()) {
         <name>Get_text_result</name>
         <configure rdf:resource="activity/Get_text_result/"/>
         <operation:operation xmlns:operation="http://ns.taverna.org.uk/2010/activity/wsdl#">
-            <ns9:operation xmlns:ns9="http://ns.taverna.org.uk/2010/activity/wsdl/">
+            <ns6:operation xmlns:ns6="http://ns.taverna.org.uk/2010/activity/wsdl/">
                 <name:name xmlns:name="http://ns.taverna.org.uk/2010/activity/wsdl/operation#">poll</name:name>
                 <wsdl:wsdl xmlns:wsdl="http://ns.taverna.org.uk/2010/activity/wsdl/operation#" rdf:resource="http://www.ebi.ac.uk/Tools/webservices/wsdl/WSInterProScan.wsdl"/>
-            </ns9:operation>
+            </ns6:operation>
         </operation:operation>
     </Configuration>
     <Configuration rdf:about="configuration/Get_text_result_type_defaultValue/">
@@ -655,10 +655,10 @@ while(tok1.hasMoreElements()) {
         <name>checkStatus</name>
         <configure rdf:resource="activity/checkStatus/"/>
         <operation:operation xmlns:operation="http://ns.taverna.org.uk/2010/activity/wsdl#">
-            <ns9:operation xmlns:ns9="http://ns.taverna.org.uk/2010/activity/wsdl/">
+            <ns6:operation xmlns:ns6="http://ns.taverna.org.uk/2010/activity/wsdl/">
                 <name:name xmlns:name="http://ns.taverna.org.uk/2010/activity/wsdl/operation#">checkStatus</name:name>
                 <wsdl:wsdl xmlns:wsdl="http://ns.taverna.org.uk/2010/activity/wsdl/operation#" rdf:resource="http://www.ebi.ac.uk/Tools/webservices/wsdl/WSInterProScan.wsdl"/>
-            </ns9:operation>
+            </ns6:operation>
         </operation:operation>
     </Configuration>
     <Configuration rdf:about="configuration/runInterProScan/">
@@ -666,10 +666,10 @@ while(tok1.hasMoreElements()) {
         <name>runInterProScan</name>
         <configure rdf:resource="activity/runInterProScan/"/>
         <operation:operation xmlns:operation="http://ns.taverna.org.uk/2010/activity/wsdl#">
-            <ns9:operation xmlns:ns9="http://ns.taverna.org.uk/2010/activity/wsdl/">
+            <ns6:operation xmlns:ns6="http://ns.taverna.org.uk/2010/activity/wsdl/">
                 <name:name xmlns:name="http://ns.taverna.org.uk/2010/activity/wsdl/operation#">runInterProScan</name:name>
                 <wsdl:wsdl xmlns:wsdl="http://ns.taverna.org.uk/2010/activity/wsdl/operation#" rdf:resource="http://www.ebi.ac.uk/Tools/webservices/wsdl/WSInterProScan.wsdl"/>
-            </ns9:operation>
+            </ns6:operation>
         </operation:operation>
     </Configuration>
 </rdf:RDF>
