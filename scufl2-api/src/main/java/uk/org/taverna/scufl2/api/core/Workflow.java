@@ -56,18 +56,16 @@ public class Workflow extends AbstractRevisioned implements
 	@Override
 	public boolean accept(Visitor visitor) {
 		if (visitor.visitEnter(this)) {
-			List<Iterable<? extends WorkflowBean>> children = new ArrayList<Iterable<? extends WorkflowBean>>();
-			children.add(getInputPorts());
-			children.add(getOutputPorts());
-			children.add(getProcessors());
-			children.add(getDataLinks());
-			children.add(getControlLinks());
-			children.add(Collections.singleton(getCurrentRevision()));
-			outer: for (Iterable<? extends WorkflowBean> it : children) {
-				for (WorkflowBean bean : it) {
-					if (!bean.accept(visitor)) {
-						break outer;
-					}
+			List<WorkflowBean> children = new ArrayList<WorkflowBean>();
+			children.addAll(getInputPorts());
+			children.addAll(getOutputPorts());
+			children.addAll(getProcessors());
+			children.addAll(getDataLinks());
+			children.addAll(getControlLinks());
+			children.addAll(Collections.singleton(getCurrentRevision()));			
+			for (WorkflowBean bean : children) {
+				if (!bean.accept(visitor)) {
+					break;
 				}
 			}
 		}
