@@ -317,9 +317,9 @@ public class StructureReader implements WorkflowBundleReader {
 		if (next.equals("Configuration")) {
 			level = Level.Configuration;
 			configuration = new Configuration();
-			profile.getConfigurations().add(configuration);
 			String configName = parseName(scanner);
 			configuration.setName(configName);
+			profile.getConfigurations().add(configuration);
 			return;
 		}
 		if (next.equals("Configures")) {
