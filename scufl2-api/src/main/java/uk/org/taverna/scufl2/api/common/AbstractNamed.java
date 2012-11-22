@@ -42,6 +42,14 @@ public abstract class AbstractNamed extends AbstractCloneable implements Named  
 		if (other == this) {
 			return 0;
 		}
+		if (other == null) {
+			return 1;
+		}
+		/**
+		 * Disabled as this means the order changes depending on setParents being called or not;
+		 * could cause a DataLink to appear twice in workflow.getDataLinks(). 
+		 * 
+		 * 
 		if (this instanceof Child) {
 			if (!(other instanceof Child)) {
 				// He's orphan, he's sorted first
@@ -61,6 +69,7 @@ public abstract class AbstractNamed extends AbstractCloneable implements Named  
 				return -1;
 			}
 		}
+		*/
 		if (getClass() != other.getClass()) {
 			int classCompare = getClass().getCanonicalName().compareTo(
 					other.getClass().getCanonicalName());
