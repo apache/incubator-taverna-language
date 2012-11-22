@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.Set;
 
+import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 
 /**
@@ -20,6 +21,7 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
  */
 public class WorkflowBundleIO {
 
+	private static final Scufl2Tools scufl2Tools = new Scufl2Tools();
 	// delay initialising the ServiceLoaders
 	protected ServiceLoader<WorkflowBundleWriter> writersLoader;
 	protected ServiceLoader<WorkflowBundleReader> readersLoader;
@@ -298,7 +300,10 @@ public class WorkflowBundleIO {
 	}
 
 	/**
-	 * Writes a <code>WorkflowBundle</code> to a file with specified media type.
+	 * Write a <code>WorkflowBundle</code> to a file with specified media type.
+	 * <p>
+	 * {@link Scufl2Tools#setParents(WorkflowBundle)} will be called on the bundle to
+	 * ensure everything contained by the bundle has it as an ancestor.
 	 * 
 	 * @param wfBundle
 	 *            the workflow bundle to write
@@ -320,11 +325,16 @@ public class WorkflowBundleIO {
 		if (writer == null) {
 			throw new IllegalArgumentException("Could not find writer for media type " + mediaType);
 		}
+		
+		scufl2Tools.setParents(wfBundle);		
 		writer.writeBundle(wfBundle, destination, mediaType);
 	}
 
 	/**
-	 * Writes a <code>WorkflowBundle</code> to a stream with specified media type.
+	 * Write a <code>WorkflowBundle</code> to a stream with specified media type.
+	 * <p>
+	 * {@link Scufl2Tools#setParents(WorkflowBundle)} will be called on the bundle to
+	 * ensure everything contained by the bundle has it as an ancestor.
 	 * 
 	 * @param wfBundle
 	 *            the workflow bundle to write
@@ -346,8 +356,8 @@ public class WorkflowBundleIO {
 		if (writer == null) {
 			throw new IllegalArgumentException("Could not find writer for media type " + mediaType);
 		}
+		scufl2Tools.setParents(wfBundle);		
 		writer.writeBundle(wfBundle, output, mediaType);
-
 	}
 
 }
