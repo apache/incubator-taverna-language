@@ -1,18 +1,27 @@
 package uk.org.taverna.scufl2.api.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import uk.org.taverna.scufl2.api.ExampleWorkflow;
 import uk.org.taverna.scufl2.api.port.InputWorkflowPort;
 import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
 
-public class DataLinkCompareTest {
+public class DataLinkCompareTest extends ExampleWorkflow {
+	
+	@Before
+	public void makeBundle() throws Exception {
+		makeWorkflowBundle();
+	}
+
+	
 	@SuppressWarnings("unchecked")
 	@Test
 	public void expectedOrder() throws Exception {
@@ -80,4 +89,18 @@ public class DataLinkCompareTest {
 				links);
 	}
 
+	@Test
+	public void dataLinkNotAddedTwice() throws Exception {
+		assertEquals(3, workflow.getDataLinks().size());
+		DataLink dl1 = workflow.getDataLinks().iterator().next();
+		assertTrue(workflow.getDataLinks().contains(dl1));
+		workflow.getDataLinks().add(dl1);
+		dl1.setParent(workflow);
+		// This could happen because dataLink.compareTo() calls
+		// .compareTo() on the sender/receiver link, and if 
+		// their parents was null at insertion and non-null
+		// later, the TreeSet order got messed up.
+		assertEquals(3, workflow.getDataLinks().size());
+	}
+	
 }
