@@ -20,12 +20,15 @@ import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.ExampleWorkflow;
+import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.structure.StructureReader;
 import uk.org.taverna.scufl2.api.io.structure.StructureWriter;
+import uk.org.taverna.scufl2.api.profiles.Profile;
 
 public class TestWorkflowBundleIO extends ExampleWorkflow {
 
@@ -61,7 +64,6 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 
 	@Test
 	public void getWorkflowBundleWriters() throws Exception {
-
 		assertEquals(1, bundleIO.getWriters().size());
 		WorkflowBundleWriter writer = bundleIO.getWriters().get(0);
 		assertTrue(writer instanceof StructureWriter);
@@ -206,11 +208,10 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 				getStructureFormatWorkflowBundle().getBytes("utf-8"));
 		WorkflowBundle readBundle = bundleIO.readBundle(inputStream,
 				TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
-
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		bundleIO.writeBundle(readBundle, output, TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
 		String bundleTxt = new String(output.toByteArray(), UTF_8);
-		assertEquals(getStructureFormatWorkflowBundle(), bundleTxt);
+		assertEquals(getStructureFormatWorkflowBundle(), bundleTxt);		
 	}
 
 	@Test
@@ -292,6 +293,28 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 		assertEquals(getStructureFormatWorkflowBundle(), bundleTxt);
 	}
 
+	@Ignore
+	@Test
+	public void writeBundleFileSetParents() throws Exception {
+		File bundleFile = tempFile();
+		// Deliberately orphan a profile and a processor
+		Profile profile = wfBundle.getProfiles().getByName("tavernaWorkbench");
+		profile.setParent(null);		
+		wfBundle.getProfiles().add(profile);		
+		processor.setParent(null);
+		workflow.getProcessors().add(processor);		
+		
+		assertNull(processor.getParent());
+		assertNull(profile.getParent());		
+		bundleIO.writeBundle(wfBundle, bundleFile,
+				TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
+		assertNotNull(processor.getParent());
+		assertNotNull(profile.getParent());				
+		String bundleTxt = FileUtils.readFileToString(bundleFile, UTF_8);
+		assertTrue(bundleTxt.contains("Processor 'Hello'"));
+		assertTrue(bundleTxt.contains("Profile 'tavernaWorkbench'"));		
+	}
+	
 	@Test
 	public void writeBundleStream() throws Exception {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
