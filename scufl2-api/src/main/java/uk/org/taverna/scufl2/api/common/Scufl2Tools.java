@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -283,20 +284,30 @@ public class Scufl2Tools {
 			throw new IllegalArgumentException("Port must be a ProcessorPort or ActivityPort");
 		}
 		for (ProcessorBinding procBinding : processorBindings) {
-			Set<? extends ProcessorPortBinding> portBindings;
-			if (port instanceof InputPort) {
-				portBindings = procBinding.getInputPortBindings();
-			} else {
-				portBindings = procBinding.getOutputPortBindings();
+			ProcessorPortBinding portBinding = processorPortBindingInternalInBinding(port, procBinding);
+			if (portBinding != null) {
+				return portBinding;
 			}
-			for (ProcessorPortBinding portBinding : portBindings) {
-				if (port instanceof ProcessorPort
-						&& portBinding.getBoundProcessorPort().equals(port)) {
-					return portBinding;
-				}
-				if (port instanceof ActivityPort && portBinding.getBoundActivityPort().equals(port)) {
-					return portBinding;
-				}
+		}
+		return null;
+	}
+
+	@SuppressWarnings("rawtypes")
+	protected ProcessorPortBinding processorPortBindingInternalInBinding(Port port,
+			ProcessorBinding procBinding) {
+		Set<? extends ProcessorPortBinding> portBindings;
+		if (port instanceof InputPort) {
+			portBindings = procBinding.getInputPortBindings();
+		} else {
+			portBindings = procBinding.getOutputPortBindings();
+		}
+		for (ProcessorPortBinding portBinding : portBindings) {
+			if (port instanceof ProcessorPort
+					&& portBinding.getBoundProcessorPort().equals(port)) {
+				return portBinding;
+			}
+			if (port instanceof ActivityPort && portBinding.getBoundActivityPort().equals(port)) {
+				return portBinding;
 			}
 		}
 		return null;
@@ -608,11 +619,18 @@ public class Scufl2Tools {
 		binding.setParent(activity.getParent());
 		binding.setBoundActivity(activity);
 		binding.setBoundProcessor(processor);
-
+		bindActivityToProcessorByMatchingPorts(binding);
+		return binding;
+	}
+	
+	public void bindActivityToProcessorByMatchingPorts(ProcessorBinding binding) {
+		Activity activity = binding.getBoundActivity();
+		Processor processor = binding.getBoundProcessor();
 		for (InputActivityPort activityPort : activity.getInputPorts()) {
 			InputProcessorPort processorPort = processor.getInputPorts()
 					.getByName(activityPort.getName());
-			if (processorPort != null) {
+			if (processorPort != null && 
+					processorPortBindingInternalInBinding(processorPort, binding) == null) {
 				new ProcessorInputPortBinding(binding, processorPort,
 						activityPort);
 			}
@@ -621,12 +639,74 @@ public class Scufl2Tools {
 		for (OutputProcessorPort processorPort : processor.getOutputPorts()) {
 			OutputActivityPort activityPort = activity.getOutputPorts()
 					.getByName(processorPort.getName());
-			if (activityPort != null) {
+			if (activityPort != null && 
+					processorPortBindingInternalInBinding(activityPort, binding) == null) {
 				new ProcessorOutputPortBinding(binding, activityPort,
 						processorPort);
 			}
 		}
-		return binding;
+	}
+	
+
+	public ProcessorBinding createProcessorAndBindingFromActivity(Activity activity) {
+		Processor proc = new Processor();
+		proc.setName(activity.getName());
+		createProcessorPortsFromActivity(proc, activity);	
+		return bindActivityToProcessorByMatchingPorts(activity, proc);		
+	}
+
+	public Activity createActivityFromProcessor(Processor processor, Profile profile) {
+		Activity activity = new Activity();
+		activity.setName(processor.getName());
+		activity.setParent(profile);
+		createActivityPortsFromProcessor(activity, processor);
+		bindActivityToProcessorByMatchingPorts(activity, processor);
+		return activity;
+	}
+
+	
+	public void removePortsBindingForUnknownPorts(ProcessorBinding binding) {
+		// First, remove ports no longer owned by processor
+		Iterator<ProcessorInputPortBinding> inputBindings = binding.getInputPortBindings().iterator();		
+		Activity activity = binding.getBoundActivity();
+		Processor processor = binding.getBoundProcessor();
+		for (ProcessorInputPortBinding ip : iterable(inputBindings)) {
+			if (! activity.getInputPorts().contains(ip.getBoundActivityPort())) {
+				inputBindings.remove();
+				continue;
+			}
+			if (! processor.getInputPorts().contains(ip.getBoundProcessorPort())) {
+				inputBindings.remove();
+				continue;
+			}
+		}
+		Iterator<ProcessorOutputPortBinding> outputBindings = binding.getOutputPortBindings().iterator();		
+		for (ProcessorOutputPortBinding op : iterable(outputBindings)) {
+			if (! activity.getOutputPorts().contains(op.getBoundActivityPort())) {
+				outputBindings.remove();
+				continue;
+			}
+			if (! processor.getOutputPorts().contains(op.getBoundProcessorPort())) {
+				outputBindings.remove();
+				continue;
+			}
+		}
+		
+		
+	}
+	
+	public void updateBindingByMatchingPorts(ProcessorBinding binding) {
+		removePortsBindingForUnknownPorts(binding);		
+		bindActivityToProcessorByMatchingPorts(binding);		
+	}
+
+	private <T> Iterable<T> iterable(final Iterator<T> it) {
+		return new Iterable<T>() {
+			@Override
+			public Iterator<T> iterator() {
+				return it;
+			}
+		};
 	}
 	
 }

@@ -1,14 +1,17 @@
 package uk.org.taverna.scufl2.api.common;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +30,7 @@ import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
 import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
+import uk.org.taverna.scufl2.api.profiles.ProcessorPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 
 public class TestScufl2Tools extends ExampleWorkflow {
@@ -121,6 +125,105 @@ public class TestScufl2Tools extends ExampleWorkflow {
 				.getOutputPortBindings().iterator().next();
 		assertSame(outputPortBinding,
 				scufl2Tools.processorPortBindingForPort(port, profile));
+	}
+
+	@Test
+	public void createProcessorFromActivity() throws Exception {
+		Profile profile = new Profile();
+		Activity a = new Activity();
+		a.setParent(profile);
+		new InputActivityPort(a, "in1");
+		new InputActivityPort(a, "in2").setDepth(1);		
+		new OutputActivityPort(a, "out1");
+		new OutputActivityPort(a, "out2").setDepth(0);		
+		OutputActivityPort aOut3 = new OutputActivityPort(a, "out3");
+		aOut3.setDepth(2);
+		aOut3.setGranularDepth(1);
+		
+		ProcessorBinding binding = scufl2Tools.createProcessorAndBindingFromActivity(a);
+		Processor p = binding.getBoundProcessor();
+		assertEquals(profile, binding.getParent());
+		
+		assertEquals(2, p.getInputPorts().size());
+		assertEquals(3, p.getOutputPorts().size());
+		assertEquals(2, binding.getInputPortBindings().size());
+		assertEquals(3, binding.getOutputPortBindings().size());
+		assertEquals(a, binding.getBoundActivity());
+		assertEquals(p, binding.getBoundProcessor());
+
+	}
+	
+
+	@Test
+	public void createActivityFromProcessor() throws Exception {
+		Processor p = new Processor();
+		new InputProcessorPort(p, "in1");
+		new InputProcessorPort(p, "in2").setDepth(1);
+		
+		new OutputProcessorPort(p, "out1");
+		new OutputProcessorPort(p, "out2").setDepth(0);
+		
+		OutputProcessorPort pOut3 = new OutputProcessorPort(p, "out3");
+		pOut3.setDepth(2);
+		pOut3.setGranularDepth(1);	
+
+		Profile profile = new Profile();
+		Activity a = scufl2Tools.createActivityFromProcessor(p, profile);
+		
+		assertEquals(profile, a.getParent());
+		ProcessorBinding binding = scufl2Tools.processorBindingForProcessor(p, profile);
+		
+		assertEquals(2, a.getInputPorts().size());
+		assertEquals(3, a.getOutputPorts().size());
+		assertEquals(2, binding.getInputPortBindings().size());
+		assertEquals(3, binding.getOutputPortBindings().size());
+		assertEquals(a, binding.getBoundActivity());
+		assertEquals(p, binding.getBoundProcessor());	
+	}
+	
+	@Test
+	public void updatePortBindingByMatchingPorts() throws Exception {
+		Processor p = new Processor();
+		new InputProcessorPort(p, "in1");
+		new InputProcessorPort(p, "in2");
+		new OutputProcessorPort(p, "out1");		
+		new OutputProcessorPort(p, "out2");
+		Profile profile = new Profile();
+		Activity a = scufl2Tools.createActivityFromProcessor(p, profile);
+		ProcessorBinding binding = scufl2Tools.processorBindingsToActivity(a).get(0);
+		
+		// Add some
+		new InputProcessorPort(p, "new1");
+		new InputProcessorPort(p, "new2");
+		new InputActivityPort(a, "new1");
+		new InputActivityPort(a, "new2");
+		new OutputProcessorPort(p, "new3");
+		new OutputProcessorPort(p, "new4");
+		new OutputActivityPort(a, "new4");
+		new OutputActivityPort(a, "new5");
+		// And remove some
+		p.getInputPorts().removeByName("in2");
+		a.getOutputPorts().removeByName("out1");
+		
+		scufl2Tools.updateBindingByMatchingPorts(binding);
+		
+//		assertEquals(3, binding.getInputPortBindings().size());
+//		assertEquals(2, binding.getOutputPortBindings().size());
+
+		Set<String> namesIn = procPortNames(binding.getInputPortBindings());
+		Set<String> namesOut = procPortNames(binding.getOutputPortBindings());
+		assertEquals(new HashSet(Arrays.asList("in1", "new1", "new2")), namesIn);
+		assertEquals(new HashSet(Arrays.asList("out2", "new4")), namesOut);		
+	}
+	
+	
+	private Set<String> procPortNames(
+			Set<? extends ProcessorPortBinding> portBindings) {
+		Set<String> names = new HashSet<String>();
+		for (ProcessorPortBinding portBinding : portBindings) {
+			names.add(portBinding.getBoundProcessorPort().getName());
+		}
+		return names;
 	}
 
 	@Test
@@ -366,3 +469,4 @@ public class TestScufl2Tools extends ExampleWorkflow {
 		
 	}
 }
+
