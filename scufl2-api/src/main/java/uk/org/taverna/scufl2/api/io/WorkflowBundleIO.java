@@ -372,18 +372,22 @@ public class WorkflowBundleIO {
 	 * workflow bundles from scratch.
 	 * <p>
 	 * Each of the bundle, workflow and profile will also have a revision set
-	 * using {@link Revisioned#newRevision()}.
+	 * using {@link Revisioned#newRevision()} and their names set to
+	 * short default values.
 	 * 
 	 * @return A template {@link WorkflowBundle} which has a main workflow and main profile
 	 */
 	public WorkflowBundle createBundle() {
 		WorkflowBundle wb = new WorkflowBundle();
+		wb.setName("bundle1");
 		
 		Workflow workflow = new Workflow();
+		workflow.setName("workflow1");
 		workflow.setParent(wb);
 		workflow.newRevision();
 
 		Profile profile = new Profile();
+		profile.setName("profile1");
 		profile.setParent(wb);
 		profile.newRevision();
 		

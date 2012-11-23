@@ -42,6 +42,9 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 		WorkflowBundle wb = bundleIO.createBundle();
 		assertEquals(wb, wb.getMainWorkflow().getParent());
 		assertEquals(wb, wb.getMainProfile().getParent());
+		assertEquals("bundle1", wb.getName());
+		assertEquals("workflow1", wb.getMainWorkflow().getName());
+		assertEquals("profile1", wb.getMainProfile().getName());
 		assertNotNull(wb.getCurrentRevision());
 		assertNotNull(wb.getMainWorkflow().getCurrentRevision());
 		assertNotNull(wb.getMainProfile().getCurrentRevision());
