@@ -72,7 +72,9 @@ public class TestSimpleWf {
 		profile.getConfigurations().add(config);
 		
 		// Save to file (or System.out ? )
-		bundleIo.writeBundle(wb, new File("test.wfbundle"), bundleType);
+		File file = File.createTempFile("test", ".wfbundle");
+		bundleIo.writeBundle(wb, file, bundleType);
+		System.out.println(file);
 	}
 
 }
