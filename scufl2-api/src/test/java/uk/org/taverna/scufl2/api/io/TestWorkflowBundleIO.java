@@ -1,5 +1,6 @@
 package uk.org.taverna.scufl2.api.io;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -37,6 +38,16 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 	protected WorkflowBundle wfBundle = makeWorkflowBundle();
 
 	@Test
+	public void createBundle() throws Exception {
+		WorkflowBundle wb = bundleIO.createBundle();
+		assertEquals(wb, wb.getMainWorkflow().getParent());
+		assertEquals(wb, wb.getMainProfile().getParent());
+		assertNotNull(wb.getCurrentRevision());
+		assertNotNull(wb.getMainWorkflow().getCurrentRevision());
+		assertNotNull(wb.getMainProfile().getCurrentRevision());
+	}
+	
+	@Test
 	public void getReaderForMediaType() throws Exception {
 		WorkflowBundleReader Reader = bundleIO
 		.getReaderForMediaType(TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
@@ -69,6 +80,7 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 		assertTrue(writer instanceof StructureWriter);
 	}
 
+	
 	@Test
 	public void getWriterForMediaType() throws Exception {
 		WorkflowBundleWriter writer = bundleIO

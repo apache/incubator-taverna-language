@@ -13,8 +13,11 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.Set;
 
+import uk.org.taverna.scufl2.api.annotation.Revisioned;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.core.Workflow;
+import uk.org.taverna.scufl2.api.profiles.Profile;
 
 /**
  * Utility class for reading and writing <code>WorkflowBundle</code>s.
@@ -358,6 +361,36 @@ public class WorkflowBundleIO {
 		}
 		scufl2Tools.setParents(wfBundle);		
 		writer.writeBundle(wfBundle, output, mediaType);
+	}
+
+	/**
+	 * Create a new WorkflowBundle with a default workflow and profile.
+	 * <p>
+	 * Unlike the {@link WorkflowBundle} constructor, this method will also make
+	 * a {@link WorkflowBundle#getMainWorkflow()} and
+	 * {@link WorkflowBundle#getMainProfile()}, simplifying construction of
+	 * workflow bundles from scratch.
+	 * <p>
+	 * Each of the bundle, workflow and profile will also have a revision set
+	 * using {@link Revisioned#newRevision()}.
+	 * 
+	 * @return A template {@link WorkflowBundle} which has a main workflow and main profile
+	 */
+	public WorkflowBundle createBundle() {
+		WorkflowBundle wb = new WorkflowBundle();
+		
+		Workflow workflow = new Workflow();
+		workflow.setParent(wb);
+		workflow.newRevision();
+
+		Profile profile = new Profile();
+		profile.setParent(wb);
+		profile.newRevision();
+		
+		wb.setMainWorkflow(workflow);
+		wb.setMainProfile(profile);
+		wb.newRevision();
+		return wb;
 	}
 
 }
