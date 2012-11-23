@@ -18,7 +18,6 @@ import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.Visitor.VisitorWithPath;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.ControlLink;
-import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
@@ -200,5 +199,170 @@ public class TestScufl2Tools extends ExampleWorkflow {
 		});
 	}
 
+	@Test
+	public void createActivityPortsFromProcessor() throws Exception {
+		Processor p = new Processor();
+		new InputProcessorPort(p, "in1");
+		new InputProcessorPort(p, "in2").setDepth(1);
+		
+		new OutputProcessorPort(p, "out1");
+		new OutputProcessorPort(p, "out2").setDepth(0);
+		
+		OutputProcessorPort pOut3 = new OutputProcessorPort(p, "out3");
+		pOut3.setDepth(2);
+		pOut3.setGranularDepth(1);
+		
+		
+		Activity a = new Activity();
+		scufl2Tools.createActivityPortsFromProcessor(a, p);
+		
+		
+		assertEquals(2, a.getInputPorts().size());
+		InputActivityPort aIn1 = a.getInputPorts().getByName("in1");
+		assertNull(aIn1.getDepth());
+		InputActivityPort aIn2 = a.getInputPorts().getByName("in2");
+		assertEquals(1, aIn2.getDepth().intValue());
+		
+		assertEquals(3, a.getOutputPorts().size());
+		OutputActivityPort aOut1 = a.getOutputPorts().getByName("out1");
+		assertEquals(null, aOut1.getDepth());
+		assertEquals(null, aOut1.getGranularDepth());
+		
+		OutputActivityPort aOut2 = a.getOutputPorts().getByName("out2");
+		assertEquals(0, aOut2.getDepth().intValue());
+		assertEquals(null, aOut2.getGranularDepth());
+		
+		OutputActivityPort aOut3 = a.getOutputPorts().getByName("out3");
+		assertEquals(2, aOut3.getDepth().intValue());
+		assertEquals(1, aOut3.getGranularDepth().intValue());		
+	}
+
+	@Test
+	public void createActivityPortsFromProcessorWithOverwrite() throws Exception {
+		Processor p = new Processor();
+		new InputProcessorPort(p, "in1");
+		new OutputProcessorPort(p, "out1");
+		new OutputProcessorPort(p, "out2").setDepth(1);
+
+		
+		Activity a = new Activity();
+		new InputActivityPort(a, "other");
+		OutputActivityPort toBeOverWritten = new OutputActivityPort(a, "out1");
+		toBeOverWritten.setDepth(1);
+		assertEquals(a, toBeOverWritten.getParent());
+		
+		
+		scufl2Tools.createActivityPortsFromProcessor(a, p);
+		// Still there
+		assertNotNull(a.getInputPorts().getByName("other"));
+		
+		// but out1 has been overwritten
+ 		OutputActivityPort aOut1 = a.getOutputPorts().getByName("out1");
+		assertNull(aOut1.getDepth());
+		assertNotSame(toBeOverWritten, aOut1);		
+	}
+
 	
+	
+	@Test
+	public void createProcessorPortsFromActivity() throws Exception {
+		Activity a = new Activity();
+		new InputActivityPort(a, "in1");
+		new InputActivityPort(a, "in2").setDepth(1);
+		
+		new OutputActivityPort(a, "out1");
+		new OutputActivityPort(a, "out2").setDepth(0);
+		
+		OutputActivityPort aOut3 = new OutputActivityPort(a, "out3");
+		aOut3.setDepth(2);
+		aOut3.setGranularDepth(1);
+		
+		
+		Processor p = new Processor();
+		scufl2Tools.createProcessorPortsFromActivity(p, a);
+		
+		
+		assertEquals(2, p.getInputPorts().size());
+		InputProcessorPort pIn1 = p.getInputPorts().getByName("in1");
+		assertNull(pIn1.getDepth());
+		InputProcessorPort pIn2 = p.getInputPorts().getByName("in2");
+		assertEquals(1, pIn2.getDepth().intValue());
+		
+		assertEquals(3, p.getOutputPorts().size());
+		OutputProcessorPort pOut1 = p.getOutputPorts().getByName("out1");
+		assertEquals(null, pOut1.getDepth());
+		assertEquals(null, pOut1.getGranularDepth());
+		
+		OutputProcessorPort pOut2 = p.getOutputPorts().getByName("out2");
+		assertEquals(0, pOut2.getDepth().intValue());
+		assertEquals(null, pOut2.getGranularDepth());
+		
+		OutputProcessorPort pOut3 = p.getOutputPorts().getByName("out3");
+		assertEquals(2, pOut3.getDepth().intValue());
+		assertEquals(1, pOut3.getGranularDepth().intValue());		
+	}
+
+	@Test
+	public void createProcessorPortsFromActivityWithOverwrite() throws Exception {
+		Activity a = new Activity();
+
+		new InputActivityPort(a, "in1");
+		
+		new OutputActivityPort(a, "out1");
+		new OutputActivityPort(a, "out2").setDepth(1);
+
+		Processor p = new Processor();
+		new InputProcessorPort(p, "other");
+		OutputProcessorPort toBeOverWritten = new OutputProcessorPort(p, "out1");
+		toBeOverWritten.setDepth(1);
+		assertEquals(p, toBeOverWritten.getParent());
+		
+		
+		scufl2Tools.createProcessorPortsFromActivity(p, a);
+		// Still there
+		assertNotNull(p.getInputPorts().getByName("other"));
+		
+		// but out1 has been overwritten
+ 		OutputProcessorPort pOut1 = p.getOutputPorts().getByName("out1");
+		assertNull(pOut1.getDepth());
+		assertNotSame(toBeOverWritten, pOut1);
+	}
+	
+	
+	@Test
+	public void bindActivityToProcessorByMatchingPorts() throws Exception {
+		Processor p = new Processor();
+		new InputProcessorPort(p, "in1");
+		new InputProcessorPort(p, "in2");
+		new OutputProcessorPort(p, "out1");
+		new OutputProcessorPort(p, "out2");
+		new OutputProcessorPort(p, "out3");
+		
+		Activity a = new Activity();
+		new InputActivityPort(a, "in1");
+		// in2 missing
+		new InputActivityPort(a, "in3"); // additional in3
+		new OutputActivityPort(a, "out1");
+		// out2 missing
+		new OutputActivityPort(a, "out3");
+		new OutputActivityPort(a, "out4"); // additional out4
+
+		ProcessorBinding binding = scufl2Tools.bindActivityToProcessorByMatchingPorts(a, p);
+		assertEquals(a, binding.getBoundActivity());
+		assertEquals(p, binding.getBoundProcessor());
+		assertEquals(1, binding.getInputPortBindings().size());
+		ProcessorInputPortBinding inBinding = binding.getInputPortBindings().iterator().next();
+		assertEquals(p.getInputPorts().getByName("in1"), inBinding.getBoundProcessorPort());
+		assertEquals(a.getInputPorts().getByName("in1"), inBinding.getBoundActivityPort());
+		
+		assertEquals(2, binding.getOutputPortBindings().size());
+		// should be out1 and out3
+		for (ProcessorOutputPortBinding outBinding : binding.getOutputPortBindings()) {
+			assertEquals(outBinding.getBoundActivityPort().getName(),
+						outBinding.getBoundProcessorPort().getName());
+			assertEquals(a, outBinding.getBoundActivityPort().getParent());
+			assertEquals(p, outBinding.getBoundProcessorPort().getParent());
+		}
+		
+	}
 }

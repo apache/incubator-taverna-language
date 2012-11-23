@@ -20,8 +20,10 @@ import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
 import uk.org.taverna.scufl2.api.port.ActivityPort;
+import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.InputPort;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
+import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.api.port.OutputPort;
 import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
 import uk.org.taverna.scufl2.api.port.Port;
@@ -318,7 +320,7 @@ public class Scufl2Tools {
 
 		});
 	}
-
+	
 	public DispatchStackLayer dispatchStackByType(Processor processor, URI type) {
 		DispatchStackLayer candidate = null;
 		for (DispatchStackLayer layer : processor.getDispatchStack()) {
@@ -572,4 +574,59 @@ public class Scufl2Tools {
 		return false;
 	}
 
+	public void createActivityPortsFromProcessor(Activity activity,
+			Processor processor) {
+		for (InputProcessorPort processorPort : processor.getInputPorts()) {
+			new InputActivityPort(activity, processorPort.getName())
+					.setDepth(processorPort.getDepth());
+		}
+		for (OutputProcessorPort processorPort : processor.getOutputPorts()) {
+			OutputActivityPort activityPort = new OutputActivityPort(activity,
+					processorPort.getName());
+			activityPort.setDepth(processorPort.getDepth());
+			activityPort.setGranularDepth(processorPort.getGranularDepth());
+		}
+	}
+
+	public void createProcessorPortsFromActivity(Processor processor,
+			Activity activity) {
+		for (InputActivityPort activityPort : activity.getInputPorts()) {
+			new InputProcessorPort(processor, activityPort.getName())
+					.setDepth(activityPort.getDepth());
+		}
+		for (OutputActivityPort activityPort : activity.getOutputPorts()) {
+			OutputProcessorPort procPort = new OutputProcessorPort(processor,
+					activityPort.getName());
+			procPort.setDepth(activityPort.getDepth());
+			procPort.setGranularDepth(activityPort.getGranularDepth());
+		}
+	}
+
+	public ProcessorBinding bindActivityToProcessorByMatchingPorts(
+			Activity activity, Processor processor) {
+		ProcessorBinding binding = new ProcessorBinding();
+		binding.setParent(activity.getParent());
+		binding.setBoundActivity(activity);
+		binding.setBoundProcessor(processor);
+
+		for (InputActivityPort activityPort : activity.getInputPorts()) {
+			InputProcessorPort processorPort = processor.getInputPorts()
+					.getByName(activityPort.getName());
+			if (processorPort != null) {
+				new ProcessorInputPortBinding(binding, processorPort,
+						activityPort);
+			}
+		}
+
+		for (OutputProcessorPort processorPort : processor.getOutputPorts()) {
+			OutputActivityPort activityPort = activity.getOutputPorts()
+					.getByName(processorPort.getName());
+			if (activityPort != null) {
+				new ProcessorOutputPortBinding(binding, activityPort,
+						processorPort);
+			}
+		}
+		return binding;
+	}
+	
 }
