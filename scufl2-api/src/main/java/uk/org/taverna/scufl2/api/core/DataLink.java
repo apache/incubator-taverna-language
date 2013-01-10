@@ -1,12 +1,11 @@
 package uk.org.taverna.scufl2.api.core;
 
-import java.util.HashMap;
-
 import uk.org.taverna.scufl2.api.common.AbstractCloneable;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.impl.NullSafeComparator;
+import uk.org.taverna.scufl2.api.port.Port;
 import uk.org.taverna.scufl2.api.port.ReceiverPort;
 import uk.org.taverna.scufl2.api.port.SenderPort;
 
@@ -79,12 +78,12 @@ public class DataLink extends AbstractCloneable implements Child<Workflow>, Comp
 		DataLink o1 = this;
 		DataLink o2 = (DataLink) o;
 		
-		int senderCompare = nullSafeCompare.compare(o1.getReceivesFrom(), o2.getReceivesFrom());
+		int senderCompare = portCompare(o1.getReceivesFrom(), o2.getReceivesFrom());
 		if (senderCompare != 0) {
 			return senderCompare;
 		}
 
-		int receiverCompare = nullSafeCompare.compare(o1.getSendsTo(), o2.getSendsTo());
+		int receiverCompare = portCompare(o1.getSendsTo(), o2.getSendsTo());
 		if (receiverCompare != 0) {
 			return receiverCompare;
 		}
@@ -92,6 +91,17 @@ public class DataLink extends AbstractCloneable implements Child<Workflow>, Comp
 	}
 
 	
+	private int portCompare(Port a, Port b) {
+		// All known Port implementations are also Child instances
+		Child aChild = (Child)a;
+		Child bChild = (Child)b;		
+		int parentCompare = nullSafeCompare.compare(aChild.getParent(), bChild.getParent());
+		if (parentCompare != 0) {
+			return parentCompare;
+		}
+		return nullSafeCompare.compare(a, b);		
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
