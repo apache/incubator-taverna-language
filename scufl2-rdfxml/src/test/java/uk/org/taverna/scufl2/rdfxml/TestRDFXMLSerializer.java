@@ -277,7 +277,7 @@ public class TestRDFXMLSerializer {
 		assertXpathEquals("datalink?from=in/yourName&to=out/results&mergePosition=1",
 				wf, "./s:datalink[2]/s:DataLink/@rdf:about");
 		assertXpathEquals("in/yourName",
-				wf, "./s:datalink[1]/s:DataLink/s:receiveFrom/@rdf:resource");
+				wf, "./s:datalink[2]/s:DataLink/s:receiveFrom/@rdf:resource");
 		assertXpathEquals("out/results",
 				wf, "./s:datalink[2]/s:DataLink/s:sendTo/@rdf:resource");
 		assertXpathEquals("1",
@@ -427,7 +427,7 @@ public class TestRDFXMLSerializer {
 		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		// To test that seeAlso URIs are stored
 		serializer.workflowDoc(outStream, workflowBundle.getMainWorkflow(), URI.create(HELLOWORLD_RDF));
-		//System.out.write(outStream.toByteArray());
+		System.out.write(outStream.toByteArray());
 		Document doc = parseXml(outStream);
 		Element root = doc.getRootElement();
 
