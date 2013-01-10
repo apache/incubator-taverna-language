@@ -173,8 +173,8 @@ public class Workflow extends AbstractRevisioned implements
 	 *            the <code>DataLink</code>s. <strong>Must not</strong> be null
 	 */
 	public void setDataLinks(Set<DataLink> dataLinks) {
-		dataLinks.clear();
-		dataLinks.addAll(dataLinks);
+		this.dataLinks.clear();
+		this.dataLinks.addAll(dataLinks);
 	}
 
 	/**
