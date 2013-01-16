@@ -93,7 +93,13 @@ public class DataLink extends AbstractCloneable implements Child<Workflow>, Comp
 	}
 
 		
+	@SuppressWarnings("unchecked")
 	private int portCompare(Port a, Port b) {
+		Integer nullCompare = NullSafeComparator.nullCompare(a, b);
+		if (nullCompare != null) {
+			return nullCompare;
+		}
+
 		// All known Port implementations are also Child instances
 		WorkflowBean aParent = ((Child)a).getParent();
 		WorkflowBean bParent = ((Child)b).getParent();
@@ -101,7 +107,8 @@ public class DataLink extends AbstractCloneable implements Child<Workflow>, Comp
 		if (parentCompare != 0) {
 			return parentCompare;
 		}
-		return NullSafeComparator.compareObjects(a, b);		
+		// OK, just to boring Port compare then
+		return a.compareTo(b);
 	}
 
 	@Override
