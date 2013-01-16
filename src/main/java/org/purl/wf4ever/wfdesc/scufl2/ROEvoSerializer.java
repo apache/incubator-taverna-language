@@ -19,7 +19,7 @@ import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.io.WriterException;
 
 public class ROEvoSerializer {
-	private URITools uriTools = new URITools();
+	//private URITools uriTools = new URITools();
 	
 	public void workflowHistory(Workflow mainWorkflow, OutputStream output) throws WriterException {	
 		Repository repository = new SailRepository(new MemoryStore());
@@ -37,7 +37,6 @@ public class ROEvoSerializer {
 		} catch (RepositoryException e1) {
 			throw new IllegalStateException("Can't get repository connection", e1);
 		}
-
 		Revision revision = mainWorkflow.getCurrentRevision();
 		Revision previous = revision.getPreviousRevision();
 		addRevision(factory, con, revision);
@@ -71,7 +70,7 @@ public class ROEvoSerializer {
 
 	private void addRevision(ValueFactory factory, RepositoryConnection con,
 			Revision revision) {
-		URI revisionURI = factory.createURI(revision.getResourceURI().toASCIIString());			
+		URI revisionURI = factory.createURI(revision.getIdentifier().toASCIIString());			
 		
 		URI version = factory.createURI("http://purl.org/wf4ever/roevo#VersionableResource");		
 		URI entity = factory.createURI("http://www.w3.org/ns/prov#Entity");		
@@ -86,8 +85,8 @@ public class ROEvoSerializer {
 
 	private void addPrevious(ValueFactory factory, RepositoryConnection con,
 			Revision revision, Revision previous) {
-		URI revisionURI = factory.createURI(revision.getResourceURI().toASCIIString());			
-		URI previousURI = factory.createURI(previous.getResourceURI().toASCIIString());
+		URI revisionURI = factory.createURI(revision.getIdentifier().toASCIIString());			
+		URI previousURI = factory.createURI(previous.getIdentifier().toASCIIString());
 		
 		URI prev = factory.createURI("http://www.w3.org/ns/prov#wasRevisionOf");
 		
