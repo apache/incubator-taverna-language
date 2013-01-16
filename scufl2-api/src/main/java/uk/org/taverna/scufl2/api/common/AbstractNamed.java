@@ -31,7 +31,6 @@ public abstract class AbstractNamed extends AbstractCloneable implements Named  
 		setName(name);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public int compareTo(Object o) {
 		if (!(o instanceof AbstractNamed)) {
@@ -41,9 +40,6 @@ public abstract class AbstractNamed extends AbstractCloneable implements Named  
 		AbstractNamed other = (AbstractNamed) o;
 		if (other == this) {
 			return 0;
-		}
-		if (other == null) {
-			return 1;
 		}
 		/**
 		 * Disabled as this means the order changes depending on setParents being called or not;
