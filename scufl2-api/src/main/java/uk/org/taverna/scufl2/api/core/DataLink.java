@@ -24,11 +24,9 @@ import uk.org.taverna.scufl2.api.port.SenderPort;
  * 
  * @author Alan R Williams
  */
+@SuppressWarnings("rawtypes")
 public class DataLink extends AbstractCloneable implements Child<Workflow>, Comparable {
 
-	@SuppressWarnings("rawtypes")
-	private static NullSafeComparator nullSafeCompare = new NullSafeComparator();
-	
 	private ReceiverPort sendsTo;
 
 	private SenderPort receivesFrom;
@@ -69,14 +67,18 @@ public class DataLink extends AbstractCloneable implements Child<Workflow>, Comp
 		return visitor.visit(this);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public int compareTo(Object o) {
-		if (!(o instanceof DataLink)) {
-			return o.getClass().getCanonicalName().compareTo(getClass().getCanonicalName());
+	public int compareTo(Object other) {
+		if (getClass() != other.getClass()) {
+			int classCompare = getClass().getCanonicalName().compareTo(
+					other.getClass().getCanonicalName());
+			if (classCompare != 0) {
+				// Allow having say InputPorts and OutputPorts in the same sorted list
+				return classCompare;
+			}
 		}
 		DataLink o1 = this;
-		DataLink o2 = (DataLink) o;
+		DataLink o2 = (DataLink) other;
 		
 		int senderCompare = portCompare(o1.getReceivesFrom(), o2.getReceivesFrom());
 		if (senderCompare != 0) {
@@ -87,19 +89,19 @@ public class DataLink extends AbstractCloneable implements Child<Workflow>, Comp
 		if (receiverCompare != 0) {
 			return receiverCompare;
 		}
-		return nullSafeCompare.compare(o1.getMergePosition(), o2.getMergePosition());
+		return NullSafeComparator.compareObjects(o1.getMergePosition(), o2.getMergePosition());
 	}
 
-	
+		
 	private int portCompare(Port a, Port b) {
 		// All known Port implementations are also Child instances
-		Child aChild = (Child)a;
-		Child bChild = (Child)b;		
-		int parentCompare = nullSafeCompare.compare(aChild.getParent(), bChild.getParent());
+		WorkflowBean aParent = ((Child)a).getParent();
+		WorkflowBean bParent = ((Child)b).getParent();
+		int parentCompare = NullSafeComparator.compareObjects(aParent, bParent);	
 		if (parentCompare != 0) {
 			return parentCompare;
 		}
-		return nullSafeCompare.compare(a, b);		
+		return NullSafeComparator.compareObjects(a, b);		
 	}
 
 	@Override
