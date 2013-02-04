@@ -19,6 +19,8 @@ import uk.org.taverna.scufl2.api.core.Workflow;
 
 public class TestAnnotationParsing {
 
+	private static final String WF_RANDOM = "/random.t2flow";
+	
 	private static final String WF_ANNOTATED = "/annotated2.2.t2flow";
 	private static Scufl2Tools scufl2Tools = new Scufl2Tools();
 
@@ -51,4 +53,31 @@ public class TestAnnotationParsing {
 
 	}
 
+
+	@Test
+	public void workflowWithoutRevisions() throws Exception {
+		URL wfResource = getClass().getResource(WF_RANDOM);
+		assertNotNull("Could not find workflow " + WF_RANDOM, wfResource);
+		T2FlowParser parser = new T2FlowParser();
+		parser.setValidating(true);
+		parser.setStrict(true);
+		WorkflowBundle wfBundle = parser.parseT2Flow(wfResource.openStream());
+		List<String> expectedRevisions = Arrays.asList(
+				"e87de19a-02c7-4106-ae81-0b8e28efb22c");
+
+		List<String> foundRevisions = new ArrayList<String>();
+
+		Revision revision = wfBundle.getMainWorkflow().getCurrentRevision();
+		while (revision != null) {
+			URI revisionUri = revision.getIdentifier();
+			String revisionUUID = uriTools
+					.relativePath(Workflow.WORKFLOW_ROOT, revisionUri)
+					.toASCIIString().replace("/", "");
+			foundRevisions.add(revisionUUID);
+			revision = revision.getPreviousRevision();
+		}
+		assertEquals(expectedRevisions, foundRevisions);
+
+	}
+	
 }
