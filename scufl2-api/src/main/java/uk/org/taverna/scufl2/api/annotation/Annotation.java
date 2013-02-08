@@ -23,11 +23,11 @@ import uk.org.taverna.scufl2.api.property.PropertyObject;
  *
  */
 public class Annotation extends AbstractNamed implements Named, Child<WorkflowBundle> {
-	private Calendar annotated;
-	private URI annotator;
+	private Calendar annotatedAt;
+	private URI annotatedBy;
 	private List<PropertyObject> bodyStatements = new ArrayList<PropertyObject>();
-	private Calendar generated = new GregorianCalendar();
-	private URI generator;
+	private Calendar serializedAt = new GregorianCalendar();
+	private URI serializedBy;
 	private WorkflowBean target;
 	private WorkflowBundle parent;
 	private URI body;
@@ -50,20 +50,20 @@ public class Annotation extends AbstractNamed implements Named, Child<WorkflowBu
 		}
 		return visitor.visitLeave(this);		
 	}
-	public Calendar getAnnotated() {
-		return annotated;
+	public Calendar getAnnotatedAt() {
+		return annotatedAt;
 	}
-	public URI getAnnotator() {
-		return annotator;
+	public URI getAnnotatedBy() {
+		return annotatedBy;
 	}
 	public List<PropertyObject> getBodyStatements() {
 		return bodyStatements;
 	}
-	public Calendar getGenerated() {
-		return generated;
+	public Calendar getSerializedAt() {
+		return serializedAt;
 	}
-	public URI getGenerator() {
-		return generator;
+	public URI getSerializedBy() {
+		return serializedBy;
 	}
 	public WorkflowBean getTarget() {
 		if (target == null) {
@@ -71,11 +71,11 @@ public class Annotation extends AbstractNamed implements Named, Child<WorkflowBu
 		}
 		return target;
 	}
-	public void setAnnotated(Calendar annotated) {
-		this.annotated = annotated;
+	public void setAnnotatedAt(Calendar annotatedAt) {
+		this.annotatedAt = annotatedAt;
 	}
-	public void setAnnotator(URI annotator) {
-		this.annotator = annotator;
+	public void setAnnotatedBy(URI annotatedBy) {
+		this.annotatedBy = annotatedBy;
 	}
 	public void setBodyStatements(List<PropertyObject> bodyStatements) {
 		if (bodyStatements == null) { 
@@ -84,11 +84,11 @@ public class Annotation extends AbstractNamed implements Named, Child<WorkflowBu
 		this.bodyStatements = bodyStatements;
 	}
 
-	public void setGenerated(Calendar generated) {
-		this.generated = generated;
+	public void setSerializedAt(Calendar serializedAt) {
+		this.serializedAt = serializedAt;
 	}
-	public void setGenerator(URI generator) {
-		this.generator = generator;
+	public void setSerializedBy(URI serializedBy) {
+		this.serializedBy = serializedBy;
 	}
 	public void setTarget(WorkflowBean target) {
 		if (target == null) {
@@ -126,18 +126,18 @@ public class Annotation extends AbstractNamed implements Named, Child<WorkflowBu
 	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
 		super.cloneInto(clone, cloning);
 		Annotation cloneAnnotation = (Annotation)clone;
-		if (getAnnotated() != null) {
-			cloneAnnotation.setAnnotated((Calendar) getAnnotated().clone());
+		if (getAnnotatedAt() != null) {
+			cloneAnnotation.setAnnotatedAt((Calendar) getAnnotatedAt().clone());
 		}
-		cloneAnnotation.setAnnotator(getAnnotator());
+		cloneAnnotation.setAnnotatedBy(getAnnotatedBy());
 		cloneAnnotation.setBody(getBody());
 		for (PropertyObject statement : getBodyStatements()) {
 			cloneAnnotation.getBodyStatements().add(cloning.cloneIfNotInCache(statement));
 		}		
-		if (getGenerated() != null) {
-			cloneAnnotation.setGenerated((Calendar) getGenerated().clone());
+		if (getSerializedAt() != null) {
+			cloneAnnotation.setSerializedAt((Calendar) getSerializedAt().clone());
 		}
-		cloneAnnotation.setGenerator(getGenerator());
+		cloneAnnotation.setSerializedBy(getSerializedBy());
 		cloneAnnotation.setTarget(cloning.cloneOrOriginal(getTarget()));		
 	}
 	

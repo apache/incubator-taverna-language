@@ -689,10 +689,10 @@ public class T2FlowParser {
 				
 				
 				annotation.setTarget(annotatedBean);
-				annotation.setAnnotated(cal);
+				annotation.setAnnotatedAt(cal);
 				//annotation.setAnnotator();
-				annotation.setGenerator(t2flowParserURI);
-				annotation.setGenerated(new GregorianCalendar());
+				annotation.setSerializedBy(t2flowParserURI);
+				annotation.setSerializedAt(new GregorianCalendar());
 				
 				PropertyResource p = new PropertyResource();
 				URI annotatedSubject = uriTools.relativeUriForBean(annotatedBean,

@@ -85,7 +85,8 @@ public class RDFXMLSerializer {
 
 	private static final String DOT_RDF = ".rdf";
 
-	protected static final URI OA = URI.create("http://www.w3.org/ns/openannotation/core/");
+	protected static final URI OA = URI.create("http://www.w3.org/ns/oa#");
+	protected static final URI PAV = URI.create("http://purl.org/pav/");
 
 	private static boolean warnedOnce = false;
 	
@@ -589,26 +590,29 @@ public class RDFXMLSerializer {
 		}
 
 		// Miniature OA description for now
-		// See http://openannotation.org/spec/core/20120509.html
+		// See http://openannotation.org/spec/core/20130205/
 		final PropertyResource annProv = new PropertyResource();
 		annProv.setResourceURI(annUri);
 		annProv.setTypeURI(OA.resolve("Annotation"));
-		if (ann.getAnnotated() != null) {
-			annProv.addProperty(OA.resolve("annoted"),
-					new PropertyLiteral(ann.getAnnotated()));
+		
+		if (ann.getAnnotatedAt() != null) {
+			annProv.addProperty(OA.resolve("annotedAt"),
+					new PropertyLiteral(ann.getAnnotatedAt()));
 		}
-		if (ann.getGenerated() != null) {
-			annProv.addProperty(OA.resolve("created"),
-					new PropertyLiteral(ann.getGenerated()));
+		if (ann.getSerializedAt() != null) {
+			annProv.addProperty(OA.resolve("serializedAt"),
+					new PropertyLiteral(ann.getSerializedAt()));
 		}
-		if (ann.getAnnotator() != null) {
-			annProv.addPropertyReference(OA.resolve("annotator"),
-					ann.getAnnotator());
+		
+		if (ann.getAnnotatedBy() != null) {
+			annProv.addPropertyReference(OA.resolve("annotatedBy"),
+					ann.getAnnotatedBy());
 		}
-		if (ann.getGenerator() != null) {
-			annProv.addPropertyReference(OA.resolve("generator"),
-					ann.getGenerator());
+		if (ann.getSerializedBy() != null) {
+			annProv.addPropertyReference(OA.resolve("serializedBy"),
+					ann.getSerializedBy());
 		}
+		
 		if (ann.getBody() != null) {
 			annProv.addPropertyReference(OA.resolve("hasBody"), ann.getBody());
 		} else if (! ann.getBodyStatements().isEmpty()){						
