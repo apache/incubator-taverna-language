@@ -63,15 +63,16 @@ generated for Unix and Windows.
 You may copy and distribute this folder for a standalone usage of the
 conversion tool.
 
-The command line tool takes a list of Taverna workflow files (supported file
-types are *.t2flow and *.wfbundle) 
+The command line tool takes a list of Taverna workflow filenames (supported file
+types are *.t2flow and *.wfbundle). If no filenames are given, the tool
+will read a workflow definition from STDIN and write wfdesc to STDOUT.
+The argument -h  and --help should give a minimal help.
+
 
 
 Example:
 
     : stain@ralph ~/src/wf4ever/scufl2-wfdesc; target/scufl2-wfdesc/bin/scufl2-to-wfdesc src/test/resources/helloworld.t2flow 
-    log4j:WARN No appenders could be found for logger (org.openrdf.sail.memory.MemoryStore).
-    log4j:WARN Please initialize the log4j system properly.
     Converted src/test/resources/helloworld.t2flow to src/test/resources/helloworld.wfdesc.ttl
 
 
@@ -139,9 +140,11 @@ Add a Maven dependency to "scufl2-wfdesc":
     <dependency>
         <groupId>uk.org.taverna.scufl2</groupId>
         <artifactId>scufl2-wfdesc</artifactId>
-        <version>0.1-SNAPSHOT</version>
+        <version>0.3.0-SNAPSHOT</version>
     </dependency>
 
+See the pom.xml file here for the latest version. Snapshot builds are
+available from http://www.mygrid.org.uk/maven/snapshot-repository/
 
 Example:
 
