@@ -1,9 +1,14 @@
 package org.purl.wf4ever.wfdesc.scufl;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +30,9 @@ public class TestConvertToWfdesc {
 	private File helloanyoneT2flow;
 	private File helloworldWfdesc;
 	private File helloanyoneWfdesc;
+	private InputStream origIn;
+	private PrintStream origOut;
+	private PrintStream origErr;
 	
 	@Before
 	public void copyT2flow() throws IOException {
@@ -58,6 +66,41 @@ public class TestConvertToWfdesc {
 		}		
 	}
 	
+	@Before
+	public void origStd() {
+		origIn = System.in;
+		origOut = System.out;
+		origErr = System.err;
+	}
+	
+	@After
+	public void restoreStd() {
+		System.setIn(origIn);
+		System.setOut(origOut);
+		System.setErr(origErr);	
+	}
+	
+	@Test
+	public void stdin() throws Exception {
+		byte[] input = IOUtils.toByteArray(getClass().getResourceAsStream("/" + HELLOWORLD_T2FLOW));
+		assertTrue(input.length > 0);
+		InputStream in = new ByteArrayInputStream(input);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		PrintStream outBuf = new PrintStream(out);
+		try {
+			System.setIn(in);
+			System.setOut(outBuf);		
+			ConvertToWfdesc.main(new String[]{});
+		} finally {
+			restoreStd();
+		}
+		out.flush();
+		out.close();
+		String turtle = out.toString("utf-8");
+		//System.out.println(outStr);
+		assertTrue(turtle.contains("Hello_World"));
+		assertTrue(turtle.contains("processor/hello/out/value"));
+	}
 	
 	@Test
 	public void convert() throws Exception {		
