@@ -138,13 +138,32 @@ Programmatic use
 Add a Maven dependency to "scufl2-wfdesc":
 
     <dependency>
-        <groupId>uk.org.taverna.scufl2</groupId>
+        <groupId>org.purl.wf4ever</groupId>
         <artifactId>scufl2-wfdesc</artifactId>
         <version>0.3.0-SNAPSHOT</version>
     </dependency>
 
-See the pom.xml file here for the latest version. Snapshot builds are
-available from http://www.mygrid.org.uk/maven/snapshot-repository/
+See the pom.xml file here for the latest version. 
+
+Snapshot builds are available from
+http://www.mygrid.org.uk/maven/snapshot-repository/
+-- to retrieve artifacts from the snapshot repository, also add
+to your POM:
+
+    <repositories>
+        <repository>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots />
+            <id>mygrid-snapshot-repository</id>
+            <name>myGrid Snapshot Repository</name>
+            <url>http://www.mygrid.org.uk/maven/snapshot-repository</url>
+        </repository>
+    </repositories>
+
+
+
 
 Example:
 
