@@ -93,9 +93,11 @@ public class WfdescSerialiser {
 		workflow.accept(new VisitorAdapter() {
 			Scufl2Tools scufl2Tools = new Scufl2Tools();
 			public boolean visit(WorkflowBean node) {
+				@SuppressWarnings("rawtypes")
 				QName parentQName = qnameForBean(((Child) node).getParent());
 				QName qName = qnameForBean(node);
 				if (node instanceof uk.org.taverna.scufl2.api.core.Workflow) {
+					@SuppressWarnings("unused")
 					org.purl.wf4ever.wfdesc.Workflow wf = sesameManager.create(
 							qName, org.purl.wf4ever.wfdesc.Workflow.class);
 					// TODO: Connect nested workflows
