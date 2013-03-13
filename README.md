@@ -171,11 +171,11 @@ References
 
 
 
-[1] https://github.com/mygrid/scufl2/
-[2] http://www.wf4ever-project.org/
-[3] https://github.com/wf4ever/ro/tree/0.1
-[4] http://www.mygrid.org.uk/dev/wiki/display/developer/2010-07+SCUFL2
-[5] http://www.wf4ever-project.org/wiki/display/docs/Research+Object+Vocabulary+Specification+v0.1
-[6] http://www.oracle.com/technetwork/java/javase/downloads/index.html
-[7] http://openjdk.java.net/install/
-[8] http://maven.apache.org/download.html
+[1]: https://github.com/mygrid/scufl2/
+[2]: http://www.wf4ever-project.org/
+[3]: https://github.com/wf4ever/ro/tree/0.1
+[4]: http://www.mygrid.org.uk/dev/wiki/display/developer/2010-07+SCUFL2
+[5]: http://www.wf4ever-project.org/wiki/display/docs/Research+Object+Vocabulary+Specification+v0.1
+[6]: http://www.oracle.com/technetwork/java/javase/downloads/index.html
+[7]: http://openjdk.java.net/install/
+[8]: http://maven.apache.org/download.html
