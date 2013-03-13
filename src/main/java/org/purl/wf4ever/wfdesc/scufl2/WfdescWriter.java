@@ -11,8 +11,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.purl.wf4ever.wfdesc.Workflow;
-
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleWriter;
 import uk.org.taverna.scufl2.api.io.WriterException;

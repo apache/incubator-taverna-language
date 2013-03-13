@@ -14,7 +14,6 @@ import org.openrdf.rio.helpers.OrganizedRDFWriter;
 import org.openrdf.sail.memory.MemoryStore;
 
 import uk.org.taverna.scufl2.api.annotation.Revision;
-import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.io.WriterException;
 

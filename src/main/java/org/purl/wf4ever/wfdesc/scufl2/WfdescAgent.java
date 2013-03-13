@@ -2,8 +2,6 @@ package org.purl.wf4ever.wfdesc.scufl2;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParseException;
