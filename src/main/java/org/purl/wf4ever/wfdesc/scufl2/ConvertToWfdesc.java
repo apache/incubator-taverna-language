@@ -6,12 +6,19 @@ import java.util.Arrays;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.log4j.BasicConfigurator;
+
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
 import uk.org.taverna.scufl2.api.io.WriterException;
 
 public class ConvertToWfdesc {
+	
+	static {
+		BasicConfigurator.configure();
+	}
+	
 	public static void main(String[] args) throws JAXBException, IOException,
 			ReaderException, WriterException {
 		WorkflowBundleIO io = new WorkflowBundleIO();

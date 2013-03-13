@@ -107,7 +107,7 @@ public class TestConvertToWfdesc {
 		
 		assertEquals(0, err.size());		
 		String help = out.toString("utf-8");
-		System.out.println(help);
+//		System.out.println(help);
 		assertTrue(help.contains("scufl2-to-wfdesc"));
 		assertTrue(help.contains("\nIf no arguments are given"));
 	}
