@@ -81,6 +81,38 @@ public class TestConvertToWfdesc {
 	}
 	
 	@Test
+	public void help() throws Exception {
+		help("-h");
+		help("--help");
+	}
+	
+	private void help(String argName) throws Exception {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		PrintStream outBuf = new PrintStream(out);
+		
+		ByteArrayOutputStream err = new ByteArrayOutputStream();
+		PrintStream errBuf = new PrintStream(err);
+		
+		try {
+			System.setOut(outBuf);
+			System.setErr(errBuf);	
+			ConvertToWfdesc.main(new String[]{argName});
+		} finally {
+			restoreStd();
+		}
+		out.flush();
+		out.close();
+		err.flush();
+		err.close();
+		
+		assertEquals(0, err.size());		
+		String help = out.toString("utf-8");
+		System.out.println(help);
+		assertTrue(help.contains("scufl2-to-wfdesc"));
+		assertTrue(help.contains("\nIf no arguments are given"));
+	}
+	
+	@Test
 	public void stdin() throws Exception {
 		byte[] input = IOUtils.toByteArray(getClass().getResourceAsStream("/" + HELLOWORLD_T2FLOW));
 		assertTrue(input.length > 0);
@@ -97,7 +129,7 @@ public class TestConvertToWfdesc {
 		out.flush();
 		out.close();
 		String turtle = out.toString("utf-8");
-		//System.out.println(outStr);
+		//System.out.println(turtle);
 		assertTrue(turtle.contains("Hello_World"));
 		assertTrue(turtle.contains("processor/hello/out/value"));
 	}
