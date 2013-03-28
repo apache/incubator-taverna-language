@@ -7,6 +7,8 @@ import java.util.Arrays;
 import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
+import org.apache.log4j.Level;
 
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.ReaderException;
@@ -17,6 +19,7 @@ public class ConvertToWfdesc {
 	
 	static {
 		BasicConfigurator.configure();
+        Logger.getRootLogger().setLevel(Level.WARN);
 	}
 	
 	public static void main(String[] args) throws JAXBException, IOException,
