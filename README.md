@@ -61,7 +61,11 @@ distribution of the command line tool "scufl2-to-wfdesc", with launchers
 generated for Unix and Windows.
 
 You may copy and distribute this folder for a standalone usage of the
-conversion tool.
+conversion tool. 
+
+Alternatively, you can use the
+target/scufl2-wfdesc-0.3.0-SNAPSHOT-standalone.jar directly with 
+"java -jar" - this JAR embeds all required libraries.
 
 The command line tool takes a list of Taverna workflow filenames (supported file
 types are *.t2flow and *.wfbundle). If no filenames are given, the tool
