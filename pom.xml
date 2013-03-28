@@ -164,29 +164,55 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>appassembler-maven-plugin</artifactId>
-                <version>1.1.1</version>
+                   <groupId>org.codehaus.mojo</groupId>
+                   <artifactId>appassembler-maven-plugin</artifactId>
+                   <version>1.1.1</version>
+                   <executions>
+                           <execution>
+                                   <id>assemble</id>
+                                   <phase>package</phase>
+                                   <goals>
+                                           <goal>assemble</goal>
+                                   </goals>
+                           </execution>
+                   </executions>
+                   <configuration>
+                           <assembleDirectory>${project.build.directory}/${project.artifactId}</assembleDi
+                           <programs>
+                                   <program>
+                                           <mainClass>org.purl.wf4ever.wfdesc.scufl2.ConvertToWfdesc</main
+                                           <name>scufl2-to-wfdesc</name>
+                                   </program>
+                           </programs>
+                   </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.0</version>
                 <executions>
                     <execution>
-                        <id>assemble</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>assemble</goal>
+                            <goal>shade</goal>
                         </goals>
+                        <configuration>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>standalone</shadedClassifierName>
+                            <transformers>
+                              <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>org.purl.wf4ever.wfdesc.scufl2.ConvertToWfdesc</mainClass>
+                              </transformer>
+                              <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                              <transformer implementation="org.apache.maven.plugins.shade.resource.XmlAppendingTransformer">
+                                  <resource>META-INF/spring</resource>
+                              </transformer>
+                            </transformers>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <assembleDirectory>${project.build.directory}/${project.artifactId}</assembleDirectory>
-                    <programs>
-                        <program>
-                            <mainClass>org.purl.wf4ever.wfdesc.scufl2.ConvertToWfdesc</mainClass>
-                            <name>scufl2-to-wfdesc</name>
-                        </program>
-                    </programs>
-                </configuration>
             </plugin>
-            
         </plugins>
         <pluginManagement>
             <plugins>
