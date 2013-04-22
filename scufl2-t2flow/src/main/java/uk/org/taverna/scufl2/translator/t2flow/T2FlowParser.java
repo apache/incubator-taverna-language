@@ -112,6 +112,8 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.TopIterationNode;
 
 public class T2FlowParser {
 
+	private static final String TEXT_TURTLE = "text/turtle";
+	private static final String SEMANTIC_ANNOTATION = "net.sf.taverna.t2.annotation.annotationbeans.SemanticAnnotation";
 	private static final String IDENTIFICATION_ASSERTION = "net.sf.taverna.t2.annotation.annotationbeans.IdentificationAssertion";
 	private static final String T2FLOW_EXTENDED_XSD = "xsd/t2flow-extended.xsd";
 	@SuppressWarnings("unused")
@@ -644,7 +646,7 @@ public class T2FlowParser {
 		return wf;
 	}
 
-	public void parseAnnotations(WorkflowBean annotatedBean, Annotations annotations) {
+	public void parseAnnotations(WorkflowBean annotatedBean, Annotations annotations) throws ReaderException {
 		
 		//logger.fine("Checking annotations for " + annotatedSubject);
 		
@@ -670,22 +672,37 @@ public class T2FlowParser {
 		for (String clazz : annotationElems.keySet()) {			
 			NetSfTavernaT2AnnotationAnnotationAssertionImpl ann = annotationElems.get(clazz);
 			Calendar cal = parseDate(ann.getDate());					
-			String value = null;
+			String value = null;	
+			String semanticMediaType = TEXT_TURTLE;
 			for (Object obj : ann.getAnnotationBean().getAny()) {
 				if (!(obj instanceof Element)) {
 					continue;
 				}
 				Element elem = (Element) obj;
-				if (elem.getNamespaceURI() == null
-						&& elem.getLocalName().equals("text")) {
+				if (! (elem.getNamespaceURI() == null)) {
+					continue;
+				}
+				if (elem.getLocalName().equals("text")) {
 					value = elem.getTextContent().trim();
 					break;
+				}
+				if (clazz.equals(SEMANTIC_ANNOTATION)) {
+					if (elem.getLocalName().equals("content")) {
+						value = elem.getTextContent().trim();
+						System.err.println("***");
+						System.out.println(value);
+						System.err.println("***");
+					}
+					if (elem.getLocalName().equals("mimeType")) {					
+						semanticMediaType = elem.getTextContent().trim();
+					}
 				}
 			}
 			if (value != null) {
 				// Add the annotation
 				Annotation annotation = new Annotation();
-				annotation.setParent(parserState.get().getCurrentWorkflowBundle());
+				WorkflowBundle workflowBundle = parserState.get().getCurrentWorkflowBundle();
+				annotation.setParent(workflowBundle);
 				
 				
 				annotation.setTarget(annotatedBean);
@@ -698,12 +715,25 @@ public class T2FlowParser {
 				URI annotatedSubject = uriTools.relativeUriForBean(annotatedBean,
 						annotation);
 				p.setResourceURI(annotatedSubject);
+				if (clazz.equals(SEMANTIC_ANNOTATION)) {
+					URI annURI = uriTools.uriForBean(annotation);
+					System.out.println(annURI);
+					// TODO: Add the correct @base					
+					// TODO: Use correct path
+					String path = "asdf";
+					try {
+						workflowBundle.getResources().addResource(value, path, semanticMediaType);
+					} catch (IOException e) {
+						throw new ReaderException("Could not store annotation body to " + path, e);
+					}
+					URI bodyURI = URI.create(path);
+					annotation.setBody(bodyURI);
+				}
 				URI predicate = getPredicatesForClass().get(clazz);
 				if (predicate != null) {
 					p.addPropertyAsString(predicate, value);
 				}
-				annotation.getBodyStatements().add(p);
-				
+				annotation.getBodyStatements().add(p);				
 			}
 		}
 	}
@@ -1013,14 +1043,13 @@ public class T2FlowParser {
 	}
 
 	protected Set<OutputWorkflowPort> parseOutputPorts(
-			AnnotatedPorts originalPorts) {
+			AnnotatedPorts originalPorts) throws ReaderException {
 		Set<OutputWorkflowPort> createdPorts = new HashSet<OutputWorkflowPort>();
 		for (AnnotatedPort originalPort : originalPorts.getPort()) {
 			OutputWorkflowPort newPort = new OutputWorkflowPort(parserState
 					.get().getCurrentWorkflow(), originalPort.getName());
 
 			parseAnnotations(newPort, originalPort.getAnnotations());
-
 			createdPorts.add(newPort);
 		}
 		return createdPorts;

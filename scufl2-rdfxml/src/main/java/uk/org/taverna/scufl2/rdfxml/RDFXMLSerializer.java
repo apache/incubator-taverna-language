@@ -593,35 +593,35 @@ public class RDFXMLSerializer {
 		// See http://openannotation.org/spec/core/20130205/
 		final PropertyResource annProv = new PropertyResource();
 		annProv.setResourceURI(annUri);
-		annProv.setTypeURI(OA.resolve("Annotation"));
+		annProv.setTypeURI(OA.resolve("#Annotation"));
 		
 		if (ann.getAnnotatedAt() != null) {
-			annProv.addProperty(OA.resolve("annotedAt"),
+			annProv.addProperty(OA.resolve("#annotedAt"),
 					new PropertyLiteral(ann.getAnnotatedAt()));
 		}
 		if (ann.getSerializedAt() != null) {
-			annProv.addProperty(OA.resolve("serializedAt"),
+			annProv.addProperty(OA.resolve("#serializedAt"),
 					new PropertyLiteral(ann.getSerializedAt()));
 		}
 		
 		if (ann.getAnnotatedBy() != null) {
-			annProv.addPropertyReference(OA.resolve("annotatedBy"),
+			annProv.addPropertyReference(OA.resolve("#annotatedBy"),
 					ann.getAnnotatedBy());
 		}
 		if (ann.getSerializedBy() != null) {
-			annProv.addPropertyReference(OA.resolve("serializedBy"),
+			annProv.addPropertyReference(OA.resolve("#serializedBy"),
 					ann.getSerializedBy());
 		}
 		
 		if (ann.getBody() != null) {
-			annProv.addPropertyReference(OA.resolve("hasBody"), ann.getBody());
+			annProv.addPropertyReference(OA.resolve("#hasBody"), ann.getBody());
 		} else if (! ann.getBodyStatements().isEmpty()){						
 			// FIXME: Hack - Our body is also the annotation!
-			annProv.addPropertyReference(OA.resolve("hasBody"), pathUri);
+			annProv.addPropertyReference(OA.resolve("#hasBody"), pathUri);
 		}
 		
 		// CHECK: should this be a relative reference instead?
-		annProv.addPropertyReference(OA.resolve("hasTarget"), 
+		annProv.addPropertyReference(OA.resolve("#hasTarget"), 
 				uriTools.uriForBean(ann.getTarget()));					
 		// Serialize the metadata
 

@@ -16,6 +16,9 @@ import org.w3c.dom.Element;
 import uk.org.taverna.scufl2.api.common.Visitor.VisitorWithPath;
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
+import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.core.Workflow;
+import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.api.property.PropertyList;
 import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.api.property.PropertyReference;
@@ -147,7 +150,16 @@ public class PropertyResourceSerialiser extends VisitorWithPath {
 	}
 
 	protected URI relativize(URI resourceURI) {
-		return uriTools.relativePath(baseUri, resourceURI);
+		if (resourceURI.toASCIIString().startsWith(WorkflowBundle.WORKFLOW_BUNDLE_ROOT.toASCIIString()) ||
+				resourceURI.toASCIIString().startsWith(Workflow.WORKFLOW_ROOT.toASCIIString()) ||
+				resourceURI.toASCIIString().startsWith(Profile.PROFILE_ROOT.toASCIIString())) {
+			// Avoid climbing too high up
+			return uriTools.relativePath(baseUri, resourceURI);
+		} else	{
+			return baseUri.relativize(resourceURI);
+		}
+		
+		
 	}
 
 	protected void resource(PropertyResource node) {
