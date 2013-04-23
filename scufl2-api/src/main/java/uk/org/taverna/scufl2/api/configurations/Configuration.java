@@ -182,14 +182,20 @@ public class Configuration extends AbstractNamed implements Child<Profile>, Type
 	}
 
 	/**
-	 * Se the underlying {@link PropertyResource} which contains the properties set by this
-	 * configuration.
+	 * Set the underlying {@link PropertyResource} which contains the properties
+	 * set by this configuration.
+	 * <p>
+	 * If the provided PropertyResource is <code>null</code>, a new, blank
+	 * PropertyResource will be set instead.
 	 * 
 	 * @param propertyResource
-	 *            the underlying <code>PropertyResource</code> which contains the properties set by
-	 *            this configuration
+	 *            the underlying <code>PropertyResource</code> which contains
+	 *            the properties set by this configuration.
 	 */
 	public void setPropertyResource(PropertyResource propertyResource) {
+		if (propertyResource == null) {
+			this.propertyResource = new PropertyResource();
+		}
 		this.propertyResource = propertyResource;
 	}
 
