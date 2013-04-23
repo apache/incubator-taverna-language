@@ -5,7 +5,7 @@ Examples of using the [SCUFL2 API](http://dev.mygrid.org.uk/wiki/display/develop
 
 To build, you'll need [Maven](http://maven.apache.org/download.cgi) 3.0.5 or newer, and run ```mvn clean install```:
 
-    $ mvn clean install
+    C:\Users\stain\workspace\scufl2-examples> mvn clean install
     
     [INFO] ------------------------------------------------------------------------
     [INFO] Building SCUFL2 examples 0.1.1-SNAPSHOT
