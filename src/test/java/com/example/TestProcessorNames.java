@@ -52,4 +52,18 @@ public class TestProcessorNames {
 		ProcessorNames processorNames = new ProcessorNames();
 		System.out.println(processorNames.showProcessorTree(ro));
 	}
+	
+
+	@Test
+	public void nestedWorkflowBundle() throws JAXBException, IOException, ReaderException {
+		InputStream workflow = getClass().getResourceAsStream(
+				"/workflows/wfbundle/as.wfbundle");
+		assertNotNull(workflow);
+
+		WorkflowBundleIO io = new WorkflowBundleIO();
+		WorkflowBundle ro = io.readBundle(workflow, null);
+		ProcessorNames processorNames = new ProcessorNames();
+		System.out.println(processorNames.showProcessorTree(ro));
+	}
+	
 }
