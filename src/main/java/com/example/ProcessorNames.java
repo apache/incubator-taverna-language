@@ -2,7 +2,6 @@ package com.example;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -14,15 +13,12 @@ import javax.xml.bind.JAXBException;
 
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.common.URITools;
-import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
 import uk.org.taverna.scufl2.api.profiles.Profile;
-import uk.org.taverna.scufl2.api.property.PropertyException;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
 
 public class ProcessorNames {
 
@@ -43,31 +39,8 @@ public class ProcessorNames {
 	private URITools uriTools = new URITools();
 
 	private Workflow findNestedWorkflow(Processor processor) {
-		URI NESTED_WORKFLOW = URI
-				.create("http://ns.taverna.org.uk/2010/activity/nested-workflow");
-
-		WorkflowBundle bundle = processor.getParent().getParent();
-		// Look for nested workflows
-		Profile mainProfile = bundle.getMainProfile();
-		Configuration activityConfig = scufl2Tools
-				.configurationForActivityBoundToProcessor(processor,
-						mainProfile);
-		if (activityConfig != null
-				&& activityConfig.getConfigurableType().equals(
-						NESTED_WORKFLOW.resolve("#Config"))) {
-			PropertyResource props = activityConfig.getPropertyResource();
-			try {
-				URI nestedWfRel = props
-						.getPropertyAsResourceURI(NESTED_WORKFLOW
-								.resolve("#workflow"));
-				URI nestedWf = uriTools.uriForBean(mainProfile).resolve(
-						nestedWfRel);
-				Workflow wf = (Workflow) uriTools.resolveUri(nestedWf, bundle);
-				return wf;
-			} catch (PropertyException ex) {
-			}
-		}
-		return null;
+		Profile profile = processor.getParent().getParent().getMainProfile();
+		return scufl2Tools.nestedWorkflowForProcessor(processor, profile);
 	}
 
 	private void findProcessors(WorkflowBundle ro, Workflow workflow,
