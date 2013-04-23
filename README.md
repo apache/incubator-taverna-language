@@ -125,4 +125,4 @@ This tool shows how to convert a t2flow file to a [SCUFL2 wfbundle](http://dev.m
 
 See the source code for [com.example.ConvertT2flowToWorkflowBundle.java](src/main/java/com/example/ConvertT2flowToWorkflowBundle.java) for how this is implemented.
 
-
+The included files [helloworld.wfbundle] and [helloanyone.wfbundle] are examples of such a conversion.    
