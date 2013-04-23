@@ -83,16 +83,16 @@
 		</pluginManagement>
 	</build>
 
-	<url>http://www.mygrid.org.uk/dev/wiki/display/developer/SCUFL2</url>
+	<url>http://dev.mygrid.org.uk/wiki/display/developer/SCUFL2+API</url>
 	<scm>
-        <!--
 		<connection>scm:git:git://github.com/myGrid/scufl2.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/myGrid/scufl2.git</developerConnection>
 		<url>https://github.com/myGrid/scufl2/</url>
-        -->
+        <!-- Previously in SVN
 		<connection>scm:svn:http://taverna.googlecode.com/svn/scufl2/trunk/</connection>
         <developerConnection>scm:svn:https://taverna.googlecode.com/svn/scufl2/trunk/</developerConnection>
         <url>http://code.google.com/p/taverna/source/browse/scufl2#scufl2%2Ftrunk</url>
+        -->
 	</scm>
 
 	<repositories>
