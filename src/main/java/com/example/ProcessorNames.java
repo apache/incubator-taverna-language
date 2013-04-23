@@ -31,8 +31,7 @@ public class ProcessorNames {
 		WorkflowBundleIO io = new WorkflowBundleIO();
 		ProcessorNames processorNames = new ProcessorNames();
 		for (String filename : args) {
-			WorkflowBundle ro = io.readBundle(new File(filename),
-					"application/vnd.taverna.t2flow+xml");
+			WorkflowBundle ro = io.readBundle(new File(filename), null);
 //			System.out.print(filename + ": ");
 //			System.out.println(processorNames.showProcessorNames(ro));
 			System.out.println(processorNames.showProcessorTree(ro));
