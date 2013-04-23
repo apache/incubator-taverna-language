@@ -36,17 +36,18 @@ import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
+import uk.org.taverna.scufl2.api.property.MultiplePropertiesException;
 import uk.org.taverna.scufl2.api.property.PropertyException;
+import uk.org.taverna.scufl2.api.property.PropertyNotFoundException;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
-
+import uk.org.taverna.scufl2.api.property.UnexpectedPropertyException;
 
 /**
  * Utility methods for dealing with SCUFL2 models
- *
+ * 
  * @author Stian Soiland-Reyes
  */
 public class Scufl2Tools {
-
 
 	public static URI PORT_DEFINITION = URI
 			.create("http://ns.taverna.org.uk/2010/scufl2#portDefinition");
@@ -55,14 +56,18 @@ public class Scufl2Tools {
 
 	public static URI NESTED_WORKFLOW = URI
 			.create("http://ns.taverna.org.uk/2010/activity/nested-workflow");
+
 	/**
-	 * Compare {@link ProcessorBinding}s by their {@link ProcessorBinding#getActivityPosition()}.
-	 *
-	 * Note: this comparator imposes orderings that are inconsistent with equals.
-	 *
+	 * Compare {@link ProcessorBinding}s by their
+	 * {@link ProcessorBinding#getActivityPosition()}.
+	 * 
+	 * Note: this comparator imposes orderings that are inconsistent with
+	 * equals.
+	 * 
 	 * @author Stian Soiland-Reyes
 	 */
-	public static class BindingComparator implements Comparator<ProcessorBinding> {
+	public static class BindingComparator implements
+			Comparator<ProcessorBinding> {
 
 		@Override
 		public int compare(ProcessorBinding o1, ProcessorBinding o2) {
@@ -72,45 +77,58 @@ public class Scufl2Tools {
 	}
 
 	/**
-	 * Returns the {@link Configuration} for a {@link Configurable} in the given {@link Profile}.
-	 *
+	 * Returns the {@link Configuration} for a {@link Configurable} in the given
+	 * {@link Profile}.
+	 * 
 	 * @param configurable
-	 *            the <code>Configurable</code> to find a <code>Configuration</code> for
+	 *            the <code>Configurable</code> to find a
+	 *            <code>Configuration</code> for
 	 * @param profile
-	 *            the <code>Profile</code> to look for the <code>Configuration</code> in
-	 * @return the <code>Configuration</code> for a <code>Configurable</code> in the given
-	 *         <code>Profile</code>
+	 *            the <code>Profile</code> to look for the
+	 *            <code>Configuration</code> in
+	 * @return the <code>Configuration</code> for a <code>Configurable</code> in
+	 *         the given <code>Profile</code>
 	 */
-	public Configuration configurationFor(Configurable configurable, Profile profile) {
-		List<Configuration> configurations = configurationsFor(configurable, profile);
+	public Configuration configurationFor(Configurable configurable,
+			Profile profile) {
+		List<Configuration> configurations = configurationsFor(configurable,
+				profile);
 		if (configurations.isEmpty()) {
-			throw new IndexOutOfBoundsException("Could not find configuration for " + configurable);
+			throw new IndexOutOfBoundsException(
+					"Could not find configuration for " + configurable);
 		}
 		if (configurations.size() > 1) {
-			throw new IllegalStateException("More than one configuration for " + configurable);
+			throw new IllegalStateException("More than one configuration for "
+					+ configurable);
 		}
 		return configurations.get(0);
 	}
 
-	public Configuration configurationForActivityBoundToProcessor(Processor processor, Profile profile) {
-		ProcessorBinding binding = processorBindingForProcessor(processor, profile);
-		Configuration config = configurationFor(binding.getBoundActivity(), profile);
+	public Configuration configurationForActivityBoundToProcessor(
+			Processor processor, Profile profile) {
+		ProcessorBinding binding = processorBindingForProcessor(processor,
+				profile);
+		Configuration config = configurationFor(binding.getBoundActivity(),
+				profile);
 		return config;
 	}
 
 	/**
-	 * Returns the list of {@link Configuration Configurations} for a {@link Configurable} in the
-	 * given {@link Profile}.
-	 *
+	 * Returns the list of {@link Configuration Configurations} for a
+	 * {@link Configurable} in the given {@link Profile}.
+	 * 
 	 * @param configurable
-	 *            the <code>Configurable</code> to find a <code>Configuration</code> for
+	 *            the <code>Configurable</code> to find a
+	 *            <code>Configuration</code> for
 	 * @param profile
-	 *            the <code>Profile</code> to look for the <code>Configuration</code> in
-	 * @return the list of <code>Configurations</code> for a <code>Configurable</code> in the given
-	 *         <code>Profile</code>
+	 *            the <code>Profile</code> to look for the
+	 *            <code>Configuration</code> in
+	 * @return the list of <code>Configurations</code> for a
+	 *         <code>Configurable</code> in the given <code>Profile</code>
 	 */
-//	@SuppressWarnings("unchecked")
-	public List<Configuration> configurationsFor(Configurable configurable, Profile profile) {
+	// @SuppressWarnings("unchecked")
+	public List<Configuration> configurationsFor(Configurable configurable,
+			Profile profile) {
 		List<Configuration> configurations = new ArrayList<Configuration>();
 		for (Configuration config : profile.getConfigurations()) {
 			if (configurable.equals(config.getConfigures())) {
@@ -138,7 +156,8 @@ public class Scufl2Tools {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<BlockingControlLink> controlLinksWaitingFor(Processor untilFinished) {
+	public List<BlockingControlLink> controlLinksWaitingFor(
+			Processor untilFinished) {
 		List<BlockingControlLink> controlLinks = new ArrayList<BlockingControlLink>();
 		for (ControlLink link : untilFinished.getParent().getControlLinks()) {
 			if (!(link instanceof BlockingControlLink)) {
@@ -154,7 +173,7 @@ public class Scufl2Tools {
 
 	}
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<DataLink> datalinksFrom(SenderPort senderPort) {
 		Workflow wf = findParent(Workflow.class, (Child) senderPort);
 		List<DataLink> links = new ArrayList();
@@ -167,7 +186,7 @@ public class Scufl2Tools {
 		return links;
 	}
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<DataLink> datalinksTo(ReceiverPort receiverPort) {
 		Workflow wf = findParent(Workflow.class, (Child) receiverPort);
 		List<DataLink> links = new ArrayList<DataLink>();
@@ -180,7 +199,8 @@ public class Scufl2Tools {
 		return links;
 	}
 
-	public <T extends WorkflowBean> T findParent(Class<T> parentClass, Child<?> child) {
+	public <T extends WorkflowBean> T findParent(Class<T> parentClass,
+			Child<?> child) {
 		WorkflowBean parent = child.getParent();
 		if (parent == null) {
 			return null;
@@ -197,12 +217,13 @@ public class Scufl2Tools {
 
 	}
 
-	public PropertyResource portDefinitionFor(ActivityPort activityPort, Profile profile) throws PropertyException {
-		Configuration actConfig = configurationFor(activityPort.getParent(), profile);
+	public PropertyResource portDefinitionFor(ActivityPort activityPort,
+			Profile profile) throws PropertyException {
+		Configuration actConfig = configurationFor(activityPort.getParent(),
+				profile);
 
 		URI portURI = uriTools.uriForBean(activityPort);
 		URI configURI = uriTools.uriForBean(actConfig);
-
 
 		URI portDefinition;
 		URI definesPort;
@@ -213,10 +234,11 @@ public class Scufl2Tools {
 			portDefinition = PORT_DEFINITION.resolve("#outputPortDefinition");
 			definesPort = PORT_DEFINITION.resolve("#definesOutputPort");
 		}
-		for (PropertyResource portDef :
-			actConfig.getPropertyResource().getPropertiesAsResources(portDefinition)) {
+		for (PropertyResource portDef : actConfig.getPropertyResource()
+				.getPropertiesAsResources(portDefinition)) {
 			URI portDefURI = portDef.getPropertyAsResourceURI(definesPort);
-			// We'll compare the URIs as absolute URIs - but portDefURI is most likely relative
+			// We'll compare the URIs as absolute URIs - but portDefURI is most
+			// likely relative
 			// to the config
 			if (configURI.resolve(portDefURI).equals(portURI)) {
 				return portDef;
@@ -226,18 +248,23 @@ public class Scufl2Tools {
 
 	}
 
-	public ProcessorBinding processorBindingForProcessor(Processor processor, Profile profile) {
-		List<ProcessorBinding> bindings = processorBindingsForProcessor(processor, profile);
+	public ProcessorBinding processorBindingForProcessor(Processor processor,
+			Profile profile) {
+		List<ProcessorBinding> bindings = processorBindingsForProcessor(
+				processor, profile);
 		if (bindings.isEmpty()) {
-			throw new IndexOutOfBoundsException("Could not find bindings for " + processor);
+			throw new IndexOutOfBoundsException("Could not find bindings for "
+					+ processor);
 		}
 		if (bindings.size() > 1) {
-			throw new IllegalStateException("More than one proc binding for " + processor);
+			throw new IllegalStateException("More than one proc binding for "
+					+ processor);
 		}
 		return bindings.get(0);
 	}
 
-	public List<ProcessorBinding> processorBindingsForProcessor(Processor processor, Profile profile) {
+	public List<ProcessorBinding> processorBindingsForProcessor(
+			Processor processor, Profile profile) {
 		List<ProcessorBinding> bindings = new ArrayList<ProcessorBinding>();
 		for (ProcessorBinding pb : profile.getProcessorBindings()) {
 			if (pb.getBoundProcessor().equals(processor)) {
@@ -260,31 +287,38 @@ public class Scufl2Tools {
 		return bindings;
 	}
 
-	public ProcessorInputPortBinding processorPortBindingForPort(InputPort inputPort,
-			Profile profile) {
-		return (ProcessorInputPortBinding) processorPortBindingForPortInternal(inputPort, profile);
+	public ProcessorInputPortBinding processorPortBindingForPort(
+			InputPort inputPort, Profile profile) {
+		return (ProcessorInputPortBinding) processorPortBindingForPortInternal(
+				inputPort, profile);
 	}
 
-	public ProcessorOutputPortBinding processorPortBindingForPort(OutputPort outputPort,
-			Profile profile) {
-		return (ProcessorOutputPortBinding) processorPortBindingForPortInternal(outputPort, profile);
+	public ProcessorOutputPortBinding processorPortBindingForPort(
+			OutputPort outputPort, Profile profile) {
+		return (ProcessorOutputPortBinding) processorPortBindingForPortInternal(
+				outputPort, profile);
 	}
 
 	@SuppressWarnings("rawtypes")
-	protected ProcessorPortBinding processorPortBindingForPortInternal(Port port, Profile profile) {
+	protected ProcessorPortBinding processorPortBindingForPortInternal(
+			Port port, Profile profile) {
 
 		List<ProcessorBinding> processorBindings;
 		if (port instanceof ProcessorPort) {
 			ProcessorPort processorPort = (ProcessorPort) port;
-			processorBindings = processorBindingsForProcessor(processorPort.getParent(), profile);
+			processorBindings = processorBindingsForProcessor(
+					processorPort.getParent(), profile);
 		} else if (port instanceof ActivityPort) {
 			ActivityPort activityPort = (ActivityPort) port;
-			processorBindings = processorBindingsToActivity(activityPort.getParent());
+			processorBindings = processorBindingsToActivity(activityPort
+					.getParent());
 		} else {
-			throw new IllegalArgumentException("Port must be a ProcessorPort or ActivityPort");
+			throw new IllegalArgumentException(
+					"Port must be a ProcessorPort or ActivityPort");
 		}
 		for (ProcessorBinding procBinding : processorBindings) {
-			ProcessorPortBinding portBinding = processorPortBindingInternalInBinding(port, procBinding);
+			ProcessorPortBinding portBinding = processorPortBindingInternalInBinding(
+					port, procBinding);
 			if (portBinding != null) {
 				return portBinding;
 			}
@@ -293,8 +327,8 @@ public class Scufl2Tools {
 	}
 
 	@SuppressWarnings("rawtypes")
-	protected ProcessorPortBinding processorPortBindingInternalInBinding(Port port,
-			ProcessorBinding procBinding) {
+	protected ProcessorPortBinding processorPortBindingInternalInBinding(
+			Port port, ProcessorBinding procBinding) {
 		Set<? extends ProcessorPortBinding> portBindings;
 		if (port instanceof InputPort) {
 			portBindings = procBinding.getInputPortBindings();
@@ -306,7 +340,8 @@ public class Scufl2Tools {
 					&& portBinding.getBoundProcessorPort().equals(port)) {
 				return portBinding;
 			}
-			if (port instanceof ActivityPort && portBinding.getBoundActivityPort().equals(port)) {
+			if (port instanceof ActivityPort
+					&& portBinding.getBoundActivityPort().equals(port)) {
 				return portBinding;
 			}
 		}
@@ -331,14 +366,15 @@ public class Scufl2Tools {
 
 		});
 	}
-	
+
 	public DispatchStackLayer dispatchStackByType(Processor processor, URI type) {
 		DispatchStackLayer candidate = null;
 		for (DispatchStackLayer layer : processor.getDispatchStack()) {
 			if (layer.getConfigurableType().equals(type)) {
 				if (candidate != null) {
-					throw new IllegalStateException("Found multiple dispatch stack layers of type "
-							+ type + " in " + processor);
+					throw new IllegalStateException(
+							"Found multiple dispatch stack layers of type "
+									+ type + " in " + processor);
 				}
 				candidate = layer;
 			}
@@ -353,22 +389,22 @@ public class Scufl2Tools {
 	 * This is calculated as all processors in the dataflow, except the
 	 * processor itself, and any processor <em>upstream</em>, following both
 	 * data links and conditional links.
-	 *
+	 * 
 	 * @see #possibleUpStreamProcessors(Dataflow, Processor)
 	 * @see #splitProcessors(Collection, Processor)
-	 *
+	 * 
 	 * @param dataflow
 	 *            Dataflow from where to find processors
 	 * @param processor
 	 *            Processor which is to be connected
 	 * @return A set of possible downstream processors
 	 */
-	public Set<Processor> possibleDownStreamProcessors(
-			Workflow dataflow, Processor processor) {
-		ProcessorSplit splitProcessors = splitProcessors(dataflow
-				.getProcessors(), processor);
-		Set<Processor> possibles = new HashSet<Processor>(splitProcessors
-				.getUnconnected());
+	public Set<Processor> possibleDownStreamProcessors(Workflow dataflow,
+			Processor processor) {
+		ProcessorSplit splitProcessors = splitProcessors(
+				dataflow.getProcessors(), processor);
+		Set<Processor> possibles = new HashSet<Processor>(
+				splitProcessors.getUnconnected());
 		possibles.addAll(splitProcessors.getDownStream());
 		return possibles;
 	}
@@ -379,10 +415,10 @@ public class Scufl2Tools {
 	 * This is calculated as all processors in the dataflow, except the
 	 * processor itself, and any processor <em>downstream</em>, following both
 	 * data links and conditional links.
-	 *
+	 * 
 	 * @see #possibleDownStreamProcessors(Dataflow, Processor)
 	 * @see #splitProcessors(Collection, Processor)
-	 *
+	 * 
 	 * @param dataflow
 	 *            Dataflow from where to find processors
 	 * @param processor
@@ -391,22 +427,22 @@ public class Scufl2Tools {
 	 */
 	public Set<Processor> possibleUpStreamProcessors(Workflow dataflow,
 			Processor firstProcessor) {
-		ProcessorSplit splitProcessors = splitProcessors(dataflow
-				.getProcessors(), firstProcessor);
-		Set<Processor> possibles = new HashSet<Processor>(splitProcessors
-				.getUnconnected());
+		ProcessorSplit splitProcessors = splitProcessors(
+				dataflow.getProcessors(), firstProcessor);
+		Set<Processor> possibles = new HashSet<Processor>(
+				splitProcessors.getUnconnected());
 		possibles.addAll(splitProcessors.getUpStream());
 		return possibles;
 	}
 
 	/**
-	 *
+	 * 
 	 * @param processors
 	 * @param splitPoint
 	 * @return
 	 */
-	public ProcessorSplit splitProcessors(
-			Collection<Processor> processors, Processor splitPoint) {
+	public ProcessorSplit splitProcessors(Collection<Processor> processors,
+			Processor splitPoint) {
 		Set<Processor> upStream = new HashSet<Processor>();
 		Set<Processor> downStream = new HashSet<Processor>();
 		Set<Processor> queue = new HashSet<Processor>();
@@ -428,7 +464,7 @@ public class Scufl2Tools {
 			for (InputProcessorPort inputPort : processor.getInputPorts()) {
 				for (DataLink incomingLink : datalinksTo(inputPort)) {
 					SenderPort source = incomingLink.getReceivesFrom();
-					if (! (source instanceof OutputProcessorPort)) {
+					if (!(source instanceof OutputProcessorPort)) {
 						continue;
 					}
 					Processor upstreamProc = ((OutputProcessorPort) source)
@@ -457,7 +493,7 @@ public class Scufl2Tools {
 			for (OutputProcessorPort outputPort : processor.getOutputPorts()) {
 				for (DataLink datalink : datalinksFrom(outputPort)) {
 					ReceiverPort sink = datalink.getSendsTo();
-					if (! (sink instanceof InputProcessorPort)) {
+					if (!(sink instanceof InputProcessorPort)) {
 						continue;
 					}
 					Processor downstreamProcc = ((InputProcessorPort) sink)
@@ -479,9 +515,9 @@ public class Scufl2Tools {
 	/**
 	 * Result bean returned from
 	 * {@link Scufl2Tools#splitProcessors(Collection, Processor)}.
-	 *
+	 * 
 	 * @author Stian Soiland-Reyes
-	 *
+	 * 
 	 */
 	public static class ProcessorSplit {
 
@@ -492,7 +528,7 @@ public class Scufl2Tools {
 
 		/**
 		 * Processor that was used as a split point.
-		 *
+		 * 
 		 * @return Split point processor
 		 */
 		public Processor getSplitPoint() {
@@ -501,7 +537,7 @@ public class Scufl2Tools {
 
 		/**
 		 * Processors that are upstream from the split point.
-		 *
+		 * 
 		 * @return Upstream processors
 		 */
 		public Set<Processor> getUpStream() {
@@ -510,7 +546,7 @@ public class Scufl2Tools {
 
 		/**
 		 * Processors that are downstream from the split point.
-		 *
+		 * 
 		 * @return Downstream processors
 		 */
 		public Set<Processor> getDownStream() {
@@ -528,7 +564,7 @@ public class Scufl2Tools {
 		 * unconnected processors downstream, but not along the path to the
 		 * {@link #getSplitPoint()}, or they could be upstream from any
 		 * processor in {@link #getDownStream()}.
-		 *
+		 * 
 		 * @return Processors unconnected from the split point
 		 */
 		public Set<Processor> getUnconnected() {
@@ -537,7 +573,7 @@ public class Scufl2Tools {
 
 		/**
 		 * Construct a new processor split result.
-		 *
+		 * 
 		 * @param splitPoint
 		 *            Processor used as split point
 		 * @param upStream
@@ -559,6 +595,116 @@ public class Scufl2Tools {
 	}
 
 	/**
+	 * Return nested workflow for processor as configured in given profile.
+	 * <p>
+	 * A nested workflow is an activity bound to the processor with the
+	 * configurable type equal to {@value #NESTED_WORKFLOW}.
+	 * <p>
+	 * This method returns <code>null</code> if no such workflow was found,
+	 * otherwise the configured workflow.
+	 * <p
+	 * Note that even if several bindings/configurations map to a different
+	 * workflow, this method throws an IllegalStateException. Most workflows
+	 * will only have a single workflow for a given profile, to handle more
+	 * complex cases use instead
+	 * {@link #nestedWorkflowsForProcessor(Processor, Profile)}.
+	 * 
+	 * @throws NullPointerException
+	 *             if the given profile does not have a parent
+	 * @throws IllegalStateException
+	 *             if a nested workflow configuration is invalid, or more than
+	 *             one possible workflow is found
+	 * 
+	 * @param processor
+	 *            Processor which might have a nested workflow
+	 * @param profile
+	 *            Profile to look for nested workflow activity/configuration.
+	 *            The profile must have a {@link WorkflowBundle} set as its
+	 *            {@link Profile#setParent(WorkflowBundle)}.
+	 * @return The configured nested workflows for processor
+	 */
+	public Workflow nestedWorkflowForProcessor(Processor processor,
+			Profile profile) {
+		List<Workflow> wfs = nestedWorkflowsForProcessor(processor, profile);
+		if (wfs.isEmpty()) {
+			return null;
+		}
+		if (wfs.size() > 1) {
+			throw new IllegalStateException(
+					"More than one possible workflow for processor "
+							+ processor);
+		}
+		return wfs.get(0);
+	}
+
+	/**
+	 * Return list of nested workflows for processor as configured in given
+	 * profile.
+	 * <p>
+	 * A nested workflow is an activity bound to the processor with the
+	 * configurable type equal to {@value #NESTED_WORKFLOW}.
+	 * <p>
+	 * This method returns a list of 0 or more workflows, as every matching
+	 * {@link ProcessorBinding} and every matching {@link Configuration} for the
+	 * bound activity is considered. Normally there will only be a single nested
+	 * workflow, in which case the
+	 * {@link #nestedWorkflowForProcessor(Processor, Profile)} method should be
+	 * used instead.
+	 * <p>
+	 * Note that even if several bindings/configurations map to the same
+	 * workflow, each workflow is only included once in the list. Nested
+	 * workflow configurations that are incomplete or which #workflow can't be
+	 * found within the workflow bundle of the profile will be silently ignored.
+	 * 
+	 * @throws NullPointerException
+	 *             if the given profile does not have a parent
+	 * @throws IllegalStateException
+	 *             if a nested workflow configuration is invalid
+	 * 
+	 * @param processor
+	 *            Processor which might have a nested workflow
+	 * @param profile
+	 *            Profile to look for nested workflow activity/configuration.
+	 *            The profile must have a {@link WorkflowBundle} set as its
+	 *            {@link Profile#setParent(WorkflowBundle)}.
+	 * @return List of configured nested workflows for processor
+	 */
+	public List<Workflow> nestedWorkflowsForProcessor(Processor processor,
+			Profile profile) {
+		if (profile.getParent() == null) {
+			throw new NullPointerException("Parent must be set for " + profile);
+		}
+		ArrayList<Workflow> workflows = new ArrayList<Workflow>();
+		for (ProcessorBinding binding : processorBindingsForProcessor(
+				processor, profile)) {
+			if (!binding.getBoundActivity().getConfigurableType()
+					.equals(NESTED_WORKFLOW)) {
+				continue;
+			}
+			for (Configuration c : configurationsFor(
+					binding.getBoundActivity(), profile)) {
+				URI nestedWfRel;
+				try {
+					nestedWfRel = c.getPropertyResource()
+							.getPropertyAsResourceURI(
+									NESTED_WORKFLOW.resolve("#workflow"));
+				} catch (PropertyException e) {
+					throw new IllegalStateException(
+							"Invalid workflow configuration", e);
+				}
+				URI nestedWf = uriTools.uriForBean(profile)
+						.resolve(nestedWfRel);
+				Workflow wf = (Workflow) uriTools.resolveUri(nestedWf,
+						profile.getParent());
+				if (wf != null && !workflows.contains(wf)) {
+					workflows.add(wf);
+				}
+			}
+		}
+		return workflows;
+	}
+
+	/**
 	 * Returns true if processor contains a nested workflow in any of its
 	 * activities in any of its profiles.
 	 */
@@ -572,13 +718,15 @@ public class Scufl2Tools {
 	}
 
 	/**
-	 * Returns true if processor contains a nested workflow in the specified profile.
-	 *
+	 * Returns true if processor contains a nested workflow in the specified
+	 * profile.
+	 * 
 	 */
 	public boolean containsNestedWorkflow(Processor processor, Profile profile) {
-		for (ProcessorBinding binding :
-			processorBindingsForProcessor(processor, profile)) {
-			if (binding.getBoundActivity().getConfigurableType().equals(NESTED_WORKFLOW)) {
+		for (ProcessorBinding binding : processorBindingsForProcessor(
+				processor, profile)) {
+			if (binding.getBoundActivity().getConfigurableType()
+					.equals(NESTED_WORKFLOW)) {
 				return true;
 			}
 		}
@@ -622,15 +770,16 @@ public class Scufl2Tools {
 		bindActivityToProcessorByMatchingPorts(binding);
 		return binding;
 	}
-	
+
 	public void bindActivityToProcessorByMatchingPorts(ProcessorBinding binding) {
 		Activity activity = binding.getBoundActivity();
 		Processor processor = binding.getBoundProcessor();
 		for (InputActivityPort activityPort : activity.getInputPorts()) {
 			InputProcessorPort processorPort = processor.getInputPorts()
 					.getByName(activityPort.getName());
-			if (processorPort != null && 
-					processorPortBindingInternalInBinding(processorPort, binding) == null) {
+			if (processorPort != null
+					&& processorPortBindingInternalInBinding(processorPort,
+							binding) == null) {
 				new ProcessorInputPortBinding(binding, processorPort,
 						activityPort);
 			}
@@ -639,23 +788,25 @@ public class Scufl2Tools {
 		for (OutputProcessorPort processorPort : processor.getOutputPorts()) {
 			OutputActivityPort activityPort = activity.getOutputPorts()
 					.getByName(processorPort.getName());
-			if (activityPort != null && 
-					processorPortBindingInternalInBinding(activityPort, binding) == null) {
+			if (activityPort != null
+					&& processorPortBindingInternalInBinding(activityPort,
+							binding) == null) {
 				new ProcessorOutputPortBinding(binding, activityPort,
 						processorPort);
 			}
 		}
 	}
-	
 
-	public ProcessorBinding createProcessorAndBindingFromActivity(Activity activity) {
+	public ProcessorBinding createProcessorAndBindingFromActivity(
+			Activity activity) {
 		Processor proc = new Processor();
 		proc.setName(activity.getName());
-		createProcessorPortsFromActivity(proc, activity);	
-		return bindActivityToProcessorByMatchingPorts(activity, proc);		
+		createProcessorPortsFromActivity(proc, activity);
+		return bindActivityToProcessorByMatchingPorts(activity, proc);
 	}
 
-	public Activity createActivityFromProcessor(Processor processor, Profile profile) {
+	public Activity createActivityFromProcessor(Processor processor,
+			Profile profile) {
 		Activity activity = new Activity();
 		activity.setName(processor.getName());
 		activity.setParent(profile);
@@ -664,40 +815,41 @@ public class Scufl2Tools {
 		return activity;
 	}
 
-	
 	public void removePortsBindingForUnknownPorts(ProcessorBinding binding) {
 		// First, remove ports no longer owned by processor
-		Iterator<ProcessorInputPortBinding> inputBindings = binding.getInputPortBindings().iterator();		
+		Iterator<ProcessorInputPortBinding> inputBindings = binding
+				.getInputPortBindings().iterator();
 		Activity activity = binding.getBoundActivity();
 		Processor processor = binding.getBoundProcessor();
 		for (ProcessorInputPortBinding ip : iterable(inputBindings)) {
-			if (! activity.getInputPorts().contains(ip.getBoundActivityPort())) {
+			if (!activity.getInputPorts().contains(ip.getBoundActivityPort())) {
 				inputBindings.remove();
 				continue;
 			}
-			if (! processor.getInputPorts().contains(ip.getBoundProcessorPort())) {
+			if (!processor.getInputPorts().contains(ip.getBoundProcessorPort())) {
 				inputBindings.remove();
 				continue;
 			}
 		}
-		Iterator<ProcessorOutputPortBinding> outputBindings = binding.getOutputPortBindings().iterator();		
+		Iterator<ProcessorOutputPortBinding> outputBindings = binding
+				.getOutputPortBindings().iterator();
 		for (ProcessorOutputPortBinding op : iterable(outputBindings)) {
-			if (! activity.getOutputPorts().contains(op.getBoundActivityPort())) {
+			if (!activity.getOutputPorts().contains(op.getBoundActivityPort())) {
 				outputBindings.remove();
 				continue;
 			}
-			if (! processor.getOutputPorts().contains(op.getBoundProcessorPort())) {
+			if (!processor.getOutputPorts()
+					.contains(op.getBoundProcessorPort())) {
 				outputBindings.remove();
 				continue;
 			}
 		}
-		
-		
+
 	}
-	
+
 	public void updateBindingByMatchingPorts(ProcessorBinding binding) {
-		removePortsBindingForUnknownPorts(binding);		
-		bindActivityToProcessorByMatchingPorts(binding);		
+		removePortsBindingForUnknownPorts(binding);
+		bindActivityToProcessorByMatchingPorts(binding);
 	}
 
 	private <T> Iterable<T> iterable(final Iterator<T> it) {
@@ -708,5 +860,5 @@ public class Scufl2Tools {
 			}
 		};
 	}
-	
+
 }
