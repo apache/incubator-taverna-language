@@ -3,7 +3,8 @@ SCUFL2 examples
 
 Examples of using the [SCUFL2 API](http://dev.mygrid.org.uk/wiki/display/developer/SCUFL2+API)
 
-To build, you'll need [Maven](http://maven.apache.org/download.cgi) 3.0.5 or newer, and run ```mvn clean install```:
+To build, you'll need [Maven](http://maven.apache.org/download.cgi) 3.0.5 or newer, and run
+```mvn clean install```:
 
     C:\Users\stain\workspace\scufl2-examples> mvn clean install
     
@@ -40,7 +41,8 @@ This tool lists a tree of the processor names in the workflows of the given bund
       - Concatenate_two_strings
       - hello
 
-See the source code for [com.example.ProcessorNames](src/main/java/com/example/ProcessorNames.java) for how this is implemented.
+See the source code for [com.example.ProcessorNames](src/main/java/com/example/ProcessorNames.java)
+ for how this is implemented.
 
 
 servicetypes
@@ -51,12 +53,14 @@ This tool lists the URIs of the types of services (activities) used in the workf
     http://ns.taverna.org.uk/2010/activity/beanshell
     http://ns.taverna.org.uk/2010/activity/constant
 
-See the source code for [com.example.ServiceTypes](src/main/java/com/example/ServiceTypes.java) for how this is implemented.
+See the source code for [com.example.ServiceTypes](src/main/java/com/example/ServiceTypes.java)
+ for how this is implemented.
 
 
 workflowmaker
 -------------
-This tool shows how to construct a workflow from scratch and save it as a [SCUFL2 wfbundle](http://dev.mygrid.org.uk/wiki/display/developer/Taverna+Workflow+Bundle).
+This tool shows how to construct a workflow from scratch and save it as a 
+[SCUFL2 wfbundle](http://dev.mygrid.org.uk/wiki/display/developer/Taverna+Workflow+Bundle).
 
     C:\Users\stain\workspace\scufl2-examples> target\scufl2-examples\bin\workflowmaker
     Written to C:\Users\stain\AppData\Local\Temp\test6264603033381329995.wfbundle
@@ -92,13 +96,16 @@ This tool shows how to construct a workflow from scratch and save it as a [SCUFL
             '''out1 = in1'''
 
 
-See the source code for [com.example.WorkflowMaker](src/main/java/com/example/WorkflowMaker.java) for how this is implemented.
+See the source code for [com.example.WorkflowMaker](src/main/java/com/example/WorkflowMaker.java) 
+for how this is implemented.
 
 
 t2flowtowfbundle
 ----------------
 
-This tool shows how to convert a t2flow file to a [SCUFL2 wfbundle](http://dev.mygrid.org.uk/wiki/display/developer/Taverna+Workflow+Bundle).
+This tool shows how to convert a t2flow file to a 
+
+[SCUFL2 wfbundle](http://dev.mygrid.org.uk/wiki/display/developer/Taverna+Workflow+Bundle).
 
     C:\Users\stain\workspace\scufl2-examples> rm helloworld.wfbundle
     
@@ -123,6 +130,10 @@ This tool shows how to convert a t2flow file to a [SCUFL2 wfbundle](http://dev.m
         testing: META-INF/container.xml   OK
     No errors detected in compressed data of helloworld.wfbundle.
 
-See the source code for [com.example.ConvertT2flowToWorkflowBundle.java](src/main/java/com/example/ConvertT2flowToWorkflowBundle.java) for how this is implemented.
+See the source code for 
+[com.example.ConvertT2flowToWorkflowBundle.java](src/main/java/com/example/ConvertT2flowToWorkflowBundle.java)
+for how this is implemented.
 
-The included files [helloworld.wfbundle](helloworld.wfbundle?raw=true) and [helloanyone.wfbundle](helloanyone.wfbundle?raw=true) are examples of such a conversion.    
+The included files [helloworld.wfbundle](helloworld.wfbundle?raw=true) and
+[helloanyone.wfbundle](helloanyone.wfbundle?raw=true) are examples of converting
+[helloworld.t2flow](helloworld.t2flow) and [helloanyone.t2flow](helloanyone.t2flow)  
