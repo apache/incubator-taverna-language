@@ -31,6 +31,7 @@ public class ProcessorNames {
 		WorkflowBundleIO io = new WorkflowBundleIO();
 		ProcessorNames processorNames = new ProcessorNames();
 		for (String filename : args) {
+			// NOTE: We give 'null' as filetype so it will guess based on filename
 			WorkflowBundle ro = io.readBundle(new File(filename), null);
 //			System.out.print(filename + ": ");
 //			System.out.println(processorNames.showProcessorNames(ro));
