@@ -40,7 +40,7 @@ This tool lists a tree of the processor names in the workflows of the given bund
       - Concatenate_two_strings
       - hello
 
-See the source code for [com.example.ProcessorNames](blob/master/src/main/java/com/example/ProcessorNames.java) for how this is implemented.
+See the source code for [com.example.ProcessorNames](src/main/java/com/example/ProcessorNames.java) for how this is implemented.
 
 
 servicetypes
@@ -51,7 +51,7 @@ This tool lists the URIs of the types of services (activities) used in the workf
     http://ns.taverna.org.uk/2010/activity/beanshell
     http://ns.taverna.org.uk/2010/activity/constant
 
-See the source code for [com.example.ServiceTypes](blob/master/src/main/java/com/example/ServiceTypes.java) for how this is implemented.
+See the source code for [com.example.ServiceTypes](src/main/java/com/example/ServiceTypes.java) for how this is implemented.
 
 
 workflowmaker
@@ -92,7 +92,7 @@ This tool shows how to construct a workflow from scratch and save it as a [SCUFL
             '''out1 = in1'''
 
 
-See the source code for [com.example.WorkflowMaker](blob/master/src/main/java/com/example/WorkflowMaker.java) for how this is implemented.
+See the source code for [com.example.WorkflowMaker](src/main/java/com/example/WorkflowMaker.java) for how this is implemented.
 
 
 t2flowtowfbundle
@@ -123,6 +123,6 @@ This tool shows how to convert a t2flow file to a [SCUFL2 wfbundle](http://dev.m
         testing: META-INF/container.xml   OK
     No errors detected in compressed data of helloworld.wfbundle.
 
-See the source code for [com.example.ConvertT2flowToWorkflowBundle.java](blob/master/src/main/java/com/example/ConvertT2flowToWorkflowBundle.java) for how this is implemented.
+See the source code for [com.example.ConvertT2flowToWorkflowBundle.java](src/main/java/com/example/ConvertT2flowToWorkflowBundle.java) for how this is implemented.
 
 
