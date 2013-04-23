@@ -78,8 +78,6 @@ public class LoopParser extends AbstractActivityParser {
 		c.setType(scufl2Uri.resolve("Config"));
 
 		final PropertyResource resource = c.getPropertyResource();
-
-		
 		
 		String conditionXml = loopConfig.getConditionXML();	
 		if (conditionXml == null) {
@@ -105,8 +103,7 @@ public class LoopParser extends AbstractActivityParser {
 			resource.addPropertyReference(scufl2Uri.resolve("#condition"), uriActivity);
 		} catch (JAXBException e) {
 			throw new ReaderException("Can't parse conditional loop activity", e);			
-		}
-			
+		}		
 		return c;
 	}
 }
