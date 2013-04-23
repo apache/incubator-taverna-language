@@ -36,11 +36,8 @@ import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
-import uk.org.taverna.scufl2.api.property.MultiplePropertiesException;
 import uk.org.taverna.scufl2.api.property.PropertyException;
-import uk.org.taverna.scufl2.api.property.PropertyNotFoundException;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
-import uk.org.taverna.scufl2.api.property.UnexpectedPropertyException;
 
 /**
  * Utility methods for dealing with SCUFL2 models
