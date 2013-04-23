@@ -1,7 +1,7 @@
 SCUFL2 examples
 ===============
 
-Examples of using the [SCUFL2 API](http://dev.mygrid.org.uk/wiki/display/developer/SCUFL2+API)
+Examples of using the [SCUFL2 API](http://dev.mygrid.org.uk/wiki/display/developer/SCUFL2+API) v0.9.2.
 
 To build, you'll need [Maven](http://maven.apache.org/download.cgi) 3.0.5 or newer, and run
 ```mvn clean install```:
