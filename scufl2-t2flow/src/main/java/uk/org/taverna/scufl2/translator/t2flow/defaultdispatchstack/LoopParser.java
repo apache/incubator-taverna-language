@@ -81,7 +81,11 @@ public class LoopParser extends AbstractActivityParser {
 
 		
 		
-		String conditionXml = loopConfig.getConditionXML();		
+		String conditionXml = loopConfig.getConditionXML();	
+		if (conditionXml == null) {
+			// Unconfigured
+			return null;			
+		}
 		Activity conditionActivity = unmarshallXml(parserState.getT2FlowParser(), conditionXml, Activity.class);				
 		try {
 			ConditionalActivityParser internalParser = new ConditionalActivityParser(parserState);
@@ -100,7 +104,7 @@ public class LoopParser extends AbstractActivityParser {
 			URI uriActivity = uriTools.relativeUriForBean(newActivity, parserState.getCurrentProfile());
 			resource.addPropertyReference(scufl2Uri.resolve("#condition"), uriActivity);
 		} catch (JAXBException e) {
-			throw new ReaderException("Can't parse conditional loop activity", e);
+			throw new ReaderException("Can't parse conditional loop activity", e);			
 		}
 			
 		return c;
