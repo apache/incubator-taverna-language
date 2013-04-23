@@ -21,6 +21,47 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
 
 /**
  * Utility class for reading and writing <code>WorkflowBundle</code>s.
+ * <p>
+ * This class depends on implemented {@link WorkflowBundleReader} and
+ * {@link WorkflowBundleWriter} instances, which are discovered from the
+ * classpath using {@link ServiceLoader} or set using {@link #setReaders(List)}
+ * and {@link #setWriters(List)}. An OSGi service descriptors is provided for
+ * instantiating this class as bean <code>workflowBundleIO</code>, while non-OSGi
+ * uses can just instantiate this class where needed.
+ * <p>
+ * The methods {@link #readBundle(File, String)},
+ * {@link #readBundle(InputStream, String)}, {@link #readBundle(URL, String)}
+ * and {@link #writeBundle(WorkflowBundle, File, String)}/
+ * {@link #writeBundle(WorkflowBundle, OutputStream, String)} take an argument
+ * to indicate the media type of the format. The reader methods from file and
+ * URL allow the parameter to be <code>null</code> in order to guess the format,
+ * but the writer method requires the format to be specified explicitly.
+ * <p>
+ * Known supported formats (as of 2013-04-23):
+ * <dl>
+ * <dt>text/vnd.taverna.scufl2.structure</dt>
+ * <dd>A textual tree-view, useful for debugging, but probably incomplete for
+ * actual workflow execution. Reader and writer provided by scufl2-api (this
+ * module).</dd>
+ * <dt>application/vnd.taverna.scufl2.workflow-bundle</dt>
+ * <dd>The <a href=
+ * 'http://dev.mygrid.org.uk/wiki/display/developer/Taverna+Workflow+Bundle'>SCU
+ * F L 2 workflow bundle</a> format, a ZIP container of RDF/XML files. Reader
+ * and writer provided by the scufl2-rdfxml module.</dd>
+ * <dt>application/vnd.taverna.t2flow+xml</dt>
+ * <dd>The Taverna 2 workflow format t2flow. An XML format based on XMLBeans
+ * serialization of T2 java objects. Reader provided by the scufl2-t2flow
+ * module.
+ * <dt>application/vnd.taverna.scufl+xml</dt>
+ * <dd>The Taverna 1 workflow format SCUFL. An XML format made for the FreeFluo
+ * workflow engine. Experimental reader provided by the scufl2-scufl module.
+ * <dt>text/vnd.wf4ever.wfdesc+turtle</dt>
+ * <dd>An abstract workflow structure format by the <a
+ * href="http://www.wf4ever-project.org/">Wf4Ever project. RDF Turtle according
+ * to the <a href="http://purl.org/wf4ever/model">wfdesc ontology</a>. Writer
+ * provided by the third-party <a
+ * href="https://github.com/wf4ever/scufl2-wfdesc">scufl2-wfdesc</a> module.
+ * </dl>
  */
 public class WorkflowBundleIO {
 
@@ -195,7 +236,12 @@ public class WorkflowBundleIO {
 	IOException {
 		if (mediaType == null) {
 			byte[] firstBytes = new byte[1024];
-			new FileInputStream(bundleFile).read(firstBytes);
+			FileInputStream fileIn = new FileInputStream(bundleFile);
+			try {			
+				fileIn.read(firstBytes);
+			} finally {
+				fileIn.close();
+			}
 			mediaType = guessMediaTypeForSignature(firstBytes);
 		}
 		WorkflowBundleReader reader = getReaderForMediaType(mediaType);
