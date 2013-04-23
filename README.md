@@ -136,4 +136,4 @@ for how this is implemented.
 
 The included files [helloworld.wfbundle](helloworld.wfbundle?raw=true) and
 [helloanyone.wfbundle](helloanyone.wfbundle?raw=true) are examples of converting
-[helloworld.t2flow](helloworld.t2flow) and [helloanyone.t2flow](helloanyone.t2flow)  
+[helloworld.t2flow](helloworld.t2flow?raw=true) and [helloanyone.t2flow](helloanyone.t2flow?raw=true)  
