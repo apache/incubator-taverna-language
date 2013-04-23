@@ -153,7 +153,7 @@ public class WorkflowMaker {
 		 * The ports must be either processor or workflow ports, and both of the
 		 * same workflow as the datalink is added to:
 		 */
-		workflow.getDataLinks().add(link);
+		workflow.getDataLinks().add(link);		
 	
 		/**
 		 * Or more compact style: pOut -> out1 .. connecting processor output
@@ -290,6 +290,8 @@ public class WorkflowMaker {
 		OutputActivityPort aOut1 = new OutputActivityPort(myBeanshell, "out1");
 		myBeanshell.getOutputPorts().add(aOut1);
 
+
+		
 		/**
 		 * But in case the activities don't match up (such as when multiple
 		 * activities are bound to the same processor, or as in this example
@@ -307,7 +309,8 @@ public class WorkflowMaker {
 		 * must be bound for each processor binding.
 		 */
 
-	
+		/** If the port names match up, the above can all be done in one go with */
+		//scufl2Tools.bindActivityToProcessorByMatchingPorts(myBeanshell, p);	
 	}
 
 
@@ -332,7 +335,7 @@ public class WorkflowMaker {
 		 * is typically related to (but different from) the activity type - but
 		 * might in some cases be shared amongst several activity types.
 		 */
-		beanshellConfig.setConfigurableType(BEANSHELL.resolve("#Config"));
+		beanshellConfig.setType(BEANSHELL.resolve("#Config"));
 
 		/**
 		 * Configurations are normally shared in the same profile as the
