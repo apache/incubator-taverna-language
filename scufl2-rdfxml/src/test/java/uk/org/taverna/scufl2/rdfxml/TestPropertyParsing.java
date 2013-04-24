@@ -139,8 +139,8 @@ public class TestPropertyParsing {
 		String expectedProfile = IOUtils.toString(profileUrl.openStream(),
 				"UTF-8");
 		// Namespaces seems to come in random order depending on which Java you run..
-		expectedProfile = expectedProfile.replaceAll("xmlns[^>]*>", "");		
-		profileStr = profileStr.replaceAll("xmlns[^>]*>", "");
+		expectedProfile = expectedProfile.replaceAll("xmlns[^>]*>", "").replaceAll("ns\\d+:", "");		
+		profileStr = profileStr.replaceAll("xmlns[^>]*>", "").replaceAll("ns\\d+:", "");
 		assertEquals(expectedProfile, profileStr);
 		// System.out.println(profileStr);
 
