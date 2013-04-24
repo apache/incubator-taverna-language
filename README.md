@@ -27,7 +27,7 @@ Requisites
 ----------
 
 * Java 1.6 or newer
-* Maven 2.2 or newer (for building)
+* Maven 2.2.1 or newer (for building)
 
 
 Building

@@ -11,7 +11,7 @@
 	<name>Taverna Scufl 2 RDF/XML</name>
 	<description>XSD based XML serialisation which is RDF/XML compatible</description>
 	<properties>
-		<sesame.version>2.3.2</sesame.version>
+		<sesame.version>2.7.0</sesame.version>
 	</properties>
 	<build>
 		<plugins>
@@ -85,6 +85,7 @@
 		</dependency>
 	</dependencies>
 	<repositories>
+    <!-- Sesame repositories no longer needed as it's in Central
 		<repository>
 			<releases>
 				<enabled>true</enabled>
@@ -107,5 +108,6 @@
 			<name>Aduna Open Source - Maven snapshots</name>
 			<url>http://repo.aduna-software.org/maven2/snapshots</url>
 		</repository>
+    -->
 	</repositories>
 </project>

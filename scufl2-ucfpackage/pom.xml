@@ -55,7 +55,7 @@
 						<goals>
 							<goal>xjc</goal>
 						</goals>
-						<configuration>
+						<configuration>                           
 						</configuration>
 					</execution>
 				</executions>
