@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>uk.org.taverna.scufl2</groupId>
@@ -8,6 +7,7 @@
 		<version>0.11.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>scufl2-rdf</artifactId>
+  <version>0.11.0</version>
 	<packaging>bundle</packaging>
 	<name>Taverna Scufl 2 RDF serialisation</name>
 	<properties>
@@ -35,11 +35,9 @@
 								<mkdir dir="${project.build.directory}/generated-sources" />
 								<mkdir dir="${project.build.directory}/generated-sources/elmo" />
 
-								<java classname="org.openrdf.elmo.codegen.OntologyConverter"
-									fork="true" failonerror="true" maxmemory="128m">
+								<java classname="org.openrdf.elmo.codegen.OntologyConverter" fork="true" failonerror="true" maxmemory="128m">
 									<arg value="-b" />
-									<arg
-										value="uk.org.taverna.scufl2.ontology=http://ns.taverna.org.uk/2010/scufl2#" />
+									<arg value="uk.org.taverna.scufl2.ontology=http://ns.taverna.org.uk/2010/scufl2#" />
 									<arg value="-j" />
 									<arg value="target/scufl2-ontology.jar" />
 									<!-- <arg value="-p" /> <arg value="" /> -->
@@ -49,8 +47,7 @@
 										<pathelement path="." />
 									</classpath>
 								</java>
-								<unzip src="${project.build.directory}/scufl2-ontology.jar"
-									dest="${project.build.directory}/generated-sources/elmo">
+								<unzip src="${project.build.directory}/scufl2-ontology.jar" dest="${project.build.directory}/generated-sources/elmo">
 									<patternset>
 										<exclude name="**/*.class" />
 									</patternset>

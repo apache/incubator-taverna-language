@@ -6,6 +6,7 @@
 		<version>0.11.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>scufl2-usecases</artifactId>
+  <version>0.11.0</version>
 	<name>Taverna Scufl 2 use cases</name>
 	<description>Use cases for exercising the SCUFL2 APIs and formats</description>
 	<url>http://www.mygrid.org.uk/dev/wiki/display/developer/SCUFL2+use+cases</url>

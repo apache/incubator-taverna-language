@@ -6,6 +6,7 @@
     <version>0.11.0-SNAPSHOT</version>
   </parent>
   <artifactId>scufl2-validation-integration</artifactId>
+  <version>0.11.0</version>
   <packaging>bundle</packaging>
   <name>Taverna Scufl 2 validation integration</name>
   <dependencies>
