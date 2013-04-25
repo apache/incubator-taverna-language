@@ -689,9 +689,6 @@ public class T2FlowParser {
 				if (clazz.equals(SEMANTIC_ANNOTATION)) {
 					if (elem.getLocalName().equals("content")) {
 						value = elem.getTextContent().trim();
-						System.err.println("***");
-						System.out.println(value);
-						System.err.println("***");
 					}
 					if (elem.getLocalName().equals("mimeType")) {					
 						semanticMediaType = elem.getTextContent().trim();
@@ -717,7 +714,6 @@ public class T2FlowParser {
 				p.setResourceURI(annotatedSubject);
 				if (clazz.equals(SEMANTIC_ANNOTATION)) {
 					URI annURI = uriTools.uriForBean(annotation);
-					System.out.println(annURI);
 					// TODO: Add the correct @base					
 					// TODO: Use correct path
 					String path = "asdf";
