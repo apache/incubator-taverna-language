@@ -177,8 +177,12 @@ public class DataBundles {
 		return Files.isDirectory(outputs);
 	}
 
-	public static boolean isList(Path list) {
-		return Files.isDirectory(list);
+	public static boolean isList(Path path) {
+		return Files.isDirectory(path);
+	}
+	
+	public static boolean isValue(Path path) {
+		return Files.isRegularFile(path);
 	}
 
 	public static Path newListItem(Path list) throws IOException {
@@ -201,6 +205,8 @@ public class DataBundles {
 		return list.resolve(Long.toString(max + 1));
 	}
 
+
+	
 	public static DataBundle openDataBundle(Path zip) throws IOException {
 		FileSystem fs = FileSystems.newFileSystem(zip, null);
 		return new DataBundle(fs.getRootDirectories().iterator().next(), false);

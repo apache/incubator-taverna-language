@@ -199,6 +199,7 @@ public class TestDataBundles {
 		Path list = DataBundles.getPort(inputs, "in1");
 		DataBundles.createList(list);
 		assertTrue(DataBundles.isList(list));
+		assertFalse(DataBundles.isValue(list));
 	}
 	
 	@Test
@@ -270,6 +271,16 @@ public class TestDataBundles {
 		DataBundles.setStringValue(portIn1, string);
 		assertTrue(Files.exists(portIn1));
 		assertEquals(string, DataBundles.getStringValue(portIn1));
+	}
+	
+	@Test
+	public void isValue() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path portIn1 = DataBundles.getPort(inputs, "in1");
+		DataBundles.setStringValue(portIn1, "Hello");
+		assertTrue(DataBundles.isValue(portIn1));
+		assertFalse(DataBundles.isList(portIn1));
 	}
 
 	@Test
