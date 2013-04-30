@@ -1,5 +1,6 @@
 package uk.org.taverna.databundle;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
@@ -48,6 +49,7 @@ public class TestDataBundles {
 		// Second time should not fail because it already exists
 		inputs = DataBundles.getInputs(dataBundle);
 		assertTrue(Files.isDirectory(inputs));
+		assertEquals(dataBundle, inputs.getParent());
 	}
 	
 	@Test
@@ -76,6 +78,7 @@ public class TestDataBundles {
 		// Second time should not fail because it already exists
 		outputs = DataBundles.getOutputs(dataBundle);
 		assertTrue(Files.isDirectory(outputs));
+		assertEquals(dataBundle, outputs.getParent());
 	}
 	
 	@Test
@@ -84,6 +87,7 @@ public class TestDataBundles {
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path portIn1 = DataBundles.getPort(inputs, "in1");
 		assertFalse(Files.exists(portIn1));
+		assertEquals(inputs, portIn1.getParent());
 	}
 	
 	@Test
@@ -95,7 +99,18 @@ public class TestDataBundles {
 		DataBundles.setStringValue(portIn1, string);
 		assertTrue(Files.exists(portIn1));
 		assertEquals(string, DataBundles.getStringValue(portIn1));
-		
 	}
+	
+	/*
+	@Test
+	public void createList() throws Exception {
+		Path dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path portIn1 = DataBundles.getPort(inputs, "in1");
+		Path list = DataBundles.createList(portIn1);
+		assertTrue(Files.isDirectory(list));
+		assertEquals(list.getParent(), portIn1);
+	}
+	*/
 	
 }
