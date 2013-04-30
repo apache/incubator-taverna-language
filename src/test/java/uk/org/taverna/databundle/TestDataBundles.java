@@ -1,8 +1,10 @@
 package uk.org.taverna.databundle;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
+import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -15,6 +17,27 @@ public class TestDataBundles {
 		assertTrue(Files.isDirectory(dataBundle));
 	}
 	
+    @Test
+	public void createFSfromJar() throws Exception {
+    	Path path = Files.createTempFile("test.zip", null);
+    	Files.delete(path);    	
+    	try (FileSystem fs = DataBundles.createFSfromJar(path)) {
+	    	assertNotSame(fs, path.getFileSystem());
+    	}
+    	assertTrue(Files.exists(path));
+	}
+	
+    @Test
+  	public void createFSfromZip() throws Exception {
+      	Path path = Files.createTempFile("test", null);
+      	Files.delete(path);    	
+      	try (FileSystem fs = DataBundles.createFSfromZip(path)) {
+  	    	assertNotSame(fs, path.getFileSystem());
+      	}
+      	assertTrue(Files.exists(path));
+  	}
+  	
+    
 	@Test
 	public void getInputs() throws Exception {
 		Path dataBundle = DataBundles.createDataBundle();
