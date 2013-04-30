@@ -10,6 +10,7 @@ public class DataBundle implements AutoCloseable {
 
 	private final Path root;
 	private boolean deleteOnClose;
+
 	public DataBundle(Path root, boolean deleteOnClose) {
 		this.root = root;
 		this.setDeleteOnClose(deleteOnClose);
@@ -18,19 +19,19 @@ public class DataBundle implements AutoCloseable {
 	public Path getRoot() {
 		return root;
 	}
-	
+
 	public Path getSource() {
-		URI uri = getRoot().toUri();		
+		URI uri = getRoot().toUri();
 		String s = uri.getSchemeSpecificPart();
-		if (! s.endsWith("!/")) { // sanity check
+		if (!s.endsWith("!/")) { // sanity check
 			throw new IllegalStateException("Can't parse JAR URI: " + uri);
 		}
-		URI zip = URI.create(s.substring(0, s.length()-2));
+		URI zip = URI.create(s.substring(0, s.length() - 2));
 		return Paths.get(zip); // Look up our path
 	}
 
 	@Override
-	public void close() throws IOException  {		
+	public void close() throws IOException {
 		close(isDeleteOnClose());
 	}
 

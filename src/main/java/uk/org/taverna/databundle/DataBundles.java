@@ -1,5 +1,7 @@
 package uk.org.taverna.databundle;
 
+import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -14,7 +16,6 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,9 +23,6 @@ import java.util.Map;
 import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 
 /**
  * Utility functions for dealing with data bundles.
@@ -41,19 +39,19 @@ public class DataBundles {
 	private static final Charset UTF8 = Charset.forName("UTF-8");
 	private static final String INPUTS = "inputs";
 	private static final String OUTPUTS = "outputs";
-	
 
 	public static DataBundle createDataBundle() throws IOException {
-		// Create ZIP file as http://docs.oracle.com/javase/7/docs/technotes/guides/io/fsp/zipfilesystemprovider.html
-		
+		// Create ZIP file as
+		// http://docs.oracle.com/javase/7/docs/technotes/guides/io/fsp/zipfilesystemprovider.html
+
 		Path dataBundle = Files.createTempFile("databundle", ".zip");
-		
+
 		FileSystem fs = createFSfromZip(dataBundle);
-//		FileSystem fs = createFSfromJar(dataBundle);
+		// FileSystem fs = createFSfromJar(dataBundle);
 		return new DataBundle(fs.getRootDirectories().iterator().next(), true);
-		//return Files.createTempDirectory("databundle");
+		// return Files.createTempDirectory("databundle");
 	}
-	
+
 	public static DataBundle openDataBundle(Path zip) throws IOException {
 		FileSystem fs = FileSystems.newFileSystem(zip, null);
 		return new DataBundle(fs.getRootDirectories().iterator().next(), false);
@@ -61,41 +59,41 @@ public class DataBundles {
 
 	protected static FileSystem createFSfromZip(Path dataBundle)
 			throws FileNotFoundException, IOException {
-		ZipOutputStream out = new ZipOutputStream(
-			    new FileOutputStream(dataBundle.toFile()));
+		ZipOutputStream out = new ZipOutputStream(new FileOutputStream(
+				dataBundle.toFile()));
 		addMimeTypeToZip(out);
 		out.close();
 		return FileSystems.newFileSystem(dataBundle, null);
 	}
 
-	private static void addMimeTypeToZip(ZipOutputStream out) throws IOException {
+	private static void addMimeTypeToZip(ZipOutputStream out)
+			throws IOException {
 		// FIXME: Make the mediatype a parameter
 		byte[] bytes = APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP.getBytes(UTF8);
-		
-		// We'll have to do the mimetype file quite low-level 
+
+		// We'll have to do the mimetype file quite low-level
 		// in order to ensure it is STORED and not COMPRESSED
-		
+
 		ZipEntry entry = new ZipEntry("mimetype");
 		entry.setMethod(ZipEntry.STORED);
 		entry.setSize(bytes.length);
 		CRC32 crc = new CRC32();
 		crc.update(bytes);
 		entry.setCrc(crc.getValue());
-		
+
 		out.putNextEntry(entry);
 		out.write(bytes);
 		out.closeEntry();
 	}
 
-	protected static FileSystem createFSfromJar(Path path)
-			throws IOException {
+	protected static FileSystem createFSfromJar(Path path) throws IOException {
 		Files.deleteIfExists(path);
 		URI uri;
 		try {
 			uri = new URI("jar", path.toUri().toASCIIString(), null);
 		} catch (URISyntaxException e) {
 			throw new IOException("Can't make jar: URI using " + path.toUri());
-		}		
+		}
 		Map<String, String> env = new HashMap<>();
 		env.put("create", "true");
 		return FileSystems.newFileSystem(uri, env);
@@ -128,7 +126,8 @@ public class DataBundles {
 		return map.resolve(portName);
 	}
 
-	public static void setStringValue(Path path, String string) throws IOException {		
+	public static void setStringValue(Path path, String string)
+			throws IOException {
 		Files.write(path, string.getBytes(UTF8));
 	}
 
@@ -146,7 +145,7 @@ public class DataBundles {
 		try (DirectoryStream<Path> ds = Files.newDirectoryStream(list)) {
 			for (Path entry : ds) {
 				String name = filenameWithoutExtension(entry);
-				//System.out.println(name);
+				// System.out.println(name);
 				try {
 					long entryNum = Long.parseLong(name);
 					if (entryNum > max) {
@@ -158,7 +157,7 @@ public class DataBundles {
 		} catch (DirectoryIteratorException ex) {
 			throw ex.getCause();
 		}
-		return list.resolve(Long.toString(max+1));
+		return list.resolve(Long.toString(max + 1));
 	}
 
 	protected static String filenameWithoutExtension(Path entry) {
@@ -179,7 +178,7 @@ public class DataBundles {
 		try (DirectoryStream<Path> ds = Files.newDirectoryStream(list)) {
 			for (Path entry : ds) {
 				String name = filenameWithoutExtension(entry);
-				//System.out.println(name);
+				// System.out.println(name);
 				try {
 					int entryNum = Integer.parseInt(name);
 					while (paths.size() <= entryNum) {
@@ -187,24 +186,26 @@ public class DataBundles {
 						paths.add(null);
 					}
 					// NOTE: Don't use add() as these could come in any order!
-					paths.set(entryNum, entry);					
+					paths.set(entryNum, entry);
 				} catch (NumberFormatException ex) {
 				}
 			}
 		} catch (DirectoryIteratorException ex) {
 			throw ex.getCause();
 		}
-		return paths;		
+		return paths;
 	}
 
-	public static void closeAndSaveDataBundle(DataBundle dataBundle, Path destination) throws IOException {
+	public static void closeAndSaveDataBundle(DataBundle dataBundle,
+			Path destination) throws IOException {
 		Path zipPath = closeDataBundle(dataBundle);
-//		Files.move(zipPath, destination);
+		// Files.move(zipPath, destination);
 		safeMove(zipPath, destination);
 	}
-	
-	public static void safeMove(Path source, Path destination) throws IOException {
-		
+
+	public static void safeMove(Path source, Path destination)
+			throws IOException {
+
 		// First just try to do an atomic move with overwrite
 		if (source.getFileSystem().provider()
 				.equals(destination.getFileSystem().provider())) {
@@ -215,27 +216,29 @@ public class DataBundles {
 				// Do the fallback by temporary files below
 			}
 		}
-		
-		String tmpName =  destination.getFileName().toString();
-		Path tmpDestination = Files.createTempFile(destination.getParent(), 
-				tmpName , ".tmp");
+
+		String tmpName = destination.getFileName().toString();
+		Path tmpDestination = Files.createTempFile(destination.getParent(),
+				tmpName, ".tmp");
 		Path backup = null;
 		try {
 			// This might do a copy if filestores differ
 			// .. hence to avoid an incomplete (and partially overwritten)
 			// destination, we do it first to a temporary file
 			Files.move(source, tmpDestination, REPLACE_EXISTING);
-			
+
 			if (Files.exists(destination)) {
 				// Keep the files for roll-back in case it goes bad
-				backup = Files.createTempFile(destination.getParent(), tmpName, ".orig");
+				backup = Files.createTempFile(destination.getParent(), tmpName,
+						".orig");
 				Files.move(destination, backup, REPLACE_EXISTING);
 			}
 			// OK ; let's swap over:
 			try {
-				Files.move(tmpDestination, destination, REPLACE_EXISTING, ATOMIC_MOVE);
+				Files.move(tmpDestination, destination, REPLACE_EXISTING,
+						ATOMIC_MOVE);
 			} finally {
-				if (! Files.exists(destination) && backup != null) {
+				if (!Files.exists(destination) && backup != null) {
 					// Restore the backup
 					Files.move(backup, destination);
 				}
@@ -246,13 +249,14 @@ public class DataBundles {
 			}
 		} finally {
 			System.out.println(tmpDestination);
-			Files.deleteIfExists(tmpDestination);			
+			Files.deleteIfExists(tmpDestination);
 		}
 	}
 
-	public static Path closeDataBundle(DataBundle dataBundle) throws IOException {
+	public static Path closeDataBundle(DataBundle dataBundle)
+			throws IOException {
 		Path path = dataBundle.getSource();
 		dataBundle.close(false);
 		return path;
-	}	
+	}
 }
