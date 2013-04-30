@@ -16,7 +16,9 @@ The class [uk.org.taverna.databundle.DataBundle](src/main/java/uk/org/taverna/da
 Example of use
 --------------
 
+Example in full is at [uk.org.taverna.databundle.TestExample](src/test/java/uk/org/taverna/databundle/TestExample.java)
 
+```java
         // Create a new (temporary) data bundle
         DataBundle dataBundle = DataBundles.createDataBundle();
 
@@ -98,4 +100,5 @@ Example of use
         try (DataBundle dataBundle2 = DataBundles.openDataBundle(zip)) {
             // Any modifications here will be saved on (here automatic) close
             
-        }
+        }     
+```
