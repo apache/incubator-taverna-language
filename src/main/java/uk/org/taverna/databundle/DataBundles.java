@@ -44,20 +44,19 @@ public class DataBundles {
 	
 
 	public static DataBundle createDataBundle() throws IOException {
-
 		// Create ZIP file as http://docs.oracle.com/javase/7/docs/technotes/guides/io/fsp/zipfilesystemprovider.html
 		
 		Path dataBundle = Files.createTempFile("databundle", ".zip");
 		
 		FileSystem fs = createFSfromZip(dataBundle);
 //		FileSystem fs = createFSfromJar(dataBundle);
-		return new DataBundle(fs.getRootDirectories().iterator().next());
+		return new DataBundle(fs.getRootDirectories().iterator().next(), true);
 		//return Files.createTempDirectory("databundle");
 	}
 	
 	public static DataBundle openDataBundle(Path zip) throws IOException {
 		FileSystem fs = FileSystems.newFileSystem(zip, null);
-		return new DataBundle(fs.getRootDirectories().iterator().next());
+		return new DataBundle(fs.getRootDirectories().iterator().next(), false);
 	}
 
 	protected static FileSystem createFSfromZip(Path dataBundle)
