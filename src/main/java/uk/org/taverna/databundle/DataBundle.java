@@ -8,12 +8,24 @@ import java.nio.file.Paths;
 
 public class DataBundle implements AutoCloseable {
 
-	private final Path root;
 	private boolean deleteOnClose;
+	private final Path root;
 
 	public DataBundle(Path root, boolean deleteOnClose) {
 		this.root = root;
 		this.setDeleteOnClose(deleteOnClose);
+	}
+
+	@Override
+	public void close() throws IOException {
+		close(isDeleteOnClose());
+	}
+
+	protected void close(boolean deleteOnClose) throws IOException {
+		getRoot().getFileSystem().close();
+		if (deleteOnClose) {
+			Files.deleteIfExists(getSource());
+		}
 	}
 
 	public Path getRoot() {
@@ -28,18 +40,6 @@ public class DataBundle implements AutoCloseable {
 		}
 		URI zip = URI.create(s.substring(0, s.length() - 2));
 		return Paths.get(zip); // Look up our path
-	}
-
-	@Override
-	public void close() throws IOException {
-		close(isDeleteOnClose());
-	}
-
-	protected void close(boolean deleteOnClose) throws IOException {
-		getRoot().getFileSystem().close();
-		if (deleteOnClose) {
-			Files.deleteIfExists(getSource());
-		}
 	}
 
 	public boolean isDeleteOnClose() {

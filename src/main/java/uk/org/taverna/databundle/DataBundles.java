@@ -36,35 +36,9 @@ import java.util.zip.ZipOutputStream;
 public class DataBundles {
 
 	private static final String APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP = "application/vnd.wf4ever.robundle+zip";
-	private static final Charset UTF8 = Charset.forName("UTF-8");
 	private static final String INPUTS = "inputs";
 	private static final String OUTPUTS = "outputs";
-
-	public static DataBundle createDataBundle() throws IOException {
-		// Create ZIP file as
-		// http://docs.oracle.com/javase/7/docs/technotes/guides/io/fsp/zipfilesystemprovider.html
-
-		Path dataBundle = Files.createTempFile("databundle", ".zip");
-
-		FileSystem fs = createFSfromZip(dataBundle);
-		// FileSystem fs = createFSfromJar(dataBundle);
-		return new DataBundle(fs.getRootDirectories().iterator().next(), true);
-		// return Files.createTempDirectory("databundle");
-	}
-
-	public static DataBundle openDataBundle(Path zip) throws IOException {
-		FileSystem fs = FileSystems.newFileSystem(zip, null);
-		return new DataBundle(fs.getRootDirectories().iterator().next(), false);
-	}
-
-	protected static FileSystem createFSfromZip(Path dataBundle)
-			throws FileNotFoundException, IOException {
-		ZipOutputStream out = new ZipOutputStream(new FileOutputStream(
-				dataBundle.toFile()));
-		addMimeTypeToZip(out);
-		out.close();
-		return FileSystems.newFileSystem(dataBundle, null);
-	}
+	private static final Charset UTF8 = Charset.forName("UTF-8");
 
 	private static void addMimeTypeToZip(ZipOutputStream out)
 			throws IOException {
@@ -86,6 +60,32 @@ public class DataBundles {
 		out.closeEntry();
 	}
 
+	public static void closeAndSaveDataBundle(DataBundle dataBundle,
+			Path destination) throws IOException {
+		Path zipPath = closeDataBundle(dataBundle);
+		// Files.move(zipPath, destination);
+		safeMove(zipPath, destination);
+	}
+
+	public static Path closeDataBundle(DataBundle dataBundle)
+			throws IOException {
+		Path path = dataBundle.getSource();
+		dataBundle.close(false);
+		return path;
+	}
+
+	public static DataBundle createDataBundle() throws IOException {
+		// Create ZIP file as
+		// http://docs.oracle.com/javase/7/docs/technotes/guides/io/fsp/zipfilesystemprovider.html
+
+		Path dataBundle = Files.createTempFile("databundle", ".zip");
+
+		FileSystem fs = createFSfromZip(dataBundle);
+		// FileSystem fs = createFSfromJar(dataBundle);
+		return new DataBundle(fs.getRootDirectories().iterator().next(), true);
+		// return Files.createTempDirectory("databundle");
+	}
+
 	protected static FileSystem createFSfromJar(Path path) throws IOException {
 		Files.deleteIfExists(path);
 		URI uri;
@@ -99,65 +99,17 @@ public class DataBundles {
 		return FileSystems.newFileSystem(uri, env);
 	}
 
-	public static Path getInputs(DataBundle dataBundle) throws IOException {
-		Path inputs = dataBundle.getRoot().resolve(INPUTS);
-		Files.createDirectories(inputs);
-		return inputs;
-	}
-
-	public static Path getOutputs(DataBundle dataBundle) throws IOException {
-		Path inputs = dataBundle.getRoot().resolve(OUTPUTS);
-		Files.createDirectories(inputs);
-		return inputs;
-	}
-
-	public static boolean hasInputs(DataBundle dataBundle) {
-		Path inputs = dataBundle.getRoot().resolve(INPUTS);
-		return Files.isDirectory(inputs);
-	}
-
-	public static boolean hasOutputs(DataBundle dataBundle) {
-		Path outputs = dataBundle.getRoot().resolve(OUTPUTS);
-		return Files.isDirectory(outputs);
-	}
-
-	public static Path getPort(Path map, String portName) throws IOException {
-		Files.createDirectories(map);
-		return map.resolve(portName);
-	}
-
-	public static void setStringValue(Path path, String string)
-			throws IOException {
-		Files.write(path, string.getBytes(UTF8));
-	}
-
-	public static String getStringValue(Path path) throws IOException {
-		return new String(Files.readAllBytes(path), UTF8);
+	protected static FileSystem createFSfromZip(Path dataBundle)
+			throws FileNotFoundException, IOException {
+		ZipOutputStream out = new ZipOutputStream(new FileOutputStream(
+				dataBundle.toFile()));
+		addMimeTypeToZip(out);
+		out.close();
+		return FileSystems.newFileSystem(dataBundle, null);
 	}
 
 	public static void createList(Path path) throws IOException {
 		Files.createDirectories(path);
-	}
-
-	public static Path newListItem(Path list) throws IOException {
-		long max = -1L;
-		createList(list);
-		try (DirectoryStream<Path> ds = Files.newDirectoryStream(list)) {
-			for (Path entry : ds) {
-				String name = filenameWithoutExtension(entry);
-				// System.out.println(name);
-				try {
-					long entryNum = Long.parseLong(name);
-					if (entryNum > max) {
-						max = entryNum;
-					}
-				} catch (NumberFormatException ex) {
-				}
-			}
-		} catch (DirectoryIteratorException ex) {
-			throw ex.getCause();
-		}
-		return list.resolve(Long.toString(max + 1));
 	}
 
 	protected static String filenameWithoutExtension(Path entry) {
@@ -169,8 +121,10 @@ public class DataBundles {
 		return fileName.substring(0, lastDot);
 	}
 
-	public static boolean isList(Path list) {
-		return Files.isDirectory(list);
+	public static Path getInputs(DataBundle dataBundle) throws IOException {
+		Path inputs = dataBundle.getRoot().resolve(INPUTS);
+		Files.createDirectories(inputs);
+		return inputs;
 	}
 
 	public static List<Path> getList(Path list) throws IOException {
@@ -196,11 +150,59 @@ public class DataBundles {
 		return paths;
 	}
 
-	public static void closeAndSaveDataBundle(DataBundle dataBundle,
-			Path destination) throws IOException {
-		Path zipPath = closeDataBundle(dataBundle);
-		// Files.move(zipPath, destination);
-		safeMove(zipPath, destination);
+	public static Path getOutputs(DataBundle dataBundle) throws IOException {
+		Path inputs = dataBundle.getRoot().resolve(OUTPUTS);
+		Files.createDirectories(inputs);
+		return inputs;
+	}
+
+	public static Path getPort(Path map, String portName) throws IOException {
+		Files.createDirectories(map);
+		return map.resolve(portName);
+	}
+
+	public static String getStringValue(Path path) throws IOException {
+		return new String(Files.readAllBytes(path), UTF8);
+	}
+
+	public static boolean hasInputs(DataBundle dataBundle) {
+		Path inputs = dataBundle.getRoot().resolve(INPUTS);
+		return Files.isDirectory(inputs);
+	}
+
+	public static boolean hasOutputs(DataBundle dataBundle) {
+		Path outputs = dataBundle.getRoot().resolve(OUTPUTS);
+		return Files.isDirectory(outputs);
+	}
+
+	public static boolean isList(Path list) {
+		return Files.isDirectory(list);
+	}
+
+	public static Path newListItem(Path list) throws IOException {
+		long max = -1L;
+		createList(list);
+		try (DirectoryStream<Path> ds = Files.newDirectoryStream(list)) {
+			for (Path entry : ds) {
+				String name = filenameWithoutExtension(entry);
+				// System.out.println(name);
+				try {
+					long entryNum = Long.parseLong(name);
+					if (entryNum > max) {
+						max = entryNum;
+					}
+				} catch (NumberFormatException ex) {
+				}
+			}
+		} catch (DirectoryIteratorException ex) {
+			throw ex.getCause();
+		}
+		return list.resolve(Long.toString(max + 1));
+	}
+
+	public static DataBundle openDataBundle(Path zip) throws IOException {
+		FileSystem fs = FileSystems.newFileSystem(zip, null);
+		return new DataBundle(fs.getRootDirectories().iterator().next(), false);
 	}
 
 	public static void safeMove(Path source, Path destination)
@@ -253,10 +255,8 @@ public class DataBundles {
 		}
 	}
 
-	public static Path closeDataBundle(DataBundle dataBundle)
+	public static void setStringValue(Path path, String string)
 			throws IOException {
-		Path path = dataBundle.getSource();
-		dataBundle.close(false);
-		return path;
+		Files.write(path, string.getBytes(UTF8));
 	}
 }
