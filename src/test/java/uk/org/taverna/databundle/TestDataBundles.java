@@ -1,5 +1,6 @@
 package uk.org.taverna.databundle;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -198,6 +200,30 @@ public class TestDataBundles {
 		DataBundles.createList(list);
 		assertTrue(DataBundles.isList(list));
 	}
+	
+	@Test
+	public void getPorts() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		DataBundles.createList(DataBundles.getPort(inputs, "in1"));
+		DataBundles.createList(DataBundles.getPort(inputs, "in2"));
+		DataBundles.setStringValue(DataBundles.getPort(inputs, "value"), 
+				"A value");		
+		Map<String, Path> ports = DataBundles.getPorts(DataBundles.getInputs(dataBundle));
+		assertEquals(3, ports.size());
+		System.out.println(ports);
+		assertTrue(ports.containsKey("in1"));
+		assertTrue(ports.containsKey("in2"));
+		assertTrue(ports.containsKey("value"));
+		
+		assertEquals("A value", DataBundles.getStringValue(ports.get("value")));
+		
+	}
+	
+	@Test
+	public void listOfLists() throws Exception {
+		// TODO: To be tested
+	}
 
 	@Test
 	public void newListItem() throws Exception {
@@ -261,7 +287,7 @@ public class TestDataBundles {
 
 	}
 
-	private List<String> ls(Path path) throws IOException {
+	protected List<String> ls(Path path) throws IOException {
 		List<String> paths = new ArrayList<>();
 		try (DirectoryStream<Path> ds = Files.newDirectoryStream(path)) {
 			for (Path p : ds) {
@@ -272,7 +298,7 @@ public class TestDataBundles {
 		return paths;
 	}
 
-	private boolean isEmpty(Path path) throws IOException {
+	protected boolean isEmpty(Path path) throws IOException {
 		try (DirectoryStream<Path> ds = Files.newDirectoryStream(path)) {
 			return !ds.iterator().hasNext();
 		}

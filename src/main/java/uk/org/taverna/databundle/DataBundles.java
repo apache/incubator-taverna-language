@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -115,8 +117,9 @@ public class DataBundles {
 	protected static String filenameWithoutExtension(Path entry) {
 		String fileName = entry.getFileName().toString();
 		int lastDot = fileName.lastIndexOf(".");
-		if (lastDot < 0) {
-			return fileName;
+		if (lastDot < 0) {	
+//			return fileName;
+			return fileName.replace("/", "");
 		}
 		return fileName.substring(0, lastDot);
 	}
@@ -255,5 +258,15 @@ public class DataBundles {
 	public static void setStringValue(Path path, String string)
 			throws IOException {
 		Files.write(path, string.getBytes(UTF8));
+	}
+
+	public static NavigableMap<String, Path> getPorts(Path path) throws IOException {
+		NavigableMap<String, Path> ports = new TreeMap<>();
+		try (DirectoryStream<Path> ds = Files.newDirectoryStream(path)) {
+			for (Path p : ds) {
+				ports.put(filenameWithoutExtension(p), p);
+			}
+		}
+		return ports;
 	}
 }
