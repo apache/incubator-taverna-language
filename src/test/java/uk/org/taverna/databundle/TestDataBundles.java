@@ -8,9 +8,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
@@ -240,6 +244,53 @@ public class TestDataBundles {
 		DataBundles.setStringValue(portIn1, string);
 		assertTrue(Files.exists(portIn1));
 		assertEquals(string, DataBundles.getStringValue(portIn1));
+	}
+
+	@Test
+	public void safeMove() throws Exception {
+		Path tmp = Files.createTempDirectory("test");
+		Path f1 = tmp.resolve("f1");
+		Files.createFile(f1);
+		assertFalse(isEmpty(tmp));
+
+		DataBundle db = DataBundles.createDataBundle();
+		Path f2 = db.getRoot().resolve("f2");
+		DataBundles.safeMove(f1, f2);
+		assertTrue(isEmpty(tmp));
+		assertEquals(Arrays.asList("f2", "mimetype"), ls(db.getRoot()));
+
+	}
+
+	private List<String> ls(Path path) throws IOException {
+		List<String> paths = new ArrayList<>();
+		try (DirectoryStream<Path> ds = Files.newDirectoryStream(path)) {
+			for (Path p : ds) {
+				paths.add(p.getFileName() + "");
+			}
+		}
+		Collections.sort(paths);
+		return paths;
+	}
+
+	private boolean isEmpty(Path path) throws IOException {
+		try (DirectoryStream<Path> ds = Files.newDirectoryStream(path)) {
+			return !ds.iterator().hasNext();
+		}
+	}
+
+	@Test(expected = IOException.class)
+	public void safeMoveFails() throws Exception {
+		Path tmp = Files.createTempDirectory("test");
+		Path f1 = tmp.resolve("f1");
+		Path d1 = tmp.resolve("d1");
+		Files.createFile(f1);
+		Files.createDirectory(d1);
+		try {
+			DataBundles.safeMove(f1, d1);
+		} finally {
+			assertTrue(Files.exists(f1));
+			assertEquals(Arrays.asList("d1", "f1"), ls(tmp));
+		}
 	}
 
 }

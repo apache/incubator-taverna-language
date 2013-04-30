@@ -132,7 +132,6 @@ public class DataBundles {
 		try (DirectoryStream<Path> ds = Files.newDirectoryStream(list)) {
 			for (Path entry : ds) {
 				String name = filenameWithoutExtension(entry);
-				// System.out.println(name);
 				try {
 					int entryNum = Integer.parseInt(name);
 					while (paths.size() <= entryNum) {
@@ -185,7 +184,6 @@ public class DataBundles {
 		try (DirectoryStream<Path> ds = Files.newDirectoryStream(list)) {
 			for (Path entry : ds) {
 				String name = filenameWithoutExtension(entry);
-				// System.out.println(name);
 				try {
 					long entryNum = Long.parseLong(name);
 					if (entryNum > max) {
@@ -218,7 +216,7 @@ public class DataBundles {
 				// Do the fallback by temporary files below
 			}
 		}
-
+		
 		String tmpName = destination.getFileName().toString();
 		Path tmpDestination = Files.createTempFile(destination.getParent(),
 				tmpName, ".tmp");
@@ -250,7 +248,6 @@ public class DataBundles {
 				Files.deleteIfExists(backup);
 			}
 		} finally {
-			System.out.println(tmpDestination);
 			Files.deleteIfExists(tmpDestination);
 		}
 	}
