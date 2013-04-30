@@ -44,9 +44,14 @@ public class DataBundles {
 		Path dataBundle = Files.createTempFile("databundle", ".zip");
 		
 		FileSystem fs = createFSfromZip(dataBundle);
-//		FileSystem fs = createFSfromJar(dataBundle);		
+//		FileSystem fs = createFSfromJar(dataBundle);
 		return fs.getRootDirectories().iterator().next();
 		//return Files.createTempDirectory("databundle");
+	}
+	
+	public static Path openDataBundle(Path zip) throws IOException {
+		FileSystem fs = FileSystems.newFileSystem(zip, null);
+		return fs.getRootDirectories().iterator().next();
 	}
 
 	protected static FileSystem createFSfromZip(Path dataBundle)
@@ -55,7 +60,7 @@ public class DataBundles {
 			    new FileOutputStream(dataBundle.toFile()));
 		addMimeTypeToZip(out);
 		out.close();
-		return FileSystems.newFileSystem(dataBundle,  null);
+		return FileSystems.newFileSystem(dataBundle, null);
 	}
 
 	private static void addMimeTypeToZip(ZipOutputStream out) throws IOException {
@@ -202,4 +207,6 @@ public class DataBundles {
 		URI zip = URI.create(s.substring(0, s.length()-2));
 		return Paths.get(zip); // Look up our path
 	}
+
+	
 }

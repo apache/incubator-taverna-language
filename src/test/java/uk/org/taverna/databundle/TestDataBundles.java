@@ -67,6 +67,28 @@ public class TestDataBundles {
 	}
 	
 	
+	@Test
+	public void closeAndOpenDataBundle() throws Exception {
+		Path dataBundle = DataBundles.createDataBundle();
+		Path zip = DataBundles.closeDataBundle(dataBundle);
+		DataBundles.openDataBundle(zip);
+	}
+	
+	@Test
+	public void closeAndOpenDataBundleWithPortValue() throws Exception {
+		Path dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path port = DataBundles.getPort(inputs, "hello");
+		DataBundles.setStringValue(port , "Hello");
+		Path zip = DataBundles.closeDataBundle(dataBundle);
+		
+		Path newDataBundle = DataBundles.openDataBundle(zip);
+		Path newInput = DataBundles.getInputs(newDataBundle);
+		Path newPort = DataBundles.getPort(newInput, "hello");
+		assertEquals("Hello", DataBundles.getStringValue(newPort));
+		
+	}
+	
 	protected void checkSignature(Path zip) throws IOException {
 		String MEDIATYPE = "application/vnd.wf4ever.robundle+zip";
 		// Check position 30++ according to RO Bundle specification
