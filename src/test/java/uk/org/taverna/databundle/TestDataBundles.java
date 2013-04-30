@@ -1,6 +1,5 @@
 package uk.org.taverna.databundle;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
@@ -9,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -111,6 +111,15 @@ public class TestDataBundles {
 	}
 	
 	@Test
+	public void isList() throws Exception {
+		Path dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path list = DataBundles.getPort(inputs, "in1");
+		DataBundles.createList(list);
+		assertTrue(DataBundles.isList(list));
+	}
+	
+	@Test
 	public void newListItem() throws Exception {
 		Path dataBundle = DataBundles.createDataBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
@@ -133,7 +142,7 @@ public class TestDataBundles {
 		Path item2 = DataBundles.newListItem(list);
 		assertTrue(item2.getFileName().toString().contains("2"));
 		
-		// Check that non-numbers don't interfer
+		// Check that non-numbers don't interfere
 		Path nonumber = list.resolve("nonumber");
 		Files.createFile(nonumber);
 		item2 = DataBundles.newListItem(list);
@@ -142,8 +151,24 @@ public class TestDataBundles {
 		// Check that extension is stripped
 		Path five = list.resolve("5.txt");
 		Files.createFile(five);
-		item2 = DataBundles.newListItem(list);
-		assertTrue(item2.getFileName().toString().contains("6"));
-
+		Path item6 = DataBundles.newListItem(list);
+		assertTrue(item6.getFileName().toString().contains("6"));
 	}
+	
+	@Test
+	public void asList() throws Exception {
+		Path dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path list = DataBundles.getPort(inputs, "in1");
+		DataBundles.createList(list);
+		for (int i=0; i<5; i++) {
+			Path item = DataBundles.newListItem(list);
+			DataBundles.setStringValue(item, "test" + i);	
+		}
+		List<Path> paths = DataBundles.getList(list);
+		assertEquals(5, paths.size());
+		assertEquals("test0", DataBundles.getStringValue(paths.get(0)));
+		assertEquals("test4", DataBundles.getStringValue(paths.get(4)));
+	}
+	
 }

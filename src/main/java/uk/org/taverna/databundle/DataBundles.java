@@ -12,7 +12,9 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -127,7 +129,6 @@ public class DataBundles {
 			throw ex.getCause();
 		}
 		return list.resolve(Long.toString(max+1));
-		
 	}
 
 	protected static String filenameWithoutExtension(Path entry) {
@@ -137,5 +138,32 @@ public class DataBundles {
 			return fileName;
 		}
 		return fileName.substring(0, lastDot);
+	}
+
+	public static boolean isList(Path list) {
+		return Files.isDirectory(list);
+	}
+
+	public static List<Path> getList(Path list) throws IOException {
+		List<Path> paths = new ArrayList<>();
+		try (DirectoryStream<Path> ds = Files.newDirectoryStream(list)) {
+			for (Path entry : ds) {
+				String name = filenameWithoutExtension(entry);
+				//System.out.println(name);
+				try {
+					int entryNum = Integer.parseInt(name);
+					while (paths.size() <= entryNum) {
+						// Fill any gaps
+						paths.add(null);
+					}
+					// NOTE: Don't use add() as these could come in any order!
+					paths.set(entryNum, entry);					
+				} catch (NumberFormatException ex) {
+				}
+			}
+		} catch (DirectoryIteratorException ex) {
+			throw ex.getCause();
+		}
+		return paths;		
 	}
 }
