@@ -101,16 +101,49 @@ public class TestDataBundles {
 		assertEquals(string, DataBundles.getStringValue(portIn1));
 	}
 	
-	/*
 	@Test
 	public void createList() throws Exception {
 		Path dataBundle = DataBundles.createDataBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
-		Path portIn1 = DataBundles.getPort(inputs, "in1");
-		Path list = DataBundles.createList(portIn1);
+		Path list = DataBundles.getPort(inputs, "in1");
+		DataBundles.createList(list);
 		assertTrue(Files.isDirectory(list));
-		assertEquals(list.getParent(), portIn1);
 	}
-	*/
 	
+	@Test
+	public void newListItem() throws Exception {
+		Path dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path list = DataBundles.getPort(inputs, "in1");
+		DataBundles.createList(list);
+		Path item0 = DataBundles.newListItem(list);
+		assertEquals(list, item0.getParent());
+		assertTrue(item0.getFileName().toString().contains("0"));
+		assertFalse(Files.exists(item0));
+		DataBundles.setStringValue(item0, "test");		
+		
+		Path item1 = DataBundles.newListItem(list);
+		assertTrue(item1.getFileName().toString().contains("1"));
+		// Because we've not actually created item1 yet
+		assertEquals(item1, DataBundles.newListItem(list));
+		DataBundles.setStringValue(item1, "test");	
+		
+		// Check that DataBundles.newListItem can deal with gaps
+		Files.delete(item0);
+		Path item2 = DataBundles.newListItem(list);
+		assertTrue(item2.getFileName().toString().contains("2"));
+		
+		// Check that non-numbers don't interfer
+		Path nonumber = list.resolve("nonumber");
+		Files.createFile(nonumber);
+		item2 = DataBundles.newListItem(list);
+		assertTrue(item2.getFileName().toString().contains("2"));
+		
+		// Check that extension is stripped
+		Path five = list.resolve("5.txt");
+		Files.createFile(five);
+		item2 = DataBundles.newListItem(list);
+		assertTrue(item2.getFileName().toString().contains("6"));
+
+	}
 }

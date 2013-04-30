@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.nio.file.DirectoryIteratorException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -100,5 +102,40 @@ public class DataBundles {
 
 	public static String getStringValue(Path path) throws IOException {
 		return new String(Files.readAllBytes(path), UTF8);
+	}
+
+	public static void createList(Path path) throws IOException {
+		Files.createDirectories(path);
+	}
+
+	public static Path newListItem(Path list) throws IOException {
+		long max = -1L;
+		createList(list);
+		try (DirectoryStream<Path> ds = Files.newDirectoryStream(list)) {
+			for (Path entry : ds) {
+				String name = filenameWithoutExtension(entry);
+				//System.out.println(name);
+				try {
+					long entryNum = Long.parseLong(name);
+					if (entryNum > max) {
+						max = entryNum;
+					}
+				} catch (NumberFormatException ex) {
+				}
+			}
+		} catch (DirectoryIteratorException ex) {
+			throw ex.getCause();
+		}
+		return list.resolve(Long.toString(max+1));
+		
+	}
+
+	protected static String filenameWithoutExtension(Path entry) {
+		String fileName = entry.getFileName().toString();
+		int lastDot = fileName.lastIndexOf(".");
+		if (lastDot < 0) {
+			return fileName;
+		}
+		return fileName.substring(0, lastDot);
 	}
 }
