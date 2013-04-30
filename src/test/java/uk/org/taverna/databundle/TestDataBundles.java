@@ -29,9 +29,20 @@ public class TestDataBundles {
 	public void hasInputs() throws Exception {
 		Path dataBundle = DataBundles.createDataBundle();
 		assertFalse(DataBundles.hasInputs(dataBundle));
-		DataBundles.getInputs(dataBundle);
+		DataBundles.getInputs(dataBundle); // create on demand
 		assertTrue(DataBundles.hasInputs(dataBundle));		
 	}
+	
+	@Test
+	public void hasOutputs() throws Exception {
+		Path dataBundle = DataBundles.createDataBundle();
+		assertFalse(DataBundles.hasOutputs(dataBundle));
+		DataBundles.getInputs(dataBundle); // independent
+		assertFalse(DataBundles.hasOutputs(dataBundle));
+		DataBundles.getOutputs(dataBundle);	// create on demand	
+		assertTrue(DataBundles.hasOutputs(dataBundle));		
+	}
+	
 	
 	@Test
 	public void getOutputs() throws Exception {
