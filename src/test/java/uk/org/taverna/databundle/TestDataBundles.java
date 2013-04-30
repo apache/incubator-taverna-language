@@ -58,16 +58,30 @@ public class TestDataBundles {
 		// Second time should not fail because it already exists
 		inputs = DataBundles.getInputs(dataBundle);
 		assertTrue(Files.isDirectory(inputs));
-		assertEquals(dataBundle, inputs.getParent());
+		assertEquals(dataBundle.getRoot(), inputs.getParent());
 	}
 
+	
 	@Test
 	public void closeDataBundle() throws Exception {
 		DataBundle dataBundle = DataBundles.createDataBundle();
 		Path zip = DataBundles.closeDataBundle(dataBundle);
-		assertTrue(Files.isReadable(zip));
-		
+		assertTrue(Files.isReadable(zip));		
+		assertEquals(zip, dataBundle.getSource());
 		checkSignature(zip);
+	}
+	
+	@Test
+	public void close() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();		
+		assertTrue(Files.exists(dataBundle.getSource()));
+		assertTrue(dataBundle.getRoot().getFileSystem().isOpen());
+		DataBundles.getInputs(dataBundle);
+		
+		dataBundle.close();
+		assertFalse(Files.exists(dataBundle.getSource()));
+		assertFalse(dataBundle.getRoot().getFileSystem().isOpen());
+		
 	}
 	
 	
@@ -145,7 +159,7 @@ public class TestDataBundles {
 		// Second time should not fail because it already exists
 		outputs = DataBundles.getOutputs(dataBundle);
 		assertTrue(Files.isDirectory(outputs));
-		assertEquals(dataBundle, outputs.getParent());
+		assertEquals(dataBundle.getRoot(), outputs.getParent());
 	}
 	
 	@Test

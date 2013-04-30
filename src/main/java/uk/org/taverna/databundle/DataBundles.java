@@ -246,21 +246,13 @@ public class DataBundles {
 			}
 		} finally {
 			System.out.println(tmpDestination);
-			Files.deleteIfExists(tmpDestination);
-			
+			Files.deleteIfExists(tmpDestination);			
 		}
 	}
 
 	public static Path closeDataBundle(DataBundle dataBundle) throws IOException {
-		URI uri = dataBundle.getRoot().toUri();
-		dataBundle.getRoot().getFileSystem().close();
-		String s = uri.getSchemeSpecificPart();
-		if (! s.endsWith("!/")) { // sanity check
-			throw new IllegalStateException("Can't parse JAR URI: " + uri);
-		}
-		URI zip = URI.create(s.substring(0, s.length()-2));
-		return Paths.get(zip); // Look up our path
-	}
-
-	
+		Path path = dataBundle.getSource();
+		dataBundle.close(false);
+		return path;
+	}	
 }
