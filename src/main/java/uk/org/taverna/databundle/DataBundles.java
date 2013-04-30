@@ -12,10 +12,12 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -30,6 +32,7 @@ import java.util.zip.ZipOutputStream;
  */
 public class DataBundles {
 
+	private static final String APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP = "application/vnd.wf4ever.robundle+zip";
 	private static final Charset UTF8 = Charset.forName("UTF-8");
 	private static final String INPUTS = "inputs";
 	private static final String OUTPUTS = "outputs";
@@ -38,7 +41,7 @@ public class DataBundles {
 
 		// Create ZIP file as http://docs.oracle.com/javase/7/docs/technotes/guides/io/fsp/zipfilesystemprovider.html
 		
-		Path dataBundle = Files.createTempFile("databundle", ".robundle.zip");
+		Path dataBundle = Files.createTempFile("databundle", ".zip");
 		
 		FileSystem fs = createFSfromZip(dataBundle);
 //		FileSystem fs = createFSfromJar(dataBundle);		
@@ -50,11 +53,28 @@ public class DataBundles {
 			throws FileNotFoundException, IOException {
 		ZipOutputStream out = new ZipOutputStream(
 			    new FileOutputStream(dataBundle.toFile()));
-		ZipEntry mimeTypeEntry = new ZipEntry("mimetype");
-		out.putNextEntry(mimeTypeEntry);
-		out.closeEntry();
+		addMimeTypeToZip(out);
 		out.close();
 		return FileSystems.newFileSystem(dataBundle,  null);
+	}
+
+	private static void addMimeTypeToZip(ZipOutputStream out) throws IOException {
+		// FIXME: Make the mediatype a parameter
+		byte[] bytes = APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP.getBytes(UTF8);
+		
+		// We'll have to do the mimetype file quite low-level 
+		// in order to ensure it is STORED and not COMPRESSED
+		
+		ZipEntry entry = new ZipEntry("mimetype");
+		entry.setMethod(ZipEntry.STORED);
+		entry.setSize(bytes.length);
+		CRC32 crc = new CRC32();
+		crc.update(bytes);
+		entry.setCrc(crc.getValue());
+		
+		out.putNextEntry(entry);
+		out.write(bytes);
+		out.closeEntry();
 	}
 
 	protected static FileSystem createFSfromJar(Path path)
@@ -165,5 +185,21 @@ public class DataBundles {
 			throw ex.getCause();
 		}
 		return paths;		
+	}
+
+	public static void closeAndSaveDataBundle(Path dataBundle, Path destination) throws IOException {
+		Path zipPath = closeDataBundle(dataBundle);
+		Files.copy(zipPath, destination);		
+	}
+
+	public static Path closeDataBundle(Path dataBundle) throws IOException {
+		URI uri = dataBundle.getRoot().toUri();
+		dataBundle.getFileSystem().close();
+		String s = uri.getSchemeSpecificPart();
+		if (! s.endsWith("!/")) { // sanity check
+			throw new IllegalStateException("Can't parse JAR URI: " + uri);
+		}
+		URI zip = URI.create(s.substring(0, s.length()-2));
+		return Paths.get(zip); // Look up our path
 	}
 }

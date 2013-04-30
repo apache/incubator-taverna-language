@@ -1,10 +1,13 @@
 package uk.org.taverna.databundle;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,6 +22,8 @@ public class TestDataBundles {
 		assertTrue(Files.isDirectory(dataBundle));
 		// TODO: Should this instead return a FileSystem so we can close() it?
 	}
+	
+
 	
     @Test
 	public void createFSfromJar() throws Exception {
@@ -51,6 +56,46 @@ public class TestDataBundles {
 		assertTrue(Files.isDirectory(inputs));
 		assertEquals(dataBundle, inputs.getParent());
 	}
+
+	@Test
+	public void closeDataBundle() throws Exception {
+		Path dataBundle = DataBundles.createDataBundle();
+		Path zip = DataBundles.closeDataBundle(dataBundle);
+		assertTrue(Files.isReadable(zip));
+		
+		checkSignature(zip);
+	}
+	
+	
+	protected void checkSignature(Path zip) throws IOException {
+		String MEDIATYPE = "application/vnd.wf4ever.robundle+zip";
+		// Check position 30++ according to RO Bundle specification
+		// http://purl.org/wf4ever/ro-bundle#ucf
+		byte[] expected = ("mimetype" + MEDIATYPE + "PK")
+				.getBytes("ASCII");
+		
+		try (InputStream in = Files.newInputStream(zip)) {
+			byte[] signature = new byte[expected.length];
+			int MIME_OFFSET = 30;
+			assertEquals(MIME_OFFSET, in.skip(MIME_OFFSET));
+			assertEquals(expected.length, in.read(signature));
+			assertArrayEquals(expected, signature);
+		}
+	}
+
+
+
+	@Test
+	public void saveDataBundle() throws Exception {
+		Path dataBundle = DataBundles.createDataBundle();
+		DataBundles.getInputs(dataBundle);
+		Path destination = Files.createTempFile("test", ".zip");
+		Files.delete(destination);
+		assertFalse(Files.exists(destination));
+		DataBundles.closeAndSaveDataBundle(dataBundle, destination);
+		assertTrue(Files.exists(destination));
+	}
+	
 	
 	@Test
 	public void hasInputs() throws Exception {
