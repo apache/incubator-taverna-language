@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -25,6 +26,7 @@ import java.util.zip.ZipOutputStream;
  */
 public class DataBundles {
 
+	private static final Charset UTF8 = Charset.forName("UTF-8");
 	private static final String INPUTS = "inputs";
 	private static final String OUTPUTS = "outputs";
 
@@ -85,5 +87,18 @@ public class DataBundles {
 	public static boolean hasOutputs(Path dataBundle) {
 		Path outputs = dataBundle.resolve(OUTPUTS);
 		return Files.isDirectory(outputs);
+	}
+
+	public static Path getPort(Path map, String portName) throws IOException {
+		Files.createDirectories(map);
+		return map.resolve(portName);
+	}
+
+	public static void setStringValue(Path path, String string) throws IOException {		
+		Files.write(path, string.getBytes(UTF8));
+	}
+
+	public static String getStringValue(Path path) throws IOException {
+		return new String(Files.readAllBytes(path), UTF8);
 	}
 }

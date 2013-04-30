@@ -1,5 +1,6 @@
 package uk.org.taverna.databundle;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
@@ -15,6 +16,7 @@ public class TestDataBundles {
 	public void createDataBundle() throws Exception {
 		Path dataBundle = DataBundles.createDataBundle();
 		assertTrue(Files.isDirectory(dataBundle));
+		// TODO: Should this instead return a FileSystem so we can close() it?
 	}
 	
     @Test
@@ -66,7 +68,6 @@ public class TestDataBundles {
 		assertTrue(DataBundles.hasOutputs(dataBundle));		
 	}
 	
-	
 	@Test
 	public void getOutputs() throws Exception {
 		Path dataBundle = DataBundles.createDataBundle();
@@ -75,6 +76,26 @@ public class TestDataBundles {
 		// Second time should not fail because it already exists
 		outputs = DataBundles.getOutputs(dataBundle);
 		assertTrue(Files.isDirectory(outputs));
+	}
+	
+	@Test
+	public void getPort() throws Exception {
+		Path dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path portIn1 = DataBundles.getPort(inputs, "in1");
+		assertFalse(Files.exists(portIn1));
+	}
+	
+	@Test
+	public void setStringValue() throws Exception {
+		Path dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path portIn1 = DataBundles.getPort(inputs, "in1");
+		String string = "A string";
+		DataBundles.setStringValue(portIn1, string);
+		assertTrue(Files.exists(portIn1));
+		assertEquals(string, DataBundles.getStringValue(portIn1));
+		
 	}
 	
 }
