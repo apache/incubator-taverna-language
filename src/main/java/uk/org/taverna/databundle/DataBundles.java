@@ -1,11 +1,13 @@
 package uk.org.taverna.databundle;
 
+
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.DirectoryIteratorException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystem;
@@ -20,6 +22,9 @@ import java.util.Map;
 import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 
 /**
  * Utility functions for dealing with data bundles.
@@ -36,8 +41,9 @@ public class DataBundles {
 	private static final Charset UTF8 = Charset.forName("UTF-8");
 	private static final String INPUTS = "inputs";
 	private static final String OUTPUTS = "outputs";
+	
 
-	public static Path createDataBundle() throws IOException {
+	public static DataBundle createDataBundle() throws IOException {
 
 		// Create ZIP file as http://docs.oracle.com/javase/7/docs/technotes/guides/io/fsp/zipfilesystemprovider.html
 		
@@ -45,13 +51,13 @@ public class DataBundles {
 		
 		FileSystem fs = createFSfromZip(dataBundle);
 //		FileSystem fs = createFSfromJar(dataBundle);
-		return fs.getRootDirectories().iterator().next();
+		return new DataBundle(fs.getRootDirectories().iterator().next());
 		//return Files.createTempDirectory("databundle");
 	}
 	
-	public static Path openDataBundle(Path zip) throws IOException {
+	public static DataBundle openDataBundle(Path zip) throws IOException {
 		FileSystem fs = FileSystems.newFileSystem(zip, null);
-		return fs.getRootDirectories().iterator().next();
+		return new DataBundle(fs.getRootDirectories().iterator().next());
 	}
 
 	protected static FileSystem createFSfromZip(Path dataBundle)
@@ -96,25 +102,25 @@ public class DataBundles {
 		return FileSystems.newFileSystem(uri, env);
 	}
 
-	public static Path getInputs(Path dataBundle) throws IOException {
-		Path inputs = dataBundle.resolve(INPUTS);
+	public static Path getInputs(DataBundle dataBundle) throws IOException {
+		Path inputs = dataBundle.getRoot().resolve(INPUTS);
 		Files.createDirectories(inputs);
 		return inputs;
 	}
 
-	public static Path getOutputs(Path dataBundle) throws IOException {
-		Path inputs = dataBundle.resolve(OUTPUTS);
+	public static Path getOutputs(DataBundle dataBundle) throws IOException {
+		Path inputs = dataBundle.getRoot().resolve(OUTPUTS);
 		Files.createDirectories(inputs);
 		return inputs;
 	}
 
-	public static boolean hasInputs(Path dataBundle) {
-		Path inputs = dataBundle.resolve(INPUTS);
+	public static boolean hasInputs(DataBundle dataBundle) {
+		Path inputs = dataBundle.getRoot().resolve(INPUTS);
 		return Files.isDirectory(inputs);
 	}
 
-	public static boolean hasOutputs(Path dataBundle) {
-		Path outputs = dataBundle.resolve(OUTPUTS);
+	public static boolean hasOutputs(DataBundle dataBundle) {
+		Path outputs = dataBundle.getRoot().resolve(OUTPUTS);
 		return Files.isDirectory(outputs);
 	}
 
@@ -192,14 +198,63 @@ public class DataBundles {
 		return paths;		
 	}
 
-	public static void closeAndSaveDataBundle(Path dataBundle, Path destination) throws IOException {
+	public static void closeAndSaveDataBundle(DataBundle dataBundle, Path destination) throws IOException {
 		Path zipPath = closeDataBundle(dataBundle);
-		Files.copy(zipPath, destination);		
+//		Files.move(zipPath, destination);
+		safeMove(zipPath, destination);
+	}
+	
+	public static void safeMove(Path source, Path destination) throws IOException {
+		
+		// First just try to do an atomic move with overwrite
+		if (source.getFileSystem().provider()
+				.equals(destination.getFileSystem().provider())) {
+			try {
+				Files.move(source, destination, ATOMIC_MOVE, REPLACE_EXISTING);
+				return;
+			} catch (AtomicMoveNotSupportedException ex) {
+				// Do the fallback by temporary files below
+			}
+		}
+		
+		String tmpName =  destination.getFileName().toString();
+		Path tmpDestination = Files.createTempFile(destination.getParent(), 
+				tmpName , ".tmp");
+		Path backup = null;
+		try {
+			// This might do a copy if filestores differ
+			// .. hence to avoid an incomplete (and partially overwritten)
+			// destination, we do it first to a temporary file
+			Files.move(source, tmpDestination, REPLACE_EXISTING);
+			
+			if (Files.exists(destination)) {
+				// Keep the files for roll-back in case it goes bad
+				backup = Files.createTempFile(destination.getParent(), tmpName, ".orig");
+				Files.move(destination, backup, REPLACE_EXISTING);
+			}
+			// OK ; let's swap over:
+			try {
+				Files.move(tmpDestination, destination, REPLACE_EXISTING, ATOMIC_MOVE);
+			} finally {
+				if (! Files.exists(destination) && backup != null) {
+					// Restore the backup
+					Files.move(backup, destination);
+				}
+			}
+			// It went well, tidy up
+			if (backup != null) {
+				Files.deleteIfExists(backup);
+			}
+		} finally {
+			System.out.println(tmpDestination);
+			Files.deleteIfExists(tmpDestination);
+			
+		}
 	}
 
-	public static Path closeDataBundle(Path dataBundle) throws IOException {
+	public static Path closeDataBundle(DataBundle dataBundle) throws IOException {
 		URI uri = dataBundle.getRoot().toUri();
-		dataBundle.getFileSystem().close();
+		dataBundle.getRoot().getFileSystem().close();
 		String s = uri.getSchemeSpecificPart();
 		if (! s.endsWith("!/")) { // sanity check
 			throw new IllegalStateException("Can't parse JAR URI: " + uri);

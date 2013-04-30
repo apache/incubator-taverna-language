@@ -1,5 +1,6 @@
 package uk.org.taverna.databundle;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -9,8 +10,11 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
@@ -18,8 +22,8 @@ import org.junit.Test;
 public class TestDataBundles {
 	@Test
 	public void createDataBundle() throws Exception {
-		Path dataBundle = DataBundles.createDataBundle();
-		assertTrue(Files.isDirectory(dataBundle));
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		assertTrue(Files.isDirectory(dataBundle.getRoot()));
 		// TODO: Should this instead return a FileSystem so we can close() it?
 	}
 	
@@ -48,7 +52,7 @@ public class TestDataBundles {
     
 	@Test
 	public void getInputs() throws Exception {
-		Path dataBundle = DataBundles.createDataBundle();
+		DataBundle dataBundle = DataBundles.createDataBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		assertTrue(Files.isDirectory(inputs));
 		// Second time should not fail because it already exists
@@ -59,7 +63,7 @@ public class TestDataBundles {
 
 	@Test
 	public void closeDataBundle() throws Exception {
-		Path dataBundle = DataBundles.createDataBundle();
+		DataBundle dataBundle = DataBundles.createDataBundle();
 		Path zip = DataBundles.closeDataBundle(dataBundle);
 		assertTrue(Files.isReadable(zip));
 		
@@ -69,24 +73,23 @@ public class TestDataBundles {
 	
 	@Test
 	public void closeAndOpenDataBundle() throws Exception {
-		Path dataBundle = DataBundles.createDataBundle();
+		DataBundle dataBundle = DataBundles.createDataBundle();
 		Path zip = DataBundles.closeDataBundle(dataBundle);
 		DataBundles.openDataBundle(zip);
 	}
 	
 	@Test
 	public void closeAndOpenDataBundleWithPortValue() throws Exception {
-		Path dataBundle = DataBundles.createDataBundle();
+		DataBundle dataBundle = DataBundles.createDataBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path port = DataBundles.getPort(inputs, "hello");
 		DataBundles.setStringValue(port , "Hello");
 		Path zip = DataBundles.closeDataBundle(dataBundle);
 		
-		Path newDataBundle = DataBundles.openDataBundle(zip);
+		DataBundle newDataBundle = DataBundles.openDataBundle(zip);
 		Path newInput = DataBundles.getInputs(newDataBundle);
 		Path newPort = DataBundles.getPort(newInput, "hello");
 		assertEquals("Hello", DataBundles.getStringValue(newPort));
-		
 	}
 	
 	protected void checkSignature(Path zip) throws IOException {
@@ -105,23 +108,20 @@ public class TestDataBundles {
 		}
 	}
 
-
-
 	@Test
-	public void saveDataBundle() throws Exception {
-		Path dataBundle = DataBundles.createDataBundle();
+	public void closeAndSaveDataBundle() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
 		DataBundles.getInputs(dataBundle);
 		Path destination = Files.createTempFile("test", ".zip");
 		Files.delete(destination);
 		assertFalse(Files.exists(destination));
 		DataBundles.closeAndSaveDataBundle(dataBundle, destination);
 		assertTrue(Files.exists(destination));
-	}
-	
+	}	
 	
 	@Test
 	public void hasInputs() throws Exception {
-		Path dataBundle = DataBundles.createDataBundle();
+		DataBundle dataBundle = DataBundles.createDataBundle();
 		assertFalse(DataBundles.hasInputs(dataBundle));
 		DataBundles.getInputs(dataBundle); // create on demand
 		assertTrue(DataBundles.hasInputs(dataBundle));		
@@ -129,7 +129,7 @@ public class TestDataBundles {
 	
 	@Test
 	public void hasOutputs() throws Exception {
-		Path dataBundle = DataBundles.createDataBundle();
+		DataBundle dataBundle = DataBundles.createDataBundle();
 		assertFalse(DataBundles.hasOutputs(dataBundle));
 		DataBundles.getInputs(dataBundle); // independent
 		assertFalse(DataBundles.hasOutputs(dataBundle));
@@ -139,7 +139,7 @@ public class TestDataBundles {
 	
 	@Test
 	public void getOutputs() throws Exception {
-		Path dataBundle = DataBundles.createDataBundle();
+		DataBundle dataBundle = DataBundles.createDataBundle();
 		Path outputs = DataBundles.getOutputs(dataBundle);
 		assertTrue(Files.isDirectory(outputs));
 		// Second time should not fail because it already exists
@@ -150,7 +150,7 @@ public class TestDataBundles {
 	
 	@Test
 	public void getPort() throws Exception {
-		Path dataBundle = DataBundles.createDataBundle();
+		DataBundle dataBundle = DataBundles.createDataBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path portIn1 = DataBundles.getPort(inputs, "in1");
 		assertFalse(Files.exists(portIn1));
@@ -159,7 +159,7 @@ public class TestDataBundles {
 	
 	@Test
 	public void setStringValue() throws Exception {
-		Path dataBundle = DataBundles.createDataBundle();
+		DataBundle dataBundle = DataBundles.createDataBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path portIn1 = DataBundles.getPort(inputs, "in1");
 		String string = "A string";
@@ -170,7 +170,7 @@ public class TestDataBundles {
 	
 	@Test
 	public void createList() throws Exception {
-		Path dataBundle = DataBundles.createDataBundle();
+		DataBundle dataBundle = DataBundles.createDataBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path list = DataBundles.getPort(inputs, "in1");
 		DataBundles.createList(list);
@@ -179,7 +179,7 @@ public class TestDataBundles {
 	
 	@Test
 	public void isList() throws Exception {
-		Path dataBundle = DataBundles.createDataBundle();
+		DataBundle dataBundle = DataBundles.createDataBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path list = DataBundles.getPort(inputs, "in1");
 		DataBundles.createList(list);
@@ -188,7 +188,7 @@ public class TestDataBundles {
 	
 	@Test
 	public void newListItem() throws Exception {
-		Path dataBundle = DataBundles.createDataBundle();
+		DataBundle dataBundle = DataBundles.createDataBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path list = DataBundles.getPort(inputs, "in1");
 		DataBundles.createList(list);
@@ -224,7 +224,7 @@ public class TestDataBundles {
 	
 	@Test
 	public void asList() throws Exception {
-		Path dataBundle = DataBundles.createDataBundle();
+		DataBundle dataBundle = DataBundles.createDataBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path list = DataBundles.getPort(inputs, "in1");
 		DataBundles.createList(list);
