@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -82,8 +83,7 @@ public class DataBundles {
 		// Create ZIP file as
 		// http://docs.oracle.com/javase/7/docs/technotes/guides/io/fsp/zipfilesystemprovider.html
 
-		Path dataBundle = Files.createTempFile("databundle", ".zip");
-
+		Path dataBundle = Files.createTempFile("databundle", ".zip");		
 		FileSystem fs = createFSfromZip(dataBundle);
 		// FileSystem fs = createFSfromJar(dataBundle);
 		return new DataBundle(fs.getRootDirectories().iterator().next(), true);
@@ -105,10 +105,10 @@ public class DataBundles {
 
 	protected static FileSystem createFSfromZip(Path dataBundle)
 			throws FileNotFoundException, IOException {
-		ZipOutputStream out = new ZipOutputStream(new FileOutputStream(
-				dataBundle.toFile()));
-		addMimeTypeToZip(out);
-		out.close();
+	
+		try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(dataBundle, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE))) {
+			addMimeTypeToZip(out);
+		}
 		return FileSystems.newFileSystem(dataBundle, null);
 	}
 
