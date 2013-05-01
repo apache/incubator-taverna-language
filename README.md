@@ -41,6 +41,9 @@ And retrieving it:
             System.out.println(DataBundles.getStringValue(portIn1));
         }
 ```
+```
+Hello
+```
 
 
 Alternatively, use the regular Files methods:
@@ -50,6 +53,7 @@ Alternatively, use the regular Files methods:
             System.out.println(line);
         }
 ```
+
 
 Binaries and large files are done through the Files API
 ```java
@@ -64,6 +68,9 @@ Or Java 7 style:
         Path localFile = Files.createTempFile("", ".txt");
         Files.copy(portIn1, localFile, StandardCopyOption.REPLACE_EXISTING);
         System.out.println("Written to: " + localFile);
+```
+```
+Written to: C:\Users\stain\AppData\Local\Temp\2009921746200670789.txt
 ```
 
 Either direction of copy works, of course:
@@ -92,12 +99,19 @@ Adding items sequentially:
 Set and get by explicit position:
 ```java
         DataBundles.setStringValue(DataBundles.getListItem(port2, 12), "item 12");
-        System.out.println(DataBundles.getStringValue(DataBundles.getListItem(port2, 2)));Set list item by explicit position:
+        System.out.println(DataBundles.getStringValue(DataBundles.getListItem(port2, 2)));
+```
+```
+item 2
 ```
         
 The list is sorted numerically (e.g. 2, 5, 10) and will contain nulls for empty slots:
 ```java
         System.out.println(DataBundles.getList(port2));
+```
+```
+[/inputs/port2/0, /inputs/port2/1, /inputs/port2/2, null, null, null, null, null,
+ null, null, null, null, /inputs/port2/12]
 ```
 
 Ports can be browsed as a map by port name:
@@ -105,17 +119,24 @@ Ports can be browsed as a map by port name:
         NavigableMap<String, Path> ports = DataBundles.getPorts(inputs);
         System.out.println(ports.keySet());
 ```
+```
+[in1, port2]
+```
     
+Saving a data bundle:    
 ```java
-        Path zip = Files.createTempFile("databundle", "zip");
+        Path zip = Files.createTempFile("databundle", ".zip");
         DataBundles.closeAndSaveDataBundle(dataBundle, zip);
         // NOTE: From now dataBundle and its Path's are CLOSED 
         // and can no longer be accessed
-```        
+        System.out.println("Saved to " + zip);
+```
+```
+Saved to C:\Users\stain\AppData\Local\Temp\databundle6905894602121718151.zip
+```
         
 Inspecting the zip:
 ```java        
-        System.out.println("Saved to " + zip);
         if (Desktop.isDesktopSupported()) {
             // Open ZIP file for browsing
             Desktop.getDesktop().open(zip.toFile());
