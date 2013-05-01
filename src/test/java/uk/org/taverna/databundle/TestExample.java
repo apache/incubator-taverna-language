@@ -68,10 +68,9 @@ public class TestExample {
 		DataBundles.setStringValue(DataBundles.newListItem(port2), "item 2");
 
 		
-		// Set by explicit position:
-		// TODO: Add convenience method with over-write to DataBundles
-		DataBundles.setStringValue(port2.resolve("12"), "item 12");
-		
+		// Set and get by explicit position:
+		DataBundles.setStringValue(DataBundles.getListItem(port2, 12), "item 12");
+		System.out.println(DataBundles.getStringValue(DataBundles.getListItem(port2, 2)));
 		
 		// The list is sorted numerically (e.g. 2, 5, 10) and
 		// will contain nulls for empty slots

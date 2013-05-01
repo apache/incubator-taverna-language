@@ -18,87 +18,113 @@ Example of use
 
 Example in full is at [uk.org.taverna.databundle.TestExample](src/test/java/uk/org/taverna/databundle/TestExample.java)
 
+
+Create a new (temporary) data bundle:
 ```java
-        // Create a new (temporary) data bundle
         DataBundle dataBundle = DataBundles.createDataBundle();
+```
 
-        // Get the inputs
+Get the input ports and the port "in1":
+```java        
         Path inputs = DataBundles.getInputs(dataBundle);
-
-        // Get an input port:
         Path portIn1 = DataBundles.getPort(inputs, "in1");
+```
 
-        // Setting a string value for the input port:
+Setting a string value for the input port:
+```java
         DataBundles.setStringValue(portIn1, "Hello");
+```
 
-        // And retrieving it
+And retrieving it:
+```java
         if (DataBundles.isValue(portIn1)) {
             System.out.println(DataBundles.getStringValue(portIn1));
         }
+```
 
-        // Or just use the regular Files methods:
+
+Alternatively, use the regular Files methods:
+```java
         for (String line : Files
                 .readAllLines(portIn1, Charset.forName("UTF-8"))) {
             System.out.println(line);
         }
+```
 
-        // Binaries and large files are done through the Files API
+Binaries and large files are done through the Files API
+```java
         try (OutputStream out = Files.newOutputStream(portIn1,
                 StandardOpenOption.APPEND)) {
             out.write(32);
         }
-        // Or Java 7 style
+```
+
+Or Java 7 style:
+```java
         Path localFile = Files.createTempFile("", ".txt");
         Files.copy(portIn1, localFile, StandardCopyOption.REPLACE_EXISTING);
         System.out.println("Written to: " + localFile);
+```
 
-        // Either way works, of course
+Either direction of copy works, of course:
+```java
         Files.copy(localFile,
                 DataBundles.getPort(DataBundles.getOutputs(dataBundle), "out1"));
+```
 
-
-        // When you get a port, it can become either a value or a list
+   
+When you get a port, it can become either a value or a list:
+```java        
         Path port2 = DataBundles.getPort(inputs, "port2");
         DataBundles.createList(port2); // empty list
         List<Path> list = DataBundles.getList(port2);
         assertTrue(list.isEmpty());
+```
 
-        // Adding items sequentially
+Adding items sequentially:
+```java
         Path item0 = DataBundles.newListItem(port2);
         DataBundles.setStringValue(item0, "item 0");
         DataBundles.setStringValue(DataBundles.newListItem(port2), "item 1");
         DataBundles.setStringValue(DataBundles.newListItem(port2), "item 2");
-
+```
         
-        // Set by explicit position:
-        // TODO: Add convenience method with over-write to DataBundles
-        DataBundles.setStringValue(port2.resolve("12"), "item 12");
+Set and get by explicit position:
+```java
+        DataBundles.setStringValue(DataBundles.getListItem(port2, 12), "item 12");
+        System.out.println(DataBundles.getStringValue(DataBundles.getListItem(port2, 2)));Set list item by explicit position:
+```
         
-        
-        // The list is sorted numerically (e.g. 2, 5, 10) and
-        // will contain nulls for empty slots
+The list is sorted numerically (e.g. 2, 5, 10) and will contain nulls for empty slots:
+```java
         System.out.println(DataBundles.getList(port2));
+```
 
-        // Ports can be browsed as a map by port name
+Ports can be browsed as a map by port name:
+```java
         NavigableMap<String, Path> ports = DataBundles.getPorts(inputs);
         System.out.println(ports.keySet());
+```
     
-        // Saving a data bundle:
+```java
         Path zip = Files.createTempFile("databundle", "zip");
         DataBundles.closeAndSaveDataBundle(dataBundle, zip);
         // NOTE: From now dataBundle and its Path's are CLOSED 
         // and can no longer be accessed
+```        
         
-        
+Inspecting the zip:
+```java        
         System.out.println("Saved to " + zip);
         if (Desktop.isDesktopSupported()) {
             // Open ZIP file for browsing
             Desktop.getDesktop().open(zip.toFile());
         }
+```        
         
-        // Loading a data bundle back from disk
+Loading a data bundle back from disk:
+```java
         try (DataBundle dataBundle2 = DataBundles.openDataBundle(zip)) {
-            // Any modifications here will be saved on (here automatic) close
-            
+            // Any modifications here will be saved on (here automatic) close            
         }     
 ```
