@@ -175,6 +175,26 @@ public class TestDataBundles {
 	}
 
 	@Test
+	public void getPorts() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		DataBundles.createList(DataBundles.getPort(inputs, "in1"));
+		DataBundles.createList(DataBundles.getPort(inputs, "in2"));
+		DataBundles.setStringValue(DataBundles.getPort(inputs, "value"),
+				"A value");
+		Map<String, Path> ports = DataBundles.getPorts(DataBundles
+				.getInputs(dataBundle));
+		assertEquals(3, ports.size());
+		System.out.println(ports);
+		assertTrue(ports.containsKey("in1"));
+		assertTrue(ports.containsKey("in2"));
+		assertTrue(ports.containsKey("value"));
+
+		assertEquals("A value", DataBundles.getStringValue(ports.get("value")));
+
+	}
+
+	@Test
 	public void hasInputs() throws Exception {
 		DataBundle dataBundle = DataBundles.createDataBundle();
 		assertFalse(DataBundles.hasInputs(dataBundle));
@@ -192,6 +212,12 @@ public class TestDataBundles {
 		assertTrue(DataBundles.hasOutputs(dataBundle));
 	}
 
+	protected boolean isEmpty(Path path) throws IOException {
+		try (DirectoryStream<Path> ds = Files.newDirectoryStream(path)) {
+			return !ds.iterator().hasNext();
+		}
+	}
+
 	@Test
 	public void isList() throws Exception {
 		DataBundle dataBundle = DataBundles.createDataBundle();
@@ -201,29 +227,79 @@ public class TestDataBundles {
 		assertTrue(DataBundles.isList(list));
 		assertFalse(DataBundles.isValue(list));
 	}
-	
+
 	@Test
-	public void getPorts() throws Exception {
+	public void isValue() throws Exception {
 		DataBundle dataBundle = DataBundles.createDataBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
-		DataBundles.createList(DataBundles.getPort(inputs, "in1"));
-		DataBundles.createList(DataBundles.getPort(inputs, "in2"));
-		DataBundles.setStringValue(DataBundles.getPort(inputs, "value"), 
-				"A value");		
-		Map<String, Path> ports = DataBundles.getPorts(DataBundles.getInputs(dataBundle));
-		assertEquals(3, ports.size());
-		System.out.println(ports);
-		assertTrue(ports.containsKey("in1"));
-		assertTrue(ports.containsKey("in2"));
-		assertTrue(ports.containsKey("value"));
-		
-		assertEquals("A value", DataBundles.getStringValue(ports.get("value")));
-		
+		Path portIn1 = DataBundles.getPort(inputs, "in1");
+		DataBundles.setStringValue(portIn1, "Hello");
+		assertTrue(DataBundles.isValue(portIn1));
+		assertFalse(DataBundles.isList(portIn1));
 	}
-	
+
 	@Test
 	public void listOfLists() throws Exception {
 		// TODO: To be tested
+	}
+
+	protected List<String> ls(Path path) throws IOException {
+		List<String> paths = new ArrayList<>();
+		try (DirectoryStream<Path> ds = Files.newDirectoryStream(path)) {
+			for (Path p : ds) {
+				paths.add(p.getFileName() + "");
+			}
+		}
+		Collections.sort(paths);
+		return paths;
+	}
+	
+	@Test
+	public void newListItemInPosition() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path list = DataBundles.getPort(inputs, "in1");
+		DataBundles.createList(list);
+		for (int i = 0; i < 5; i++) {
+			Path item = DataBundles.newListItem(list);
+			DataBundles.setStringValue(item, "item " + i);
+		}
+		// set at next available position
+		Path item5 = DataBundles.getListItem(list, 5);
+		assertTrue(item5.getFileName().toString().contains("5"));
+		DataBundles.setStringValue(item5, "item 5");
+
+		
+		// set somewhere later
+		Path item8 = DataBundles.getListItem(list, 8);
+		assertTrue(item8.getFileName().toString().contains("8"));
+		DataBundles.setStringValue(item8, "item 8");
+		
+		Path item7 = DataBundles.getListItem(list, 7);
+		assertFalse(Files.exists(item7));
+		assertFalse(DataBundles.isList(item7));
+		assertFalse(DataBundles.isValue(item7));
+		// TODO: Is it really missing? item1337 is also missing..
+		assertTrue(DataBundles.isMissing(item7));
+		
+		
+		// overwrite #2
+		Path item2 = DataBundles.getListItem(list, 2);		
+		DataBundles.setStringValue(item2, "replaced");
+		
+		
+		List<Path> listItems = DataBundles.getList(list);
+		assertEquals(9, listItems.size());
+		assertEquals("item 0", DataBundles.getStringValue(listItems.get(0)));
+		assertEquals("item 1", DataBundles.getStringValue(listItems.get(1)));
+		assertEquals("replaced", DataBundles.getStringValue(listItems.get(2)));
+		assertEquals("item 3", DataBundles.getStringValue(listItems.get(3)));
+		assertEquals("item 4", DataBundles.getStringValue(listItems.get(4)));
+		assertEquals("item 5", DataBundles.getStringValue(listItems.get(5)));
+		assertNull(listItems.get(6));
+		assertNull(listItems.get(7));
+		assertEquals("item 8", DataBundles.getStringValue(listItems.get(8)));
+		
 	}
 
 	@Test
@@ -263,27 +339,6 @@ public class TestDataBundles {
 	}
 
 	@Test
-	public void setStringValue() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
-		Path inputs = DataBundles.getInputs(dataBundle);
-		Path portIn1 = DataBundles.getPort(inputs, "in1");
-		String string = "A string";
-		DataBundles.setStringValue(portIn1, string);
-		assertTrue(Files.exists(portIn1));
-		assertEquals(string, DataBundles.getStringValue(portIn1));
-	}
-	
-	@Test
-	public void isValue() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
-		Path inputs = DataBundles.getInputs(dataBundle);
-		Path portIn1 = DataBundles.getPort(inputs, "in1");
-		DataBundles.setStringValue(portIn1, "Hello");
-		assertTrue(DataBundles.isValue(portIn1));
-		assertFalse(DataBundles.isList(portIn1));
-	}
-
-	@Test
 	public void safeMove() throws Exception {
 		Path tmp = Files.createTempDirectory("test");
 		Path f1 = tmp.resolve("f1");
@@ -296,23 +351,6 @@ public class TestDataBundles {
 		assertTrue(isEmpty(tmp));
 		assertEquals(Arrays.asList("f2", "mimetype"), ls(db.getRoot()));
 
-	}
-
-	protected List<String> ls(Path path) throws IOException {
-		List<String> paths = new ArrayList<>();
-		try (DirectoryStream<Path> ds = Files.newDirectoryStream(path)) {
-			for (Path p : ds) {
-				paths.add(p.getFileName() + "");
-			}
-		}
-		Collections.sort(paths);
-		return paths;
-	}
-
-	protected boolean isEmpty(Path path) throws IOException {
-		try (DirectoryStream<Path> ds = Files.newDirectoryStream(path)) {
-			return !ds.iterator().hasNext();
-		}
 	}
 
 	@Test(expected = IOException.class)
@@ -330,4 +368,16 @@ public class TestDataBundles {
 		}
 	}
 
+	@Test
+	public void setStringValue() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path portIn1 = DataBundles.getPort(inputs, "in1");
+		String string = "A string";
+		DataBundles.setStringValue(portIn1, string);
+		assertTrue(Files.exists(portIn1));
+		assertEquals(string, DataBundles.getStringValue(portIn1));
+	}
+
 }
+

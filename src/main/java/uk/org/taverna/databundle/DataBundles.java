@@ -15,7 +15,9 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -164,6 +166,9 @@ public class DataBundles {
 	}
 
 	public static String getStringValue(Path path) throws IOException {
+		if (! isValue(path)) {
+			throw new IllegalArgumentException("Not a value: " + path);
+		}
 		return new String(Files.readAllBytes(path), UTF8);
 	}
 
@@ -263,7 +268,8 @@ public class DataBundles {
 
 	public static void setStringValue(Path path, String string)
 			throws IOException {
-		Files.write(path, string.getBytes(UTF8));
+		Files.write(path, string.getBytes(UTF8), 
+				StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
 	}
 
 	public static NavigableMap<String, Path> getPorts(Path path) throws IOException {
@@ -274,5 +280,20 @@ public class DataBundles {
 			}
 		}
 		return ports;
+	}
+
+	public static Path getListItem(Path list, long position) {
+		if (position < 0) {
+			throw new IllegalArgumentException("Position must be 0 or more, not: " + position);
+		}
+		// FIXME: Look for extensions
+		return list.resolve(Long.toString(position));
+	}
+
+	public static boolean isMissing(Path item) {
+//		if (! Files.exists(item.getParent())) {
+//			throw new IllegalStateException("Invalid path");
+//		}
+		return ! Files.exists(item);
 	}
 }
