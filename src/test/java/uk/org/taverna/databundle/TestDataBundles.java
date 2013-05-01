@@ -203,6 +203,54 @@ public class TestDataBundles {
 	}
 
 	@Test
+	public void getListItem() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path list = DataBundles.getPort(inputs, "in1");
+		DataBundles.createList(list);
+		for (int i = 0; i < 5; i++) {
+			Path item = DataBundles.newListItem(list);
+			DataBundles.setStringValue(item, "item " + i);
+		}
+		// set at next available position
+		Path item5 = DataBundles.getListItem(list, 5);
+		assertTrue(item5.getFileName().toString().contains("5"));
+		DataBundles.setStringValue(item5, "item 5");
+	
+		
+		// set somewhere later
+		Path item8 = DataBundles.getListItem(list, 8);
+		assertTrue(item8.getFileName().toString().contains("8"));
+		DataBundles.setStringValue(item8, "item 8");
+		
+		Path item7 = DataBundles.getListItem(list, 7);
+		assertFalse(Files.exists(item7));
+		assertFalse(DataBundles.isList(item7));
+		assertFalse(DataBundles.isValue(item7));
+		// TODO: Is it really missing? item1337 is also missing..
+		assertTrue(DataBundles.isMissing(item7));
+		
+		
+		// overwrite #2
+		Path item2 = DataBundles.getListItem(list, 2);		
+		DataBundles.setStringValue(item2, "replaced");
+		
+		
+		List<Path> listItems = DataBundles.getList(list);
+		assertEquals(9, listItems.size());
+		assertEquals("item 0", DataBundles.getStringValue(listItems.get(0)));
+		assertEquals("item 1", DataBundles.getStringValue(listItems.get(1)));
+		assertEquals("replaced", DataBundles.getStringValue(listItems.get(2)));
+		assertEquals("item 3", DataBundles.getStringValue(listItems.get(3)));
+		assertEquals("item 4", DataBundles.getStringValue(listItems.get(4)));
+		assertEquals("item 5", DataBundles.getStringValue(listItems.get(5)));
+		assertNull(listItems.get(6));
+		assertNull(listItems.get(7));
+		assertEquals("item 8", DataBundles.getStringValue(listItems.get(8)));
+		
+	}
+
+	@Test
 	public void hasOutputs() throws Exception {
 		DataBundle dataBundle = DataBundles.createDataBundle();
 		assertFalse(DataBundles.hasOutputs(dataBundle));
@@ -254,54 +302,6 @@ public class TestDataBundles {
 		return paths;
 	}
 	
-	@Test
-	public void getListItem() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
-		Path inputs = DataBundles.getInputs(dataBundle);
-		Path list = DataBundles.getPort(inputs, "in1");
-		DataBundles.createList(list);
-		for (int i = 0; i < 5; i++) {
-			Path item = DataBundles.newListItem(list);
-			DataBundles.setStringValue(item, "item " + i);
-		}
-		// set at next available position
-		Path item5 = DataBundles.getListItem(list, 5);
-		assertTrue(item5.getFileName().toString().contains("5"));
-		DataBundles.setStringValue(item5, "item 5");
-
-		
-		// set somewhere later
-		Path item8 = DataBundles.getListItem(list, 8);
-		assertTrue(item8.getFileName().toString().contains("8"));
-		DataBundles.setStringValue(item8, "item 8");
-		
-		Path item7 = DataBundles.getListItem(list, 7);
-		assertFalse(Files.exists(item7));
-		assertFalse(DataBundles.isList(item7));
-		assertFalse(DataBundles.isValue(item7));
-		// TODO: Is it really missing? item1337 is also missing..
-		assertTrue(DataBundles.isMissing(item7));
-		
-		
-		// overwrite #2
-		Path item2 = DataBundles.getListItem(list, 2);		
-		DataBundles.setStringValue(item2, "replaced");
-		
-		
-		List<Path> listItems = DataBundles.getList(list);
-		assertEquals(9, listItems.size());
-		assertEquals("item 0", DataBundles.getStringValue(listItems.get(0)));
-		assertEquals("item 1", DataBundles.getStringValue(listItems.get(1)));
-		assertEquals("replaced", DataBundles.getStringValue(listItems.get(2)));
-		assertEquals("item 3", DataBundles.getStringValue(listItems.get(3)));
-		assertEquals("item 4", DataBundles.getStringValue(listItems.get(4)));
-		assertEquals("item 5", DataBundles.getStringValue(listItems.get(5)));
-		assertNull(listItems.get(6));
-		assertNull(listItems.get(7));
-		assertEquals("item 8", DataBundles.getStringValue(listItems.get(8)));
-		
-	}
-
 	@Test
 	public void newListItem() throws Exception {
 		DataBundle dataBundle = DataBundles.createDataBundle();
