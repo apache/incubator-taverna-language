@@ -255,7 +255,7 @@ public class TestDataBundles {
 	}
 	
 	@Test
-	public void newListItemInPosition() throws Exception {
+	public void getListItem() throws Exception {
 		DataBundle dataBundle = DataBundles.createDataBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path list = DataBundles.getPort(inputs, "in1");
