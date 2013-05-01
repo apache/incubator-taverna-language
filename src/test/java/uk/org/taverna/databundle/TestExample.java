@@ -81,7 +81,7 @@ public class TestExample {
 		System.out.println(ports.keySet());
 	
 		// Saving a data bundle:
-		Path zip = Files.createTempFile("databundle", "zip");
+		Path zip = Files.createTempFile("databundle", ".zip");
 		DataBundles.closeAndSaveDataBundle(dataBundle, zip);
 		// NOTE: From now dataBundle and its Path's are CLOSED 
 		// and can no longer be accessed
