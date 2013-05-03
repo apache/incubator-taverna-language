@@ -1,5 +1,6 @@
 package uk.org.taverna.databundle;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.Desktop;
@@ -51,22 +52,25 @@ public class TestExample {
 		System.out.println("Written to: " + localFile);
 
 		// Either way works, of course
+		Path outputs = DataBundles.getOutputs(dataBundle);
 		Files.copy(localFile,
-				DataBundles.getPort(DataBundles.getOutputs(dataBundle), "out1"));
+				DataBundles.getPort(outputs, "out1"));
 
 
 		// When you get a port, it can become either a value or a list
 		Path port2 = DataBundles.getPort(inputs, "port2");
-		DataBundles.createList(port2); // empty list
-		List<Path> list = DataBundles.getList(port2);
-		assertTrue(list.isEmpty());
+		DataBundles.createList(port2); // empty list		
+		if (DataBundles.isList(port2)) {
+			List<Path> list = DataBundles.getList(port2);
+			assertTrue(list.isEmpty());
+		}
 
 		// Adding items sequentially
 		Path item0 = DataBundles.newListItem(port2);
 		DataBundles.setStringValue(item0, "item 0");
 		DataBundles.setStringValue(DataBundles.newListItem(port2), "item 1");
 		DataBundles.setStringValue(DataBundles.newListItem(port2), "item 2");
-
+		
 		
 		// Set and get by explicit position:
 		DataBundles.setStringValue(DataBundles.getListItem(port2, 12), "item 12");
@@ -79,7 +83,18 @@ public class TestExample {
 		// Ports can be browsed as a map by port name
 		NavigableMap<String, Path> ports = DataBundles.getPorts(inputs);
 		System.out.println(ports.keySet());
-	
+		
+		// Representing errors		
+		Path out2 = DataBundles.getPort(outputs, "out2");		
+		DataBundles.setError(out2, "Something did not work", "A very\n long\n error\n trace");		
+
+		// Retrieving errors
+		if (DataBundles.isError(out2)) {
+			ErrorDocument error = DataBundles.getError(out2);
+			System.out.println("Error: " + error.getMessage());
+		}
+		
+		
 		// Saving a data bundle:
 		Path zip = Files.createTempFile("databundle", ".zip");
 		DataBundles.closeAndSaveDataBundle(dataBundle, zip);
@@ -95,11 +110,23 @@ public class TestExample {
 		
 		// Loading a data bundle back from disk
 		try (DataBundle dataBundle2 = DataBundles.openDataBundle(zip)) {
-			// Any modifications here will be saved on (here automatic) close
+			assertEquals(zip, dataBundle2.getSource());
+			Path loadedInputs = DataBundles.getInputs(dataBundle2);
 			
-		}
-		
-		
+			for (Path port : DataBundles.getPorts(loadedInputs).values()) {
+				if (DataBundles.isValue(port)) {
+					System.out.print("Value " + port + ": ");
+					System.out.println(DataBundles.getStringValue(port));
+				} else if (DataBundles.isList(port)) {
+					System.out.print("List " + port + ": ");
+					for (Path item : DataBundles.getList(port)) {
+						// We'll assume depth 1 here
+						System.out.print(DataBundles.getStringValue(item));
+						System.out.print(", ");
+					}
+					System.out.println();
+				}				
+			}			
+		}				
 	}
-
 }
