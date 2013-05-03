@@ -126,6 +126,10 @@ public class DataBundles {
 	}
 
 	public static ErrorDocument getError(Path path) throws IOException {
+		if (path == null) {
+			return null;
+		}
+			
 		Path errorPath = withExtension(path, ERR);
 		List<String> errorList = Files.readAllLines(errorPath, UTF8);
 		int split = errorList.indexOf("");
@@ -161,6 +165,9 @@ public class DataBundles {
 	}
 
 	public static List<Path> getList(Path list) throws IOException {
+		if (list == null) {
+			return null;
+		}
 		List<Path> paths = new ArrayList<>();
 		try (DirectoryStream<Path> ds = Files.newDirectoryStream(list)) {
 			for (Path entry : ds) {
@@ -212,6 +219,9 @@ public class DataBundles {
 	}
 
 	public static String getStringValue(Path path) throws IOException {
+		if (path == null || isMissing(path)) {
+			return null;
+		}	
 		if (! isValue(path)) {
 			throw new IllegalArgumentException("Not a value: " + path);
 		}

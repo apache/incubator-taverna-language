@@ -24,7 +24,7 @@ import org.junit.Test;
 
 public class TestDataBundles {
 	@Test
-	public void asList() throws Exception {
+	public void getList() throws Exception {
 		DataBundle dataBundle = DataBundles.createDataBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path list = DataBundles.getPort(inputs, "in1");
@@ -37,6 +37,8 @@ public class TestDataBundles {
 		assertEquals(5, paths.size());
 		assertEquals("test0", DataBundles.getStringValue(paths.get(0)));
 		assertEquals("test4", DataBundles.getStringValue(paths.get(4)));
+		
+		assertEquals(null, DataBundles.getList(null));
 	}
 
 	protected void checkSignature(Path zip) throws IOException {
@@ -157,7 +159,9 @@ public class TestDataBundles {
 		
 		assertEquals("Something did not work", error.getMessage());
 		// Notice that the lack of trailing \n is preserved 
-		assertEquals("A very\n long\n error\n trace", error.getTrace());		
+		assertEquals("A very\n long\n error\n trace", error.getTrace());	
+		
+		assertEquals(null, DataBundles.getError(null));
 	}
 
 	@Test
@@ -274,7 +278,7 @@ public class TestDataBundles {
 		Map<String, Path> ports = DataBundles.getPorts(DataBundles
 				.getInputs(dataBundle));
 		assertEquals(3, ports.size());
-		System.out.println(ports);
+//		System.out.println(ports);
 		assertTrue(ports.containsKey("in1"));
 		assertTrue(ports.containsKey("in2"));
 		assertTrue(ports.containsKey("value"));
@@ -533,15 +537,27 @@ public class TestDataBundles {
 	
 
 	@Test
+	public void getStringValue() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path portIn1 = DataBundles.getPort(inputs, "in1");
+		String string = "A string";
+		DataBundles.setStringValue(portIn1, string);
+		assertEquals(string, DataBundles.getStringValue(portIn1));	
+		assertEquals(null, DataBundles.getStringValue(null));
+	}
+	
+
+	@Test
 	public void setStringValue() throws Exception {
 		DataBundle dataBundle = DataBundles.createDataBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path portIn1 = DataBundles.getPort(inputs, "in1");
 		String string = "A string";
 		DataBundles.setStringValue(portIn1, string);
-		assertTrue(Files.exists(portIn1));
-		assertEquals(string, DataBundles.getStringValue(portIn1));
+		assertEquals(string, Files.readAllLines(portIn1, Charset.forName("UTF-8")).get(0));
 	}
+	
 	@Test
 	public void withExtension() throws Exception {
 		Path testDir = Files.createTempDirectory("test");
