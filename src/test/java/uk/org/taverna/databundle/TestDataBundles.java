@@ -1,10 +1,10 @@
 package uk.org.taverna.databundle;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -288,7 +288,25 @@ public class TestDataBundles {
 
 	@Test
 	public void listOfLists() throws Exception {
-		// TODO: To be tested
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path list = DataBundles.getPort(inputs, "in1");
+		DataBundles.createList(list);
+		Path sublist0 = DataBundles.newListItem(list);
+		DataBundles.createList(sublist0);
+		
+		Path sublist1 = DataBundles.newListItem(list);
+		DataBundles.createList(sublist1);
+		
+		assertEquals(Arrays.asList("0/", "1/"), ls(list));
+		
+		DataBundles.setStringValue(DataBundles.newListItem(sublist1), 
+				"Hello");
+		
+		assertEquals(Arrays.asList("0"), ls(sublist1));
+		
+		assertEquals("Hello",DataBundles.getStringValue( 
+				DataBundles.getListItem(DataBundles.getListItem(list, 1), 0)));
 	}
 
 	protected List<String> ls(Path path) throws IOException {
