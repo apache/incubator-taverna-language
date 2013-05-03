@@ -4,7 +4,6 @@ import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -15,10 +14,8 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.nio.file.attribute.FileAttribute;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -106,7 +103,8 @@ public class DataBundles {
 	protected static FileSystem createFSfromZip(Path dataBundle)
 			throws FileNotFoundException, IOException {
 	
-		try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(dataBundle, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE))) {
+		try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(dataBundle, 
+				StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING))) {
 			addMimeTypeToZip(out);
 		}
 		return FileSystems.newFileSystem(dataBundle, null);
