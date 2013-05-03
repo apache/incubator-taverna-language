@@ -412,10 +412,10 @@ public class TestDataBundles {
 		DataBundle dataBundle = DataBundles.createDataBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path portIn1 = DataBundles.getPort(inputs, "in1");
-		Path errorDoc = DataBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");		
-		assertEquals("in1.err", errorDoc.getFileName().toString());
+		Path errorPath = DataBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");		
+		assertEquals("in1.err", errorPath.getFileName().toString());
 
-		List<String> errLines = Files.readAllLines(errorDoc, Charset.forName("UTF-8"));
+		List<String> errLines = Files.readAllLines(errorPath, Charset.forName("UTF-8"));
 		assertEquals(6, errLines.size());
 		assertEquals("", errLines.get(0));
 		assertEquals("Something did not work", errLines.get(1));
@@ -424,6 +424,51 @@ public class TestDataBundles {
 		assertEquals(" error", errLines.get(4));
 		assertEquals(" trace", errLines.get(5));
 	}
+	
+	@Test
+	public void setErrorCause() throws Exception {		
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path portIn1 = DataBundles.getPort(inputs, "in1");
+		Path cause1 = DataBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");
+		Path portIn2 = DataBundles.getPort(inputs, "in2");
+		Path cause2 = DataBundles.setError(portIn2, "Something else did not work", "Shorter trace");
+		
+		
+		Path outputs = DataBundles.getOutputs(dataBundle);
+		Path portOut1 = DataBundles.getPort(outputs, "out1");
+		Path errorPath = DataBundles.setError(portOut1, "Errors in input", "", cause1, cause2);
+		
+		List<String> errLines = Files.readAllLines(errorPath, Charset.forName("UTF-8"));
+		assertEquals("../inputs/in1.err", errLines.get(0));
+		assertEquals("../inputs/in2.err", errLines.get(1));
+		assertEquals("", errLines.get(2));
+	}
+
+	@Test
+	public void getErrorCause() throws Exception {		
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path portIn1 = DataBundles.getPort(inputs, "in1");
+		Path cause1 = DataBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");
+		Path portIn2 = DataBundles.getPort(inputs, "in2");
+		Path cause2 = DataBundles.setError(portIn2, "Something else did not work", "Shorter trace");
+		
+		
+		Path outputs = DataBundles.getOutputs(dataBundle);
+		Path portOut1 = DataBundles.getPort(outputs, "out1");
+		DataBundles.setError(portOut1, "Errors in input", "", cause1, cause2);
+
+		ErrorDocument error = DataBundles.getError(portOut1);
+		assertEquals("Errors in input", error.getMessage());
+		assertEquals("", error.getTrace());
+		assertEquals(2, error.getCausedBy().size());
+		
+		assertTrue(Files.isSameFile(cause1, error.getCausedBy().get(0)));
+		assertTrue(Files.isSameFile(cause2, error.getCausedBy().get(1)));
+	}
+
+	
 	
 	@Test
 	public void isError() throws Exception {

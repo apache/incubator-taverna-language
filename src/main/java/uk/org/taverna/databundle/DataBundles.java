@@ -306,7 +306,7 @@ public class DataBundles {
 		// Silly \n-based format
 		List<String> errorDoc = new ArrayList<>();
 		for (Path cause : causedBy) {
-			Path relCause = errorPath.relativize(cause);
+			Path relCause = errorPath.getParent().relativize(cause);
 			errorDoc.add(relCause.toString());			
 		}
 		errorDoc.add(""); // Our magic separator
@@ -340,7 +340,7 @@ public class DataBundles {
 		ErrorDocument errorDoc = new ErrorDocument();
 
 		for (String cause : errorList.subList(0, split)) {
-			errorDoc.getCausedBy().add(path.resolve(cause));
+			errorDoc.getCausedBy().add(path.resolveSibling(cause));
 		}
 		
 		errorDoc.setMessage(errorList.get(split+1));
