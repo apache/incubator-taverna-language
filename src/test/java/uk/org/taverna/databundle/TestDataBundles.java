@@ -392,6 +392,22 @@ public class TestDataBundles {
 	}
 	
 	@Test
+	public void getError() throws Exception {
+		
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path portIn1 = DataBundles.getPort(inputs, "in1");
+		DataBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");		
+		
+		ErrorDocument error = DataBundles.getError(portIn1);
+		assertTrue(error.getCausedBy().isEmpty());
+		
+		assertEquals("Something did not work", error.getMessage());
+		// Notice that the lack of trailing \n is preserved 
+		assertEquals("A very\n long\n error\n trace", error.getTrace());		
+	}
+	
+	@Test
 	public void setError() throws Exception {
 		DataBundle dataBundle = DataBundles.createDataBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);

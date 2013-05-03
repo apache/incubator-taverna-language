@@ -329,4 +329,33 @@ public class DataBundles {
 		return path.resolveSibling(newP);
 	}
 
+	public static ErrorDocument getError(Path path) throws IOException {
+		Path errorPath = withExtension(path, ERR);
+		List<String> errorList = Files.readAllLines(errorPath, UTF8);
+		int split = errorList.indexOf("");
+		if (split == -1 || errorList.size() <= split) {
+			throw new IOException("Invalid error document: " + errorPath);
+		}
+		
+		ErrorDocument errorDoc = new ErrorDocument();
+
+		for (String cause : errorList.subList(0, split)) {
+			errorDoc.getCausedBy().add(path.resolve(cause));
+		}
+		
+		errorDoc.setMessage(errorList.get(split+1));
+		
+		StringBuffer errorTrace = new StringBuffer();
+		for (String line : errorList.subList(split+2, errorList.size())) {
+			errorTrace.append(line);
+			errorTrace.append("\n");	
+		}		
+		if (errorTrace.length() > 0) { 
+			// Delete last \n
+			errorTrace.deleteCharAt(errorTrace.length()-1);
+		}
+		errorDoc.setTrace(errorTrace.toString());
+		return errorDoc;
+	}
+
 }
