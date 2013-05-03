@@ -457,7 +457,7 @@ public class TestDataBundles {
 	
 	
 	@Test
-	public void setError() throws Exception {
+	public void setErrorArgs() throws Exception {
 		DataBundle dataBundle = DataBundles.createDataBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path portIn1 = DataBundles.getPort(inputs, "in1");
@@ -492,6 +492,43 @@ public class TestDataBundles {
 		assertEquals("../inputs/in1.err", errLines.get(0));
 		assertEquals("../inputs/in2.err", errLines.get(1));
 		assertEquals("", errLines.get(2));
+	}
+	
+	
+	@Test
+	public void setErrorObj() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+
+		Path portIn1 = DataBundles.getPort(inputs, "in1");
+		Path cause1 = DataBundles.setError(portIn1, "a", "b");
+		Path portIn2 = DataBundles.getPort(inputs, "in2");
+		Path cause2 = DataBundles.setError(portIn2, "c", "d");
+		
+		
+		Path outputs = DataBundles.getOutputs(dataBundle);
+		Path portOut1 = DataBundles.getPort(outputs, "out1");
+
+		ErrorDocument error = new ErrorDocument();
+		error.getCausedBy().add(cause1);
+		error.getCausedBy().add(cause2);
+		
+		error.setMessage("Something did not work");
+		error.setTrace("Here\nis\nwhy\n");
+		
+		Path errorPath = DataBundles.setError(portOut1, error);		
+		assertEquals("out1.err", errorPath.getFileName().toString());
+
+		List<String> errLines = Files.readAllLines(errorPath, Charset.forName("UTF-8"));
+		assertEquals(8, errLines.size());
+		assertEquals("../inputs/in1.err", errLines.get(0));
+		assertEquals("../inputs/in2.err", errLines.get(1));
+		assertEquals("", errLines.get(2));
+		assertEquals("Something did not work", errLines.get(3));
+		assertEquals("Here", errLines.get(4));
+		assertEquals("is", errLines.get(5));
+		assertEquals("why", errLines.get(6));
+		assertEquals("", errLines.get(7));
 	}
 	
 
@@ -530,8 +567,6 @@ public class TestDataBundles {
 		
 		Path fileManyTxt = DataBundles.withExtension(fileManyPdf, ".txt");
 		assertEquals("file.test.many.txt", fileManyTxt.getFileName().toString());
-		
-		
 	}
 
 }

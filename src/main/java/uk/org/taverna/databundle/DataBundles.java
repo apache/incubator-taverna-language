@@ -324,6 +324,11 @@ public class DataBundles {
 		}
 	}
 
+	public static Path setError(Path path, ErrorDocument error) throws IOException {
+		return setError(path, error.getMessage(), error.getTrace(), error
+				.getCausedBy().toArray(new Path[error.getCausedBy().size()]));
+	}
+
 	public static Path setError(Path errorPath, String message, String trace, Path... causedBy) throws IOException {
 		errorPath = withExtension(errorPath, ERR);
 		// Silly \n-based format
