@@ -37,8 +37,8 @@ import java.util.zip.ZipOutputStream;
  */
 public class DataBundles {
 
-	private static final String ERR = ".err";
 	private static final String APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP = "application/vnd.wf4ever.robundle+zip";
+	private static final String ERR = ".err";
 	private static final String INPUTS = "inputs";
 	private static final String OUTPUTS = "outputs";
 	private static final Charset UTF8 = Charset.forName("UTF-8");
@@ -125,6 +125,35 @@ public class DataBundles {
 		return fileName.substring(0, lastDot);
 	}
 
+	public static ErrorDocument getError(Path path) throws IOException {
+		Path errorPath = withExtension(path, ERR);
+		List<String> errorList = Files.readAllLines(errorPath, UTF8);
+		int split = errorList.indexOf("");
+		if (split == -1 || errorList.size() <= split) {
+			throw new IOException("Invalid error document: " + errorPath);
+		}
+		
+		ErrorDocument errorDoc = new ErrorDocument();
+
+		for (String cause : errorList.subList(0, split)) {
+			errorDoc.getCausedBy().add(path.resolveSibling(cause));
+		}
+		
+		errorDoc.setMessage(errorList.get(split+1));
+		
+		StringBuffer errorTrace = new StringBuffer();
+		for (String line : errorList.subList(split+2, errorList.size())) {
+			errorTrace.append(line);
+			errorTrace.append("\n");	
+		}		
+		if (errorTrace.length() > 0) { 
+			// Delete last \n
+			errorTrace.deleteCharAt(errorTrace.length()-1);
+		}
+		errorDoc.setTrace(errorTrace.toString());
+		return errorDoc;
+	}
+
 	public static Path getInputs(DataBundle dataBundle) throws IOException {
 		Path inputs = dataBundle.getRoot().resolve(INPUTS);
 		Files.createDirectories(inputs);
@@ -153,6 +182,14 @@ public class DataBundles {
 		return paths;
 	}
 
+	public static Path getListItem(Path list, long position) {
+		if (position < 0) {
+			throw new IllegalArgumentException("Position must be 0 or more, not: " + position);
+		}
+		// FIXME: Look for extensions
+		return list.resolve(Long.toString(position));
+	}
+
 	public static Path getOutputs(DataBundle dataBundle) throws IOException {
 		Path inputs = dataBundle.getRoot().resolve(OUTPUTS);
 		Files.createDirectories(inputs);
@@ -164,42 +201,54 @@ public class DataBundles {
 		return map.resolve(portName);
 	}
 
+	public static NavigableMap<String, Path> getPorts(Path path) throws IOException {
+		NavigableMap<String, Path> ports = new TreeMap<>();
+		try (DirectoryStream<Path> ds = Files.newDirectoryStream(path)) {
+			for (Path p : ds) {
+				ports.put(filenameWithoutExtension(p), p);
+			}
+		}
+		return ports;
+	}
+
 	public static String getStringValue(Path path) throws IOException {
 		if (! isValue(path)) {
 			throw new IllegalArgumentException("Not a value: " + path);
 		}
 		return new String(Files.readAllBytes(path), UTF8);
 	}
-
+	
 	public static boolean hasInputs(DataBundle dataBundle) {
 		Path inputs = dataBundle.getRoot().resolve(INPUTS);
 		return Files.isDirectory(inputs);
 	}
-
+	
 	public static boolean hasOutputs(DataBundle dataBundle) {
 		Path outputs = dataBundle.getRoot().resolve(OUTPUTS);
 		return Files.isDirectory(outputs);
 	}
 
-	public static boolean isList(Path path) {
-		return Files.isDirectory(path);
-	}
-	
-	public static boolean isValue(Path path) {
-		return Files.isRegularFile(path);
-	}
-	
+
 	public static boolean isError(Path path) {
 		return Files.isRegularFile(withExtension(path, ERR));
 	}
 
+	public static boolean isList(Path path) {
+		return Files.isDirectory(path);
+	}
 
+
+	
 	public static boolean isMissing(Path item) {
 	//		if (! Files.exists(item.getParent())) {
 	//			throw new IllegalStateException("Invalid path");
 	//		}
 			return ! Files.exists(item) && ! isError(item);
 		}
+
+	public static boolean isValue(Path path) {
+		return Files.isRegularFile(path);
+	}
 
 	public static Path newListItem(Path list) throws IOException {
 		long max = -1L;
@@ -221,8 +270,6 @@ public class DataBundles {
 		return list.resolve(Long.toString(max + 1));
 	}
 
-
-	
 	public static DataBundle openDataBundle(Path zip) throws IOException {
 		FileSystem fs = FileSystems.newFileSystem(zip, null);
 		return new DataBundle(fs.getRootDirectories().iterator().next(), false);
@@ -277,30 +324,6 @@ public class DataBundles {
 		}
 	}
 
-	public static void setStringValue(Path path, String string)
-			throws IOException {
-		Files.write(path, string.getBytes(UTF8), 
-				StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
-	}
-
-	public static NavigableMap<String, Path> getPorts(Path path) throws IOException {
-		NavigableMap<String, Path> ports = new TreeMap<>();
-		try (DirectoryStream<Path> ds = Files.newDirectoryStream(path)) {
-			for (Path p : ds) {
-				ports.put(filenameWithoutExtension(p), p);
-			}
-		}
-		return ports;
-	}
-
-	public static Path getListItem(Path list, long position) {
-		if (position < 0) {
-			throw new IllegalArgumentException("Position must be 0 or more, not: " + position);
-		}
-		// FIXME: Look for extensions
-		return list.resolve(Long.toString(position));
-	}
-
 	public static Path setError(Path errorPath, String message, String trace, Path... causedBy) throws IOException {
 		errorPath = withExtension(errorPath, ERR);
 		// Silly \n-based format
@@ -316,6 +339,12 @@ public class DataBundles {
 		return errorPath;
 	}
 
+	public static void setStringValue(Path path, String string)
+			throws IOException {
+		Files.write(path, string.getBytes(UTF8), 
+				StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
+	}
+
 	protected static Path withExtension(Path path, String extension) {
 		if (! extension.isEmpty() && ! extension.startsWith(".")) {
 			throw new IllegalArgumentException("Extension must be empty or start with .");
@@ -327,35 +356,6 @@ public class DataBundles {
 		// Everything after the last . - or just the end
 		String newP = p.replaceFirst("(\\.[^.]*)?$", extension);
 		return path.resolveSibling(newP);
-	}
-
-	public static ErrorDocument getError(Path path) throws IOException {
-		Path errorPath = withExtension(path, ERR);
-		List<String> errorList = Files.readAllLines(errorPath, UTF8);
-		int split = errorList.indexOf("");
-		if (split == -1 || errorList.size() <= split) {
-			throw new IOException("Invalid error document: " + errorPath);
-		}
-		
-		ErrorDocument errorDoc = new ErrorDocument();
-
-		for (String cause : errorList.subList(0, split)) {
-			errorDoc.getCausedBy().add(path.resolveSibling(cause));
-		}
-		
-		errorDoc.setMessage(errorList.get(split+1));
-		
-		StringBuffer errorTrace = new StringBuffer();
-		for (String line : errorList.subList(split+2, errorList.size())) {
-			errorTrace.append(line);
-			errorTrace.append("\n");	
-		}		
-		if (errorTrace.length() > 0) { 
-			// Delete last \n
-			errorTrace.deleteCharAt(errorTrace.length()-1);
-		}
-		errorDoc.setTrace(errorTrace.toString());
-		return errorDoc;
 	}
 
 }

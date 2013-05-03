@@ -1,6 +1,5 @@
 package uk.org.taverna.databundle;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -146,6 +145,45 @@ public class TestDataBundles {
 	}
 
 	@Test
+	public void getError() throws Exception {
+		
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path portIn1 = DataBundles.getPort(inputs, "in1");
+		DataBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");		
+		
+		ErrorDocument error = DataBundles.getError(portIn1);
+		assertTrue(error.getCausedBy().isEmpty());
+		
+		assertEquals("Something did not work", error.getMessage());
+		// Notice that the lack of trailing \n is preserved 
+		assertEquals("A very\n long\n error\n trace", error.getTrace());		
+	}
+
+	@Test
+	public void getErrorCause() throws Exception {		
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path portIn1 = DataBundles.getPort(inputs, "in1");
+		Path cause1 = DataBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");
+		Path portIn2 = DataBundles.getPort(inputs, "in2");
+		Path cause2 = DataBundles.setError(portIn2, "Something else did not work", "Shorter trace");
+		
+		
+		Path outputs = DataBundles.getOutputs(dataBundle);
+		Path portOut1 = DataBundles.getPort(outputs, "out1");
+		DataBundles.setError(portOut1, "Errors in input", "", cause1, cause2);
+
+		ErrorDocument error = DataBundles.getError(portOut1);
+		assertEquals("Errors in input", error.getMessage());
+		assertEquals("", error.getTrace());
+		assertEquals(2, error.getCausedBy().size());
+		
+		assertTrue(Files.isSameFile(cause1, error.getCausedBy().get(0)));
+		assertTrue(Files.isSameFile(cause2, error.getCausedBy().get(1)));
+	}
+
+	@Test
 	public void getInputs() throws Exception {
 		DataBundle dataBundle = DataBundles.createDataBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
@@ -154,54 +192,6 @@ public class TestDataBundles {
 		inputs = DataBundles.getInputs(dataBundle);
 		assertTrue(Files.isDirectory(inputs));
 		assertEquals(dataBundle.getRoot(), inputs.getParent());
-	}
-
-	@Test
-	public void getOutputs() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
-		Path outputs = DataBundles.getOutputs(dataBundle);
-		assertTrue(Files.isDirectory(outputs));
-		// Second time should not fail because it already exists
-		outputs = DataBundles.getOutputs(dataBundle);
-		assertTrue(Files.isDirectory(outputs));
-		assertEquals(dataBundle.getRoot(), outputs.getParent());
-	}
-
-	@Test
-	public void getPort() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
-		Path inputs = DataBundles.getInputs(dataBundle);
-		Path portIn1 = DataBundles.getPort(inputs, "in1");
-		assertFalse(Files.exists(portIn1));
-		assertEquals(inputs, portIn1.getParent());
-	}
-
-	@Test
-	public void getPorts() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
-		Path inputs = DataBundles.getInputs(dataBundle);
-		DataBundles.createList(DataBundles.getPort(inputs, "in1"));
-		DataBundles.createList(DataBundles.getPort(inputs, "in2"));
-		DataBundles.setStringValue(DataBundles.getPort(inputs, "value"),
-				"A value");
-		Map<String, Path> ports = DataBundles.getPorts(DataBundles
-				.getInputs(dataBundle));
-		assertEquals(3, ports.size());
-		System.out.println(ports);
-		assertTrue(ports.containsKey("in1"));
-		assertTrue(ports.containsKey("in2"));
-		assertTrue(ports.containsKey("value"));
-
-		assertEquals("A value", DataBundles.getStringValue(ports.get("value")));
-
-	}
-
-	@Test
-	public void hasInputs() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
-		assertFalse(DataBundles.hasInputs(dataBundle));
-		DataBundles.getInputs(dataBundle); // create on demand
-		assertTrue(DataBundles.hasInputs(dataBundle));
 	}
 
 	@Test
@@ -254,6 +244,54 @@ public class TestDataBundles {
 	}
 
 	@Test
+	public void getOutputs() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path outputs = DataBundles.getOutputs(dataBundle);
+		assertTrue(Files.isDirectory(outputs));
+		// Second time should not fail because it already exists
+		outputs = DataBundles.getOutputs(dataBundle);
+		assertTrue(Files.isDirectory(outputs));
+		assertEquals(dataBundle.getRoot(), outputs.getParent());
+	}
+
+	@Test
+	public void getPort() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path portIn1 = DataBundles.getPort(inputs, "in1");
+		assertFalse(Files.exists(portIn1));
+		assertEquals(inputs, portIn1.getParent());
+	}
+
+	@Test
+	public void getPorts() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		DataBundles.createList(DataBundles.getPort(inputs, "in1"));
+		DataBundles.createList(DataBundles.getPort(inputs, "in2"));
+		DataBundles.setStringValue(DataBundles.getPort(inputs, "value"),
+				"A value");
+		Map<String, Path> ports = DataBundles.getPorts(DataBundles
+				.getInputs(dataBundle));
+		assertEquals(3, ports.size());
+		System.out.println(ports);
+		assertTrue(ports.containsKey("in1"));
+		assertTrue(ports.containsKey("in2"));
+		assertTrue(ports.containsKey("value"));
+
+		assertEquals("A value", DataBundles.getStringValue(ports.get("value")));
+
+	}
+
+	@Test
+	public void hasInputs() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		assertFalse(DataBundles.hasInputs(dataBundle));
+		DataBundles.getInputs(dataBundle); // create on demand
+		assertTrue(DataBundles.hasInputs(dataBundle));
+	}
+
+	@Test
 	public void hasOutputs() throws Exception {
 		DataBundle dataBundle = DataBundles.createDataBundle();
 		assertFalse(DataBundles.hasOutputs(dataBundle));
@@ -270,6 +308,19 @@ public class TestDataBundles {
 	}
 
 	@Test
+	public void isError() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path portIn1 = DataBundles.getPort(inputs, "in1");
+		DataBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");		
+		
+		assertFalse(DataBundles.isList(portIn1));		
+		assertFalse(DataBundles.isValue(portIn1));
+		assertFalse(DataBundles.isMissing(portIn1));
+		assertTrue(DataBundles.isError(portIn1));		
+	}
+
+	@Test
 	public void isList() throws Exception {
 		DataBundle dataBundle = DataBundles.createDataBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
@@ -278,6 +329,18 @@ public class TestDataBundles {
 		assertTrue(DataBundles.isList(list));
 		assertFalse(DataBundles.isValue(list));
 		assertFalse(DataBundles.isError(list));
+	}
+	
+	@Test
+	public void isMissing() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path portIn1 = DataBundles.getPort(inputs, "in1");
+		
+		assertFalse(DataBundles.isList(portIn1));		
+		assertFalse(DataBundles.isValue(portIn1));
+		assertFalse(DataBundles.isError(portIn1));
+		assertTrue(DataBundles.isMissing(portIn1));
 	}
 
 	@Test
@@ -313,7 +376,7 @@ public class TestDataBundles {
 		assertEquals("Hello",DataBundles.getStringValue( 
 				DataBundles.getListItem(DataBundles.getListItem(list, 1), 0)));
 	}
-
+	
 	protected List<String> ls(Path path) throws IOException {
 		List<String> paths = new ArrayList<>();
 		try (DirectoryStream<Path> ds = Files.newDirectoryStream(path)) {
@@ -360,7 +423,7 @@ public class TestDataBundles {
 		Path item6 = DataBundles.newListItem(list);
 		assertTrue(item6.getFileName().toString().contains("6"));
 	}
-
+	
 	@Test
 	public void safeMove() throws Exception {
 		Path tmp = Files.createTempDirectory("test");
@@ -390,22 +453,8 @@ public class TestDataBundles {
 			assertEquals(Arrays.asList("d1", "f1"), ls(tmp));
 		}
 	}
+
 	
-	@Test
-	public void getError() throws Exception {
-		
-		DataBundle dataBundle = DataBundles.createDataBundle();
-		Path inputs = DataBundles.getInputs(dataBundle);
-		Path portIn1 = DataBundles.getPort(inputs, "in1");
-		DataBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");		
-		
-		ErrorDocument error = DataBundles.getError(portIn1);
-		assertTrue(error.getCausedBy().isEmpty());
-		
-		assertEquals("Something did not work", error.getMessage());
-		// Notice that the lack of trailing \n is preserved 
-		assertEquals("A very\n long\n error\n trace", error.getTrace());		
-	}
 	
 	@Test
 	public void setError() throws Exception {
@@ -444,58 +493,18 @@ public class TestDataBundles {
 		assertEquals("../inputs/in2.err", errLines.get(1));
 		assertEquals("", errLines.get(2));
 	}
+	
 
 	@Test
-	public void getErrorCause() throws Exception {		
+	public void setStringValue() throws Exception {
 		DataBundle dataBundle = DataBundles.createDataBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path portIn1 = DataBundles.getPort(inputs, "in1");
-		Path cause1 = DataBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");
-		Path portIn2 = DataBundles.getPort(inputs, "in2");
-		Path cause2 = DataBundles.setError(portIn2, "Something else did not work", "Shorter trace");
-		
-		
-		Path outputs = DataBundles.getOutputs(dataBundle);
-		Path portOut1 = DataBundles.getPort(outputs, "out1");
-		DataBundles.setError(portOut1, "Errors in input", "", cause1, cause2);
-
-		ErrorDocument error = DataBundles.getError(portOut1);
-		assertEquals("Errors in input", error.getMessage());
-		assertEquals("", error.getTrace());
-		assertEquals(2, error.getCausedBy().size());
-		
-		assertTrue(Files.isSameFile(cause1, error.getCausedBy().get(0)));
-		assertTrue(Files.isSameFile(cause2, error.getCausedBy().get(1)));
+		String string = "A string";
+		DataBundles.setStringValue(portIn1, string);
+		assertTrue(Files.exists(portIn1));
+		assertEquals(string, DataBundles.getStringValue(portIn1));
 	}
-
-	
-	
-	@Test
-	public void isError() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
-		Path inputs = DataBundles.getInputs(dataBundle);
-		Path portIn1 = DataBundles.getPort(inputs, "in1");
-		DataBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");		
-		
-		assertFalse(DataBundles.isList(portIn1));		
-		assertFalse(DataBundles.isValue(portIn1));
-		assertFalse(DataBundles.isMissing(portIn1));
-		assertTrue(DataBundles.isError(portIn1));		
-	}
-	
-	@Test
-	public void isMissing() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
-		Path inputs = DataBundles.getInputs(dataBundle);
-		Path portIn1 = DataBundles.getPort(inputs, "in1");
-		
-		assertFalse(DataBundles.isList(portIn1));		
-		assertFalse(DataBundles.isValue(portIn1));
-		assertFalse(DataBundles.isError(portIn1));
-		assertTrue(DataBundles.isMissing(portIn1));
-	}
-	
-
 	@Test
 	public void withExtension() throws Exception {
 		Path testDir = Files.createTempDirectory("test");
@@ -523,16 +532,6 @@ public class TestDataBundles {
 		assertEquals("file.test.many.txt", fileManyTxt.getFileName().toString());
 		
 		
-	}
-	@Test
-	public void setStringValue() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
-		Path inputs = DataBundles.getInputs(dataBundle);
-		Path portIn1 = DataBundles.getPort(inputs, "in1");
-		String string = "A string";
-		DataBundles.setStringValue(portIn1, string);
-		assertTrue(Files.exists(portIn1));
-		assertEquals(string, DataBundles.getStringValue(portIn1));
 	}
 
 }
