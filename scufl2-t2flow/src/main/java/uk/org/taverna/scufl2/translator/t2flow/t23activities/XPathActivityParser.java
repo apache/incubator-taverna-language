@@ -75,10 +75,10 @@ public class XPathActivityParser extends AbstractActivityParser {
 			configResource.setTypeURI(ACTIVITY_URI.resolve("#Config"));
 
 			String xmlDocument = xpathConfig.getXmlDocument();
-                        if (xmlDocument != null) {
-                            configResource.addPropertyAsString(
-                                            ACTIVITY_URI.resolve("#exampleXmlDocument"), xmlDocument);
-                        }
+			if (xmlDocument != null) {
+				configResource.addPropertyAsString(
+					ACTIVITY_URI.resolve("#exampleXmlDocument"), xmlDocument);
+			}
 
 			String xpathExpression = xpathConfig.getXpathExpression();
 			configResource.addPropertyAsString(

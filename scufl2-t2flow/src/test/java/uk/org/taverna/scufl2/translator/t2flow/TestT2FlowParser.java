@@ -20,7 +20,7 @@ public class TestT2FlowParser {
 
 	private static final String INTERACTION_WITH_LOOP = "/interaction-with-strange-loop.t2flow";
 	private static final String AS_T2FLOW = "/as.t2flow";
-        private static final String XPATH_WORKFLOW = "/xpath_workflow.t2flow";
+	private static final String XPATH_WORKFLOW = "/xpath_workflow.t2flow";
 	
 	@Test
 	public void readSimpleWorkflow() throws Exception {
@@ -52,8 +52,8 @@ public class TestT2FlowParser {
 		assertTrue(loopConfigs.isEmpty());		
 	}
         
-        @Test
-        public void readXPathWorkflow() throws Exception {
+	@Test
+	public void readXPathWorkflow() throws Exception {
 		URL wfResource = getClass().getResource(XPATH_WORKFLOW);
 		assertNotNull("Could not find workflow " + XPATH_WORKFLOW, wfResource);
 		T2FlowParser parser = new T2FlowParser();
@@ -61,6 +61,6 @@ public class TestT2FlowParser {
 		WorkflowBundle wfBundle = parser.parseT2Flow(wfResource.openStream());
 		Profile profile = wfBundle.getMainProfile();
 		assertEquals(1, wfBundle.getProfiles().size());                
-        }
+	}
 	
 }
