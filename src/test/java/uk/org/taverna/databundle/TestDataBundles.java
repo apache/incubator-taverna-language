@@ -1,5 +1,6 @@
 package uk.org.taverna.databundle;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -9,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
@@ -226,6 +228,7 @@ public class TestDataBundles {
 		Path item7 = DataBundles.getListItem(list, 7);
 		assertFalse(Files.exists(item7));
 		assertFalse(DataBundles.isList(item7));
+		assertFalse(DataBundles.isError(item7));
 		assertFalse(DataBundles.isValue(item7));
 		// TODO: Is it really missing? item1337 is also missing..
 		assertTrue(DataBundles.isMissing(item7));
@@ -274,6 +277,7 @@ public class TestDataBundles {
 		DataBundles.createList(list);
 		assertTrue(DataBundles.isList(list));
 		assertFalse(DataBundles.isValue(list));
+		assertFalse(DataBundles.isError(list));
 	}
 
 	@Test
@@ -284,6 +288,7 @@ public class TestDataBundles {
 		DataBundles.setStringValue(portIn1, "Hello");
 		assertTrue(DataBundles.isValue(portIn1));
 		assertFalse(DataBundles.isList(portIn1));
+		assertFalse(DataBundles.isError(portIn1));
 	}
 
 	@Test
@@ -385,7 +390,79 @@ public class TestDataBundles {
 			assertEquals(Arrays.asList("d1", "f1"), ls(tmp));
 		}
 	}
+	
+	@Test
+	public void setError() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path portIn1 = DataBundles.getPort(inputs, "in1");
+		Path errorDoc = DataBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");		
+		assertEquals("in1.err", errorDoc.getFileName().toString());
 
+		List<String> errLines = Files.readAllLines(errorDoc, Charset.forName("UTF-8"));
+		assertEquals(6, errLines.size());
+		assertEquals("", errLines.get(0));
+		assertEquals("Something did not work", errLines.get(1));
+		assertEquals("A very", errLines.get(2));
+		assertEquals(" long", errLines.get(3));
+		assertEquals(" error", errLines.get(4));
+		assertEquals(" trace", errLines.get(5));
+	}
+	
+	@Test
+	public void isError() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path portIn1 = DataBundles.getPort(inputs, "in1");
+		DataBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");		
+		
+		assertFalse(DataBundles.isList(portIn1));		
+		assertFalse(DataBundles.isValue(portIn1));
+		assertFalse(DataBundles.isMissing(portIn1));
+		assertTrue(DataBundles.isError(portIn1));		
+	}
+	
+	@Test
+	public void isMissing() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path portIn1 = DataBundles.getPort(inputs, "in1");
+		
+		assertFalse(DataBundles.isList(portIn1));		
+		assertFalse(DataBundles.isValue(portIn1));
+		assertFalse(DataBundles.isError(portIn1));
+		assertTrue(DataBundles.isMissing(portIn1));
+	}
+	
+
+	@Test
+	public void withExtension() throws Exception {
+		Path testDir = Files.createTempDirectory("test");
+		Path fileTxt = testDir.resolve("file.txt");
+		assertEquals("file.txt", fileTxt.getFileName().toString()); // better be!
+		
+		Path fileHtml = DataBundles.withExtension(fileTxt, ".html");
+		assertEquals(fileTxt.getParent(), fileHtml.getParent());
+		assertEquals("file.html", fileHtml.getFileName().toString()); 
+		
+		Path fileDot = DataBundles.withExtension(fileTxt, ".");
+		assertEquals("file.", fileDot.getFileName().toString()); 
+		
+		Path fileEmpty = DataBundles.withExtension(fileTxt, "");
+		assertEquals("file", fileEmpty.getFileName().toString()); 
+		
+		
+		Path fileDoc = DataBundles.withExtension(fileEmpty, ".doc");
+		assertEquals("file.doc", fileDoc.getFileName().toString());
+		
+		Path fileManyPdf = DataBundles.withExtension(fileTxt, ".test.many.pdf");
+		assertEquals("file.test.many.pdf", fileManyPdf.getFileName().toString()); 
+		
+		Path fileManyTxt = DataBundles.withExtension(fileManyPdf, ".txt");
+		assertEquals("file.test.many.txt", fileManyTxt.getFileName().toString());
+		
+		
+	}
 	@Test
 	public void setStringValue() throws Exception {
 		DataBundle dataBundle = DataBundles.createDataBundle();

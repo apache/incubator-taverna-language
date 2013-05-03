@@ -37,6 +37,7 @@ import java.util.zip.ZipOutputStream;
  */
 public class DataBundles {
 
+	private static final String ERR = ".err";
 	private static final String APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP = "application/vnd.wf4ever.robundle+zip";
 	private static final String INPUTS = "inputs";
 	private static final String OUTPUTS = "outputs";
@@ -187,6 +188,18 @@ public class DataBundles {
 	public static boolean isValue(Path path) {
 		return Files.isRegularFile(path);
 	}
+	
+	public static boolean isError(Path path) {
+		return Files.isRegularFile(withExtension(path, ERR));
+	}
+
+
+	public static boolean isMissing(Path item) {
+	//		if (! Files.exists(item.getParent())) {
+	//			throw new IllegalStateException("Invalid path");
+	//		}
+			return ! Files.exists(item) && ! isError(item);
+		}
 
 	public static Path newListItem(Path list) throws IOException {
 		long max = -1L;
@@ -288,10 +301,32 @@ public class DataBundles {
 		return list.resolve(Long.toString(position));
 	}
 
-	public static boolean isMissing(Path item) {
-//		if (! Files.exists(item.getParent())) {
-//			throw new IllegalStateException("Invalid path");
-//		}
-		return ! Files.exists(item);
+	public static Path setError(Path errorPath, String message, String trace, Path... causedBy) throws IOException {
+		errorPath = withExtension(errorPath, ERR);
+		// Silly \n-based format
+		List<String> errorDoc = new ArrayList<>();
+		for (Path cause : causedBy) {
+			Path relCause = errorPath.relativize(cause);
+			errorDoc.add(relCause.toString());			
+		}
+		errorDoc.add(""); // Our magic separator
+		errorDoc.add(message);
+		errorDoc.add(trace);
+		Files.write(errorPath, errorDoc, UTF8, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
+		return errorPath;
 	}
+
+	protected static Path withExtension(Path path, String extension) {
+		if (! extension.isEmpty() && ! extension.startsWith(".")) {
+			throw new IllegalArgumentException("Extension must be empty or start with .");
+		}
+		String p = path.getFileName().toString();
+		if (! extension.isEmpty() && p.toLowerCase().endsWith(extension.toLowerCase())) {
+			return path;
+		}		
+		// Everything after the last . - or just the end
+		String newP = p.replaceFirst("(\\.[^.]*)?$", extension);
+		return path.resolveSibling(newP);
+	}
+
 }
