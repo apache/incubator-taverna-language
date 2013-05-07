@@ -1,5 +1,6 @@
 package uk.org.taverna.databundle;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -9,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystem;
@@ -321,6 +323,7 @@ public class TestDataBundles {
 		assertFalse(DataBundles.isList(portIn1));		
 		assertFalse(DataBundles.isValue(portIn1));
 		assertFalse(DataBundles.isMissing(portIn1));
+		assertFalse(DataBundles.isReference(portIn1));
 		assertTrue(DataBundles.isError(portIn1));		
 	}
 
@@ -333,6 +336,8 @@ public class TestDataBundles {
 		assertTrue(DataBundles.isList(list));
 		assertFalse(DataBundles.isValue(list));
 		assertFalse(DataBundles.isError(list));
+		assertFalse(DataBundles.isReference(list));
+		assertFalse(DataBundles.isMissing(list));
 	}
 	
 	@Test
@@ -345,6 +350,7 @@ public class TestDataBundles {
 		assertFalse(DataBundles.isValue(portIn1));
 		assertFalse(DataBundles.isError(portIn1));
 		assertTrue(DataBundles.isMissing(portIn1));
+		assertFalse(DataBundles.isReference(portIn1));
 	}
 
 	@Test
@@ -356,6 +362,7 @@ public class TestDataBundles {
 		assertTrue(DataBundles.isValue(portIn1));
 		assertFalse(DataBundles.isList(portIn1));
 		assertFalse(DataBundles.isError(portIn1));
+		assertFalse(DataBundles.isReference(portIn1));
 	}
 
 	@Test
@@ -547,6 +554,71 @@ public class TestDataBundles {
 		assertEquals(null, DataBundles.getStringValue(null));
 	}
 	
+	@Test
+	public void setReference() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path portIn1 = DataBundles.getPort(inputs, "in1");
+		URI uri = URI.create("http://example.org/test");		
+		Path f = DataBundles.setReference(portIn1, uri);
+		assertEquals("in1.url", f.getFileName().toString());
+		assertEquals(inputs, f.getParent());
+		assertFalse(Files.exists(portIn1));		
+		
+		List<String> uriLines = Files.readAllLines(f, Charset.forName("ASCII"));
+		assertEquals(3, uriLines.size());
+		assertEquals("[InternetShortcut]", uriLines.get(0));
+		assertEquals("URL=http://example.org/test", uriLines.get(1));
+		assertEquals("", uriLines.get(2));				
+	}
+	
+	@Test
+	public void getReference() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path portIn1 = DataBundles.getPort(inputs, "in1");
+		DataBundles.setReference(portIn1, URI.create("http://example.org/test"));
+		URI uri = DataBundles.getReference(portIn1);
+		assertEquals("http://example.org/test", uri.toASCIIString());
+	}
+	
+	@Test
+	public void isReference() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path portIn1 = DataBundles.getPort(inputs, "in1");
+		DataBundles.setReference(portIn1, URI.create("http://example.org/test"));
+		assertTrue(DataBundles.isReference(portIn1));
+		assertFalse(DataBundles.isError(portIn1));		
+		assertFalse(DataBundles.isList(portIn1));
+		assertFalse(DataBundles.isMissing(portIn1));
+		assertFalse(DataBundles.isValue(portIn1));
+	}
+	
+	
+	@Test
+	public void getReferenceFromWin8() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path win8 = inputs.resolve("win8.url");
+		Files.copy(getClass().getResourceAsStream("/win8.url"), win8);
+				
+		URI uri = DataBundles.getReference(DataBundles.getPort(inputs, "win8"));
+		assertEquals("http://example.com/made-in-windows-8", uri.toASCIIString());
+	}
+	
+	@Test
+	public void setReferenceIri() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path portIn1 = DataBundles.getPort(inputs, "in1");		
+		URI uri = new URI("http", "xn--bcher-kva.example.com", "/s\u00F8iland/\u2603snowman", "\u2605star");
+		Path f = DataBundles.setReference(portIn1, uri);
+		List<String> uriLines = Files.readAllLines(f, Charset.forName("ASCII"));
+		// TODO: Double-check that this is actually correct escaping :)
+		assertEquals("URL=http://xn--bcher-kva.example.com/s%C3%B8iland/%E2%98%83snowman#%E2%98%85star", 
+				uriLines.get(1));
+	}
 
 	@Test
 	public void setStringValue() throws Exception {
