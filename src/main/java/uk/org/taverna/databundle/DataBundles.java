@@ -3,6 +3,8 @@ package uk.org.taverna.databundle;
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
@@ -16,6 +18,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +28,9 @@ import java.util.TreeMap;
 import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.HierarchicalINIConfiguration;
 
 /**
  * Utility functions for dealing with data bundles.
@@ -37,6 +43,11 @@ import java.util.zip.ZipOutputStream;
  */
 public class DataBundles {
 
+	private static final String INI_URL = "URL";
+	private static final String INI_INTERNET_SHORTCUT = "InternetShortcut";
+	private static final Charset ASCII = Charset.forName("ASCII");
+	private static final Charset LATIN1 = Charset.forName("Latin1");
+	private static final String URL = ".url";
 	private static final String APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP = "application/vnd.wf4ever.robundle+zip";
 	private static final String ERR = ".err";
 	private static final String INPUTS = "inputs";
@@ -371,6 +382,77 @@ public class DataBundles {
 		// Everything after the last . - or just the end
 		String newP = p.replaceFirst("(\\.[^.]*)?$", extension);
 		return path.resolveSibling(newP);
+	}
+
+	public static Path setReference(Path path, URI ref) throws IOException {
+		path = withExtension(path, ".url");
+
+		// We'll save a IE-like .url "Internet shortcut" in INI format.
+		
+		
+//		HierarchicalINIConfiguration ini = new HierarchicalINIConfiguration();
+//		ini.getSection(INI_INTERNET_SHORTCUT).addProperty(INI_URL,
+//				ref.toASCIIString());
+
+//		Ini ini = new Wini();
+//		ini.getConfig().setLineSeparator("\r\n");
+//		ini.put(INI_INTERNET_SHORTCUT, INI_URL, ref.toASCIIString());		 
+
+		/*
+		 * Neither of the above create a .url that is compatible with Safari on
+		 * Mac OS (which expects "URL=" rather than "URL = ", so instead we make
+		 * it manually with MessageFormat.format:
+		 */
+		
+		// Includes a terminating double line-feed -- which Safari might also need
+		String iniTmpl = "[{0}]\r\n{1}={2}\r\n\r\n";
+		String ini = MessageFormat.format(iniTmpl, 
+				INI_INTERNET_SHORTCUT, INI_URL, ref.toASCIIString());
+		
+		
+		
+		// NOTE: We use Latin1 here, but because of 
+		try (BufferedWriter w = Files
+				.newBufferedWriter(path, ASCII,
+						StandardOpenOption.TRUNCATE_EXISTING,
+						StandardOpenOption.CREATE)) {			
+			// ini.save(w);
+			// ini.store(w);
+			w.write(ini);
+//		} catch (ConfigurationException e) {
+//			throw new IOException("Can't write shortcut to " + path, e);
+		}
+		return path;
+	}
+
+	public static boolean isReference(Path path) {
+		return Files.isRegularFile(withExtension(path, URL));
+	}
+
+	public static URI getReference(Path path) throws IOException {
+		if (path == null || isMissing(path)) {
+			return null;
+		}	
+		if (! isReference(path)) {
+			throw new IllegalArgumentException("Not a reference: " + path);
+		}
+		// Note: Latin1 is chosen here because it would not bail out on 
+		// "strange" characters. We actually parse the URL as ASCII
+		path = withExtension(path, ".url");
+		try (BufferedReader r = Files.newBufferedReader(path, LATIN1)) {
+			HierarchicalINIConfiguration ini = new HierarchicalINIConfiguration();
+			ini.load(r);
+			
+			String urlStr = ini.getSection(INI_INTERNET_SHORTCUT).getString(INI_URL);
+			
+//			String urlStr = ini.get(INI_INTERNET_SHORTCUT, INI_URL);
+			if (urlStr == null) {
+				throw new IOException("Invalid/unsupported URL format: " + path);
+			}
+			return URI.create(urlStr);
+		} catch (ConfigurationException e) {
+			throw new IOException("Can't parse reference: " + path, e);
+		}
 	}
 
 }
