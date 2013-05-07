@@ -1,10 +1,11 @@
 package uk.org.taverna.databundle;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.Desktop;
 import java.io.OutputStream;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -93,6 +94,17 @@ public class TestExample {
 			ErrorDocument error = DataBundles.getError(out2);
 			System.out.println("Error: " + error.getMessage());
 		}
+		
+		// Representing references
+		URI ref = URI.create("http://example.com/external.txt");
+		Path out3 = DataBundles.getPort(outputs, "out3");
+		System.out.println(DataBundles.setReference(out3, ref));
+		if (DataBundles.isReference(out3)) {
+			URI resolved = DataBundles.getReference(out3);
+			System.out.println(resolved);
+		}
+
+		
 		
 		
 		// Saving a data bundle:
