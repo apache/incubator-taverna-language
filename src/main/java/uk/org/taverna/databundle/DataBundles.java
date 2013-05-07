@@ -264,7 +264,7 @@ public class DataBundles {
 	//		if (! Files.exists(item.getParent())) {
 	//			throw new IllegalStateException("Invalid path");
 	//		}
-			return ! Files.exists(item) && ! isError(item);
+			return ! Files.exists(item) && ! isError(item) && !isReference(item);
 		}
 
 	public static boolean isValue(Path path) {
