@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-public class TestROBundles {
+public class TestBundles {
 	protected void checkSignature(Path zip) throws IOException {
 		String MEDIATYPE = "application/vnd.wf4ever.robundle+zip";
 		// Check position 30++ according to RO Bundle specification
