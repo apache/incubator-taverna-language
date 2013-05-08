@@ -2,30 +2,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>net.sf.taverna</groupId>
-        <artifactId>parent</artifactId>
-        <version>0.2.2011-02-17</version>
-    </parent>
     <prerequisites>
         <maven>2.2.1</maven>
     </prerequisites>
-    <groupId>uk.org.taverna.databundle</groupId>
-    <artifactId>databundle</artifactId>
+    <groupId>org.purl.wf4ever.robundle</groupId>
+    <artifactId>robundle</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Databundle API</name>
-    <description>API for dealing with Data Bundles</description>
+    <name>RO Bundle API</name>
+    <description>API for dealing with RO Bundles</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <scufl2.version>0.11.0</scufl2.version>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>uk.org.taverna.scufl2</groupId>
-            <artifactId>scufl2-rdfxml</artifactId>
-            <version>0.11.0</version>
-        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -52,6 +42,28 @@
         </dependency>
     </dependencies>
 
+    <scm>
+        <connection>scm:git:git://github.com/wf4ever/robundle.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/wf4ever/robundle.git</developerConnection>
+        <url>https://github.com/wf4ever/robundle/</url>
+    </scm>
+    <licenses>
+        <license>
+            <name>MIT license</name>
+            <url>http://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/wf4ever/robundle/issues</url>
+    </issueManagement>
+    <ciManagement>
+        <system>jenkins</system>
+        <url>http://build.mygrid.org.uk/ci/job/robundle/</url>
+    </ciManagement>
+
+
     <build>
         <plugins>
             <plugin>
@@ -68,6 +80,46 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jar</goal>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.7.1</version>
+                <configuration>
+                    <skip>false</skip>
+                    <systemProperties>
+                        <property>
+                            <name>java.awt.headless</name>
+                            <value>true</value>
+                        </property>
+                    </systemProperties>
+                </configuration>
+            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
@@ -79,29 +131,5 @@
             </plugins>
         </pluginManagement>
     </build>
-
-    <scm>
-        <connection>scm:git:git://github.com/myGrid/databundle.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/myGrid/databundle.git</developerConnection>
-        <url>https://github.com/myGrid/databundle/</url>
-    </scm>
-    <licenses>
-        <license>
-            <name>GNU Lesser General Public License 2.1</name>
-            <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-    <repositories>
-        <repository>
-            <id>mygrid-repository</id>
-            <name>myGrid Repository</name>
-            <url>http://www.mygrid.org.uk/maven/repository</url>
-            <releases />
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 
 </project>
