@@ -43,7 +43,7 @@ public class TestROBundles {
 
 	@Test
 	public void close() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createBundle();
 		assertTrue(Files.exists(dataBundle.getSource()));
 		assertTrue(dataBundle.getRoot().getFileSystem().isOpen());
 
@@ -55,37 +55,37 @@ public class TestROBundles {
 
 	@Test
 	public void closeAndOpenDataBundle() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path zip = ROBundles.closeDataBundle(dataBundle);
-		ROBundles.openDataBundle(zip);
+		ROBundle dataBundle = ROBundles.createBundle();
+		Path zip = ROBundles.closeBundle(dataBundle);
+		ROBundles.openBundle(zip);
 	}
 
 	@Test
 	public void closeAndOpenDataBundleWithPortValue() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createBundle();
 		Path hello = dataBundle.getRoot().resolve("hello.txt");
 		ROBundles.setStringValue(hello, "Hello");
-		Path zip = ROBundles.closeDataBundle(dataBundle);
+		Path zip = ROBundles.closeBundle(dataBundle);
 
-		ROBundle newDataBundle = ROBundles.openDataBundle(zip);
+		ROBundle newDataBundle = ROBundles.openBundle(zip);
 		Path newHello = newDataBundle.getRoot().resolve("hello.txt");		
 		assertEquals("Hello", ROBundles.getStringValue(newHello));
 	}
 
 	@Test
 	public void closeAndSaveDataBundle() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createBundle();
 		Path destination = Files.createTempFile("test", ".zip");
 		Files.delete(destination);
 		assertFalse(Files.exists(destination));
-		ROBundles.closeAndSaveDataBundle(dataBundle, destination);
+		ROBundles.closeAndSaveBundle(dataBundle, destination);
 		assertTrue(Files.exists(destination));
 	}
 
 	@Test
 	public void closeDataBundle() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path zip = ROBundles.closeDataBundle(dataBundle);
+		ROBundle dataBundle = ROBundles.createBundle();
+		Path zip = ROBundles.closeBundle(dataBundle);
 		assertTrue(Files.isReadable(zip));
 		assertEquals(zip, dataBundle.getSource());
 		checkSignature(zip);
@@ -93,7 +93,7 @@ public class TestROBundles {
 
 	@Test
 	public void createDataBundle() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createBundle();
 		assertTrue(Files.isDirectory(dataBundle.getRoot()));
 		// TODO: Should this instead return a FileSystem so we can close() it?
 	}
@@ -120,7 +120,7 @@ public class TestROBundles {
 
 	@Test
 	public void getReference() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createBundle();
 		Path hello = dataBundle.getRoot().resolve("hello");
 		ROBundles.setReference(hello, URI.create("http://example.org/test"));
 		URI uri = ROBundles.getReference(hello);
@@ -129,7 +129,7 @@ public class TestROBundles {
 
 	@Test
 	public void getReferenceFromWin8() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createBundle();
 		Path win8 = dataBundle.getRoot().resolve("win8");
 		Path win8Url = dataBundle.getRoot().resolve("win8.url");
 		Files.copy(getClass().getResourceAsStream("/win8.url"), win8Url);
@@ -140,7 +140,7 @@ public class TestROBundles {
 
 	@Test
 	public void getStringValue() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createBundle();
 		Path hello = dataBundle.getRoot().resolve("hello");
 		String string = "A string";
 		ROBundles.setStringValue(hello, string);
@@ -157,7 +157,7 @@ public class TestROBundles {
 
 	@Test
 	public void isMissing() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createBundle();
 		Path missing = dataBundle.getRoot().resolve("missing");		
 		assertFalse(ROBundles.isValue(missing));
 		assertTrue(ROBundles.isMissing(missing));
@@ -166,7 +166,7 @@ public class TestROBundles {
 	
 	@Test
 	public void isReference() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createBundle();
 		Path ref = dataBundle.getRoot().resolve("ref");		
 		ROBundles.setReference(ref, URI.create("http://example.org/test"));
 		assertTrue(ROBundles.isReference(ref));
@@ -176,7 +176,7 @@ public class TestROBundles {
 	
 	@Test
 	public void isValue() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createBundle();
 		Path hello = dataBundle.getRoot().resolve("hello");		
 		ROBundles.setStringValue(hello, "Hello");
 		assertTrue(ROBundles.isValue(hello));
@@ -203,7 +203,7 @@ public class TestROBundles {
 		Files.createFile(f1);
 		assertFalse(isEmpty(tmp));
 
-		ROBundle db = ROBundles.createDataBundle();
+		ROBundle db = ROBundles.createBundle();
 		Path f2 = db.getRoot().resolve("f2");
 		ROBundles.safeMove(f1, f2);
 		assertTrue(isEmpty(tmp));
@@ -229,7 +229,7 @@ public class TestROBundles {
 	
 	@Test
 	public void setReference() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createBundle();
 		
 		Path ref = dataBundle.getRoot().resolve("ref");		
 		ROBundles.setReference(ref, URI.create("http://example.org/test"));
@@ -249,7 +249,7 @@ public class TestROBundles {
 	
 	@Test
 	public void setReferenceIri() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createBundle();
 		Path ref = dataBundle.getRoot().resolve("ref");		
 		URI uri = new URI("http", "xn--bcher-kva.example.com", "/s\u00F8iland/\u2603snowman", "\u2605star");
 		Path f = ROBundles.setReference(ref, uri);
@@ -261,7 +261,7 @@ public class TestROBundles {
 
 	@Test
 	public void setStringValue() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createBundle();
 		Path ref = dataBundle.getRoot().resolve("ref");		
 		String string = "A string";
 		ROBundles.setStringValue(ref, string);

@@ -1,7 +1,6 @@
 package org.purl.wf4ever.robundle;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.awt.Desktop;
 import java.io.OutputStream;
@@ -11,21 +10,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
-import java.util.List;
-import java.util.NavigableMap;
 
 import org.junit.Test;
-import org.purl.wf4ever.robundle.ROBundle;
-import org.purl.wf4ever.robundle.ROBundles;
 
 public class TestExample {
 	@Test
 	public void example() throws Exception {
-		// Create a new (temporary) data bundle
-		ROBundle dataBundle = ROBundles.createDataBundle();
+		// Create a new (temporary) RO bundle
+		ROBundle bundle = ROBundles.createBundle();
 
 		// Get the inputs
-		Path inputs = dataBundle.getRoot().resolve("inputs");
+		Path inputs = bundle.getRoot().resolve("inputs");
 		Files.createDirectory(inputs);
 
 		// Get an input port:
@@ -54,21 +49,21 @@ public class TestExample {
 		Files.copy(in1, localFile, StandardCopyOption.REPLACE_EXISTING);
 		System.out.println("Written to: " + localFile);
 
-		Files.copy(localFile, dataBundle.getRoot().resolve("out1"));
+		Files.copy(localFile, bundle.getRoot().resolve("out1"));
 
 		// Representing references
 		URI ref = URI.create("http://example.com/external.txt");
-		Path out3 = dataBundle.getRoot().resolve("out3");
+		Path out3 = bundle.getRoot().resolve("out3");
 		System.out.println(ROBundles.setReference(out3, ref));
 		if (ROBundles.isReference(out3)) {
 			URI resolved = ROBundles.getReference(out3);
 			System.out.println(resolved);
 		}
 
-		// Saving a data bundle:
-		Path zip = Files.createTempFile("databundle", ".zip");
-		ROBundles.closeAndSaveDataBundle(dataBundle, zip);
-		// NOTE: From now dataBundle and its Path's are CLOSED
+		// Saving a bundle:
+		Path zip = Files.createTempFile("bundle", ".zip");
+		ROBundles.closeAndSaveBundle(bundle, zip);
+		// NOTE: From now "bundle" and its Path's are CLOSED
 		// and can no longer be accessed
 
 		System.out.println("Saved to " + zip);
@@ -77,9 +72,9 @@ public class TestExample {
 			Desktop.getDesktop().open(zip.toFile());
 		}
 
-		// Loading a data bundle back from disk
-		try (ROBundle dataBundle2 = ROBundles.openDataBundle(zip)) {
-			assertEquals(zip, dataBundle2.getSource());
+		// Loading a bundle back from disk
+		try (ROBundle bundle2 = ROBundles.openBundle(zip)) {
+			assertEquals(zip, bundle2.getSource());
 			
 		}
 	}

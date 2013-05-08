@@ -11,20 +11,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.AtomicMoveNotSupportedException;
-import java.nio.file.DirectoryIteratorException;
-import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.NavigableMap;
-import java.util.TreeMap;
 import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -33,10 +27,10 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalINIConfiguration;
 
 /**
- * Utility functions for dealing with data bundles.
+ * Utility functions for dealing with RO bundles.
  * <p>
  * The style of using this class is similar to that of {@link Files}. In fact, a
- * data bundle is implemented as a set of {@link Path}s.
+ * RO bundle is implemented as a set of {@link Path}s.
  * 
  * @author Stian Soiland-Reyes
  * 
@@ -47,9 +41,7 @@ public class ROBundles {
 	private static final Charset ASCII = Charset.forName("ASCII");
 	private static final String INI_INTERNET_SHORTCUT = "InternetShortcut";
 	private static final String INI_URL = "URL";
-	private static final String INPUTS = "inputs";
 	private static final Charset LATIN1 = Charset.forName("Latin1");
-	private static final String OUTPUTS = "outputs";
 	private static final String URL = ".url";
 	private static final Charset UTF8 = Charset.forName("UTF-8");
 
@@ -73,29 +65,29 @@ public class ROBundles {
 		out.closeEntry();
 	}
 
-	public static void closeAndSaveDataBundle(ROBundle dataBundle,
+	public static void closeAndSaveBundle(ROBundle bundle,
 			Path destination) throws IOException {
-		Path zipPath = closeDataBundle(dataBundle);
+		Path zipPath = closeBundle(bundle);
 		// Files.move(zipPath, destination);
 		safeMove(zipPath, destination);
 	}
 
-	public static Path closeDataBundle(ROBundle dataBundle)
+	public static Path closeBundle(ROBundle bundle)
 			throws IOException {
-		Path path = dataBundle.getSource();
-		dataBundle.close(false);
+		Path path = bundle.getSource();
+		bundle.close(false);
 		return path;
 	}
 
-	public static ROBundle createDataBundle() throws IOException {
+	public static ROBundle createBundle() throws IOException {
 		// Create ZIP file as
 		// http://docs.oracle.com/javase/7/docs/technotes/guides/io/fsp/zipfilesystemprovider.html
 
-		Path dataBundle = Files.createTempFile("databundle", ".zip");		
-		FileSystem fs = createFSfromZip(dataBundle);
-		// FileSystem fs = createFSfromJar(dataBundle);
+		Path bundle = Files.createTempFile("robundle", ".zip");		
+		FileSystem fs = createFSfromZip(bundle);
+		// FileSystem fs = createFSfromJar(bundle);
 		return new ROBundle(fs.getRootDirectories().iterator().next(), true);
-		// return Files.createTempDirectory("databundle");
+		// return Files.createTempDirectory("bundle");
 	}
 
 	protected static FileSystem createFSfromJar(Path path) throws IOException {
@@ -111,14 +103,14 @@ public class ROBundles {
 		return FileSystems.newFileSystem(uri, env);
 	}
 
-	protected static FileSystem createFSfromZip(Path dataBundle)
+	protected static FileSystem createFSfromZip(Path bundle)
 			throws FileNotFoundException, IOException {
 	
-		try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(dataBundle, 
+		try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(bundle, 
 				StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING))) {
 			addMimeTypeToZip(out);
 		}
-		return FileSystems.newFileSystem(dataBundle, null);
+		return FileSystems.newFileSystem(bundle, null);
 	}
 
 	protected static String filenameWithoutExtension(Path entry) {
@@ -182,7 +174,7 @@ public class ROBundles {
 		return Files.isRegularFile(path);
 	}
 
-	public static ROBundle openDataBundle(Path zip) throws IOException {
+	public static ROBundle openBundle(Path zip) throws IOException {
 		FileSystem fs = FileSystems.newFileSystem(zip, null);
 		return new ROBundle(fs.getRootDirectories().iterator().next(), false);
 	}
