@@ -26,7 +26,7 @@ import org.purl.wf4ever.robundle.ROBundle;
 import org.purl.wf4ever.robundle.ROBundles;
 import org.purl.wf4ever.robundle.ErrorDocument;
 
-public class TestDataBundles {
+public class TestROBundles {
 	protected void checkSignature(Path zip) throws IOException {
 		String MEDIATYPE = "application/vnd.wf4ever.robundle+zip";
 		// Check position 30++ according to RO Bundle specification
