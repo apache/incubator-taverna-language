@@ -35,7 +35,7 @@ import org.apache.commons.configuration.HierarchicalINIConfiguration;
  * @author Stian Soiland-Reyes
  * 
  */
-public class ROBundles {
+public class Bundles {
 
 	private static final String APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP = "application/vnd.wf4ever.robundle+zip";
 	private static final Charset ASCII = Charset.forName("ASCII");

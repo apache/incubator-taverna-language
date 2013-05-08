@@ -39,7 +39,7 @@ public class TestROBundles {
 
 	@Test
 	public void close() throws Exception {
-		Bundle bundle = ROBundles.createBundle();
+		Bundle bundle = Bundles.createBundle();
 		assertTrue(Files.exists(bundle.getSource()));
 		assertTrue(bundle.getRoot().getFileSystem().isOpen());
 
@@ -51,37 +51,37 @@ public class TestROBundles {
 
 	@Test
 	public void closeAndOpenBundle() throws Exception {
-		Bundle bundle = ROBundles.createBundle();
-		Path zip = ROBundles.closeBundle(bundle);
-		ROBundles.openBundle(zip);
+		Bundle bundle = Bundles.createBundle();
+		Path zip = Bundles.closeBundle(bundle);
+		Bundles.openBundle(zip);
 	}
 
 	@Test
 	public void closeAndOpenBundleWithPortValue() throws Exception {
-		Bundle bundle = ROBundles.createBundle();
+		Bundle bundle = Bundles.createBundle();
 		Path hello = bundle.getRoot().resolve("hello.txt");
-		ROBundles.setStringValue(hello, "Hello");
-		Path zip = ROBundles.closeBundle(bundle);
+		Bundles.setStringValue(hello, "Hello");
+		Path zip = Bundles.closeBundle(bundle);
 
-		Bundle newBundle = ROBundles.openBundle(zip);
+		Bundle newBundle = Bundles.openBundle(zip);
 		Path newHello = newBundle.getRoot().resolve("hello.txt");		
-		assertEquals("Hello", ROBundles.getStringValue(newHello));
+		assertEquals("Hello", Bundles.getStringValue(newHello));
 	}
 
 	@Test
 	public void closeAndSaveBundle() throws Exception {
-		Bundle bundle = ROBundles.createBundle();
+		Bundle bundle = Bundles.createBundle();
 		Path destination = Files.createTempFile("test", ".zip");
 		Files.delete(destination);
 		assertFalse(Files.exists(destination));
-		ROBundles.closeAndSaveBundle(bundle, destination);
+		Bundles.closeAndSaveBundle(bundle, destination);
 		assertTrue(Files.exists(destination));
 	}
 
 	@Test
 	public void closeBundle() throws Exception {
-		Bundle bundle = ROBundles.createBundle();
-		Path zip = ROBundles.closeBundle(bundle);
+		Bundle bundle = Bundles.createBundle();
+		Path zip = Bundles.closeBundle(bundle);
 		assertTrue(Files.isReadable(zip));
 		assertEquals(zip, bundle.getSource());
 		checkSignature(zip);
@@ -89,7 +89,7 @@ public class TestROBundles {
 
 	@Test
 	public void createBundle() throws Exception {
-		Bundle bundle = ROBundles.createBundle();
+		Bundle bundle = Bundles.createBundle();
 		assertTrue(Files.isDirectory(bundle.getRoot()));
 		// TODO: Should this instead return a FileSystem so we can close() it?
 	}
@@ -98,7 +98,7 @@ public class TestROBundles {
 	public void createFSfromJar() throws Exception {
 		Path path = Files.createTempFile("test.zip", null);
 		Files.delete(path);
-		try (FileSystem fs = ROBundles.createFSfromJar(path)) {
+		try (FileSystem fs = Bundles.createFSfromJar(path)) {
 			assertNotSame(fs, path.getFileSystem());
 		}
 		assertTrue(Files.exists(path));
@@ -108,7 +108,7 @@ public class TestROBundles {
 	public void createFSfromZip() throws Exception {
 		Path path = Files.createTempFile("test", null);
 		Files.delete(path);
-		try (FileSystem fs = ROBundles.createFSfromZip(path)) {
+		try (FileSystem fs = Bundles.createFSfromZip(path)) {
 			assertNotSame(fs, path.getFileSystem());
 		}
 		assertTrue(Files.exists(path));
@@ -116,32 +116,32 @@ public class TestROBundles {
 
 	@Test
 	public void getReference() throws Exception {
-		Bundle bundle = ROBundles.createBundle();
+		Bundle bundle = Bundles.createBundle();
 		Path hello = bundle.getRoot().resolve("hello");
-		ROBundles.setReference(hello, URI.create("http://example.org/test"));
-		URI uri = ROBundles.getReference(hello);
+		Bundles.setReference(hello, URI.create("http://example.org/test"));
+		URI uri = Bundles.getReference(hello);
 		assertEquals("http://example.org/test", uri.toASCIIString());
 	}
 
 	@Test
 	public void getReferenceFromWin8() throws Exception {
-		Bundle bundle = ROBundles.createBundle();
+		Bundle bundle = Bundles.createBundle();
 		Path win8 = bundle.getRoot().resolve("win8");
 		Path win8Url = bundle.getRoot().resolve("win8.url");
 		Files.copy(getClass().getResourceAsStream("/win8.url"), win8Url);
 				
-		URI uri = ROBundles.getReference(win8);
+		URI uri = Bundles.getReference(win8);
 		assertEquals("http://example.com/made-in-windows-8", uri.toASCIIString());
 	}
 
 	@Test
 	public void getStringValue() throws Exception {
-		Bundle bundle = ROBundles.createBundle();
+		Bundle bundle = Bundles.createBundle();
 		Path hello = bundle.getRoot().resolve("hello");
 		String string = "A string";
-		ROBundles.setStringValue(hello, string);
-		assertEquals(string, ROBundles.getStringValue(hello));	
-		assertEquals(null, ROBundles.getStringValue(null));
+		Bundles.setStringValue(hello, string);
+		assertEquals(string, Bundles.getStringValue(hello));	
+		assertEquals(null, Bundles.getStringValue(null));
 	}
 
 	protected boolean isEmpty(Path path) throws IOException {
@@ -153,30 +153,30 @@ public class TestROBundles {
 
 	@Test
 	public void isMissing() throws Exception {
-		Bundle bundle = ROBundles.createBundle();
+		Bundle bundle = Bundles.createBundle();
 		Path missing = bundle.getRoot().resolve("missing");		
-		assertFalse(ROBundles.isValue(missing));
-		assertTrue(ROBundles.isMissing(missing));
-		assertFalse(ROBundles.isReference(missing));
+		assertFalse(Bundles.isValue(missing));
+		assertTrue(Bundles.isMissing(missing));
+		assertFalse(Bundles.isReference(missing));
 	}
 	
 	@Test
 	public void isReference() throws Exception {
-		Bundle bundle = ROBundles.createBundle();
+		Bundle bundle = Bundles.createBundle();
 		Path ref = bundle.getRoot().resolve("ref");		
-		ROBundles.setReference(ref, URI.create("http://example.org/test"));
-		assertTrue(ROBundles.isReference(ref));
-		assertFalse(ROBundles.isMissing(ref));
-		assertFalse(ROBundles.isValue(ref));
+		Bundles.setReference(ref, URI.create("http://example.org/test"));
+		assertTrue(Bundles.isReference(ref));
+		assertFalse(Bundles.isMissing(ref));
+		assertFalse(Bundles.isValue(ref));
 	}
 	
 	@Test
 	public void isValue() throws Exception {
-		Bundle bundle = ROBundles.createBundle();
+		Bundle bundle = Bundles.createBundle();
 		Path hello = bundle.getRoot().resolve("hello");		
-		ROBundles.setStringValue(hello, "Hello");
-		assertTrue(ROBundles.isValue(hello));
-		assertFalse(ROBundles.isReference(hello));
+		Bundles.setStringValue(hello, "Hello");
+		assertTrue(Bundles.isValue(hello));
+		assertFalse(Bundles.isReference(hello));
 	}
 
 
@@ -199,9 +199,9 @@ public class TestROBundles {
 		Files.createFile(f1);
 		assertFalse(isEmpty(tmp));
 
-		Bundle db = ROBundles.createBundle();
+		Bundle db = Bundles.createBundle();
 		Path f2 = db.getRoot().resolve("f2");
-		ROBundles.safeMove(f1, f2);
+		Bundles.safeMove(f1, f2);
 		assertTrue(isEmpty(tmp));
 		assertEquals(Arrays.asList("f2", "mimetype"), ls(db.getRoot()));
 
@@ -216,7 +216,7 @@ public class TestROBundles {
 		Files.createFile(f1);
 		Files.createDirectory(d1);
 		try {
-			ROBundles.safeMove(f1, d1);
+			Bundles.safeMove(f1, d1);
 		} finally {
 			assertTrue(Files.exists(f1));
 			assertEquals(Arrays.asList("d1", "f1"), ls(tmp));
@@ -225,13 +225,13 @@ public class TestROBundles {
 	
 	@Test
 	public void setReference() throws Exception {
-		Bundle bundle = ROBundles.createBundle();
+		Bundle bundle = Bundles.createBundle();
 		
 		Path ref = bundle.getRoot().resolve("ref");		
-		ROBundles.setReference(ref, URI.create("http://example.org/test"));
+		Bundles.setReference(ref, URI.create("http://example.org/test"));
 		
 		URI uri = URI.create("http://example.org/test");		
-		Path f = ROBundles.setReference(ref, uri);
+		Path f = Bundles.setReference(ref, uri);
 		assertEquals("ref.url", f.getFileName().toString());
 		assertEquals(bundle.getRoot(), f.getParent());
 		assertFalse(Files.exists(ref));		
@@ -245,10 +245,10 @@ public class TestROBundles {
 	
 	@Test
 	public void setReferenceIri() throws Exception {
-		Bundle bundle = ROBundles.createBundle();
+		Bundle bundle = Bundles.createBundle();
 		Path ref = bundle.getRoot().resolve("ref");		
 		URI uri = new URI("http", "xn--bcher-kva.example.com", "/s\u00F8iland/\u2603snowman", "\u2605star");
-		Path f = ROBundles.setReference(ref, uri);
+		Path f = Bundles.setReference(ref, uri);
 		List<String> uriLines = Files.readAllLines(f, Charset.forName("ASCII"));
 		// TODO: Double-check that this is actually correct escaping :)
 		assertEquals("URL=http://xn--bcher-kva.example.com/s%C3%B8iland/%E2%98%83snowman#%E2%98%85star", 
@@ -257,10 +257,10 @@ public class TestROBundles {
 
 	@Test
 	public void setStringValue() throws Exception {
-		Bundle bundle = ROBundles.createBundle();
+		Bundle bundle = Bundles.createBundle();
 		Path ref = bundle.getRoot().resolve("ref");		
 		String string = "A string";
-		ROBundles.setStringValue(ref, string);
+		Bundles.setStringValue(ref, string);
 		assertEquals(string, Files.readAllLines(ref, Charset.forName("UTF-8")).get(0));
 	}
 	
@@ -270,24 +270,24 @@ public class TestROBundles {
 		Path fileTxt = testDir.resolve("file.txt");
 		assertEquals("file.txt", fileTxt.getFileName().toString()); // better be!
 		
-		Path fileHtml = ROBundles.withExtension(fileTxt, ".html");
+		Path fileHtml = Bundles.withExtension(fileTxt, ".html");
 		assertEquals(fileTxt.getParent(), fileHtml.getParent());
 		assertEquals("file.html", fileHtml.getFileName().toString()); 
 		
-		Path fileDot = ROBundles.withExtension(fileTxt, ".");
+		Path fileDot = Bundles.withExtension(fileTxt, ".");
 		assertEquals("file.", fileDot.getFileName().toString()); 
 		
-		Path fileEmpty = ROBundles.withExtension(fileTxt, "");
+		Path fileEmpty = Bundles.withExtension(fileTxt, "");
 		assertEquals("file", fileEmpty.getFileName().toString()); 
 		
 		
-		Path fileDoc = ROBundles.withExtension(fileEmpty, ".doc");
+		Path fileDoc = Bundles.withExtension(fileEmpty, ".doc");
 		assertEquals("file.doc", fileDoc.getFileName().toString());
 		
-		Path fileManyPdf = ROBundles.withExtension(fileTxt, ".test.many.pdf");
+		Path fileManyPdf = Bundles.withExtension(fileTxt, ".test.many.pdf");
 		assertEquals("file.test.many.pdf", fileManyPdf.getFileName().toString()); 
 		
-		Path fileManyTxt = ROBundles.withExtension(fileManyPdf, ".txt");
+		Path fileManyTxt = Bundles.withExtension(fileManyPdf, ".txt");
 		assertEquals("file.test.many.txt", fileManyTxt.getFileName().toString());
 	}
 

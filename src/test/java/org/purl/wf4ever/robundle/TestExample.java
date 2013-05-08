@@ -17,7 +17,7 @@ public class TestExample {
 	@Test
 	public void example() throws Exception {
 		// Create a new (temporary) RO bundle
-		Bundle bundle = ROBundles.createBundle();
+		Bundle bundle = Bundles.createBundle();
 
 		// Get the inputs
 		Path inputs = bundle.getRoot().resolve("inputs");
@@ -27,11 +27,11 @@ public class TestExample {
 		Path in1 = inputs.resolve("in1");
 
 		// Setting a string value for the input port:
-		ROBundles.setStringValue(in1, "Hello");
+		Bundles.setStringValue(in1, "Hello");
 
 		// And retrieving it
-		if (ROBundles.isValue(in1)) {
-			System.out.println(ROBundles.getStringValue(in1));
+		if (Bundles.isValue(in1)) {
+			System.out.println(Bundles.getStringValue(in1));
 		}
 
 		// Or just use the regular Files methods:
@@ -54,15 +54,15 @@ public class TestExample {
 		// Representing references
 		URI ref = URI.create("http://example.com/external.txt");
 		Path out3 = bundle.getRoot().resolve("out3");
-		System.out.println(ROBundles.setReference(out3, ref));
-		if (ROBundles.isReference(out3)) {
-			URI resolved = ROBundles.getReference(out3);
+		System.out.println(Bundles.setReference(out3, ref));
+		if (Bundles.isReference(out3)) {
+			URI resolved = Bundles.getReference(out3);
 			System.out.println(resolved);
 		}
 
 		// Saving a bundle:
 		Path zip = Files.createTempFile("bundle", ".zip");
-		ROBundles.closeAndSaveBundle(bundle, zip);
+		Bundles.closeAndSaveBundle(bundle, zip);
 		// NOTE: From now "bundle" and its Path's are CLOSED
 		// and can no longer be accessed
 
@@ -73,7 +73,7 @@ public class TestExample {
 		}
 
 		// Loading a bundle back from disk
-		try (Bundle bundle2 = ROBundles.openBundle(zip)) {
+		try (Bundle bundle2 = Bundles.openBundle(zip)) {
 			assertEquals(zip, bundle2.getSource());
 			
 		}
