@@ -1,6 +1,5 @@
 package uk.org.taverna.databundle;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -25,24 +24,6 @@ import java.util.Map;
 import org.junit.Test;
 
 public class TestDataBundles {
-	@Test
-	public void getList() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
-		Path inputs = DataBundles.getInputs(dataBundle);
-		Path list = DataBundles.getPort(inputs, "in1");
-		DataBundles.createList(list);
-		for (int i = 0; i < 5; i++) {
-			Path item = DataBundles.newListItem(list);
-			DataBundles.setStringValue(item, "test" + i);
-		}
-		List<Path> paths = DataBundles.getList(list);
-		assertEquals(5, paths.size());
-		assertEquals("test0", DataBundles.getStringValue(paths.get(0)));
-		assertEquals("test4", DataBundles.getStringValue(paths.get(4)));
-		
-		assertEquals(null, DataBundles.getList(null));
-	}
-
 	protected void checkSignature(Path zip) throws IOException {
 		String MEDIATYPE = "application/vnd.wf4ever.robundle+zip";
 		// Check position 30++ according to RO Bundle specification
@@ -201,6 +182,24 @@ public class TestDataBundles {
 	}
 
 	@Test
+	public void getList() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path list = DataBundles.getPort(inputs, "in1");
+		DataBundles.createList(list);
+		for (int i = 0; i < 5; i++) {
+			Path item = DataBundles.newListItem(list);
+			DataBundles.setStringValue(item, "test" + i);
+		}
+		List<Path> paths = DataBundles.getList(list);
+		assertEquals(5, paths.size());
+		assertEquals("test0", DataBundles.getStringValue(paths.get(0)));
+		assertEquals("test4", DataBundles.getStringValue(paths.get(4)));
+		
+		assertEquals(null, DataBundles.getList(null));
+	}
+
+	@Test
 	public void getListItem() throws Exception {
 		DataBundle dataBundle = DataBundles.createDataBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
@@ -290,6 +289,38 @@ public class TestDataBundles {
 	}
 
 	@Test
+	public void getReference() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path portIn1 = DataBundles.getPort(inputs, "in1");
+		DataBundles.setReference(portIn1, URI.create("http://example.org/test"));
+		URI uri = DataBundles.getReference(portIn1);
+		assertEquals("http://example.org/test", uri.toASCIIString());
+	}
+
+	@Test
+	public void getReferenceFromWin8() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path win8 = inputs.resolve("win8.url");
+		Files.copy(getClass().getResourceAsStream("/win8.url"), win8);
+				
+		URI uri = DataBundles.getReference(DataBundles.getPort(inputs, "win8"));
+		assertEquals("http://example.com/made-in-windows-8", uri.toASCIIString());
+	}
+
+	@Test
+	public void getStringValue() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path portIn1 = DataBundles.getPort(inputs, "in1");
+		String string = "A string";
+		DataBundles.setStringValue(portIn1, string);
+		assertEquals(string, DataBundles.getStringValue(portIn1));	
+		assertEquals(null, DataBundles.getStringValue(null));
+	}
+
+	@Test
 	public void hasInputs() throws Exception {
 		DataBundle dataBundle = DataBundles.createDataBundle();
 		assertFalse(DataBundles.hasInputs(dataBundle));
@@ -306,7 +337,7 @@ public class TestDataBundles {
 		DataBundles.getOutputs(dataBundle); // create on demand
 		assertTrue(DataBundles.hasOutputs(dataBundle));
 	}
-
+	
 	protected boolean isEmpty(Path path) throws IOException {
 		try (DirectoryStream<Path> ds = Files.newDirectoryStream(path)) {
 			return !ds.iterator().hasNext();
@@ -352,7 +383,20 @@ public class TestDataBundles {
 		assertTrue(DataBundles.isMissing(portIn1));
 		assertFalse(DataBundles.isReference(portIn1));
 	}
-
+	
+	@Test
+	public void isReference() throws Exception {
+		DataBundle dataBundle = DataBundles.createDataBundle();
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path portIn1 = DataBundles.getPort(inputs, "in1");
+		DataBundles.setReference(portIn1, URI.create("http://example.org/test"));
+		assertTrue(DataBundles.isReference(portIn1));
+		assertFalse(DataBundles.isError(portIn1));		
+		assertFalse(DataBundles.isList(portIn1));
+		assertFalse(DataBundles.isMissing(portIn1));
+		assertFalse(DataBundles.isValue(portIn1));
+	}
+	
 	@Test
 	public void isValue() throws Exception {
 		DataBundle dataBundle = DataBundles.createDataBundle();
@@ -387,6 +431,8 @@ public class TestDataBundles {
 		assertEquals("Hello",DataBundles.getStringValue( 
 				DataBundles.getListItem(DataBundles.getListItem(list, 1), 0)));
 	}
+
+	
 	
 	protected List<String> ls(Path path) throws IOException {
 		List<String> paths = new ArrayList<>();
@@ -435,6 +481,7 @@ public class TestDataBundles {
 		assertTrue(item6.getFileName().toString().contains("6"));
 	}
 	
+	
 	@Test
 	public void safeMove() throws Exception {
 		Path tmp = Files.createTempDirectory("test");
@@ -449,6 +496,7 @@ public class TestDataBundles {
 		assertEquals(Arrays.asList("f2", "mimetype"), ls(db.getRoot()));
 
 	}
+	
 
 	@Test(expected = IOException.class)
 	public void safeMoveFails() throws Exception {
@@ -464,8 +512,6 @@ public class TestDataBundles {
 			assertEquals(Arrays.asList("d1", "f1"), ls(tmp));
 		}
 	}
-
-	
 	
 	@Test
 	public void setErrorArgs() throws Exception {
@@ -505,7 +551,6 @@ public class TestDataBundles {
 		assertEquals("", errLines.get(2));
 	}
 	
-	
 	@Test
 	public void setErrorObj() throws Exception {
 		DataBundle dataBundle = DataBundles.createDataBundle();
@@ -542,17 +587,6 @@ public class TestDataBundles {
 		assertEquals("", errLines.get(7));
 	}
 	
-
-	@Test
-	public void getStringValue() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
-		Path inputs = DataBundles.getInputs(dataBundle);
-		Path portIn1 = DataBundles.getPort(inputs, "in1");
-		String string = "A string";
-		DataBundles.setStringValue(portIn1, string);
-		assertEquals(string, DataBundles.getStringValue(portIn1));	
-		assertEquals(null, DataBundles.getStringValue(null));
-	}
 	
 	@Test
 	public void setReference() throws Exception {
@@ -570,41 +604,6 @@ public class TestDataBundles {
 		assertEquals("[InternetShortcut]", uriLines.get(0));
 		assertEquals("URL=http://example.org/test", uriLines.get(1));
 		assertEquals("", uriLines.get(2));				
-	}
-	
-	@Test
-	public void getReference() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
-		Path inputs = DataBundles.getInputs(dataBundle);
-		Path portIn1 = DataBundles.getPort(inputs, "in1");
-		DataBundles.setReference(portIn1, URI.create("http://example.org/test"));
-		URI uri = DataBundles.getReference(portIn1);
-		assertEquals("http://example.org/test", uri.toASCIIString());
-	}
-	
-	@Test
-	public void isReference() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
-		Path inputs = DataBundles.getInputs(dataBundle);
-		Path portIn1 = DataBundles.getPort(inputs, "in1");
-		DataBundles.setReference(portIn1, URI.create("http://example.org/test"));
-		assertTrue(DataBundles.isReference(portIn1));
-		assertFalse(DataBundles.isError(portIn1));		
-		assertFalse(DataBundles.isList(portIn1));
-		assertFalse(DataBundles.isMissing(portIn1));
-		assertFalse(DataBundles.isValue(portIn1));
-	}
-	
-	
-	@Test
-	public void getReferenceFromWin8() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
-		Path inputs = DataBundles.getInputs(dataBundle);
-		Path win8 = inputs.resolve("win8.url");
-		Files.copy(getClass().getResourceAsStream("/win8.url"), win8);
-				
-		URI uri = DataBundles.getReference(DataBundles.getPort(inputs, "win8"));
-		assertEquals("http://example.com/made-in-windows-8", uri.toASCIIString());
 	}
 	
 	@Test

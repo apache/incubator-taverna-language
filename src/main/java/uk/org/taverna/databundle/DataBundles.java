@@ -43,15 +43,15 @@ import org.apache.commons.configuration.HierarchicalINIConfiguration;
  */
 public class DataBundles {
 
-	private static final String INI_URL = "URL";
-	private static final String INI_INTERNET_SHORTCUT = "InternetShortcut";
-	private static final Charset ASCII = Charset.forName("ASCII");
-	private static final Charset LATIN1 = Charset.forName("Latin1");
-	private static final String URL = ".url";
 	private static final String APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP = "application/vnd.wf4ever.robundle+zip";
+	private static final Charset ASCII = Charset.forName("ASCII");
 	private static final String ERR = ".err";
+	private static final String INI_INTERNET_SHORTCUT = "InternetShortcut";
+	private static final String INI_URL = "URL";
 	private static final String INPUTS = "inputs";
+	private static final Charset LATIN1 = Charset.forName("Latin1");
 	private static final String OUTPUTS = "outputs";
+	private static final String URL = ".url";
 	private static final Charset UTF8 = Charset.forName("UTF-8");
 
 	private static void addMimeTypeToZip(ZipOutputStream out)
@@ -229,6 +229,32 @@ public class DataBundles {
 		return ports;
 	}
 
+	public static URI getReference(Path path) throws IOException {
+		if (path == null || isMissing(path)) {
+			return null;
+		}	
+		if (! isReference(path)) {
+			throw new IllegalArgumentException("Not a reference: " + path);
+		}
+		// Note: Latin1 is chosen here because it would not bail out on 
+		// "strange" characters. We actually parse the URL as ASCII
+		path = withExtension(path, ".url");
+		try (BufferedReader r = Files.newBufferedReader(path, LATIN1)) {
+			HierarchicalINIConfiguration ini = new HierarchicalINIConfiguration();
+			ini.load(r);
+			
+			String urlStr = ini.getSection(INI_INTERNET_SHORTCUT).getString(INI_URL);
+			
+//			String urlStr = ini.get(INI_INTERNET_SHORTCUT, INI_URL);
+			if (urlStr == null) {
+				throw new IOException("Invalid/unsupported URL format: " + path);
+			}
+			return URI.create(urlStr);
+		} catch (ConfigurationException e) {
+			throw new IOException("Can't parse reference: " + path, e);
+		}
+	}
+	
 	public static String getStringValue(Path path) throws IOException {
 		if (path == null || isMissing(path)) {
 			return null;
@@ -243,29 +269,33 @@ public class DataBundles {
 		Path inputs = dataBundle.getRoot().resolve(INPUTS);
 		return Files.isDirectory(inputs);
 	}
-	
+
+
 	public static boolean hasOutputs(DataBundle dataBundle) {
 		Path outputs = dataBundle.getRoot().resolve(OUTPUTS);
 		return Files.isDirectory(outputs);
 	}
 
-
 	public static boolean isError(Path path) {
 		return Files.isRegularFile(withExtension(path, ERR));
 	}
 
+
+	
 	public static boolean isList(Path path) {
 		return Files.isDirectory(path);
 	}
 
-
-	
 	public static boolean isMissing(Path item) {
 	//		if (! Files.exists(item.getParent())) {
 	//			throw new IllegalStateException("Invalid path");
 	//		}
 			return ! Files.exists(item) && ! isError(item) && !isReference(item);
 		}
+
+	public static boolean isReference(Path path) {
+		return Files.isRegularFile(withExtension(path, URL));
+	}
 
 	public static boolean isValue(Path path) {
 		return Files.isRegularFile(path);
@@ -365,25 +395,6 @@ public class DataBundles {
 		return errorPath;
 	}
 
-	public static void setStringValue(Path path, String string)
-			throws IOException {
-		Files.write(path, string.getBytes(UTF8), 
-				StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
-	}
-
-	protected static Path withExtension(Path path, String extension) {
-		if (! extension.isEmpty() && ! extension.startsWith(".")) {
-			throw new IllegalArgumentException("Extension must be empty or start with .");
-		}
-		String p = path.getFileName().toString();
-		if (! extension.isEmpty() && p.toLowerCase().endsWith(extension.toLowerCase())) {
-			return path;
-		}		
-		// Everything after the last . - or just the end
-		String newP = p.replaceFirst("(\\.[^.]*)?$", extension);
-		return path.resolveSibling(newP);
-	}
-
 	public static Path setReference(Path path, URI ref) throws IOException {
 		path = withExtension(path, ".url");
 
@@ -425,34 +436,23 @@ public class DataBundles {
 		return path;
 	}
 
-	public static boolean isReference(Path path) {
-		return Files.isRegularFile(withExtension(path, URL));
+	public static void setStringValue(Path path, String string)
+			throws IOException {
+		Files.write(path, string.getBytes(UTF8), 
+				StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
 	}
 
-	public static URI getReference(Path path) throws IOException {
-		if (path == null || isMissing(path)) {
-			return null;
-		}	
-		if (! isReference(path)) {
-			throw new IllegalArgumentException("Not a reference: " + path);
+	protected static Path withExtension(Path path, String extension) {
+		if (! extension.isEmpty() && ! extension.startsWith(".")) {
+			throw new IllegalArgumentException("Extension must be empty or start with .");
 		}
-		// Note: Latin1 is chosen here because it would not bail out on 
-		// "strange" characters. We actually parse the URL as ASCII
-		path = withExtension(path, ".url");
-		try (BufferedReader r = Files.newBufferedReader(path, LATIN1)) {
-			HierarchicalINIConfiguration ini = new HierarchicalINIConfiguration();
-			ini.load(r);
-			
-			String urlStr = ini.getSection(INI_INTERNET_SHORTCUT).getString(INI_URL);
-			
-//			String urlStr = ini.get(INI_INTERNET_SHORTCUT, INI_URL);
-			if (urlStr == null) {
-				throw new IOException("Invalid/unsupported URL format: " + path);
-			}
-			return URI.create(urlStr);
-		} catch (ConfigurationException e) {
-			throw new IOException("Can't parse reference: " + path, e);
-		}
+		String p = path.getFileName().toString();
+		if (! extension.isEmpty() && p.toLowerCase().endsWith(extension.toLowerCase())) {
+			return path;
+		}		
+		// Everything after the last . - or just the end
+		String newP = p.replaceFirst("(\\.[^.]*)?$", extension);
+		return path.resolveSibling(newP);
 	}
 
 }
