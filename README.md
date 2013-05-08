@@ -10,7 +10,7 @@ and [TestDataBundles.java](src/test/java/uk/org/taverna/databundle/TestDataBundl
 
 This API is built on the Java 7 NIO Files and uses the [Java 7 ZIP file provider](http://docs.oracle.com/javase/7/docs/technotes/guides/io/fsp/zipfilesystemprovider.html) to generate the Data Bundle.
 
-The class [org.purl.wf4ever.robundle.ROBundle](src/main/java/uk/org/taverna/databundle/DataBundle.java) complements the Java 7 [java.nio.Files](http://docs.oracle.com/javase/7/docs/api/java/nio/file/Files.html) API with more specific helper methods to work with Data Bundles.
+The class [org.purl.wf4ever.robundle.Bundle](src/main/java/uk/org/taverna/databundle/DataBundle.java) complements the Java 7 [java.nio.Files](http://docs.oracle.com/javase/7/docs/api/java/nio/file/Files.html) API with more specific helper methods to work with Data Bundles.
 
 
 Example of use

@@ -17,7 +17,7 @@ public class TestExample {
 	@Test
 	public void example() throws Exception {
 		// Create a new (temporary) RO bundle
-		ROBundle bundle = ROBundles.createBundle();
+		Bundle bundle = ROBundles.createBundle();
 
 		// Get the inputs
 		Path inputs = bundle.getRoot().resolve("inputs");
@@ -73,7 +73,7 @@ public class TestExample {
 		}
 
 		// Loading a bundle back from disk
-		try (ROBundle bundle2 = ROBundles.openBundle(zip)) {
+		try (Bundle bundle2 = ROBundles.openBundle(zip)) {
 			assertEquals(zip, bundle2.getSource());
 			
 		}

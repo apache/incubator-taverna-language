@@ -65,28 +65,28 @@ public class ROBundles {
 		out.closeEntry();
 	}
 
-	public static void closeAndSaveBundle(ROBundle bundle,
+	public static void closeAndSaveBundle(Bundle bundle,
 			Path destination) throws IOException {
 		Path zipPath = closeBundle(bundle);
 		// Files.move(zipPath, destination);
 		safeMove(zipPath, destination);
 	}
 
-	public static Path closeBundle(ROBundle bundle)
+	public static Path closeBundle(Bundle bundle)
 			throws IOException {
 		Path path = bundle.getSource();
 		bundle.close(false);
 		return path;
 	}
 
-	public static ROBundle createBundle() throws IOException {
+	public static Bundle createBundle() throws IOException {
 		// Create ZIP file as
 		// http://docs.oracle.com/javase/7/docs/technotes/guides/io/fsp/zipfilesystemprovider.html
 
 		Path bundle = Files.createTempFile("robundle", ".zip");		
 		FileSystem fs = createFSfromZip(bundle);
 		// FileSystem fs = createFSfromJar(bundle);
-		return new ROBundle(fs.getRootDirectories().iterator().next(), true);
+		return new Bundle(fs.getRootDirectories().iterator().next(), true);
 		// return Files.createTempDirectory("bundle");
 	}
 
@@ -174,9 +174,9 @@ public class ROBundles {
 		return Files.isRegularFile(path);
 	}
 
-	public static ROBundle openBundle(Path zip) throws IOException {
+	public static Bundle openBundle(Path zip) throws IOException {
 		FileSystem fs = FileSystems.newFileSystem(zip, null);
-		return new ROBundle(fs.getRootDirectories().iterator().next(), false);
+		return new Bundle(fs.getRootDirectories().iterator().next(), false);
 	}
 
 	public static void safeMove(Path source, Path destination)
