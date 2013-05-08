@@ -6,12 +6,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class DataBundle implements AutoCloseable {
+public class ROBundle implements AutoCloseable {
 
 	private boolean deleteOnClose;
 	private final Path root;
 
-	public DataBundle(Path root, boolean deleteOnClose) {
+	public ROBundle(Path root, boolean deleteOnClose) {
 		this.root = root;
 		this.setDeleteOnClose(deleteOnClose);
 	}

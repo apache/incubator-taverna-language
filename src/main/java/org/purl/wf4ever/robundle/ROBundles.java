@@ -74,28 +74,28 @@ public class ROBundles {
 		out.closeEntry();
 	}
 
-	public static void closeAndSaveDataBundle(DataBundle dataBundle,
+	public static void closeAndSaveDataBundle(ROBundle dataBundle,
 			Path destination) throws IOException {
 		Path zipPath = closeDataBundle(dataBundle);
 		// Files.move(zipPath, destination);
 		safeMove(zipPath, destination);
 	}
 
-	public static Path closeDataBundle(DataBundle dataBundle)
+	public static Path closeDataBundle(ROBundle dataBundle)
 			throws IOException {
 		Path path = dataBundle.getSource();
 		dataBundle.close(false);
 		return path;
 	}
 
-	public static DataBundle createDataBundle() throws IOException {
+	public static ROBundle createDataBundle() throws IOException {
 		// Create ZIP file as
 		// http://docs.oracle.com/javase/7/docs/technotes/guides/io/fsp/zipfilesystemprovider.html
 
 		Path dataBundle = Files.createTempFile("databundle", ".zip");		
 		FileSystem fs = createFSfromZip(dataBundle);
 		// FileSystem fs = createFSfromJar(dataBundle);
-		return new DataBundle(fs.getRootDirectories().iterator().next(), true);
+		return new ROBundle(fs.getRootDirectories().iterator().next(), true);
 		// return Files.createTempDirectory("databundle");
 	}
 
@@ -169,7 +169,7 @@ public class ROBundles {
 		return errorDoc;
 	}
 
-	public static Path getInputs(DataBundle dataBundle) throws IOException {
+	public static Path getInputs(ROBundle dataBundle) throws IOException {
 		Path inputs = dataBundle.getRoot().resolve(INPUTS);
 		Files.createDirectories(inputs);
 		return inputs;
@@ -208,7 +208,7 @@ public class ROBundles {
 		return list.resolve(Long.toString(position));
 	}
 
-	public static Path getOutputs(DataBundle dataBundle) throws IOException {
+	public static Path getOutputs(ROBundle dataBundle) throws IOException {
 		Path inputs = dataBundle.getRoot().resolve(OUTPUTS);
 		Files.createDirectories(inputs);
 		return inputs;
@@ -265,13 +265,13 @@ public class ROBundles {
 		return new String(Files.readAllBytes(path), UTF8);
 	}
 	
-	public static boolean hasInputs(DataBundle dataBundle) {
+	public static boolean hasInputs(ROBundle dataBundle) {
 		Path inputs = dataBundle.getRoot().resolve(INPUTS);
 		return Files.isDirectory(inputs);
 	}
 
 
-	public static boolean hasOutputs(DataBundle dataBundle) {
+	public static boolean hasOutputs(ROBundle dataBundle) {
 		Path outputs = dataBundle.getRoot().resolve(OUTPUTS);
 		return Files.isDirectory(outputs);
 	}
@@ -321,9 +321,9 @@ public class ROBundles {
 		return list.resolve(Long.toString(max + 1));
 	}
 
-	public static DataBundle openDataBundle(Path zip) throws IOException {
+	public static ROBundle openDataBundle(Path zip) throws IOException {
 		FileSystem fs = FileSystems.newFileSystem(zip, null);
-		return new DataBundle(fs.getRootDirectories().iterator().next(), false);
+		return new ROBundle(fs.getRootDirectories().iterator().next(), false);
 	}
 
 	public static void safeMove(Path source, Path destination)

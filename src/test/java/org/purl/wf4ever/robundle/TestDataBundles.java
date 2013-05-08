@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
-import org.purl.wf4ever.robundle.DataBundle;
+import org.purl.wf4ever.robundle.ROBundle;
 import org.purl.wf4ever.robundle.ROBundles;
 import org.purl.wf4ever.robundle.ErrorDocument;
 
@@ -44,7 +44,7 @@ public class TestDataBundles {
 
 	@Test
 	public void close() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		assertTrue(Files.exists(dataBundle.getSource()));
 		assertTrue(dataBundle.getRoot().getFileSystem().isOpen());
 		ROBundles.getInputs(dataBundle);
@@ -57,20 +57,20 @@ public class TestDataBundles {
 
 	@Test
 	public void closeAndOpenDataBundle() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path zip = ROBundles.closeDataBundle(dataBundle);
 		ROBundles.openDataBundle(zip);
 	}
 
 	@Test
 	public void closeAndOpenDataBundleWithPortValue() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path inputs = ROBundles.getInputs(dataBundle);
 		Path port = ROBundles.getPort(inputs, "hello");
 		ROBundles.setStringValue(port, "Hello");
 		Path zip = ROBundles.closeDataBundle(dataBundle);
 
-		DataBundle newDataBundle = ROBundles.openDataBundle(zip);
+		ROBundle newDataBundle = ROBundles.openDataBundle(zip);
 		Path newInput = ROBundles.getInputs(newDataBundle);
 		Path newPort = ROBundles.getPort(newInput, "hello");
 		assertEquals("Hello", ROBundles.getStringValue(newPort));
@@ -78,7 +78,7 @@ public class TestDataBundles {
 
 	@Test
 	public void closeAndSaveDataBundle() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		ROBundles.getInputs(dataBundle);
 		Path destination = Files.createTempFile("test", ".zip");
 		Files.delete(destination);
@@ -89,7 +89,7 @@ public class TestDataBundles {
 
 	@Test
 	public void closeDataBundle() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path zip = ROBundles.closeDataBundle(dataBundle);
 		assertTrue(Files.isReadable(zip));
 		assertEquals(zip, dataBundle.getSource());
@@ -98,7 +98,7 @@ public class TestDataBundles {
 
 	@Test
 	public void createDataBundle() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		assertTrue(Files.isDirectory(dataBundle.getRoot()));
 		// TODO: Should this instead return a FileSystem so we can close() it?
 	}
@@ -125,7 +125,7 @@ public class TestDataBundles {
 
 	@Test
 	public void createList() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path inputs = ROBundles.getInputs(dataBundle);
 		Path list = ROBundles.getPort(inputs, "in1");
 		ROBundles.createList(list);
@@ -135,7 +135,7 @@ public class TestDataBundles {
 	@Test
 	public void getError() throws Exception {
 		
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path inputs = ROBundles.getInputs(dataBundle);
 		Path portIn1 = ROBundles.getPort(inputs, "in1");
 		ROBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");		
@@ -152,7 +152,7 @@ public class TestDataBundles {
 
 	@Test
 	public void getErrorCause() throws Exception {		
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path inputs = ROBundles.getInputs(dataBundle);
 		Path portIn1 = ROBundles.getPort(inputs, "in1");
 		Path cause1 = ROBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");
@@ -175,7 +175,7 @@ public class TestDataBundles {
 
 	@Test
 	public void getInputs() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path inputs = ROBundles.getInputs(dataBundle);
 		assertTrue(Files.isDirectory(inputs));
 		// Second time should not fail because it already exists
@@ -186,7 +186,7 @@ public class TestDataBundles {
 
 	@Test
 	public void getList() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path inputs = ROBundles.getInputs(dataBundle);
 		Path list = ROBundles.getPort(inputs, "in1");
 		ROBundles.createList(list);
@@ -204,7 +204,7 @@ public class TestDataBundles {
 
 	@Test
 	public void getListItem() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path inputs = ROBundles.getInputs(dataBundle);
 		Path list = ROBundles.getPort(inputs, "in1");
 		ROBundles.createList(list);
@@ -253,7 +253,7 @@ public class TestDataBundles {
 
 	@Test
 	public void getOutputs() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path outputs = ROBundles.getOutputs(dataBundle);
 		assertTrue(Files.isDirectory(outputs));
 		// Second time should not fail because it already exists
@@ -264,7 +264,7 @@ public class TestDataBundles {
 
 	@Test
 	public void getPort() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path inputs = ROBundles.getInputs(dataBundle);
 		Path portIn1 = ROBundles.getPort(inputs, "in1");
 		assertFalse(Files.exists(portIn1));
@@ -273,7 +273,7 @@ public class TestDataBundles {
 
 	@Test
 	public void getPorts() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path inputs = ROBundles.getInputs(dataBundle);
 		ROBundles.createList(ROBundles.getPort(inputs, "in1"));
 		ROBundles.createList(ROBundles.getPort(inputs, "in2"));
@@ -293,7 +293,7 @@ public class TestDataBundles {
 
 	@Test
 	public void getReference() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path inputs = ROBundles.getInputs(dataBundle);
 		Path portIn1 = ROBundles.getPort(inputs, "in1");
 		ROBundles.setReference(portIn1, URI.create("http://example.org/test"));
@@ -303,7 +303,7 @@ public class TestDataBundles {
 
 	@Test
 	public void getReferenceFromWin8() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path inputs = ROBundles.getInputs(dataBundle);
 		Path win8 = inputs.resolve("win8.url");
 		Files.copy(getClass().getResourceAsStream("/win8.url"), win8);
@@ -314,7 +314,7 @@ public class TestDataBundles {
 
 	@Test
 	public void getStringValue() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path inputs = ROBundles.getInputs(dataBundle);
 		Path portIn1 = ROBundles.getPort(inputs, "in1");
 		String string = "A string";
@@ -325,7 +325,7 @@ public class TestDataBundles {
 
 	@Test
 	public void hasInputs() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		assertFalse(ROBundles.hasInputs(dataBundle));
 		ROBundles.getInputs(dataBundle); // create on demand
 		assertTrue(ROBundles.hasInputs(dataBundle));
@@ -333,7 +333,7 @@ public class TestDataBundles {
 
 	@Test
 	public void hasOutputs() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		assertFalse(ROBundles.hasOutputs(dataBundle));
 		ROBundles.getInputs(dataBundle); // independent
 		assertFalse(ROBundles.hasOutputs(dataBundle));
@@ -349,7 +349,7 @@ public class TestDataBundles {
 
 	@Test
 	public void isError() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path inputs = ROBundles.getInputs(dataBundle);
 		Path portIn1 = ROBundles.getPort(inputs, "in1");
 		ROBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");		
@@ -363,7 +363,7 @@ public class TestDataBundles {
 
 	@Test
 	public void isList() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path inputs = ROBundles.getInputs(dataBundle);
 		Path list = ROBundles.getPort(inputs, "in1");
 		ROBundles.createList(list);
@@ -376,7 +376,7 @@ public class TestDataBundles {
 	
 	@Test
 	public void isMissing() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path inputs = ROBundles.getInputs(dataBundle);
 		Path portIn1 = ROBundles.getPort(inputs, "in1");
 		
@@ -389,7 +389,7 @@ public class TestDataBundles {
 	
 	@Test
 	public void isReference() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path inputs = ROBundles.getInputs(dataBundle);
 		Path portIn1 = ROBundles.getPort(inputs, "in1");
 		ROBundles.setReference(portIn1, URI.create("http://example.org/test"));
@@ -402,7 +402,7 @@ public class TestDataBundles {
 	
 	@Test
 	public void isValue() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path inputs = ROBundles.getInputs(dataBundle);
 		Path portIn1 = ROBundles.getPort(inputs, "in1");
 		ROBundles.setStringValue(portIn1, "Hello");
@@ -414,7 +414,7 @@ public class TestDataBundles {
 
 	@Test
 	public void listOfLists() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path inputs = ROBundles.getInputs(dataBundle);
 		Path list = ROBundles.getPort(inputs, "in1");
 		ROBundles.createList(list);
@@ -450,7 +450,7 @@ public class TestDataBundles {
 	
 	@Test
 	public void newListItem() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path inputs = ROBundles.getInputs(dataBundle);
 		Path list = ROBundles.getPort(inputs, "in1");
 		ROBundles.createList(list);
@@ -492,7 +492,7 @@ public class TestDataBundles {
 		Files.createFile(f1);
 		assertFalse(isEmpty(tmp));
 
-		DataBundle db = ROBundles.createDataBundle();
+		ROBundle db = ROBundles.createDataBundle();
 		Path f2 = db.getRoot().resolve("f2");
 		ROBundles.safeMove(f1, f2);
 		assertTrue(isEmpty(tmp));
@@ -518,7 +518,7 @@ public class TestDataBundles {
 	
 	@Test
 	public void setErrorArgs() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path inputs = ROBundles.getInputs(dataBundle);
 		Path portIn1 = ROBundles.getPort(inputs, "in1");
 		Path errorPath = ROBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");		
@@ -536,7 +536,7 @@ public class TestDataBundles {
 	
 	@Test
 	public void setErrorCause() throws Exception {		
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path inputs = ROBundles.getInputs(dataBundle);
 		Path portIn1 = ROBundles.getPort(inputs, "in1");
 		Path cause1 = ROBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");
@@ -556,7 +556,7 @@ public class TestDataBundles {
 	
 	@Test
 	public void setErrorObj() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path inputs = ROBundles.getInputs(dataBundle);
 
 		Path portIn1 = ROBundles.getPort(inputs, "in1");
@@ -593,7 +593,7 @@ public class TestDataBundles {
 	
 	@Test
 	public void setReference() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path inputs = ROBundles.getInputs(dataBundle);
 		Path portIn1 = ROBundles.getPort(inputs, "in1");
 		URI uri = URI.create("http://example.org/test");		
@@ -611,7 +611,7 @@ public class TestDataBundles {
 	
 	@Test
 	public void setReferenceIri() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path inputs = ROBundles.getInputs(dataBundle);
 		Path portIn1 = ROBundles.getPort(inputs, "in1");		
 		URI uri = new URI("http", "xn--bcher-kva.example.com", "/s\u00F8iland/\u2603snowman", "\u2605star");
@@ -624,7 +624,7 @@ public class TestDataBundles {
 
 	@Test
 	public void setStringValue() throws Exception {
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path inputs = ROBundles.getInputs(dataBundle);
 		Path portIn1 = ROBundles.getPort(inputs, "in1");
 		String string = "A string";

@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.NavigableMap;
 
 import org.junit.Test;
-import org.purl.wf4ever.robundle.DataBundle;
+import org.purl.wf4ever.robundle.ROBundle;
 import org.purl.wf4ever.robundle.ROBundles;
 import org.purl.wf4ever.robundle.ErrorDocument;
 
@@ -23,7 +23,7 @@ public class TestExample {
 	@Test
 	public void example() throws Exception {
 		// Create a new (temporary) data bundle
-		DataBundle dataBundle = ROBundles.createDataBundle();
+		ROBundle dataBundle = ROBundles.createDataBundle();
 
 		// Get the inputs
 		Path inputs = ROBundles.getInputs(dataBundle);
@@ -124,7 +124,7 @@ public class TestExample {
 		}
 		
 		// Loading a data bundle back from disk
-		try (DataBundle dataBundle2 = ROBundles.openDataBundle(zip)) {
+		try (ROBundle dataBundle2 = ROBundles.openDataBundle(zip)) {
 			assertEquals(zip, dataBundle2.getSource());
 			Path loadedInputs = ROBundles.getInputs(dataBundle2);
 			
