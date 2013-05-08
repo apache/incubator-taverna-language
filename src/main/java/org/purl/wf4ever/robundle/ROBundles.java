@@ -121,10 +121,6 @@ public class ROBundles {
 		return FileSystems.newFileSystem(dataBundle, null);
 	}
 
-	public static void createList(Path path) throws IOException {
-		Files.createDirectories(path);
-	}
-
 	protected static String filenameWithoutExtension(Path entry) {
 		String fileName = entry.getFileName().toString();
 		int lastDot = fileName.lastIndexOf(".");
@@ -133,66 +129,6 @@ public class ROBundles {
 			return fileName.replace("/", "");
 		}
 		return fileName.substring(0, lastDot);
-	}
-
-	public static Path getInputs(ROBundle dataBundle) throws IOException {
-		Path inputs = dataBundle.getRoot().resolve(INPUTS);
-		Files.createDirectories(inputs);
-		return inputs;
-	}
-
-	public static List<Path> getList(Path list) throws IOException {
-		if (list == null) {
-			return null;
-		}
-		List<Path> paths = new ArrayList<>();
-		try (DirectoryStream<Path> ds = Files.newDirectoryStream(list)) {
-			for (Path entry : ds) {
-				String name = filenameWithoutExtension(entry);
-				try {
-					int entryNum = Integer.parseInt(name);
-					while (paths.size() <= entryNum) {
-						// Fill any gaps
-						paths.add(null);
-					}
-					// NOTE: Don't use add() as these could come in any order!
-					paths.set(entryNum, entry);
-				} catch (NumberFormatException ex) {
-				}
-			}
-		} catch (DirectoryIteratorException ex) {
-			throw ex.getCause();
-		}
-		return paths;
-	}
-
-	public static Path getListItem(Path list, long position) {
-		if (position < 0) {
-			throw new IllegalArgumentException("Position must be 0 or more, not: " + position);
-		}
-		// FIXME: Look for extensions
-		return list.resolve(Long.toString(position));
-	}
-
-	public static Path getOutputs(ROBundle dataBundle) throws IOException {
-		Path inputs = dataBundle.getRoot().resolve(OUTPUTS);
-		Files.createDirectories(inputs);
-		return inputs;
-	}
-
-	public static Path getPort(Path map, String portName) throws IOException {
-		Files.createDirectories(map);
-		return map.resolve(portName);
-	}
-
-	public static NavigableMap<String, Path> getPorts(Path path) throws IOException {
-		NavigableMap<String, Path> ports = new TreeMap<>();
-		try (DirectoryStream<Path> ds = Files.newDirectoryStream(path)) {
-			for (Path p : ds) {
-				ports.put(filenameWithoutExtension(p), p);
-			}
-		}
-		return ports;
 	}
 
 	public static URI getReference(Path path) throws IOException {
@@ -231,21 +167,6 @@ public class ROBundles {
 		return new String(Files.readAllBytes(path), UTF8);
 	}
 	
-	public static boolean hasInputs(ROBundle dataBundle) {
-		Path inputs = dataBundle.getRoot().resolve(INPUTS);
-		return Files.isDirectory(inputs);
-	}
-
-
-	public static boolean hasOutputs(ROBundle dataBundle) {
-		Path outputs = dataBundle.getRoot().resolve(OUTPUTS);
-		return Files.isDirectory(outputs);
-	}
-	
-	public static boolean isList(Path path) {
-		return Files.isDirectory(path);
-	}
-
 	public static boolean isMissing(Path item) {
 	//		if (! Files.exists(item.getParent())) {
 	//			throw new IllegalStateException("Invalid path");
@@ -259,26 +180,6 @@ public class ROBundles {
 
 	public static boolean isValue(Path path) {
 		return Files.isRegularFile(path);
-	}
-
-	public static Path newListItem(Path list) throws IOException {
-		long max = -1L;
-		createList(list);
-		try (DirectoryStream<Path> ds = Files.newDirectoryStream(list)) {
-			for (Path entry : ds) {
-				String name = filenameWithoutExtension(entry);
-				try {
-					long entryNum = Long.parseLong(name);
-					if (entryNum > max) {
-						max = entryNum;
-					}
-				} catch (NumberFormatException ex) {
-				}
-			}
-		} catch (DirectoryIteratorException ex) {
-			throw ex.getCause();
-		}
-		return list.resolve(Long.toString(max + 1));
 	}
 
 	public static ROBundle openDataBundle(Path zip) throws IOException {

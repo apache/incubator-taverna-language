@@ -46,7 +46,6 @@ public class TestROBundles {
 		ROBundle dataBundle = ROBundles.createDataBundle();
 		assertTrue(Files.exists(dataBundle.getSource()));
 		assertTrue(dataBundle.getRoot().getFileSystem().isOpen());
-		ROBundles.getInputs(dataBundle);
 
 		dataBundle.close();
 		assertFalse(Files.exists(dataBundle.getSource()));
@@ -64,21 +63,18 @@ public class TestROBundles {
 	@Test
 	public void closeAndOpenDataBundleWithPortValue() throws Exception {
 		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path inputs = ROBundles.getInputs(dataBundle);
-		Path port = ROBundles.getPort(inputs, "hello");
-		ROBundles.setStringValue(port, "Hello");
+		Path hello = dataBundle.getRoot().resolve("hello.txt");
+		ROBundles.setStringValue(hello, "Hello");
 		Path zip = ROBundles.closeDataBundle(dataBundle);
 
 		ROBundle newDataBundle = ROBundles.openDataBundle(zip);
-		Path newInput = ROBundles.getInputs(newDataBundle);
-		Path newPort = ROBundles.getPort(newInput, "hello");
-		assertEquals("Hello", ROBundles.getStringValue(newPort));
+		Path newHello = newDataBundle.getRoot().resolve("hello.txt");		
+		assertEquals("Hello", ROBundles.getStringValue(newHello));
 	}
 
 	@Test
 	public void closeAndSaveDataBundle() throws Exception {
 		ROBundle dataBundle = ROBundles.createDataBundle();
-		ROBundles.getInputs(dataBundle);
 		Path destination = Files.createTempFile("test", ".zip");
 		Files.delete(destination);
 		assertFalse(Files.exists(destination));
@@ -123,181 +119,35 @@ public class TestROBundles {
 	}
 
 	@Test
-	public void createList() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path inputs = ROBundles.getInputs(dataBundle);
-		Path list = ROBundles.getPort(inputs, "in1");
-		ROBundles.createList(list);
-		assertTrue(Files.isDirectory(list));
-	}
-
-	@Test
-	public void getInputs() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path inputs = ROBundles.getInputs(dataBundle);
-		assertTrue(Files.isDirectory(inputs));
-		// Second time should not fail because it already exists
-		inputs = ROBundles.getInputs(dataBundle);
-		assertTrue(Files.isDirectory(inputs));
-		assertEquals(dataBundle.getRoot(), inputs.getParent());
-	}
-
-	@Test
-	public void getList() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path inputs = ROBundles.getInputs(dataBundle);
-		Path list = ROBundles.getPort(inputs, "in1");
-		ROBundles.createList(list);
-		for (int i = 0; i < 5; i++) {
-			Path item = ROBundles.newListItem(list);
-			ROBundles.setStringValue(item, "test" + i);
-		}
-		List<Path> paths = ROBundles.getList(list);
-		assertEquals(5, paths.size());
-		assertEquals("test0", ROBundles.getStringValue(paths.get(0)));
-		assertEquals("test4", ROBundles.getStringValue(paths.get(4)));
-		
-		assertEquals(null, ROBundles.getList(null));
-	}
-
-	@Test
-	public void getListItem() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path inputs = ROBundles.getInputs(dataBundle);
-		Path list = ROBundles.getPort(inputs, "in1");
-		ROBundles.createList(list);
-		for (int i = 0; i < 5; i++) {
-			Path item = ROBundles.newListItem(list);
-			ROBundles.setStringValue(item, "item " + i);
-		}
-		// set at next available position
-		Path item5 = ROBundles.getListItem(list, 5);
-		assertTrue(item5.getFileName().toString().contains("5"));
-		ROBundles.setStringValue(item5, "item 5");
-	
-		
-		// set somewhere later
-		Path item8 = ROBundles.getListItem(list, 8);
-		assertTrue(item8.getFileName().toString().contains("8"));
-		ROBundles.setStringValue(item8, "item 8");
-		
-		Path item7 = ROBundles.getListItem(list, 7);
-		assertFalse(Files.exists(item7));
-		assertFalse(ROBundles.isList(item7));
-		assertFalse(ROBundles.isValue(item7));
-		// TODO: Is it really missing? item1337 is also missing..
-		assertTrue(ROBundles.isMissing(item7));
-		
-		
-		// overwrite #2
-		Path item2 = ROBundles.getListItem(list, 2);		
-		ROBundles.setStringValue(item2, "replaced");
-		
-		
-		List<Path> listItems = ROBundles.getList(list);
-		assertEquals(9, listItems.size());
-		assertEquals("item 0", ROBundles.getStringValue(listItems.get(0)));
-		assertEquals("item 1", ROBundles.getStringValue(listItems.get(1)));
-		assertEquals("replaced", ROBundles.getStringValue(listItems.get(2)));
-		assertEquals("item 3", ROBundles.getStringValue(listItems.get(3)));
-		assertEquals("item 4", ROBundles.getStringValue(listItems.get(4)));
-		assertEquals("item 5", ROBundles.getStringValue(listItems.get(5)));
-		assertNull(listItems.get(6));
-		assertNull(listItems.get(7));
-		assertEquals("item 8", ROBundles.getStringValue(listItems.get(8)));
-		
-	}
-
-	@Test
-	public void getOutputs() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path outputs = ROBundles.getOutputs(dataBundle);
-		assertTrue(Files.isDirectory(outputs));
-		// Second time should not fail because it already exists
-		outputs = ROBundles.getOutputs(dataBundle);
-		assertTrue(Files.isDirectory(outputs));
-		assertEquals(dataBundle.getRoot(), outputs.getParent());
-	}
-
-	@Test
-	public void getPort() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path inputs = ROBundles.getInputs(dataBundle);
-		Path portIn1 = ROBundles.getPort(inputs, "in1");
-		assertFalse(Files.exists(portIn1));
-		assertEquals(inputs, portIn1.getParent());
-	}
-
-	@Test
-	public void getPorts() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path inputs = ROBundles.getInputs(dataBundle);
-		ROBundles.createList(ROBundles.getPort(inputs, "in1"));
-		ROBundles.createList(ROBundles.getPort(inputs, "in2"));
-		ROBundles.setStringValue(ROBundles.getPort(inputs, "value"),
-				"A value");
-		Map<String, Path> ports = ROBundles.getPorts(ROBundles
-				.getInputs(dataBundle));
-		assertEquals(3, ports.size());
-//		System.out.println(ports);
-		assertTrue(ports.containsKey("in1"));
-		assertTrue(ports.containsKey("in2"));
-		assertTrue(ports.containsKey("value"));
-
-		assertEquals("A value", ROBundles.getStringValue(ports.get("value")));
-
-	}
-
-	@Test
 	public void getReference() throws Exception {
 		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path inputs = ROBundles.getInputs(dataBundle);
-		Path portIn1 = ROBundles.getPort(inputs, "in1");
-		ROBundles.setReference(portIn1, URI.create("http://example.org/test"));
-		URI uri = ROBundles.getReference(portIn1);
+		Path hello = dataBundle.getRoot().resolve("hello");
+		ROBundles.setReference(hello, URI.create("http://example.org/test"));
+		URI uri = ROBundles.getReference(hello);
 		assertEquals("http://example.org/test", uri.toASCIIString());
 	}
 
 	@Test
 	public void getReferenceFromWin8() throws Exception {
 		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path inputs = ROBundles.getInputs(dataBundle);
-		Path win8 = inputs.resolve("win8.url");
-		Files.copy(getClass().getResourceAsStream("/win8.url"), win8);
+		Path win8 = dataBundle.getRoot().resolve("win8");
+		Path win8Url = dataBundle.getRoot().resolve("win8.url");
+		Files.copy(getClass().getResourceAsStream("/win8.url"), win8Url);
 				
-		URI uri = ROBundles.getReference(ROBundles.getPort(inputs, "win8"));
+		URI uri = ROBundles.getReference(win8);
 		assertEquals("http://example.com/made-in-windows-8", uri.toASCIIString());
 	}
 
 	@Test
 	public void getStringValue() throws Exception {
 		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path inputs = ROBundles.getInputs(dataBundle);
-		Path portIn1 = ROBundles.getPort(inputs, "in1");
+		Path hello = dataBundle.getRoot().resolve("hello");
 		String string = "A string";
-		ROBundles.setStringValue(portIn1, string);
-		assertEquals(string, ROBundles.getStringValue(portIn1));	
+		ROBundles.setStringValue(hello, string);
+		assertEquals(string, ROBundles.getStringValue(hello));	
 		assertEquals(null, ROBundles.getStringValue(null));
 	}
 
-	@Test
-	public void hasInputs() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
-		assertFalse(ROBundles.hasInputs(dataBundle));
-		ROBundles.getInputs(dataBundle); // create on demand
-		assertTrue(ROBundles.hasInputs(dataBundle));
-	}
-
-	@Test
-	public void hasOutputs() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
-		assertFalse(ROBundles.hasOutputs(dataBundle));
-		ROBundles.getInputs(dataBundle); // independent
-		assertFalse(ROBundles.hasOutputs(dataBundle));
-		ROBundles.getOutputs(dataBundle); // create on demand
-		assertTrue(ROBundles.hasOutputs(dataBundle));
-	}
-	
 	protected boolean isEmpty(Path path) throws IOException {
 		try (DirectoryStream<Path> ds = Files.newDirectoryStream(path)) {
 			return !ds.iterator().hasNext();
@@ -306,76 +156,34 @@ public class TestROBundles {
 
 
 	@Test
-	public void isList() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path inputs = ROBundles.getInputs(dataBundle);
-		Path list = ROBundles.getPort(inputs, "in1");
-		ROBundles.createList(list);
-		assertTrue(ROBundles.isList(list));
-		assertFalse(ROBundles.isValue(list));
-		assertFalse(ROBundles.isReference(list));
-		assertFalse(ROBundles.isMissing(list));
-	}
-	
-	@Test
 	public void isMissing() throws Exception {
 		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path inputs = ROBundles.getInputs(dataBundle);
-		Path portIn1 = ROBundles.getPort(inputs, "in1");
-		
-		assertFalse(ROBundles.isList(portIn1));		
-		assertFalse(ROBundles.isValue(portIn1));
-		assertTrue(ROBundles.isMissing(portIn1));
-		assertFalse(ROBundles.isReference(portIn1));
+		Path missing = dataBundle.getRoot().resolve("missing");		
+		assertFalse(ROBundles.isValue(missing));
+		assertTrue(ROBundles.isMissing(missing));
+		assertFalse(ROBundles.isReference(missing));
 	}
 	
 	@Test
 	public void isReference() throws Exception {
 		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path inputs = ROBundles.getInputs(dataBundle);
-		Path portIn1 = ROBundles.getPort(inputs, "in1");
-		ROBundles.setReference(portIn1, URI.create("http://example.org/test"));
-		assertTrue(ROBundles.isReference(portIn1));
-		assertFalse(ROBundles.isList(portIn1));
-		assertFalse(ROBundles.isMissing(portIn1));
-		assertFalse(ROBundles.isValue(portIn1));
+		Path ref = dataBundle.getRoot().resolve("ref");		
+		ROBundles.setReference(ref, URI.create("http://example.org/test"));
+		assertTrue(ROBundles.isReference(ref));
+		assertFalse(ROBundles.isMissing(ref));
+		assertFalse(ROBundles.isValue(ref));
 	}
 	
 	@Test
 	public void isValue() throws Exception {
 		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path inputs = ROBundles.getInputs(dataBundle);
-		Path portIn1 = ROBundles.getPort(inputs, "in1");
-		ROBundles.setStringValue(portIn1, "Hello");
-		assertTrue(ROBundles.isValue(portIn1));
-		assertFalse(ROBundles.isList(portIn1));
-		assertFalse(ROBundles.isReference(portIn1));
+		Path hello = dataBundle.getRoot().resolve("hello");		
+		ROBundles.setStringValue(hello, "Hello");
+		assertTrue(ROBundles.isValue(hello));
+		assertFalse(ROBundles.isReference(hello));
 	}
 
-	@Test
-	public void listOfLists() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path inputs = ROBundles.getInputs(dataBundle);
-		Path list = ROBundles.getPort(inputs, "in1");
-		ROBundles.createList(list);
-		Path sublist0 = ROBundles.newListItem(list);
-		ROBundles.createList(sublist0);
-		
-		Path sublist1 = ROBundles.newListItem(list);
-		ROBundles.createList(sublist1);
-		
-		assertEquals(Arrays.asList("0/", "1/"), ls(list));
-		
-		ROBundles.setStringValue(ROBundles.newListItem(sublist1), 
-				"Hello");
-		
-		assertEquals(Arrays.asList("0"), ls(sublist1));
-		
-		assertEquals("Hello",ROBundles.getStringValue( 
-				ROBundles.getListItem(ROBundles.getListItem(list, 1), 0)));
-	}
 
-	
 	
 	protected List<String> ls(Path path) throws IOException {
 		List<String> paths = new ArrayList<>();
@@ -387,43 +195,6 @@ public class TestROBundles {
 		Collections.sort(paths);
 		return paths;
 	}
-	
-	@Test
-	public void newListItem() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path inputs = ROBundles.getInputs(dataBundle);
-		Path list = ROBundles.getPort(inputs, "in1");
-		ROBundles.createList(list);
-		Path item0 = ROBundles.newListItem(list);
-		assertEquals(list, item0.getParent());
-		assertTrue(item0.getFileName().toString().contains("0"));
-		assertFalse(Files.exists(item0));
-		ROBundles.setStringValue(item0, "test");
-
-		Path item1 = ROBundles.newListItem(list);
-		assertTrue(item1.getFileName().toString().contains("1"));
-		// Because we've not actually created item1 yet
-		assertEquals(item1, ROBundles.newListItem(list));
-		ROBundles.setStringValue(item1, "test");
-
-		// Check that ROBundles.newListItem can deal with gaps
-		Files.delete(item0);
-		Path item2 = ROBundles.newListItem(list);
-		assertTrue(item2.getFileName().toString().contains("2"));
-
-		// Check that non-numbers don't interfere
-		Path nonumber = list.resolve("nonumber");
-		Files.createFile(nonumber);
-		item2 = ROBundles.newListItem(list);
-		assertTrue(item2.getFileName().toString().contains("2"));
-
-		// Check that extension is stripped
-		Path five = list.resolve("5.txt");
-		Files.createFile(five);
-		Path item6 = ROBundles.newListItem(list);
-		assertTrue(item6.getFileName().toString().contains("6"));
-	}
-	
 	
 	@Test
 	public void safeMove() throws Exception {
@@ -459,13 +230,15 @@ public class TestROBundles {
 	@Test
 	public void setReference() throws Exception {
 		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path inputs = ROBundles.getInputs(dataBundle);
-		Path portIn1 = ROBundles.getPort(inputs, "in1");
+		
+		Path ref = dataBundle.getRoot().resolve("ref");		
+		ROBundles.setReference(ref, URI.create("http://example.org/test"));
+		
 		URI uri = URI.create("http://example.org/test");		
-		Path f = ROBundles.setReference(portIn1, uri);
-		assertEquals("in1.url", f.getFileName().toString());
-		assertEquals(inputs, f.getParent());
-		assertFalse(Files.exists(portIn1));		
+		Path f = ROBundles.setReference(ref, uri);
+		assertEquals("ref.url", f.getFileName().toString());
+		assertEquals(dataBundle.getRoot(), f.getParent());
+		assertFalse(Files.exists(ref));		
 		
 		List<String> uriLines = Files.readAllLines(f, Charset.forName("ASCII"));
 		assertEquals(3, uriLines.size());
@@ -477,10 +250,9 @@ public class TestROBundles {
 	@Test
 	public void setReferenceIri() throws Exception {
 		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path inputs = ROBundles.getInputs(dataBundle);
-		Path portIn1 = ROBundles.getPort(inputs, "in1");		
+		Path ref = dataBundle.getRoot().resolve("ref");		
 		URI uri = new URI("http", "xn--bcher-kva.example.com", "/s\u00F8iland/\u2603snowman", "\u2605star");
-		Path f = ROBundles.setReference(portIn1, uri);
+		Path f = ROBundles.setReference(ref, uri);
 		List<String> uriLines = Files.readAllLines(f, Charset.forName("ASCII"));
 		// TODO: Double-check that this is actually correct escaping :)
 		assertEquals("URL=http://xn--bcher-kva.example.com/s%C3%B8iland/%E2%98%83snowman#%E2%98%85star", 
@@ -490,11 +262,10 @@ public class TestROBundles {
 	@Test
 	public void setStringValue() throws Exception {
 		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path inputs = ROBundles.getInputs(dataBundle);
-		Path portIn1 = ROBundles.getPort(inputs, "in1");
+		Path ref = dataBundle.getRoot().resolve("ref");		
 		String string = "A string";
-		ROBundles.setStringValue(portIn1, string);
-		assertEquals(string, Files.readAllLines(portIn1, Charset.forName("UTF-8")).get(0));
+		ROBundles.setStringValue(ref, string);
+		assertEquals(string, Files.readAllLines(ref, Charset.forName("UTF-8")).get(0));
 	}
 	
 	@Test
