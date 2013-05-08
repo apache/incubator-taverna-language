@@ -45,7 +45,6 @@ public class ROBundles {
 
 	private static final String APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP = "application/vnd.wf4ever.robundle+zip";
 	private static final Charset ASCII = Charset.forName("ASCII");
-	private static final String ERR = ".err";
 	private static final String INI_INTERNET_SHORTCUT = "InternetShortcut";
 	private static final String INI_URL = "URL";
 	private static final String INPUTS = "inputs";
@@ -134,39 +133,6 @@ public class ROBundles {
 			return fileName.replace("/", "");
 		}
 		return fileName.substring(0, lastDot);
-	}
-
-	public static ErrorDocument getError(Path path) throws IOException {
-		if (path == null) {
-			return null;
-		}
-			
-		Path errorPath = withExtension(path, ERR);
-		List<String> errorList = Files.readAllLines(errorPath, UTF8);
-		int split = errorList.indexOf("");
-		if (split == -1 || errorList.size() <= split) {
-			throw new IOException("Invalid error document: " + errorPath);
-		}
-		
-		ErrorDocument errorDoc = new ErrorDocument();
-
-		for (String cause : errorList.subList(0, split)) {
-			errorDoc.getCausedBy().add(path.resolveSibling(cause));
-		}
-		
-		errorDoc.setMessage(errorList.get(split+1));
-		
-		StringBuffer errorTrace = new StringBuffer();
-		for (String line : errorList.subList(split+2, errorList.size())) {
-			errorTrace.append(line);
-			errorTrace.append("\n");	
-		}		
-		if (errorTrace.length() > 0) { 
-			// Delete last \n
-			errorTrace.deleteCharAt(errorTrace.length()-1);
-		}
-		errorDoc.setTrace(errorTrace.toString());
-		return errorDoc;
 	}
 
 	public static Path getInputs(ROBundle dataBundle) throws IOException {
@@ -275,12 +241,6 @@ public class ROBundles {
 		Path outputs = dataBundle.getRoot().resolve(OUTPUTS);
 		return Files.isDirectory(outputs);
 	}
-
-	public static boolean isError(Path path) {
-		return Files.isRegularFile(withExtension(path, ERR));
-	}
-
-
 	
 	public static boolean isList(Path path) {
 		return Files.isDirectory(path);
@@ -290,7 +250,7 @@ public class ROBundles {
 	//		if (! Files.exists(item.getParent())) {
 	//			throw new IllegalStateException("Invalid path");
 	//		}
-			return ! Files.exists(item) && ! isError(item) && !isReference(item);
+			return ! Files.exists(item) && !isReference(item);
 		}
 
 	public static boolean isReference(Path path) {
@@ -373,26 +333,6 @@ public class ROBundles {
 		} finally {
 			Files.deleteIfExists(tmpDestination);
 		}
-	}
-
-	public static Path setError(Path path, ErrorDocument error) throws IOException {
-		return setError(path, error.getMessage(), error.getTrace(), error
-				.getCausedBy().toArray(new Path[error.getCausedBy().size()]));
-	}
-
-	public static Path setError(Path errorPath, String message, String trace, Path... causedBy) throws IOException {
-		errorPath = withExtension(errorPath, ERR);
-		// Silly \n-based format
-		List<String> errorDoc = new ArrayList<>();
-		for (Path cause : causedBy) {
-			Path relCause = errorPath.getParent().relativize(cause);
-			errorDoc.add(relCause.toString());			
-		}
-		errorDoc.add(""); // Our magic separator
-		errorDoc.add(message);
-		errorDoc.add(trace);
-		Files.write(errorPath, errorDoc, UTF8, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
-		return errorPath;
 	}
 
 	public static Path setReference(Path path, URI ref) throws IOException {

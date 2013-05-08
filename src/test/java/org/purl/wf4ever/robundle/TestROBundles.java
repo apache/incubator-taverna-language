@@ -24,7 +24,6 @@ import java.util.Map;
 import org.junit.Test;
 import org.purl.wf4ever.robundle.ROBundle;
 import org.purl.wf4ever.robundle.ROBundles;
-import org.purl.wf4ever.robundle.ErrorDocument;
 
 public class TestROBundles {
 	protected void checkSignature(Path zip) throws IOException {
@@ -133,47 +132,6 @@ public class TestROBundles {
 	}
 
 	@Test
-	public void getError() throws Exception {
-		
-		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path inputs = ROBundles.getInputs(dataBundle);
-		Path portIn1 = ROBundles.getPort(inputs, "in1");
-		ROBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");		
-		
-		ErrorDocument error = ROBundles.getError(portIn1);
-		assertTrue(error.getCausedBy().isEmpty());
-		
-		assertEquals("Something did not work", error.getMessage());
-		// Notice that the lack of trailing \n is preserved 
-		assertEquals("A very\n long\n error\n trace", error.getTrace());	
-		
-		assertEquals(null, ROBundles.getError(null));
-	}
-
-	@Test
-	public void getErrorCause() throws Exception {		
-		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path inputs = ROBundles.getInputs(dataBundle);
-		Path portIn1 = ROBundles.getPort(inputs, "in1");
-		Path cause1 = ROBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");
-		Path portIn2 = ROBundles.getPort(inputs, "in2");
-		Path cause2 = ROBundles.setError(portIn2, "Something else did not work", "Shorter trace");
-		
-		
-		Path outputs = ROBundles.getOutputs(dataBundle);
-		Path portOut1 = ROBundles.getPort(outputs, "out1");
-		ROBundles.setError(portOut1, "Errors in input", "", cause1, cause2);
-
-		ErrorDocument error = ROBundles.getError(portOut1);
-		assertEquals("Errors in input", error.getMessage());
-		assertEquals("", error.getTrace());
-		assertEquals(2, error.getCausedBy().size());
-		
-		assertTrue(Files.isSameFile(cause1, error.getCausedBy().get(0)));
-		assertTrue(Files.isSameFile(cause2, error.getCausedBy().get(1)));
-	}
-
-	@Test
 	public void getInputs() throws Exception {
 		ROBundle dataBundle = ROBundles.createDataBundle();
 		Path inputs = ROBundles.getInputs(dataBundle);
@@ -226,7 +184,6 @@ public class TestROBundles {
 		Path item7 = ROBundles.getListItem(list, 7);
 		assertFalse(Files.exists(item7));
 		assertFalse(ROBundles.isList(item7));
-		assertFalse(ROBundles.isError(item7));
 		assertFalse(ROBundles.isValue(item7));
 		// TODO: Is it really missing? item1337 is also missing..
 		assertTrue(ROBundles.isMissing(item7));
@@ -347,19 +304,6 @@ public class TestROBundles {
 		}
 	}
 
-	@Test
-	public void isError() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path inputs = ROBundles.getInputs(dataBundle);
-		Path portIn1 = ROBundles.getPort(inputs, "in1");
-		ROBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");		
-		
-		assertFalse(ROBundles.isList(portIn1));		
-		assertFalse(ROBundles.isValue(portIn1));
-		assertFalse(ROBundles.isMissing(portIn1));
-		assertFalse(ROBundles.isReference(portIn1));
-		assertTrue(ROBundles.isError(portIn1));		
-	}
 
 	@Test
 	public void isList() throws Exception {
@@ -369,7 +313,6 @@ public class TestROBundles {
 		ROBundles.createList(list);
 		assertTrue(ROBundles.isList(list));
 		assertFalse(ROBundles.isValue(list));
-		assertFalse(ROBundles.isError(list));
 		assertFalse(ROBundles.isReference(list));
 		assertFalse(ROBundles.isMissing(list));
 	}
@@ -382,7 +325,6 @@ public class TestROBundles {
 		
 		assertFalse(ROBundles.isList(portIn1));		
 		assertFalse(ROBundles.isValue(portIn1));
-		assertFalse(ROBundles.isError(portIn1));
 		assertTrue(ROBundles.isMissing(portIn1));
 		assertFalse(ROBundles.isReference(portIn1));
 	}
@@ -394,7 +336,6 @@ public class TestROBundles {
 		Path portIn1 = ROBundles.getPort(inputs, "in1");
 		ROBundles.setReference(portIn1, URI.create("http://example.org/test"));
 		assertTrue(ROBundles.isReference(portIn1));
-		assertFalse(ROBundles.isError(portIn1));		
 		assertFalse(ROBundles.isList(portIn1));
 		assertFalse(ROBundles.isMissing(portIn1));
 		assertFalse(ROBundles.isValue(portIn1));
@@ -408,7 +349,6 @@ public class TestROBundles {
 		ROBundles.setStringValue(portIn1, "Hello");
 		assertTrue(ROBundles.isValue(portIn1));
 		assertFalse(ROBundles.isList(portIn1));
-		assertFalse(ROBundles.isError(portIn1));
 		assertFalse(ROBundles.isReference(portIn1));
 	}
 
@@ -515,81 +455,6 @@ public class TestROBundles {
 			assertEquals(Arrays.asList("d1", "f1"), ls(tmp));
 		}
 	}
-	
-	@Test
-	public void setErrorArgs() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path inputs = ROBundles.getInputs(dataBundle);
-		Path portIn1 = ROBundles.getPort(inputs, "in1");
-		Path errorPath = ROBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");		
-		assertEquals("in1.err", errorPath.getFileName().toString());
-
-		List<String> errLines = Files.readAllLines(errorPath, Charset.forName("UTF-8"));
-		assertEquals(6, errLines.size());
-		assertEquals("", errLines.get(0));
-		assertEquals("Something did not work", errLines.get(1));
-		assertEquals("A very", errLines.get(2));
-		assertEquals(" long", errLines.get(3));
-		assertEquals(" error", errLines.get(4));
-		assertEquals(" trace", errLines.get(5));
-	}
-	
-	@Test
-	public void setErrorCause() throws Exception {		
-		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path inputs = ROBundles.getInputs(dataBundle);
-		Path portIn1 = ROBundles.getPort(inputs, "in1");
-		Path cause1 = ROBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");
-		Path portIn2 = ROBundles.getPort(inputs, "in2");
-		Path cause2 = ROBundles.setError(portIn2, "Something else did not work", "Shorter trace");
-		
-		
-		Path outputs = ROBundles.getOutputs(dataBundle);
-		Path portOut1 = ROBundles.getPort(outputs, "out1");
-		Path errorPath = ROBundles.setError(portOut1, "Errors in input", "", cause1, cause2);
-		
-		List<String> errLines = Files.readAllLines(errorPath, Charset.forName("UTF-8"));
-		assertEquals("../inputs/in1.err", errLines.get(0));
-		assertEquals("../inputs/in2.err", errLines.get(1));
-		assertEquals("", errLines.get(2));
-	}
-	
-	@Test
-	public void setErrorObj() throws Exception {
-		ROBundle dataBundle = ROBundles.createDataBundle();
-		Path inputs = ROBundles.getInputs(dataBundle);
-
-		Path portIn1 = ROBundles.getPort(inputs, "in1");
-		Path cause1 = ROBundles.setError(portIn1, "a", "b");
-		Path portIn2 = ROBundles.getPort(inputs, "in2");
-		Path cause2 = ROBundles.setError(portIn2, "c", "d");
-		
-		
-		Path outputs = ROBundles.getOutputs(dataBundle);
-		Path portOut1 = ROBundles.getPort(outputs, "out1");
-
-		ErrorDocument error = new ErrorDocument();
-		error.getCausedBy().add(cause1);
-		error.getCausedBy().add(cause2);
-		
-		error.setMessage("Something did not work");
-		error.setTrace("Here\nis\nwhy\n");
-		
-		Path errorPath = ROBundles.setError(portOut1, error);		
-		assertEquals("out1.err", errorPath.getFileName().toString());
-
-		List<String> errLines = Files.readAllLines(errorPath, Charset.forName("UTF-8"));
-		assertEquals(8, errLines.size());
-		assertEquals("../inputs/in1.err", errLines.get(0));
-		assertEquals("../inputs/in2.err", errLines.get(1));
-		assertEquals("", errLines.get(2));
-		assertEquals("Something did not work", errLines.get(3));
-		assertEquals("Here", errLines.get(4));
-		assertEquals("is", errLines.get(5));
-		assertEquals("why", errLines.get(6));
-		assertEquals("", errLines.get(7));
-	}
-	
 	
 	@Test
 	public void setReference() throws Exception {

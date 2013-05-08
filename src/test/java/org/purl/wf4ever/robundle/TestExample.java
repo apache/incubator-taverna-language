@@ -17,7 +17,6 @@ import java.util.NavigableMap;
 import org.junit.Test;
 import org.purl.wf4ever.robundle.ROBundle;
 import org.purl.wf4ever.robundle.ROBundles;
-import org.purl.wf4ever.robundle.ErrorDocument;
 
 public class TestExample {
 	@Test
@@ -87,16 +86,6 @@ public class TestExample {
 		// Ports can be browsed as a map by port name
 		NavigableMap<String, Path> ports = ROBundles.getPorts(inputs);
 		System.out.println(ports.keySet());
-		
-		// Representing errors		
-		Path out2 = ROBundles.getPort(outputs, "out2");		
-		ROBundles.setError(out2, "Something did not work", "A very\n long\n error\n trace");		
-
-		// Retrieving errors
-		if (ROBundles.isError(out2)) {
-			ErrorDocument error = ROBundles.getError(out2);
-			System.out.println("Error: " + error.getMessage());
-		}
 		
 		// Representing references
 		URI ref = URI.create("http://example.com/external.txt");
