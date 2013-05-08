@@ -1,4 +1,4 @@
-package uk.org.taverna.databundle;
+package org.purl.wf4ever.robundle;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -15,6 +15,9 @@ import java.util.List;
 import java.util.NavigableMap;
 
 import org.junit.Test;
+import org.purl.wf4ever.robundle.DataBundle;
+import org.purl.wf4ever.robundle.DataBundles;
+import org.purl.wf4ever.robundle.ErrorDocument;
 
 public class TestExample {
 	@Test

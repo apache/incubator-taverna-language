@@ -1,4 +1,4 @@
-package uk.org.taverna.databundle;
+package org.purl.wf4ever.robundle;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

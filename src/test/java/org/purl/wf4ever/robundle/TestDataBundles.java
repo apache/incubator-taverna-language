@@ -1,4 +1,4 @@
-package uk.org.taverna.databundle;
+package org.purl.wf4ever.robundle;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
+import org.purl.wf4ever.robundle.DataBundle;
+import org.purl.wf4ever.robundle.DataBundles;
+import org.purl.wf4ever.robundle.ErrorDocument;
 
 public class TestDataBundles {
 	protected void checkSignature(Path zip) throws IOException {

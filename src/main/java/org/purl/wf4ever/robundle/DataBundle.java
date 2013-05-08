@@ -1,4 +1,4 @@
-package uk.org.taverna.databundle;
+package org.purl.wf4ever.robundle;
 
 import java.io.IOException;
 import java.net.URI;
