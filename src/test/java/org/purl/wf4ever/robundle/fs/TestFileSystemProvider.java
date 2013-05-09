@@ -7,7 +7,7 @@ import java.net.URI;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.spi.FileSystemProvider;
-import java.util.HashMap;
+import java.util.Collections;
 
 import org.junit.Test;
 import org.purl.wf4ever.robundle.Bundle;
@@ -28,18 +28,11 @@ public class TestFileSystemProvider {
 
 	@Test
 	public void newByURI() throws Exception {
-		URI widgetUri = URI
-				.create("widget://2be0ea48-4b43-4be7-be76-8859f8414296/");
-		FileSystem fs = FileSystems.newFileSystem(widgetUri,
-				new HashMap<String, Object>());
-		assertTrue(fs instanceof BundleFileSystem);
-	}
-
-	@Test
-	public void fromFile() throws Exception {
 		Bundle bundle = Bundles.createBundle();
-		FileSystem fs = FileSystems.newFileSystem(bundle.getSource(),
-				getClass().getClassLoader());
+		
+		URI w = new URI("widget", bundle.getSource().toUri().toASCIIString(), null);
+		FileSystem fs = FileSystems.newFileSystem(w, 
+				Collections.<String,Object>emptyMap());
 		assertTrue(fs instanceof BundleFileSystem);
 	}
 

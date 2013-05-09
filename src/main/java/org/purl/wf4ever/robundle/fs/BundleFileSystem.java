@@ -1,6 +1,7 @@
 package org.purl.wf4ever.robundle.fs;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.FileStore;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
@@ -12,75 +13,74 @@ import java.util.Set;
 
 public class BundleFileSystem extends FileSystem {
 
+	private FileSystem origFS;
+	private BundleFileSystemProvider provider;
+	private URI baseURI;
+
+	protected BundleFileSystem(FileSystem origFS, BundleFileSystemProvider provider, URI baseURI) {
+		this.origFS = origFS;
+		this.provider = provider;
+		this.baseURI = baseURI;
+	}
+
 	@Override
 	public FileSystemProvider provider() {
-		return new BundleFileSystemProvider();
+		return provider;
 	}
 
 	@Override
 	public void close() throws IOException {
-		// TODO Auto-generated method stub
-		
+		origFS.close();		
 	}
 
 	@Override
 	public boolean isOpen() {
-		// TODO Auto-generated method stub
-		return false;
+		return origFS.isOpen();
 	}
 
 	@Override
 	public boolean isReadOnly() {
-		// TODO Auto-generated method stub
-		return false;
+		return origFS.isReadOnly();
 	}
 
 	@Override
 	public String getSeparator() {
-		// TODO Auto-generated method stub
-		return null;
+		return origFS.getSeparator();
 	}
 
 	@Override
 	public Iterable<Path> getRootDirectories() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Iterable<FileStore> getFileStores() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Set<String> supportedFileAttributeViews() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Path getPath(String first, String... more) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public PathMatcher getPathMatcher(String syntaxAndPattern) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public UserPrincipalLookupService getUserPrincipalLookupService() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public WatchService newWatchService() throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 	
 }
