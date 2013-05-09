@@ -134,6 +134,8 @@ public class T2FlowParser {
 	public static final URI exampleDataURI = URI
 			.create("http://biocatalogue.org/attribute/exampleData");
 	
+	public static final String DEFAULT_PRODUCED_BY = "unspecified";
+	
 
 	public static <T extends Named> T findNamed(Collection<T> namedObjects,
 			String name) {
@@ -305,7 +307,8 @@ public class T2FlowParser {
 	}
 
 	protected void makeProfile(uk.org.taverna.scufl2.xml.t2flow.jaxb.Workflow wf) {
-		Profile profile = new Profile(wf.getProducedBy());
+		// TODO: What should the default be? Should there be one? Who knows
+		Profile profile = new Profile(wf.getProducedBy() == null ? DEFAULT_PRODUCED_BY : wf.getProducedBy());
 		profile.setParent(parserState.get().getCurrentWorkflowBundle());
 		parserState.get().getCurrentWorkflowBundle().setMainProfile(profile);
 		parserState.get().setCurrentProfile(profile);
