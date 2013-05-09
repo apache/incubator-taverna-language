@@ -10,6 +10,7 @@ import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.OutputFormat;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.SpreadsheetColumnNameEntry;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.SpreadsheetExcludes;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.SpreadsheetImportConfig;
@@ -83,12 +84,14 @@ public class SpreadsheetActivityParser extends AbstractActivityParser {
 
 		configResource.addPropertyAsString(ACTIVITY_URI.resolve("#emptyCellPolicy"), config
 				.getEmptyCellPolicy().value());
-
-		configResource.addPropertyAsString(ACTIVITY_URI.resolve("#outputFormat"), config
-				.getOutputFormat().value());
-
-		configResource.addPropertyAsString(ACTIVITY_URI.resolve("#csvDelimiter"),
-				config.getCsvDelimiter());
+		
+		OutputFormat outputFormat = config.getOutputFormat();
+		if(outputFormat != null)
+			configResource.addPropertyAsString(ACTIVITY_URI.resolve("#outputFormat"), outputFormat.value());
+		
+		String csvDelimiter = config.getCsvDelimiter();
+		if(csvDelimiter != null)
+			configResource.addPropertyAsString(ACTIVITY_URI.resolve("#csvDelimiter"), csvDelimiter);
 
 		return configuration;
 	}
