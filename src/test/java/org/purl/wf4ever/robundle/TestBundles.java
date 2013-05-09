@@ -92,6 +92,7 @@ public class TestBundles {
 		Bundle bundle = Bundles.createBundle();
 		assertTrue(Files.isDirectory(bundle.getRoot()));
 		// TODO: Should this instead return a FileSystem so we can close() it?
+		bundle.getRoot().getFileSystem().newWatchService();
 	}
 
 	@Test
