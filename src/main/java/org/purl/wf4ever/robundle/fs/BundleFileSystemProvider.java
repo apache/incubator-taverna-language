@@ -24,6 +24,7 @@ import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.FileAttributeView;
 import java.nio.file.spi.FileSystemProvider;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -75,7 +76,7 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 
 	protected URI baseURIFor(URI uri) {
 		if (!(uri.getScheme().equals(WIDGET))) {
-			throw new UnsupportedOperationException();
+			throw new IllegalArgumentException("Unsupported scheme in: " + uri);
 		}
 		if (!uri.isOpaque()) {
 			return uri.resolve("/");
@@ -88,8 +89,8 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 			realPath = localPath.toAbsolutePath();
 		}
 		// Generate a UUID from the MD5 of the URI of the real path (!)
-		UUID uuid = UUID.nameUUIDFromBytes(realPath.toUri()
-				.toASCIIString().getBytes(UTF8));
+		UUID uuid = UUID.nameUUIDFromBytes(realPath.toUri().toASCIIString()
+				.getBytes(UTF8));
 		try {
 			return new URI(WIDGET, uuid.toString(), "/", null);
 		} catch (URISyntaxException e) {
@@ -99,10 +100,11 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 	}
 
 	@Override
-	public FileSystem getFileSystem(URI uri) {
-		WeakReference<BundleFileSystem> ref = openFilesystems.get(baseURIFor(uri));
-		if (ref == null) { 
-			throw new FileSystemNotFoundException(uri.toString()); 
+	public BundleFileSystem getFileSystem(URI uri) {
+		WeakReference<BundleFileSystem> ref = openFilesystems
+				.get(baseURIFor(uri));
+		if (ref == null) {
+			throw new FileSystemNotFoundException(uri.toString());
 		}
 		BundleFileSystem fs = ref.get();
 		if (fs == null) {
@@ -113,102 +115,128 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 
 	@Override
 	public Path getPath(URI uri) {
-		// TODO Auto-generated method stub
-		return null;
+		BundleFileSystem fs = getFileSystem(uri);
+		Path r = fs.getRoot();
+		if (uri.isOpaque()) {
+			return r;
+		} else {
+			return r.resolve(uri.getPath());
+		}
 	}
 
 	@Override
 	public SeekableByteChannel newByteChannel(Path path,
 			Set<? extends OpenOption> options, FileAttribute<?>... attrs)
-			throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+			throws IOException {		
+		final BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
+		return origProvider(path).newByteChannel(fs.unwrap(path), options, attrs);
+	}
+
+	private FileSystemProvider origProvider(Path path) {
+		return ((BundlePath) path).getFileSystem().origFS.provider();
 	}
 
 	@Override
 	public DirectoryStream<Path> newDirectoryStream(Path dir,
-			Filter<? super Path> filter) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+			final Filter<? super Path> filter) throws IOException {
+		final BundleFileSystem fs = (BundleFileSystem) dir.getFileSystem();
+		final DirectoryStream<Path> stream = origProvider(dir)
+				.newDirectoryStream(fs.unwrap(dir), new Filter<Path>() {
+					@Override
+					public boolean accept(Path entry) throws IOException {
+						return filter.accept(fs.wrap(entry));
+					}
+				});
+		return new DirectoryStream<Path>() {
+			@Override
+			public void close() throws IOException {
+				stream.close();
+			}
+
+			@Override
+			public Iterator<Path> iterator() {
+				return fs.wrapIterator(stream.iterator());
+			}
+		};
 	}
 
 	@Override
 	public void createDirectory(Path dir, FileAttribute<?>... attrs)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		BundleFileSystem fs = (BundleFileSystem) dir.getFileSystem();
+		origProvider(dir).createDirectory(fs.unwrap(dir), attrs);
 	}
 
 	@Override
 	public void delete(Path path) throws IOException {
-		// TODO Auto-generated method stub
-
+		BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
+		origProvider(path).delete(fs.unwrap(path));
 	}
 
 	@Override
 	public void copy(Path source, Path target, CopyOption... options)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		BundleFileSystem fs = (BundleFileSystem) source.getFileSystem();
+		origProvider(source).copy(fs.unwrap(source), fs.unwrap(target), options);
 	}
 
 	@Override
 	public void move(Path source, Path target, CopyOption... options)
 			throws IOException {
-		// TODO Auto-generated method stub
-
+		BundleFileSystem fs = (BundleFileSystem) source.getFileSystem();
+		origProvider(source).copy(fs.unwrap(source), fs.unwrap(target), options);
 	}
 
 	@Override
 	public boolean isSameFile(Path path, Path path2) throws IOException {
-		// TODO Auto-generated method stub
-		return false;
+		BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
+		return origProvider(path).isSameFile(fs.unwrap(path), fs.unwrap(path2));
 	}
 
 	@Override
 	public boolean isHidden(Path path) throws IOException {
-		// TODO Auto-generated method stub
-		return false;
+		BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
+		return origProvider(path).isHidden(fs.unwrap(path));
 	}
 
 	@Override
 	public FileStore getFileStore(Path path) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		BundlePath bpath = (BundlePath)path;
+		return bpath.getFileSystem().getFileStore();
 	}
 
 	@Override
 	public void checkAccess(Path path, AccessMode... modes) throws IOException {
-		// TODO Auto-generated method stub
-
+		BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
+		origProvider(path).checkAccess(fs.unwrap(path), modes);
 	}
 
 	@Override
 	public <V extends FileAttributeView> V getFileAttributeView(Path path,
 			Class<V> type, LinkOption... options) {
-		// TODO Auto-generated method stub
-		return null;
+		BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
+		return origProvider(path).getFileAttributeView(fs.unwrap(path), type, options);
 	}
 
 	@Override
 	public <A extends BasicFileAttributes> A readAttributes(Path path,
 			Class<A> type, LinkOption... options) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
+		return origProvider(path).readAttributes(fs.unwrap(path), type, options);
 	}
 
 	@Override
 	public Map<String, Object> readAttributes(Path path, String attributes,
 			LinkOption... options) throws IOException {
-		// TODO Auto-generated method stub
-		return null;
+		BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
+		return origProvider(path).readAttributes(fs.unwrap(path), attributes, options);
 	}
 
 	@Override
 	public void setAttribute(Path path, String attribute, Object value,
 			LinkOption... options) throws IOException {
-		// TODO Auto-generated method stub
-
+		BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
+		origProvider(path).setAttribute(fs.unwrap(path), attribute, value, options);
 	}
 
 }

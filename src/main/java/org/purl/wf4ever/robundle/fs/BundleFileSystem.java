@@ -8,23 +8,61 @@ import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.WatchService;
 import java.nio.file.attribute.UserPrincipalLookupService;
-import java.nio.file.spi.FileSystemProvider;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.Set;
 
 public class BundleFileSystem extends FileSystem {
 
-	private FileSystem origFS;
-	private BundleFileSystemProvider provider;
-	private URI baseURI;
+	protected final FileSystem origFS;
+	protected final BundleFileSystemProvider provider;
+	protected final URI baseURI;
 
 	protected BundleFileSystem(FileSystem origFS, BundleFileSystemProvider provider, URI baseURI) {
+		if (origFS ==null || provider == null || baseURI == null) { 
+			throw new NullPointerException();
+		}
 		this.origFS = origFS;
 		this.provider = provider;
 		this.baseURI = baseURI;
 	}
+	
+	
+	protected Path unwrap(Path bundlePath) {
+		if (! (bundlePath instanceof BundlePath)) {
+			// assume it's already unwrapped for some reason
+			return bundlePath;
+		}
+		return ((BundlePath) bundlePath).getZipPath();
+	}
+	
+	protected BundlePath wrap(Path zipPath) {
+		if (zipPath instanceof BundlePath) {
+			throw new IllegalArgumentException("Did not expect BundlePath: " + zipPath);
+		}
+		return new BundlePath(this, zipPath);
+	}
+
+	protected Iterator<Path> wrapIterator(final Iterator<Path> iterator) {
+		return new Iterator<Path>() {
+			@Override
+			public boolean hasNext() {
+				return iterator.hasNext();
+			}
+			@Override
+			public Path next() {
+				return wrap(iterator.next());
+			}
+			@Override
+			public void remove() {
+				iterator.remove();				
+			}			
+		};
+	}
+	
 
 	@Override
-	public FileSystemProvider provider() {
+	public BundleFileSystemProvider provider() {
 		return provider;
 	}
 
@@ -50,27 +88,43 @@ public class BundleFileSystem extends FileSystem {
 
 	@Override
 	public Iterable<Path> getRootDirectories() {
-		throw new UnsupportedOperationException();
+		return Collections.<Path>singleton(getRoot());
+	}
+
+	protected BundlePath getRoot() {
+		return wrap(origFS.getRootDirectories().iterator().next());
 	}
 
 	@Override
 	public Iterable<FileStore> getFileStores() {
-		throw new UnsupportedOperationException();
+		return Collections.<FileStore>singleton(getFileStore());
+	}
+
+	protected BundleFileStore getFileStore() {
+		// We assume there's only one file store, as is true for ZipProvider
+		return new BundleFileStore(this, origFS.getFileStores().iterator().next());
 	}
 
 	@Override
 	public Set<String> supportedFileAttributeViews() {
-		throw new UnsupportedOperationException();
+		return origFS.supportedFileAttributeViews();
 	}
 
 	@Override
 	public Path getPath(String first, String... more) {
-		throw new UnsupportedOperationException();
+		Path zipPath = origFS.getPath(first, more);
+		return wrap(zipPath);
 	}
 
 	@Override
 	public PathMatcher getPathMatcher(String syntaxAndPattern) {
-		throw new UnsupportedOperationException();
+		final PathMatcher zipMatcher = origFS.getPathMatcher(syntaxAndPattern);
+		return new PathMatcher() {			
+			@Override
+			public boolean matches(Path path) {
+				return zipMatcher.matches(unwrap(path));
+			}
+		};
 	}
 
 	@Override
@@ -81,6 +135,10 @@ public class BundleFileSystem extends FileSystem {
 	@Override
 	public WatchService newWatchService() throws IOException {
 		throw new UnsupportedOperationException();
+	}
+
+	public URI getBaseURI() {
+		return baseURI;
 	}
 	
 }
