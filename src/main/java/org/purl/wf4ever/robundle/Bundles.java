@@ -51,12 +51,8 @@ public class Bundles {
 	}
 
 	public static Bundle createBundle() throws IOException {
-		Path bundle = Files.createTempFile("robundle", ".zip");
-		BundleFileSystem fs = BundleFileSystemProvider.newFileSystemFromNew(
-				bundle, null);
-		// FileSystem fs = createFSfromJar(bundle);
+		BundleFileSystem fs = BundleFileSystemProvider.newFileSystemFromTemporary();
 		return new Bundle(fs.getRootDirectory(), true);
-		// return Files.createTempDirectory("bundle");
 	}
 
 	protected static String filenameWithoutExtension(Path entry) {

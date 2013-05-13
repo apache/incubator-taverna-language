@@ -1,6 +1,6 @@
 package org.purl.wf4ever.robundle.fs;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -51,6 +51,7 @@ public class TestFileSystemProvider {
 		BundleFileSystemProvider.createBundleAsZip(path, "application/x-test");
 		assertTrue(Files.exists(path));
 		BundleFileSystem f = BundleFileSystemProvider.newFileSystemFromExisting(path);
+		assertEquals(path, f.getSource());
 		assertEquals("application/x-test", Files.readAllLines(
 				f.getRootDirectory().resolve("mimetype"), 
 				Charset.forName("ASCII")).get(0));
@@ -62,6 +63,7 @@ public class TestFileSystemProvider {
 		Files.delete(path);
 		BundleFileSystem f = BundleFileSystemProvider.newFileSystemFromNew(path);
 		assertTrue(Files.exists(path));
+		assertEquals(path, f.getSource());
 		assertEquals("application/vnd.wf4ever.robundle+zip", Files.readAllLines(
 				f.getRootDirectory().resolve("mimetype"), 
 				Charset.forName("ASCII")).get(0));
@@ -73,9 +75,20 @@ public class TestFileSystemProvider {
 		Files.delete(path);
 		BundleFileSystem f = BundleFileSystemProvider.newFileSystemFromNew(path, "application/x-test2");
 		assertTrue(Files.exists(path));
+		assertEquals(path, f.getSource());
 		assertEquals("application/x-test2", Files.readAllLines(
 				f.getRootDirectory().resolve("mimetype"), 
 				Charset.forName("ASCII")).get(0));
 	}
+	
+	@Test
+	public void newFileSystemFromTemporary() throws Exception {
+		BundleFileSystem f = BundleFileSystemProvider.newFileSystemFromTemporary();
+		assertTrue(Files.exists(f.getSource()));
+		assertEquals("application/vnd.wf4ever.robundle+zip", Files.readAllLines(
+				f.getRootDirectory().resolve("mimetype"), 
+				Charset.forName("ASCII")).get(0));
+	}
+	
 
 }

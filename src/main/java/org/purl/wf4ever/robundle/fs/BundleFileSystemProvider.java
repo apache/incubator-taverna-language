@@ -113,6 +113,13 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 		return newFileSystemFromExisting(bundle);
 	}
 
+	public static BundleFileSystem newFileSystemFromTemporary() throws IOException {
+		Path bundle = Files.createTempFile("robundle", ".zip");
+		BundleFileSystem fs = BundleFileSystemProvider.newFileSystemFromNew(
+				bundle, null);
+		return fs;
+	}
+
 	Map<URI, WeakReference<BundleFileSystem>> openFilesystems = new HashMap<>();
 
 	protected URI baseURIFor(URI uri) {
