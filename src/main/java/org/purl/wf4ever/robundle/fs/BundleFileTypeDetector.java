@@ -17,9 +17,9 @@ import java.util.zip.ZipInputStream;
 public class BundleFileTypeDetector extends FileTypeDetector {
 
 	private static final String APPLICATION_ZIP = "application/zip";
-	private static final String MIMETYPE = "mimetype";
-	private static final Charset LATIN1 = Charset.forName("ISO-8859-1");
 	private static final Charset ASCII = Charset.forName("ASCII");
+	private static final Charset LATIN1 = Charset.forName("ISO-8859-1");
+	private static final String MIMETYPE = "mimetype";
 
 	@Override
 	public String probeContentType(Path path) throws IOException {
