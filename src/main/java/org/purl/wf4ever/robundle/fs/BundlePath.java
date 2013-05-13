@@ -18,6 +18,9 @@ public class BundlePath implements Path {
 	private final Path zipPath;
 
 	protected BundlePath(BundleFileSystem fs, Path zipPath) {
+		if (fs == null || zipPath == null) {
+			throw new NullPointerException();
+		}
 		this.fs = fs;
 		this.zipPath = zipPath;
 	}
