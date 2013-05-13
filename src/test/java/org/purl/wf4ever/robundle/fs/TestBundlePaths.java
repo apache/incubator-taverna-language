@@ -1,15 +1,13 @@
 package org.purl.wf4ever.robundle.fs;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.nio.file.Path;
 
 import org.junit.Test;
-import org.purl.wf4ever.robundle.Bundle;
-import org.purl.wf4ever.robundle.Bundles;
 
 public class TestBundlePaths {
 	@Test
