@@ -2,9 +2,13 @@ package org.purl.wf4ever.robundle;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import org.purl.wf4ever.robundle.fs.BundleFileSystem;
+import org.purl.wf4ever.robundle.fs.BundlePath;
 
 public class Bundle implements AutoCloseable {
 
@@ -33,13 +37,10 @@ public class Bundle implements AutoCloseable {
 	}
 
 	public Path getSource() {
-		URI uri = getRoot().toUri();
-		String s = uri.getSchemeSpecificPart();
-		if (!s.endsWith("!/")) { // sanity check
-			throw new IllegalStateException("Can't parse JAR URI: " + uri);
-		}
-		URI zip = URI.create(s.substring(0, s.length() - 2));
-		return Paths.get(zip); // Look up our path
+		BundleFileSystem fs = (BundleFileSystem) getRoot().getFileSystem();
+		return fs.getSource();
+		
+
 	}
 
 	public boolean isDeleteOnClose() {

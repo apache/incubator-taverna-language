@@ -5,10 +5,8 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.FileSystem;
@@ -17,14 +15,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.zip.CRC32;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalINIConfiguration;
+import org.purl.wf4ever.robundle.fs.BundleFileSystem;
+import org.purl.wf4ever.robundle.fs.BundleFileSystemProvider;
 
 /**
  * Utility functions for dealing with RO bundles.
@@ -37,7 +32,6 @@ import org.apache.commons.configuration.HierarchicalINIConfiguration;
  */
 public class Bundles {
 
-	private static final String APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP = "application/vnd.wf4ever.robundle+zip";
 	private static final Charset ASCII = Charset.forName("ASCII");
 	private static final String INI_INTERNET_SHORTCUT = "InternetShortcut";
 	private static final String INI_URL = "URL";
@@ -45,25 +39,6 @@ public class Bundles {
 	private static final String URL = ".url";
 	private static final Charset UTF8 = Charset.forName("UTF-8");
 
-	private static void addMimeTypeToZip(ZipOutputStream out)
-			throws IOException {
-		// FIXME: Make the mediatype a parameter
-		byte[] bytes = APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP.getBytes(UTF8);
-
-		// We'll have to do the mimetype file quite low-level
-		// in order to ensure it is STORED and not COMPRESSED
-
-		ZipEntry entry = new ZipEntry("mimetype");
-		entry.setMethod(ZipEntry.STORED);
-		entry.setSize(bytes.length);
-		CRC32 crc = new CRC32();
-		crc.update(bytes);
-		entry.setCrc(crc.getValue());
-
-		out.putNextEntry(entry);
-		out.write(bytes);
-		out.closeEntry();
-	}
 
 	public static void closeAndSaveBundle(Bundle bundle,
 			Path destination) throws IOException {
@@ -80,38 +55,13 @@ public class Bundles {
 	}
 
 	public static Bundle createBundle() throws IOException {
-		// Create ZIP file as
-		// http://docs.oracle.com/javase/7/docs/technotes/guides/io/fsp/zipfilesystemprovider.html
-
 		Path bundle = Files.createTempFile("robundle", ".zip");		
-		FileSystem fs = createFSfromZip(bundle);
+		BundleFileSystem fs = BundleFileSystemProvider.newFileSystemFromNew(bundle, null);
 		// FileSystem fs = createFSfromJar(bundle);
-		return new Bundle(fs.getRootDirectories().iterator().next(), true);
+		return new Bundle(fs.getRootDirectory(), true);
 		// return Files.createTempDirectory("bundle");
 	}
 
-	protected static FileSystem createFSfromJar(Path path) throws IOException {
-		Files.deleteIfExists(path);
-		URI uri;
-		try {
-			uri = new URI("jar", path.toUri().toASCIIString(), null);
-		} catch (URISyntaxException e) {
-			throw new IOException("Can't make jar: URI using " + path.toUri());
-		}
-		Map<String, String> env = new HashMap<>();
-		env.put("create", "true");
-		return FileSystems.newFileSystem(uri, env);
-	}
-
-	protected static FileSystem createFSfromZip(Path bundle)
-			throws FileNotFoundException, IOException {
-	
-		try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(bundle, 
-				StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING))) {
-			addMimeTypeToZip(out);
-		}
-		return FileSystems.newFileSystem(bundle, null);
-	}
 
 	protected static String filenameWithoutExtension(Path entry) {
 		String fileName = entry.getFileName().toString();

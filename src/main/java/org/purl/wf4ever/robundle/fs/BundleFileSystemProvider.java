@@ -1,5 +1,6 @@
 package org.purl.wf4ever.robundle.fs;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.URI;
@@ -15,31 +16,247 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystemAlreadyExistsException;
 import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.FileAttributeView;
 import java.nio.file.spi.FileSystemProvider;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.zip.CRC32;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class BundleFileSystemProvider extends FileSystemProvider {
+	private static final String APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP = "application/vnd.wf4ever.robundle+zip";
+	private static final Charset UTF8 = Charset.forName("UTF-8");
+	private static final String WIDGET = "widget";
+
+	protected static void addMimeTypeToZip(ZipOutputStream out, String mimetype)
+			throws IOException {
+		if (mimetype == null) {
+			mimetype = APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP;
+		}
+		// FIXME: Make the mediatype a parameter
+		byte[] bytes = mimetype.getBytes(UTF8);
+
+		// We'll have to do the mimetype file quite low-level
+		// in order to ensure it is STORED and not COMPRESSED
+
+		ZipEntry entry = new ZipEntry("mimetype");
+		entry.setMethod(ZipEntry.STORED);
+		entry.setSize(bytes.length);
+		CRC32 crc = new CRC32();
+		crc.update(bytes);
+		entry.setCrc(crc.getValue());
+
+		out.putNextEntry(entry);
+		out.write(bytes);
+		out.closeEntry();
+	}
+
+	protected static void createBundleAsZip(Path bundle, String mimetype)
+			throws FileNotFoundException, IOException {
+		// Create ZIP file as
+		// http://docs.oracle.com/javase/7/docs/technotes/guides/io/fsp/zipfilesystemprovider.html
+		try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(
+				bundle, StandardOpenOption.CREATE,
+				StandardOpenOption.TRUNCATE_EXISTING))) {
+			addMimeTypeToZip(out, null);
+		}
+	}
+
+
+	public static BundleFileSystemProvider getInstance() {
+		for (FileSystemProvider provider : FileSystemProvider
+				.installedProviders()) {
+			if (provider instanceof BundleFileSystemProvider) {
+				return (BundleFileSystemProvider) provider;
+			}
+		}
+		throw new IllegalStateException("FileSystemProvider has not been installed: " + BundleFileSystemProvider.class);
+	}
+
+	public static BundleFileSystem newFileSystemFromExisting(Path bundle) throws FileNotFoundException, IOException {
+		URI w;
+		try {
+			w = new URI("widget", bundle.toUri().toASCIIString(), null);
+		} catch (URISyntaxException e) {
+			throw new IllegalArgumentException("Can't create widget: URI for " + bundle);
+		}
+		FileSystem fs = FileSystems.newFileSystem(w, 
+				Collections.<String,Object>emptyMap());		
+		return (BundleFileSystem) fs;
+	}
+	
+	public static BundleFileSystem newFileSystemFromNew(Path bundle) throws FileNotFoundException, IOException {
+		return newFileSystemFromNew(bundle, APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP);
+	}
+	
+	public static BundleFileSystem newFileSystemFromNew(Path bundle, String mimetype) throws FileNotFoundException, IOException {
+		createBundleAsZip(bundle, mimetype);		
+		return newFileSystemFromExisting(bundle);
+	}
 
 	Map<URI, WeakReference<BundleFileSystem>> openFilesystems = new HashMap<>();
 
-	private static final String WIDGET = "widget";
+	protected URI baseURIFor(URI uri) {
+		if (!(uri.getScheme().equals(WIDGET))) {
+			throw new IllegalArgumentException("Unsupported scheme in: " + uri);
+		}
+		if (!uri.isOpaque()) {
+			return uri.resolve("/");
+		}
+		Path localPath = localPathFor(uri);
+		Path realPath;
+		try {
+			realPath = localPath.toRealPath();
+		} catch (IOException ex) {
+			realPath = localPath.toAbsolutePath();
+		}
+		// Generate a UUID from the MD5 of the URI of the real path (!)
+		UUID uuid = UUID.nameUUIDFromBytes(realPath.toUri().toASCIIString()
+				.getBytes(UTF8));
+		try {
+			return new URI(WIDGET, uuid.toString(), "/", null);
+		} catch (URISyntaxException e) {
+			throw new IllegalStateException("Can't create widget:// URI for: "
+					+ uuid);
+		}
+	}
 
-	private static final Charset UTF8 = Charset.forName("UTF8");
+	@Override
+	public void checkAccess(Path path, AccessMode... modes) throws IOException {
+		BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
+		origProvider(path).checkAccess(fs.unwrap(path), modes);
+	}
+
+	@Override
+	public void copy(Path source, Path target, CopyOption... options)
+			throws IOException {
+		BundleFileSystem fs = (BundleFileSystem) source.getFileSystem();
+		origProvider(source).copy(fs.unwrap(source), fs.unwrap(target), options);
+	}
+
+	@Override
+	public void createDirectory(Path dir, FileAttribute<?>... attrs)
+			throws IOException {
+		BundleFileSystem fs = (BundleFileSystem) dir.getFileSystem();
+		origProvider(dir).createDirectory(fs.unwrap(dir), attrs);
+	}
+
+	@Override
+	public void delete(Path path) throws IOException {
+		BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
+		origProvider(path).delete(fs.unwrap(path));
+	}
+
+	@Override
+	public <V extends FileAttributeView> V getFileAttributeView(Path path,
+			Class<V> type, LinkOption... options) {
+		BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
+		return origProvider(path).getFileAttributeView(fs.unwrap(path), type, options);
+	}
+
+	@Override
+	public FileStore getFileStore(Path path) throws IOException {
+		BundlePath bpath = (BundlePath)path;
+		return bpath.getFileSystem().getFileStore();
+	}
+
+	@Override
+	public BundleFileSystem getFileSystem(URI uri) {
+		WeakReference<BundleFileSystem> ref = openFilesystems
+				.get(baseURIFor(uri));
+		if (ref == null) {
+			throw new FileSystemNotFoundException(uri.toString());
+		}
+		BundleFileSystem fs = ref.get();
+		if (fs == null) {
+			throw new FileSystemNotFoundException(uri.toString());
+		}
+		return fs;
+	}
+
+	@Override
+	public Path getPath(URI uri) {
+		BundleFileSystem fs = getFileSystem(uri);
+		Path r = fs.getRootDirectory();
+		if (uri.isOpaque()) {
+			return r;
+		} else {
+			return r.resolve(uri.getPath());
+		}
+	}
 
 	@Override
 	public String getScheme() {
 		return WIDGET;
+	}
+
+	@Override
+	public boolean isHidden(Path path) throws IOException {
+		BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
+		return origProvider(path).isHidden(fs.unwrap(path));
+	}
+
+	@Override
+	public boolean isSameFile(Path path, Path path2) throws IOException {
+		BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
+		return origProvider(path).isSameFile(fs.unwrap(path), fs.unwrap(path2));
+	}
+
+	private Path localPathFor(URI uri) {
+		URI localUri = URI.create(uri.getSchemeSpecificPart());
+		return Paths.get(localUri);
+	}
+
+	@Override
+	public void move(Path source, Path target, CopyOption... options)
+			throws IOException {
+		BundleFileSystem fs = (BundleFileSystem) source.getFileSystem();
+		origProvider(source).copy(fs.unwrap(source), fs.unwrap(target), options);
+	}
+
+	@Override
+	public SeekableByteChannel newByteChannel(Path path,
+			Set<? extends OpenOption> options, FileAttribute<?>... attrs)
+			throws IOException {		
+		final BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
+		return origProvider(path).newByteChannel(fs.unwrap(path), options, attrs);
+	}
+
+	@Override
+	public DirectoryStream<Path> newDirectoryStream(Path dir,
+			final Filter<? super Path> filter) throws IOException {
+		final BundleFileSystem fs = (BundleFileSystem) dir.getFileSystem();
+		final DirectoryStream<Path> stream = origProvider(dir)
+				.newDirectoryStream(fs.unwrap(dir), new Filter<Path>() {
+					@Override
+					public boolean accept(Path entry) throws IOException {
+						return filter.accept(fs.wrap(entry));
+					}
+				});
+		return new DirectoryStream<Path>() {
+			@Override
+			public void close() throws IOException {
+				stream.close();
+			}
+
+			@Override
+			public Iterator<Path> iterator() {
+				return fs.wrapIterator(stream.iterator());
+			}
+		};
 	}
 
 	@Override
@@ -69,153 +286,8 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 		return fs;
 	}
 
-	private Path localPathFor(URI uri) {
-		URI localUri = URI.create(uri.getSchemeSpecificPart());
-		return Paths.get(localUri);
-	}
-
-	protected URI baseURIFor(URI uri) {
-		if (!(uri.getScheme().equals(WIDGET))) {
-			throw new IllegalArgumentException("Unsupported scheme in: " + uri);
-		}
-		if (!uri.isOpaque()) {
-			return uri.resolve("/");
-		}
-		Path localPath = localPathFor(uri);
-		Path realPath;
-		try {
-			realPath = localPath.toRealPath();
-		} catch (IOException ex) {
-			realPath = localPath.toAbsolutePath();
-		}
-		// Generate a UUID from the MD5 of the URI of the real path (!)
-		UUID uuid = UUID.nameUUIDFromBytes(realPath.toUri().toASCIIString()
-				.getBytes(UTF8));
-		try {
-			return new URI(WIDGET, uuid.toString(), "/", null);
-		} catch (URISyntaxException e) {
-			throw new IllegalStateException("Can't create widget:// URI for: "
-					+ uuid);
-		}
-	}
-
-	@Override
-	public BundleFileSystem getFileSystem(URI uri) {
-		WeakReference<BundleFileSystem> ref = openFilesystems
-				.get(baseURIFor(uri));
-		if (ref == null) {
-			throw new FileSystemNotFoundException(uri.toString());
-		}
-		BundleFileSystem fs = ref.get();
-		if (fs == null) {
-			throw new FileSystemNotFoundException(uri.toString());
-		}
-		return fs;
-	}
-
-	@Override
-	public Path getPath(URI uri) {
-		BundleFileSystem fs = getFileSystem(uri);
-		Path r = fs.getRoot();
-		if (uri.isOpaque()) {
-			return r;
-		} else {
-			return r.resolve(uri.getPath());
-		}
-	}
-
-	@Override
-	public SeekableByteChannel newByteChannel(Path path,
-			Set<? extends OpenOption> options, FileAttribute<?>... attrs)
-			throws IOException {		
-		final BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
-		return origProvider(path).newByteChannel(fs.unwrap(path), options, attrs);
-	}
-
 	private FileSystemProvider origProvider(Path path) {
 		return ((BundlePath) path).getFileSystem().origFS.provider();
-	}
-
-	@Override
-	public DirectoryStream<Path> newDirectoryStream(Path dir,
-			final Filter<? super Path> filter) throws IOException {
-		final BundleFileSystem fs = (BundleFileSystem) dir.getFileSystem();
-		final DirectoryStream<Path> stream = origProvider(dir)
-				.newDirectoryStream(fs.unwrap(dir), new Filter<Path>() {
-					@Override
-					public boolean accept(Path entry) throws IOException {
-						return filter.accept(fs.wrap(entry));
-					}
-				});
-		return new DirectoryStream<Path>() {
-			@Override
-			public void close() throws IOException {
-				stream.close();
-			}
-
-			@Override
-			public Iterator<Path> iterator() {
-				return fs.wrapIterator(stream.iterator());
-			}
-		};
-	}
-
-	@Override
-	public void createDirectory(Path dir, FileAttribute<?>... attrs)
-			throws IOException {
-		BundleFileSystem fs = (BundleFileSystem) dir.getFileSystem();
-		origProvider(dir).createDirectory(fs.unwrap(dir), attrs);
-	}
-
-	@Override
-	public void delete(Path path) throws IOException {
-		BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
-		origProvider(path).delete(fs.unwrap(path));
-	}
-
-	@Override
-	public void copy(Path source, Path target, CopyOption... options)
-			throws IOException {
-		BundleFileSystem fs = (BundleFileSystem) source.getFileSystem();
-		origProvider(source).copy(fs.unwrap(source), fs.unwrap(target), options);
-	}
-
-	@Override
-	public void move(Path source, Path target, CopyOption... options)
-			throws IOException {
-		BundleFileSystem fs = (BundleFileSystem) source.getFileSystem();
-		origProvider(source).copy(fs.unwrap(source), fs.unwrap(target), options);
-	}
-
-	@Override
-	public boolean isSameFile(Path path, Path path2) throws IOException {
-		BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
-		return origProvider(path).isSameFile(fs.unwrap(path), fs.unwrap(path2));
-	}
-
-	@Override
-	public boolean isHidden(Path path) throws IOException {
-		BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
-		return origProvider(path).isHidden(fs.unwrap(path));
-	}
-
-	@Override
-	public FileStore getFileStore(Path path) throws IOException {
-		BundlePath bpath = (BundlePath)path;
-		return bpath.getFileSystem().getFileStore();
-	}
-
-	@Override
-	public void checkAccess(Path path, AccessMode... modes) throws IOException {
-		BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
-		origProvider(path).checkAccess(fs.unwrap(path), modes);
-	}
-
-	@Override
-	public <V extends FileAttributeView> V getFileAttributeView(Path path,
-			Class<V> type, LinkOption... options) {
-		BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
-		return origProvider(path).getFileAttributeView(fs.unwrap(path), type, options);
 	}
 
 	@Override

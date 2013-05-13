@@ -95,25 +95,7 @@ public class TestBundles {
 		bundle.getRoot().getFileSystem().newWatchService();
 	}
 
-	@Test
-	public void createFSfromJar() throws Exception {
-		Path path = Files.createTempFile("test.zip", null);
-		Files.delete(path);
-		try (FileSystem fs = Bundles.createFSfromJar(path)) {
-			assertNotSame(fs, path.getFileSystem());
-		}
-		assertTrue(Files.exists(path));
-	}
 
-	@Test
-	public void createFSfromZip() throws Exception {
-		Path path = Files.createTempFile("test", null);
-		Files.delete(path);
-		try (FileSystem fs = Bundles.createFSfromZip(path)) {
-			assertNotSame(fs, path.getFileSystem());
-		}
-		assertTrue(Files.exists(path));
-	}
 
 	@Test
 	public void getReference() throws Exception {
