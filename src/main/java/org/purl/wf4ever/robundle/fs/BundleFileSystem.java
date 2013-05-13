@@ -31,13 +31,16 @@ public class BundleFileSystem extends FileSystem {
 
 	protected Path unwrap(Path bundlePath) {
 		if (!(bundlePath instanceof BundlePath)) {
-			// assume it's already unwrapped for some reason
+			// assume it's already unwrapped for some reason (for instance being null)
 			return bundlePath;
 		}
 		return ((BundlePath) bundlePath).getZipPath();
 	}
 
 	protected BundlePath wrap(Path zipPath) {
+		if (zipPath == null) {
+			return null;
+		}
 		if (zipPath instanceof BundlePath) {
 			throw new IllegalArgumentException("Did not expect BundlePath: "
 					+ zipPath);
