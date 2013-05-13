@@ -1,5 +1,6 @@
 package org.purl.wf4ever.robundle.fs;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -13,12 +14,11 @@ import org.purl.wf4ever.robundle.Bundles;
 public class TestBundlePaths {
 	@Test
 	public void endsWith() throws Exception {
-		Bundle bundle = Bundles.createBundle();
-		bundle.getRoot();
-		Path fred = bundle.getRoot();
-		Path barBazAbs = fred.resolve("bar/baz");
+		BundleFileSystem fs = BundleFileSystemProvider.newFileSystemFromTemporary();
+		Path root = fs.getRootDirectory();
+		Path barBazAbs = root.resolve("bar/baz");
 		System.out.println(barBazAbs);
-		Path barBaz = fred.relativize(barBazAbs);
+		Path barBaz = root.relativize(barBazAbs);
 		assertEquals("bar/baz", barBaz.toString());
 		assertTrue(barBaz.endsWith("bar/baz"));
 		assertFalse(barBaz.endsWith("bar/../bar/baz"));
@@ -28,7 +28,14 @@ public class TestBundlePaths {
 		assertFalse(climber.endsWith("bar/baz"));
 		Path climberNorm = climber.normalize();
 		assertFalse(climberNorm.endsWith("../baz"));
-		assertTrue(climberNorm.endsWith("bar/baz"));
-		
+		assertTrue(climberNorm.endsWith("bar/baz"));		
 	}
+	
+	@Test
+	public void parent() throws Exception {
+		BundleFileSystem fs = BundleFileSystemProvider.newFileSystemFromTemporary();
+		Path root = fs.getRootDirectory();
+		assertNull(root.getParent());
+	}
+	
 }
