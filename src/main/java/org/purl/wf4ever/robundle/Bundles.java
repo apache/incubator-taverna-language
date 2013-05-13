@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.AtomicMoveNotSupportedException;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -39,35 +37,33 @@ public class Bundles {
 	private static final String URL = ".url";
 	private static final Charset UTF8 = Charset.forName("UTF-8");
 
-
-	public static void closeAndSaveBundle(Bundle bundle,
-			Path destination) throws IOException {
+	public static void closeAndSaveBundle(Bundle bundle, Path destination)
+			throws IOException {
 		Path zipPath = closeBundle(bundle);
 		// Files.move(zipPath, destination);
 		safeMove(zipPath, destination);
 	}
 
-	public static Path closeBundle(Bundle bundle)
-			throws IOException {
+	public static Path closeBundle(Bundle bundle) throws IOException {
 		Path path = bundle.getSource();
 		bundle.close(false);
 		return path;
 	}
 
 	public static Bundle createBundle() throws IOException {
-		Path bundle = Files.createTempFile("robundle", ".zip");		
-		BundleFileSystem fs = BundleFileSystemProvider.newFileSystemFromNew(bundle, null);
+		Path bundle = Files.createTempFile("robundle", ".zip");
+		BundleFileSystem fs = BundleFileSystemProvider.newFileSystemFromNew(
+				bundle, null);
 		// FileSystem fs = createFSfromJar(bundle);
 		return new Bundle(fs.getRootDirectory(), true);
 		// return Files.createTempDirectory("bundle");
 	}
 
-
 	protected static String filenameWithoutExtension(Path entry) {
 		String fileName = entry.getFileName().toString();
 		int lastDot = fileName.lastIndexOf(".");
-		if (lastDot < 0) {	
-//			return fileName;
+		if (lastDot < 0) {
+			// return fileName;
 			return fileName.replace("/", "");
 		}
 		return fileName.substring(0, lastDot);
@@ -76,20 +72,21 @@ public class Bundles {
 	public static URI getReference(Path path) throws IOException {
 		if (path == null || isMissing(path)) {
 			return null;
-		}	
-		if (! isReference(path)) {
+		}
+		if (!isReference(path)) {
 			throw new IllegalArgumentException("Not a reference: " + path);
 		}
-		// Note: Latin1 is chosen here because it would not bail out on 
+		// Note: Latin1 is chosen here because it would not bail out on
 		// "strange" characters. We actually parse the URL as ASCII
 		path = withExtension(path, ".url");
 		try (BufferedReader r = Files.newBufferedReader(path, LATIN1)) {
 			HierarchicalINIConfiguration ini = new HierarchicalINIConfiguration();
 			ini.load(r);
-			
-			String urlStr = ini.getSection(INI_INTERNET_SHORTCUT).getString(INI_URL);
-			
-//			String urlStr = ini.get(INI_INTERNET_SHORTCUT, INI_URL);
+
+			String urlStr = ini.getSection(INI_INTERNET_SHORTCUT).getString(
+					INI_URL);
+
+			// String urlStr = ini.get(INI_INTERNET_SHORTCUT, INI_URL);
 			if (urlStr == null) {
 				throw new IOException("Invalid/unsupported URL format: " + path);
 			}
@@ -98,23 +95,23 @@ public class Bundles {
 			throw new IOException("Can't parse reference: " + path, e);
 		}
 	}
-	
+
 	public static String getStringValue(Path path) throws IOException {
 		if (path == null || isMissing(path)) {
 			return null;
-		}	
-		if (! isValue(path)) {
+		}
+		if (!isValue(path)) {
 			throw new IllegalArgumentException("Not a value: " + path);
 		}
 		return new String(Files.readAllBytes(path), UTF8);
 	}
-	
+
 	public static boolean isMissing(Path item) {
-	//		if (! Files.exists(item.getParent())) {
-	//			throw new IllegalStateException("Invalid path");
-	//		}
-			return ! Files.exists(item) && !isReference(item);
-		}
+		// if (! Files.exists(item.getParent())) {
+		// throw new IllegalStateException("Invalid path");
+		// }
+		return !Files.exists(item) && !isReference(item);
+	}
 
 	public static boolean isReference(Path path) {
 		return Files.isRegularFile(withExtension(path, URL));
@@ -125,7 +122,8 @@ public class Bundles {
 	}
 
 	public static Bundle openBundle(Path zip) throws IOException {
-		BundleFileSystem fs = BundleFileSystemProvider.newFileSystemFromExisting(zip);		
+		BundleFileSystem fs = BundleFileSystemProvider
+				.newFileSystemFromExisting(zip);
 		return new Bundle(fs.getRootDirectory(), false);
 	}
 
@@ -142,7 +140,7 @@ public class Bundles {
 				// Do the fallback by temporary files below
 			}
 		}
-		
+
 		String tmpName = destination.getFileName().toString();
 		Path tmpDestination = Files.createTempFile(destination.getParent(),
 				tmpName, ".tmp");
@@ -182,57 +180,58 @@ public class Bundles {
 		path = withExtension(path, ".url");
 
 		// We'll save a IE-like .url "Internet shortcut" in INI format.
-		
-		
-//		HierarchicalINIConfiguration ini = new HierarchicalINIConfiguration();
-//		ini.getSection(INI_INTERNET_SHORTCUT).addProperty(INI_URL,
-//				ref.toASCIIString());
 
-//		Ini ini = new Wini();
-//		ini.getConfig().setLineSeparator("\r\n");
-//		ini.put(INI_INTERNET_SHORTCUT, INI_URL, ref.toASCIIString());		 
+		// HierarchicalINIConfiguration ini = new
+		// HierarchicalINIConfiguration();
+		// ini.getSection(INI_INTERNET_SHORTCUT).addProperty(INI_URL,
+		// ref.toASCIIString());
+
+		// Ini ini = new Wini();
+		// ini.getConfig().setLineSeparator("\r\n");
+		// ini.put(INI_INTERNET_SHORTCUT, INI_URL, ref.toASCIIString());
 
 		/*
 		 * Neither of the above create a .url that is compatible with Safari on
 		 * Mac OS (which expects "URL=" rather than "URL = ", so instead we make
 		 * it manually with MessageFormat.format:
 		 */
-		
-		// Includes a terminating double line-feed -- which Safari might also need
+
+		// Includes a terminating double line-feed -- which Safari might also
+		// need
 		String iniTmpl = "[{0}]\r\n{1}={2}\r\n\r\n";
-		String ini = MessageFormat.format(iniTmpl, 
-				INI_INTERNET_SHORTCUT, INI_URL, ref.toASCIIString());
-		
-		
-		
-		// NOTE: We use Latin1 here, but because of 
+		String ini = MessageFormat.format(iniTmpl, INI_INTERNET_SHORTCUT,
+				INI_URL, ref.toASCIIString());
+
+		// NOTE: We use Latin1 here, but because of
 		try (BufferedWriter w = Files
 				.newBufferedWriter(path, ASCII,
 						StandardOpenOption.TRUNCATE_EXISTING,
-						StandardOpenOption.CREATE)) {			
+						StandardOpenOption.CREATE)) {
 			// ini.save(w);
 			// ini.store(w);
 			w.write(ini);
-//		} catch (ConfigurationException e) {
-//			throw new IOException("Can't write shortcut to " + path, e);
+			// } catch (ConfigurationException e) {
+			// throw new IOException("Can't write shortcut to " + path, e);
 		}
 		return path;
 	}
 
 	public static void setStringValue(Path path, String string)
 			throws IOException {
-		Files.write(path, string.getBytes(UTF8), 
+		Files.write(path, string.getBytes(UTF8),
 				StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
 	}
 
 	protected static Path withExtension(Path path, String extension) {
-		if (! extension.isEmpty() && ! extension.startsWith(".")) {
-			throw new IllegalArgumentException("Extension must be empty or start with .");
+		if (!extension.isEmpty() && !extension.startsWith(".")) {
+			throw new IllegalArgumentException(
+					"Extension must be empty or start with .");
 		}
 		String p = path.getFileName().toString();
-		if (! extension.isEmpty() && p.toLowerCase().endsWith(extension.toLowerCase())) {
+		if (!extension.isEmpty()
+				&& p.toLowerCase().endsWith(extension.toLowerCase())) {
 			return path;
-		}		
+		}
 		// Everything after the last . - or just the end
 		String newP = p.replaceFirst("(\\.[^.]*)?$", extension);
 		return path.resolveSibling(newP);

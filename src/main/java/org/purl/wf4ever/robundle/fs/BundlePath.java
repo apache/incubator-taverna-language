@@ -25,7 +25,7 @@ public class BundlePath implements Path {
 	public int compareTo(Path other) {
 		return zipPath.compareTo(fs.unwrap(other));
 	}
-	
+
 	public boolean endsWith(Path other) {
 		return zipPath.endsWith(fs.unwrap(other));
 	}
@@ -35,7 +35,7 @@ public class BundlePath implements Path {
 	}
 
 	public boolean equals(Object other) {
-		if (! (other instanceof BundlePath)) {
+		if (!(other instanceof BundlePath)) {
 			return false;
 		}
 		BundlePath bundlePath = (BundlePath) other;
@@ -148,10 +148,7 @@ public class BundlePath implements Path {
 	public URI toUri() {
 		Path abs = zipPath.toAbsolutePath();
 		String path = abs.toString();
-		return fs.getBaseURI().resolve(path);		
+		return fs.getBaseURI().resolve(path);
 	}
-
-
-
 
 }

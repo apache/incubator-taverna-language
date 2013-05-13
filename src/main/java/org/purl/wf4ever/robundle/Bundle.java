@@ -1,14 +1,10 @@
 package org.purl.wf4ever.robundle;
 
 import java.io.IOException;
-import java.net.URI;
-import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.purl.wf4ever.robundle.fs.BundleFileSystem;
-import org.purl.wf4ever.robundle.fs.BundlePath;
 
 public class Bundle implements AutoCloseable {
 
@@ -39,8 +35,6 @@ public class Bundle implements AutoCloseable {
 	public Path getSource() {
 		BundleFileSystem fs = (BundleFileSystem) getRoot().getFileSystem();
 		return fs.getSource();
-		
-
 	}
 
 	public boolean isDeleteOnClose() {

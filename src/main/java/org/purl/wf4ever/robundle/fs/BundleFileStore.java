@@ -7,14 +7,14 @@ import java.nio.file.attribute.FileStoreAttributeView;
 
 public class BundleFileStore extends FileStore {
 
-//	private final BundleFileSystem fs;
+	// private final BundleFileSystem fs;
 	private final FileStore origFileStore;
 
 	protected BundleFileStore(BundleFileSystem fs, FileStore origFileStore) {
-		if (fs == null || origFileStore == null) { 
+		if (fs == null || origFileStore == null) {
 			throw new NullPointerException();
 		}
-//		this.fs = fs;
+		// this.fs = fs;
 		this.origFileStore = origFileStore;
 	}
 
@@ -38,7 +38,7 @@ public class BundleFileStore extends FileStore {
 	public long getUsableSpace() throws IOException {
 		return origFileStore.getUsableSpace();
 	}
-	
+
 	public boolean isReadOnly() {
 		return origFileStore.isReadOnly();
 	}
@@ -63,6 +63,5 @@ public class BundleFileStore extends FileStore {
 	public String type() {
 		return "bundle";
 	}
-
 
 }

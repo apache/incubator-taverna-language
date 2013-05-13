@@ -18,7 +18,7 @@ public class BundleFileSystem extends FileSystem {
 	protected final FileSystem origFS;
 	protected final BundleFileSystemProvider provider;
 	protected final URI baseURI;
-	
+
 	protected BundleFileSystem(FileSystem origFS,
 			BundleFileSystemProvider provider, URI baseURI) {
 		if (origFS == null || provider == null || baseURI == null) {
@@ -31,7 +31,8 @@ public class BundleFileSystem extends FileSystem {
 
 	protected Path unwrap(Path bundlePath) {
 		if (!(bundlePath instanceof BundlePath)) {
-			// assume it's already unwrapped for some reason (for instance being null)
+			// assume it's already unwrapped for some reason (for instance being
+			// null)
 			return bundlePath;
 		}
 		return ((BundlePath) bundlePath).getZipPath();
@@ -159,6 +160,4 @@ public class BundleFileSystem extends FileSystem {
 		return Paths.get(zip); // Look up our path
 	}
 
-
-	
 }

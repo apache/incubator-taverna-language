@@ -75,7 +75,6 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 		}
 	}
 
-
 	public static BundleFileSystemProvider getInstance() {
 		for (FileSystemProvider provider : FileSystemProvider
 				.installedProviders()) {
@@ -83,27 +82,34 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 				return (BundleFileSystemProvider) provider;
 			}
 		}
-		throw new IllegalStateException("FileSystemProvider has not been installed: " + BundleFileSystemProvider.class);
+		throw new IllegalStateException(
+				"FileSystemProvider has not been installed: "
+						+ BundleFileSystemProvider.class);
 	}
 
-	public static BundleFileSystem newFileSystemFromExisting(Path bundle) throws FileNotFoundException, IOException {
+	public static BundleFileSystem newFileSystemFromExisting(Path bundle)
+			throws FileNotFoundException, IOException {
 		URI w;
 		try {
 			w = new URI("widget", bundle.toUri().toASCIIString(), null);
 		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException("Can't create widget: URI for " + bundle);
+			throw new IllegalArgumentException("Can't create widget: URI for "
+					+ bundle);
 		}
-		FileSystem fs = FileSystems.newFileSystem(w, 
-				Collections.<String,Object>emptyMap());		
+		FileSystem fs = FileSystems.newFileSystem(w,
+				Collections.<String, Object> emptyMap());
 		return (BundleFileSystem) fs;
 	}
-	
-	public static BundleFileSystem newFileSystemFromNew(Path bundle) throws FileNotFoundException, IOException {
-		return newFileSystemFromNew(bundle, APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP);
+
+	public static BundleFileSystem newFileSystemFromNew(Path bundle)
+			throws FileNotFoundException, IOException {
+		return newFileSystemFromNew(bundle,
+				APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP);
 	}
-	
-	public static BundleFileSystem newFileSystemFromNew(Path bundle, String mimetype) throws FileNotFoundException, IOException {
-		createBundleAsZip(bundle, mimetype);		
+
+	public static BundleFileSystem newFileSystemFromNew(Path bundle,
+			String mimetype) throws FileNotFoundException, IOException {
+		createBundleAsZip(bundle, mimetype);
 		return newFileSystemFromExisting(bundle);
 	}
 
@@ -144,7 +150,8 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 	public void copy(Path source, Path target, CopyOption... options)
 			throws IOException {
 		BundleFileSystem fs = (BundleFileSystem) source.getFileSystem();
-		origProvider(source).copy(fs.unwrap(source), fs.unwrap(target), options);
+		origProvider(source)
+				.copy(fs.unwrap(source), fs.unwrap(target), options);
 	}
 
 	@Override
@@ -164,12 +171,13 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 	public <V extends FileAttributeView> V getFileAttributeView(Path path,
 			Class<V> type, LinkOption... options) {
 		BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
-		return origProvider(path).getFileAttributeView(fs.unwrap(path), type, options);
+		return origProvider(path).getFileAttributeView(fs.unwrap(path), type,
+				options);
 	}
 
 	@Override
 	public FileStore getFileStore(Path path) throws IOException {
-		BundlePath bpath = (BundlePath)path;
+		BundlePath bpath = (BundlePath) path;
 		return bpath.getFileSystem().getFileStore();
 	}
 
@@ -224,15 +232,17 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 	public void move(Path source, Path target, CopyOption... options)
 			throws IOException {
 		BundleFileSystem fs = (BundleFileSystem) source.getFileSystem();
-		origProvider(source).copy(fs.unwrap(source), fs.unwrap(target), options);
+		origProvider(source)
+				.copy(fs.unwrap(source), fs.unwrap(target), options);
 	}
 
 	@Override
 	public SeekableByteChannel newByteChannel(Path path,
 			Set<? extends OpenOption> options, FileAttribute<?>... attrs)
-			throws IOException {		
+			throws IOException {
 		final BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
-		return origProvider(path).newByteChannel(fs.unwrap(path), options, attrs);
+		return origProvider(path).newByteChannel(fs.unwrap(path), options,
+				attrs);
 	}
 
 	@Override
@@ -294,21 +304,24 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 	public <A extends BasicFileAttributes> A readAttributes(Path path,
 			Class<A> type, LinkOption... options) throws IOException {
 		BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
-		return origProvider(path).readAttributes(fs.unwrap(path), type, options);
+		return origProvider(path)
+				.readAttributes(fs.unwrap(path), type, options);
 	}
 
 	@Override
 	public Map<String, Object> readAttributes(Path path, String attributes,
 			LinkOption... options) throws IOException {
 		BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
-		return origProvider(path).readAttributes(fs.unwrap(path), attributes, options);
+		return origProvider(path).readAttributes(fs.unwrap(path), attributes,
+				options);
 	}
 
 	@Override
 	public void setAttribute(Path path, String attribute, Object value,
 			LinkOption... options) throws IOException {
 		BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
-		origProvider(path).setAttribute(fs.unwrap(path), attribute, value, options);
+		origProvider(path).setAttribute(fs.unwrap(path), attribute, value,
+				options);
 	}
 
 }
