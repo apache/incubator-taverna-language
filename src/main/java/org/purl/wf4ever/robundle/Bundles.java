@@ -125,8 +125,8 @@ public class Bundles {
 	}
 
 	public static Bundle openBundle(Path zip) throws IOException {
-		FileSystem fs = FileSystems.newFileSystem(zip, null);
-		return new Bundle(fs.getRootDirectories().iterator().next(), false);
+		BundleFileSystem fs = BundleFileSystemProvider.newFileSystemFromExisting(zip);		
+		return new Bundle(fs.getRootDirectory(), false);
 	}
 
 	public static void safeMove(Path source, Path destination)
