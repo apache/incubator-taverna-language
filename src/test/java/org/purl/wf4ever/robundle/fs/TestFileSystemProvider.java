@@ -1,10 +1,12 @@
 package org.purl.wf4ever.robundle.fs;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -43,11 +45,37 @@ public class TestFileSystemProvider {
 	}
 
 	@Test
-	public void createFSfromZip() throws Exception {
+	public void newFileSystemFromExisting() throws Exception {
 		Path path = Files.createTempFile("test", null);
 		Files.delete(path);
-		BundleFileSystemProvider.createBundleAsZip(path, null);
+		BundleFileSystemProvider.createBundleAsZip(path, "application/x-test");
 		assertTrue(Files.exists(path));
+		BundleFileSystem f = BundleFileSystemProvider.newFileSystemFromExisting(path);
+		assertEquals("application/x-test", Files.readAllLines(
+				f.getRootDirectory().resolve("mimetype"), 
+				Charset.forName("ASCII")).get(0));
+	}
+	
+	@Test
+	public void newFileSystemFromNewDefaultMime() throws Exception {
+		Path path = Files.createTempFile("test", null);
+		Files.delete(path);
+		BundleFileSystem f = BundleFileSystemProvider.newFileSystemFromNew(path);
+		assertTrue(Files.exists(path));
+		assertEquals("application/vnd.wf4ever.robundle+zip", Files.readAllLines(
+				f.getRootDirectory().resolve("mimetype"), 
+				Charset.forName("ASCII")).get(0));
+	}
+	
+	@Test
+	public void newFileSystemFromNew() throws Exception {
+		Path path = Files.createTempFile("test", null);
+		Files.delete(path);
+		BundleFileSystem f = BundleFileSystemProvider.newFileSystemFromNew(path, "application/x-test2");
+		assertTrue(Files.exists(path));
+		assertEquals("application/x-test2", Files.readAllLines(
+				f.getRootDirectory().resolve("mimetype"), 
+				Charset.forName("ASCII")).get(0));
 	}
 
 }
