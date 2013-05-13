@@ -71,7 +71,7 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 		try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(
 				bundle, StandardOpenOption.CREATE,
 				StandardOpenOption.TRUNCATE_EXISTING))) {
-			addMimeTypeToZip(out, null);
+			addMimeTypeToZip(out, mimetype);
 		}
 	}
 
