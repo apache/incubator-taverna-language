@@ -39,67 +39,6 @@ public class TestDataBundles {
 	}
 
 	@Test
-	public void close() throws Exception {
-		Bundle dataBundle = DataBundles.createBundle();
-		assertTrue(Files.exists(dataBundle.getSource()));
-		assertTrue(dataBundle.getRoot().getFileSystem().isOpen());
-		DataBundles.getInputs(dataBundle);
-
-		dataBundle.close();
-		assertFalse(Files.exists(dataBundle.getSource()));
-		assertFalse(dataBundle.getRoot().getFileSystem().isOpen());
-
-	}
-
-	@Test
-	public void closeAndOpenDataBundle() throws Exception {
-		Bundle dataBundle = DataBundles.createBundle();
-		Path zip = DataBundles.closeBundle(dataBundle);
-		DataBundles.openBundle(zip);
-	}
-
-	@Test
-	public void closeAndOpenDataBundleWithPortValue() throws Exception {
-		Bundle dataBundle = DataBundles.createBundle();
-		Path inputs = DataBundles.getInputs(dataBundle);
-		Path port = DataBundles.getPort(inputs, "hello");
-		DataBundles.setStringValue(port, "Hello");
-		Path zip = DataBundles.closeBundle(dataBundle);
-
-		Bundle newBundle = DataBundles.openBundle(zip);
-		Path newInput = DataBundles.getInputs(newBundle);
-		Path newPort = DataBundles.getPort(newInput, "hello");
-		assertEquals("Hello", DataBundles.getStringValue(newPort));
-	}
-
-	@Test
-	public void closeAndSaveDataBundle() throws Exception {
-		Bundle dataBundle = DataBundles.createBundle();
-		DataBundles.getInputs(dataBundle);
-		Path destination = Files.createTempFile("test", ".zip");
-		Files.delete(destination);
-		assertFalse(Files.exists(destination));
-		DataBundles.closeAndSaveBundle(dataBundle, destination);
-		assertTrue(Files.exists(destination));
-	}
-
-	@Test
-	public void closeBundle() throws Exception {
-		Bundle dataBundle = DataBundles.createBundle();
-		Path zip = DataBundles.closeBundle(dataBundle);
-		assertTrue(Files.isReadable(zip));
-		assertEquals(zip, dataBundle.getSource());
-		checkSignature(zip);
-	}
-
-	@Test
-	public void createBundle() throws Exception {
-		Bundle dataBundle = DataBundles.createBundle();
-		assertTrue(Files.isDirectory(dataBundle.getRoot()));
-		// TODO: Should this instead return a FileSystem so we can close() it?
-	}
-
-	@Test
 	public void createList() throws Exception {
 		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
@@ -268,38 +207,6 @@ public class TestDataBundles {
 	}
 
 	@Test
-	public void getReference() throws Exception {
-		Bundle dataBundle = DataBundles.createBundle();
-		Path inputs = DataBundles.getInputs(dataBundle);
-		Path portIn1 = DataBundles.getPort(inputs, "in1");
-		DataBundles.setReference(portIn1, URI.create("http://example.org/test"));
-		URI uri = DataBundles.getReference(portIn1);
-		assertEquals("http://example.org/test", uri.toASCIIString());
-	}
-
-	@Test
-	public void getReferenceFromWin8() throws Exception {
-		Bundle dataBundle = DataBundles.createBundle();
-		Path inputs = DataBundles.getInputs(dataBundle);
-		Path win8 = inputs.resolve("win8.url");
-		Files.copy(getClass().getResourceAsStream("/win8.url"), win8);
-				
-		URI uri = DataBundles.getReference(DataBundles.getPort(inputs, "win8"));
-		assertEquals("http://example.com/made-in-windows-8", uri.toASCIIString());
-	}
-
-	@Test
-	public void getStringValue() throws Exception {
-		Bundle dataBundle = DataBundles.createBundle();
-		Path inputs = DataBundles.getInputs(dataBundle);
-		Path portIn1 = DataBundles.getPort(inputs, "in1");
-		String string = "A string";
-		DataBundles.setStringValue(portIn1, string);
-		assertEquals(string, DataBundles.getStringValue(portIn1));	
-		assertEquals(null, DataBundles.getStringValue(null));
-	}
-
-	@Test
 	public void hasInputs() throws Exception {
 		Bundle dataBundle = DataBundles.createBundle();
 		assertFalse(DataBundles.hasInputs(dataBundle));
@@ -317,12 +224,6 @@ public class TestDataBundles {
 		assertTrue(DataBundles.hasOutputs(dataBundle));
 	}
 	
-	protected boolean isEmpty(Path path) throws IOException {
-		try (DirectoryStream<Path> ds = Files.newDirectoryStream(path)) {
-			return !ds.iterator().hasNext();
-		}
-	}
-
 	@Test
 	public void isError() throws Exception {
 		Bundle dataBundle = DataBundles.createBundle();
@@ -363,31 +264,6 @@ public class TestDataBundles {
 		assertFalse(DataBundles.isReference(portIn1));
 	}
 	
-	@Test
-	public void isReference() throws Exception {
-		Bundle dataBundle = DataBundles.createBundle();
-		Path inputs = DataBundles.getInputs(dataBundle);
-		Path portIn1 = DataBundles.getPort(inputs, "in1");
-		DataBundles.setReference(portIn1, URI.create("http://example.org/test"));
-		assertTrue(DataBundles.isReference(portIn1));
-		assertFalse(DataBundles.isError(portIn1));		
-		assertFalse(DataBundles.isList(portIn1));
-		assertFalse(DataBundles.isMissing(portIn1));
-		assertFalse(DataBundles.isValue(portIn1));
-	}
-	
-	@Test
-	public void isValue() throws Exception {
-		Bundle dataBundle = DataBundles.createBundle();
-		Path inputs = DataBundles.getInputs(dataBundle);
-		Path portIn1 = DataBundles.getPort(inputs, "in1");
-		DataBundles.setStringValue(portIn1, "Hello");
-		assertTrue(DataBundles.isValue(portIn1));
-		assertFalse(DataBundles.isList(portIn1));
-		assertFalse(DataBundles.isError(portIn1));
-		assertFalse(DataBundles.isReference(portIn1));
-	}
-
 	@Test
 	public void listOfLists() throws Exception {
 		Bundle dataBundle = DataBundles.createBundle();
@@ -462,37 +338,6 @@ public class TestDataBundles {
 	
 	
 	@Test
-	public void safeMove() throws Exception {
-		Path tmp = Files.createTempDirectory("test");
-		Path f1 = tmp.resolve("f1");
-		Files.createFile(f1);
-		assertFalse(isEmpty(tmp));
-
-		Bundle db = DataBundles.createBundle();
-		Path f2 = db.getRoot().resolve("f2");
-		DataBundles.safeMove(f1, f2);
-		assertTrue(isEmpty(tmp));
-		assertEquals(Arrays.asList("f2", "mimetype"), ls(db.getRoot()));
-
-	}
-	
-
-	@Test(expected = IOException.class)
-	public void safeMoveFails() throws Exception {
-		Path tmp = Files.createTempDirectory("test");
-		Path f1 = tmp.resolve("f1");
-		Path d1 = tmp.resolve("d1");
-		Files.createFile(f1);
-		Files.createDirectory(d1);
-		try {
-			DataBundles.safeMove(f1, d1);
-		} finally {
-			assertTrue(Files.exists(f1));
-			assertEquals(Arrays.asList("d1", "f1"), ls(tmp));
-		}
-	}
-	
-	@Test
 	public void setErrorArgs() throws Exception {
 		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
@@ -564,75 +409,6 @@ public class TestDataBundles {
 		assertEquals("is", errLines.get(5));
 		assertEquals("why", errLines.get(6));
 		assertEquals("", errLines.get(7));
-	}
-	
-	
-	@Test
-	public void setReference() throws Exception {
-		Bundle dataBundle = DataBundles.createBundle();
-		Path inputs = DataBundles.getInputs(dataBundle);
-		Path portIn1 = DataBundles.getPort(inputs, "in1");
-		URI uri = URI.create("http://example.org/test");		
-		Path f = DataBundles.setReference(portIn1, uri);
-		assertEquals("in1.url", f.getFileName().toString());
-		assertEquals(inputs, f.getParent());
-		assertFalse(Files.exists(portIn1));		
-		
-		List<String> uriLines = Files.readAllLines(f, Charset.forName("ASCII"));
-		assertEquals(3, uriLines.size());
-		assertEquals("[InternetShortcut]", uriLines.get(0));
-		assertEquals("URL=http://example.org/test", uriLines.get(1));
-		assertEquals("", uriLines.get(2));				
-	}
-	
-	@Test
-	public void setReferenceIri() throws Exception {
-		Bundle dataBundle = DataBundles.createBundle();
-		Path inputs = DataBundles.getInputs(dataBundle);
-		Path portIn1 = DataBundles.getPort(inputs, "in1");		
-		URI uri = new URI("http", "xn--bcher-kva.example.com", "/s\u00F8iland/\u2603snowman", "\u2605star");
-		Path f = DataBundles.setReference(portIn1, uri);
-		List<String> uriLines = Files.readAllLines(f, Charset.forName("ASCII"));
-		// TODO: Double-check that this is actually correct escaping :)
-		assertEquals("URL=http://xn--bcher-kva.example.com/s%C3%B8iland/%E2%98%83snowman#%E2%98%85star", 
-				uriLines.get(1));
-	}
-
-	@Test
-	public void setStringValue() throws Exception {
-		Bundle dataBundle = DataBundles.createBundle();
-		Path inputs = DataBundles.getInputs(dataBundle);
-		Path portIn1 = DataBundles.getPort(inputs, "in1");
-		String string = "A string";
-		DataBundles.setStringValue(portIn1, string);
-		assertEquals(string, Files.readAllLines(portIn1, Charset.forName("UTF-8")).get(0));
-	}
-	
-	@Test
-	public void withExtension() throws Exception {
-		Path testDir = Files.createTempDirectory("test");
-		Path fileTxt = testDir.resolve("file.txt");
-		assertEquals("file.txt", fileTxt.getFileName().toString()); // better be!
-		
-		Path fileHtml = DataBundles.withExtension(fileTxt, ".html");
-		assertEquals(fileTxt.getParent(), fileHtml.getParent());
-		assertEquals("file.html", fileHtml.getFileName().toString()); 
-		
-		Path fileDot = DataBundles.withExtension(fileTxt, ".");
-		assertEquals("file.", fileDot.getFileName().toString()); 
-		
-		Path fileEmpty = DataBundles.withExtension(fileTxt, "");
-		assertEquals("file", fileEmpty.getFileName().toString()); 
-		
-		
-		Path fileDoc = DataBundles.withExtension(fileEmpty, ".doc");
-		assertEquals("file.doc", fileDoc.getFileName().toString());
-		
-		Path fileManyPdf = DataBundles.withExtension(fileTxt, ".test.many.pdf");
-		assertEquals("file.test.many.pdf", fileManyPdf.getFileName().toString()); 
-		
-		Path fileManyTxt = DataBundles.withExtension(fileManyPdf, ".txt");
-		assertEquals("file.test.many.txt", fileManyTxt.getFileName().toString());
 	}
 
 }
