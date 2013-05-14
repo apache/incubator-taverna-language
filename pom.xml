@@ -12,7 +12,7 @@
     </prerequisites>
     <groupId>uk.org.taverna.databundle</groupId>
     <artifactId>databundle</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
     <name>Databundle API</name>
     <description>API for dealing with Data Bundles</description>
     <properties>
@@ -48,7 +48,7 @@
         <dependency>
             <groupId>org.purl.wf4ever.robundle</groupId>
             <artifactId>robundle</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
@@ -102,6 +102,16 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+        <repository>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots />
+            <id>mygrid-snapshot-repository</id>
+            <name>myGrid Snapshot Repository</name>
+            <url>http://www.mygrid.org.uk/maven/snapshot-repository</url>
+        </repository>
+
     </repositories>
 
 </project>
