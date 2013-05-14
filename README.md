@@ -8,9 +8,23 @@ Work in progress.
 See [Data bundle requirements](http://dev.mygrid.org.uk/wiki/display/TAVOSGI/2013-02+Data+bundle+requirements)
 and [TestDataBundles.java](src/test/java/uk/org/taverna/databundle/TestDataBundles.java)
 
-This API is built on the Java 7 NIO Files and uses the [Java 7 ZIP file provider](http://docs.oracle.com/javase/7/docs/technotes/guides/io/fsp/zipfilesystemprovider.html) to generate the Data Bundle.
+This API is built on the Java 7 NIO Files and the [RO Bundle API](https://github.com/wf4ever/robundle), which 
+uses the [Java 7 ZIP file provider](http://docs.oracle.com/javase/7/docs/technotes/guides/io/fsp/zipfilesystemprovider.html) to generate the Data Bundle.
+
 
 The class [uk.org.taverna.databundle.DataBundle](src/main/java/uk/org/taverna/databundle/DataBundle.java) complements the Java 7 [java.nio.Files](http://docs.oracle.com/javase/7/docs/api/java/nio/file/Files.html) API with more specific helper methods to work with Data Bundles.
+
+
+Building
+--------
+```mvn clean install```
+
+should normally work, given a recent version of [Maven 3](http://maven.apache.org/download.cgi) and 
+[Java 7 SDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html).
+
+Maven should download the latest snapshot of [robundle](https://github.com/wf4ever/robundle) from [myGrid's snapshot repository](http://build.mygrid.org.uk/maven/snapshot-repository/org/purl/wf4ever/robundle/robundle/).
+
+[myGrid's Jenkins installation](http://build.mygrid.org.uk/ci/) has automated builds of both [databundles](http://build.mygrid.org.uk/ci/job/databundles/) and [robundle](http://build.mygrid.org.uk/ci/job/robundle/)
 
 
 Example of use
