@@ -1,5 +1,5 @@
-Data bundles API
-================
+RO bundle API
+=============
 
 API for building Wf4Ever RO bundles. 
 
@@ -14,6 +14,22 @@ The class
 [org.purl.wf4ever.robundle.Bundle](src/main/java/org/purl/wf4ever/robundle/Bundle.java) complements the 
 Java 7 [java.nio.Files](http://docs.oracle.com/javase/7/docs/api/java/nio/file/Files.html) API 
 with more specific helper methods to work with RO Bundles.
+
+This API is the basis for the [Taverna Data Bundles API](https://github.com/myGrid/databundles).
+
+
+
+Building
+--------
+```mvn clean install```
+
+should normally work, given a recent version of [Maven 3](http://maven.apache.org/download.cgi) and 
+[Java 7 SDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html).
+
+[myGrid's Jenkins installation](http://build.mygrid.org.uk/ci/) has automated builds of
+[robundle](http://build.mygrid.org.uk/ci/job/robundle/), which are deployed 
+to [myGrid's snapshot Maven repository](http://build.mygrid.org.uk/maven/snapshot-repository/org/purl/wf4ever/robundle/robundle/).
+
 
 
 Example of use
