@@ -103,9 +103,6 @@ public class Bundles {
 	}
 
 	public static boolean isMissing(Path item) {
-		// if (! Files.exists(item.getParent())) {
-		// throw new IllegalStateException("Invalid path");
-		// }
 		return !Files.exists(item) && !isReference(item);
 	}
 
