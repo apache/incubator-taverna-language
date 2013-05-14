@@ -3,7 +3,6 @@ package uk.org.taverna.databundle;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -12,7 +11,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
-import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -22,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
+import org.purl.wf4ever.robundle.Bundle;
 
 public class TestDataBundles {
 	protected void checkSignature(Path zip) throws IOException {
@@ -41,7 +40,7 @@ public class TestDataBundles {
 
 	@Test
 	public void close() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		assertTrue(Files.exists(dataBundle.getSource()));
 		assertTrue(dataBundle.getRoot().getFileSystem().isOpen());
 		DataBundles.getInputs(dataBundle);
@@ -54,75 +53,55 @@ public class TestDataBundles {
 
 	@Test
 	public void closeAndOpenDataBundle() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
-		Path zip = DataBundles.closeDataBundle(dataBundle);
-		DataBundles.openDataBundle(zip);
+		Bundle dataBundle = DataBundles.createBundle();
+		Path zip = DataBundles.closeBundle(dataBundle);
+		DataBundles.openBundle(zip);
 	}
 
 	@Test
 	public void closeAndOpenDataBundleWithPortValue() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path port = DataBundles.getPort(inputs, "hello");
 		DataBundles.setStringValue(port, "Hello");
-		Path zip = DataBundles.closeDataBundle(dataBundle);
+		Path zip = DataBundles.closeBundle(dataBundle);
 
-		DataBundle newDataBundle = DataBundles.openDataBundle(zip);
-		Path newInput = DataBundles.getInputs(newDataBundle);
+		Bundle newBundle = DataBundles.openBundle(zip);
+		Path newInput = DataBundles.getInputs(newBundle);
 		Path newPort = DataBundles.getPort(newInput, "hello");
 		assertEquals("Hello", DataBundles.getStringValue(newPort));
 	}
 
 	@Test
 	public void closeAndSaveDataBundle() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		DataBundles.getInputs(dataBundle);
 		Path destination = Files.createTempFile("test", ".zip");
 		Files.delete(destination);
 		assertFalse(Files.exists(destination));
-		DataBundles.closeAndSaveDataBundle(dataBundle, destination);
+		DataBundles.closeAndSaveBundle(dataBundle, destination);
 		assertTrue(Files.exists(destination));
 	}
 
 	@Test
-	public void closeDataBundle() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
-		Path zip = DataBundles.closeDataBundle(dataBundle);
+	public void closeBundle() throws Exception {
+		Bundle dataBundle = DataBundles.createBundle();
+		Path zip = DataBundles.closeBundle(dataBundle);
 		assertTrue(Files.isReadable(zip));
 		assertEquals(zip, dataBundle.getSource());
 		checkSignature(zip);
 	}
 
 	@Test
-	public void createDataBundle() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+	public void createBundle() throws Exception {
+		Bundle dataBundle = DataBundles.createBundle();
 		assertTrue(Files.isDirectory(dataBundle.getRoot()));
 		// TODO: Should this instead return a FileSystem so we can close() it?
 	}
 
 	@Test
-	public void createFSfromJar() throws Exception {
-		Path path = Files.createTempFile("test.zip", null);
-		Files.delete(path);
-		try (FileSystem fs = DataBundles.createFSfromJar(path)) {
-			assertNotSame(fs, path.getFileSystem());
-		}
-		assertTrue(Files.exists(path));
-	}
-
-	@Test
-	public void createFSfromZip() throws Exception {
-		Path path = Files.createTempFile("test", null);
-		Files.delete(path);
-		try (FileSystem fs = DataBundles.createFSfromZip(path)) {
-			assertNotSame(fs, path.getFileSystem());
-		}
-		assertTrue(Files.exists(path));
-	}
-
-	@Test
 	public void createList() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path list = DataBundles.getPort(inputs, "in1");
 		DataBundles.createList(list);
@@ -132,7 +111,7 @@ public class TestDataBundles {
 	@Test
 	public void getError() throws Exception {
 		
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path portIn1 = DataBundles.getPort(inputs, "in1");
 		DataBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");		
@@ -149,7 +128,7 @@ public class TestDataBundles {
 
 	@Test
 	public void getErrorCause() throws Exception {		
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path portIn1 = DataBundles.getPort(inputs, "in1");
 		Path cause1 = DataBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");
@@ -172,7 +151,7 @@ public class TestDataBundles {
 
 	@Test
 	public void getInputs() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		assertTrue(Files.isDirectory(inputs));
 		// Second time should not fail because it already exists
@@ -183,7 +162,7 @@ public class TestDataBundles {
 
 	@Test
 	public void getList() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path list = DataBundles.getPort(inputs, "in1");
 		DataBundles.createList(list);
@@ -201,7 +180,7 @@ public class TestDataBundles {
 
 	@Test
 	public void getListItem() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path list = DataBundles.getPort(inputs, "in1");
 		DataBundles.createList(list);
@@ -250,7 +229,7 @@ public class TestDataBundles {
 
 	@Test
 	public void getOutputs() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		Path outputs = DataBundles.getOutputs(dataBundle);
 		assertTrue(Files.isDirectory(outputs));
 		// Second time should not fail because it already exists
@@ -261,7 +240,7 @@ public class TestDataBundles {
 
 	@Test
 	public void getPort() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path portIn1 = DataBundles.getPort(inputs, "in1");
 		assertFalse(Files.exists(portIn1));
@@ -270,7 +249,7 @@ public class TestDataBundles {
 
 	@Test
 	public void getPorts() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		DataBundles.createList(DataBundles.getPort(inputs, "in1"));
 		DataBundles.createList(DataBundles.getPort(inputs, "in2"));
@@ -290,7 +269,7 @@ public class TestDataBundles {
 
 	@Test
 	public void getReference() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path portIn1 = DataBundles.getPort(inputs, "in1");
 		DataBundles.setReference(portIn1, URI.create("http://example.org/test"));
@@ -300,7 +279,7 @@ public class TestDataBundles {
 
 	@Test
 	public void getReferenceFromWin8() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path win8 = inputs.resolve("win8.url");
 		Files.copy(getClass().getResourceAsStream("/win8.url"), win8);
@@ -311,7 +290,7 @@ public class TestDataBundles {
 
 	@Test
 	public void getStringValue() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path portIn1 = DataBundles.getPort(inputs, "in1");
 		String string = "A string";
@@ -322,7 +301,7 @@ public class TestDataBundles {
 
 	@Test
 	public void hasInputs() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		assertFalse(DataBundles.hasInputs(dataBundle));
 		DataBundles.getInputs(dataBundle); // create on demand
 		assertTrue(DataBundles.hasInputs(dataBundle));
@@ -330,7 +309,7 @@ public class TestDataBundles {
 
 	@Test
 	public void hasOutputs() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		assertFalse(DataBundles.hasOutputs(dataBundle));
 		DataBundles.getInputs(dataBundle); // independent
 		assertFalse(DataBundles.hasOutputs(dataBundle));
@@ -346,7 +325,7 @@ public class TestDataBundles {
 
 	@Test
 	public void isError() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path portIn1 = DataBundles.getPort(inputs, "in1");
 		DataBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");		
@@ -360,7 +339,7 @@ public class TestDataBundles {
 
 	@Test
 	public void isList() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path list = DataBundles.getPort(inputs, "in1");
 		DataBundles.createList(list);
@@ -373,7 +352,7 @@ public class TestDataBundles {
 	
 	@Test
 	public void isMissing() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path portIn1 = DataBundles.getPort(inputs, "in1");
 		
@@ -386,7 +365,7 @@ public class TestDataBundles {
 	
 	@Test
 	public void isReference() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path portIn1 = DataBundles.getPort(inputs, "in1");
 		DataBundles.setReference(portIn1, URI.create("http://example.org/test"));
@@ -399,7 +378,7 @@ public class TestDataBundles {
 	
 	@Test
 	public void isValue() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path portIn1 = DataBundles.getPort(inputs, "in1");
 		DataBundles.setStringValue(portIn1, "Hello");
@@ -411,7 +390,7 @@ public class TestDataBundles {
 
 	@Test
 	public void listOfLists() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path list = DataBundles.getPort(inputs, "in1");
 		DataBundles.createList(list);
@@ -447,7 +426,7 @@ public class TestDataBundles {
 	
 	@Test
 	public void newListItem() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path list = DataBundles.getPort(inputs, "in1");
 		DataBundles.createList(list);
@@ -489,7 +468,7 @@ public class TestDataBundles {
 		Files.createFile(f1);
 		assertFalse(isEmpty(tmp));
 
-		DataBundle db = DataBundles.createDataBundle();
+		Bundle db = DataBundles.createBundle();
 		Path f2 = db.getRoot().resolve("f2");
 		DataBundles.safeMove(f1, f2);
 		assertTrue(isEmpty(tmp));
@@ -515,7 +494,7 @@ public class TestDataBundles {
 	
 	@Test
 	public void setErrorArgs() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path portIn1 = DataBundles.getPort(inputs, "in1");
 		Path errorPath = DataBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");		
@@ -533,7 +512,7 @@ public class TestDataBundles {
 	
 	@Test
 	public void setErrorCause() throws Exception {		
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path portIn1 = DataBundles.getPort(inputs, "in1");
 		Path cause1 = DataBundles.setError(portIn1, "Something did not work", "A very\n long\n error\n trace");
@@ -553,7 +532,7 @@ public class TestDataBundles {
 	
 	@Test
 	public void setErrorObj() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 
 		Path portIn1 = DataBundles.getPort(inputs, "in1");
@@ -590,7 +569,7 @@ public class TestDataBundles {
 	
 	@Test
 	public void setReference() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path portIn1 = DataBundles.getPort(inputs, "in1");
 		URI uri = URI.create("http://example.org/test");		
@@ -608,7 +587,7 @@ public class TestDataBundles {
 	
 	@Test
 	public void setReferenceIri() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path portIn1 = DataBundles.getPort(inputs, "in1");		
 		URI uri = new URI("http", "xn--bcher-kva.example.com", "/s\u00F8iland/\u2603snowman", "\u2605star");
@@ -621,7 +600,7 @@ public class TestDataBundles {
 
 	@Test
 	public void setStringValue() throws Exception {
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path portIn1 = DataBundles.getPort(inputs, "in1");
 		String string = "A string";

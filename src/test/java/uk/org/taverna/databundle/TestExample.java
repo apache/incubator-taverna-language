@@ -15,12 +15,13 @@ import java.util.List;
 import java.util.NavigableMap;
 
 import org.junit.Test;
+import org.purl.wf4ever.robundle.Bundle;
 
 public class TestExample {
 	@Test
 	public void example() throws Exception {
 		// Create a new (temporary) data bundle
-		DataBundle dataBundle = DataBundles.createDataBundle();
+		Bundle dataBundle = DataBundles.createBundle();
 
 		// Get the inputs
 		Path inputs = DataBundles.getInputs(dataBundle);
@@ -109,7 +110,7 @@ public class TestExample {
 		
 		// Saving a data bundle:
 		Path zip = Files.createTempFile("databundle", ".zip");
-		DataBundles.closeAndSaveDataBundle(dataBundle, zip);
+		DataBundles.closeAndSaveBundle(dataBundle, zip);
 		// NOTE: From now dataBundle and its Path's are CLOSED 
 		// and can no longer be accessed
 		
@@ -121,7 +122,7 @@ public class TestExample {
 		}
 		
 		// Loading a data bundle back from disk
-		try (DataBundle dataBundle2 = DataBundles.openDataBundle(zip)) {
+		try (Bundle dataBundle2 = DataBundles.openBundle(zip)) {
 			assertEquals(zip, dataBundle2.getSource());
 			Path loadedInputs = DataBundles.getInputs(dataBundle2);
 			
