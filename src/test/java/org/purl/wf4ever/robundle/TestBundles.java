@@ -55,7 +55,7 @@ public class TestBundles {
 	}
 
 	@Test
-	public void closeAndOpenBundleWithPortValue() throws Exception {
+	public void closeAndOpenBundleWithStringValue() throws Exception {
 		Bundle bundle = Bundles.createBundle();
 		Path hello = bundle.getRoot().resolve("hello.txt");
 		Bundles.setStringValue(hello, "Hello");
