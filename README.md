@@ -21,7 +21,7 @@ Example in full is at [uk.org.taverna.databundle.TestExample](src/test/java/uk/o
 
 Create a new (temporary) data bundle:
 ```java
-        DataBundle dataBundle = DataBundles.createDataBundle();
+        Bundle dataBundle = DataBundles.createBundle();
 ```
 
 Get the input ports and the port "in1":
@@ -126,7 +126,7 @@ Ports can be browsed as a map by port name:
 Saving a data bundle:    
 ```java
         Path zip = Files.createTempFile("databundle", ".zip");
-        DataBundles.closeAndSaveDataBundle(dataBundle, zip);
+        DataBundles.closeAndSaveBundle(dataBundle, zip);
         // NOTE: From now dataBundle and its Path's are CLOSED 
         // and can no longer be accessed
         System.out.println("Saved to " + zip);
@@ -145,7 +145,7 @@ Inspecting the zip:
         
 Loading a data bundle back from disk:
 ```java
-        try (DataBundle dataBundle2 = DataBundles.openDataBundle(zip)) {
+        try (Bundle dataBundle2 = DataBundles.openBundle(zip)) {
             // Any modifications here will be saved on (here automatic) close            
         }     
 ```
