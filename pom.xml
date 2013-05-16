@@ -143,4 +143,5 @@
         </repository>
     </repositories>
 
+    <packaging>bundle</packaging>
 </project>
