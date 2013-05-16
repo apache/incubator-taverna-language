@@ -129,6 +129,56 @@ public class TestFileSystemProvider {
             assertTrue(root.toString().contains("\u2301"));
         }
     }
+
+
+    @Test
+    public void bundleWithSpaces() throws Exception {
+        Path path = Files.createTempFile("with several spaces", ".zip");
+        Files.delete(path);
+        
+        // Will fail with FileSystemNotFoundException without env:
+        //FileSystems.newFileSystem(path, null);
+        
+        // Neither does this work, as it does not double-escape:
+        // URI jar = URI.create("jar:" + path.toUri().toASCIIString());                
+
+        URI widget = new URI("widget", path.toUri().toString(), null);
+        assertTrue(widget.toASCIIString().contains("with%2520several%2520spaces"));
+        
+        Map<String, Object> env = new HashMap<>();
+        env.put("create", "true");
+ 
+        try (FileSystem fs = FileSystems.newFileSystem(widget, env)) {
+        } 
+        assertTrue(Files.exists(path));
+        // Reopen from now-existing Path to check that the URI is
+        // escaped in the same way
+        try (FileSystem fs = BundleFileSystemProvider.newFileSystemFromExisting(path)) {
+        }        
+    }
+    
+    @Test
+    public void bundleWithUnicode() throws Exception {
+        Path path = Files.createTempFile("with\u2301unicode\u263bhere", ".zip");
+        Files.delete(path);
+        //System.out.println(path); // Should contain a electrical symbol and smiley
+        URI widget = new URI("widget", path.toUri().toString(), null);
+        //System.out.println(jar);
+        assertTrue(widget.toString().contains("\u2301"));
+        assertTrue(widget.toString().contains("\u263b"));        
+        
+        Map<String, Object> env = new HashMap<>();
+        env.put("create", "true");
+ 
+        try (FileSystem fs = FileSystems.newFileSystem(widget, env)) {     
+        }
+        assertTrue(Files.exists(path));
+        // Reopen from now-existing Path to check that the URI is
+        // escaped in the same way
+        try (FileSystem fs = BundleFileSystemProvider.newFileSystemFromExisting(path)) {
+        }
+    }
+
 	
 	@Test
 	public void newFileSystemFromExisting() throws Exception {
