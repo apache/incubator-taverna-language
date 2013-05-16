@@ -184,6 +184,35 @@ public class TestDataBundles {
 		assertFalse(Files.exists(portIn1));
 		assertEquals(inputs, portIn1.getParent());
 	}
+	
+	@Test
+    public void getPortChecksExtension() throws Exception {
+        Bundle dataBundle = DataBundles.createBundle();
+        Path inputs = DataBundles.getInputs(dataBundle);
+        Path portIn1 = DataBundles.getPort(inputs, "in1");
+        assertFalse(Files.exists(portIn1));
+        Path ref = DataBundles.setReference(portIn1, URI.create("http://example.com/"));
+        Path portIn1Again = DataBundles.getPort(inputs, "in1");
+        assertEquals(ref, portIn1Again);
+        assertFalse(portIn1Again.equals(portIn1));
+        assertTrue(Files.exists(portIn1Again));
+    }
+
+	@Test
+    public void getListItemChecksExtension() throws Exception {
+        Bundle dataBundle = DataBundles.createBundle();
+        Path inputs = DataBundles.getInputs(dataBundle);
+        Path portIn1 = DataBundles.getPort(inputs, "in1");
+        Path list = DataBundles.newListItem(portIn1);
+        
+        Path item = DataBundles.newListItem(list);
+        
+        Path ref = DataBundles.setReference(item, URI.create("http://example.com/"));
+        Path itemAgain = DataBundles.getListItem(list, 0);
+        assertEquals(ref, itemAgain);
+        assertFalse(itemAgain.equals(portIn1));
+        assertTrue(Files.exists(itemAgain));
+    }
 
 	@Test
 	public void getPorts() throws Exception {

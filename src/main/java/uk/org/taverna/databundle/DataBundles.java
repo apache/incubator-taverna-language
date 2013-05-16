@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryIteratorException;
 import java.nio.file.DirectoryStream;
+import java.nio.file.DirectoryStream.Filter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -40,6 +41,7 @@ public class DataBundles extends Bundles {
 		int lastDot = fileName.lastIndexOf(".");
 		if (lastDot < 0) {	
 //			return fileName;
+		    // Might be root
 			return fileName.replace("/", "");
 		}
 		return fileName.substring(0, lastDot);
@@ -109,12 +111,11 @@ public class DataBundles extends Bundles {
 		return paths;
 	}
 
-	public static Path getListItem(Path list, long position) {
+	public static Path getListItem(Path list, long position) throws IOException {
 		if (position < 0) {
 			throw new IllegalArgumentException("Position must be 0 or more, not: " + position);
 		}
-		// FIXME: Look for extensions
-		return list.resolve(Long.toString(position));
+		return anyExtension(list, Long.toString(position));
 	}
 
 	public static Path getOutputs(Bundle dataBundle) throws IOException {
@@ -125,8 +126,29 @@ public class DataBundles extends Bundles {
 
 	public static Path getPort(Path map, String portName) throws IOException {
 		Files.createDirectories(map);
-		return map.resolve(portName);
+		return anyExtension(map, portName);
 	}
+
+    private static Path anyExtension(Path directory, String fileName) throws IOException {
+        Path path = directory.resolve(fileName);
+		
+		// Prefer the fileName as it is
+        if (Files.exists(path)) {
+		    return path;
+		}
+        // Strip any existing extension
+        fileName = filenameWithoutExtension(path);
+        
+        // Check directory for path.*
+        for (Path p : Files.newDirectoryStream(directory, fileName + ".*")) {
+            // We'll just return the first one
+            // TODO: Should we fail if there's more than one?
+            return p;
+        }
+        // Nothing? Then let's give the existing one; perhaps it is to be
+        // created.
+        return path;
+    }
 
 	public static NavigableMap<String, Path> getPorts(Path path) throws IOException {
 		NavigableMap<String, Path> ports = new TreeMap<>();
@@ -206,16 +228,19 @@ public class DataBundles extends Bundles {
 	}
 
 	protected static Path withExtension(Path path, String extension) {
-		if (! extension.isEmpty() && ! extension.startsWith(".")) {
-			throw new IllegalArgumentException("Extension must be empty or start with .");
-		}
-		String p = path.getFileName().toString();
-		if (! extension.isEmpty() && p.toLowerCase().endsWith(extension.toLowerCase())) {
-			return path;
-		}		
-		// Everything after the last . - or just the end
-		String newP = p.replaceFirst("(\\.[^.]*)?$", extension);
-		return path.resolveSibling(newP);
+		String filename = path.getFileName().toString();
+		return path.resolveSibling(withExtensionFilename(filename, extension));
 	}
+	
+	protected static String withExtensionFilename(String filename, String extension) {
+        if (! extension.isEmpty() && ! extension.startsWith(".")) {
+            throw new IllegalArgumentException("Extension must be empty or start with .");
+        }
+        if (! extension.isEmpty() && filename.toLowerCase().endsWith(extension.toLowerCase())) {
+            return filename;
+        }
+        // Everything after the last . - or just the end
+        return filename.replaceFirst("(\\.[^.]*)?$", extension);
+    }
 
 }
