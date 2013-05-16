@@ -7,6 +7,7 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.NotDirectoryException;
 import java.nio.file.Path;
 
@@ -40,6 +41,12 @@ public class TestBundleFileSystem {
     @Test
     public void fileAndDirectory() throws Exception {
         Path folder = fs.getPath("folder");
+
+        // To test on local file system, uncomment next 2 lines:
+//        Path test = Files.createTempDirectory("test");
+//        folder = test.resolve("folder");
+        
+        
         assertFalse(Files.exists(folder));
         Files.createFile(folder);
         assertTrue(Files.exists(folder));
@@ -58,13 +65,14 @@ public class TestBundleFileSystem {
             fail("Should have thrown FileAlreadyExistsException");
         } catch (FileAlreadyExistsException ex) {
         }
+        assertFalse(Files.isDirectory(folder));
 
         Path child = folder.resolve("child");
 
         try {
             Files.createFile(child);
-            fail("Should have thrown NotDirectoryException");
-        } catch (NotDirectoryException ex) {
+            fail("Should have thrown NoSuchFileException");
+        } catch (NoSuchFileException ex) {
         }
         assertFalse(Files.exists(child));
 
@@ -84,6 +92,14 @@ public class TestBundleFileSystem {
     @Test
     public void directoryAndFile() throws Exception {
         Path folderSlash = fs.getPath("folder/");
+        Path folder = fs.getPath("folder");
+
+        
+        // Uncomment next 3 lines to test on local FS
+//        Path test = Files.createTempDirectory("test");
+//        folderSlash = test.resolve("folder/");
+//        folder = test.resolve("folder");
+        
         assertFalse(Files.exists(folderSlash));
 
         Files.createDirectory(folderSlash);
@@ -99,15 +115,14 @@ public class TestBundleFileSystem {
 
         try {
             Files.createFile(folderSlash);
-            fail("Should have thrown FileAlreadyExistsException");
-        } catch (FileAlreadyExistsException ex) {
+            fail("Should have thrown IOException");
+        } catch (IOException ex) {
         }
 
-        Path folder = fs.getPath("folder");
         try {
             Files.createFile(folder);
-            fail("Should have thrown FileAlreadyExistsException");
-        } catch (FileAlreadyExistsException ex) {
+            fail("Should have thrown IOException");
+        } catch (IOException ex) {
         }
                 
         Path child = folderSlash.resolve("child");
