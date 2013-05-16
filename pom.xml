@@ -114,4 +114,5 @@
 
     </repositories>
 
+    <packaging>bundle</packaging>
 </project>
