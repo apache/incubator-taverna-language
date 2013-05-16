@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryIteratorException;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -32,6 +33,10 @@ public class DataBundles extends Bundles {
 	private static final Charset UTF8 = Charset.forName("UTF-8");
 
 	public static void createList(Path path) throws IOException {
+	    Path existing = anyExtension(path);
+	    if (! existing.equals(path)) {
+	        throw new FileAlreadyExistsException(path.toString());
+	    }
 		Files.createDirectories(path);
 	}
 	
@@ -128,6 +133,10 @@ public class DataBundles extends Bundles {
 		return anyExtension(map, portName);
 	}
 
+	private static Path anyExtension(Path path) throws IOException {
+	    return anyExtension(path.getParent(), path.getFileName().toString());
+    }
+	
     private static Path anyExtension(Path directory, String fileName) throws IOException {
         Path path = directory.resolve(fileName);
 		
