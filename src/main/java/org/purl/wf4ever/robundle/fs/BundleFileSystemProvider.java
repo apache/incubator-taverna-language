@@ -326,7 +326,14 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 		URI baseURI = baseURIFor(uri);
 
 		// Open using ZIP provider
-		FileSystem origFs = FileSystems.newFileSystem(localPath, null);
+		URI jar;
+        try {
+            jar = new URI("jar", localPath.toUri().toString(), null);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Can't construct JAR uri for " + localPath);
+        }
+		// Pass on env
+		FileSystem origFs = FileSystems.newFileSystem(jar, env);
 
 		BundleFileSystem fs;
 		synchronized (openFilesystems) {
