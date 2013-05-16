@@ -13,6 +13,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.spi.FileSystemProvider;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -70,6 +72,64 @@ public class TestFileSystemProvider {
 		assertTrue(fs instanceof BundleFileSystem);
 	}
 
+	@Test
+    public void jarWithSpaces() throws Exception {
+        Path path = Files.createTempFile("with several spaces", ".zip");
+        Files.delete(path);
+        
+        // Will fail with FileSystemNotFoundException without env:
+        //FileSystems.newFileSystem(path, null);
+        
+        // Neither does this work, as it does not double-escape:
+        // URI jar = URI.create("jar:" + path.toUri().toASCIIString());                
+
+        URI jar = new URI("jar", path.toUri().toString(), null);
+        assertTrue(jar.toASCIIString().contains("with%2520several%2520spaces"));
+        
+        Map<String, Object> env = new HashMap<>();
+        env.put("create", "true");
+ 
+        try (FileSystem fs = FileSystems.newFileSystem(jar, env)) {
+            URI root = fs.getPath("/").toUri();    
+            assertTrue(root.toString().contains("with%2520several%2520spaces"));
+        } 
+        // Reopen from now-existing Path to check that the URI is
+        // escaped in the same way
+        try (FileSystem fs = FileSystems.newFileSystem(path, null)) {
+            URI root = fs.getPath("/").toUri();
+            //System.out.println(root.toASCIIString());
+            assertTrue(root.toString().contains("with%2520several%2520spaces"));
+        }
+    }
+	
+	@Test
+    public void jarWithUnicode() throws Exception {
+	    Path path = Files.createTempFile("with\u2301unicode\u263bhere", ".zip");
+        Files.delete(path);
+        //System.out.println(path); // Should contain a electrical symbol and smiley
+        URI jar = new URI("jar", path.toUri().toString(), null);
+        //System.out.println(jar);
+        assertTrue(jar.toString().contains("\u2301"));
+        assertTrue(jar.toString().contains("\u263b"));        
+        
+        Map<String, Object> env = new HashMap<>();
+        env.put("create", "true");
+ 
+        try (FileSystem fs = FileSystems.newFileSystem(jar, env)) {            
+            URI root = fs.getPath("/").toUri();
+            //System.out.println(root.toASCIIString());
+            assertTrue(root.toString().contains("\u2301"));
+        }
+        
+        // Reopen from now-existing Path to check that the URI is
+        // escaped in the same way
+        try (FileSystem fs = FileSystems.newFileSystem(path, null)) {
+            URI root = fs.getPath("/").toUri();
+            //System.out.println(root.toASCIIString());
+            assertTrue(root.toString().contains("\u2301"));
+        }
+    }
+	
 	@Test
 	public void newFileSystemFromExisting() throws Exception {
 		Path path = Files.createTempFile("test", null);
