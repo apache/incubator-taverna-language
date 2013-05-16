@@ -85,6 +85,12 @@ public class TestExample {
 		// Ports can be browsed as a map by port name
 		NavigableMap<String, Path> ports = DataBundles.getPorts(inputs);
 		System.out.println(ports.keySet());
+
+		// Is there anything known about a port?
+		if (! DataBundles.isMissing(DataBundles.getPort(outputs, "out3"))) {
+			// DataBundles.getPorts(outputs).containsKey("out3")
+			
+		}
 		
 		// Representing errors		
 		Path out2 = DataBundles.getPort(outputs, "out2");		
