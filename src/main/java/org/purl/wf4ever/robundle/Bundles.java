@@ -111,8 +111,8 @@ public class Bundles {
 	}
 
 	public static boolean isValue(Path path) {
-		return Files.isRegularFile(path);
-	}
+		return ! isReference(path) && Files.isRegularFile(path);
+	} 
 
 	public static Bundle openBundle(Path zip) throws IOException {
 		BundleFileSystem fs = BundleFileSystemProvider
