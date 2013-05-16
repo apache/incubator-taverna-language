@@ -417,6 +417,17 @@ public class TestDataBundles {
         assertTrue(Files.isRegularFile(err));                
         DataBundles.createList(list);
     }
+    
+    @Test(expected=FileAlreadyExistsException.class)
+    public void setErrorExistsAsList() throws Exception {
+        Bundle dataBundle = DataBundles.createBundle();
+        Path inputs = DataBundles.getInputs(dataBundle);
+        Path list = DataBundles.getPort(inputs, "in1");
+        DataBundles.createList(list);
+        assertFalse(Files.isRegularFile(list));
+        assertTrue(Files.isDirectory(list));
+        DataBundles.setError(list, "a", "b");
+    }
 	
 	@Test
 	public void setErrorArgs() throws Exception {

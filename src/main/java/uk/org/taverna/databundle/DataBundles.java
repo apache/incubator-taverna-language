@@ -33,12 +33,17 @@ public class DataBundles extends Bundles {
 	private static final Charset UTF8 = Charset.forName("UTF-8");
 
 	public static void createList(Path path) throws IOException {
-	    Path existing = anyExtension(path);
-	    if (! existing.equals(path)) {
-	        throw new FileAlreadyExistsException(path.toString());
-	    }
+	    checkExistingAnyExtension(path);
 		Files.createDirectories(path);
 	}
+
+    private static void checkExistingAnyExtension(Path path) throws IOException,
+            FileAlreadyExistsException {
+        Path existing = anyExtension(path);
+	    if (! path.equals(existing)) {
+	        throw new FileAlreadyExistsException(existing.toString());
+	    }
+    }
 	
 	protected static String filenameWithoutExtension(Path entry) {
 		String fileName = entry.getFileName().toString();
@@ -145,10 +150,14 @@ public class DataBundles extends Bundles {
 		    return path;
 		}
         // Strip any existing extension
-        fileName = filenameWithoutExtension(path);
+        String fileNameNoExt = filenameWithoutExtension(path);     
+        Path withoutExt = path.resolveSibling(fileNameNoExt);
+        if (Files.exists(withoutExt)) {
+            return withoutExt;
+        }
         
         // Check directory for path.*
-        for (Path p : Files.newDirectoryStream(directory, fileName + ".*")) {
+        for (Path p : Files.newDirectoryStream(directory, fileNameNoExt + ".*")) {
             // We'll just return the first one
             // TODO: Should we fail if there's more than one?
             return p;
@@ -231,6 +240,7 @@ public class DataBundles extends Bundles {
 		errorDoc.add(""); // Our magic separator
 		errorDoc.add(message);
 		errorDoc.add(trace);
+		checkExistingAnyExtension(errorPath);
 		Files.write(errorPath, errorDoc, UTF8, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
 		return errorPath;
 	}
