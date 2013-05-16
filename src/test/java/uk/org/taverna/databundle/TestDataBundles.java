@@ -439,7 +439,16 @@ public class TestDataBundles {
         assertTrue(Files.isRegularFile(ref));
         DataBundles.setError(in1, "a", "b");
     }
-
+    
+    @Test(expected=FileAlreadyExistsException.class)
+    public void setErrorExistsAsValue() throws Exception {
+        Bundle dataBundle = DataBundles.createBundle();
+        Path inputs = DataBundles.getInputs(dataBundle);
+        Path in1 = DataBundles.getPort(inputs, "in1");
+        DataBundles.setStringValue(in1, "test");
+        assertTrue(Files.isRegularFile(in1));
+        DataBundles.setError(in1, "a", "b");
+    }
     
 	@Test
 	public void setErrorArgs() throws Exception {
