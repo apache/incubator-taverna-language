@@ -48,7 +48,6 @@ public class TestBundleFileSystem {
 
         try {
             Files.createDirectory(folder);
-            // Disable for now, just to see where this leads
             fail("Should have thrown FileAlreadyExistsException");
         } catch (FileAlreadyExistsException ex) {
         }
@@ -84,32 +83,46 @@ public class TestBundleFileSystem {
      */
     @Test
     public void directoryAndFile() throws Exception {
-        Path folder = fs.getPath("folder/");
-        assertFalse(Files.exists(folder));
+        Path folderSlash = fs.getPath("folder/");
+        assertFalse(Files.exists(folderSlash));
 
-        Files.createDirectory(folder);
-        assertTrue(Files.exists(folder));
-        assertFalse(Files.isRegularFile(folder));
-        assertTrue(Files.isDirectory(folder));
+        Files.createDirectory(folderSlash);
+        assertTrue(Files.exists(folderSlash));
+        assertFalse(Files.isRegularFile(folderSlash));
+        assertTrue(Files.isDirectory(folderSlash));
 
         try {
-            Files.createDirectory(folder);
+            Files.createDirectory(folderSlash);
             fail("Should have thrown FileAlreadyExistsException");
         } catch (FileAlreadyExistsException ex) {
         }
 
+        try {
+            Files.createFile(folderSlash);
+            fail("Should have thrown FileAlreadyExistsException");
+        } catch (FileAlreadyExistsException ex) {
+        }
+
+        Path folder = fs.getPath("folder");
         try {
             Files.createFile(folder);
-            // Disable for now, just to see where this leads
             fail("Should have thrown FileAlreadyExistsException");
         } catch (FileAlreadyExistsException ex) {
         }
-
-        Path child = folder.resolve("child");
+                
+        Path child = folderSlash.resolve("child");
         Files.createFile(child);
 
-        assertTrue(Files.isRegularFile(folder));
-        assertFalse(Files.isDirectory(fs.getPath("folder/")));
+        assertTrue(Files.exists(folder));
+        assertTrue(Files.exists(folderSlash));        
+        
+        assertFalse(Files.isRegularFile(folder));
+        assertFalse(Files.isRegularFile(folderSlash));
+
+        assertTrue(Files.isDirectory(folder));
+        assertTrue(Files.isDirectory(folderSlash));
+
+        
     }
 
 }
