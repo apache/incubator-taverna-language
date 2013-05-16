@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -36,7 +37,7 @@ public class TestDataBundles {
 			assertArrayEquals(expected, signature);
 		}
 	}
-
+	
 	@Test
 	public void createList() throws Exception {
 		Bundle dataBundle = DataBundles.createBundle();
@@ -45,10 +46,9 @@ public class TestDataBundles {
 		DataBundles.createList(list);
 		assertTrue(Files.isDirectory(list));
 	}
-
+	
 	@Test
-	public void getError() throws Exception {
-		
+	public void getError() throws Exception {	
 		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path portIn1 = DataBundles.getPort(inputs, "in1");
@@ -222,7 +222,7 @@ public class TestDataBundles {
 		DataBundles.getOutputs(dataBundle); // create on demand
 		assertTrue(DataBundles.hasOutputs(dataBundle));
 	}
-	
+
 	@Test
 	public void isError() throws Exception {
 		Bundle dataBundle = DataBundles.createBundle();
@@ -262,6 +262,23 @@ public class TestDataBundles {
 		assertTrue(DataBundles.isMissing(portIn1));
 		assertFalse(DataBundles.isReference(portIn1));
 	}
+
+	@Test
+    public void isValueOnError() throws Exception {
+        Bundle bundle = DataBundles.createBundle();
+        Path inputs = DataBundles.getInputs(bundle);
+        DataBundles.setError(DataBundles.getPort(inputs, "test"),
+                "error", "");
+        assertFalse(DataBundles.isValue(DataBundles.getPorts(inputs).get("test")));
+    }
+	
+	@Test
+    public void isValueOnReference() throws Exception {
+	    Bundle bundle = DataBundles.createBundle();
+	    Path inputs = DataBundles.getInputs(bundle);
+	    DataBundles.setReference(DataBundles.getPort(inputs, "test"), URI.create("http://www.example.com/"));
+	    assertFalse(DataBundles.isValue(DataBundles.getPorts(inputs).get("test")));
+    }
 	
 	@Test
 	public void listOfLists() throws Exception {
