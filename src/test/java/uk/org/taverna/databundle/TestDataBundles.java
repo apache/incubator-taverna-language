@@ -428,7 +428,19 @@ public class TestDataBundles {
         assertTrue(Files.isDirectory(list));
         DataBundles.setError(list, "a", "b");
     }
-	
+
+    @Test(expected=FileAlreadyExistsException.class)
+    public void setErrorExistsAsReference() throws Exception {
+        Bundle dataBundle = DataBundles.createBundle();
+        Path inputs = DataBundles.getInputs(dataBundle);
+        Path in1 = DataBundles.getPort(inputs, "in1");
+        Path ref = DataBundles.setReference(in1, URI.create("http://example.com/"));
+        assertFalse(Files.exists(in1));
+        assertTrue(Files.isRegularFile(ref));
+        DataBundles.setError(in1, "a", "b");
+    }
+
+    
 	@Test
 	public void setErrorArgs() throws Exception {
 		Bundle dataBundle = DataBundles.createBundle();
