@@ -96,6 +96,7 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 	}
 	
 	private static class Singleton {
+	    // Fallback for OSGi environments
 	    private static final BundleFileSystemProvider INSTANCE = new BundleFileSystemProvider();
 	}
 	
@@ -119,10 +120,18 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 			throw new IllegalArgumentException("Can't create widget: URI for "
 					+ bundle);
 		}
+
         FileSystem fs = FileSystems.newFileSystem(w,
                 Collections.<String, Object> emptyMap(),
                 BundleFileSystemProvider.class.getClassLoader());
 		return (BundleFileSystem) fs;
+	
+		// To avoid multiple instances of this provider in an OSGi environment,
+		// the above official API calls could be replaced with:
+
+		//	return getInstance().newFileSystem(w, Collections.<String, Object> emptyMap());
+		
+		// which would fall back to Singleton.INSTANCE if there is no provider.
 	}
 
     public static BundleFileSystem newFileSystemFromNew(Path bundle)
