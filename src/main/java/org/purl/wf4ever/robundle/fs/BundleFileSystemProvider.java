@@ -119,12 +119,13 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 			throw new IllegalArgumentException("Can't create widget: URI for "
 					+ bundle);
 		}
-		FileSystem fs = FileSystems.newFileSystem(w,
-				Collections.<String, Object> emptyMap());
+        FileSystem fs = FileSystems.newFileSystem(w,
+                Collections.<String, Object> emptyMap(),
+                BundleFileSystemProvider.class.getClassLoader());
 		return (BundleFileSystem) fs;
 	}
 
-	public static BundleFileSystem newFileSystemFromNew(Path bundle)
+    public static BundleFileSystem newFileSystemFromNew(Path bundle)
 			throws FileNotFoundException, IOException {
 		return newFileSystemFromNew(bundle,
 				APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP);
@@ -315,6 +316,7 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 		Path localPath = localPathFor(uri);
 		URI baseURI = baseURIFor(uri);
 
+		// Open using ZIP provider
 		FileSystem origFs = FileSystems.newFileSystem(localPath, null);
 
 		BundleFileSystem fs;
