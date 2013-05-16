@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -381,6 +382,18 @@ public class TestDataBundles {
 		assertTrue(item6.getFileName().toString().contains("6"));
 	}
 	
+	@Test(expected=FileAlreadyExistsException.class)
+    public void newListAlreadyExistsAsFile() throws Exception {
+	    Bundle dataBundle = DataBundles.createBundle();
+        Path inputs = DataBundles.getInputs(dataBundle);
+        Path list = DataBundles.getPort(inputs, "in1");
+        Files.createFile(list);
+        assertTrue(Files.isRegularFile(list));
+        DataBundles.setStringValue(list, "A string");
+        assertTrue(Files.isRegularFile(list));
+        assertFalse(Files.isDirectory(list));
+        DataBundles.createList(list);
+    }
 	
 	@Test
 	public void setErrorArgs() throws Exception {
