@@ -160,7 +160,11 @@ public class DataBundles extends Bundles {
 	public static boolean isMissing(Path item) {
 		return Bundles.isMissing(item) && ! isError(item);
 	}
-		
+
+   public static boolean isValue(Path item) {
+        return ! isError(item) && Bundles.isValue(item);
+    }
+	
 	public static Path newListItem(Path list) throws IOException {
 		long max = -1L;
 		createList(list);
