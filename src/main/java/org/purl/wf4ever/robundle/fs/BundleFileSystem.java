@@ -17,15 +17,13 @@ public class BundleFileSystem extends FileSystem {
 
 	protected final URI baseURI;
 	protected final FileSystem origFS;
-	protected final BundleFileSystemProvider provider;
 
 	protected BundleFileSystem(FileSystem origFS,
-			BundleFileSystemProvider provider, URI baseURI) {
-		if (origFS == null || provider == null || baseURI == null) {
+			URI baseURI) {
+		if (origFS == null || baseURI == null) {
 			throw new NullPointerException();
 		}
 		this.origFS = origFS;
-		this.provider = provider;
 		this.baseURI = baseURI;
 	}
 
@@ -113,7 +111,7 @@ public class BundleFileSystem extends FileSystem {
 
 	@Override
 	public BundleFileSystemProvider provider() {
-		return provider;
+		return BundleFileSystemProvider.getInstance();
 	}
 
 	@Override

@@ -41,6 +41,26 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 	private static final Charset UTF8 = Charset.forName("UTF-8");
 	private static final String WIDGET = "widget";
 
+	/**
+	 * Public constructor provided for FileSystemProvider.installedProviders().
+	 * Use #getInstance() instead.
+	 *  
+	 * @deprecated
+	 */
+	@Deprecated
+	public BundleFileSystemProvider() {
+    }
+	
+	@Override
+	public boolean equals(Object obj) {
+	    return getClass() == obj.getClass();
+	} 
+	
+	@Override
+	public int hashCode() {
+	    return getClass().hashCode();
+	}
+	
 	protected static void addMimeTypeToZip(ZipOutputStream out, String mimetype)
 			throws IOException {
 		if (mimetype == null) {
@@ -74,7 +94,11 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 			addMimeTypeToZip(out, mimetype);
 		}
 	}
-
+	
+	private static class Singleton {
+	    private static final BundleFileSystemProvider INSTANCE = new BundleFileSystemProvider();
+	}
+	
 	public static BundleFileSystemProvider getInstance() {
 		for (FileSystemProvider provider : FileSystemProvider
 				.installedProviders()) {
@@ -82,9 +106,8 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 				return (BundleFileSystemProvider) provider;
 			}
 		}
-		throw new IllegalStateException(
-				"FileSystemProvider has not been installed: "
-						+ BundleFileSystemProvider.class);
+		// Fallback for OSGi environments
+		return Singleton.INSTANCE;
 	}
 
 	public static BundleFileSystem newFileSystemFromExisting(Path bundle)
@@ -120,7 +143,13 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 		return fs;
 	}
 
-	Map<URI, WeakReference<BundleFileSystem>> openFilesystems = new HashMap<>();
+    /**
+     * The list of open file systems. This is static so that it is shared across
+     * eventual multiple instances of this provider (such as when running in an
+     * OSGi environment). Access to this map should be synchronized to avoid
+     * opening a file system that is not in the map.
+     */
+	protected static Map<URI, WeakReference<BundleFileSystem>> openFilesystems = new HashMap<>();
 
 	protected URI baseURIFor(URI uri) {
 		if (!(uri.getScheme().equals(WIDGET))) {
@@ -188,19 +217,22 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 		return bpath.getFileSystem().getFileStore();
 	}
 
-	@Override
-	public BundleFileSystem getFileSystem(URI uri) {
-		WeakReference<BundleFileSystem> ref = openFilesystems
-				.get(baseURIFor(uri));
-		if (ref == null) {
-			throw new FileSystemNotFoundException(uri.toString());
-		}
-		BundleFileSystem fs = ref.get();
-		if (fs == null) {
-			throw new FileSystemNotFoundException(uri.toString());
-		}
-		return fs;
-	}
+    @Override
+    public BundleFileSystem getFileSystem(URI uri) {
+        synchronized (openFilesystems) {
+            URI baseURI = baseURIFor(uri);
+            WeakReference<BundleFileSystem> ref = openFilesystems.get(baseURI);
+            if (ref == null) {
+                throw new FileSystemNotFoundException(uri.toString());
+            }
+            BundleFileSystem fs = ref.get();
+            if (fs == null) {
+                openFilesystems.remove(baseURI);
+                throw new FileSystemNotFoundException(uri.toString());
+            }
+            return fs;
+        }
+    }
 
 	@Override
 	public Path getPath(URI uri) {
@@ -291,12 +323,12 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 					.get(baseURI);
 			if (existingRef != null) {
 				BundleFileSystem existing = existingRef.get();
-				if (existing.isOpen()) {
+				if (existing != null && existing.isOpen()) {
 					throw new FileSystemAlreadyExistsException(
 							baseURI.toASCIIString());
 				}
 			}
-			fs = new BundleFileSystem(origFs, this, baseURI);
+			fs = new BundleFileSystem(origFs, baseURI);
 			openFilesystems.put(baseURI,
 					new WeakReference<BundleFileSystem>(fs));
 		}

@@ -18,6 +18,32 @@ import org.junit.Test;
 
 public class TestFileSystemProvider {
 
+    @Test
+    public void getInstance() throws Exception {
+        assertSame(BundleFileSystemProvider.getInstance(), BundleFileSystemProvider.getInstance());
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void getInstanceEquals() throws Exception {
+        assertEquals(BundleFileSystemProvider.getInstance(),
+                new BundleFileSystemProvider());
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void getInstanceHashCode() throws Exception {
+        assertEquals(BundleFileSystemProvider.getInstance().hashCode(),
+                new BundleFileSystemProvider().hashCode());
+    }
+    
+    @SuppressWarnings({ "deprecation", "static-access" })
+    @Test
+    public void sameOpen() throws Exception {
+        assertSame(BundleFileSystemProvider.getInstance().openFilesystems,
+                new BundleFileSystemProvider().openFilesystems);
+    }
+    
 	@Test
 	public void installedProviders() throws Exception {
 		for (FileSystemProvider provider : FileSystemProvider
