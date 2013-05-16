@@ -11,6 +11,7 @@ import java.nio.file.AccessMode;
 import java.nio.file.CopyOption;
 import java.nio.file.DirectoryStream;
 import java.nio.file.DirectoryStream.Filter;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileStore;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystemAlreadyExistsException;
@@ -203,6 +204,10 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 	@Override
 	public void createDirectory(Path dir, FileAttribute<?>... attrs)
 			throws IOException {
+	    // Workaround http://stackoverflow.com/questions/16588321/
+	    if (Files.exists(dir)) { 
+	        throw new FileAlreadyExistsException(dir.toString());
+	    }
 		BundleFileSystem fs = (BundleFileSystem) dir.getFileSystem();
 		origProvider(dir).createDirectory(fs.unwrap(dir), attrs);
 	}
