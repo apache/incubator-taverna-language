@@ -455,7 +455,19 @@ public class TestDataBundles {
 		assertEquals("../inputs/in2.err", errLines.get(1));
 		assertEquals("", errLines.get(2));
 	}
-    
+
+    @Test
+    public void setErrorExistsAsError() throws Exception {
+        Bundle dataBundle = DataBundles.createBundle();
+        Path inputs = DataBundles.getInputs(dataBundle);
+        Path in1 = DataBundles.getPort(inputs, "in1");
+        Path ref = DataBundles.setError(in1, "a", "b");
+        assertFalse(Files.exists(in1));
+        assertTrue(Files.isRegularFile(ref));
+        DataBundles.setError(in1, "c", "d");
+        assertEquals("c", DataBundles.getError(in1).getMessage());
+    }
+
     @Test(expected=FileAlreadyExistsException.class)
     public void setErrorExistsAsList() throws Exception {
         Bundle dataBundle = DataBundles.createBundle();
@@ -466,7 +478,7 @@ public class TestDataBundles {
         assertTrue(Files.isDirectory(list));
         DataBundles.setError(list, "a", "b");
     }
-    
+
 	@Test(expected=FileAlreadyExistsException.class)
     public void setErrorExistsAsReference() throws Exception {
         Bundle dataBundle = DataBundles.createBundle();
@@ -478,7 +490,7 @@ public class TestDataBundles {
         DataBundles.setError(in1, "a", "b");
     }
 	
-	@Test(expected=FileAlreadyExistsException.class)
+    @Test(expected=FileAlreadyExistsException.class)
     public void setErrorExistsAsValue() throws Exception {
         Bundle dataBundle = DataBundles.createBundle();
         Path inputs = DataBundles.getInputs(dataBundle);
