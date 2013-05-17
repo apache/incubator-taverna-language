@@ -21,6 +21,11 @@ public class Manifest {
     private static final String MIMETYPE = "/mimetype";
     private static final String META_INF = "/META-INF";
     private static final String RO = "/.ro";
+    private Bundle bundle;
+
+    public Manifest(Bundle bundle) {
+        this.bundle = bundle;
+    }
 
     public static FileTime now() {
         return FileTime.fromMillis(new GregorianCalendar().getTimeInMillis());
@@ -38,7 +43,7 @@ public class Manifest {
     List<PathAnnotation> annotations = new ArrayList<>();
     List<String> graph;
 
-    public void populateFromBundle(Bundle bundle) throws IOException {
+    public void populateFromBundle() throws IOException {
         final Set<Path> potentiallyEmptyFolders = new LinkedHashSet<>();
 
         Files.walkFileTree(bundle.getRoot(), new SimpleFileVisitor<Path>() {
@@ -107,6 +112,13 @@ public class Manifest {
             return dir.resolveSibling(fnameStr + "/");
         }
         return dir;
+    }
+
+    public Path writeAsJsonLD() throws IOException {        
+        Path jsonld = bundle.getFileSystem().getPath(".ro", "manifest.json");
+        Files.createFile(jsonld);
+        // TODO: Actually write it!
+        return jsonld;
     }
 
 }

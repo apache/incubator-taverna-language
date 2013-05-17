@@ -1,5 +1,6 @@
 package org.purl.wf4ever.robundle.manifest;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -26,8 +27,8 @@ public class TestManifest {
         Path r = bundle.getRoot();
         URI base = r.toUri();
 
-        Manifest manifest = new Manifest();
-        manifest.populateFromBundle(bundle);
+        Manifest manifest = new Manifest(bundle);
+        manifest.populateFromBundle();
 
         List<String> uris = new ArrayList<>();
         for (PathMetadata s : manifest.aggregates) {
@@ -60,7 +61,18 @@ public class TestManifest {
         return Paths.get(fileUri);
     }
 
-    private Bundle exampleBundle() throws IOException {
+
+    @Test
+    public void testName() throws Exception {
+        Bundle bundle = exampleBundle();
+        Manifest manifest = new Manifest(bundle);
+        manifest.populateFromBundle();
+        Path jsonld = manifest.writeAsJsonLD();
+        assertEquals(bundle.getRoot().resolve(".ro/manifest.json"), jsonld);
+        assertTrue(Files.exists(jsonld));
+    }
+    
+    protected Bundle exampleBundle() throws IOException {
         Path source;
         try (Bundle bundle = Bundles.createBundle()) {
             source = bundle.getSource();
