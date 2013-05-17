@@ -5,6 +5,7 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryIteratorException;
 import java.nio.file.DirectoryStream;
+import java.nio.file.DirectoryStream.Filter;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,6 +29,19 @@ import org.purl.wf4ever.robundle.Bundles;
  */
 public class DataBundles extends Bundles {
 
+    protected static final class ExtensionIgnoringFilter implements Filter<Path> {
+        private final String fname;
+
+        private ExtensionIgnoringFilter(Path file) {
+            this.fname = filenameWithoutExtension(file);
+        }
+
+        @Override
+        public boolean accept(Path entry) throws IOException {
+            return fname.equals(filenameWithoutExtension(entry));
+        }
+    }
+    
 	private static final String DOT_ERR = ".err";
 	private static final String INPUTS = "inputs";
 	private static final String OUTPUTS = "outputs";
@@ -75,12 +89,21 @@ public class DataBundles extends Bundles {
 		Files.createDirectories(path);
 	}
 
+	public static void deleteAllExtensions(final Path file) throws IOException {
+        
+        Filter<Path> filter = new ExtensionIgnoringFilter(file);
+        try (DirectoryStream<Path> ds = Files.newDirectoryStream(file.getParent(), filter)) {
+            for (Path p : ds) {
+                deleteRecursively(p);
+            }
+        }
+        
+    }
+
 	protected static String filenameWithoutExtension(Path entry) {
 		String fileName = entry.getFileName().toString();
 		int lastDot = fileName.lastIndexOf(".");
 		if (lastDot < 0) {	
-//			return fileName;
-		    // Might be root
 			return fileName.replace("/", "");
 		}
 		return fileName.substring(0, lastDot);
@@ -162,13 +185,13 @@ public class DataBundles extends Bundles {
 		Files.createDirectories(inputs);
 		return inputs;
 	}
-
-	public static Path getPort(Path map, String portName) throws IOException {
+	
+    public static Path getPort(Path map, String portName) throws IOException {
 		Files.createDirectories(map);
 		return anyExtension(map, portName);
 	}
-	
-    public static NavigableMap<String, Path> getPorts(Path path) throws IOException {
+
+	public static NavigableMap<String, Path> getPorts(Path path) throws IOException {
 		NavigableMap<String, Path> ports = new TreeMap<>();
 		try (DirectoryStream<Path> ds = Files.newDirectoryStream(path)) {
 			for (Path p : ds) {
@@ -177,59 +200,59 @@ public class DataBundles extends Bundles {
 		}
 		return ports;
 	}
-
+	
 	public static boolean hasInputs(Bundle dataBundle) {
 		Path inputs = dataBundle.getRoot().resolve(INPUTS);
 		return Files.isDirectory(inputs);
 	}
-	
+
+
 	public static boolean hasOutputs(Bundle dataBundle) {
 		Path outputs = dataBundle.getRoot().resolve(OUTPUTS);
 		return Files.isDirectory(outputs);
 	}
 
-
 	public static boolean isError(Path path) {
 		return Files.isRegularFile(withExtension(path, DOT_ERR));
 	}
-
+	
 	public static boolean isList(Path path) {
 		return Files.isDirectory(path);
 	}
-	
+
 	public static boolean isMissing(Path item) {
 		return Bundles.isMissing(item) && ! isError(item);
 	}
 
-	public static boolean isValue(Path item) {
-            return ! isError(item) && Bundles.isValue(item);
-        }
-
-   public static Path newListItem(Path list) throws IOException {
-	long max = -1L;
-	createList(list);
-	try (DirectoryStream<Path> ds = Files.newDirectoryStream(list)) {
-		for (Path entry : ds) {
-			String name = filenameWithoutExtension(entry);
-			try {
-				long entryNum = Long.parseLong(name);
-				if (entryNum > max) {
-					max = entryNum;
-				}
-			} catch (NumberFormatException ex) {
-			}
-		}
-	} catch (DirectoryIteratorException ex) {
-		throw ex.getCause();
-	}
-	return list.resolve(Long.toString(max + 1));
-}
+   public static boolean isValue(Path item) {
+        return ! isError(item) && Bundles.isValue(item);
+    }
 	
+	public static Path newListItem(Path list) throws IOException {
+    	long max = -1L;
+    	createList(list);
+    	try (DirectoryStream<Path> ds = Files.newDirectoryStream(list)) {
+    		for (Path entry : ds) {
+    			String name = filenameWithoutExtension(entry);
+    			try {
+    				long entryNum = Long.parseLong(name);
+    				if (entryNum > max) {
+    					max = entryNum;
+    				}
+    			} catch (NumberFormatException ex) {
+    			}
+    		}
+    	} catch (DirectoryIteratorException ex) {
+    		throw ex.getCause();
+    	}
+    	return list.resolve(Long.toString(max + 1));
+    }
+
 	public static Path setError(Path path, ErrorDocument error) throws IOException {
 		return setError(path, error.getMessage(), error.getTrace(), error
 				.getCausedBy().toArray(new Path[error.getCausedBy().size()]));
 	}
-
+	
 	public static Path setError(Path errorPath, String message, String trace, Path... causedBy) throws IOException {
 		errorPath = withExtension(errorPath, DOT_ERR);
 		// Silly \n-based format
@@ -257,12 +280,12 @@ public class DataBundles extends Bundles {
         Bundles.setStringValue(path, string);
     }
 
-	protected static Path withExtension(Path path, String extension) {
+    protected static Path withExtension(Path path, String extension) {
 		String filename = path.getFileName().toString();
 		return path.resolveSibling(withExtensionFilename(filename, extension));
 	}
-	
-	protected static String withExtensionFilename(String filename, String extension) {
+
+    protected static String withExtensionFilename(String filename, String extension) {
         if (! extension.isEmpty() && ! extension.startsWith(".")) {
             throw new IllegalArgumentException("Extension must be empty or start with .");
         }

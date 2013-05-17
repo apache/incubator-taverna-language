@@ -40,6 +40,58 @@ public class TestDataBundles {
 	}
 	
 	@Test
+    public void clear() throws Exception {
+        Bundle dataBundle = DataBundles.createBundle();
+        Path inputs = DataBundles.getInputs(dataBundle);
+        Path file1 = inputs.resolve("file1");
+        Path file1Txt = inputs.resolve("file1.txt");
+        Path file1Png = inputs.resolve("file1.png");
+        Path file1Else = inputs.resolve("file1somethingelse.txt");
+        
+        Files.createFile(file1);
+        Files.createFile(file1Txt);
+        Files.createFile(file1Png);
+        Files.createFile(file1Else); 
+        
+        DataBundles.deleteAllExtensions(file1);
+        
+        assertFalse(Files.exists(file1));
+        assertFalse(Files.exists(file1Txt));
+        assertFalse(Files.exists(file1Png));
+        assertTrue(Files.exists(file1Else));
+	}
+
+	   
+    @Test
+    public void clearRecursive() throws Exception {
+        Bundle dataBundle = DataBundles.createBundle();
+        Path inputs = DataBundles.getInputs(dataBundle);
+        Path file1 = inputs.resolve("file1");
+        Path file1Dir = inputs.resolve("file1.dir");
+        
+        Files.createDirectory(file1);
+        Files.createDirectory(file1Dir);
+        Path nested = file1Dir.resolve("nested");
+        Files.createDirectory(nested);
+        
+        
+        Path filePng = file1Dir.resolve("file.png");
+        Path fileTxt = nested.resolve("file1somethingelse.txt");
+        
+        Files.createFile(filePng);
+        Files.createFile(fileTxt); 
+        
+        DataBundles.deleteAllExtensions(file1);
+        
+        assertFalse(Files.exists(file1));
+        assertFalse(Files.exists(nested));
+        assertFalse(Files.exists(file1Dir));
+        assertFalse(Files.exists(filePng));
+        assertFalse(Files.exists(fileTxt));
+    }
+
+	
+	@Test
 	public void createList() throws Exception {
 		Bundle dataBundle = DataBundles.createBundle();
 		Path inputs = DataBundles.getInputs(dataBundle);
