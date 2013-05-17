@@ -18,82 +18,12 @@ import java.util.UUID;
 import org.purl.wf4ever.robundle.Bundle;
 
 public class Manifest {
-    private static final String MIMETYPE = "/mimetype";
     private static final String META_INF = "/META-INF";
+    private static final String MIMETYPE = "/mimetype";
     private static final String RO = "/.ro";
-    private Bundle bundle;
-
-    public Manifest(Bundle bundle) {
-        this.bundle = bundle;
-    }
 
     public static FileTime now() {
         return FileTime.fromMillis(new GregorianCalendar().getTimeInMillis());
-    }
-
-    URI id = URI.create("/");
-    List<Path> manifest = new ArrayList<>();
-    FileTime createdOn = now();
-
-    List<Agent> createdBy = new ArrayList<>();
-    FileTime authoredOn;
-    List<Agent> authoredBy;
-    List<Path> history;
-    List<PathMetadata> aggregates = new ArrayList<>();
-    List<PathAnnotation> annotations = new ArrayList<>();
-    List<String> graph;
-
-    public void populateFromBundle() throws IOException {
-        final Set<Path> potentiallyEmptyFolders = new LinkedHashSet<>();
-
-        Files.walkFileTree(bundle.getRoot(), new SimpleFileVisitor<Path>() {
-            @Override
-            public FileVisitResult preVisitDirectory(Path dir,
-                    BasicFileAttributes attrs) throws IOException {
-                if (dir.startsWith(RO) || dir.startsWith(META_INF)) {
-                    return FileVisitResult.SKIP_SUBTREE;
-                }
-                potentiallyEmptyFolders.add(withSlash(dir));
-                potentiallyEmptyFolders.remove(withSlash(dir.getParent()));
-                return FileVisitResult.CONTINUE;
-            }
-
-            @Override
-            public FileVisitResult visitFile(Path file,
-                    BasicFileAttributes attrs) throws IOException {
-                if (file.startsWith(MIMETYPE)) {
-                    return FileVisitResult.CONTINUE;
-                }
-                // super.visitFile(file, attrs);
-                PathMetadata metadata = new PathMetadata();
-                // Strip out the widget:// magic
-                metadata.file = file.getRoot().toUri().relativize(file.toUri());
-                metadata.folder = withSlash(file.getParent());
-                metadata.proxy = URI.create("urn:uuid:" + UUID.randomUUID());
-                metadata.createdOn = Files.getLastModifiedTime(file);
-                aggregates.add(metadata);
-                potentiallyEmptyFolders.remove(file.getParent());
-                return FileVisitResult.CONTINUE;
-            }
-            
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException exc)
-                    throws IOException {
-                super.postVisitDirectory(dir, exc);
-                if (potentiallyEmptyFolders.remove(dir)) {
-                    PathMetadata metadata = new PathMetadata();
-                    // Strip out the widget:// magic
-                    metadata.file = dir.getRoot().toUri().relativize(withSlash(dir).toUri());
-                    metadata.folder = withSlash(dir.getParent());
-                    //metadata.proxy = URI.create("urn:uuid:" + UUID.randomUUID());
-                    //metadata.createdOn = Files.getLastModifiedTime(dir);
-                    aggregates.add(metadata);
-                    potentiallyEmptyFolders.remove(withSlash(dir.getParent()));
-                    return FileVisitResult.CONTINUE;
-                }
-                return FileVisitResult.CONTINUE;
-            }
-        });
     }
 
     protected static Path withSlash(Path dir) {
@@ -114,9 +44,171 @@ public class Manifest {
         return dir;
     }
 
-    public Path writeAsJsonLD() throws IOException {        
+    private List<PathMetadata> aggregates = new ArrayList<>();
+    private List<PathAnnotation> annotations = new ArrayList<>();
+    private List<Agent> authoredBy;
+    private FileTime authoredOn;
+    private Bundle bundle;
+    private List<Agent> createdBy = new ArrayList<>();
+    private FileTime createdOn = now();
+    private List<String> graph;
+    private List<Path> history;
+    private URI id = URI.create("/");
+    private List<Path> manifest = new ArrayList<>();
+
+    public Manifest(Bundle bundle) {
+        this.bundle = bundle;
+    }
+
+    public List<PathMetadata> getAggregates() {
+        return aggregates;
+    }
+
+    public List<PathAnnotation> getAnnotations() {
+        return annotations;
+    }
+
+    public List<Agent> getAuthoredBy() {
+        return authoredBy;
+    }
+
+    public FileTime getAuthoredOn() {
+        return authoredOn;
+    }
+
+    public Bundle getBundle() {
+        return bundle;
+    }
+
+    public List<Agent> getCreatedBy() {
+        return createdBy;
+    }
+
+    public FileTime getCreatedOn() {
+        return createdOn;
+    }
+
+    public List<String> getGraph() {
+        return graph;
+    }
+
+    public List<Path> getHistory() {
+        return history;
+    }
+
+    public URI getId() {
+        return id;
+    }
+
+    public List<Path> getManifest() {
+        return manifest;
+    }
+
+    public void populateFromBundle() throws IOException {
+        final Set<Path> potentiallyEmptyFolders = new LinkedHashSet<>();
+
+        Files.walkFileTree(bundle.getRoot(), new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult postVisitDirectory(Path dir, IOException exc)
+                    throws IOException {
+                super.postVisitDirectory(dir, exc);
+                if (potentiallyEmptyFolders.remove(dir)) {
+                    PathMetadata metadata = new PathMetadata();
+                    // Strip out the widget:// magic
+                    metadata.setFile(dir.getRoot().toUri()
+                            .relativize(withSlash(dir).toUri()));
+                    metadata.setFolder(withSlash(dir.getParent()));
+                    // metadata.proxy = URI.create("urn:uuid:" +
+                    // UUID.randomUUID());
+                    // metadata.createdOn = Files.getLastModifiedTime(dir);
+                    aggregates.add(metadata);
+                    potentiallyEmptyFolders.remove(withSlash(dir.getParent()));
+                    return FileVisitResult.CONTINUE;
+                }
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir,
+                    BasicFileAttributes attrs) throws IOException {
+                if (dir.startsWith(RO) || dir.startsWith(META_INF)) {
+                    return FileVisitResult.SKIP_SUBTREE;
+                }
+                potentiallyEmptyFolders.add(withSlash(dir));
+                potentiallyEmptyFolders.remove(withSlash(dir.getParent()));
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult visitFile(Path file,
+                    BasicFileAttributes attrs) throws IOException {
+                if (file.startsWith(MIMETYPE)) {
+                    return FileVisitResult.CONTINUE;
+                }
+                // super.visitFile(file, attrs);
+                PathMetadata metadata = new PathMetadata();
+                // Strip out the widget:// magic
+                metadata.setFile(file.getRoot().toUri().relativize(file.toUri()));
+                metadata.setFolder(withSlash(file.getParent()));
+                metadata.setProxy(URI.create("urn:uuid:" + UUID.randomUUID()));
+                metadata.setCreatedOn(Files.getLastModifiedTime(file));
+                aggregates.add(metadata);
+                potentiallyEmptyFolders.remove(file.getParent());
+                return FileVisitResult.CONTINUE;
+            }
+        });
+    }
+
+    public void setAggregates(List<PathMetadata> aggregates) {
+        this.aggregates = aggregates;
+    }
+
+    public void setAnnotations(List<PathAnnotation> annotations) {
+        this.annotations = annotations;
+    }
+
+    public void setAuthoredBy(List<Agent> authoredBy) {
+        this.authoredBy = authoredBy;
+    }
+
+    public void setAuthoredOn(FileTime authoredOn) {
+        this.authoredOn = authoredOn;
+    }
+
+    public void setBundle(Bundle bundle) {
+        this.bundle = bundle;
+    }
+
+    public void setCreatedBy(List<Agent> createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public void setCreatedOn(FileTime createdOn) {
+        this.createdOn = createdOn;
+    }
+
+    public void setGraph(List<String> graph) {
+        this.graph = graph;
+    }
+
+    public void setHistory(List<Path> history) {
+        this.history = history;
+    }
+
+    public void setId(URI id) {
+        this.id = id;
+    }
+
+    public void setManifest(List<Path> manifest) {
+        this.manifest = manifest;
+    }
+
+    public Path writeAsJsonLD() throws IOException {
         Path jsonld = bundle.getFileSystem().getPath(".ro", "manifest.json");
         Files.createFile(jsonld);
+        if (!manifest.contains(jsonld)) {
+            manifest.add(0, jsonld);
+        }
         // TODO: Actually write it!
         return jsonld;
     }

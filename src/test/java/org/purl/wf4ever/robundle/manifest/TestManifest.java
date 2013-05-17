@@ -1,6 +1,5 @@
 package org.purl.wf4ever.robundle.manifest;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -31,19 +30,19 @@ public class TestManifest {
         manifest.populateFromBundle();
 
         List<String> uris = new ArrayList<>();
-        for (PathMetadata s : manifest.aggregates) {
-            uris.add(s.file.toASCIIString());
-            Path path = uri2path(base, s.file);
+        for (PathMetadata s : manifest.getAggregates()) {
+            uris.add(s.getFile().toASCIIString());
+            Path path = uri2path(base, s.getFile());
             assertNotNull(path.getParent());
-            assertEquals(Manifest.withSlash(path.getParent()), s.folder);
-            if (s.file.equals(URI.create("f/nested/empty/"))) {
+            assertEquals(Manifest.withSlash(path.getParent()), s.getFolder());
+            if (s.getFile().equals(URI.create("f/nested/empty/"))) {
                 continue;
                 // Folder's don't need proxy and createdOn
             }
-            System.out.println(s.file);
-            assertEquals("urn", s.proxy.getScheme());
-            UUID.fromString(s.proxy.getSchemeSpecificPart().replace("uuid:", ""));
-            assertEquals(s.createdOn, Files.getLastModifiedTime(path));
+            System.out.println(s.getFile());
+            assertEquals("urn", s.getProxy().getScheme());
+            UUID.fromString(s.getProxy().getSchemeSpecificPart().replace("uuid:", ""));
+            assertEquals(s.getCreatedOn(), Files.getLastModifiedTime(path));
         }
         assertFalse(uris.contains("mimetype"));
         assertFalse(uris.contains("META-INF"));
@@ -63,12 +62,12 @@ public class TestManifest {
 
 
     @Test
-    public void testName() throws Exception {
+    public void writeAsJsonLD() throws Exception {
         Bundle bundle = exampleBundle();
         Manifest manifest = new Manifest(bundle);
         manifest.populateFromBundle();
         Path jsonld = manifest.writeAsJsonLD();
-        assertEquals(bundle.getRoot().resolve(".ro/manifest.json"), jsonld);
+        assertEquals(bundle.getFileSystem().getPath(".ro",  "manifest.json"), jsonld);
         assertTrue(Files.exists(jsonld));
     }
     
