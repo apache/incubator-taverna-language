@@ -557,17 +557,6 @@ public class TestDataBundles {
         DataBundles.setReference(in1, URI.create("http://example.com/"));
     }
 
-    @Test(expected = FileAlreadyExistsException.class)
-    public void setReferenceExistsAsValue() throws Exception {
-        Bundle dataBundle = DataBundles.createBundle();
-        Path inputs = DataBundles.getInputs(dataBundle);
-        Path in1 = DataBundles.getPort(inputs, "in1");
-        DataBundles.setStringValue(in1, "Hello");
-        assertTrue(Files.isRegularFile(in1));
-        DataBundles.setReference(in1, URI.create("http://example.com/"));
-    }
-    
-
     @Test
     public void setReferenceExistsAsReference() throws Exception {
         Bundle dataBundle = DataBundles.createBundle();
@@ -576,6 +565,17 @@ public class TestDataBundles {
         Path ref = DataBundles.setReference(in1, URI.create("http://example.com/"));
         assertFalse(Files.exists(in1));
         assertTrue(Files.isRegularFile(ref));
+        DataBundles.setReference(in1, URI.create("http://example.com/"));
+    }
+    
+
+    @Test(expected = FileAlreadyExistsException.class)
+    public void setReferenceExistsAsValue() throws Exception {
+        Bundle dataBundle = DataBundles.createBundle();
+        Path inputs = DataBundles.getInputs(dataBundle);
+        Path in1 = DataBundles.getPort(inputs, "in1");
+        DataBundles.setStringValue(in1, "Hello");
+        assertTrue(Files.isRegularFile(in1));
         DataBundles.setReference(in1, URI.create("http://example.com/"));
     }
     
