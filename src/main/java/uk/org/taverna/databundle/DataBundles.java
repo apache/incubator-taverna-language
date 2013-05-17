@@ -44,6 +44,11 @@ public class DataBundles extends Bundles {
 	        throw new FileAlreadyExistsException(existing.toString());
 	    }
     }
+    
+    public static void setStringValue(Path path, String string) throws IOException {
+        checkExistingAnyExtension(path);
+        Bundles.setStringValue(path, string);
+    }
 	
 	protected static String filenameWithoutExtension(Path entry) {
 		String fileName = entry.getFileName().toString();
