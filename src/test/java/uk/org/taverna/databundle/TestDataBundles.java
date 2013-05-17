@@ -523,6 +523,41 @@ public class TestDataBundles {
 		assertEquals("why", errLines.get(6));
 		assertEquals("", errLines.get(7));
 	}
+	
+    @Test(expected=FileAlreadyExistsException.class)
+    public void setStringExistsAsReference() throws Exception {
+        Bundle dataBundle = DataBundles.createBundle();
+        Path inputs = DataBundles.getInputs(dataBundle);
+        Path in1 = DataBundles.getPort(inputs, "in1");
+        Path ref = DataBundles.setReference(in1, URI.create("http://example.com/"));
+        assertFalse(Files.exists(in1));
+        assertTrue(Files.isRegularFile(ref));
+        DataBundles.setStringValue(in1, "Hello");
+    }
+    
+
+    @Test(expected=FileAlreadyExistsException.class)
+    public void setStringExistsAsError() throws Exception {
+        Bundle dataBundle = DataBundles.createBundle();
+        Path inputs = DataBundles.getInputs(dataBundle);
+        Path in1 = DataBundles.getPort(inputs, "in1");
+        Path ref = DataBundles.setError(in1, "x", "X");
+        assertFalse(Files.exists(in1));
+        assertTrue(Files.isRegularFile(ref));
+        DataBundles.setStringValue(in1, "Hello");
+    }
+
+    @Test(expected=FileAlreadyExistsException.class)
+    public void setStringExistsAsList() throws Exception {
+        Bundle dataBundle = DataBundles.createBundle();
+        Path inputs = DataBundles.getInputs(dataBundle);
+        Path in1 = DataBundles.getPort(inputs, "in1");
+        DataBundles.createList(in1);
+        assertTrue(Files.isDirectory(in1));
+        DataBundles.setStringValue(in1, "Hello");
+    }
+
+
 
 }
 
