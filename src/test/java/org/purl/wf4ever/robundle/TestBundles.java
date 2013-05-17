@@ -39,11 +39,11 @@ public class TestBundles {
 	public void close() throws Exception {
 		Bundle bundle = Bundles.createBundle();
 		assertTrue(Files.exists(bundle.getSource()));
-		assertTrue(bundle.getRoot().getFileSystem().isOpen());
+		assertTrue(bundle.getFileSystem().isOpen());
 
 		bundle.close();
 		assertFalse(Files.exists(bundle.getSource()));
-		assertFalse(bundle.getRoot().getFileSystem().isOpen());
+		assertFalse(bundle.getFileSystem().isOpen());
 
 	}
 
