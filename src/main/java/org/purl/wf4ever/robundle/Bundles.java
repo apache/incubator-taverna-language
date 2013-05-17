@@ -9,9 +9,12 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.text.MessageFormat;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -29,6 +32,21 @@ import org.purl.wf4ever.robundle.fs.BundleFileSystemProvider;
  * 
  */
 public class Bundles {
+
+    protected static class RecursiveDeleteVisitor extends SimpleFileVisitor<Path> {
+        @Override
+        public FileVisitResult postVisitDirectory(Path dir, IOException exc)
+                throws IOException {
+            Files.delete(dir);
+            return FileVisitResult.CONTINUE;
+        }
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                throws IOException {
+            Files.delete(file);
+            return FileVisitResult.CONTINUE;
+        }
+    }
 
     private static final Charset ASCII = Charset.forName("ASCII");
 	private static final String INI_INTERNET_SHORTCUT = "InternetShortcut";
@@ -229,5 +247,13 @@ public class Bundles {
 		String newP = p.replaceFirst("(\\.[^.]*)?$", extension);
 		return path.resolveSibling(newP);
 	}
+
+    public static void deleteRecursively(Path p) throws IOException {
+        if (Files.isDirectory(p)) {
+            Files.walkFileTree(p, new RecursiveDeleteVisitor());
+        } else {
+            Files.delete(p);
+        }
+    }
 
 }
