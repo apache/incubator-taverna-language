@@ -37,6 +37,7 @@ public class Bundles {
         @Override
         public FileVisitResult postVisitDirectory(Path dir, IOException exc)
                 throws IOException {
+            super.postVisitDirectory(dir, exc);
             Files.delete(dir);
             return FileVisitResult.CONTINUE;
         }

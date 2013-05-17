@@ -74,6 +74,7 @@ public class Manifest {
             @Override
             public FileVisitResult postVisitDirectory(Path dir, IOException exc)
                     throws IOException {
+                super.postVisitDirectory(dir, exc);
                 if (potentiallyEmptyFolders.remove(dir)) {
                     PathMetadata metadata = new PathMetadata();
                     // Strip out the widget:// magic
