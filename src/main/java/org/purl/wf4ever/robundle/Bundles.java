@@ -30,11 +30,11 @@ import org.purl.wf4ever.robundle.fs.BundleFileSystemProvider;
  */
 public class Bundles {
 
-	private static final Charset ASCII = Charset.forName("ASCII");
+    private static final Charset ASCII = Charset.forName("ASCII");
 	private static final String INI_INTERNET_SHORTCUT = "InternetShortcut";
 	private static final String INI_URL = "URL";
 	private static final Charset LATIN1 = Charset.forName("Latin1");
-	private static final String URL = ".url";
+	protected static final String DOT_URL = ".url";
 	private static final Charset UTF8 = Charset.forName("UTF-8");
 
 	public static void closeAndSaveBundle(Bundle bundle, Path destination)
@@ -74,7 +74,7 @@ public class Bundles {
 		}
 		// Note: Latin1 is chosen here because it would not bail out on
 		// "strange" characters. We actually parse the URL as ASCII
-		path = withExtension(path, ".url");
+		path = withExtension(path, DOT_URL);
 		try (BufferedReader r = Files.newBufferedReader(path, LATIN1)) {
 			HierarchicalINIConfiguration ini = new HierarchicalINIConfiguration();
 			ini.load(r);
@@ -107,7 +107,7 @@ public class Bundles {
 	}
 
 	public static boolean isReference(Path path) {
-		return Files.isRegularFile(withExtension(path, URL));
+		return Files.isRegularFile(withExtension(path, DOT_URL));
 	}
 
 	public static boolean isValue(Path path) {
@@ -170,7 +170,7 @@ public class Bundles {
 	}
 
 	public static Path setReference(Path path, URI ref) throws IOException {
-		path = withExtension(path, ".url");
+		path = withExtension(path, DOT_URL);
 
 		// We'll save a IE-like .url "Internet shortcut" in INI format.
 
