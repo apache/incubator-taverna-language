@@ -535,6 +535,19 @@ public class TestDataBundles {
         DataBundles.setStringValue(in1, "Hello");
     }
     
+    
+    @Test
+    public void setStringExistsAsString() throws Exception {
+        Bundle dataBundle = DataBundles.createBundle();
+        Path inputs = DataBundles.getInputs(dataBundle);
+        Path in1 = DataBundles.getPort(inputs, "in1");
+        DataBundles.setStringValue(in1, "A");
+        assertTrue(Files.isRegularFile(in1));
+        DataBundles.setStringValue(in1, "B");
+        assertEquals("B", DataBundles.getStringValue(in1));
+    }
+    
+    
 
     @Test(expected=FileAlreadyExistsException.class)
     public void setStringExistsAsError() throws Exception {
