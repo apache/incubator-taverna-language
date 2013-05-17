@@ -238,10 +238,10 @@ public class TestBundles {
 	@Test
 	public void setStringValue() throws Exception {
 		Bundle bundle = Bundles.createBundle();
-		Path ref = bundle.getRoot().resolve("ref");		
+		Path file = bundle.getRoot().resolve("file");		
 		String string = "A string";
-		Bundles.setStringValue(ref, string);
-		assertEquals(string, Files.readAllLines(ref, Charset.forName("UTF-8")).get(0));
+		Bundles.setStringValue(file, string);
+		assertEquals(string, Files.readAllLines(file, Charset.forName("UTF-8")).get(0));
 	}
 	
 	@Test
