@@ -28,7 +28,7 @@ import org.purl.wf4ever.robundle.Bundles;
  */
 public class DataBundles extends Bundles {
 
-	private static final String ERR = ".err";
+	private static final String DOT_ERR = ".err";
 	private static final String INPUTS = "inputs";
 	private static final String OUTPUTS = "outputs";
 	private static final Charset UTF8 = Charset.forName("UTF-8");
@@ -91,7 +91,7 @@ public class DataBundles extends Bundles {
 			return null;
 		}
 			
-		Path errorPath = withExtension(path, ERR);
+		Path errorPath = withExtension(path, DOT_ERR);
 		List<String> errorList = Files.readAllLines(errorPath, UTF8);
 		int split = errorList.indexOf("");
 		if (split == -1 || errorList.size() <= split) {
@@ -190,7 +190,7 @@ public class DataBundles extends Bundles {
 
 
 	public static boolean isError(Path path) {
-		return Files.isRegularFile(withExtension(path, ERR));
+		return Files.isRegularFile(withExtension(path, DOT_ERR));
 	}
 
 	public static boolean isList(Path path) {
@@ -231,7 +231,7 @@ public class DataBundles extends Bundles {
 	}
 
 	public static Path setError(Path errorPath, String message, String trace, Path... causedBy) throws IOException {
-		errorPath = withExtension(errorPath, ERR);
+		errorPath = withExtension(errorPath, DOT_ERR);
 		// Silly \n-based format
 		List<String> errorDoc = new ArrayList<>();
 		for (Path cause : causedBy) {
