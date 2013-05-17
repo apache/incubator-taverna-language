@@ -32,11 +32,35 @@ public class DataBundles extends Bundles {
 	private static final String OUTPUTS = "outputs";
 	private static final Charset UTF8 = Charset.forName("UTF-8");
 
-	public static void createList(Path path) throws IOException {
-	    checkExistingAnyExtension(path);
-		Files.createDirectories(path);
-	}
+	private static Path anyExtension(Path path) throws IOException {
+	    return anyExtension(path.getParent(), path.getFileName().toString());
+    }
 
+    private static Path anyExtension(Path directory, String fileName) throws IOException {
+        Path path = directory.resolve(fileName);
+		
+		// Prefer the fileName as it is
+        if (Files.exists(path)) {
+		    return path;
+		}
+        // Strip any existing extension
+        String fileNameNoExt = filenameWithoutExtension(path);     
+        Path withoutExt = path.resolveSibling(fileNameNoExt);
+        if (Files.exists(withoutExt)) {
+            return withoutExt;
+        }
+        
+        // Check directory for path.*
+        for (Path p : Files.newDirectoryStream(directory, fileNameNoExt + ".*")) {
+            // We'll just return the first one
+            // TODO: Should we fail if there's more than one?
+            return p;
+        }
+        // Nothing? Then let's give the existing one; perhaps it is to be
+        // created.
+        return path;
+    }
+    
     private static void checkExistingAnyExtension(Path path) throws IOException,
             FileAlreadyExistsException {
         Path existing = anyExtension(path);
@@ -44,12 +68,12 @@ public class DataBundles extends Bundles {
 	        throw new FileAlreadyExistsException(existing.toString());
 	    }
     }
-    
-    public static void setStringValue(Path path, String string) throws IOException {
-        checkExistingAnyExtension(path);
-        Bundles.setStringValue(path, string);
-    }
 	
+	public static void createList(Path path) throws IOException {
+	    checkExistingAnyExtension(path);
+		Files.createDirectories(path);
+	}
+
 	protected static String filenameWithoutExtension(Path entry) {
 		String fileName = entry.getFileName().toString();
 		int lastDot = fileName.lastIndexOf(".");
@@ -142,37 +166,8 @@ public class DataBundles extends Bundles {
 		Files.createDirectories(map);
 		return anyExtension(map, portName);
 	}
-
-	private static Path anyExtension(Path path) throws IOException {
-	    return anyExtension(path.getParent(), path.getFileName().toString());
-    }
 	
-    private static Path anyExtension(Path directory, String fileName) throws IOException {
-        Path path = directory.resolve(fileName);
-		
-		// Prefer the fileName as it is
-        if (Files.exists(path)) {
-		    return path;
-		}
-        // Strip any existing extension
-        String fileNameNoExt = filenameWithoutExtension(path);     
-        Path withoutExt = path.resolveSibling(fileNameNoExt);
-        if (Files.exists(withoutExt)) {
-            return withoutExt;
-        }
-        
-        // Check directory for path.*
-        for (Path p : Files.newDirectoryStream(directory, fileNameNoExt + ".*")) {
-            // We'll just return the first one
-            // TODO: Should we fail if there's more than one?
-            return p;
-        }
-        // Nothing? Then let's give the existing one; perhaps it is to be
-        // created.
-        return path;
-    }
-
-	public static NavigableMap<String, Path> getPorts(Path path) throws IOException {
+    public static NavigableMap<String, Path> getPorts(Path path) throws IOException {
 		NavigableMap<String, Path> ports = new TreeMap<>();
 		try (DirectoryStream<Path> ds = Files.newDirectoryStream(path)) {
 			for (Path p : ds) {
@@ -181,54 +176,54 @@ public class DataBundles extends Bundles {
 		}
 		return ports;
 	}
-	
+
 	public static boolean hasInputs(Bundle dataBundle) {
 		Path inputs = dataBundle.getRoot().resolve(INPUTS);
 		return Files.isDirectory(inputs);
 	}
-
-
+	
 	public static boolean hasOutputs(Bundle dataBundle) {
 		Path outputs = dataBundle.getRoot().resolve(OUTPUTS);
 		return Files.isDirectory(outputs);
 	}
 
+
 	public static boolean isError(Path path) {
 		return Files.isRegularFile(withExtension(path, ERR));
 	}
-	
+
 	public static boolean isList(Path path) {
 		return Files.isDirectory(path);
 	}
-
+	
 	public static boolean isMissing(Path item) {
 		return Bundles.isMissing(item) && ! isError(item);
 	}
 
-   public static boolean isValue(Path item) {
-        return ! isError(item) && Bundles.isValue(item);
-    }
-	
-	public static Path newListItem(Path list) throws IOException {
-		long max = -1L;
-		createList(list);
-		try (DirectoryStream<Path> ds = Files.newDirectoryStream(list)) {
-			for (Path entry : ds) {
-				String name = filenameWithoutExtension(entry);
-				try {
-					long entryNum = Long.parseLong(name);
-					if (entryNum > max) {
-						max = entryNum;
-					}
-				} catch (NumberFormatException ex) {
-				}
-			}
-		} catch (DirectoryIteratorException ex) {
-			throw ex.getCause();
-		}
-		return list.resolve(Long.toString(max + 1));
-	}
+	public static boolean isValue(Path item) {
+            return ! isError(item) && Bundles.isValue(item);
+        }
 
+   public static Path newListItem(Path list) throws IOException {
+	long max = -1L;
+	createList(list);
+	try (DirectoryStream<Path> ds = Files.newDirectoryStream(list)) {
+		for (Path entry : ds) {
+			String name = filenameWithoutExtension(entry);
+			try {
+				long entryNum = Long.parseLong(name);
+				if (entryNum > max) {
+					max = entryNum;
+				}
+			} catch (NumberFormatException ex) {
+			}
+		}
+	} catch (DirectoryIteratorException ex) {
+		throw ex.getCause();
+	}
+	return list.resolve(Long.toString(max + 1));
+}
+	
 	public static Path setError(Path path, ErrorDocument error) throws IOException {
 		return setError(path, error.getMessage(), error.getTrace(), error
 				.getCausedBy().toArray(new Path[error.getCausedBy().size()]));
@@ -249,6 +244,11 @@ public class DataBundles extends Bundles {
 		Files.write(errorPath, errorDoc, UTF8, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
 		return errorPath;
 	}
+
+	public static void setStringValue(Path path, String string) throws IOException {
+        checkExistingAnyExtension(path);
+        Bundles.setStringValue(path, string);
+    }
 
 	protected static Path withExtension(Path path, String extension) {
 		String filename = path.getFileName().toString();
