@@ -1,6 +1,7 @@
 package uk.org.taverna.databundle;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryIteratorException;
 import java.nio.file.DirectoryStream;
@@ -245,6 +246,12 @@ public class DataBundles extends Bundles {
 		return errorPath;
 	}
 
+	public static Path setReference(Path path, URI reference) throws IOException {
+	    path = withExtension(path, DOT_URL);
+        checkExistingAnyExtension(path);
+        return Bundles.setReference(path, reference);
+    }
+	
 	public static void setStringValue(Path path, String string) throws IOException {
         checkExistingAnyExtension(path);
         Bundles.setStringValue(path, string);
