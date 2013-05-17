@@ -1,15 +1,19 @@
 package org.purl.wf4ever.robundle.manifest;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,7 +21,18 @@ import java.util.UUID;
 
 import org.purl.wf4ever.robundle.Bundle;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
+@JsonPropertyOrder(value = { "@context", "id", "manifest", "createdOn",
+        "createdBy", "createdOn", "authoredOn", "authoredBy", "history",
+        "aggregates", "annotations", "@graph" })
 public class Manifest {
+
     private static final String META_INF = "/META-INF";
     private static final String MIMETYPE = "/mimetype";
     private static final String RO = "/.ro";
@@ -60,6 +75,17 @@ public class Manifest {
         this.bundle = bundle;
     }
 
+    @JsonProperty(value = "@context")
+    public List<Object> getContext() {
+        ArrayList<Object> context = new ArrayList<>();
+        HashMap<Object, Object> map = new HashMap<>();
+        map.put("@base", getBundle().getRoot().toUri());
+        context.add(map);
+        context.add(URI
+                .create("http://purl.org/wf4ever/ro-bundle/context.json"));
+        return context;
+    }
+
     public List<PathMetadata> getAggregates() {
         return aggregates;
     }
@@ -72,10 +98,12 @@ public class Manifest {
         return authoredBy;
     }
 
+    @JsonIgnore
     public FileTime getAuthoredOn() {
         return authoredOn;
     }
 
+    @JsonIgnore
     public Bundle getBundle() {
         return bundle;
     }
@@ -84,6 +112,7 @@ public class Manifest {
         return createdBy;
     }
 
+    @JsonIgnore
     public FileTime getCreatedOn() {
         return createdOn;
     }
@@ -92,6 +121,7 @@ public class Manifest {
         return graph;
     }
 
+    @JsonIgnore
     public List<Path> getHistory() {
         return history;
     }
@@ -100,6 +130,7 @@ public class Manifest {
         return id;
     }
 
+    @JsonIgnore
     public List<Path> getManifest() {
         return manifest;
     }
@@ -148,7 +179,8 @@ public class Manifest {
                 // super.visitFile(file, attrs);
                 PathMetadata metadata = new PathMetadata();
                 // Strip out the widget:// magic
-                metadata.setFile(file.getRoot().toUri().relativize(file.toUri()));
+                metadata.setFile(file.getRoot().toUri()
+                        .relativize(file.toUri()));
                 metadata.setFolder(withSlash(file.getParent()));
                 metadata.setProxy(URI.create("urn:uuid:" + UUID.randomUUID()));
                 metadata.setCreatedOn(Files.getLastModifiedTime(file));
@@ -205,12 +237,22 @@ public class Manifest {
 
     public Path writeAsJsonLD() throws IOException {
         Path jsonld = bundle.getFileSystem().getPath(".ro", "manifest.json");
+        Files.createDirectories(jsonld.getParent());
         Files.createFile(jsonld);
         if (!manifest.contains(jsonld)) {
             manifest.add(0, jsonld);
         }
-        // TODO: Actually write it!
+        ObjectMapper om = new ObjectMapper();
+        om.enable(SerializationFeature.INDENT_OUTPUT);
+        om.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        om.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+
+        om.setSerializationInclusion(Include.NON_NULL);
+        try (Writer w = Files.newBufferedWriter(jsonld,
+                Charset.forName("UTF-8"), StandardOpenOption.WRITE,
+                StandardOpenOption.TRUNCATE_EXISTING)) {
+            om.writeValue(w, this);
+        }
         return jsonld;
     }
-
 }

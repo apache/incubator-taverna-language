@@ -2,6 +2,9 @@ package org.purl.wf4ever.robundle.manifest;
 
 import java.net.URI;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+@JsonPropertyOrder(value = { "annotation", "about", "content" })
 public class PathAnnotation {
     private URI annotation;
     private URI about;

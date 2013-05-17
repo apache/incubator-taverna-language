@@ -2,18 +2,16 @@ package org.purl.wf4ever.robundle.manifest;
 
 import java.net.URI;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+@JsonPropertyOrder(value = { "uri", "orcid", "name" })
 public class Agent {
-    private URI homepage;
-    private URI id;
+    private URI uri;
     private String name;
     private URI orcid;
 
-    public URI getHomepage() {
-        return homepage;
-    }
-
-    public URI getId() {
-        return id;
+    public URI getUri() {
+        return uri;
     }
 
     public String getName() {
@@ -24,12 +22,8 @@ public class Agent {
         return orcid;
     }
 
-    public void setHomepage(URI homepage) {
-        this.homepage = homepage;
-    }
-
-    public void setId(URI id) {
-        this.id = id;
+    public void setUri(URI uri) {
+        this.uri = uri;
     }
 
     public void setName(String name) {

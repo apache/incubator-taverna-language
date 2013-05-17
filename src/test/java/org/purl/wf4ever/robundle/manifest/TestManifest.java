@@ -38,8 +38,7 @@ public class TestManifest {
             if (s.getFile().equals(URI.create("f/nested/empty/"))) {
                 continue;
                 // Folder's don't need proxy and createdOn
-            }
-            System.out.println(s.getFile());
+            }            
             assertEquals("urn", s.getProxy().getScheme());
             UUID.fromString(s.getProxy().getSchemeSpecificPart().replace("uuid:", ""));
             assertEquals(s.getCreatedOn(), Files.getLastModifiedTime(path));
@@ -69,6 +68,7 @@ public class TestManifest {
         Path jsonld = manifest.writeAsJsonLD();
         assertEquals(bundle.getFileSystem().getPath(".ro",  "manifest.json"), jsonld);
         assertTrue(Files.exists(jsonld));
+        System.out.write(Files.readAllBytes(jsonld));
     }
     
     protected Bundle exampleBundle() throws IOException {
