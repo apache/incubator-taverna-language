@@ -41,8 +41,11 @@ public class TestZipFS {
             assertFalse(Files.isDirectory(folder));
 
             try {
-                Files.createDirectory(folder);
-
+                Path folderCreated = Files.createDirectory(folder);
+                assertEquals(folder, folderCreated);
+                folder = folderCreated;
+                System.out.println(folder + " " + folderCreated);
+ 
                 // Disable for now, just to see where this leads
                 // fail("Should have thrown FileAlreadyExistsException");
             } catch (FileAlreadyExistsException ex) {
