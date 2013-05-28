@@ -73,6 +73,11 @@ public class Bundles {
 		BundleFileSystem fs = BundleFileSystemProvider.newFileSystemFromTemporary();
 		return new Bundle(fs.getRootDirectory(), true);
 	}
+	
+	public static Bundle createBundle(Path path) throws IOException {
+        BundleFileSystem fs = BundleFileSystemProvider.newFileSystemFromNew(path);
+        return new Bundle(fs.getRootDirectory(), true);
+    }
 
 	protected static String filenameWithoutExtension(Path entry) {
 		String fileName = entry.getFileName().toString();
