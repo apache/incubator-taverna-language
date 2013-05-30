@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.channels.FileChannel;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.file.AccessMode;
@@ -27,7 +28,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.FileAttributeView;
 import java.nio.file.spi.FileSystemProvider;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -154,7 +154,12 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 	}
 
 	public static BundleFileSystem newFileSystemFromTemporary() throws IOException {
-		Path bundle = Files.createTempFile("robundle", ".zip");
+	    Path tempDir = Files.createTempDirectory("robundle");
+	    // Why inside a tempDir? Because ZipFileSystemProvider
+	    // creates neighbouring temporary files 
+	    // per file that is written to zip, which could mean a lot of 
+	    // temporary files directly in /tmp - making it difficult to clean up
+	    Path bundle = tempDir.resolve("robundle.zip");
 		BundleFileSystem fs = BundleFileSystemProvider.newFileSystemFromNew(
 				bundle, null);
 		return fs;
@@ -304,6 +309,14 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 		return origProvider(path).newByteChannel(fs.unwrap(path), options,
 				attrs);
 	}
+	
+	@Override
+	public FileChannel newFileChannel(Path path,
+	        Set<? extends OpenOption> options, FileAttribute<?>... attrs)
+	        throws IOException {
+        final BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
+        return origProvider(path).newFileChannel(fs.unwrap(path), options,
+                attrs);	}
 
 	@Override
 	public DirectoryStream<Path> newDirectoryStream(Path dir,
