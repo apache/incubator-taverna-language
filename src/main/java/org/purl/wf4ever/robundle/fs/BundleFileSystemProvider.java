@@ -2,6 +2,7 @@ package org.purl.wf4ever.robundle.fs;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -304,6 +305,14 @@ public class BundleFileSystemProvider extends FileSystemProvider {
         origProvider(source)
                 .copy(fs.unwrap(source), fs.unwrap(target), options);
     }
+    
+    @Override
+    public InputStream newInputStream(Path path, OpenOption... options)
+            throws IOException {
+        // Avoid copying out to a file, like newByteChannel / newFileChannel
+        BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
+        return origProvider(path).newInputStream(fs.unwrap(path), options);
+    }
 
     @Override
     public SeekableByteChannel newByteChannel(Path path,
@@ -347,8 +356,9 @@ public class BundleFileSystemProvider extends FileSystemProvider {
             }
         }
 
-        // Implement by newFileChannel to avoid memory leaks
-        return origProvider(path).newFileChannel(zipPath, options, attrs);
+        // Implement by newFileChannel to avoid memory leaks and 
+        // allow manifest to be updated
+        return newFileChannel(path, options, attrs);
     }
 
     @Override
