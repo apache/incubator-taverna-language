@@ -29,6 +29,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.FileAttributeView;
 import java.nio.file.spi.FileSystemProvider;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -339,7 +340,8 @@ public class BundleFileSystemProvider extends FileSystemProvider {
                 // the very same file,
                 // with CREATE_NEW the second thread would then fail.
 
-                origProvider(path).newByteChannel(zipPath, options, attrs)
+                EnumSet<StandardOpenOption> opts = EnumSet.of(StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW);
+                origProvider(path).newFileChannel(zipPath, opts, attrs)
                         .close();
 
             }
