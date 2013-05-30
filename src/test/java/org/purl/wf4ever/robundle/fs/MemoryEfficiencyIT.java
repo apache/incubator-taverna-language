@@ -1,14 +1,17 @@
 package org.purl.wf4ever.robundle.fs;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.FileSystems;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Random;
-import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -26,7 +29,7 @@ public class MemoryEfficiencyIT {
     private static final int kiB = 1024;
 
     private static final int MiB = 1024*1024;
-    private static final int GiB = 1024*1024*1024;
+    private static final long GiB = 1024l*1024l*1024l;
     private BundleFileSystem fs;
 
     @Before
@@ -45,6 +48,7 @@ public class MemoryEfficiencyIT {
 
     int MAX_WORKERS = 100;
 
+    
     
     @Test
     public void writeManyFiles() throws Exception {
@@ -93,6 +97,43 @@ public class MemoryEfficiencyIT {
         assertTrue(usedAfterCloseFS < zipSize);
     }
     
+    @Test
+    public void writeGigaFile() throws Exception {
+
+        long usedBefore = usedMemory();
+        
+        Path file = fs.getPath("bigfile");
+        long size = 5l * GiB;
+        if (fs.getFileStore().getUsableSpace() < size) {
+            throw new IllegalStateException("This test requires at least " + size/GiB + "GiB free disk space");
+        }
+       
+        // We'll use FileChannel as it allows calling .position. This should
+        // be very fast on UNIX which allows zero-padding, but on Windows
+        // this will still take a while as it writes 5 GiB of \00s to disk. 
+        // Another downside is that the ZipFileProvider compresses the file
+        // once the file channel is closed.
+        try (FileChannel bc = FileChannel.open(file, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW)) {
+            bc.position(size);
+            ByteBuffer src = ByteBuffer.allocateDirect(1024);
+            bc.write(src);
+        }
+
+        long fileSize = Files.size(file);
+        assertTrue(fileSize > size) ;
+        System.out.println("Written " + fileSize/MiB);
+        long usedAfterCloseFile = usedMemory();
+        assertTrue(usedAfterCloseFile - usedBefore < 10*MiB);
+
+        fs.close();
+        long zipSize = Files.size(fs.getSource());
+        System.out.println("ZIP: " + zipSize / MiB + " MiB");
+        // Zeros should compress fairly well
+        assertTrue(zipSize < 10 * MiB);
+        
+        long usedAfterCloseFS = usedMemory();
+        assertTrue(usedAfterCloseFS - usedBefore < 10*MiB);
+    }
     
     @Test
     public void writeBigFile() throws Exception {
