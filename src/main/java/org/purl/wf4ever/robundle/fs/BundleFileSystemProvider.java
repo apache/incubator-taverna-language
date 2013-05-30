@@ -6,8 +6,13 @@ import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.SeekableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.file.AccessMode;
 import java.nio.file.CopyOption;
@@ -41,6 +46,105 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 public class BundleFileSystemProvider extends FileSystemProvider {
+    public class BundleFileChannel extends FileChannel {
+
+        private FileChannel fc;
+        @SuppressWarnings("unused")
+        private Path path;
+        @SuppressWarnings("unused")
+        private Set<? extends OpenOption> options;
+        @SuppressWarnings("unused")
+        private FileAttribute<?>[] attrs;
+
+        public int read(ByteBuffer dst) throws IOException {
+            return fc.read(dst);
+        }
+
+        public long read(ByteBuffer[] dsts, int offset, int length)
+                throws IOException {
+            return fc.read(dsts, offset, length);
+        }
+
+        public int write(ByteBuffer src) throws IOException {
+            return fc.write(src);
+        }
+
+        public long write(ByteBuffer[] srcs, int offset, int length)
+                throws IOException {
+            return fc.write(srcs, offset, length);
+        }
+
+        public long position() throws IOException {
+            return fc.position();
+        }
+
+        public FileChannel position(long newPosition) throws IOException {
+            return fc.position(newPosition);
+        }
+
+        public long size() throws IOException {
+            return fc.size();
+        }
+
+        public FileChannel truncate(long size) throws IOException {
+            return fc.truncate(size);
+        }
+
+        public void force(boolean metaData) throws IOException {
+            fc.force(metaData);
+        }
+
+        public long transferTo(long position, long count,
+                WritableByteChannel target) throws IOException {
+            return fc.transferTo(position, count, target);
+        }
+
+        public long transferFrom(ReadableByteChannel src, long position,
+                long count) throws IOException {
+            return fc.transferFrom(src, position, count);
+        }
+
+        public int read(ByteBuffer dst, long position) throws IOException {
+            return fc.read(dst, position);
+        }
+
+        public int write(ByteBuffer src, long position) throws IOException {
+            return fc.write(src, position);
+        }
+
+        public MappedByteBuffer map(MapMode mode, long position, long size)
+                throws IOException {
+            return fc.map(mode, position, size);
+        }
+
+        public FileLock lock(long position, long size, boolean shared)
+                throws IOException {
+            return fc.lock(position, size, shared);
+        }
+
+        public FileLock tryLock(long position, long size, boolean shared)
+                throws IOException {
+            return fc.tryLock(position, size, shared);
+        }
+        
+        @Override
+        protected void implCloseChannel() throws IOException {
+           fc.close();
+           // TODO: Update manifest
+        }
+
+        public BundleFileChannel(FileChannel fc, Path path,
+                Set<? extends OpenOption> options, FileAttribute<?>[] attrs) {
+                    this.fc = fc;
+                    this.path = path;
+                    this.options = options;
+                    this.attrs = attrs;
+        }
+
+
+
+    }
+
     private static final String APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP = "application/vnd.wf4ever.robundle+zip";
     private static final Charset UTF8 = Charset.forName("UTF-8");
     private static final String WIDGET = "widget";
@@ -366,8 +470,9 @@ public class BundleFileSystemProvider extends FileSystemProvider {
             Set<? extends OpenOption> options, FileAttribute<?>... attrs)
             throws IOException {
         final BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
-        return origProvider(path).newFileChannel(fs.unwrap(path), options,
+        FileChannel fc = origProvider(path).newFileChannel(fs.unwrap(path), options,
                 attrs);
+        return new BundleFileChannel(fc, path, options, attrs);
     }
 
     @Override
