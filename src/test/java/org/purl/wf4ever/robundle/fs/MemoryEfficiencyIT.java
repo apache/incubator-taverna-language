@@ -110,9 +110,13 @@ public class MemoryEfficiencyIT {
         // We'll use FileChannel as it allows calling .position. This should
         // be very fast on UNIX which allows zero-padding, but on Windows
         // this will still take a while as it writes 5 GiB of \00s to disk. 
+        
         // Another downside is that the ZipFileProvider compresses the file
-        // once the file channel is closed.
-        try (FileChannel bc = FileChannel.open(file, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW)) {
+        // once the file channel is closed, requiring ~5 GB disk space
+        try (FileChannel bc = FileChannel.open(file, 
+                StandardOpenOption.WRITE, 
+                StandardOpenOption.SPARSE,
+                StandardOpenOption.CREATE_NEW)) {
             bc.position(size);
             ByteBuffer src = ByteBuffer.allocateDirect(1024);
             bc.write(src);
