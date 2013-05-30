@@ -1,10 +1,12 @@
 package org.purl.wf4ever.robundle.fs;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
@@ -28,6 +30,12 @@ public class TestBundleFileSystem {
     public void closeFS() throws IOException {
         fs.close();
         Files.deleteIfExists(fs.getSource());
+    }
+    
+    @Test
+    public void writeToNewFile() throws Exception {
+        Path file = fs.getPath("test.txt");
+        Files.newBufferedWriter(file, Charset.defaultCharset()).close();
     }
 
     /**

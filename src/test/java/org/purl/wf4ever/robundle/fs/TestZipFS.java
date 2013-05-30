@@ -5,26 +5,77 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.net.StandardSocketOptions;
 import java.net.URI;
+import java.nio.channels.FileChannel;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.spi.FileSystemProvider;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.lang.CharSet;
 import org.junit.Test;
 
 public class TestZipFS {
 
     private static Path zip;
 
+    @Test
+    public void fileChannelCreateNew() throws Exception {
+        try (FileSystem fs = tempZipFS()) {
+            Path test = fs.getPath("test.txt");
+            EnumSet<StandardOpenOption> options =
+                    EnumSet.<StandardOpenOption>of(StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
+            fs.provider().newFileChannel(test, options);
+        }
+        
+    }
+
+    @Test
+    public void fileChannelCreate() throws Exception {
+        try (FileSystem fs = tempZipFS()) {
+            Path test = fs.getPath("test.txt");
+            FileChannel.open(test, StandardOpenOption.WRITE, StandardOpenOption.CREATE).close();
+        } catch (NoSuchFileException ex) {
+            System.err.println("Unexpected exception");
+            ex.printStackTrace();
+        }
+    }
+
+    @Test(expected=FileAlreadyExistsException.class)
+    public void fileChannelCreateFails() throws Exception {
+        try (FileSystem fs = tempZipFS()) {
+            Path test = fs.getPath("test.txt");
+            Files.createFile(test);
+            FileChannel.open(test, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW).close();
+        }
+    }
+
+    @Test
+    public void fileChannelTruncate() throws Exception {
+        try (FileSystem fs = tempZipFS()) {
+            Path test = fs.getPath("test.txt");
+            Files.write(test, new byte[1024]);
+            assertEquals(1024, Files.size(test));
+            FileChannel.open(test, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING).close();
+            assertEquals(0, Files.size(test));
+        }
+    }
+
+    
     /**
      * Verifies http://stackoverflow.com/questions/16588321/ as both ZIP format
      * and Java 7 ZIPFS allows a folder and file to have the same name.
