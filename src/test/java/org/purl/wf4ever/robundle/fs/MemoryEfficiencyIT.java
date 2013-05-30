@@ -105,7 +105,8 @@ public class MemoryEfficiencyIT {
         if (fs.getFileStore().getUsableSpace() < size) {
             throw new IllegalStateException("This test requires at least " + size/GiB + "GiB free disk space");
         }
-       
+        System.out.println("Writing " + size/GiB + "GiB to bundle");
+        
         // We'll use FileChannel as it allows calling .position. This should
         // be very fast on UNIX which allows zero-padding, but on Windows
         // this will still take a while as it writes 5 GiB of \00s to disk. 
