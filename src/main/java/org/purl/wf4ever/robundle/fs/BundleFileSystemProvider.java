@@ -125,7 +125,10 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 		
 		
         Map<String, Object> options = new HashMap<>();
-        // Don't write to ByteArrayOutputStream
+        // Don't write to ByteArrayOutputStream as it would run out of
+        // memory. Note however that this means writing many small files
+        // is quite slow, as the ZIP provider will write one tempfile per
+        // file in the zip archive - synchronized to disk
         options.put("useTempFile", true);
         
         FileSystem fs = FileSystems.newFileSystem(w,
@@ -378,7 +381,7 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 	}
 
 	private FileSystemProvider origProvider(Path path) {
-		return ((BundlePath) path).getFileSystem().origFS.provider();
+		return ((BundlePath) path).getFileSystem().getOrigFS().provider();
 	}
 
 	@Override
