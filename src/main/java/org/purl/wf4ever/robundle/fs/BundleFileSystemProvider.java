@@ -122,8 +122,14 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 					+ bundle);
 		}
 
+		
+		
+        Map<String, Object> options = new HashMap<>();
+        // Don't write to ByteArrayOutputStream
+        options.put("useTempFile", true);
+        
         FileSystem fs = FileSystems.newFileSystem(w,
-                Collections.<String, Object> emptyMap(),
+                options,
                 BundleFileSystemProvider.class.getClassLoader());
 		return (BundleFileSystem) fs;
 	
