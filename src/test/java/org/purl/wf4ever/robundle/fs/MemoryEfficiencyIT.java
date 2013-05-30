@@ -23,7 +23,7 @@ public class MemoryEfficiencyIT {
     private Runtime rt = Runtime.getRuntime();
     
     // delays to allow garbage collection to run
-    private static final long DC_DELAY = 300;
+    private static final long GC_DELAY = 300;
     private static final int kiB = 1024;
 
     private static final int MiB = 1024*1024;
@@ -58,7 +58,7 @@ public class MemoryEfficiencyIT {
             Files.createDirectory(dir);
         }
 
-        final byte[] pattern = new byte[kiB];
+        final byte[] pattern = new byte[8*kiB];
         rand.nextBytes(pattern);
 
         ExecutorService pool = Executors.newFixedThreadPool(MAX_WORKERS);
@@ -211,9 +211,9 @@ public class MemoryEfficiencyIT {
     public void runGC() {
         System.gc();
         try {
-            Thread.sleep(DC_DELAY);
+            Thread.sleep(GC_DELAY);
             System.gc();
-            Thread.sleep(300);
+            Thread.sleep(GC_DELAY);
         } catch (InterruptedException e) {
         }
     }
