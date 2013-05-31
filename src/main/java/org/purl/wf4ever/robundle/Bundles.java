@@ -25,6 +25,7 @@ import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributeView;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
@@ -106,7 +107,7 @@ public class Bundles {
                     throw new IOException("Timed out waiting for threaded recursive copy to complete", e);
                 }
                 if (firstException != null) {
-                    throw firstException;
+                    throw new IOException("Exception while threaded recursive copy", firstException);
                 }
             }
         }
@@ -137,13 +138,15 @@ public class Bundles {
         public FileVisitResult preVisitDirectory(Path dir,
                 BasicFileAttributes attrs) throws IOException {
             try {
+                Path destinationDir = toDestination(dir);
                 if (copyOptionsSet
                         .contains(StandardCopyOption.REPLACE_EXISTING)
-                        && Files.isDirectory(dir)) {
+                        && Files.isDirectory(destinationDir)) {
                     return FileVisitResult.CONTINUE;
                 }
-                Files.copy(dir, toDestination(dir), copyOptions);
-                // Files.createDirectory(toDestination(dir));
+                Files.copy(dir, destinationDir, copyOptions);
+//                Files.createDirectory(destinationDir);
+                 System.out.println("Created " + destinationDir + " " + destinationDir.toUri());
                 return FileVisitResult.CONTINUE;
             } catch (IOException ex) {
                 // Eat or rethrow depending on IGNORE_ERRORS
@@ -288,9 +291,8 @@ public class Bundles {
     public static void copyRecursively(final Path source,
             final Path destination, final CopyOption... copyOptions)
             throws IOException {
-        final Set<CopyOption> copyOptionsSet = new HashSet<>();
+        final Set<CopyOption> copyOptionsSet = new HashSet<>(Arrays.asList(copyOptions));
       
-
         if (!Files.isDirectory(source)) {
             throw new FileNotFoundException("Not a directory: " + source);
         }
