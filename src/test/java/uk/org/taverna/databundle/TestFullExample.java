@@ -12,6 +12,7 @@ import java.util.Arrays;
 
 import org.junit.Test;
 import org.purl.wf4ever.robundle.Bundle;
+import org.purl.wf4ever.robundle.manifest.Manifest;
 
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
@@ -46,7 +47,7 @@ public class TestFullExample {
 		}
 		
 		// Outputs
-        Path outputs = DataBundles.getInputs(dataBundle);
+        Path outputs = DataBundles.getOutputs(dataBundle);
         for (String filename : Arrays.asList("getResult_3_output_output.xml",
                 "getResult_output_output.octet-stream",
                 "Graphical_output.png",
@@ -66,6 +67,14 @@ public class TestFullExample {
         
         // Intermediate values
 		
+		
+		// Generate Manifest		
+		// TODO: This should be done automatically on close/save
+        Manifest manifest = new Manifest(dataBundle);
+        manifest.populateFromBundle();
+        Path jsonld = manifest.writeAsJsonLD();
+        String manifestStr = new String(Files.readAllBytes(jsonld), "UTF8");
+		System.out.println(manifestStr);
 		
 		
 		// Saving a data bundle:
