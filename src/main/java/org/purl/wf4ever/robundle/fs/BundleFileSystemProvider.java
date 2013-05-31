@@ -48,30 +48,40 @@ import java.util.zip.ZipOutputStream;
 public class BundleFileSystemProvider extends FileSystemProvider {
     public class BundleFileChannel extends FileChannel {
 
-        private FileChannel fc;
         @SuppressWarnings("unused")
-        private Path path;
+        private FileAttribute<?>[] attrs;
+        private FileChannel fc;
         @SuppressWarnings("unused")
         private Set<? extends OpenOption> options;
         @SuppressWarnings("unused")
-        private FileAttribute<?>[] attrs;
+        private Path path;
 
-        public int read(ByteBuffer dst) throws IOException {
-            return fc.read(dst);
+        public BundleFileChannel(FileChannel fc, Path path,
+                Set<? extends OpenOption> options, FileAttribute<?>[] attrs) {
+            this.fc = fc;
+            this.path = path;
+            this.options = options;
+            this.attrs = attrs;
         }
 
-        public long read(ByteBuffer[] dsts, int offset, int length)
+        public void force(boolean metaData) throws IOException {
+            fc.force(metaData);
+        }
+
+        @Override
+        protected void implCloseChannel() throws IOException {
+            fc.close();
+            // TODO: Update manifest
+        }
+
+        public FileLock lock(long position, long size, boolean shared)
                 throws IOException {
-            return fc.read(dsts, offset, length);
+            return fc.lock(position, size, shared);
         }
 
-        public int write(ByteBuffer src) throws IOException {
-            return fc.write(src);
-        }
-
-        public long write(ByteBuffer[] srcs, int offset, int length)
+        public MappedByteBuffer map(MapMode mode, long position, long size)
                 throws IOException {
-            return fc.write(srcs, offset, length);
+            return fc.map(mode, position, size);
         }
 
         public long position() throws IOException {
@@ -82,21 +92,21 @@ public class BundleFileSystemProvider extends FileSystemProvider {
             return fc.position(newPosition);
         }
 
+        public int read(ByteBuffer dst) throws IOException {
+            return fc.read(dst);
+        }
+
+        public int read(ByteBuffer dst, long position) throws IOException {
+            return fc.read(dst, position);
+        }
+
+        public long read(ByteBuffer[] dsts, int offset, int length)
+                throws IOException {
+            return fc.read(dsts, offset, length);
+        }
+
         public long size() throws IOException {
             return fc.size();
-        }
-
-        public FileChannel truncate(long size) throws IOException {
-            return fc.truncate(size);
-        }
-
-        public void force(boolean metaData) throws IOException {
-            fc.force(metaData);
-        }
-
-        public long transferTo(long position, long count,
-                WritableByteChannel target) throws IOException {
-            return fc.transferTo(position, count, target);
         }
 
         public long transferFrom(ReadableByteChannel src, long position,
@@ -104,22 +114,13 @@ public class BundleFileSystemProvider extends FileSystemProvider {
             return fc.transferFrom(src, position, count);
         }
 
-        public int read(ByteBuffer dst, long position) throws IOException {
-            return fc.read(dst, position);
+        public long transferTo(long position, long count,
+                WritableByteChannel target) throws IOException {
+            return fc.transferTo(position, count, target);
         }
 
-        public int write(ByteBuffer src, long position) throws IOException {
-            return fc.write(src, position);
-        }
-
-        public MappedByteBuffer map(MapMode mode, long position, long size)
-                throws IOException {
-            return fc.map(mode, position, size);
-        }
-
-        public FileLock lock(long position, long size, boolean shared)
-                throws IOException {
-            return fc.lock(position, size, shared);
+        public FileChannel truncate(long size) throws IOException {
+            return fc.truncate(size);
         }
 
         public FileLock tryLock(long position, long size, boolean shared)
@@ -127,45 +128,37 @@ public class BundleFileSystemProvider extends FileSystemProvider {
             return fc.tryLock(position, size, shared);
         }
 
-        @Override
-        protected void implCloseChannel() throws IOException {
-            fc.close();
-            // TODO: Update manifest
+        public int write(ByteBuffer src) throws IOException {
+            return fc.write(src);
         }
 
-        public BundleFileChannel(FileChannel fc, Path path,
-                Set<? extends OpenOption> options, FileAttribute<?>[] attrs) {
-            this.fc = fc;
-            this.path = path;
-            this.options = options;
-            this.attrs = attrs;
+        public int write(ByteBuffer src, long position) throws IOException {
+            return fc.write(src, position);
+        }
+
+        public long write(ByteBuffer[] srcs, int offset, int length)
+                throws IOException {
+            return fc.write(srcs, offset, length);
         }
 
     }
 
+    private static class Singleton {
+        // Fallback for OSGi environments
+        private static final BundleFileSystemProvider INSTANCE = new BundleFileSystemProvider();
+    }
     private static final String APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP = "application/vnd.wf4ever.robundle+zip";
-    private static final Charset UTF8 = Charset.forName("UTF-8");
-    private static final String WIDGET = "widget";
-
     /**
-     * Public constructor provided for FileSystemProvider.installedProviders().
-     * Use #getInstance() instead.
-     * 
-     * @deprecated
+     * The list of open file systems. This is static so that it is shared across
+     * eventual multiple instances of this provider (such as when running in an
+     * OSGi environment). Access to this map should be synchronized to avoid
+     * opening a file system that is not in the map.
      */
-    @Deprecated
-    public BundleFileSystemProvider() {
-    }
+    protected static Map<URI, WeakReference<BundleFileSystem>> openFilesystems = new HashMap<>();
 
-    @Override
-    public boolean equals(Object obj) {
-        return getClass() == obj.getClass();
-    }
+    private static final Charset UTF8 = Charset.forName("UTF-8");
 
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
+    private static final String WIDGET = "widget";
 
     protected static void addMimeTypeToZip(ZipOutputStream out, String mimetype)
             throws IOException {
@@ -199,11 +192,6 @@ public class BundleFileSystemProvider extends FileSystemProvider {
                 StandardOpenOption.TRUNCATE_EXISTING))) {
             addMimeTypeToZip(out, mimetype);
         }
-    }
-
-    private static class Singleton {
-        // Fallback for OSGi environments
-        private static final BundleFileSystemProvider INSTANCE = new BundleFileSystemProvider();
     }
 
     public static BundleFileSystemProvider getInstance() {
@@ -273,12 +261,14 @@ public class BundleFileSystemProvider extends FileSystemProvider {
     }
 
     /**
-     * The list of open file systems. This is static so that it is shared across
-     * eventual multiple instances of this provider (such as when running in an
-     * OSGi environment). Access to this map should be synchronized to avoid
-     * opening a file system that is not in the map.
+     * Public constructor provided for FileSystemProvider.installedProviders().
+     * Use #getInstance() instead.
+     * 
+     * @deprecated
      */
-    protected static Map<URI, WeakReference<BundleFileSystem>> openFilesystems = new HashMap<>();
+    @Deprecated
+    public BundleFileSystemProvider() {
+    }
 
     protected URI baseURIFor(URI uri) {
         if (!(uri.getScheme().equals(WIDGET))) {
@@ -337,6 +327,11 @@ public class BundleFileSystemProvider extends FileSystemProvider {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        return getClass() == obj.getClass();
+    }
+
+    @Override
     public <V extends FileAttributeView> V getFileAttributeView(Path path,
             Class<V> type, LinkOption... options) {
         BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
@@ -384,6 +379,11 @@ public class BundleFileSystemProvider extends FileSystemProvider {
     }
 
     @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
+    @Override
     public boolean isHidden(Path path) throws IOException {
         BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
         return origProvider(path).isHidden(fs.unwrap(path));
@@ -406,14 +406,6 @@ public class BundleFileSystemProvider extends FileSystemProvider {
         BundleFileSystem fs = (BundleFileSystem) source.getFileSystem();
         origProvider(source)
                 .copy(fs.unwrap(source), fs.unwrap(target), options);
-    }
-
-    @Override
-    public InputStream newInputStream(Path path, OpenOption... options)
-            throws IOException {
-        // Avoid copying out to a file, like newByteChannel / newFileChannel
-        BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
-        return origProvider(path).newInputStream(fs.unwrap(path), options);
     }
 
     @Override
@@ -465,16 +457,6 @@ public class BundleFileSystemProvider extends FileSystemProvider {
     }
 
     @Override
-    public FileChannel newFileChannel(Path path,
-            Set<? extends OpenOption> options, FileAttribute<?>... attrs)
-            throws IOException {
-        final BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
-        FileChannel fc = origProvider(path).newFileChannel(fs.unwrap(path),
-                options, attrs);
-        return new BundleFileChannel(fc, path, options, attrs);
-    }
-
-    @Override
     public DirectoryStream<Path> newDirectoryStream(Path dir,
             final Filter<? super Path> filter) throws IOException {
         final BundleFileSystem fs = (BundleFileSystem) dir.getFileSystem();
@@ -496,6 +478,16 @@ public class BundleFileSystemProvider extends FileSystemProvider {
                 return fs.wrapIterator(stream.iterator());
             }
         };
+    }
+
+    @Override
+    public FileChannel newFileChannel(Path path,
+            Set<? extends OpenOption> options, FileAttribute<?>... attrs)
+            throws IOException {
+        final BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
+        FileChannel fc = origProvider(path).newFileChannel(fs.unwrap(path),
+                options, attrs);
+        return new BundleFileChannel(fc, path, options, attrs);
     }
 
     @Override
@@ -532,6 +524,14 @@ public class BundleFileSystemProvider extends FileSystemProvider {
                     new WeakReference<BundleFileSystem>(fs));
         }
         return fs;
+    }
+
+    @Override
+    public InputStream newInputStream(Path path, OpenOption... options)
+            throws IOException {
+        // Avoid copying out to a file, like newByteChannel / newFileChannel
+        BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
+        return origProvider(path).newInputStream(fs.unwrap(path), options);
     }
 
     private FileSystemProvider origProvider(Path path) {

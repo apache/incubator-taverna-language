@@ -18,8 +18,8 @@ public class BundleFileSystem extends FileSystem {
 
     protected final URI baseURI;
     private FileSystem origFS;
-    private final Path source;
     private final String separator;
+    private final Path source;
 
     protected BundleFileSystem(FileSystem origFS, URI baseURI) {
         if (origFS == null || baseURI == null) {
@@ -43,6 +43,17 @@ public class BundleFileSystem extends FileSystem {
         origFS = null;
     }
 
+    protected Path findSource() {
+        Path zipRoot = getRootDirectory().getZipPath();
+        URI uri = zipRoot.toUri();
+        String s = uri.getSchemeSpecificPart();
+        if (!s.endsWith("!/")) { // sanity check
+            throw new IllegalStateException("Can't parse JAR URI: " + uri);
+        }
+        URI zip = URI.create(s.substring(0, s.length() - 2));
+        return Paths.get(zip); // Look up our path
+    }
+
     public URI getBaseURI() {
         return baseURI;
     }
@@ -51,6 +62,11 @@ public class BundleFileSystem extends FileSystem {
         // We assume there's only one file store, as is true for ZipProvider
         return new BundleFileStore(this, getOrigFS().getFileStores().iterator()
                 .next());
+    }
+
+    @Override
+    public Iterable<FileStore> getFileStores() {
+        return Collections.<FileStore> singleton(getFileStore());
     }
 
     /**
@@ -64,11 +80,6 @@ public class BundleFileSystem extends FileSystem {
             throw new ClosedFileSystemException();
         }
         return orig;
-    }
-
-    @Override
-    public Iterable<FileStore> getFileStores() {
-        return Collections.<FileStore> singleton(getFileStore());
     }
 
     @Override
@@ -105,17 +116,6 @@ public class BundleFileSystem extends FileSystem {
 
     public Path getSource() {
         return source;
-    }
-
-    protected Path findSource() {
-        Path zipRoot = getRootDirectory().getZipPath();
-        URI uri = zipRoot.toUri();
-        String s = uri.getSchemeSpecificPart();
-        if (!s.endsWith("!/")) { // sanity check
-            throw new IllegalStateException("Can't parse JAR URI: " + uri);
-        }
-        URI zip = URI.create(s.substring(0, s.length() - 2));
-        return Paths.get(zip); // Look up our path
     }
 
     @Override

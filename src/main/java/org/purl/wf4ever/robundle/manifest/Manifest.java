@@ -75,17 +75,6 @@ public class Manifest {
         this.bundle = bundle;
     }
 
-    @JsonProperty(value = "@context")
-    public List<Object> getContext() {
-        ArrayList<Object> context = new ArrayList<>();
-        HashMap<Object, Object> map = new HashMap<>();
-        map.put("@base", getBundle().getRoot().toUri());
-        context.add(map);
-        context.add(URI
-                .create("http://purl.org/wf4ever/ro-bundle/context.json"));
-        return context;
-    }
-
     public List<PathMetadata> getAggregates() {
         return aggregates;
     }
@@ -106,6 +95,17 @@ public class Manifest {
     @JsonIgnore
     public Bundle getBundle() {
         return bundle;
+    }
+
+    @JsonProperty(value = "@context")
+    public List<Object> getContext() {
+        ArrayList<Object> context = new ArrayList<>();
+        HashMap<Object, Object> map = new HashMap<>();
+        map.put("@base", getBundle().getRoot().toUri());
+        context.add(map);
+        context.add(URI
+                .create("http://purl.org/wf4ever/ro-bundle/context.json"));
+        return context;
     }
 
     public List<Agent> getCreatedBy() {
