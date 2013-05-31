@@ -9,6 +9,7 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -17,6 +18,8 @@ import java.util.concurrent.TimeUnit;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.purl.wf4ever.robundle.Bundles;
+import org.purl.wf4ever.robundle.utils.RecursiveCopyFileVisitor.RecursiveCopyOption;
 
 public class MemoryEfficiencyIT {
 
@@ -53,9 +56,11 @@ public class MemoryEfficiencyIT {
 
         long usedBefore = usedMemory();
 
+        Path folder = fs.getPath("folder");
+        
         for (int i=0 ; i<100 ; i++) {
-            Path dir = fs.getPath("dir" + i);
-            Files.createDirectory(dir);
+            Path dir = folder.resolve("dir" + i);
+            Files.createDirectories(dir);
         }
 
         final byte[] pattern = new byte[8*kiB];
@@ -67,7 +72,8 @@ public class MemoryEfficiencyIT {
             System.out.println("Writing " + numFiles + " files in parallell over max " + MAX_WORKERS + " threads");
             for (int i=0; i< numFiles; i++) {
                 int folderNo = i % 100;
-                final Path file = fs.getPath("dir" + folderNo, "file" + i);
+                Path dir = folder.resolve("dir" + folderNo);
+                final Path file = dir.resolve("file" + i);
                 pool.submit(new Runnable() {
                     public void run() {
                         try (OutputStream newOutputStream = Files.newOutputStream(file)) {
@@ -78,21 +84,33 @@ public class MemoryEfficiencyIT {
                     };
                 });
             }
-            System.out.println();
             pool.shutdown();
             assertTrue("Timed out waiting for threads", pool.awaitTermination(60, TimeUnit.SECONDS));
+            System.out.println("Done");
         } finally {
             pool.shutdownNow();
         }
         long usedAfterCloseFile = usedMemory();
         assertTrue(usedAfterCloseFile - usedBefore < 10 * MiB);
 
+        Date startedRecurse = new Date();
+        System.out.println("Recursively copying folder");
+        Bundles.copyRecursively(folder, fs.getPath("copy"),
+                RecursiveCopyOption.IGNORE_ERRORS);
+        long duration = new Date().getTime() - startedRecurse.getTime();
+        System.out.println("Done in " + duration/1000 + "s");
+        
+        long usedAfterRecursive = usedMemory();
+        assertTrue(usedAfterRecursive - usedBefore < 10 * MiB);
+        
         fs.close();
         long zipSize = Files.size(fs.getSource());
         System.out.println("ZIP: " + zipSize / MiB + " MiB");
         long usedAfterCloseFS = usedMemory();
         assertTrue(usedAfterCloseFS - usedBefore < 10*MiB);
         assertTrue(usedAfterCloseFS < zipSize);
+      
+        
     }
     
     @Test
