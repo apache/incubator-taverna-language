@@ -32,8 +32,6 @@ public class RecursiveCopyFileVisitor extends
     public static void copyRecursively(final Path source,
             final Path destination, final CopyOption... copyOptions)
             throws IOException {
-        RecursiveCopyFileVisitor.copyRecursively(source, destination, copyOptions);
-        
         final Set<CopyOption> copyOptionsSet = new HashSet<>(Arrays.asList(copyOptions));
       
         if (!Files.isDirectory(source)) {
