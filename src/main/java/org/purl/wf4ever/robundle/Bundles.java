@@ -5,17 +5,31 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.CopyOption;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.BasicFileAttributeView;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalINIConfiguration;
@@ -32,6 +46,106 @@ import org.purl.wf4ever.robundle.fs.BundleFileSystemProvider;
  * 
  */
 public class Bundles {
+
+    private static int COPY_MAX_CONCURRENT = Integer.valueOf(System
+            .getProperty("bundles.copy.max_concurrent", "10"));
+    
+    public enum RecursiveCopyOption implements CopyOption {
+        /**
+         * Ignore any errors, copy as much as possible. 
+         * The default is to stop on the first IOException.
+         * 
+         */
+        IGNORE_ERRORS,
+        
+        /**
+         * Use concurrent copies, this can speed up copying of many small files.
+         * The maximum number of threads in a particular recursive operation is defined by
+         * the system property bundles.copy.max_concurrent, default is 10. 
+         */
+        THREADED,
+        
+    }
+    
+    protected static final class RecursiveCopyFileVisitor extends
+            SimpleFileVisitor<Path> {
+        private final Path destination;
+        private final Set<CopyOption> copyOptionsSet;
+        private final CopyOption[] copyOptions;
+        private final Path source;
+        private final LinkOption[] linkOptions;
+
+        private RecursiveCopyFileVisitor(Path destination,
+                Set<CopyOption> copyOptionsSet, CopyOption[] copyOptions,
+                Path source, LinkOption[] linkOptions) {
+            this.destination = destination;
+            this.copyOptionsSet = copyOptionsSet;
+            this.copyOptions = copyOptions;
+            this.source = source;
+            this.linkOptions = linkOptions;
+        }
+
+        @Override
+        public FileVisitResult preVisitDirectory(Path dir,
+                BasicFileAttributes attrs) throws IOException {
+            try {
+                if (copyOptionsSet.contains(StandardCopyOption.REPLACE_EXISTING) && Files.isDirectory(dir)) {
+                    return FileVisitResult.CONTINUE;
+                }
+                Files.copy(dir, toDestination(dir), copyOptions);
+                //Files.createDirectory(toDestination(dir));
+                return FileVisitResult.CONTINUE;
+            } catch (IOException ex) {
+                // Eat or rethrow depending on IGNORE_ERRORS
+                return visitFileFailed(dir, ex);
+            }
+        }
+
+        private Path toDestination(Path path) {
+            return destination.resolve(source.relativize(path));
+        }
+        
+        @Override
+        public FileVisitResult visitFileFailed(Path file, IOException exc)
+                throws IOException {
+            if (copyOptionsSet.contains(RecursiveCopyOption.IGNORE_ERRORS)) {
+                return FileVisitResult.SKIP_SUBTREE;
+            }
+            // Or - throw exception
+            return super.visitFileFailed(file, exc);
+        }
+
+        @Override
+        public FileVisitResult visitFile(Path file,
+                BasicFileAttributes attrs) throws IOException {
+            try {            
+                Files.copy(file, toDestination(file), copyOptions);
+                return FileVisitResult.CONTINUE;
+            } catch (IOException ex) {
+                return visitFileFailed(file, ex);
+            }
+        }
+
+        @Override
+        public FileVisitResult postVisitDirectory(Path dir, IOException exc)
+                throws IOException {
+            try {
+            if (copyOptionsSet.contains(StandardCopyOption.COPY_ATTRIBUTES)) {
+                // Copy file times
+                // Inspired by java.nio.file.CopyMoveHelper.copyToForeignTarget()
+                BasicFileAttributes attrs = Files.readAttributes(dir,
+                        BasicFileAttributes.class, linkOptions);
+                BasicFileAttributeView view = Files.getFileAttributeView(
+                        toDestination(dir), BasicFileAttributeView.class, linkOptions);
+                view.setTimes(attrs.lastModifiedTime(),
+                        attrs.lastAccessTime(), attrs.creationTime());
+            }            
+                return FileVisitResult.CONTINUE;
+            } catch (IOException ex) {
+                return visitFileFailed(dir, ex);
+            }
+        }
+    }
 
     protected static class RecursiveDeleteVisitor extends SimpleFileVisitor<Path> {
         @Override
@@ -252,6 +366,39 @@ public class Bundles {
 		// Everything after the last . - or just the end
 		String newP = p.replaceFirst("(\\.[^.]*)?$", extension);
 		return path.resolveSibling(newP);
+	}
+	
+	public static void copyRecursively(final Path source, final Path destination, final CopyOption... copyOptions) throws IOException {
+	    final Set<CopyOption> copyOptionsSet = new HashSet<>();
+	    final Set<LinkOption> linkOptionsSet = new HashSet<>();
+	    for (CopyOption option : copyOptions) {
+	        copyOptionsSet.add(option);
+	        if (option instanceof LinkOption) {
+	            linkOptionsSet.add((LinkOption)option);
+	        }	        
+	    }
+	    final LinkOption[] linkOptions = linkOptionsSet.toArray(new LinkOption[(linkOptionsSet.size())]);
+	    
+	    
+	    if (! Files.isDirectory(source)) {
+	        throw new FileNotFoundException("Not a directory: " + source);
+	    }
+	    if (Files.isDirectory(destination) && ! copyOptionsSet.contains(StandardCopyOption.REPLACE_EXISTING)) {
+	        throw new FileAlreadyExistsException(destination.toString());
+	    }
+	    Path destinationParent = destination.getParent();
+	    if (destinationParent != null && ! Files.isDirectory(destinationParent)) {
+	        throw new FileNotFoundException("Not a directory: " + destinationParent);
+	    }
+	    
+	    FileVisitor<Path> visitor = new RecursiveCopyFileVisitor(destination, copyOptionsSet,
+                copyOptions, source, linkOptions);
+	    Set<FileVisitOption> walkOptions = EnumSet.noneOf(FileVisitOption.class);
+	    if (! copyOptionsSet.contains(LinkOption.NOFOLLOW_LINKS)) {
+	        walkOptions = EnumSet.of(FileVisitOption.FOLLOW_LINKS);
+	    }
+	    Files.walkFileTree(source, walkOptions, Integer.MAX_VALUE, visitor);
+	    
 	}
 
     public static void deleteRecursively(Path p) throws IOException {
