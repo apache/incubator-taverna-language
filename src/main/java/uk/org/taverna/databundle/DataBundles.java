@@ -33,7 +33,6 @@ import uk.org.taverna.scufl2.api.io.WriterException;
  */
 public class DataBundles extends Bundles {
 
-
     protected static final class ExtensionIgnoringFilter implements Filter<Path> {
         private final String fname;
 
@@ -47,6 +46,7 @@ public class DataBundles extends Bundles {
         }
     }
     
+    private static final String WORKFLOWBUNDLE = "workflow.wfbundle";
     private static final String WORKFLOWRUN_PROV_TTL = "workflowrun.prov.ttl";
 	private static final String DOT_ERR = ".err";
 	private static final String INPUTS = "inputs";
@@ -307,7 +307,7 @@ public class DataBundles extends Bundles {
     }
 
     public static Path getWorkflowBundle(Bundle dataBundle) {
-        return dataBundle.getRoot().resolve("workflowbundle");
+        return dataBundle.getRoot().resolve(WORKFLOWBUNDLE);
     }
     
     public static void setWorkflowBundle(Bundle dataBundle,
