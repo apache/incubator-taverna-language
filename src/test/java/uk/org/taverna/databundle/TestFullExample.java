@@ -69,18 +69,13 @@ public class TestFullExample {
         // Intermediate values
 		DataBundles.copyRecursively(runPath.resolve("intermediates"),
 		        DataBundles.getIntermediates(dataBundle), 
-		        StandardCopyOption.REPLACE_EXISTING 
-		        //,Bundles.RecursiveCopyOption.THREADED
-		        );
+		        StandardCopyOption.REPLACE_EXISTING);
 		
 		// Generate Manifest		
 		// TODO: This should be done automatically on close/save
         Manifest manifest = new Manifest(dataBundle);
         manifest.populateFromBundle();
-        Path jsonld = manifest.writeAsJsonLD();
-        String manifestStr = new String(Files.readAllBytes(jsonld), "UTF8");
-		System.out.println(manifestStr);
-		
+        manifest.writeAsJsonLD();
 		
 		// Saving a data bundle:
 		Path zip = Files.createTempFile("databundle", ".zip");
