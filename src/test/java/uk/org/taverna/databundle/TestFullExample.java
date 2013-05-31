@@ -8,6 +8,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 
 import org.junit.Test;
@@ -66,7 +67,11 @@ public class TestFullExample {
         
         
         // Intermediate values
-		
+		DataBundles.copyRecursively(runPath.resolve("intermediates"),
+		        DataBundles.getIntermediates(dataBundle), 
+		        StandardCopyOption.REPLACE_EXISTING 
+		        //,Bundles.RecursiveCopyOption.THREADED
+		        );
 		
 		// Generate Manifest		
 		// TODO: This should be done automatically on close/save
