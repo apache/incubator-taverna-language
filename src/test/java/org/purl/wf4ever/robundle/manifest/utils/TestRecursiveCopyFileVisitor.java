@@ -16,6 +16,7 @@ import org.purl.wf4ever.robundle.Bundles;
 
 public class TestRecursiveCopyFileVisitor {
 
+    // TODO: Test NOFOLLOW and follow of symlinks
 
     @Test(expected=FileAlreadyExistsException.class)
     public void copyRecursivelyAlreadyExists() throws Exception {
@@ -37,8 +38,6 @@ public class TestRecursiveCopyFileVisitor {
     
     @Test
     public void copyRecursively() throws Exception {
-        // TODO: Test NOFOLLOW and follow of symlinks
-        
         Path orig = Files.createTempDirectory("orig");
         Files.createFile(orig.resolve("1"));
         Files.createDirectory(orig.resolve("2"));
