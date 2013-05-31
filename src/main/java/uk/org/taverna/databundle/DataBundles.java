@@ -18,6 +18,10 @@ import java.util.TreeMap;
 import org.purl.wf4ever.robundle.Bundle;
 import org.purl.wf4ever.robundle.Bundles;
 
+import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
+import uk.org.taverna.scufl2.api.io.WriterException;
+
 /**
  * Utility functions for dealing with data bundles.
  * <p>
@@ -28,6 +32,7 @@ import org.purl.wf4ever.robundle.Bundles;
  * 
  */
 public class DataBundles extends Bundles {
+
 
     protected static final class ExtensionIgnoringFilter implements Filter<Path> {
         private final String fname;
@@ -42,6 +47,7 @@ public class DataBundles extends Bundles {
         }
     }
     
+    private static final String WORKFLOWRUN_PROV_TTL = "workflowrun.prov.ttl";
 	private static final String DOT_ERR = ".err";
 	private static final String INPUTS = "inputs";
 	private static final String OUTPUTS = "outputs";
@@ -294,6 +300,28 @@ public class DataBundles extends Bundles {
         }
         // Everything after the last . - or just the end
         return filename.replaceFirst("(\\.[^.]*)?$", extension);
+    }
+
+    public static Path getWorkflowRunProvenance(Bundle dataBundle) {
+        return dataBundle.getRoot().resolve(WORKFLOWRUN_PROV_TTL);
+    }
+
+    public static Path getWorkflowBundle(Bundle dataBundle) {
+        return dataBundle.getRoot().resolve("workflowbundle");
+    }
+    
+    public static void setWorkflowBundle(Bundle dataBundle,
+            WorkflowBundle wfBundle) throws IOException {
+        Path bundlePath = getWorkflowBundle(dataBundle);
+        
+        WorkflowBundleIO wfBundleIO = new WorkflowBundleIO();
+        // TODO: Save as nested folder?
+        try {
+            wfBundleIO.writeBundle(wfBundle, 
+                    Files.newOutputStream(bundlePath), "application/vnd.taverna.scufl2.workflow-bundle");
+        } catch (WriterException e) {
+            throw new IOException("Can't write workflow bundle to: " + bundlePath, e);
+        } 
     }
 
 }
