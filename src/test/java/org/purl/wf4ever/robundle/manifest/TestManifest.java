@@ -65,10 +65,31 @@ public class TestManifest {
         Bundle bundle = exampleBundle();
         Manifest manifest = new Manifest(bundle);
         manifest.populateFromBundle();
+        PathMetadata helloMeta = null;
+        for (PathMetadata meta : manifest.getAggregates()) {
+            URI root = URI.create("/");
+            if (root.resolve(meta.getFile()).equals(root.resolve("hello.txt"))) {
+                helloMeta = meta;
+            }
+        }
+        assertNotNull("No metadata for </hello.txt>", helloMeta);
+        
+        
+        
         Path jsonld = manifest.writeAsJsonLD();
         assertEquals(bundle.getFileSystem().getPath(".ro",  "manifest.json"), jsonld);
         assertTrue(Files.exists(jsonld));
-        System.out.write(Files.readAllBytes(jsonld));
+        String manifestStr = new String(Files.readAllBytes(jsonld), "UTF8");
+        System.out.println(manifestStr);
+        
+        // Rough and ready that somethings are there
+        // TODO: Read back and check as JSON structure
+        // TODO: Check as JSON-LD graph 
+        assertTrue(manifestStr.contains("@context"));
+        assertTrue(manifestStr.contains("http://purl.org/wf4ever/ro-bundle/context.json"));
+        assertTrue(manifestStr.contains("f/file2.txt"));
+        assertTrue(manifestStr.contains("hello.txt"));
+        assertTrue(manifestStr.contains(helloMeta.getProxy().toASCIIString()));
     }
     
     protected Bundle exampleBundle() throws IOException {
