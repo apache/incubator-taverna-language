@@ -1,5 +1,6 @@
 package uk.org.taverna.databundle;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -19,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.junit.Test;
 import org.purl.wf4ever.robundle.Bundle;
@@ -677,6 +679,41 @@ public class TestDataBundles {
         assertEquals("B", DataBundles.getStringValue(in1));
     }
 
+    @Test
+    public void getIntermediates() throws Exception {
+        Bundle dataBundle = DataBundles.createBundle();
+        Path intermediates = DataBundles.getIntermediates(dataBundle);
+        assertEquals("/intermediates", intermediates.toString());
+        assertTrue(Files.isDirectory(intermediates));
+    }
+
+    
+    @Test(expected=FileAlreadyExistsException.class)
+    public void getIntermediatesFails() throws Exception {
+        Bundle dataBundle = DataBundles.createBundle();
+        Path intermediates = DataBundles.getIntermediates(dataBundle);
+        Files.delete(intermediates);
+        Files.createFile(intermediates);
+        DataBundles.getIntermediates(dataBundle);
+    }
+    
+    @Test
+    public void getIntermediate() throws Exception {
+        Bundle dataBundle = DataBundles.createBundle();
+        UUID uuid = UUID.randomUUID();
+        Path inter = DataBundles.getIntermediate(dataBundle, uuid);
+        assertFalse(Files.exists(inter));
+        DataBundles.setStringValue(inter, "intermediate");
+        Path parent = inter.getParent();
+        assertEquals(dataBundle.getRoot().resolve("intermediates"), parent.getParent());
+        String parentName = parent.getFileName().toString();
+        assertEquals(2, parentName.length());
+        assertTrue(uuid.toString().startsWith(parentName));
+        // Filename is a valid string
+        String interFileName = inter.getFileName().toString();
+        assertTrue(interFileName.startsWith(parentName));
+        assertEquals(uuid, UUID.fromString(interFileName));
+    }
 
 
 }

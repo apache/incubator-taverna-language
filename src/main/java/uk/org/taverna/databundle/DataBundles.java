@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NavigableMap;
 import java.util.TreeMap;
+import java.util.UUID;
 
 import org.purl.wf4ever.robundle.Bundle;
 import org.purl.wf4ever.robundle.Bundles;
@@ -33,6 +34,7 @@ import uk.org.taverna.scufl2.api.io.WriterException;
  */
 public class DataBundles extends Bundles {
 
+
     protected static final class ExtensionIgnoringFilter implements Filter<Path> {
         private final String fname;
 
@@ -50,6 +52,7 @@ public class DataBundles extends Bundles {
     private static final String WORKFLOWRUN_PROV_TTL = "workflowrun.prov.ttl";
 	private static final String DOT_ERR = ".err";
 	private static final String INPUTS = "inputs";
+	private static final String INTERMEDIATES = "intermediates";
 	private static final String OUTPUTS = "outputs";
 	private static final Charset UTF8 = Charset.forName("UTF-8");
 
@@ -322,6 +325,21 @@ public class DataBundles extends Bundles {
         } catch (WriterException e) {
             throw new IOException("Can't write workflow bundle to: " + bundlePath, e);
         } 
+    }
+
+    public static Path getIntermediates(Bundle dataBundle) throws IOException {
+        Path intermediates = dataBundle.getRoot().resolve(INTERMEDIATES);
+        Files.createDirectories(intermediates);
+        return intermediates;
+    }
+    
+    public static Path getIntermediate(Bundle dataBundle, UUID uuid) throws IOException {
+        String fileName = uuid.toString();
+        Path intermediates = getIntermediates(dataBundle);
+        // Folder is named after first 2 characters of UUID
+        Path folder = intermediates.resolve(fileName.substring(0, 2));
+        Files.createDirectories(folder);
+        return anyExtension(folder, fileName);
     }
 
 }
