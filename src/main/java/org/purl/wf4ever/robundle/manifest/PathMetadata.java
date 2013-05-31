@@ -8,7 +8,8 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder(value = { "file", "uri", "folder", "mediatype", "createdOn", "createdBy", "proxy"})
+@JsonPropertyOrder(value = { "file", "uri", "folder", "mediatype", "createdOn",
+        "createdBy", "proxy" })
 public class PathMetadata {
     private List<Agent> createdBy;
     private FileTime createdOn;
@@ -26,7 +27,7 @@ public class PathMetadata {
     public FileTime getCreatedOn() {
         return createdOn;
     }
-    
+
     public URI getFile() {
         return file;
     }
@@ -43,7 +44,7 @@ public class PathMetadata {
     public URI getProxy() {
         return proxy;
     }
-        
+
     public URI getUri() {
         return uri;
     }

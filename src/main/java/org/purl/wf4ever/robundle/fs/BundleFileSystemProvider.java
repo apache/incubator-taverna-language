@@ -126,22 +126,20 @@ public class BundleFileSystemProvider extends FileSystemProvider {
                 throws IOException {
             return fc.tryLock(position, size, shared);
         }
-        
+
         @Override
         protected void implCloseChannel() throws IOException {
-           fc.close();
-           // TODO: Update manifest
+            fc.close();
+            // TODO: Update manifest
         }
 
         public BundleFileChannel(FileChannel fc, Path path,
                 Set<? extends OpenOption> options, FileAttribute<?>[] attrs) {
-                    this.fc = fc;
-                    this.path = path;
-                    this.options = options;
-                    this.attrs = attrs;
+            this.fc = fc;
+            this.path = path;
+            this.options = options;
+            this.attrs = attrs;
         }
-
-
 
     }
 
@@ -234,7 +232,7 @@ public class BundleFileSystemProvider extends FileSystemProvider {
         // useTempFile not needed as we override
         // newByteChannel to use newFileChannel() - which don't
         // consume memory
-        //        options.put("useTempFile", true);
+        // options.put("useTempFile", true);
 
         FileSystem fs = FileSystems.newFileSystem(w, options,
                 BundleFileSystemProvider.class.getClassLoader());
@@ -409,7 +407,7 @@ public class BundleFileSystemProvider extends FileSystemProvider {
         origProvider(source)
                 .copy(fs.unwrap(source), fs.unwrap(target), options);
     }
-    
+
     @Override
     public InputStream newInputStream(Path path, OpenOption... options)
             throws IOException {
@@ -441,7 +439,7 @@ public class BundleFileSystemProvider extends FileSystemProvider {
             }
             if (options.contains(StandardOpenOption.CREATE_NEW)) {
             } else if (options.contains(StandardOpenOption.CREATE)
-                    && ! Files.exists(zipPath)) {
+                    && !Files.exists(zipPath)) {
                 // Workaround for bug in ZIPFS in Java 7 -
                 // it only creates new files on
                 // StandardOpenOption.CREATE_NEW
@@ -453,14 +451,15 @@ public class BundleFileSystemProvider extends FileSystemProvider {
                 // the very same file,
                 // with CREATE_NEW the second thread would then fail.
 
-                EnumSet<StandardOpenOption> opts = EnumSet.of(StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW);
-                origProvider(path).newFileChannel(zipPath, opts, attrs)
-                        .close();
+                EnumSet<StandardOpenOption> opts = EnumSet
+                        .of(StandardOpenOption.WRITE,
+                                StandardOpenOption.CREATE_NEW);
+                origProvider(path).newFileChannel(zipPath, opts, attrs).close();
 
             }
         }
 
-        // Implement by newFileChannel to avoid memory leaks and 
+        // Implement by newFileChannel to avoid memory leaks and
         // allow manifest to be updated
         return newFileChannel(path, options, attrs);
     }
@@ -470,8 +469,8 @@ public class BundleFileSystemProvider extends FileSystemProvider {
             Set<? extends OpenOption> options, FileAttribute<?>... attrs)
             throws IOException {
         final BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
-        FileChannel fc = origProvider(path).newFileChannel(fs.unwrap(path), options,
-                attrs);
+        FileChannel fc = origProvider(path).newFileChannel(fs.unwrap(path),
+                options, attrs);
         return new BundleFileChannel(fc, path, options, attrs);
     }
 
