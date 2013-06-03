@@ -20,6 +20,7 @@ import org.purl.wf4ever.robundle.Bundle;
 import org.purl.wf4ever.robundle.Bundles;
 
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
 import uk.org.taverna.scufl2.api.io.WriterException;
 
@@ -48,7 +49,8 @@ public class DataBundles extends Bundles {
         }
     }
     
-    private static final String WORKFLOWBUNDLE = "workflow.wfbundle";
+    private static final String WORKFLOW = "workflow";
+    private static final String DOT_WFBUNDLE = ".wfbundle";
     private static final String WORKFLOWRUN_PROV_TTL = "workflowrun.prov.ttl";
 	private static final String DOT_ERR = ".err";
 	private static final String INPUTS = "inputs";
@@ -309,13 +311,14 @@ public class DataBundles extends Bundles {
         return dataBundle.getRoot().resolve(WORKFLOWRUN_PROV_TTL);
     }
 
-    public static Path getWorkflowBundle(Bundle dataBundle) {
-        return dataBundle.getRoot().resolve(WORKFLOWBUNDLE);
+    public static Path getWorkflow(Bundle dataBundle) throws IOException {
+        return anyExtension(dataBundle.getRoot(), WORKFLOW);
     }
     
     public static void setWorkflowBundle(Bundle dataBundle,
             WorkflowBundle wfBundle) throws IOException {
-        Path bundlePath = getWorkflowBundle(dataBundle);
+        Path bundlePath = withExtension(getWorkflow(dataBundle), DOT_WFBUNDLE); 
+        checkExistingAnyExtension(bundlePath);
         
         WorkflowBundleIO wfBundleIO = new WorkflowBundleIO();
         // TODO: Save as nested folder?
@@ -325,6 +328,14 @@ public class DataBundles extends Bundles {
         } catch (WriterException e) {
             throw new IOException("Can't write workflow bundle to: " + bundlePath, e);
         } 
+    }
+    
+    public static WorkflowBundle getWorkflowBundle(Bundle dataBundle)
+            throws ReaderException, IOException {
+        Path wf = getWorkflow(dataBundle);
+        WorkflowBundleIO wfBundleIO = new WorkflowBundleIO();
+        String type = Files.probeContentType(wf);
+        return wfBundleIO.readBundle(Files.newInputStream(wf), type);
     }
 
     public static Path getIntermediates(Bundle dataBundle) throws IOException {

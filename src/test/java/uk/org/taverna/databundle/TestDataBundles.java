@@ -24,6 +24,9 @@ import java.util.UUID;
 import org.junit.Test;
 import org.purl.wf4ever.robundle.Bundle;
 
+import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
+
 public class TestDataBundles {
 	protected void checkSignature(Path zip) throws IOException {
 		String MEDIATYPE = "application/vnd.wf4ever.robundle+zip";
@@ -714,6 +717,47 @@ public class TestDataBundles {
         assertEquals(uuid, UUID.fromString(interFileName));
     }
     
+    @Test
+    public void getWorkflow() throws Exception {
+        Bundle dataBundle = DataBundles.createBundle();
+        Path wf = DataBundles.getWorkflow(dataBundle);
+        assertEquals("/workflow", wf.toString());
+    }
+    
+    @Test
+    public void setWorkflowBundle() throws Exception {
+        Bundle dataBundle = DataBundles.createBundle();
+        
+        WorkflowBundleIO wfBundleIO = new WorkflowBundleIO();
+        WorkflowBundle wfBundle = wfBundleIO.createBundle();
+        DataBundles.setWorkflowBundle(dataBundle, wfBundle);
+        
+        Path wf = DataBundles.getWorkflow(dataBundle);
+        assertEquals("/workflow.wfbundle", wf.toString());        
+        assertEquals("application/vnd.taverna.scufl2.workflow-bundle", 
+                Files.probeContentType(wf));
+    }
+
+    @Test
+    public void getWorkflowBundle() throws Exception {
+        Bundle dataBundle = DataBundles.createBundle();
+        
+        WorkflowBundleIO wfBundleIO = new WorkflowBundleIO();
+        WorkflowBundle wfBundle = wfBundleIO.createBundle();
+        
+        String name = wfBundle.getName();
+        String wfName = wfBundle.getMainWorkflow().getName();
+        URI id = wfBundle.getIdentifier();
+        
+        DataBundles.setWorkflowBundle(dataBundle, wfBundle);
+
+        // Reload the bundle
+        wfBundle = DataBundles.getWorkflowBundle(dataBundle);        
+        assertEquals(name, wfBundle.getName());
+        assertEquals(wfName, wfBundle.getMainWorkflow().getName());        
+        assertEquals(id, wfBundle.getIdentifier());
+        
+    }
 
 
 }
