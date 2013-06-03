@@ -101,13 +101,13 @@ public class MemoryEfficiencyIT {
         System.out.println("Done in " + duration/1000 + "s");
         
         long usedAfterRecursive = usedMemory();
-        assertTrue(usedAfterRecursive - usedBefore < 10 * MiB);
+        assertTrue(usedAfterRecursive - usedBefore < 20 * MiB);
         
         fs.close();
         long zipSize = Files.size(fs.getSource());
         System.out.println("ZIP: " + zipSize / MiB + " MiB");
         long usedAfterCloseFS = usedMemory();
-        assertTrue(usedAfterCloseFS - usedBefore < 10*MiB);
+        assertTrue(usedAfterCloseFS - usedBefore < 20*MiB);
         assertTrue(usedAfterCloseFS < zipSize);
       
         
