@@ -1,5 +1,6 @@
 package org.purl.wf4ever.robundle;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
@@ -7,7 +8,7 @@ import java.nio.file.Path;
 
 import org.purl.wf4ever.robundle.fs.BundleFileSystem;
 
-public class Bundle implements AutoCloseable {
+public class Bundle implements Closeable {
 
     private boolean deleteOnClose;
     private final Path root;
@@ -23,6 +24,9 @@ public class Bundle implements AutoCloseable {
     }
 
     protected void close(boolean deleteOnClose) throws IOException {
+        if (! getFileSystem().isOpen()) {
+            return;
+        }
         getFileSystem().close();
         if (deleteOnClose) {
             Files.deleteIfExists(getSource());
