@@ -29,7 +29,6 @@ public class MemoryEfficiencyIT extends Helper {
 
     private static final int MiB = 1024*1024;
     private static final long GiB = 1024l*1024l*1024l;
-    private BundleFileSystem fs;
 
     Random rand = new Random();
 
