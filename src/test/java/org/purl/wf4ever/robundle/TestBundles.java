@@ -50,7 +50,7 @@ public class TestBundles {
 	public void closeAndOpenBundle() throws Exception {
 		Bundle bundle = Bundles.createBundle();
 		Path zip = Bundles.closeBundle(bundle);
-		Bundles.openBundle(zip);
+		Bundles.openBundle(zip).close();
 	}
 
 	@Test
@@ -60,19 +60,22 @@ public class TestBundles {
 		Bundles.setStringValue(hello, "Hello");
 		Path zip = Bundles.closeBundle(bundle);
 
-		Bundle newBundle = Bundles.openBundle(zip);
-		Path newHello = newBundle.getRoot().resolve("hello.txt");		
-		assertEquals("Hello", Bundles.getStringValue(newHello));
+		try (Bundle newBundle = Bundles.openBundle(zip)) {
+    		Path newHello = newBundle.getRoot().resolve("hello.txt");		
+    		assertEquals("Hello", Bundles.getStringValue(newHello));
+		}
 	}
 
 	@Test
 	public void closeAndSaveBundle() throws Exception {
 		Bundle bundle = Bundles.createBundle();
 		Path destination = Files.createTempFile("test", ".zip");
+		destination.toFile().deleteOnExit();
 		Files.delete(destination);
 		assertFalse(Files.exists(destination));
 		Bundles.closeAndSaveBundle(bundle, destination);
 		assertTrue(Files.exists(destination));
+		assertFalse(Files.exists(bundle.getSource()));
 	}
 
 	@Test
@@ -101,6 +104,7 @@ public class TestBundles {
     @Test
     public void createBundlePath() throws Exception {
         Path source = Files.createTempFile("test", ".zip");
+        source.toFile().deleteOnExit();
         Files.delete(source);
         try (Bundle bundle = Bundles.createBundle(source)) {  
             assertTrue(Files.isDirectory(bundle.getRoot()));
@@ -114,6 +118,8 @@ public class TestBundles {
     @Test
     public void createBundlePathExists() throws Exception {
         Path source = Files.createTempFile("test", ".zip");
+        source.toFile().deleteOnExit();
+        
         assertTrue(Files.exists(source)); // will be overwritten
         try (Bundle bundle = Bundles.createBundle(source)) {  
         }
@@ -124,38 +130,42 @@ public class TestBundles {
     @Test(expected=IOException.class)
     public void createBundleExistsAsDirFails() throws Exception {
         Path source = Files.createTempDirectory("test");
+        source.toFile().deleteOnExit();
         try (Bundle bundle = Bundles.createBundle(source)) {  
         }
     }
 
 	@Test
 	public void getReference() throws Exception {
-		Bundle bundle = Bundles.createBundle();
-		Path hello = bundle.getRoot().resolve("hello");
-		Bundles.setReference(hello, URI.create("http://example.org/test"));
-		URI uri = Bundles.getReference(hello);
-		assertEquals("http://example.org/test", uri.toASCIIString());
+		try (Bundle bundle = Bundles.createBundle()) {
+    		Path hello = bundle.getRoot().resolve("hello");
+    		Bundles.setReference(hello, URI.create("http://example.org/test"));
+    		URI uri = Bundles.getReference(hello);
+    		assertEquals("http://example.org/test", uri.toASCIIString());
+		}
 	}
 
 	@Test
 	public void getReferenceFromWin8() throws Exception {
-		Bundle bundle = Bundles.createBundle();
-		Path win8 = bundle.getRoot().resolve("win8");
-		Path win8Url = bundle.getRoot().resolve("win8.url");
-		Files.copy(getClass().getResourceAsStream("/win8.url"), win8Url);
-				
-		URI uri = Bundles.getReference(win8);
-		assertEquals("http://example.com/made-in-windows-8", uri.toASCIIString());
+		try (Bundle bundle = Bundles.createBundle()) {
+    		Path win8 = bundle.getRoot().resolve("win8");
+    		Path win8Url = bundle.getRoot().resolve("win8.url");
+    		Files.copy(getClass().getResourceAsStream("/win8.url"), win8Url);
+    				
+    		URI uri = Bundles.getReference(win8);
+    		assertEquals("http://example.com/made-in-windows-8", uri.toASCIIString());
+		}
 	}
 
 	@Test
 	public void getStringValue() throws Exception {
-		Bundle bundle = Bundles.createBundle();
+		try (Bundle bundle = Bundles.createBundle()) {
 		Path hello = bundle.getRoot().resolve("hello");
 		String string = "A string";
 		Bundles.setStringValue(hello, string);
 		assertEquals(string, Bundles.getStringValue(hello));	
 		assertEquals(null, Bundles.getStringValue(null));
+		}
 	}
 
 	protected boolean isEmpty(Path path) throws IOException {
@@ -167,30 +177,34 @@ public class TestBundles {
 
 	@Test
 	public void isMissing() throws Exception {
-		Bundle bundle = Bundles.createBundle();
+		try (Bundle bundle = Bundles.createBundle()) {
 		Path missing = bundle.getRoot().resolve("missing");		
 		assertFalse(Bundles.isValue(missing));
 		assertTrue(Bundles.isMissing(missing));
 		assertFalse(Bundles.isReference(missing));
+		}
 	}
 	
 	@Test
 	public void isReference() throws Exception {
-		Bundle bundle = Bundles.createBundle();
+		try (Bundle bundle = Bundles.createBundle()) {
 		Path ref = bundle.getRoot().resolve("ref");		
 		Bundles.setReference(ref, URI.create("http://example.org/test"));
 		assertTrue(Bundles.isReference(ref));
 		assertFalse(Bundles.isMissing(ref));
 		assertFalse(Bundles.isValue(ref));
+		}
 	}
 	
 	@Test
 	public void isValue() throws Exception {
-		Bundle bundle = Bundles.createBundle();
+		try (Bundle bundle = Bundles.createBundle()) {
+		    
 		Path hello = bundle.getRoot().resolve("hello");		
 		Bundles.setStringValue(hello, "Hello");
 		assertTrue(Bundles.isValue(hello));
 		assertFalse(Bundles.isReference(hello));
+	}
 	}
 
 
@@ -209,15 +223,18 @@ public class TestBundles {
 	@Test
 	public void safeMove() throws Exception {
 		Path tmp = Files.createTempDirectory("test");
+		tmp.toFile().deleteOnExit();
 		Path f1 = tmp.resolve("f1");
+		f1.toFile().deleteOnExit();
 		Files.createFile(f1);
 		assertFalse(isEmpty(tmp));
 
-		Bundle db = Bundles.createBundle();
-		Path f2 = db.getRoot().resolve("f2");
-		Bundles.safeMove(f1, f2);
-		assertTrue(isEmpty(tmp));
-		assertEquals(Arrays.asList("f2", "mimetype"), ls(db.getRoot()));
+		try (Bundle db = Bundles.createBundle()) {
+    		Path f2 = db.getRoot().resolve("f2");
+    		Bundles.safeMove(f1, f2);
+    		assertTrue(isEmpty(tmp));
+    		assertEquals(Arrays.asList("f2", "mimetype"), ls(db.getRoot()));
+		}
 
 	}
 	
@@ -225,8 +242,11 @@ public class TestBundles {
 	@Test(expected = IOException.class)
 	public void safeMoveFails() throws Exception {
 		Path tmp = Files.createTempDirectory("test");
+		tmp.toFile().deleteOnExit();
 		Path f1 = tmp.resolve("f1");
+		f1.toFile().deleteOnExit();
 		Path d1 = tmp.resolve("d1");
+		d1.toFile().deleteOnExit();
 		Files.createFile(f1);
 		Files.createDirectory(d1);
 		try {
@@ -239,7 +259,7 @@ public class TestBundles {
 	
 	@Test
 	public void setReference() throws Exception {
-		Bundle bundle = Bundles.createBundle();
+		try (Bundle bundle = Bundles.createBundle()) {
 		
 		Path ref = bundle.getRoot().resolve("ref");		
 		Bundles.setReference(ref, URI.create("http://example.org/test"));
@@ -255,11 +275,12 @@ public class TestBundles {
 		assertEquals("[InternetShortcut]", uriLines.get(0));
 		assertEquals("URL=http://example.org/test", uriLines.get(1));
 		assertEquals("", uriLines.get(2));				
+		}		
 	}
 	
 	@Test
 	public void setReferenceIri() throws Exception {
-		Bundle bundle = Bundles.createBundle();
+		try (Bundle bundle = Bundles.createBundle()) {
 		Path ref = bundle.getRoot().resolve("ref");		
 		URI uri = new URI("http", "xn--bcher-kva.example.com", "/s\u00F8iland/\u2603snowman", "\u2605star");
 		Path f = Bundles.setReference(ref, uri);
@@ -267,21 +288,25 @@ public class TestBundles {
 		// TODO: Double-check that this is actually correct escaping :)
 		assertEquals("URL=http://xn--bcher-kva.example.com/s%C3%B8iland/%E2%98%83snowman#%E2%98%85star", 
 				uriLines.get(1));
+		}
 	}
 
 	@Test
 	public void setStringValue() throws Exception {
-		Bundle bundle = Bundles.createBundle();
+		try (Bundle bundle = Bundles.createBundle()) {
 		Path file = bundle.getRoot().resolve("file");		
 		String string = "A string";
 		Bundles.setStringValue(file, string);
 		assertEquals(string, Files.readAllLines(file, Charset.forName("UTF-8")).get(0));
+		}
 	}
 	
 	@Test
 	public void withExtension() throws Exception {
 		Path testDir = Files.createTempDirectory("test");
+		testDir.toFile().deleteOnExit();
 		Path fileTxt = testDir.resolve("file.txt");
+		fileTxt.toFile().deleteOnExit();
 		assertEquals("file.txt", fileTxt.getFileName().toString()); // better be!
 		
 		Path fileHtml = Bundles.withExtension(fileTxt, ".html");
