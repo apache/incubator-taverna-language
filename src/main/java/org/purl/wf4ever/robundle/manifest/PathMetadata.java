@@ -76,5 +76,16 @@ public class PathMetadata {
     public void setUri(URI uri) {
         this.uri = uri;
     }
+    
+    @Override
+    public String toString() {
+        if (getUri() != null) { 
+            return getUri().toString();
+        }
+        if (getFile() != null) {
+            return getFile().toString();
+        }
+        return getProxy().toString();
+    }
 
 }
