@@ -15,13 +15,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.purl.wf4ever.robundle.Bundles;
 import org.purl.wf4ever.robundle.utils.RecursiveCopyFileVisitor.RecursiveCopyOption;
 
-public class MemoryEfficiencyIT {
+public class MemoryEfficiencyIT extends Helper {
 
     private Runtime rt = Runtime.getRuntime();
     
@@ -33,22 +31,9 @@ public class MemoryEfficiencyIT {
     private static final long GiB = 1024l*1024l*1024l;
     private BundleFileSystem fs;
 
-    @Before
-    public void newFS() throws Exception {
-        fs = BundleFileSystemProvider.newFileSystemFromTemporary();
-//        System.out.println(fs.getSource());
-    }
-
-    @After
-    public void closeFS() throws IOException {
-        fs.close();
-        Files.deleteIfExists(fs.getSource());
-    }
-
     Random rand = new Random();
 
     int MAX_WORKERS = 100;
-
     
     
     @Test

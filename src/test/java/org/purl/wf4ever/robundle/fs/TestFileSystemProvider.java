@@ -62,6 +62,7 @@ public class TestFileSystemProvider {
 	public void newByURI() throws Exception {
 
 		Path path = Files.createTempFile("test", "zip");
+		path.toFile().deleteOnExit();
 		BundleFileSystemProvider.createBundleAsZip(path, null);
 
 		// HACK: Use a opaque version of widget: with the file URI as scheme
@@ -76,6 +77,7 @@ public class TestFileSystemProvider {
     @Test
     public void bundleWithSpaces() throws Exception {
         Path path = Files.createTempFile("with several spaces", ".zip");
+        path.toFile().deleteOnExit();
         Files.delete(path);
         
         // Will fail with FileSystemNotFoundException without env:
@@ -102,6 +104,7 @@ public class TestFileSystemProvider {
     @Test
     public void bundleWithUnicode() throws Exception {
         Path path = Files.createTempFile("with\u2301unicode\u263bhere", ".zip");
+        path.toFile().deleteOnExit();
         Files.delete(path);
         //System.out.println(path); // Should contain a electrical symbol and smiley
         URI widget = new URI("widget", path.toUri().toString(), null);
@@ -126,6 +129,7 @@ public class TestFileSystemProvider {
 	@Test
 	public void newFileSystemFromExisting() throws Exception {
 		Path path = Files.createTempFile("test", null);
+		path.toFile().deleteOnExit();
 		Files.delete(path);
 		BundleFileSystemProvider.createBundleAsZip(path, "application/x-test");
 		assertTrue(Files.exists(path));
@@ -140,6 +144,7 @@ public class TestFileSystemProvider {
 	@Test
 	public void newFileSystemFromNewDefaultMime() throws Exception {
 		Path path = Files.createTempFile("test", null);
+		path.toFile().deleteOnExit();
 		Files.delete(path);
 		BundleFileSystem f = BundleFileSystemProvider.newFileSystemFromNew(path);
 		assertTrue(Files.exists(path));
@@ -152,6 +157,7 @@ public class TestFileSystemProvider {
 	@Test
 	public void newFileSystemFromNew() throws Exception {
 		Path path = Files.createTempFile("test", null);
+		path.toFile().deleteOnExit();
 		Files.delete(path);
 		BundleFileSystem f = BundleFileSystemProvider.newFileSystemFromNew(path, "application/x-test2");
 		assertTrue(Files.exists(path));
@@ -163,11 +169,15 @@ public class TestFileSystemProvider {
 	
 	@Test
 	public void newFileSystemFromTemporary() throws Exception {
-		BundleFileSystem f = BundleFileSystemProvider.newFileSystemFromTemporary();
-		assertTrue(Files.exists(f.getSource()));
-		assertEquals("application/vnd.wf4ever.robundle+zip", Files.readAllLines(
-				f.getRootDirectory().resolve("mimetype"), 
-				Charset.forName("ASCII")).get(0));
+	    Path source;
+		try (BundleFileSystem f = BundleFileSystemProvider.newFileSystemFromTemporary()) {		
+    		source = f.getSource();
+            assertTrue(Files.exists(source));
+    		assertEquals("application/vnd.wf4ever.robundle+zip", Files.readAllLines(
+    				f.getRootDirectory().resolve("mimetype"), 
+    				Charset.forName("ASCII")).get(0));
+		}
+		Files.delete(source);
 	}
 	
 

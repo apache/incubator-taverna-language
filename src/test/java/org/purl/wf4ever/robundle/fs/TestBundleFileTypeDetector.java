@@ -31,6 +31,7 @@ public class TestBundleFileTypeDetector {
 		BundleFileTypeDetector detector = new BundleFileTypeDetector();
 
 		Path zip = Files.createTempFile("test", ".bin");
+		zip.toFile().deleteOnExit();
 		try (ZipOutputStream zout = new ZipOutputStream(
 				Files.newOutputStream(zip))) {
 			ZipEntry entry = new ZipEntry("e");
@@ -46,6 +47,7 @@ public class TestBundleFileTypeDetector {
 		BundleFileTypeDetector detector = new BundleFileTypeDetector();
 
 		Path file = Files.createTempFile("test", ".bin");
+		file.toFile().deleteOnExit();
 		Files.write(file, Arrays.asList("This is just some text",
 				"added here to make the file", "larger than 38 bytes"), Charset
 				.forName("UTF8"));
@@ -58,6 +60,7 @@ public class TestBundleFileTypeDetector {
 		BundleFileTypeDetector detector = new BundleFileTypeDetector();
 
 		Path file = Files.createTempFile("test", ".bin");
+		file.toFile().deleteOnExit();
 		assertEquals(0, Files.size(file));
 		assertNull(detector.probeContentType(file));
 	}
