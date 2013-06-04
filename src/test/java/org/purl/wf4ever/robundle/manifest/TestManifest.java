@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,6 +20,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.purl.wf4ever.robundle.Bundle;
 import org.purl.wf4ever.robundle.Bundles;
+
+import com.github.jsonldjava.core.JSONLD;
+import com.github.jsonldjava.core.JSONLDTripleCallback;
+import com.github.jsonldjava.impl.JenaTripleCallback;
+import com.github.jsonldjava.utils.JSONUtils;
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.Resource;
 
 public class TestManifest {
     private Bundle bundle;
@@ -91,8 +105,57 @@ public class TestManifest {
         assertTrue(manifestStr.contains("f/file2.txt"));
         assertTrue(manifestStr.contains("hello.txt"));
         assertTrue(manifestStr.contains(helloMeta.getProxy().toASCIIString()));
+        
+        // Parse back as JSON-LD
+        JSONLDTripleCallback callback = new JenaTripleCallback();
+        try (InputStream jsonIn = Files.newInputStream(jsonld)) {        
+            Object input = JSONUtils.fromInputStream(jsonIn); 
+            Model model = (Model)JSONLD.toRDF(input, callback);
+            model.write(System.out, "TURTLE");
+           
+            String queryStr = "PREFIX ore: <http://www.openarchives.org/ore/terms/>" +
+            		"PREFIX bundle: <http://purl.org/wf4ever/bundle#>" +
+            		"SELECT ?file ?proxy " +
+            		"WHERE {" +
+            		"    ?ro ore:aggregates ?file ." +
+            		"    OPTIONAL { ?file bundle:hasProxy ?proxy . } " +
+            		"}";
+            Query query = QueryFactory.create(queryStr) ;
+            QueryExecution qexec = QueryExecutionFactory.create(query, model);
+            
+            try {
+                ResultSet results = qexec.execSelect();
+                int aggregationCount=0;
+                for (; results.hasNext(); aggregationCount++) {
+                    QuerySolution soln = results.nextSolution();
+                    Resource fileRes = soln.getResource("file");
+                    Resource proxy = soln.getResource("proxy");
+                    Path file = Paths.get(asURI(fileRes));
+                    assertTrue(Files.exists(file));
+                    PathMetadata meta = manifest.getAggregation(file);                    
+                    assertEquals(asURI(proxy), meta.getProxy());
+                }
+                assertEquals("Could not find all aggregations from manifest: " + manifest.getAggregates(),
+                        manifest.getAggregates().size(), aggregationCount);
+            } finally {
+                // WHY is not QueryExecution an instance of Closable?
+                qexec.close();
+            }
+            
+        }        
     }
     
+    private URI asURI(Resource proxy) {
+        if (proxy == null) {
+            return null;
+        }
+        String uri = proxy.getURI();
+        if (uri == null) {
+            return null;
+        }
+        return URI.create(uri);
+    }
+
     @Before
     public void exampleBundle() throws IOException {
         Path source;
