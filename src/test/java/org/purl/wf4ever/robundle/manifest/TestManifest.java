@@ -14,15 +14,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.purl.wf4ever.robundle.Bundle;
 import org.purl.wf4ever.robundle.Bundles;
 
 public class TestManifest {
+    private Bundle bundle;
+
     @Test
     public void populateFromBundle() throws Exception {
-        Bundle bundle = exampleBundle();
-
         Path r = bundle.getRoot();
         URI base = r.toUri();
 
@@ -62,7 +64,6 @@ public class TestManifest {
 
     @Test
     public void writeAsJsonLD() throws Exception {
-        Bundle bundle = exampleBundle();
         Manifest manifest = new Manifest(bundle);
         manifest.populateFromBundle();
         PathMetadata helloMeta = null;
@@ -92,7 +93,8 @@ public class TestManifest {
         assertTrue(manifestStr.contains(helloMeta.getProxy().toASCIIString()));
     }
     
-    protected Bundle exampleBundle() throws IOException {
+    @Before
+    public void exampleBundle() throws IOException {
         Path source;
         try (Bundle bundle = Bundles.createBundle()) {
             source = bundle.getSource();
@@ -111,6 +113,12 @@ public class TestManifest {
             Files.createDirectory(nested.resolve("empty"));
             bundle.setDeleteOnClose(false);
         }
-        return Bundles.openBundle(source);
+        bundle = Bundles.openBundle(source);
+    }
+    
+    @After
+    public void closeBundle() throws IOException {
+        bundle.close();
+        
     }
 }
