@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.net.URI;
 import java.nio.channels.FileChannel;
 import java.nio.file.DirectoryStream;
@@ -22,52 +23,49 @@ import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipOutputStream;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 public class TestZipFS {
 
     private static Path zip;
+    private FileSystem fs;
 
     @Test
     public void fileChannelCreateNew() throws Exception {
-        try (FileSystem fs = tempZipFS()) {
-            Path test = fs.getPath("test.txt");
-            EnumSet<StandardOpenOption> options =
-                    EnumSet.<StandardOpenOption>of(StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
-            fs.provider().newFileChannel(test, options);
-        }
-        
+        Path test = fs.getPath("test.txt");
+        EnumSet<StandardOpenOption> options =
+                EnumSet.<StandardOpenOption>of(StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
+        fs.provider().newFileChannel(test, options);
     }
 
     @Test
     public void fileChannelCreate() throws Exception {
-        try (FileSystem fs = tempZipFS()) {
+        try {
             Path test = fs.getPath("test.txt");
             FileChannel.open(test, StandardOpenOption.WRITE, StandardOpenOption.CREATE).close();
         } catch (NoSuchFileException ex) {
             System.err.println("Unexpected exception");
             ex.printStackTrace();
+            // Bug in JDK
         }
     }
 
     @Test(expected=FileAlreadyExistsException.class)
     public void fileChannelCreateFails() throws Exception {
-        try (FileSystem fs = tempZipFS()) {
             Path test = fs.getPath("test.txt");
             Files.createFile(test);
             FileChannel.open(test, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW).close();
-        }
     }
 
     @Test
     public void fileChannelTruncate() throws Exception {
-        try (FileSystem fs = tempZipFS()) {
             Path test = fs.getPath("test.txt");
             Files.write(test, new byte[1024]);
             assertEquals(1024, Files.size(test));
             FileChannel.open(test, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING).close();
             assertEquals(0, Files.size(test));
-        }
     }
 
     
@@ -78,7 +76,6 @@ public class TestZipFS {
      */
     @Test
     public void directoryOrFile() throws Exception {
-        try (FileSystem fs = tempZipFS()) {
             Path folder = fs.getPath("folder");
             assertFalse(Files.exists(folder));
             Files.createFile(folder);
@@ -116,7 +113,8 @@ public class TestZipFS {
             // assertTrue(Files.isDirectory(child.getParent()));
             // Or the original Path
             // assertTrue(Files.isDirectory(folder));
-        }
+        
+            fs.close();
         // What if we open it again.. can we find both?
         try (FileSystem fs2 = FileSystems.newFileSystem(zip, null)) {
             assertTrue(Files.isRegularFile(fs2.getPath("folder")));
@@ -150,14 +148,21 @@ public class TestZipFS {
 
     }
 
-    public static FileSystem tempZipFS() throws Exception {
+    @Before
+    public void tempZipFS() throws Exception {
         zip = Files.createTempFile("test", ".zip");
         Files.delete(zip);
         System.out.println(zip);
         URI jar = new URI("jar", zip.toUri().toString(), null);
         Map<String, Object> env = new HashMap<>();
         env.put("create", "true");
-        return FileSystems.newFileSystem(jar, env);
+        fs = FileSystems.newFileSystem(jar, env);
+    }
+
+    @After
+    public void deleteTempFS() throws IOException {
+        fs.close();
+        Files.deleteIfExists(zip);
     }
     
     /* http://stackoverflow.com/a/16584723/412540 */
