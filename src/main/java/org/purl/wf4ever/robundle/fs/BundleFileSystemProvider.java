@@ -250,6 +250,8 @@ public class BundleFileSystemProvider extends FileSystemProvider {
     public static BundleFileSystem newFileSystemFromTemporary()
             throws IOException {
         Path tempDir = Files.createTempDirectory("robundle");
+        tempDir.toFile().deleteOnExit();
+
         // Why inside a tempDir? Because ZipFileSystemProvider
         // creates neighbouring temporary files
         // per file that is written to zip, which could mean a lot of
@@ -257,6 +259,7 @@ public class BundleFileSystemProvider extends FileSystemProvider {
         Path bundle = tempDir.resolve("robundle.zip");
         BundleFileSystem fs = BundleFileSystemProvider.newFileSystemFromNew(
                 bundle, null);
+        bundle.toFile().deleteOnExit();
         return fs;
     }
 
