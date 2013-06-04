@@ -26,6 +26,7 @@ import java.util.zip.ZipOutputStream;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.purl.wf4ever.robundle.Bundles;
 
 public class TestZipFS {
 
@@ -170,6 +171,7 @@ public class TestZipFS {
     public void jarWithSpaces() throws Exception {
         Path path = Files.createTempFile("with several spaces", ".zip");
         Files.delete(path);
+        path.toFile().deleteOnExit();
 
         // Will fail with FileSystemNotFoundException without env:
         //FileSystems.newFileSystem(path, null);
@@ -205,6 +207,7 @@ public class TestZipFS {
     public void jarWithSpacesJava8() throws Exception {
 
         Path dir = Files.createTempDirectory("test");
+        try {
         dir.resolve("test");
 
         Path path = dir.resolve("with several spaces.zip");
@@ -259,6 +262,10 @@ public class TestZipFS {
                 assertEquals("with several spaces.zip", file.getFileName().toString());
                 // not with%20several%20spaces.zip
             }
+        } 
+        
+        } finally {
+            Bundles.deleteRecursively(dir);
         }
 
     }
