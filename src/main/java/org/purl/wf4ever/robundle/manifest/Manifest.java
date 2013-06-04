@@ -255,4 +255,20 @@ public class Manifest {
         }
         return jsonld;
     }
+
+    public PathMetadata getAggregation(Path file) {
+        URI fileUri = file.toUri();
+        fileUri = file.getRoot().toUri().relativize(fileUri);
+        for (PathMetadata meta : getAggregates()) {
+            if (fileUri.equals(meta.getFile()) || fileUri.equals(meta.getUri())) {
+                return meta;
+            }
+        }
+        // Let's add it
+//        PathMetadata meta = new PathMetadata();
+//        meta.setFile(fileUri);
+//        getAggregates().add(meta);
+//        return meta;
+        return null;
+    }
 }
