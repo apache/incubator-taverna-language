@@ -86,12 +86,32 @@ public class TestBundles {
 
 	@Test
 	public void createBundle() throws Exception {
-		Bundle bundle = Bundles.createBundle();
-		assertTrue(Files.isDirectory(bundle.getRoot()));
-		// TODO: Should this instead return a FileSystem so we can close() it?
+	    Path source = null;
+		try (Bundle bundle = Bundles.createBundle()) {	
+		    assertTrue(Files.isDirectory(bundle.getRoot()));
+		    source = bundle.getSource();
+		    assertTrue(Files.exists(source));
+		}
+		// As it was temporary file it should be deleted on close
+		assertFalse(Files.exists(source));
 	}
 
 
+
+    @Test
+    public void createBundlePath() throws Exception {
+        Path source = Files.createTempFile("test", ".zip");
+        try (Bundle bundle = Bundles.createBundle(source)) {  
+            assertTrue(Files.isDirectory(bundle.getRoot()));
+            assertEquals(source, bundle.getSource());
+            assertTrue(Files.exists(source));
+        }
+        // As it was a specific path, it should NOT be deleted on close
+        assertTrue(Files.exists(source));
+    }
+
+
+	
 
 	@Test
 	public void getReference() throws Exception {
