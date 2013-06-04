@@ -11,26 +11,10 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-public class TestBundleFileSystem {
+public class TestBundleFileSystem extends Helper {
 
-    private BundleFileSystem fs;
-
-    @Before
-    public void newFS() throws Exception {
-        fs = BundleFileSystemProvider.newFileSystemFromTemporary();
-        // System.out.println(fs.getSource());
-    }
-
-    @After
-    public void closeFS() throws IOException {
-        fs.close();
-        Files.deleteIfExists(fs.getSource());
-    }
-    
     @Test
     public void writeToNewFile() throws Exception {
         Path file = fs.getPath("test.txt");
