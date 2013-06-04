@@ -69,7 +69,7 @@ public class Bundles {
     public static Bundle createBundle(Path path) throws IOException {
         BundleFileSystem fs = BundleFileSystemProvider
                 .newFileSystemFromNew(path);
-        return new Bundle(fs.getRootDirectory(), true);
+        return new Bundle(fs.getRootDirectory(), false);
     }
 
     public static void deleteRecursively(Path p) throws IOException {
