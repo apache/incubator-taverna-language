@@ -101,6 +101,7 @@ public class TestBundles {
     @Test
     public void createBundlePath() throws Exception {
         Path source = Files.createTempFile("test", ".zip");
+        Files.delete(source);
         try (Bundle bundle = Bundles.createBundle(source)) {  
             assertTrue(Files.isDirectory(bundle.getRoot()));
             assertEquals(source, bundle.getSource());
@@ -110,8 +111,22 @@ public class TestBundles {
         assertTrue(Files.exists(source));
     }
 
+    @Test
+    public void createBundlePathExists() throws Exception {
+        Path source = Files.createTempFile("test", ".zip");
+        assertTrue(Files.exists(source)); // will be overwritten
+        try (Bundle bundle = Bundles.createBundle(source)) {  
+        }
+        // As it was a specific path, it should NOT be deleted on close
+        assertTrue(Files.exists(source));
+    }
 
-	
+    @Test(expected=IOException.class)
+    public void createBundleExistsAsDirFails() throws Exception {
+        Path source = Files.createTempDirectory("test");
+        try (Bundle bundle = Bundles.createBundle(source)) {  
+        }
+    }
 
 	@Test
 	public void getReference() throws Exception {
