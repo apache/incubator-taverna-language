@@ -36,13 +36,13 @@ public class MemoryEfficiencyIT {
     @Before
     public void newFS() throws Exception {
         fs = BundleFileSystemProvider.newFileSystemFromTemporary();
-        System.out.println(fs.getSource());
+//        System.out.println(fs.getSource());
     }
 
     @After
     public void closeFS() throws IOException {
         fs.close();
-//        Files.deleteIfExists(fs.getSource());
+        Files.deleteIfExists(fs.getSource());
     }
 
     Random rand = new Random();
