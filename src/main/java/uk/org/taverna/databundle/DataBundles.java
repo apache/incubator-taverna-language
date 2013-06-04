@@ -1,6 +1,7 @@
 package uk.org.taverna.databundle;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryIteratorException;
@@ -322,9 +323,9 @@ public class DataBundles extends Bundles {
         
         WorkflowBundleIO wfBundleIO = new WorkflowBundleIO();
         // TODO: Save as nested folder?
-        try {
+        try (OutputStream outputStream = Files.newOutputStream(bundlePath)) {
             wfBundleIO.writeBundle(wfBundle, 
-                    Files.newOutputStream(bundlePath), "application/vnd.taverna.scufl2.workflow-bundle");
+                    outputStream, "application/vnd.taverna.scufl2.workflow-bundle");
         } catch (WriterException e) {
             throw new IOException("Can't write workflow bundle to: " + bundlePath, e);
         } 
