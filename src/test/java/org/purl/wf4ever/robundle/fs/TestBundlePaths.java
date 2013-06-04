@@ -5,29 +5,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-public class TestBundlePaths {
+public class TestBundlePaths extends Helper {
 
-    private BundleFileSystem fs;
-
-    @Before
-    public void makeFS() throws IOException {
-        fs = BundleFileSystemProvider.newFileSystemFromTemporary();
-    }
-    
-    @After
-    public void closeAndDeleteFS() throws IOException {
-        fs.close();
-        Files.deleteIfExists(fs.getSource());
-    }
-    
 	@Test
 	public void endsWith() throws Exception {
 	    Path root = fs.getRootDirectory();
