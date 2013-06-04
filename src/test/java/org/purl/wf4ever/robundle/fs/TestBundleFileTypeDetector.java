@@ -20,10 +20,10 @@ public class TestBundleFileTypeDetector {
 	@Test
 	public void detectRoBundle() throws Exception {
 		BundleFileTypeDetector detector = new BundleFileTypeDetector();
-		Bundle bundle = Bundles.createBundle();
-
-		assertEquals("application/vnd.wf4ever.robundle+zip",
-				detector.probeContentType(bundle.getSource()));
+		try (Bundle bundle = Bundles.createBundle()) {
+            assertEquals("application/vnd.wf4ever.robundle+zip",
+                    detector.probeContentType(bundle.getSource()));
+        }
 	}
 
 	@Test
@@ -64,9 +64,10 @@ public class TestBundleFileTypeDetector {
 	
 	@Test
 	public void detectorSPI() throws Exception {
-		Bundle bundle = Bundles.createBundle();		
-		assertEquals("application/vnd.wf4ever.robundle+zip",
-				Files.probeContentType(bundle.getSource()));
+		try (Bundle bundle = Bundles.createBundle()) {		
+    		assertEquals("application/vnd.wf4ever.robundle+zip",
+    				Files.probeContentType(bundle.getSource()));
+		}
 		
 	}
 	

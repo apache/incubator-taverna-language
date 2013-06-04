@@ -67,9 +67,10 @@ public class TestFileSystemProvider {
 		// HACK: Use a opaque version of widget: with the file URI as scheme
 		// specific part
 		URI w = new URI("widget", path.toUri().toASCIIString(), null);
-		FileSystem fs = FileSystems.newFileSystem(w,
-				Collections.<String, Object> emptyMap());
-		assertTrue(fs instanceof BundleFileSystem);
+		try (FileSystem fs = FileSystems.newFileSystem(w,
+				Collections.<String, Object> emptyMap())) {
+		    assertTrue(fs instanceof BundleFileSystem);
+		}
 	}
 
     @Test
@@ -128,11 +129,12 @@ public class TestFileSystemProvider {
 		Files.delete(path);
 		BundleFileSystemProvider.createBundleAsZip(path, "application/x-test");
 		assertTrue(Files.exists(path));
-		BundleFileSystem f = BundleFileSystemProvider.newFileSystemFromExisting(path);
-		assertEquals(path, f.getSource());
-		assertEquals("application/x-test", Files.readAllLines(
-				f.getRootDirectory().resolve("mimetype"), 
-				Charset.forName("ASCII")).get(0));
+		try (BundleFileSystem f = BundleFileSystemProvider.newFileSystemFromExisting(path)) {
+    		assertEquals(path, f.getSource());
+    		assertEquals("application/x-test", Files.readAllLines(
+    				f.getRootDirectory().resolve("mimetype"), 
+    				Charset.forName("ASCII")).get(0));
+		}
 	}
 	
 	@Test
