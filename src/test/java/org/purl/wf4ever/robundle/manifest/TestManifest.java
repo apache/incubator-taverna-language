@@ -22,6 +22,7 @@ import org.purl.wf4ever.robundle.Bundle;
 import org.purl.wf4ever.robundle.Bundles;
 
 import com.github.jsonldjava.core.JSONLD;
+import com.github.jsonldjava.core.JSONLDProcessingError;
 import com.github.jsonldjava.core.JSONLDTripleCallback;
 import com.github.jsonldjava.impl.JenaTripleCallback;
 import com.github.jsonldjava.utils.JSONUtils;
@@ -107,10 +108,8 @@ public class TestManifest {
         assertTrue(manifestStr.contains(helloMeta.getProxy().toASCIIString()));
         
         // Parse back as JSON-LD
-        JSONLDTripleCallback callback = new JenaTripleCallback();
         try (InputStream jsonIn = Files.newInputStream(jsonld)) {        
-            Object input = JSONUtils.fromInputStream(jsonIn); 
-            Model model = (Model)JSONLD.toRDF(input, callback);
+            Model model = jsonLdAsJenaModel(jsonIn);
             model.write(System.out, "TURTLE");
            
             String queryStr = "PREFIX ore: <http://www.openarchives.org/ore/terms/>" +
@@ -140,9 +139,24 @@ public class TestManifest {
             } finally {
                 // WHY is not QueryExecution an instance of Closable?
                 qexec.close();
-            }
-            
+            }            
         }        
+    }
+    
+    @Test
+    public void readManifest() throws Exception {
+        try (InputStream jsonIn = getClass().getResourceAsStream("/manifest.json")) {        
+            Model model = jsonLdAsJenaModel(jsonIn);
+            model.write(System.out, "TURTLE");
+        }
+    }
+
+    protected Model jsonLdAsJenaModel(InputStream jsonIn) throws IOException,
+            JSONLDProcessingError {
+        Object input = JSONUtils.fromInputStream(jsonIn);
+        JSONLDTripleCallback callback = new JenaTripleCallback();
+        Model model = (Model)JSONLD.toRDF(input, callback);
+        return model;
     }
     
     private URI asURI(Resource proxy) {
