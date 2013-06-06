@@ -8,6 +8,7 @@ import java.io.InputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestJsonExport {
@@ -30,6 +31,7 @@ public class TestJsonExport {
         System.out.println(FileUtils.readFileToString(jsonFile, "UTF-8"));
     }
     
+    @Ignore("Takes 24 seconds!")
     @Test
     public void jsonExportNested() throws Exception {
         File tmp = File.createTempFile("enm", ".t2flow");
