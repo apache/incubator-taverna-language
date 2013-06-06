@@ -251,6 +251,13 @@ public class TestDataBundles {
         assertTrue(item8.getFileName().toString().contains("8"));
         DataBundles.setStringValue(item8, "item 8");
         assertEquals(9, DataBundles.getListSize(list));
+        
+        // Evil bit - very high number
+        long highNumber = 3l * Integer.MAX_VALUE;
+        Path itemHigh = DataBundles.getListItem(list, highNumber);
+        assertTrue(itemHigh.getFileName().toString().contains(Long.toString(highNumber)));
+        DataBundles.setStringValue(itemHigh, "item 8");
+        assertEquals(highNumber+1l, DataBundles.getListSize(list));
     }
 	
 	@Test
