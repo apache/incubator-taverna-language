@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -18,7 +17,6 @@ import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Ported;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.common.URITools;
-import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
@@ -112,13 +110,12 @@ public class JsonExport {
     
     protected ObjectNode annotations(Child<?> bean) {
         ObjectNode node = mapper.createObjectNode();
-        for (Annotation ann : annotationsFor(bean)) {
+        for (Annotation ann : scufl2Tools.annotationsFor(bean)) {
             URI annUri = uriTools.uriForBean(ann);
             for (PropertyObject s : ann.getBodyStatements()) {
                 if (s instanceof PropertyResource) {
                     PropertyResource r = (PropertyResource) s;
                     URI resourceUri = annUri.resolve(r.getResourceURI());
-                    System.out.println(resourceUri);
                     for (Entry<URI, SortedSet<PropertyObject>> entry: r.getProperties().entrySet()) {
                         URI property = annUri.resolve(entry.getKey());
                         if (entry.getValue().size() == 1) {
@@ -136,24 +133,6 @@ public class JsonExport {
             }
         }
         return node;
-    }
-
-    protected List<Annotation> annotationsFor(Child<?> bean) {
-        WorkflowBundle bundle = scufl2Tools.findParent(WorkflowBundle.class, bean);
-        return annotationsFor(bean, bundle);
-    }
-
-    protected List<Annotation> annotationsFor(WorkflowBean bean, WorkflowBundle bundle) {
-        ArrayList<Annotation> annotations = new ArrayList<Annotation>();
-        if (bundle == null) {
-            return annotations;
-        }
-        for (Annotation ann : bundle.getAnnotations()) {
-            if (ann.getTarget().equals(bean)){
-                annotations.add(ann);
-            }
-        }
-        return annotations;
     }
 
     public void convert(String[] filepaths) throws ReaderException,
