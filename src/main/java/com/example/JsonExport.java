@@ -78,9 +78,9 @@ public class JsonExport {
 
     private ObjectMapper mapper = new ObjectMapper();
     
-    private URITools uriTools = new URITools();
-    
     private Scufl2Tools scufl2Tools = new Scufl2Tools();
+    
+    private URITools uriTools = new URITools();
     
     public JsonExport() {
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -93,6 +93,67 @@ public class JsonExport {
         List<WorkflowBundleWriter> writers = io.getWriters();
         writers.add(jsonWriter);        
         io.setWriters(writers);
+    }
+
+    protected void addPorts(Ported ported, ObjectNode p) {
+        ArrayNode inputs = mapper.createArrayNode();        
+        for (Port port : ported.getInputPorts()) {
+            inputs.add(toJson(port));
+        }
+        p.put("inputs", inputs);        
+        
+        ArrayNode outputs = mapper.createArrayNode();        
+        for (Port port : ported.getOutputPorts()) {
+            outputs.add(toJson(port));
+            // FIXME: Do we need the id for ports? Needed if we add datalinks
+        }
+        p.put("outputs", outputs);
+    }
+    
+    protected ObjectNode annotations(Child<?> bean) {
+        ObjectNode node = mapper.createObjectNode();
+        for (Annotation ann : annotationsFor(bean)) {
+            URI annUri = uriTools.uriForBean(ann);
+            for (PropertyObject s : ann.getBodyStatements()) {
+                if (s instanceof PropertyResource) {
+                    PropertyResource r = (PropertyResource) s;
+                    URI resourceUri = annUri.resolve(r.getResourceURI());
+                    System.out.println(resourceUri);
+                    for (Entry<URI, SortedSet<PropertyObject>> entry: r.getProperties().entrySet()) {
+                        URI property = annUri.resolve(entry.getKey());
+                        if (entry.getValue().size() == 1) {
+                            PropertyObject obj = entry.getValue().iterator().next();
+                            node.put(property.toString(), toJson(obj, annUri));
+                        } else {
+                            ArrayNode list = mapper.createArrayNode();
+                            node.put(property.toString(), list);
+                            for (PropertyObject obj : entry.getValue()) {
+                                list.add(toJson(obj, annUri));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return node;
+    }
+
+    protected List<Annotation> annotationsFor(Child<?> bean) {
+        WorkflowBundle bundle = scufl2Tools.findParent(WorkflowBundle.class, bean);
+        return annotationsFor(bean, bundle);
+    }
+
+    protected List<Annotation> annotationsFor(WorkflowBean bean, WorkflowBundle bundle) {
+        ArrayList<Annotation> annotations = new ArrayList<Annotation>();
+        if (bundle == null) {
+            return annotations;
+        }
+        for (Annotation ann : bundle.getAnnotations()) {
+            if (ann.getTarget().equals(bean)){
+                annotations.add(ann);
+            }
+        }
+        return annotations;
     }
 
     public void convert(String[] filepaths) throws ReaderException,
@@ -108,25 +169,47 @@ public class JsonExport {
             io.writeBundle(wfBundle, workflowFile, "application/ld+json");
         }
     }
-    
-    public ObjectNode toJson(WorkflowBundle wfBundle) {
-        
-        ObjectNode root = mapper.createObjectNode();
-        ArrayNode contextList = root.arrayNode();
-        root.put("@context", contextList);
-        ObjectNode context = root.objectNode();
-        contextList.add("https://w3id.org/scufl2/context");
-        contextList.add(context);
-        URI base = wfBundle.getGlobalBaseURI();
-        context.put("@base", base.toASCIIString());
-        root.put("id", base.toASCIIString());
+
+    protected ObjectNode toJson(Port port) {
+       ObjectNode p = mapper.createObjectNode();
+       p.put("name", port.getName());
+       p.putPOJO("id", uriTools.relativeUriForBean(port, 
+               scufl2Tools.findParent(WorkflowBundle.class, ((Child<?>)port))));
        
-//        root.put("name", wfBundle.getName());
-//        root.put("revisions", toJson(wfBundle.getCurrentRevision()));
-        
-        root.put("workflow", toJson(wfBundle.getMainWorkflow()));
-        
-        return root;
+       if (port instanceof DepthPort) {
+        DepthPort depthPort = (DepthPort) port;
+        if (depthPort.getDepth() != null) {
+            p.put("depth", depthPort.getDepth());
+        }
+       }
+       if (port instanceof GranularDepthPort) {
+           GranularDepthPort granularDepthPort = (GranularDepthPort) port;
+           if (granularDepthPort.getGranularDepth() != null && 
+                   ! granularDepthPort.getGranularDepth().equals(granularDepthPort.getDepth())) {
+               p.put("granularDepth", granularDepthPort.getGranularDepth());
+           }
+       }
+       p.putAll(annotations((Child<?>)port));
+       return p;
+    }
+
+    protected JsonNode toJson(Processor proc) {
+        ObjectNode p = mapper.createObjectNode();
+        p.putPOJO("id", uriTools.relativeUriForBean(proc, proc.getParent().getParent()));
+        p.put("name", proc.getName());
+        addPorts(proc, p);
+        p.putAll(annotations(proc));
+        return p;
+    }
+    
+    protected JsonNode toJson(PropertyObject obj, URI annUri) {
+        if (obj instanceof PropertyLiteral) {
+            PropertyLiteral lit = (PropertyLiteral) obj;
+            return new TextNode(lit.getLiteralValue());
+            // TODO: Support different literal types like integers
+        }
+        // TODO: Other types of annotations!
+        return null;
     }
 
     protected JsonNode toJson(Revision currentRevision) {
@@ -166,106 +249,23 @@ public class JsonExport {
         return wf;
     }
 
-    private ObjectNode annotations(Child<?> bean) {
-        ObjectNode node = mapper.createObjectNode();
-        for (Annotation ann : annotationsFor(bean)) {
-            URI annUri = uriTools.uriForBean(ann);
-            for (PropertyObject s : ann.getBodyStatements()) {
-                if (s instanceof PropertyResource) {
-                    PropertyResource r = (PropertyResource) s;
-                    URI resourceUri = annUri.resolve(r.getResourceURI());
-                    System.out.println(resourceUri);
-                    for (Entry<URI, SortedSet<PropertyObject>> entry: r.getProperties().entrySet()) {
-                        URI property = annUri.resolve(entry.getKey());
-                        if (entry.getValue().size() == 1) {
-                            PropertyObject obj = entry.getValue().iterator().next();
-                            node.put(property.toString(), toJson(obj, annUri));
-                        } else {
-                            ArrayNode list = mapper.createArrayNode();
-                            node.put(property.toString(), list);
-                            for (PropertyObject obj : entry.getValue()) {
-                                list.add(toJson(obj, annUri));
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return node;
-    }
-
-    private JsonNode toJson(PropertyObject obj, URI annUri) {
-        if (obj instanceof PropertyLiteral) {
-            PropertyLiteral lit = (PropertyLiteral) obj;
-            return new TextNode(lit.getLiteralValue());
-            // TODO: Support different literal types like integers
-        }
-        // TODO: Other types of annotations!
-        return null;
-    }
-
-    private List<Annotation> annotationsFor(Child<?> bean) {
-        WorkflowBundle bundle = scufl2Tools.findParent(WorkflowBundle.class, bean);
-        return annotationsFor(bean, bundle);
-    }
-    
-    private List<Annotation> annotationsFor(WorkflowBean bean, WorkflowBundle bundle) {
-        ArrayList<Annotation> annotations = new ArrayList<Annotation>();
-        if (bundle == null) {
-            return annotations;
-        }
-        for (Annotation ann : bundle.getAnnotations()) {
-            if (ann.getTarget().equals(bean)){
-                annotations.add(ann);
-            }
-        }
-        return annotations;
-    }
-
-    protected JsonNode toJson(Processor proc) {
-        ObjectNode p = mapper.createObjectNode();
-        p.putPOJO("id", uriTools.relativeUriForBean(proc, proc.getParent().getParent()));
-        p.put("name", proc.getName());
-        addPorts(proc, p);
-        p.putAll(annotations(proc));
-        return p;
-    }
-
-    protected void addPorts(Ported ported, ObjectNode p) {
-        ArrayNode inputs = mapper.createArrayNode();        
-        for (Port port : ported.getInputPorts()) {
-            inputs.add(toJson(port));
-        }
-        p.put("inputs", inputs);        
+    public ObjectNode toJson(WorkflowBundle wfBundle) {
         
-        ArrayNode outputs = mapper.createArrayNode();        
-        for (Port port : ported.getOutputPorts()) {
-            outputs.add(toJson(port));
-            // FIXME: Do we need the id for ports? Needed if we add datalinks
-        }
-        p.put("outputs", outputs);
-    }
-
-    protected ObjectNode toJson(Port port) {
-       ObjectNode p = mapper.createObjectNode();
-       p.put("name", port.getName());
-       p.putPOJO("id", uriTools.relativeUriForBean(port, 
-               scufl2Tools.findParent(WorkflowBundle.class, ((Child<?>)port))));
+        ObjectNode root = mapper.createObjectNode();
+        ArrayNode contextList = root.arrayNode();
+        root.put("@context", contextList);
+        ObjectNode context = root.objectNode();
+        contextList.add("https://w3id.org/scufl2/context");
+        contextList.add(context);
+        URI base = wfBundle.getGlobalBaseURI();
+        context.put("@base", base.toASCIIString());
+        root.put("id", base.toASCIIString());
        
-       if (port instanceof DepthPort) {
-        DepthPort depthPort = (DepthPort) port;
-        if (depthPort.getDepth() != null) {
-            p.put("depth", depthPort.getDepth());
-        }
-       }
-       if (port instanceof GranularDepthPort) {
-           GranularDepthPort granularDepthPort = (GranularDepthPort) port;
-           if (granularDepthPort.getGranularDepth() != null && 
-                   ! granularDepthPort.getGranularDepth().equals(granularDepthPort.getDepth())) {
-               p.put("granularDepth", granularDepthPort.getGranularDepth());
-           }
-       }
-       p.putAll(annotations((Child<?>)port));
-       return p;
+//        root.put("name", wfBundle.getName());
+//        root.put("revisions", toJson(wfBundle.getCurrentRevision()));
+        
+        root.put("workflow", toJson(wfBundle.getMainWorkflow()));
+        
+        return root;
     }
 }
