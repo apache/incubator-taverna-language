@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
+import uk.org.taverna.scufl2.api.annotation.Annotation;
 import uk.org.taverna.scufl2.api.common.Visitor.VisitorWithPath;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
@@ -72,6 +73,25 @@ public class Scufl2Tools {
 		}
 
 	}
+	
+    public List<Annotation> annotationsFor(Child<?> bean) {
+        WorkflowBundle bundle = findParent(WorkflowBundle.class, bean);
+        return annotationsFor(bean, bundle);
+    }
+
+    public List<Annotation> annotationsFor(WorkflowBean bean, WorkflowBundle bundle) {
+        ArrayList<Annotation> annotations = new ArrayList<Annotation>();
+        if (bundle == null) {
+            return annotations;
+        }
+        for (Annotation ann : bundle.getAnnotations()) {
+            if (ann.getTarget().equals(bean)){
+                annotations.add(ann);
+            }
+        }
+        return annotations;
+    }
+	
 
 	/**
 	 * Returns the {@link Configuration} for a {@link Configurable} in the given
