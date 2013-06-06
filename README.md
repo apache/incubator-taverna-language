@@ -162,7 +162,8 @@ Converting multiple files:
     helloworld.json
     helloanyone.json
     
-[helloworld.json] [helloanyone.json]
+See the converted [helloworld.json](helloworld.json) and
+[helloanyone.json](helloanyone.json)
 
 Example using STDIN/STDOUT:
 
