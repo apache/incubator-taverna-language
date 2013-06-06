@@ -47,6 +47,18 @@
 			<optional>true</optional>
 		</dependency>
 
+        <!--  For writing out JSON-LD annotations -->
+
+        <dependency>
+            <groupId>com.github.jsonld-java</groupId>
+            <artifactId>jsonld-java</artifactId>
+            <version>0.2-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.jsonld-java</groupId>
+            <artifactId>jsonld-java-jena</artifactId>
+            <version>0.2-SNAPSHOT</version>
+        </dependency>
 
 		<!-- Following only needed by src/test/java -->
 		<dependency>

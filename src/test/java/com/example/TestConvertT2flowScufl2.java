@@ -14,7 +14,7 @@ import org.junit.Test;
 
 public class TestConvertT2flowScufl2 {
 	@Test
-	public void testname() throws Exception {
+	public void convertToScufl2() throws Exception {
 		File tmp = File.createTempFile("scufl2-ebi-interproscan", ".t2flow");
 		tmp.deleteOnExit();
 		InputStream ebi = getClass().getResourceAsStream("/workflows/t2flow/ebi_interproscan_for_taverna_2_317472.t2flow");
