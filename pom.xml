@@ -6,7 +6,7 @@
 	<version>0.1.1-SNAPSHOT</version>
 	<name>SCUFL2 examples</name>
 	<properties>
-		<scufl2.version>0.11.0</scufl2.version>
+		<scufl2.version>0.12.0-SNAPSHOT</scufl2.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>

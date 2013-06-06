@@ -199,6 +199,20 @@ public class JsonExport {
         p.put("name", proc.getName());
         addPorts(proc, p);
         p.putAll(annotations(proc));
+        
+        List<Workflow> nested = scufl2Tools.nestedWorkflowsForProcessor(proc, 
+                proc.getParent().getParent().getMainProfile());
+        if (! nested.isEmpty()) {
+            if (nested.size() == 1) {
+                p.put("nestedWorkflow", toJson(nested.iterator().next()));
+            } else {
+                ArrayNode list = mapper.createArrayNode();
+                for (Workflow w : nested) {
+                    list.add(toJson(w));
+                }
+                p.put("nestedWorkflow", list);
+            }
+        }
         return p;
     }
     
