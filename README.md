@@ -159,8 +159,10 @@ Usage:
 Converting multiple files:
 
     c:\Users\stain\src\scufl2-examples>target\scufl2-examples\bin\jsonexport helloworld.t2flow helloanyone.wfbundle
-    [helloworld.json]
-    [helloanyone.json]
+    helloworld.json
+    helloanyone.json
+    
+[helloworld.json] [helloanyone.json]
 
 Example using STDIN/STDOUT:
 
