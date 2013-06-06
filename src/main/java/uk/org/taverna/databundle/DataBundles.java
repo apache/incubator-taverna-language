@@ -241,23 +241,8 @@ public class DataBundles extends Bundles {
     }
 	
 	public static Path newListItem(Path list) throws IOException {
-    	long max = -1L;
     	createList(list);
-    	try (DirectoryStream<Path> ds = Files.newDirectoryStream(list)) {
-    		for (Path entry : ds) {
-    			String name = filenameWithoutExtension(entry);
-    			try {
-    				long entryNum = Long.parseLong(name);
-    				if (entryNum > max) {
-    					max = entryNum;
-    				}
-    			} catch (NumberFormatException ex) {
-    			}
-    		}
-    	} catch (DirectoryIteratorException ex) {
-    		throw ex.getCause();
-    	}
-    	return list.resolve(Long.toString(max + 1));
+    	return list.resolve(Long.toString(getListSize(list)));
     }
 
 	public static Path setError(Path path, ErrorDocument error) throws IOException {
@@ -352,6 +337,27 @@ public class DataBundles extends Bundles {
         Path folder = intermediates.resolve(fileName.substring(0, 2));
         Files.createDirectories(folder);
         return anyExtension(folder, fileName);
+    }
+
+    public static long getListSize(Path list) throws IOException {
+        long max = -1L;
+        // Should fail if list is not a directory
+        try (DirectoryStream<Path> ds = Files.newDirectoryStream(list)) {
+            for (Path entry : ds) {
+                String name = filenameWithoutExtension(entry);
+                try {
+                    long entryNum = Long.parseLong(name);
+                    if (entryNum > max) {
+                        max = entryNum;
+                    }
+                } catch (NumberFormatException ex) {
+                }
+            }
+        } catch (DirectoryIteratorException ex) {
+            throw ex.getCause();
+        }
+        return max+1;
+
     }
 
 }

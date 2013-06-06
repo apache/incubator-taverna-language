@@ -229,6 +229,30 @@ public class TestDataBundles {
 		
 	}
 
+    @Test
+    public void getListSize() throws Exception {
+        Path inputs = DataBundles.getInputs(dataBundle);
+        Path list = DataBundles.getPort(inputs, "in1");
+        DataBundles.createList(list);
+        for (int i = 0; i < 5; i++) {
+            Path item = DataBundles.newListItem(list);
+            DataBundles.setStringValue(item, "item " + i);
+        }
+        assertEquals(5, DataBundles.getListSize(list));
+
+        // set at next available position
+        Path item5 = DataBundles.getListItem(list, 5);
+        assertTrue(item5.getFileName().toString().contains("5"));
+        DataBundles.setStringValue(item5, "item 5");
+        assertEquals(6, DataBundles.getListSize(list));
+
+        // set somewhere beyond the end
+        Path item8 = DataBundles.getListItem(list, 8);
+        assertTrue(item8.getFileName().toString().contains("8"));
+        DataBundles.setStringValue(item8, "item 8");
+        assertEquals(9, DataBundles.getListSize(list));
+    }
+	
 	@Test
     public void getListItemChecksExtension() throws Exception {
         Path inputs = DataBundles.getInputs(dataBundle);
