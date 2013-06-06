@@ -24,6 +24,7 @@ import uk.org.taverna.scufl2.api.port.OutputPort;
 import uk.org.taverna.scufl2.api.port.Port;
 import uk.org.taverna.scufl2.api.port.ProcessorPort;
 import uk.org.taverna.scufl2.api.profiles.ProcessorPortBinding;
+import uk.org.taverna.scufl2.api.property.PropertyObject;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
 
 /**
@@ -106,12 +107,23 @@ public class URITools {
 				} catch (IllegalStateException ex) {
 					return false;
 				}
-				WorkflowBean existing = uriToBean.put(uri, node);
+                WorkflowBean existing = uriToBean.put(uri, node);
 				if (existing != null) {
-					String msg = "Multiple nodes with same URI {0}: {1} {2}";
-					throw new IllegalStateException(MessageFormat.format(msg,
-							uri, existing, node));
+				    // Check if we should keep the existing object instead, 
+				    // because the inserted object is "lesser worth"
+				    // (for instance we try to insert a Revision when a 
+				    // WorkflowBundle already exists, 
+    				if (node instanceof Revision && ! (existing instanceof Revision)) {
+    				    uriToBean.put(uri, existing);
+    				} else if (node instanceof PropertyObject && ! (existing instanceof PropertyObject)) {
+    				    // annotation objects are less worth
+    				    uriToBean.put(uri, existing);
+    				} else if (node instanceof PropertyResource && ! (existing instanceof PropertyResource)) {
+    				    // Perhaps it's one PropertyReference vs. PropertyResource - the resource wins
+                        uriToBean.put(uri, existing);
+    				}
 				}
+
 				return !(node instanceof Configuration);
 			}
 		});
