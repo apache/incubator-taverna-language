@@ -137,6 +137,23 @@ public class JsonExport {
 
     public void convert(String[] filepaths) throws ReaderException,
             IOException, WriterException {
+        if (filepaths.length == 0  || filepaths[0].equals("-h")) {
+            System.out.println("Export workflow structore as JSON.");
+            System.out.println("Usage: jsonexport [filename] ...");
+            System.out.println("If the filename is - the workflow will be read from STDIN and");
+            System.out.println("JSON written to STDOUT. ");
+            System.out.println("Otherwise, the file is read as a workflow (t2flow, workflow bundle)");
+            System.out.println("and written as JSON to a file with the .json extension.");
+            System.out.println("Multiple filenames can be given. JSON filenames are written to STDOUT");
+            return;
+        }
+        if (filepaths[0].equals("-")) {
+            // Do piped Stdin/Stdout instead
+            WorkflowBundle wfBundle = io.readBundle(System.in, null);
+            io.writeBundle(wfBundle, System.err, "application/ld+json");
+            return;
+        }
+
         for (String filepath : filepaths) {
             File workflow = new File(filepath);
 
@@ -146,7 +163,8 @@ public class JsonExport {
 
             WorkflowBundle wfBundle = io.readBundle(workflow, null);
             io.writeBundle(wfBundle, workflowFile, "application/ld+json");
-        }
+            System.out.println(workflowFile);
+        } 
     }
 
     protected ObjectNode toJson(Port port) {

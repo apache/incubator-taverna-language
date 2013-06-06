@@ -1,0 +1,49 @@
+{
+  "@context" : [ "https://w3id.org/scufl2/context", {
+    "@base" : "http://ns.taverna.org.uk/2010/workflowBundle/01348671-5aaa-4cc2-84cc-477329b70b0d/"
+  } ],
+  "id" : "http://ns.taverna.org.uk/2010/workflowBundle/01348671-5aaa-4cc2-84cc-477329b70b0d/",
+  "workflow" : {
+    "id" : "workflow/Hello_Anyone/",
+    "name" : "Hello_Anyone",
+    "revisions" : [ {
+      "id" : "http://ns.taverna.org.uk/2010/workflow/01348671-5aaa-4cc2-84cc-477329b70b0d/"
+    } ],
+    "inputs" : [ {
+      "name" : "name",
+      "id" : "workflow/Hello_Anyone/in/name",
+      "depth" : 0
+    } ],
+    "outputs" : [ {
+      "name" : "greeting",
+      "id" : "workflow/Hello_Anyone/out/greeting"
+    } ],
+    "processors" : [ {
+      "id" : "workflow/Hello_Anyone/processor/Concatenate_two_strings/",
+      "name" : "Concatenate_two_strings",
+      "inputs" : [ {
+        "name" : "string1",
+        "id" : "workflow/Hello_Anyone/processor/Concatenate_two_strings/in/string1",
+        "depth" : 0
+      }, {
+        "name" : "string2",
+        "id" : "workflow/Hello_Anyone/processor/Concatenate_two_strings/in/string2",
+        "depth" : 0
+      } ],
+      "outputs" : [ {
+        "name" : "output",
+        "id" : "workflow/Hello_Anyone/processor/Concatenate_two_strings/out/output",
+        "depth" : 0
+      } ]
+    }, {
+      "id" : "workflow/Hello_Anyone/processor/hello/",
+      "name" : "hello",
+      "inputs" : [ ],
+      "outputs" : [ {
+        "name" : "value",
+        "id" : "workflow/Hello_Anyone/processor/hello/out/value",
+        "depth" : 0
+      } ]
+    } ]
+  }
+}

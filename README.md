@@ -137,3 +137,65 @@ for how this is implemented.
 The included files [helloworld.wfbundle](helloworld.wfbundle?raw=true) and
 [helloanyone.wfbundle](helloanyone.wfbundle?raw=true) are examples of converting
 [helloworld.t2flow](helloworld.t2flow?raw=true) and [helloanyone.t2flow](helloanyone.t2flow?raw=true)  
+
+
+jsonexport
+----------
+This tool exports a JSON structure of the workflow, including basic
+annotations on workflows, ports, processors, nested workflows and
+revision log of the workflows.
+
+Usage:
+
+    c:\Users\stain\src\scufl2-examples>target\scufl2-examples\bin\jsonexport -h
+    Export workflow structore as JSON.
+    Usage: jsonexport [filename] ...
+    If the filename is - the workflow will be read from STDIN and
+    JSON written to STDOUT.
+    Otherwise, the file is read as a workflow (t2flow, workflow bundle)
+    and written as JSON to a file with the .json extension.
+    Multiple filenames can be given. JSON filenames are written to STDOUT
+
+Converting multiple files:
+
+    c:\Users\stain\src\scufl2-examples>target\scufl2-examples\bin\jsonexport helloworld.t2flow helloanyone.wfbundle
+    helloworld.json
+    helloanyone.json
+
+Example using STDIN/STDOUT:
+
+    c:\Users\stain\src\scufl2-examples>target\scufl2-examples\bin\jsonexport - < helloworld.t2flow | head
+    {
+        "@context" : [ "https://w3id.org/scufl2/context", {
+            "@base" : "http://ns.taverna.org.uk/2010/workflowBundle/8781d5f4-d0ba-48a8-a1d1-14281bd8a917/"
+        } ],
+        "id" : "http://ns.taverna.org.uk/2010/workflowBundle/8781d5f4-d0ba-48a8-a1d1-14281bd8a917/",
+        "workflow" : {
+            "id" : "workflow/Hello_World/",
+            "name" : "Hello_World",
+            "revisions" : [ {
+            "id" : "http://ns.taverna.org.uk/2010/workflow/8781d5f4-d0ba-48a8-a1d1-14281bd8a917/",
+            "generatedAtTime" : "2012-01-03T15:12:21Z"
+            } ],
+            "inputs" : [ ],
+            "outputs" : [ {
+            "name" : "greeting",
+            "id" : "workflow/Hello_World/out/greeting"
+            } ],
+            "processors" : [ {
+            "id" : "workflow/Hello_World/processor/hello/",
+            "name" : "hello",
+            "inputs" : [ ],
+            "outputs" : [ {
+                "name" : "value",
+                "id" : "workflow/Hello_World/processor/hello/out/value",
+                "depth" : 0
+            } ]
+            } ],
+            "http://purl.org/dc/elements/1.1/creator" : "Stian Soiland-Reyes",
+            "http://purl.org/dc/terms/title" : "Hello World",
+            "http://purl.org/dc/terms/description" : "One of the simplest workflows possible. No workflow input ports, a single workflow output port \"greeting\",  outputting \"Hello, world!\" as produced by the String Constant \"hello\"."
+        }
+    }
+
+

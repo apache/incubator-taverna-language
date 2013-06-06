@@ -1,0 +1,32 @@
+{
+  "@context" : [ "https://w3id.org/scufl2/context", {
+    "@base" : "http://ns.taverna.org.uk/2010/workflowBundle/8781d5f4-d0ba-48a8-a1d1-14281bd8a917/"
+  } ],
+  "id" : "http://ns.taverna.org.uk/2010/workflowBundle/8781d5f4-d0ba-48a8-a1d1-14281bd8a917/",
+  "workflow" : {
+    "id" : "workflow/Hello_World/",
+    "name" : "Hello_World",
+    "revisions" : [ {
+      "id" : "http://ns.taverna.org.uk/2010/workflow/8781d5f4-d0ba-48a8-a1d1-14281bd8a917/",
+      "generatedAtTime" : "2012-01-03T15:12:21Z"
+    } ],
+    "inputs" : [ ],
+    "outputs" : [ {
+      "name" : "greeting",
+      "id" : "workflow/Hello_World/out/greeting"
+    } ],
+    "processors" : [ {
+      "id" : "workflow/Hello_World/processor/hello/",
+      "name" : "hello",
+      "inputs" : [ ],
+      "outputs" : [ {
+        "name" : "value",
+        "id" : "workflow/Hello_World/processor/hello/out/value",
+        "depth" : 0
+      } ]
+    } ],
+    "http://purl.org/dc/elements/1.1/creator" : "Stian Soiland-Reyes",
+    "http://purl.org/dc/terms/title" : "Hello World",
+    "http://purl.org/dc/terms/description" : "One of the simplest workflows possible. No workflow input ports, a single workflow output port \"greeting\",  outputting \"Hello, world!\" as produced by the String Constant \"hello\"."
+  }
+}

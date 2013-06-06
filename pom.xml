@@ -120,6 +120,10 @@
 							<mainClass>com.example.WorkflowMaker</mainClass>
 							<name>workflowmaker</name>
 						</program>
+						<program>
+							<mainClass>com.example.JsonExport</mainClass>
+							<name>jsonexport</name>
+						</program>
 					</programs>
 				</configuration>
 			</plugin>
