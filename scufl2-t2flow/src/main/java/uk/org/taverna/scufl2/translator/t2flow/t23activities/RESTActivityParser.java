@@ -1,28 +1,18 @@
 package uk.org.taverna.scufl2.translator.t2flow.t23activities;
 
-import static uk.org.taverna.scufl2.translator.t2flow.t23activities.RESTActivityParser.ACTIVITY_URI;
-import static uk.org.taverna.scufl2.translator.t2flow.t23activities.RESTActivityParser.HTTP_URI;
-
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
-import uk.org.taverna.scufl2.api.activity.Activity;
-import uk.org.taverna.scufl2.api.common.Scufl2Tools;
-import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
-import uk.org.taverna.scufl2.api.port.InputActivityPort;
-import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.api.property.PropertyList;
 import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.defaultactivities.AbstractActivityParser;
-import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityInputs.Entry;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.HTTPHeaders;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.RESTConfig;
@@ -71,8 +61,6 @@ public class RESTActivityParser extends AbstractActivityParser {
 	public URI mapT2flowRavenIdToScufl2URI(URI t2flowActivity) {
 		return ACTIVITY_URI;
 	}
-
-	private static URITools uriTools = new URITools();
 
 	@Override
 	public Configuration parseConfiguration(T2FlowParser t2FlowParser,
@@ -149,73 +137,11 @@ public class RESTActivityParser extends AbstractActivityParser {
 			if (restConfig.getOutgoingDataFormat() != null) {
 				configResource.addProperty(ACTIVITY_URI.resolve("#outgoingDataFormat"), new PropertyLiteral(restConfig.getOutgoingDataFormat()));
 			}
-
-			// Ports
-
-//			Activity currentActivity = parserState.getCurrentActivity();
-//			if (restConfig.getActivityInputs() != null && restConfig.getActivityInputs().getEntry() != null) {
-//				for (Entry entry : restConfig.getActivityInputs().getEntry()) {
-//					String portName = entry.getString();
-//					// Ignored, URL parameters have to be strings
-//					//String className = entry.getJavaClass();
-//
-//					InputActivityPort inputPort = new InputActivityPort(currentActivity, portName);
-//					inputPort.setDepth(0);
-//
-//
-//					PropertyResource portConfig = configResource.addPropertyAsNewResource(
-//							Scufl2Tools.PORT_DEFINITION.resolve("#inputPortDefinition"),
-//							Scufl2Tools.PORT_DEFINITION.resolve("#InputPortDefinition"));
-//
-//					URI portUri = new URITools().relativeUriForBean(inputPort, configuration);
-//					portConfig.addPropertyReference(Scufl2Tools.PORT_DEFINITION.resolve("#definesInputPort"), portUri);
-//					portConfig.addPropertyReference(Scufl2Tools.PORT_DEFINITION.resolve("#dataType"),
-//							PropertyLiteral.XSD_STRING);
-//				}
-//			}
-//			if (hasContent(method)) {
-//				InputActivityPort inputPort = new InputActivityPort(currentActivity, IN_BODY);
-//				inputPort.setDepth(0);
-//
-//				// FIXME: Is this really an #inputPortDefinition? It's not specified
-//				// by the user - it's a consequence of the method choice. But if we don't do
-//				// this, then we'll have to specify the binary/string option elsewhere.
-//				PropertyResource portConfig = configResource.addPropertyAsNewResource(
-//						Scufl2Tools.PORT_DEFINITION.resolve("#inputPortDefinition"),
-//						Scufl2Tools.PORT_DEFINITION.resolve("#InputPortDefinition"));
-//
-//				URI portUri = new URITools().relativeUriForBean(inputPort, configuration);
-//				portConfig.addPropertyReference(Scufl2Tools.PORT_DEFINITION.resolve("#definesInputPort"), portUri);
-//
-//				URI dataType = PropertyLiteral.XSD_STRING;
-//				if (restConfig.getOutgoingDataFormat().equalsIgnoreCase("binary")) {
-//					dataType = Scufl2Tools.PORT_DEFINITION.resolve("#binary");
-//				}
-//				portConfig.addPropertyReference(Scufl2Tools.PORT_DEFINITION.resolve("#dataType"),
-//						dataType);
-//			}
-//
-//			OutputActivityPort responseBody = new OutputActivityPort(currentActivity, OUT_RESPONSE_BODY);
-//			responseBody.setDepth(0);
-//			OutputActivityPort status = new OutputActivityPort(currentActivity, OUT_STATUS);
-//			status.setDepth(0);
-//
-//			if (restConfig.isShowRedirectionOutputPort()) {
-//				OutputActivityPort redirection = new OutputActivityPort(currentActivity, OUT_REDIRECTION);
-//				redirection.setDepth(0);
-//			}
-
-
 			return configuration;
 		} finally {
 			parserState.setCurrentConfiguration(null);
 		}
 	}
-
-	private static final String IN_BODY = "inputBody";
-	private static final String OUT_RESPONSE_BODY = "responseBody";
-	private static final String OUT_STATUS = "status";
-	private static final String OUT_REDIRECTION = "redirection";
 
 	private boolean hasContent(URI method) {
 		if (! (method.resolve("#").equals(HTTP_METHODS_URI))) {
