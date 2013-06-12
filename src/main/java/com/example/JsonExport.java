@@ -18,6 +18,9 @@ import uk.org.taverna.scufl2.api.common.Ported;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
+import uk.org.taverna.scufl2.api.core.BlockingControlLink;
+import uk.org.taverna.scufl2.api.core.ControlLink;
+import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.io.ReaderException;
@@ -255,9 +258,46 @@ public class JsonExport {
         addPorts(workflow, wf);
         wf.put("processors", processors);
         
+        ArrayNode datalinks = mapper.createArrayNode();
+        for (DataLink link : workflow.getDataLinks()) {
+            datalinks.add(toJson(link));
+        }
+        wf.put("datalinks", datalinks);
+
+        ArrayNode controlLinks = mapper.createArrayNode();
+        for (ControlLink link : workflow.getControlLinks()) {
+            controlLinks.add(toJson(link));
+        }
+        wf.put("controllinks", controlLinks);
+
+        
         wf.putAll(annotations(workflow));
         
         return wf;
+    }
+
+    protected JsonNode toJson(ControlLink link) {
+        ObjectNode l = mapper.createObjectNode();
+        if (link instanceof BlockingControlLink) {
+            BlockingControlLink controlLink = (BlockingControlLink) link;
+            l.putPOJO("block", uriTools.relativeUriForBean(controlLink.getBlock(), 
+                    link.getParent().getParent()));
+            l.putPOJO("untilFinished", uriTools.relativeUriForBean(controlLink.getUntilFinished(), 
+                    link.getParent().getParent()));
+        }
+        return l;
+    }
+
+    protected JsonNode toJson(DataLink link) {
+        ObjectNode l = mapper.createObjectNode();
+        l.putPOJO("receivesFrom", uriTools.relativeUriForBean(link.getReceivesFrom(), 
+                link.getParent().getParent()));
+        l.putPOJO("sendsTo", uriTools.relativeUriForBean(link.getSendsTo(), 
+                link.getParent().getParent()));
+        if (link.getMergePosition() != null) {
+            l.put("mergePosition", link.getMergePosition());
+        }
+        return l;
     }
 
     public ObjectNode toJson(WorkflowBundle wfBundle) {
