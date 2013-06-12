@@ -56,8 +56,19 @@
         "depth" : 0
       } ]
     } ],
-    "http://purl.org/dc/terms/title" : "Hello Anyone",
+    "datalinks" : [ {
+      "receivesFrom" : "workflow/Hello_Anyone/processor/Concatenate_two_strings/out/output",
+      "sendsTo" : "workflow/Hello_Anyone/out/greeting"
+    }, {
+      "receivesFrom" : "workflow/Hello_Anyone/processor/hello/out/value",
+      "sendsTo" : "workflow/Hello_Anyone/processor/Concatenate_two_strings/in/string1"
+    }, {
+      "receivesFrom" : "workflow/Hello_Anyone/in/name",
+      "sendsTo" : "workflow/Hello_Anyone/processor/Concatenate_two_strings/in/string2"
+    } ],
+    "controllinks" : [ ],
     "http://purl.org/dc/terms/description" : "An extension to helloworld.t2flow - this workflow takes a workflow input \"name\" which is combined with the string constant \"Hello, \" using the local worker \"Concatenate two strings\", and outputs the produced string to the workflow output \"greeting\".",
+    "http://purl.org/dc/terms/title" : "Hello Anyone",
     "http://purl.org/dc/elements/1.1/creator" : "Stian Soiland-Reyes"
   }
 }
