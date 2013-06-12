@@ -190,6 +190,7 @@ See the converted [helloworld.json](helloworld.json) and
 [helloanyone.json](helloanyone.json)
 
 Example using STDIN/STDOUT:
+    c:\Users\stain\src\scufl2-examples> target\scufl2-examples\bin\jsonexport - < helloworld.t2flow
     
     {
       "@context" : [ "https://w3id.org/scufl2/context", {
