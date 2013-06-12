@@ -1,7 +1,21 @@
 SCUFL2 examples
 ===============
 
-Examples of using the [SCUFL2 API](http://dev.mygrid.org.uk/wiki/display/developer/SCUFL2+API) v0.9.2.
+Examples of using the [SCUFL2 API](http://dev.mygrid.org.uk/wiki/display/developer/SCUFL2+API) v0.12.0-SNAPSHOT.
+
+Download
+--------
+Download the scufl2-examples-0.x.x-standalone.jar from the
+[latest build](http://build.mygrid.org.uk/ci/job/scufl2-examples/lastSuccessfulBuild/com.example$scufl2-examples/).
+
+For instance: [scufl2-examples-0.1.1-SNAPSHOT-standalone.jar][http://build.mygrid.org.uk/ci/job/scufl2-examples/275/com.example$scufl2-examples/artifact/com.example/scufl2-examples/0.1.1-SNAPSHOT/scufl2-examples-0.1.1-SNAPSHOT-standalone.jar)
+
+This is a standalone executable JAR (see below).
+
+
+Build
+-----
+
 
 To build, you'll need [Maven](http://maven.apache.org/download.cgi) 3.0.5 or newer, and run
 ```mvn clean install```:
