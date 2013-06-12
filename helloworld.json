@@ -25,8 +25,8 @@
         "depth" : 0
       } ]
     } ],
-    "http://purl.org/dc/elements/1.1/creator" : "Stian Soiland-Reyes",
     "http://purl.org/dc/terms/title" : "Hello World",
+    "http://purl.org/dc/elements/1.1/creator" : "Stian Soiland-Reyes",
     "http://purl.org/dc/terms/description" : "One of the simplest workflows possible. No workflow input ports, a single workflow output port \"greeting\",  outputting \"Hello, world!\" as produced by the String Constant \"hello\"."
   }
 }

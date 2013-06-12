@@ -7,12 +7,23 @@
     "id" : "workflow/Hello_Anyone/",
     "name" : "Hello_Anyone",
     "revisions" : [ {
-      "id" : "http://ns.taverna.org.uk/2010/workflow/01348671-5aaa-4cc2-84cc-477329b70b0d/"
+      "id" : "http://ns.taverna.org.uk/2010/workflow/01348671-5aaa-4cc2-84cc-477329b70b0d/",
+      "generatedAtTime" : "2012-01-03T15:14:30Z",
+      "wasRevisionOf" : "http://ns.taverna.org.uk/2010/workflow/ca7dba1d-1fdf-476f-b911-714d09227d70/"
+    }, {
+      "id" : "http://ns.taverna.org.uk/2010/workflow/ca7dba1d-1fdf-476f-b911-714d09227d70/",
+      "generatedAtTime" : "2012-01-03T15:14:18Z",
+      "wasRevisionOf" : "http://ns.taverna.org.uk/2010/workflow/8781d5f4-d0ba-48a8-a1d1-14281bd8a917/"
+    }, {
+      "id" : "http://ns.taverna.org.uk/2010/workflow/8781d5f4-d0ba-48a8-a1d1-14281bd8a917/",
+      "generatedAtTime" : "2012-01-03T15:12:21Z"
     } ],
     "inputs" : [ {
       "name" : "name",
       "id" : "workflow/Hello_Anyone/in/name",
-      "depth" : 0
+      "depth" : 0,
+      "http://purl.org/dc/terms/description" : "Your name for the greeting",
+      "http://biocatalogue.org/attribute/exampleData" : "World!"
     } ],
     "outputs" : [ {
       "name" : "greeting",
@@ -44,6 +55,9 @@
         "id" : "workflow/Hello_Anyone/processor/hello/out/value",
         "depth" : 0
       } ]
-    } ]
+    } ],
+    "http://purl.org/dc/terms/title" : "Hello Anyone",
+    "http://purl.org/dc/terms/description" : "An extension to helloworld.t2flow - this workflow takes a workflow input \"name\" which is combined with the string constant \"Hello, \" using the local worker \"Concatenate two strings\", and outputs the produced string to the workflow output \"greeting\".",
+    "http://purl.org/dc/elements/1.1/creator" : "Stian Soiland-Reyes"
   }
 }

@@ -25,7 +25,17 @@ To build, you'll need [Maven](http://maven.apache.org/download.cgi) 3.0.5 or new
     [INFO] Final Memory: 15M/243M
     [INFO] ----------------    
 
-To run the examples, see the folder ```target\scufl2-examples```.
+To run the examples, see the folder ```target\scufl2-examples``` which has a bin/ executable for each of the below tools. Note that these tools require the provided bin/lib folder structure.
+
+Alternatively you can use ```java -jar target/scufl2-examples-0.1.1-SNAPSHOT-standalone.jar``` - this is a standalone
+JAR file that can execute any of the tools as the first argument. 
+Linux users can install this with:
+
+    chmod 755 target/scufl2-examples-*-standalone.jar
+    sudo cp target/scufl2-examples-*-standalone.jar /usr/local/bin/scufl2tool
+    
+as JAR files are recognized as executables.
+
 
 processornames
 --------------
@@ -147,7 +157,7 @@ revision log of the workflows.
 
 Usage:
 
-    c:\Users\stain\src\scufl2-examples>target\scufl2-examples\bin\jsonexport -h
+    c:\Users\stain\src\scufl2-examples> target\scufl2-examples\bin\jsonexport -h
     Export workflow structore as JSON.
     Usage: jsonexport [filename] ...
     If the filename is - the workflow will be read from STDIN and
@@ -158,7 +168,7 @@ Usage:
 
 Converting multiple files:
 
-    c:\Users\stain\src\scufl2-examples>target\scufl2-examples\bin\jsonexport helloworld.t2flow helloanyone.wfbundle
+    c:\Users\stain\src\scufl2-examples> target\scufl2-examples\bin\jsonexport helloworld.t2flow helloanyone.wfbundle
     helloworld.json
     helloanyone.json
     
@@ -167,7 +177,7 @@ See the converted [helloworld.json](helloworld.json) and
 
 Example using STDIN/STDOUT:
 
-    c:\Users\stain\src\scufl2-examples>target\scufl2-examples\bin\jsonexport - < helloworld.t2flow
+    c:\Users\stain\src\scufl2-examples> target\scufl2-examples\bin\jsonexport - < helloworld.t2flow
 
     {
       "@context" : [ "https://w3id.org/scufl2/context", {
@@ -196,8 +206,8 @@ Example using STDIN/STDOUT:
             "depth" : 0
           } ]
         } ],
-        "http://purl.org/dc/elements/1.1/creator" : "Stian Soiland-Reyes",
         "http://purl.org/dc/terms/title" : "Hello World",
+        "http://purl.org/dc/elements/1.1/creator" : "Stian Soiland-Reyes",
         "http://purl.org/dc/terms/description" : "One of the simplest workflows possible. No workflow input ports, a single workflow output port \"greeting\",  outputting \"Hello, world!\" as produced by the String Constant \"hello\"."
       }
     }
