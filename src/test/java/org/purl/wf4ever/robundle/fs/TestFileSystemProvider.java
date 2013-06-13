@@ -17,11 +17,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Assume;
 import org.junit.Test;
 
 public class TestFileSystemProvider {
-
-    private static final String FILE_ENCODING = "file.encoding";
 
     @Test
     public void getInstance() throws Exception {
@@ -110,7 +109,8 @@ public class TestFileSystemProvider {
         try {
             path = Files.createTempFile("with\u2301unicode\u263bhere", ".zip");
         } catch (InvalidPathException ex) {
-            System.err.println("Can't test unicode filename with file.encoding" + System.getProperty("file.encoding"));
+            Assume.assumeNoException("Can't test unicode filename, as -Dfile.encoding=" + System.getProperty("file.encoding"), 
+                    ex);
             return;
         }
         path.toFile().deleteOnExit();
