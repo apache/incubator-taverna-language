@@ -10,6 +10,7 @@ import java.nio.charset.Charset;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.spi.FileSystemProvider;
 import java.util.Collections;
@@ -19,6 +20,8 @@ import java.util.Map;
 import org.junit.Test;
 
 public class TestFileSystemProvider {
+
+    private static final String FILE_ENCODING = "file.encoding";
 
     @Test
     public void getInstance() throws Exception {
@@ -103,7 +106,13 @@ public class TestFileSystemProvider {
     
     @Test
     public void bundleWithUnicode() throws Exception {
-        Path path = Files.createTempFile("with\u2301unicode\u263bhere", ".zip");
+        Path path;
+        try {
+            path = Files.createTempFile("with\u2301unicode\u263bhere", ".zip");
+        } catch (InvalidPathException ex) {
+            System.err.println("Can't test unicode filename with file.encoding" + System.getProperty("file.encoding"));
+            return;
+        }
         path.toFile().deleteOnExit();
         Files.delete(path);
         //System.out.println(path); // Should contain a electrical symbol and smiley
