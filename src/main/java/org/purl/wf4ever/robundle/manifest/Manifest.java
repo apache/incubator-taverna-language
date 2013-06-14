@@ -181,8 +181,8 @@ public class Manifest {
                 // super.visitFile(file, attrs);
                 PathMetadata metadata = new PathMetadata();
                 // Strip out the widget:// magic
-                metadata.setFile(file.getRoot().toUri()
-                        .relativize(file.toUri()));
+                metadata.setFile(ROOT.resolve(file.getRoot().toUri()
+                        .relativize(file.toUri())));
                 metadata.setFolder(withSlash(file.getParent()));
                 metadata.setProxy(URI.create("urn:uuid:" + UUID.randomUUID()));
                 metadata.setCreatedOn(Files.getLastModifiedTime(file));
