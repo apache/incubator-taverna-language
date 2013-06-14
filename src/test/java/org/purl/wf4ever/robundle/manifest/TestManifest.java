@@ -3,6 +3,7 @@ package org.purl.wf4ever.robundle.manifest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -21,11 +22,6 @@ import org.junit.Test;
 import org.purl.wf4ever.robundle.Bundle;
 import org.purl.wf4ever.robundle.Bundles;
 
-import com.github.jsonldjava.core.JSONLD;
-import com.github.jsonldjava.core.JSONLDProcessingError;
-import com.github.jsonldjava.core.JSONLDTripleCallback;
-import com.github.jsonldjava.impl.JenaTripleCallback;
-import com.github.jsonldjava.utils.JSONUtils;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -109,7 +105,7 @@ public class TestManifest {
         
         // Parse back as JSON-LD
         try (InputStream jsonIn = Files.newInputStream(jsonld)) {        
-            Model model = jsonLdAsJenaModel(jsonIn);
+            Model model = RDFToManifest.jsonLdAsJenaModel(jsonIn);
             model.write(System.out, "TURTLE");
            
             String queryStr = "PREFIX ore: <http://www.openarchives.org/ore/terms/>" +
@@ -143,20 +139,30 @@ public class TestManifest {
         }        
     }
     
+
     @Test
     public void readManifest() throws Exception {
-        try (InputStream jsonIn = getClass().getResourceAsStream("/manifest.json")) {        
-            Model model = jsonLdAsJenaModel(jsonIn);
-            model.write(System.out, "TURTLE");
-        }
-    }
+        Manifest manifest = new Manifest(bundle);
+        
+        new RDFToManifest().readTo(
+                getClass().getResourceAsStream("/manifest.json"), manifest);
 
-    protected Model jsonLdAsJenaModel(InputStream jsonIn) throws IOException,
-            JSONLDProcessingError {
-        Object input = JSONUtils.fromInputStream(jsonIn);
-        JSONLDTripleCallback callback = new JenaTripleCallback();
-        Model model = (Model)JSONLD.toRDF(input, callback);
-        return model;
+        Path r = bundle.getRoot();
+        assertNotNull(manifest.getAggregation(r.resolve("/README.txt")));
+        assertEquals("text/plain",
+                manifest.getAggregation(r.resolve("/README.txt"))
+                        .getMediatype());
+        assertEquals("http://example.com/foaf#bob",
+                manifest.getAggregation(r.resolve("/README.txt"))
+                        .getCreatedBy().get(0).getUri());
+        assertEquals("Bob Builder",
+                manifest.getAggregation(r.resolve("/README.txt"))
+                        .getCreatedBy().get(0).getName());
+
+        
+        assertNull(manifest.getAggregation(r.resolve("/README.txt")).getProxy());
+        assertNotNull(manifest.getAggregation(URI.create("http://example.com/comments.txt")).getProxy());
+        
     }
     
     private URI asURI(Resource proxy) {
