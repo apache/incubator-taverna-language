@@ -32,6 +32,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
         "createdBy", "createdOn", "authoredOn", "authoredBy", "history",
         "aggregates", "annotations", "@graph" })
 public class Manifest {
+    
+    private static URI ROOT = URI.create("/");
 
     private static final String META_INF = "/META-INF";
     private static final String MIMETYPE = "/mimetype";
@@ -146,8 +148,8 @@ public class Manifest {
                 if (potentiallyEmptyFolders.remove(dir)) {
                     PathMetadata metadata = new PathMetadata();
                     // Strip out the widget:// magic
-                    metadata.setFile(dir.getRoot().toUri()
-                            .relativize(withSlash(dir).toUri()));
+                    metadata.setFile(ROOT.resolve(dir.getRoot().toUri()
+                            .relativize(withSlash(dir).toUri())));
                     metadata.setFolder(withSlash(dir.getParent()));
                     // metadata.proxy = URI.create("urn:uuid:" +
                     // UUID.randomUUID());
@@ -258,17 +260,16 @@ public class Manifest {
 
     public PathMetadata getAggregation(Path file) {
         URI fileUri = file.toUri();
-        fileUri = file.getRoot().toUri().relativize(fileUri);
+        fileUri = ROOT.resolve(file.getRoot().toUri().relativize(fileUri));
+        return getAggregation(fileUri);
+    }
+
+    public PathMetadata getAggregation(URI uri) {
         for (PathMetadata meta : getAggregates()) {
-            if (fileUri.equals(meta.getFile()) || fileUri.equals(meta.getUri())) {
+            if (uri.equals(meta.getFile()) || uri.equals(meta.getUri()) || uri.equals(meta.getProxy())) {
                 return meta;
             }
         }
-        // Let's add it
-//        PathMetadata meta = new PathMetadata();
-//        meta.setFile(fileUri);
-//        getAggregates().add(meta);
-//        return meta;
         return null;
     }
 }
