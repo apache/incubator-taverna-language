@@ -19,7 +19,6 @@ import com.hp.hpl.jena.ontology.ObjectProperty;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.ontology.Ontology;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -263,16 +262,13 @@ public class RDFToManifest {
     private Set<Individual> listObjectProperties(Individual in,
             ObjectProperty prop) {
         LinkedHashSet<Individual> results = new LinkedHashSet<>();
-        List<RDFNode> nodes;
         try (ClosableIterable<RDFNode> props = iterate(in.listPropertyValues(prop))) {
-            nodes = props.iterator().toList();
-        }
-        // We need to get a full list out before we call createIndividual to avoid ConcurrentModificationExceptions :(
-        for (RDFNode node : nodes) {
-            if (! node.isResource()) {
-                continue;
+            for (RDFNode node : props) {
+                if (! node.isResource() || ! node.canAs(Individual.class)) {
+                    continue;
+                }
+                results.add(node.as(Individual.class));
             }
-            results.add(node.as(Individual.class));
         }
         return results;
     }
