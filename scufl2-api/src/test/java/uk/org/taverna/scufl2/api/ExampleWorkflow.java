@@ -45,7 +45,7 @@ public class ExampleWorkflow {
 	public Activity makeActivity() {
 		activity = new Activity();
 		activity.setName("HelloScript");
-		activity.setConfigurableType(URI
+		activity.setType(URI
 				.create("http://ns.taverna.org.uk/2010/activity/beanshell"));
 
 		personName = new InputActivityPort(activity, "personName");

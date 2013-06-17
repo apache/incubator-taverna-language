@@ -74,7 +74,7 @@ public class TestRESTActivityParser {
 				config.getType());
 
 		Activity activity = (Activity) config.getConfigures();
-		assertEquals(ACTIVITY_URI, activity.getConfigurableType());
+		assertEquals(ACTIVITY_URI, activity.getType());
 
 		PropertyResource configResource = config.getPropertyResource();
 		PropertyResource request = configResource.getPropertyAsResource(
@@ -159,7 +159,7 @@ public class TestRESTActivityParser {
 				config.getType());
 
 		Activity activity = (Activity) config.getConfigures();
-		assertEquals(ACTIVITY_URI, activity.getConfigurableType());
+		assertEquals(ACTIVITY_URI, activity.getType());
 
 		PropertyResource configResource = config.getPropertyResource();
 		PropertyResource request = configResource.getPropertyAsResource(
@@ -244,7 +244,7 @@ public class TestRESTActivityParser {
 				config.getType());
 
 		Activity activity = (Activity) config.getConfigures();
-		assertEquals(ACTIVITY_URI, activity.getConfigurableType());
+		assertEquals(ACTIVITY_URI, activity.getType());
 
 		PropertyResource configResource = config.getPropertyResource();
 		PropertyResource request = configResource.getPropertyAsResource(
@@ -427,7 +427,7 @@ public class TestRESTActivityParser {
 				config.getType());
 
 		Activity activity = (Activity) config.getConfigures();
-		assertEquals(ACTIVITY_URI, activity.getConfigurableType());
+		assertEquals(ACTIVITY_URI, activity.getType());
 
 		PropertyResource configResource = config.getPropertyResource();
 		PropertyResource request = configResource.getPropertyAsResource(
@@ -535,7 +535,7 @@ public class TestRESTActivityParser {
 					config.getType());
 
 			Activity activity = (Activity) config.getConfigures();
-			assertEquals(ACTIVITY_URI, activity.getConfigurableType());
+			assertEquals(ACTIVITY_URI, activity.getType());
 
 			PropertyResource configResource = config.getPropertyResource();
 			PropertyResource request = configResource.getPropertyAsResource(
@@ -643,7 +643,7 @@ public class TestRESTActivityParser {
 					config.getType());
 
 			Activity activity = (Activity) config.getConfigures();
-			assertEquals(ACTIVITY_URI, activity.getConfigurableType());
+			assertEquals(ACTIVITY_URI, activity.getType());
 
 			PropertyResource configResource = config.getPropertyResource();
 			PropertyResource request = configResource.getPropertyAsResource(
@@ -753,7 +753,7 @@ public class TestRESTActivityParser {
 					config.getType());
 
 			Activity activity = (Activity) config.getConfigures();
-			assertEquals(ACTIVITY_URI, activity.getConfigurableType());
+			assertEquals(ACTIVITY_URI, activity.getType());
 
 			PropertyResource configResource = config.getPropertyResource();
 			PropertyResource request = configResource.getPropertyAsResource(
@@ -850,7 +850,7 @@ public class TestRESTActivityParser {
 						config.getType());
 
 				Activity activity = (Activity) config.getConfigures();
-				assertEquals(ACTIVITY_URI, activity.getConfigurableType());
+				assertEquals(ACTIVITY_URI, activity.getType());
 
 				PropertyResource configResource = config.getPropertyResource();
 				PropertyResource request = configResource.getPropertyAsResource(
@@ -947,7 +947,7 @@ public class TestRESTActivityParser {
 						config.getType());
 
 				Activity activity = (Activity) config.getConfigures();
-				assertEquals(ACTIVITY_URI, activity.getConfigurableType());
+				assertEquals(ACTIVITY_URI, activity.getType());
 
 				PropertyResource configResource = config.getPropertyResource();
 				PropertyResource request = configResource.getPropertyAsResource(

@@ -85,7 +85,7 @@ public class TestAPICreation {
 		ro.getProfiles().add(p);
 		p.getActivities().add(activity);
 
-		activity.setConfigurableType(URI
+		activity.setType(URI
 				.create("http://taverna.sf.net/2009/2.1/activity/beanshell#wrongURI"));
 	}
 

@@ -387,7 +387,7 @@ public class Scufl2Tools {
 	public DispatchStackLayer dispatchStackByType(Processor processor, URI type) {
 		DispatchStackLayer candidate = null;
 		for (DispatchStackLayer layer : processor.getDispatchStack()) {
-			if (layer.getConfigurableType().equals(type)) {
+			if (layer.getType().equals(type)) {
 				if (candidate != null) {
 					throw new IllegalStateException(
 							"Found multiple dispatch stack layers of type "
@@ -694,7 +694,7 @@ public class Scufl2Tools {
 		ArrayList<Workflow> workflows = new ArrayList<Workflow>();
 		for (ProcessorBinding binding : processorBindingsForProcessor(
 				processor, profile)) {
-			if (!binding.getBoundActivity().getConfigurableType()
+			if (!binding.getBoundActivity().getType()
 					.equals(NESTED_WORKFLOW)) {
 				continue;
 			}
@@ -742,7 +742,7 @@ public class Scufl2Tools {
 	public boolean containsNestedWorkflow(Processor processor, Profile profile) {
 		for (ProcessorBinding binding : processorBindingsForProcessor(
 				processor, profile)) {
-			if (binding.getBoundActivity().getConfigurableType()
+			if (binding.getBoundActivity().getType()
 					.equals(NESTED_WORKFLOW)) {
 				return true;
 			}

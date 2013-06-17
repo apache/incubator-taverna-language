@@ -156,7 +156,7 @@ public class StructureWriter implements WorkflowBundleWriter {
 				append(a);
 				newLine(3);
 				append("Type");
-				append(a.getConfigurableType());
+				append(a.getType());
 				appendPorts(3, a);
 			}
 			for (ProcessorBinding pb : p.getProcessorBindings()) {

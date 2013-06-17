@@ -46,7 +46,7 @@ public class ParallelizeParser extends AbstractActivityParser {
 			ParallelizeConfig parallelConfig = unmarshallConfig(t2FlowParser, configBean,
 					"xstream", ParallelizeConfig.class);
 			Configuration c = new Configuration();		
-			c.setConfigurableType(scufl2Uri.resolve("#Config"));
+			c.setType(scufl2Uri.resolve("#Config"));
 
 			BigInteger maxJobs = parallelConfig.getMaxJobs();
 			if (maxJobs != null && maxJobs.intValue() > 0 && maxJobs.intValue() != Defaults.maxJobs) {

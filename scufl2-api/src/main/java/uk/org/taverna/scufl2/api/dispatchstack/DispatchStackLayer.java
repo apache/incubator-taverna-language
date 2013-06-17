@@ -41,7 +41,7 @@ public class DispatchStackLayer extends AbstractCloneable
 	 */
 	public DispatchStackLayer(DispatchStack parent, URI configurableType) {
 		setParent(parent);
-		setConfigurableType(configurableType);
+		setType(configurableType);
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class DispatchStackLayer extends AbstractCloneable
 	 * @return the type of the <code>DispatchStackLayer</code>
 	 */
 	@Override
-	public URI getConfigurableType() {
+	public URI getType() {
 		return configurableType;
 	}
 
@@ -71,7 +71,7 @@ public class DispatchStackLayer extends AbstractCloneable
 	 *            the type of the <code>DispatchStackLayer</code>
 	 */
 	@Override
-	public void setConfigurableType(URI type) {
+	public void setType(URI type) {
 		configurableType = type;
 	}
 
@@ -92,9 +92,9 @@ public class DispatchStackLayer extends AbstractCloneable
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer("DispatchStackLayer");
-		if (getConfigurableType() != null) {
+		if (getType() != null) {
 			sb.append(" ");
-			sb.append(getConfigurableType());
+			sb.append(getType());
 		}
 		return sb.toString();
 	}
@@ -102,6 +102,6 @@ public class DispatchStackLayer extends AbstractCloneable
 	@Override
 	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
 		DispatchStackLayer cloneLayer = (DispatchStackLayer)clone;
-		cloneLayer.setConfigurableType(getConfigurableType());		
+		cloneLayer.setType(getType());		
 	}
 }

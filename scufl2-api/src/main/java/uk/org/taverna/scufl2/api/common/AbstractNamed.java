@@ -104,8 +104,8 @@ public abstract class AbstractNamed extends AbstractCloneable implements Named  
 			}
 		}
 		if (this instanceof Typed) {
-			URI myId = ((Typed) this).getConfigurableType();
-			URI otherId = ((Typed) obj).getConfigurableType();
+			URI myId = ((Typed) this).getType();
+			URI otherId = ((Typed) obj).getType();
 			if (myId != null) {
 				return myId.equals(otherId);
 			}

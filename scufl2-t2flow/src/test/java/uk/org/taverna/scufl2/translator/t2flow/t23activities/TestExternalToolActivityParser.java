@@ -74,7 +74,7 @@ public class TestExternalToolActivityParser {
 		assertEquals(ACTIVITY_URI.resolve("#Config"), config.getType());
 
 		Activity activity = (Activity) config.getConfigures();
-		assertEquals(ACTIVITY_URI, activity.getConfigurableType());
+		assertEquals(ACTIVITY_URI, activity.getType());
 
 		String repositoryUrl = config.getPropertyResource().getPropertyAsString(
 				ACTIVITY_URI.resolve("#repositoryUrl"));
@@ -631,7 +631,7 @@ public class TestExternalToolActivityParser {
 		assertNotNull(proc);
 		Configuration config = scufl2Tools.configurationForActivityBoundToProcessor(proc, profile);
 		assertNotNull(config);
-		assertEquals(ACTIVITY_URI.resolve("#Config"), config.getConfigurableType());
+		assertEquals(ACTIVITY_URI.resolve("#Config"), config.getType());
 		PropertyResource resource = config.getPropertyResource();
 		String toolId = resource.getPropertyAsString(ACTIVITY_URI.resolve("#toolId"));
 		assertEquals("2cd545bf-64ae-4cda-84fc-8cfe2faed772", toolId);

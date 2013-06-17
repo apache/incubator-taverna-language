@@ -41,7 +41,7 @@ import uk.org.taverna.scufl2.api.property.PropertyResource;
  * {@link #getType()} of this {@link Configuration}.
  * <p>
  * Note: {@link #getType()} (and the potentially misleading
- * {@link #getConfigurableType()}) return the type of <b>this</b> Configuration,
+ * {@link #getType()}) return the type of <b>this</b> Configuration,
  * not the type of the {@link Configurable} bean that it happens to configure.
  * For instance, a Configuration typed
  * <code>http://example.com/WSDLConfiguration</code> might configure an activity
@@ -87,24 +87,6 @@ public class Configuration extends AbstractNamed implements Child<Profile>, Type
 	}
 
 	/**
-	 * Return the type of the <code>Configuration</code>.
-	 * <p>
-	 * Note that this method name (inherited from {@link Typed}) can be
-	 * misleading, as this is the type of the {@link Configuration}, not the
-	 * {@link Configurable}. To avoid ambiguous code, 
-	 * you may use the {@link #getType()} method instead.
-	 * 
-	 * @deprecated Use {@link #getType()} to avoid ambiguous code
-	 * 
-	 * @return the type of the <code>Configuration</code>
-	 */
-	@Deprecated
-	@Override
-	public URI getConfigurableType() {
-		return getType();
-	}
-
-	/**
 	 * Return the {@link Configurable} workflow bean that is configured. Typically an
 	 * {@link Activity} or {@link DispatchStackLayer}, but in theory also {@link Processor},
 	 * {@link Workflow} and {@link Port} can be configured.
@@ -139,24 +121,6 @@ public class Configuration extends AbstractNamed implements Child<Profile>, Type
 	 */
 	public URI getType() {
 		return getPropertyResource().getTypeURI();
-	}
-
-	/**
-	 * Set the type of the <code>Configuration</code>.
-	 * <p>
-	 * Note that this method name (inherited from {@link Typed}) can be
-	 * misleading, as this is the type of the {@link Configuration}, not the
-	 * {@link Configurable}. To avoid ambiguous code, you may use the
-	 * {@link #setType(URI)} method instead.
-	 * 
-	 * @deprecated Use {@link #setType(URI)} to avoid ambiguous code
-	 * @param type
-	 *             the type of the <code>Configuration</code>.
-	 */
-	@Deprecated
-	@Override
-	public void setConfigurableType(URI type) {
-		setType(type);
 	}
 
 	/**

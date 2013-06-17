@@ -180,7 +180,7 @@ public class TestActivityParsingRshell {
 				
 		Activity activity = (Activity) config.getConfigures();
 		assertEquals(ACTIVITY_URI,
-				activity.getConfigurableType());
+				activity.getType());
 		assertEquals(ACTIVITY_URI.resolve("#Config"), config
 				.getPropertyResource().getTypeURI());
 		String script = config.getPropertyResource().getPropertyAsString(

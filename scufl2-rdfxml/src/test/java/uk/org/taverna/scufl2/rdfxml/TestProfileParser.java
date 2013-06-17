@@ -46,7 +46,7 @@ public class TestProfileParser {
 		assertEquals("HelloScript", helloScript.getName());
 		assertEquals(
 "http://ns.taverna.org.uk/2010/activity/beanshell",
-				helloScript.getConfigurableType().toASCIIString());
+				helloScript.getType().toASCIIString());
 		assertEquals(1, helloScript.getInputPorts().size());
 		InputActivityPort personName = helloScript.getInputPorts().getByName(
 				"personName");

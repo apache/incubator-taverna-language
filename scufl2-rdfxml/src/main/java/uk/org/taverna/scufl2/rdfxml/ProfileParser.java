@@ -104,7 +104,7 @@ public class ProfileParser extends AbstractParser {
 			activity.setParent(getParserState().getCurrent(
 					uk.org.taverna.scufl2.api.profiles.Profile.class));
 			if (original.getType() != null) {
-				activity.setConfigurableType(resolve(original.getType()
+				activity.setType(resolve(original.getType()
 						.getResource()));
 			}
 			for (uk.org.taverna.scufl2.rdfxml.jaxb.Activity.InputActivityPort inputActivityPort : original
@@ -134,7 +134,7 @@ public class ProfileParser extends AbstractParser {
 		}
 
 		if (original.getType() != null) {
-			config.setConfigurableType(resolve(original.getType().getResource()));
+			config.setType(resolve(original.getType().getResource()));
 		}
 		if (original.getConfigure() != null) {
 			Configurable configurable = resolveBeanUri(original.getConfigure()

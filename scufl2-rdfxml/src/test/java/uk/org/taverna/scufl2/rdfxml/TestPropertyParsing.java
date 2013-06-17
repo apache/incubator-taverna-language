@@ -42,7 +42,7 @@ public class TestPropertyParsing {
 				.getByName("Content_list");
 		assertEquals("Content_list", contentList.getName());
 		assertEquals("http://ns.taverna.org.uk/2010/activity/xml-splitter/in",
-				contentList.getConfigurableType().toASCIIString());
+				contentList.getType().toASCIIString());
 		assertEquals(1, contentList.getInputPorts().size());
 		InputActivityPort personName = contentList.getInputPorts().getByName(
 				"WSArrayofData");

@@ -59,7 +59,7 @@ public class TestBeanshellActivityParser {
 				.configurationForActivityBoundToProcessor(concat, profile);		
 		Activity concatAct = (Activity) concatConfig.getConfigures();
 		assertEquals(ACTIVITY_URI,
-				concatAct.getConfigurableType());
+				concatAct.getType());
 		PropertyResource configResource = concatConfig.getPropertyResource();
 		assertEquals(ACTIVITY_URI.resolve("#Config"), configResource.getTypeURI());
 		

@@ -55,7 +55,7 @@ public class RetryParser extends AbstractActivityParser {
 
 		
 		Configuration c = new Configuration();		
-		c.setConfigurableType(scufl2Uri.resolve("#Config"));
+		c.setType(scufl2Uri.resolve("#Config"));
 
 		PropertyResource resource = c.getPropertyResource();
 

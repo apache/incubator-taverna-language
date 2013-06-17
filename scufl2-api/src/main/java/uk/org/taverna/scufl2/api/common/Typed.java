@@ -16,7 +16,7 @@ public interface Typed extends WorkflowBean {
 	 * 
 	 * @return the type of the <code>WorkflowBean</code>
 	 */
-	public URI getConfigurableType();
+	public URI getType();
 
 	/**
 	 * Sets the type of the {@link WorkflowBean}.
@@ -24,6 +24,6 @@ public interface Typed extends WorkflowBean {
 	 * @param type
 	 *            the type of the <code>WorkflowBean</code>.
 	 */
-	public void setConfigurableType(URI type);
+	public void setType(URI type);
 
 }

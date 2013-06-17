@@ -38,8 +38,8 @@ public class TestConfiguration {
 			return;
 		}
 		configuration.setConfigures(a);
-		configuration.setConfigurableType(tavernaUri);
-		a.setConfigurableType(tavernaUri);
+		configuration.setType(tavernaUri);
+		a.setType(tavernaUri);
 		
 		CorrectnessValidator cv = new CorrectnessValidator();
 		ReportCorrectnessValidationListener rcvl = new ReportCorrectnessValidationListener();
@@ -63,8 +63,8 @@ public class TestConfiguration {
 			return;
 		}
 		configuration.setConfigures(a);
-		configuration.setConfigurableType(tavernaUri);
-		a.setConfigurableType(tavernaUri2);
+		configuration.setType(tavernaUri);
+		a.setType(tavernaUri2);
 		
 		CorrectnessValidator cv = new CorrectnessValidator();
 		ReportCorrectnessValidationListener rcvl = new ReportCorrectnessValidationListener();
@@ -88,8 +88,8 @@ public class TestConfiguration {
 			return;
 		}
 		configuration.setConfigures(a);
-		configuration.setConfigurableType(tavernaUri);
-		a.setConfigurableType(myGridUri);
+		configuration.setType(tavernaUri);
+		a.setType(myGridUri);
 		
 		CorrectnessValidator cv = new CorrectnessValidator();
 		ReportCorrectnessValidationListener rcvl = new ReportCorrectnessValidationListener();
@@ -117,7 +117,7 @@ public class TestConfiguration {
 		} catch (URISyntaxException e) {
 			return;
 		}
-		configuration.setConfigurableType(tavernaUri);
+		configuration.setType(tavernaUri);
 		configuration.setPropertyResource(pr);
 		
 		CorrectnessValidator cv = new CorrectnessValidator();
@@ -141,7 +141,7 @@ public class TestConfiguration {
 			return;
 		}
 		configuration.setPropertyResource(pr);
-		configuration.setConfigurableType(tavernaUri);
+		configuration.setType(tavernaUri);
 		
 		CorrectnessValidator cv = new CorrectnessValidator();
 		ReportCorrectnessValidationListener rcvl = new ReportCorrectnessValidationListener();

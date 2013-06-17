@@ -249,7 +249,7 @@ public class StructureReader implements WorkflowBundleReader {
 		if (next.equals("Type")) {
 			URI uri = URI.create(nextLine.split("[<>]")[1]);
 			if (level == Level.Activity) {
-				activity.setConfigurableType(uri);
+				activity.setType(uri);
 			} else if (level == Level.Configuration) {
 				configuration.getPropertyResource().setTypeURI(uri);
 			}

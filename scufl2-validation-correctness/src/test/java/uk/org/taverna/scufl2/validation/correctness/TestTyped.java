@@ -31,7 +31,7 @@ public class TestTyped {
 	@Test
 	public void testCorrectnessOfMissingConfigurableType() {
 		Activity a = new Activity();
-		a.setConfigurableType(null);
+		a.setType(null);
 		
 		CorrectnessValidator cv = new CorrectnessValidator();
 		ReportCorrectnessValidationListener rcvl = new ReportCorrectnessValidationListener();
@@ -45,7 +45,7 @@ public class TestTyped {
 	@Test
 	public void testCompletenessOfMissingConfigurableType() {
 		Activity a = new Activity();
-		a.setConfigurableType(null);
+		a.setType(null);
 		
 		CorrectnessValidator cv = new CorrectnessValidator();
 		ReportCorrectnessValidationListener rcvl = new ReportCorrectnessValidationListener();
@@ -67,7 +67,7 @@ public class TestTyped {
 	@Test
 	public void testCompletenessOfConfigurableType() throws URISyntaxException {
 		Activity a = new Activity();
-		a.setConfigurableType(new URI("http://www.taverna.org.uk"));
+		a.setType(new URI("http://www.taverna.org.uk"));
 		
 		CorrectnessValidator cv = new CorrectnessValidator();
 		ReportCorrectnessValidationListener rcvl = new ReportCorrectnessValidationListener();
@@ -88,7 +88,7 @@ public class TestTyped {
 	public void testNonAbsoluteURI() throws URISyntaxException {
 		Activity a = new Activity();
 		URI type = new URI("fred/soup");
-		a.setConfigurableType(type);
+		a.setType(type);
 		
 		CorrectnessValidator cv = new CorrectnessValidator();
 		ReportCorrectnessValidationListener rcvl = new ReportCorrectnessValidationListener();
@@ -109,7 +109,7 @@ public class TestTyped {
 	public void testFileURI() throws URISyntaxException {
 		Activity a = new Activity();
 		URI type = new URI("file:///fred/soup");
-		a.setConfigurableType(type);
+		a.setType(type);
 		
 		CorrectnessValidator cv = new CorrectnessValidator();
 		ReportCorrectnessValidationListener rcvl = new ReportCorrectnessValidationListener();

@@ -51,7 +51,7 @@ public class TestRDFXMLReader {
 				hello.getDispatchStack().getType().toASCIIString());
 		assertEquals(7, hello.getDispatchStack().size());
 		assertEquals("http://ns.taverna.org.uk/2010/scufl2/taverna#Failover",
-				hello.getDispatchStack().get(3).getConfigurableType()
+				hello.getDispatchStack().get(3).getType()
 						.toASCIIString());
 	}
 

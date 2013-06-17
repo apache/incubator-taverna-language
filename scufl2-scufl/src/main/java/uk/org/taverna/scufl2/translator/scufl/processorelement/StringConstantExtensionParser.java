@@ -68,7 +68,7 @@ public class StringConstantExtensionParser extends AbstractExtensionParser {
 		Activity activity = new Activity();
 		getParserState().setCurrentActivity(activity);
 		activity.setParent(getParserState().getCurrentProfile());
-		activity.setConfigurableType(CONSTANT);
+		activity.setType(CONSTANT);
 		OutputActivityPort valuePort = new OutputActivityPort(activity, VALUE);
 		valuePort.setDepth(0);
 		valuePort.setGranularDepth(0);

@@ -77,7 +77,7 @@ Ported {
 	 * @return the type of the <code>Activity</code>
 	 */
 	@Override
-	public URI getConfigurableType() {
+	public URI getType() {
 		return type;
 	}
 
@@ -116,7 +116,7 @@ Ported {
 	 * @param type the type of the <code>Activity</code>
 	 */
 	@Override
-	public void setConfigurableType(URI type) {
+	public void setType(URI type) {
 		this.type = type;
 	}
 
@@ -157,13 +157,13 @@ Ported {
 
 	@Override
 	public String toString() {
-		return "Activity " + getConfigurableType() + " \"" + getName() + '"';
+		return "Activity " + getType() + " \"" + getName() + '"';
 	}
 	
 	@Override
 	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
 		super.cloneInto(clone, cloning);
 		Activity cloneActivity = (Activity) clone;
-		cloneActivity.setConfigurableType(getConfigurableType());
+		cloneActivity.setType(getType());
 	}
 }

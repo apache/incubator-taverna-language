@@ -433,9 +433,9 @@ public class RDFXMLSerializer {
 				uk.org.taverna.scufl2.rdfxml.jaxb.DispatchStackLayer layer = objectFactory
 						.createDispatchStackLayer();
 				layer.setAbout(uri.toASCIIString());
-				if (dispatchStackLayer.getConfigurableType() != null) {
+				if (dispatchStackLayer.getType() != null) {
 					Type type = rdfObjectFactory.createType();
-					type.setResource(dispatchStackLayer.getConfigurableType()
+					type.setResource(dispatchStackLayer.getType()
 							.toASCIIString());
 					layer.setType(type);
 				}
@@ -879,11 +879,11 @@ public class RDFXMLSerializer {
 	}
 
 	private Type type(Typed typed) {
-		if (typed.getConfigurableType() == null) {
+		if (typed.getType() == null) {
 			return null;
 		}
 		Type t = rdfObjectFactory.createType();
-		t.setResource(typed.getConfigurableType().toASCIIString());
+		t.setResource(typed.getType().toASCIIString());
 		return t;
 	}
 

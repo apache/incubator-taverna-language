@@ -131,7 +131,7 @@ public class WorkflowParser extends AbstractParser {
 
 	protected void parseDispatchStackLayer(DispatchStackLayer original) {
 		uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer layer = new uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer();
-		layer.setConfigurableType(getParserState().getCurrentBase().resolve(
+		layer.setType(getParserState().getCurrentBase().resolve(
 				original.getType().getResource()));
 		layer.setParent(getParserState().getCurrent(
 				uk.org.taverna.scufl2.api.dispatchstack.DispatchStack.class));

@@ -59,7 +59,7 @@ public class TestDispatchLayerParsing {
 		List<String> foundNames = new ArrayList<String>();
 		
 		for (DispatchStackLayer layer : parallelise.getDispatchStack()) {
-			URI type = layer.getConfigurableType();
+			URI type = layer.getType();
 			foundNames.add(DISPATCH_LAYER.relativize(type).toASCIIString());
 		}		
 		assertEquals(expectedNames, foundNames);

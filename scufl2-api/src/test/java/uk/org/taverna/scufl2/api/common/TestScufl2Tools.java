@@ -233,7 +233,7 @@ public class TestScufl2Tools extends ExampleWorkflow {
 		assertTrue("Need at least one layer", 
 				! hello.getDispatchStack().isEmpty());
 		for (DispatchStackLayer layer : hello.getDispatchStack()) {
-			URI type = layer.getConfigurableType();
+			URI type = layer.getType();
 			assertNotNull(type);
 			assertSame(layer, scufl2Tools.dispatchStackByType(hello, type));
 		}

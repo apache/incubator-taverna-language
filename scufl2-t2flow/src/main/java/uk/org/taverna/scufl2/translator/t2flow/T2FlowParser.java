@@ -361,7 +361,7 @@ public class T2FlowParser {
 		String activityClass = origActivity.getClazz();
 		URI activityId = mapTypeFromRaven(raven, activityClass);
 		uk.org.taverna.scufl2.api.activity.Activity newActivity = new uk.org.taverna.scufl2.api.activity.Activity();
-		newActivity.setConfigurableType(activityId);
+		newActivity.setType(activityId);
 		return newActivity;
 	}
 
@@ -467,7 +467,7 @@ public class T2FlowParser {
 			}
 			// We'll have to fake it
 			configuration = new Configuration();
-			configuration.setConfigurableType(configBeanURI.resolve("Config"));
+			configuration.setType(configBeanURI.resolve("Config"));
 
 			URI fallBackURI = configBeanURI.resolve(configBean.getEncoding());
 
@@ -935,7 +935,7 @@ public class T2FlowParser {
 		DispatchStackLayer dispatchStackLayer = new DispatchStackLayer();
 		URI typeUri = mapTypeFromRaven(dispatchLayer.getRaven(),
 				dispatchLayer.getClazz());
-		dispatchStackLayer.setConfigurableType(typeUri);
+		dispatchStackLayer.setType(typeUri);
 		parserState.get().setCurrentConfigurable(dispatchStackLayer);
 		try {
 			parseConfigurationAndAddToProfile(dispatchLayer.getConfigBean(),

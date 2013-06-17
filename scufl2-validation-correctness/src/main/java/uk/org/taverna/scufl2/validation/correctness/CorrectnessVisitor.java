@@ -226,7 +226,7 @@ public class CorrectnessVisitor extends DispatchingVisitor {
 		URI configuresType = null;
 		if (configures != null) {
 			if (configures instanceof Typed) {
-				configuresType = ((Typed) configures).getConfigurableType();
+				configuresType = ((Typed) configures).getType();
 			}
 		}
 		// Correct check cannot be completed unless property descriptions are available
@@ -799,7 +799,7 @@ public class CorrectnessVisitor extends DispatchingVisitor {
 	 */
 	@Override
 	public void visitTyped(Typed bean) {
-		URI configurableType = bean.getConfigurableType();
+		URI configurableType = bean.getType();
 		if (configurableType != null) {
 			if (!configurableType.isAbsolute()) {
 				listener.nonAbsoluteURI(bean, "configurableType", configurableType);

@@ -55,7 +55,7 @@ public class TestSimpleWf {
 		
 		// Beanshell script
 		Activity script = new Activity("msconvert");
-		script.setConfigurableType(BEANSHELL);
+		script.setType(BEANSHELL);
 
 		Profile profile = wb.getMainProfile();
 		script.setParent(profile);

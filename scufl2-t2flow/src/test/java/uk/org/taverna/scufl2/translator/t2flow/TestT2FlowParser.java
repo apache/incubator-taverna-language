@@ -47,7 +47,7 @@ public class TestT2FlowParser {
 		Processor interaction = wfBundle.getMainWorkflow().getProcessors().getByName("BioSTIFInteraction");
 		DispatchStackLayer loopLayer = interaction.getDispatchStack().get(2);
 		assertEquals("http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Loop", 
-				loopLayer.getConfigurableType().toString());
+				loopLayer.getType().toString());
 		List<Configuration> loopConfigs = scufl2Tools.configurationsFor(loopLayer, wfBundle.getMainProfile());
 		// unconfigured
 		assertTrue(loopConfigs.isEmpty());		
