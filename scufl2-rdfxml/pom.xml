@@ -15,6 +15,15 @@
 	</properties>
 	<build>
 		<plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Export-Package>uk.org.taverna.scufl2.api.io;provide:=true</Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jaxb2-maven-plugin</artifactId>
@@ -33,6 +42,7 @@
 		</plugins>
 	</build>
 	<dependencies>
+    
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>scufl2-api</artifactId>
