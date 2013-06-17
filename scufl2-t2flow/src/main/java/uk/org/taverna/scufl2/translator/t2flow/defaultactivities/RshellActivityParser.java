@@ -71,7 +71,7 @@ public class RshellActivityParser extends AbstractActivityParser {
 		Configuration configuration = new Configuration();
 		configuration.setParent(parserState.getCurrentProfile());
 
-		PropertyResource configResource = configuration.getPropertyResource();
+		PropertyResource configResource = configuration.getJson();
 		configResource.setTypeURI(ACTIVITY_URI.resolve("#Config"));
 
 		// Basic properties

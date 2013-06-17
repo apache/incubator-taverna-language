@@ -51,7 +51,7 @@ public class ParallelizeParser extends AbstractActivityParser {
 			BigInteger maxJobs = parallelConfig.getMaxJobs();
 			if (maxJobs != null && maxJobs.intValue() > 0 && maxJobs.intValue() != Defaults.maxJobs) {
 				PropertyLiteral p = new PropertyLiteral(maxJobs.intValue());
-				c.getPropertyResource().addProperty(scufl2Uri.resolve("#maxJobs"), p);
+				c.getJson().addProperty(scufl2Uri.resolve("#maxJobs"), p);
 			}
 			return c;
 		}

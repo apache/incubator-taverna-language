@@ -257,15 +257,6 @@ public class URITools {
 			}
 
 		}
-		if (bean instanceof PropertyResource) {
-			PropertyResource propertyResource = (PropertyResource) bean;
-			URI resourceURI = propertyResource.getResourceURI();
-			if (resourceURI != null) {
-				return resourceURI;
-			}
-			throw new IllegalStateException(
-					"PropertyResource does not have a resourceURI");
-		}
 		if (bean instanceof Revision) {
 			Revision revision = (Revision) bean;
 			return revision.getIdentifier();

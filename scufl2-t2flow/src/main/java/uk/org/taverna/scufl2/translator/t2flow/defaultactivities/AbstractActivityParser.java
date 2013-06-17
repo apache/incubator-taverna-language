@@ -93,7 +93,7 @@ public abstract class AbstractActivityParser implements T2Parser {
 
 	protected PropertyResource parseAndAddOutputPortDefinition(ActivityPortDefinitionBean portBean,
 			Configuration configuration, Activity activity) {
-		PropertyResource configResource = configuration.getPropertyResource();
+		PropertyResource configResource = configuration.getJson();
 		OutputActivityPort outputPort = new OutputActivityPort();
 		
 		outputPort.setName(getPortElement(portBean, "name", String.class));
@@ -142,7 +142,7 @@ public abstract class AbstractActivityParser implements T2Parser {
 
 	protected PropertyResource parseAndAddInputPortDefinition(ActivityPortDefinitionBean portBean,
 			Configuration configuration, Activity activity) {
-		PropertyResource configResource = configuration.getPropertyResource();
+		PropertyResource configResource = configuration.getJson();
 
 		InputActivityPort inputPort = new InputActivityPort();
 		inputPort.setName(getPortElement(portBean, "name", String.class));

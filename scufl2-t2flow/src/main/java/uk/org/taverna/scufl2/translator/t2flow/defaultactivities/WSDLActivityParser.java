@@ -47,7 +47,7 @@ public class WSDLActivityParser extends AbstractActivityParser {
 				"xstream", WSDLConfig.class);
 
 		Configuration configuration = new Configuration();
-		configuration.getPropertyResource().setTypeURI(
+		configuration.getJson().setTypeURI(
 				WSDL.resolve("#Config"));
 
 		URI wsdl;
@@ -68,7 +68,7 @@ public class WSDLActivityParser extends AbstractActivityParser {
 			throw new ReaderException("WSDL config has no operation set");
 		}
 
-		PropertyResource wsdlOperation = configuration.getPropertyResource()
+		PropertyResource wsdlOperation = configuration.getJson()
 				.addPropertyAsNewResource(WSDL.resolve("#operation"),
 						OPERATION);
 		wsdlOperation.addPropertyReference(OPERATION.resolve("#wsdl"), wsdl);
@@ -78,7 +78,7 @@ public class WSDLActivityParser extends AbstractActivityParser {
 				&& !wsdlConfig.getSecurityProfile().isEmpty()) {
 			URI securityProfileURI = SECURITY.resolve("#" + wsdlConfig
 					.getSecurityProfile());
-			configuration.getPropertyResource().addPropertyReference(
+			configuration.getJson().addPropertyReference(
 					WSDL.resolve("#securityProfile"), securityProfileURI);
 		}
 		return configuration;

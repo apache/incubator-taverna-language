@@ -76,7 +76,7 @@ public class TestRESTActivityParser {
 		Activity activity = (Activity) config.getConfigures();
 		assertEquals(ACTIVITY_URI, activity.getType());
 
-		PropertyResource configResource = config.getPropertyResource();
+		PropertyResource configResource = config.getJson();
 		PropertyResource request = configResource.getPropertyAsResource(
 				ACTIVITY_URI.resolve("#request"));
 		assertEquals(ACTIVITY_URI.resolve("#Request"), request.getTypeURI());
@@ -161,7 +161,7 @@ public class TestRESTActivityParser {
 		Activity activity = (Activity) config.getConfigures();
 		assertEquals(ACTIVITY_URI, activity.getType());
 
-		PropertyResource configResource = config.getPropertyResource();
+		PropertyResource configResource = config.getJson();
 		PropertyResource request = configResource.getPropertyAsResource(
 				ACTIVITY_URI.resolve("#request"));
 		assertEquals(ACTIVITY_URI.resolve("#Request"), request.getTypeURI());
@@ -246,7 +246,7 @@ public class TestRESTActivityParser {
 		Activity activity = (Activity) config.getConfigures();
 		assertEquals(ACTIVITY_URI, activity.getType());
 
-		PropertyResource configResource = config.getPropertyResource();
+		PropertyResource configResource = config.getJson();
 		PropertyResource request = configResource.getPropertyAsResource(
 				ACTIVITY_URI.resolve("#request"));
 		assertEquals(ACTIVITY_URI.resolve("#Request"), request.getTypeURI());
@@ -429,7 +429,7 @@ public class TestRESTActivityParser {
 		Activity activity = (Activity) config.getConfigures();
 		assertEquals(ACTIVITY_URI, activity.getType());
 
-		PropertyResource configResource = config.getPropertyResource();
+		PropertyResource configResource = config.getJson();
 		PropertyResource request = configResource.getPropertyAsResource(
 				ACTIVITY_URI.resolve("#request"));
 		assertEquals(ACTIVITY_URI.resolve("#Request"), request.getTypeURI());
@@ -537,7 +537,7 @@ public class TestRESTActivityParser {
 			Activity activity = (Activity) config.getConfigures();
 			assertEquals(ACTIVITY_URI, activity.getType());
 
-			PropertyResource configResource = config.getPropertyResource();
+			PropertyResource configResource = config.getJson();
 			PropertyResource request = configResource.getPropertyAsResource(
 					ACTIVITY_URI.resolve("#request"));
 			assertEquals(ACTIVITY_URI.resolve("#Request"), request.getTypeURI());
@@ -645,7 +645,7 @@ public class TestRESTActivityParser {
 			Activity activity = (Activity) config.getConfigures();
 			assertEquals(ACTIVITY_URI, activity.getType());
 
-			PropertyResource configResource = config.getPropertyResource();
+			PropertyResource configResource = config.getJson();
 			PropertyResource request = configResource.getPropertyAsResource(
 					ACTIVITY_URI.resolve("#request"));
 			assertEquals(ACTIVITY_URI.resolve("#Request"), request.getTypeURI());
@@ -755,7 +755,7 @@ public class TestRESTActivityParser {
 			Activity activity = (Activity) config.getConfigures();
 			assertEquals(ACTIVITY_URI, activity.getType());
 
-			PropertyResource configResource = config.getPropertyResource();
+			PropertyResource configResource = config.getJson();
 			PropertyResource request = configResource.getPropertyAsResource(
 					ACTIVITY_URI.resolve("#request"));
 			assertEquals(ACTIVITY_URI.resolve("#Request"), request.getTypeURI());
@@ -852,7 +852,7 @@ public class TestRESTActivityParser {
 				Activity activity = (Activity) config.getConfigures();
 				assertEquals(ACTIVITY_URI, activity.getType());
 
-				PropertyResource configResource = config.getPropertyResource();
+				PropertyResource configResource = config.getJson();
 				PropertyResource request = configResource.getPropertyAsResource(
 						ACTIVITY_URI.resolve("#request"));
 				assertEquals(ACTIVITY_URI.resolve("#Request"), request.getTypeURI());
@@ -949,7 +949,7 @@ public class TestRESTActivityParser {
 				Activity activity = (Activity) config.getConfigures();
 				assertEquals(ACTIVITY_URI, activity.getType());
 
-				PropertyResource configResource = config.getPropertyResource();
+				PropertyResource configResource = config.getJson();
 				PropertyResource request = configResource.getPropertyAsResource(
 						ACTIVITY_URI.resolve("#request"));
 				assertEquals(ACTIVITY_URI.resolve("#Request"), request.getTypeURI());

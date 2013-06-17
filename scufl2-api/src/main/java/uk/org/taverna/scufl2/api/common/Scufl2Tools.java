@@ -10,6 +10,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.PropertyException;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.annotation.Annotation;
 import uk.org.taverna.scufl2.api.common.Visitor.VisitorWithPath;
@@ -37,8 +41,6 @@ import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
-import uk.org.taverna.scufl2.api.property.PropertyException;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
 
 /**
  * Utility methods for dealing with SCUFL2 models
@@ -234,34 +236,20 @@ public class Scufl2Tools {
 
 	}
 
-	public PropertyResource portDefinitionFor(ActivityPort activityPort,
+	public JsonNode portDefinitionFor(ActivityPort activityPort,
 			Profile profile) throws PropertyException {
 		Configuration actConfig = configurationFor(activityPort.getParent(),
 				profile);
 
-		URI portURI = uriTools.uriForBean(activityPort);
-		URI configURI = uriTools.uriForBean(actConfig);
 
-		URI portDefinition;
-		URI definesPort;
-		if (activityPort instanceof InputPort) {
-			portDefinition = PORT_DEFINITION.resolve("#inputPortDefinition");
-			definesPort = PORT_DEFINITION.resolve("#definesInputPort");
-		} else {
-			portDefinition = PORT_DEFINITION.resolve("#outputPortDefinition");
-			definesPort = PORT_DEFINITION.resolve("#definesOutputPort");
+		JsonNode portDef = actConfig.getJson().get("portDefinition");
+		if (portDef == null) { 
+		    return null;
 		}
-		for (PropertyResource portDef : actConfig.getPropertyResource()
-				.getPropertiesAsResources(portDefinition)) {
-			URI portDefURI = portDef.getPropertyAsResourceURI(definesPort);
-			// We'll compare the URIs as absolute URIs - but portDefURI is most
-			// likely relative
-			// to the config
-			if (configURI.resolve(portDefURI).equals(portURI)) {
-				return portDef;
-			}
-		}
-		return null;
+
+		URI portPath = uriTools.relativeUriForBean(activityPort, activityPort.getParent());
+		// e.g. "in/input1" or "out/output2"
+		return portDef.get(portPath.toString());
 
 	}
 
@@ -278,7 +266,7 @@ public class Scufl2Tools {
 					+ processor);
 		}
 		return bindings.get(0);
-	}
+	} 
 
 	public List<ProcessorBinding> processorBindingsForProcessor(
 			Processor processor, Profile profile) {
@@ -702,7 +690,7 @@ public class Scufl2Tools {
 					binding.getBoundActivity(), profile)) {
 				URI nestedWfRel;
 				try {
-					nestedWfRel = c.getPropertyResource()
+					nestedWfRel = c.getJson()
 							.getPropertyAsResourceURI(
 									NESTED_WORKFLOW.resolve("#workflow"));
 				} catch (PropertyException e) {

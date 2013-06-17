@@ -62,11 +62,11 @@ public class ExampleWorkflow {
 		configuration.setConfigures(activity);
 
 		configuration
-				.getPropertyResource()
+				.getJson()
 				.setTypeURI(
 						URI.create("http://ns.taverna.org.uk/2010/activity/beanshell#Config"));
 		configuration
-				.getPropertyResource()
+				.getJson()
 				.addPropertyAsString(
 						URI.create("http://ns.taverna.org.uk/2010/activity/beanshell#script"),
 						"hello = \"Hello, \" + personName;\n"
@@ -207,9 +207,9 @@ public class ExampleWorkflow {
 		Profile profile = makeMainProfile();
 		profile.setName("tavernaServer");
 		Configuration config = profile.getConfigurations().getByName("Hello");
-		config.getPropertyResource().clearAllProperties();
+		config.getJson().clearAllProperties();
 		// FIXME: Need removeProperty!
-		config.getPropertyResource()
+		config.getJson()
 				.addPropertyAsString(
 						URI.create("http://ns.taverna.org.uk/2010/activity/beanshell#script"),
 						"hello = \"Hello, \" + personName;\n"

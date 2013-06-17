@@ -110,7 +110,6 @@ public class TestConfiguration {
 	@Test
 	public void testCorrectnessOfMissingConfigures() {
 		Configuration configuration = new Configuration();
-		PropertyResource pr = new PropertyResource();
 		URI tavernaUri = null;
 		try {
 			tavernaUri = new URI("http://www.taverna.org.uk");
@@ -118,7 +117,7 @@ public class TestConfiguration {
 			return;
 		}
 		configuration.setType(tavernaUri);
-		configuration.setPropertyResource(pr);
+		configuration.setJson(pr);
 		
 		CorrectnessValidator cv = new CorrectnessValidator();
 		ReportCorrectnessValidationListener rcvl = new ReportCorrectnessValidationListener();
@@ -140,7 +139,7 @@ public class TestConfiguration {
 		} catch (URISyntaxException e) {
 			return;
 		}
-		configuration.setPropertyResource(pr);
+		configuration.setJson(pr);
 		configuration.setType(tavernaUri);
 		
 		CorrectnessValidator cv = new CorrectnessValidator();

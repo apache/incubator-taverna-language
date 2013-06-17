@@ -41,7 +41,7 @@ public class SoaplabActivityParser extends AbstractActivityParser {
 		Configuration configuration = new Configuration();
 		configuration.setParent(parserState.getCurrentProfile());
 
-		PropertyResource configResource = configuration.getPropertyResource();
+		PropertyResource configResource = configuration.getJson();
 		configResource.setTypeURI(scufl2Uri.resolve("#Config"));
 
 		String endpoint = soaplabConfig.getEndpoint();

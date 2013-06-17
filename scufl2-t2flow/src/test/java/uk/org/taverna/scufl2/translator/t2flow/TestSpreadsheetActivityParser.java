@@ -29,7 +29,7 @@ public class TestSpreadsheetActivityParser {
 		Profile profile = wfBundle.getMainProfile();
 		Processor proc = wfBundle.getMainWorkflow().getProcessors().getByName("SpreadsheetImport");
 		PropertyResource config = scufl2Tools
-				.configurationForActivityBoundToProcessor(proc, profile).getPropertyResource();
+				.configurationForActivityBoundToProcessor(proc, profile).getJson();
 		assertNotNull(config);
 		assertEquals("",config.getPropertyAsString(ACTIVITY_URI.resolve("#emptyCellValue")));
 		assertFalse(config.hasProperty(ACTIVITY_URI.resolve("#outputFormat")));

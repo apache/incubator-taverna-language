@@ -50,16 +50,16 @@ public class ConfigurationDefinitionTest {
 	 */
 	@Test
 	public void testActivityConfigurationDefinitionURI() {
-		assertEquals(configurableType, new ConfigurationDefinition(configurableType).getConfigurableType());
+		assertEquals(configurableType, new ConfigurationDefinition(configurableType).getType());
 	}
 
 	/**
-	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.ConfigurationDefinition#getConfigurableType()}.
+	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.ConfigurationDefinition#getType()}.
 	 */
 	@Test
 	public void testGetConfigurableType() {
-		assertEquals(configurableType, configurationDefinition.getConfigurableType());
-		assertEquals(configurableType, configurationDefinition.getConfigurableType());
+		assertEquals(configurableType, configurationDefinition.getType());
+		assertEquals(configurableType, configurationDefinition.getType());
 	}
 
 	/**
@@ -72,13 +72,13 @@ public class ConfigurationDefinitionTest {
 	}
 
 	/**
-	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.ConfigurationDefinition#setConfigurableType(java.net.URI)}.
+	 * Test method for {@link uk.org.taverna.scufl2.api.configurations.ConfigurationDefinition#setType(java.net.URI)}.
 	 */
 	@Test
 	public void testSetConfigurableType() {
-		assertEquals(configurableType, configurationDefinition.getConfigurableType());
-		configurationDefinition.setConfigurableType(URI.create("test:test"));
-		assertEquals(URI.create("test:test"), configurationDefinition.getConfigurableType());
+		assertEquals(configurableType, configurationDefinition.getType());
+		configurationDefinition.setType(URI.create("test:test"));
+		assertEquals(URI.create("test:test"), configurationDefinition.getType());
 	}
 
 	/**

@@ -9,8 +9,6 @@ import java.net.URI;
  */
 public interface Typed extends WorkflowBean {
 
-	// TODO: Change back to getType/setType()
-	
 	/**
 	 * Returns the type of the {@link WorkflowBean}.
 	 * 

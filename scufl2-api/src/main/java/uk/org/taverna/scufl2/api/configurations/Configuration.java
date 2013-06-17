@@ -17,17 +17,20 @@ import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
 import uk.org.taverna.scufl2.api.port.Port;
 import uk.org.taverna.scufl2.api.profiles.Profile;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.jsonschema.JsonSchema;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 /**
  * Configuration of a {@link Configurable} workflow bean.
  * <p>
  * A configuration is activated by a {@link Profile}, and provides a link to the
- * {@link #getPropertyResource()} containing the properties to configure the
+ * {@link #getJson()} containing the properties to configure the
  * bean, like an {@link Activity}.
  * <p>
  * A configuration is of a certain (RDF) <strong>type</strong>, as defined by
- * {@link PropertyResource#getTypeURI()} on the - which determines which
+ * {@link #getType()} - which determines which
  * properties are required and optional. For instance, the type
  * <code>http://ns.taverna.org.uk/2010/activity/wsdl/ConfigType</code> requires
  * the property
@@ -56,9 +59,12 @@ import uk.org.taverna.scufl2.api.property.PropertyResource;
  * 
  */
 public class Configuration extends AbstractNamed implements Child<Profile>, Typed {
-	private Configurable configures;
+	private static final JsonNodeFactory JSON_NODE_FACTORY = new JsonNodeFactory(true);
+    private Configurable configures;
 	private Profile parent;
-	private PropertyResource propertyResource = new PropertyResource();
+	private JsonNode json = JSON_NODE_FACTORY.objectNode();
+	private JsonSchema jsonSchema;
+    private URI type;
 
 	/**
 	 * Constructs a <code>Configuration</code> with a random UUID as the name.
@@ -80,10 +86,7 @@ public class Configuration extends AbstractNamed implements Child<Profile>, Type
 
 	@Override
 	public boolean accept(Visitor visitor) {
-		if (visitor.visitEnter(this) && getPropertyResource() != null) {
-			getPropertyResource().accept(visitor);
-		}
-		return visitor.visitLeave(this);
+	    return visitor.visit(this);
 	}
 
 	/**
@@ -108,8 +111,8 @@ public class Configuration extends AbstractNamed implements Child<Profile>, Type
 	 * 
 	 * @return the backing {@link PropertyResource}.
 	 */
-	public PropertyResource getPropertyResource() {
-		return propertyResource;
+	public JsonNode getJson() {
+		return json;
 	}
 
 	/**
@@ -120,7 +123,7 @@ public class Configuration extends AbstractNamed implements Child<Profile>, Type
 	 * @return the type of the <code>Configuration</code>
 	 */
 	public URI getType() {
-		return getPropertyResource().getTypeURI();
+		return type;
 	}
 
 	/**
@@ -152,15 +155,16 @@ public class Configuration extends AbstractNamed implements Child<Profile>, Type
 	 * If the provided PropertyResource is <code>null</code>, a new, blank
 	 * PropertyResource will be set instead.
 	 * 
-	 * @param propertyResource
+	 * @param json
 	 *            the underlying <code>PropertyResource</code> which contains
 	 *            the properties set by this configuration.
 	 */
-	public void setPropertyResource(PropertyResource propertyResource) {
-		if (propertyResource == null) {
-			this.propertyResource = new PropertyResource();
+	public void setJson(JsonNode json) {
+		if (json == null) {
+		    // TODO: Should this be JSON_NODE_FACTORY.nullNode();
+			this.json = JSON_NODE_FACTORY.objectNode();
 		}
-		this.propertyResource = propertyResource;
+		this.json = json;
 	}
 
 	/**
@@ -172,7 +176,7 @@ public class Configuration extends AbstractNamed implements Child<Profile>, Type
 	 *             the type of the <code>Configuration</code>.
 	 */
 	public void setType(URI type) {
-		getPropertyResource().setTypeURI(type);
+	    this.type = type;
 	}
 
 	@Override
@@ -181,5 +185,13 @@ public class Configuration extends AbstractNamed implements Child<Profile>, Type
 		Configuration cloneConfig = (Configuration) clone;
 		cloneConfig.setConfigures(cloning.cloneOrOriginal(getConfigures()));
 	}
+
+    public JsonSchema getJsonSchema() {
+        return jsonSchema;
+    }
+
+    public void setJsonSchema(JsonSchema jsonSchema) {
+        this.jsonSchema = jsonSchema;
+    }
 	
 }

@@ -96,7 +96,7 @@ public class TestPropertyParsing {
 	public void propertyResource() throws Exception {
 		Configuration get_XML_result = profile.getConfigurations().getByName(
 				"Get_XML_result");
-		PropertyResource propResource = get_XML_result.getPropertyResource();
+		PropertyResource propResource = get_XML_result.getJson();
 		assertEquals("http://ns.taverna.org.uk/2010/activity/wsdl#Config",
 				propResource.getTypeURI().toASCIIString());
 		assertNull(propResource.getResourceURI());

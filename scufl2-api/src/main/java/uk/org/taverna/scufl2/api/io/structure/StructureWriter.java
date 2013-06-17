@@ -226,7 +226,7 @@ public class StructureWriter implements WorkflowBundleWriter {
 					append(" '" + configuredURI.toASCIIString() + "'");
 				}
 				
-				for (Entry<URI, SortedSet<PropertyObject>> prop : config.getPropertyResource()
+				for (Entry<URI, SortedSet<PropertyObject>> prop : config.getJson()
 						.getProperties().entrySet()) {
 					newLine(3);
 					append("Property");

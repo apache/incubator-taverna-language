@@ -18,6 +18,8 @@ import java.util.SortedSet;
 
 import org.junit.Test;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.common.URITools;
@@ -27,7 +29,6 @@ import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.api.profiles.Profile;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.defaultactivities.BeanshellActivityParser;
 
 public class TestBeanshellActivityParser {
@@ -60,7 +61,8 @@ public class TestBeanshellActivityParser {
 		Activity concatAct = (Activity) concatConfig.getConfigures();
 		assertEquals(ACTIVITY_URI,
 				concatAct.getType());
-		PropertyResource configResource = concatConfig.getPropertyResource();
+
+		JsonNode configResource = concatConfig.getJson();
 		assertEquals(ACTIVITY_URI.resolve("#Config"), configResource.getTypeURI());
 		
 		assertEquals(URI.create("http://ns.taverna.org.uk/2010/activity/localworker/org.embl.ebi.escience.scuflworkers.java.StringConcat"), 
@@ -178,7 +180,7 @@ public class TestBeanshellActivityParser {
 		Configuration a_c_config = scufl2Tools
 				.configurationForActivityBoundToProcessor(a_c_workflow, profile);		
 
-		PropertyResource a_c_configResource = a_c_config.getPropertyResource();
+		PropertyResource a_c_configResource = a_c_config.getJson();
 		
 		assertFalse(a_c_configResource.hasProperty(ACTIVITY_URI.resolve("#derivedFrom")));
 		SortedSet<PropertyResource> deps = a_c_configResource.getPropertiesAsResources(DEPENDENCY_URI.resolve("#dependency"));
@@ -197,7 +199,7 @@ public class TestBeanshellActivityParser {
 		Configuration b_config = scufl2Tools
 				.configurationForActivityBoundToProcessor(b_system, profile);		
 
-		PropertyResource b_configResource = b_config.getPropertyResource();
+		PropertyResource b_configResource = b_config.getJson();
 		
 		deps = b_configResource.getPropertiesAsResources(DEPENDENCY_URI.resolve("#dependency"));
 		jars = new HashSet<String>();

@@ -128,7 +128,7 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 		configuration.setParent(parserState.getCurrentProfile());
 		parserState.setCurrentConfiguration(configuration);
 		try {
-			PropertyResource configResource = configuration.getPropertyResource();
+			PropertyResource configResource = configuration.getJson();
 			configResource.setTypeURI(ACTIVITY_URI.resolve("#Config"));
 
 			if (usecaseConfig != null) {
@@ -321,7 +321,7 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 		// Ignoring tags, REs, queue__preferred, queue__deny
 
 		PropertyResource configResource = parserState.getCurrentConfiguration()
-				.getPropertyResource();
+				.getJson();
 
 		// static inputs
 		for (ScriptInputStatic inputStatic : toolDesc.getStaticInputs()

@@ -57,7 +57,7 @@ public class RetryParser extends AbstractActivityParser {
 		Configuration c = new Configuration();		
 		c.setType(scufl2Uri.resolve("#Config"));
 
-		PropertyResource resource = c.getPropertyResource();
+		PropertyResource resource = c.getJson();
 
 		BigInteger maxRetries = config.getMaxRetries();
 		if (maxRetries != null && maxRetries.longValue() != Defaults.MAX_RETRIES || maxRetries.longValue() < 0) {

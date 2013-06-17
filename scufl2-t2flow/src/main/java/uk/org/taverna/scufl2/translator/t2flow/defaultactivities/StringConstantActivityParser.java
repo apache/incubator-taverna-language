@@ -45,9 +45,9 @@ public class StringConstantActivityParser extends AbstractActivityParser {
 			throw new ReaderException("String constant configuration has no value set");
 		}
 		Configuration configuration = new Configuration();
-		configuration.getPropertyResource().setTypeURI(
+		configuration.getJson().setTypeURI(
 				CONSTANT.resolve("#Config"));
-		configuration.getPropertyResource().addPropertyAsString(
+		configuration.getJson().addPropertyAsString(
 				CONSTANT.resolve("#string"), value);
 		
 		Activity activity = parserState.getCurrentActivity();

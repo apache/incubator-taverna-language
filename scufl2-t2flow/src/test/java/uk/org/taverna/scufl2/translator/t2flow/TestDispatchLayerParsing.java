@@ -72,7 +72,7 @@ public class TestDispatchLayerParsing {
 		DispatchStackLayer retry = scufl2Tools.dispatchStackByType(parallelise, RETRY);
 		Configuration retryConfig = scufl2Tools.configurationFor(retry, profile);
 		assertEquals(RETRY.resolve("#Config"), retryConfig.getType());
-		assertTrue(retryConfig.getPropertyResource().getProperties().isEmpty());				
+		assertTrue(retryConfig.getJson().getProperties().isEmpty());				
 	}
 	
 	@Test
@@ -82,7 +82,7 @@ public class TestDispatchLayerParsing {
 		DispatchStackLayer retry = scufl2Tools.dispatchStackByType(alternates, RETRY);
 		Configuration retryConfig = scufl2Tools.configurationFor(retry, profile);
 		assertEquals(RETRY.resolve("#Config"), retryConfig.getType());
-		assertTrue(retryConfig.getPropertyResource().getProperties().isEmpty());				
+		assertTrue(retryConfig.getJson().getProperties().isEmpty());				
 	}
 	
 	
@@ -93,7 +93,7 @@ public class TestDispatchLayerParsing {
 		DispatchStackLayer parallelize = scufl2Tools.dispatchStackByType(retry, PARALLELIZE);
 		Configuration parallelizeConfig = scufl2Tools.configurationFor(parallelize, profile);
 		assertEquals(PARALLELIZE.resolve("#Config"), parallelizeConfig.getType());
-		assertTrue(parallelizeConfig.getPropertyResource().getProperties().isEmpty());				
+		assertTrue(parallelizeConfig.getJson().getProperties().isEmpty());				
 	}
 	
 	@Test
@@ -132,7 +132,7 @@ public class TestDispatchLayerParsing {
 		DispatchStackLayer parallelize = scufl2Tools.dispatchStackByType(alternates, PARALLELIZE);
 		Configuration parallelizeConfig = scufl2Tools.configurationFor(parallelize, profile);
 		assertEquals(PARALLELIZE.resolve("#Config"), parallelizeConfig.getType());
-		assertTrue(parallelizeConfig.getPropertyResource().getProperties().isEmpty());				
+		assertTrue(parallelizeConfig.getJson().getProperties().isEmpty());				
 	}
 	
 	@Test
@@ -142,8 +142,8 @@ public class TestDispatchLayerParsing {
 		DispatchStackLayer parallelize = scufl2Tools.dispatchStackByType(retry, PARALLELIZE);
 		Configuration parallelizeConfig = scufl2Tools.configurationFor(parallelize, profile);
 		assertEquals(PARALLELIZE.resolve("#Config"), parallelizeConfig.getType());
-		assertFalse(parallelizeConfig.getPropertyResource().getProperties().isEmpty());				
-		assertEquals(5, parallelizeConfig.getPropertyResource().getPropertyAsLiteral(PARALLELIZE.resolve("#maxJobs")).getLiteralValueAsInt());
+		assertFalse(parallelizeConfig.getJson().getProperties().isEmpty());				
+		assertEquals(5, parallelizeConfig.getJson().getPropertyAsLiteral(PARALLELIZE.resolve("#maxJobs")).getLiteralValueAsInt());
 	}
 	
 	
@@ -155,15 +155,15 @@ public class TestDispatchLayerParsing {
 		Configuration retryConfig = scufl2Tools.configurationFor(retry, profile);
 		assertEquals(RETRY.resolve("#Config"), retryConfig.getType());
 
-		assertTrue(retryConfig.getPropertyResource().hasProperty(RETRY.resolve("#maxRetries")));
-		assertTrue(retryConfig.getPropertyResource().hasProperty(RETRY.resolve("#initialDelay")));
-		assertTrue(retryConfig.getPropertyResource().hasProperty(RETRY.resolve("#maxDelay")));
-		assertTrue(retryConfig.getPropertyResource().hasProperty(RETRY.resolve("#backoffFactor")));
+		assertTrue(retryConfig.getJson().hasProperty(RETRY.resolve("#maxRetries")));
+		assertTrue(retryConfig.getJson().hasProperty(RETRY.resolve("#initialDelay")));
+		assertTrue(retryConfig.getJson().hasProperty(RETRY.resolve("#maxDelay")));
+		assertTrue(retryConfig.getJson().hasProperty(RETRY.resolve("#backoffFactor")));
 
-		assertEquals(5, retryConfig.getPropertyResource().getPropertyAsLiteral(RETRY.resolve("#maxRetries")).getLiteralValueAsInt());
-		assertEquals(1337, retryConfig.getPropertyResource().getPropertyAsLiteral(RETRY.resolve("#initialDelay")).getLiteralValueAsInt());
-		assertEquals(7000, retryConfig.getPropertyResource().getPropertyAsLiteral(RETRY.resolve("#maxDelay")).getLiteralValueAsInt());
-		assertEquals(1.13, retryConfig.getPropertyResource().getPropertyAsLiteral(RETRY.resolve("#backoffFactor")).getLiteralValueAsDouble(), 0.001);
+		assertEquals(5, retryConfig.getJson().getPropertyAsLiteral(RETRY.resolve("#maxRetries")).getLiteralValueAsInt());
+		assertEquals(1337, retryConfig.getJson().getPropertyAsLiteral(RETRY.resolve("#initialDelay")).getLiteralValueAsInt());
+		assertEquals(7000, retryConfig.getJson().getPropertyAsLiteral(RETRY.resolve("#maxDelay")).getLiteralValueAsInt());
+		assertEquals(1.13, retryConfig.getJson().getPropertyAsLiteral(RETRY.resolve("#backoffFactor")).getLiteralValueAsDouble(), 0.001);
 		
 	}
 	
@@ -175,11 +175,11 @@ public class TestDispatchLayerParsing {
 		DispatchStackLayer retry = scufl2Tools.dispatchStackByType(retries, RETRY);
 		Configuration retryConfig = scufl2Tools.configurationFor(retry, profile);
 		assertEquals(RETRY.resolve("#Config"), retryConfig.getType());
-		assertEquals(3, retryConfig.getPropertyResource().getPropertyAsLiteral(RETRY.resolve("#maxRetries")).getLiteralValueAsInt());
+		assertEquals(3, retryConfig.getJson().getPropertyAsLiteral(RETRY.resolve("#maxRetries")).getLiteralValueAsInt());
 
-		assertFalse(retryConfig.getPropertyResource().hasProperty(RETRY.resolve("#initialDelay")));
-		assertFalse(retryConfig.getPropertyResource().hasProperty(RETRY.resolve("#maxDelay")));
-		assertFalse(retryConfig.getPropertyResource().hasProperty(RETRY.resolve("#backoffFactor")));
+		assertFalse(retryConfig.getJson().hasProperty(RETRY.resolve("#initialDelay")));
+		assertFalse(retryConfig.getJson().hasProperty(RETRY.resolve("#maxDelay")));
+		assertFalse(retryConfig.getJson().hasProperty(RETRY.resolve("#backoffFactor")));
 
 //		assertEquals(1000, retryConfig.getPropertyResource().getPropertyAsLiteral(RETRY.resolve("#initialDelay")).getLiteralValueAsInt());
 //		assertEquals(5000, retryConfig.getPropertyResource().getPropertyAsLiteral(RETRY.resolve("#maxDelay")).getLiteralValueAsInt());

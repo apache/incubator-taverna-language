@@ -222,7 +222,7 @@ public class CorrectnessVisitor extends DispatchingVisitor {
 	@Override
 	public void visitConfiguration(Configuration bean) {
 		Configurable configures = bean.getConfigures();
-		PropertyResource propertyResource = bean.getPropertyResource();
+		PropertyResource propertyResource = bean.getJson();
 		URI configuresType = null;
 		if (configures != null) {
 			if (configures instanceof Typed) {

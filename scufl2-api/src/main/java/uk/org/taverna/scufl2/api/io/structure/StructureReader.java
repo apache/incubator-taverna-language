@@ -251,7 +251,7 @@ public class StructureReader implements WorkflowBundleReader {
 			if (level == Level.Activity) {
 				activity.setType(uri);
 			} else if (level == Level.Configuration) {
-				configuration.getPropertyResource().setTypeURI(uri);
+				configuration.getJson().setTypeURI(uri);
 			}
 			return;
 		}
@@ -362,7 +362,7 @@ public class StructureReader implements WorkflowBundleReader {
 			}
 
 			if (finished) {
-				configuration.getPropertyResource().addPropertyAsString(
+				configuration.getJson().addPropertyAsString(
 						propertyUri, largeString.toString());
 				largeString = null;
 				propertyUri = null;

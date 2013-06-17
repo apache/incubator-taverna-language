@@ -80,14 +80,14 @@ public class TestURIToolsBeans {
 	@Test(expected = IllegalStateException.class)
 	public void uriForConfigPropertyResourceFails() throws Exception {
 		PropertyResource propResource = wfBundle.getMainProfile()
-				.getConfigurations().getByName("Hello").getPropertyResource();
+				.getConfigurations().getByName("Hello").getJson();
 		URI uri = uriTools.uriForBean(propResource);
 	}
 
 	@Test
 	public void uriForConfigPropertyResourceWithUri() throws Exception {
 		PropertyResource propResource = wfBundle.getMainProfile()
-				.getConfigurations().getByName("Hello").getPropertyResource();
+				.getConfigurations().getByName("Hello").getJson();
 		propResource.setResourceURI(URI.create("http://example.com/fish"));
 		URI uri = uriTools.uriForBean(propResource);
 		assertEquals("http://example.com/fish", uri.toASCIIString());

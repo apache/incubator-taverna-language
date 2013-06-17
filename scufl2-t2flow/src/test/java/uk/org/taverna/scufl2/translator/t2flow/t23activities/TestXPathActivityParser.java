@@ -33,14 +33,14 @@ public class TestXPathActivityParser {
 		//XPath_height has missing xmlDocument from its configuration
 		Processor heightProc = wfBundle.getMainWorkflow().getProcessors().getByName("XPath_height");
 		PropertyResource heightConfig = scufl2Tools
-				.configurationForActivityBoundToProcessor(heightProc, profile).getPropertyResource();
+				.configurationForActivityBoundToProcessor(heightProc, profile).getJson();
 		assertNotNull(heightConfig);
 		assertEquals("//height/text()",heightConfig.getPropertyAsString(ACTIVITY_URI.resolve("#xpathExpression")));
 		assertFalse(heightConfig.hasProperty(ACTIVITY_URI.resolve("#exampleXmlDocument")));
 		//XPath_width has xmlDocument
 		Processor widthProc = wfBundle.getMainWorkflow().getProcessors().getByName("XPath_width");
 		PropertyResource widthConfig = scufl2Tools
-				.configurationForActivityBoundToProcessor(widthProc, profile).getPropertyResource();		
+				.configurationForActivityBoundToProcessor(widthProc, profile).getJson();		
 		assertNotNull(widthConfig);		
 		assertEquals("//width/text()",widthConfig.getPropertyAsString(ACTIVITY_URI.resolve("#xpathExpression")));		
 		assertTrue(widthConfig.hasProperty(ACTIVITY_URI.resolve("#exampleXmlDocument")));		

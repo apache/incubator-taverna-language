@@ -182,8 +182,8 @@ public class TestActivityParsingRshell {
 		assertEquals(ACTIVITY_URI,
 				activity.getType());
 		assertEquals(ACTIVITY_URI.resolve("#Config"), config
-				.getPropertyResource().getTypeURI());
-		String script = config.getPropertyResource().getPropertyAsString(
+				.getJson().getTypeURI());
+		String script = config.getJson().getPropertyAsString(
 				ACTIVITY_URI.resolve("#script"));
 		assertEquals("too\nsimple", script);
 
@@ -197,7 +197,7 @@ public class TestActivityParsingRshell {
 		InputActivityPort in3 = activity.getInputPorts().getByName("in3");
 		assertEquals(0, in3.getDepth().intValue());
 
-		Set<PropertyResource> inputDef = config.getPropertyResource()
+		Set<PropertyResource> inputDef = config.getJson()
 				.getPropertiesAsResources(
 						PORT_DEFINITION.resolve("#inputPortDefinition"));
 		assertEquals(3, inputDef.size());
@@ -252,7 +252,7 @@ public class TestActivityParsingRshell {
 
 		}
 		
-		Set<PropertyResource> outputDef = config.getPropertyResource()
+		Set<PropertyResource> outputDef = config.getJson()
 				.getPropertiesAsResources(
 						PORT_DEFINITION.resolve("#outputPortDefinition"));
 		assertEquals(3, outputDef.size());
@@ -296,7 +296,7 @@ public class TestActivityParsingRshell {
 				getPropertyAsResourceURI(PORT_DEFINITION.resolve("#dataType")));
 		
 
-		PropertyResource connection = config.getPropertyResource().getPropertyAsResource(ACTIVITY_URI.resolve("#connection"));
+		PropertyResource connection = config.getJson().getPropertyAsResource(ACTIVITY_URI.resolve("#connection"));
 		assertEquals(ACTIVITY_URI.resolve("#Connection"), connection.getTypeURI());
 
 		assertEquals("localhost", connection.getPropertyAsString(ACTIVITY_URI.resolve("#hostname")));

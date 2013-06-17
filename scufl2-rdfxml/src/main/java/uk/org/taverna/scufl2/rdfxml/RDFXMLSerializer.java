@@ -121,7 +121,7 @@ public class RDFXMLSerializer {
 			URI baseUri = uriTools.uriForBean(profile);
 			PropertyResourceSerialiser visitor = new PropertyResourceSerialiser(
 					baseUri);
-			node.getPropertyResource().accept(visitor);
+			node.getJson().accept(visitor);
 			// We don't want the root element (eg. beanshell:Configuration) again, as we're
 			// already inside the general Configuration element which rdf:type is set
 			NodeList childNodes = visitor.getRootElement().getChildNodes();

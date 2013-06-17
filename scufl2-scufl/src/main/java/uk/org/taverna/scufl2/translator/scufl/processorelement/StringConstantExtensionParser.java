@@ -60,9 +60,9 @@ public class StringConstantExtensionParser extends AbstractExtensionParser {
 		StringconstantType sc = (StringconstantType) o;
 		Configuration configuration = new Configuration();
 		configuration.setParent(getParserState().getCurrentProfile());
-		configuration.getPropertyResource().setTypeURI(
+		configuration.getJson().setTypeURI(
 				CONSTANT.resolve("#Config"));
-		configuration.getPropertyResource().addPropertyAsString(
+		configuration.getJson().addPropertyAsString(
 				CONSTANT.resolve("#string"), sc.getValue());
 		
 		Activity activity = new Activity();

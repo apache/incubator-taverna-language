@@ -472,7 +472,7 @@ public class T2FlowParser {
 			URI fallBackURI = configBeanURI.resolve(configBean.getEncoding());
 
 			java.util.Map<URI, SortedSet<PropertyObject>> properties = configuration
-					.getPropertyResource().getProperties();
+					.getJson().getProperties();
 			Object any = configBean.getAny();
 			Element element = (Element) configBean.getAny();
 			PropertyLiteral literal = new PropertyLiteral(element);

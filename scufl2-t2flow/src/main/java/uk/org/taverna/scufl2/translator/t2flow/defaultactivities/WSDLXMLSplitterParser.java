@@ -62,7 +62,7 @@ public class WSDLXMLSplitterParser extends AbstractActivityParser {
 		Configuration configuration = new Configuration();
 		configuration.setParent(parserState.getCurrentProfile());
 		
-		PropertyResource resource = configuration.getPropertyResource();		
+		PropertyResource resource = configuration.getJson();		
 		resource.setTypeURI(
 				SPLITTER.resolve("#Config"));
 

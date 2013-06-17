@@ -75,7 +75,7 @@ public class RESTActivityParser extends AbstractActivityParser {
 		parserState.setCurrentConfiguration(configuration);
 		try {
 			PropertyResource configResource = configuration
-					.getPropertyResource();
+					.getJson();
 			configResource.setTypeURI(ACTIVITY_URI.resolve("#Config"));
 
 			PropertyResource request = configResource.addPropertyAsNewResource(ACTIVITY_URI.resolve("#request"),

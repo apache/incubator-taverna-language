@@ -143,7 +143,7 @@ public class ProfileParser extends AbstractParser {
 		}
 
 		getParserState().push(config);
-		getParserState().push(config.getPropertyResource());
+		getParserState().push(config.getJson());
 		for (Object o : original.getAny()) {
 			parseProperty(o);
 		}

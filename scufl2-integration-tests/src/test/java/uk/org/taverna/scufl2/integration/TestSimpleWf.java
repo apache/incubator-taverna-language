@@ -67,7 +67,7 @@ public class TestSimpleWf {
 		Configuration config = new Configuration();
 		config.setConfigures(script);
 		config.setType(BEANSHELL.resolve("#Config"));
-		config.getPropertyResource().addPropertyAsString(BEANSHELL.resolve("#script"), 
+		config.getJson().addPropertyAsString(BEANSHELL.resolve("#script"), 
 				"blablalbal");
 		profile.getConfigurations().add(config);
 		

@@ -77,7 +77,7 @@ public class LoopParser extends AbstractActivityParser {
 		final Configuration c = new Configuration();		
 		c.setType(scufl2Uri.resolve("Config"));
 
-		final PropertyResource resource = c.getPropertyResource();
+		final PropertyResource resource = c.getJson();
 		
 		String conditionXml = loopConfig.getConditionXML();	
 		if (conditionXml == null) {

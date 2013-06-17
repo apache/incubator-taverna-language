@@ -149,7 +149,7 @@ public class TestProfileParser {
 	@Test
 	public void propertyResource() throws Exception {
 		Configuration hello = profile.getConfigurations().getByName("Hello");
-		PropertyResource propResource = hello.getPropertyResource();
+		PropertyResource propResource = hello.getJson();
 		assertEquals(
 "http://ns.taverna.org.uk/2010/activity/beanshell#Config",
 				propResource.getTypeURI().toASCIIString());

@@ -71,7 +71,7 @@ public class XPathActivityParser extends AbstractActivityParser {
 		try {
 
 			PropertyResource configResource = configuration
-					.getPropertyResource();
+					.getJson();
 			configResource.setTypeURI(ACTIVITY_URI.resolve("#Config"));
 
 			String xmlDocument = xpathConfig.getXmlDocument();
