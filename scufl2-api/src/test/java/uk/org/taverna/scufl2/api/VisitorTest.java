@@ -15,7 +15,6 @@ import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
-import uk.org.taverna.scufl2.api.property.PropertyObject;
 
 public class VisitorTest {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -73,8 +72,7 @@ public class VisitorTest {
 				WorkflowBean parent = child.getParent();
 				assertTrue(enters.contains(parent));
 			} else {
-				assertTrue("Bean is not a PropertyObject or Child: " + b,
-						b instanceof PropertyObject);
+				fail("Bean is not a Child");
 			}
 		}
 

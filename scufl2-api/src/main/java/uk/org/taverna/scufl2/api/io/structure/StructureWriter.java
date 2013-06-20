@@ -13,9 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.SortedSet;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.Named;
@@ -36,8 +34,6 @@ import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
-import uk.org.taverna.scufl2.api.property.PropertyLiteral;
-import uk.org.taverna.scufl2.api.property.PropertyObject;
 
 /**
  * A <code>WorkflowBundleWriter</code> that writes a {@link WorkflowBundle} in Scufl2 Structure
@@ -225,28 +221,9 @@ public class StructureWriter implements WorkflowBundleWriter {
 					URI configuredURI = uriTools.relativeUriForBean(config.getConfigures(), p);
 					append(" '" + configuredURI.toASCIIString() + "'");
 				}
-				
-				for (Entry<URI, SortedSet<PropertyObject>> prop : config.getJson()
-						.getProperties().entrySet()) {
-					newLine(3);
-					append("Property");
-					append(prop.getKey());
 
-					for (PropertyObject po : prop.getValue()) {
-						if (po instanceof PropertyLiteral) {
-							PropertyLiteral lit = (PropertyLiteral) po;
-							newLine(4);
-							append("'''");
-							append(lit.getLiteralValue().replace("'''", "\\'\\'\\'"));
-							append("'''");
-
-							// TODO: Handle literal types
-						} else {
-							// TODO: Handle other props, recursively
-						}
-
-					}
-				}
+				newLine(4);
+				append(config.getJson().toString());
 			}
 
 		}

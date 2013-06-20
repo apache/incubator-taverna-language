@@ -62,7 +62,7 @@ import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
  * 
  */
 public class Configuration extends AbstractNamed implements Child<Profile>, Typed {
-	private static final JsonNodeFactory JSON_NODE_FACTORY = new JsonNodeFactory(true);
+	private static final JsonNodeFactory JSON_NODE_FACTORY = JsonNodeFactory.instance;
     private Configurable configures;
 	private Profile parent;
 	private JsonNode json = JSON_NODE_FACTORY.objectNode();

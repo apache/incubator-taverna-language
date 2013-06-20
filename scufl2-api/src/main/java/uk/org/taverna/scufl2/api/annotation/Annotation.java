@@ -1,10 +1,8 @@
 package uk.org.taverna.scufl2.api.annotation;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 import uk.org.taverna.scufl2.api.common.AbstractNamed;
 import uk.org.taverna.scufl2.api.common.Child;
@@ -12,7 +10,6 @@ import uk.org.taverna.scufl2.api.common.Named;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
-import uk.org.taverna.scufl2.api.property.PropertyObject;
 
 /**
  * An annotation of a WorkflowBean.
@@ -25,7 +22,7 @@ import uk.org.taverna.scufl2.api.property.PropertyObject;
 public class Annotation extends AbstractNamed implements Named, Child<WorkflowBundle> {
 	private Calendar annotatedAt;
 	private URI annotatedBy;
-	private List<PropertyObject> bodyStatements = new ArrayList<PropertyObject>();
+
 	private Calendar serializedAt = new GregorianCalendar();
 	private URI serializedBy;
 	private WorkflowBean target;
@@ -42,22 +39,13 @@ public class Annotation extends AbstractNamed implements Named, Child<WorkflowBu
 	
 	@Override
 	public boolean accept(Visitor visitor) {
-		visitor.visitEnter(this);
-		for (WorkflowBean b : getBodyStatements()) {
-			if (! b.accept(visitor)) {
-				break;
-			}
-		}
-		return visitor.visitLeave(this);		
+	    return visitor.visit(this);
 	}
 	public Calendar getAnnotatedAt() {
 		return annotatedAt;
 	}
 	public URI getAnnotatedBy() {
 		return annotatedBy;
-	}
-	public List<PropertyObject> getBodyStatements() {
-		return bodyStatements;
 	}
 	public Calendar getSerializedAt() {
 		return serializedAt;
@@ -77,13 +65,6 @@ public class Annotation extends AbstractNamed implements Named, Child<WorkflowBu
 	public void setAnnotatedBy(URI annotatedBy) {
 		this.annotatedBy = annotatedBy;
 	}
-	public void setBodyStatements(List<PropertyObject> bodyStatements) {
-		if (bodyStatements == null) { 
-			throw new NullPointerException("bodyStatements can't be null");
-		}
-		this.bodyStatements = bodyStatements;
-	}
-
 	public void setSerializedAt(Calendar serializedAt) {
 		this.serializedAt = serializedAt;
 	}
@@ -131,14 +112,10 @@ public class Annotation extends AbstractNamed implements Named, Child<WorkflowBu
 		}
 		cloneAnnotation.setAnnotatedBy(getAnnotatedBy());
 		cloneAnnotation.setBody(getBody());
-		for (PropertyObject statement : getBodyStatements()) {
-			cloneAnnotation.getBodyStatements().add(cloning.cloneIfNotInCache(statement));
-		}		
 		if (getSerializedAt() != null) {
 			cloneAnnotation.setSerializedAt((Calendar) getSerializedAt().clone());
 		}
 		cloneAnnotation.setSerializedBy(getSerializedBy());
 		cloneAnnotation.setTarget(cloning.cloneOrOriginal(getTarget()));		
-	}
-	
+	}	
 }

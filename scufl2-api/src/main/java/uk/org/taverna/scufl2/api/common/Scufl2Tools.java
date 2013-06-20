@@ -676,7 +676,8 @@ public class Scufl2Tools {
 	 */
 	public List<Workflow> nestedWorkflowsForProcessor(Processor processor,
 			Profile profile) {
-		if (profile.getParent() == null) {
+		WorkflowBundle bundle = profile.getParent();
+        if (bundle == null) {
 			throw new NullPointerException("Parent must be set for " + profile);
 		}
 		ArrayList<Workflow> workflows = new ArrayList<Workflow>();
@@ -688,19 +689,8 @@ public class Scufl2Tools {
 			}
 			for (Configuration c : configurationsFor(
 					binding.getBoundActivity(), profile)) {
-				URI nestedWfRel;
-				try {
-					nestedWfRel = c.getJson()
-							.getPropertyAsResourceURI(
-									NESTED_WORKFLOW.resolve("#workflow"));
-				} catch (PropertyException e) {
-					throw new IllegalStateException(
-							"Invalid workflow configuration", e);
-				}
-				URI nestedWf = uriTools.uriForBean(profile)
-						.resolve(nestedWfRel);
-				Workflow wf = (Workflow) uriTools.resolveUri(nestedWf,
-						profile.getParent());
+				JsonNode nested = c.getJson().get("nestedWorkflow");
+				Workflow wf = bundle.getWorkflows().getByName(nested.asText());
 				if (wf != null && !workflows.contains(wf)) {
 					workflows.add(wf);
 				}

@@ -2,6 +2,9 @@ package uk.org.taverna.scufl2.api;
 
 import java.net.URI;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
@@ -38,9 +41,10 @@ public class ExampleWorkflow {
 	protected Activity activity;
 	protected BlockingControlLink condition;
 	protected Processor wait4me;
-	private DataLink nameLink;
+    @SuppressWarnings("unused")
+    private DataLink nameLink;
 
-	URI TAVERNA_2_2 = URI.create("http://ns.taverna.org.uk/2010/taverna/2.2/");
+	protected static URI TAVERNA_2_2 = URI.create("http://ns.taverna.org.uk/2010/taverna/2.2/");
 
 	public Activity makeActivity() {
 		activity = new Activity();
@@ -62,14 +66,11 @@ public class ExampleWorkflow {
 		configuration.setConfigures(activity);
 
 		configuration
-				.getJson()
-				.setTypeURI(
+				.setType(
 						URI.create("http://ns.taverna.org.uk/2010/activity/beanshell#Config"));
-		configuration
-				.getJson()
-				.addPropertyAsString(
-						URI.create("http://ns.taverna.org.uk/2010/activity/beanshell#script"),
-						"hello = \"Hello, \" + personName;\n"
+		ObjectNode json = (ObjectNode) configuration.getJson();
+		json.put("script",
+				"hello = \"Hello, \" + personName;\n"
 								+ "JOptionPane.showMessageDialog(null, hello);");
 		return configuration;
 	}
@@ -132,7 +133,7 @@ public class ExampleWorkflow {
 		// NOTE: setWorkflowIdentifier should only be called when loading a
 		// workflow
 		// which already has an ID
-		workflow.setWorkflowIdentifier(URI
+		workflow.setIdentifier(URI
 				.create("http://ns.taverna.org.uk/2010/workflow/00626652-55ae-4a9e-80d4-c8e9ac84e2ca/"));
 
 		InputWorkflowPort yourName = new InputWorkflowPort(workflow, "yourName");
@@ -207,13 +208,11 @@ public class ExampleWorkflow {
 		Profile profile = makeMainProfile();
 		profile.setName("tavernaServer");
 		Configuration config = profile.getConfigurations().getByName("Hello");
-		config.getJson().clearAllProperties();
-		// FIXME: Need removeProperty!
-		config.getJson()
-				.addPropertyAsString(
-						URI.create("http://ns.taverna.org.uk/2010/activity/beanshell#script"),
+		ObjectNode json = JsonNodeFactory.instance.objectNode();
+	    json.put("script",
 						"hello = \"Hello, \" + personName;\n"
 								+ "System.out.println(\"Server says: \" + hello);");
+	    config.setJson(json);
 		return profile;
 	}
 

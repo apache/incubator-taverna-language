@@ -251,7 +251,7 @@ public class StructureReader implements WorkflowBundleReader {
 			if (level == Level.Activity) {
 				activity.setType(uri);
 			} else if (level == Level.Configuration) {
-				configuration.getJson().setTypeURI(uri);
+				configuration.setType(uri);
 			}
 			return;
 		}
@@ -341,6 +341,8 @@ public class StructureReader implements WorkflowBundleReader {
 			return;
 		}
 		if (level == Level.Property) {
+		    // FIXME: Read in JSON
+		    
 			boolean finished = false;
 			String[] split = nextLine.split("'''", 3);
 			if (split.length == 1) {
@@ -362,8 +364,8 @@ public class StructureReader implements WorkflowBundleReader {
 			}
 
 			if (finished) {
-				configuration.getJson().addPropertyAsString(
-						propertyUri, largeString.toString());
+//				configuration.getJson().addPropertyAsString(
+//						propertyUri, largeString.toString());
 				largeString = null;
 				propertyUri = null;
 				level = Level.Configuration;

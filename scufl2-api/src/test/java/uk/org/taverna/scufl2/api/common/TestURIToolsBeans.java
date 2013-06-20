@@ -1,5 +1,6 @@
 package uk.org.taverna.scufl2.api.common;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -22,7 +23,6 @@ import uk.org.taverna.scufl2.api.iterationstrategy.CrossProduct;
 import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
 
 public class TestURIToolsBeans {
 
@@ -77,26 +77,11 @@ public class TestURIToolsBeans {
 				+ "configuration/Hello/" + "", uri.toASCIIString());
 	}
 
-	@Test(expected = IllegalStateException.class)
-	public void uriForConfigPropertyResourceFails() throws Exception {
-		PropertyResource propResource = wfBundle.getMainProfile()
-				.getConfigurations().getByName("Hello").getJson();
-		URI uri = uriTools.uriForBean(propResource);
-	}
-
-	@Test
-	public void uriForConfigPropertyResourceWithUri() throws Exception {
-		PropertyResource propResource = wfBundle.getMainProfile()
-				.getConfigurations().getByName("Hello").getJson();
-		propResource.setResourceURI(URI.create("http://example.com/fish"));
-		URI uri = uriTools.uriForBean(propResource);
-		assertEquals("http://example.com/fish", uri.toASCIIString());
-	}
-
 	@Test
 	public void uriForControlLink() throws Exception {
-		Processor hello = wfBundle.getMainWorkflow().getProcessors()
+        Processor hello = wfBundle.getMainWorkflow().getProcessors()
 				.getByName("Hello");
+		assertNotNull(hello);
 		ControlLink condition = wfBundle.getMainWorkflow().getControlLinks()
 				.iterator().next();
 		assertTrue(condition instanceof BlockingControlLink);
