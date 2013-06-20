@@ -13,16 +13,13 @@ import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
-import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
 import uk.org.taverna.scufl2.api.port.InputWorkflowPort;
-import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
 import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
-import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
-import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
-import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class TestSimpleWf {
 	private static final WorkflowBundleIO bundleIo = new WorkflowBundleIO();
@@ -67,7 +64,7 @@ public class TestSimpleWf {
 		Configuration config = new Configuration();
 		config.setConfigures(script);
 		config.setType(BEANSHELL.resolve("#Config"));
-		config.getJson().addPropertyAsString(BEANSHELL.resolve("#script"), 
+		((ObjectNode)config.getJson()).put("script", 
 				"blablalbal");
 		profile.getConfigurations().add(config);
 		
