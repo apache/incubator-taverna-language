@@ -16,15 +16,18 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipOutputStream;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.purl.wf4ever.robundle.Bundles;
 
@@ -149,6 +152,28 @@ public class TestZipFS {
 
     }
 
+    @Test
+    public void setLastModifiedTime() throws Exception {
+        Path root = fs.getRootDirectories().iterator().next();
+        
+        Path folder = root.resolve("folder");
+        Files.createDirectory(folder);
+        
+        Path file = root.resolve("file");
+        Files.createFile(file);
+        
+        
+        FileTime someTimeAgo = FileTime.from(365*12, TimeUnit.DAYS);
+        Files.setLastModifiedTime(folder, someTimeAgo);
+        Files.setLastModifiedTime(file, someTimeAgo);
+        try {
+            Files.setLastModifiedTime(root, someTimeAgo);
+        } catch (NoSuchFileException ex) {
+            System.err.println("Unexpected failure of setLastModifiedTime on root");
+            ex.printStackTrace();
+        }
+    }
+    
     @Before
     public void tempZipFS() throws Exception {
         zip = Files.createTempFile("test", ".zip");
