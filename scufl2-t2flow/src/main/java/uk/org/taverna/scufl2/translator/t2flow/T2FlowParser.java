@@ -1171,7 +1171,7 @@ public class T2FlowParser {
 		Workflow wf = new Workflow();
 		parserState.get().setCurrentWorkflow(wf);
 		wf.setName(df.getName());
-		wf.setWorkflowIdentifier(Workflow.WORKFLOW_ROOT.resolve(df.getId()
+		wf.setIdentifier(Workflow.WORKFLOW_ROOT.resolve(df.getId()
 				+ "/"));
 		return wf;
 	}
