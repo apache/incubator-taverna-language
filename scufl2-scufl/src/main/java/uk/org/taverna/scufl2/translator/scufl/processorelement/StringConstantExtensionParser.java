@@ -15,6 +15,8 @@ import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.xml.scufl.jaxb.StringconstantType;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 /**
  * @author alanrw
  *
@@ -60,10 +62,9 @@ public class StringConstantExtensionParser extends AbstractExtensionParser {
 		StringconstantType sc = (StringconstantType) o;
 		Configuration configuration = new Configuration();
 		configuration.setParent(getParserState().getCurrentProfile());
-		configuration.getJson().setTypeURI(
+		configuration.setType(
 				CONSTANT.resolve("#Config"));
-		configuration.getJson().addPropertyAsString(
-				CONSTANT.resolve("#string"), sc.getValue());
+		((ObjectNode)configuration.getJson()).put("string", sc.getValue());
 		
 		Activity activity = new Activity();
 		getParserState().setCurrentActivity(activity);
