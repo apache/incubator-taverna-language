@@ -16,7 +16,6 @@ import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.MismatchConfigurableTypeProblem;
 import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.NullFieldProblem;
 
@@ -110,14 +109,8 @@ public class TestConfiguration {
 	@Test
 	public void testCorrectnessOfMissingConfigures() {
 		Configuration configuration = new Configuration();
-		URI tavernaUri = null;
-		try {
-			tavernaUri = new URI("http://www.taverna.org.uk");
-		} catch (URISyntaxException e) {
-			return;
-		}
-		configuration.setType(tavernaUri);
-		configuration.setJson(pr);
+		configuration.setType(URI.create("http://www.example.com/"));
+		configuration.setJson("{ \"hello\": 1337  }");
 		
 		CorrectnessValidator cv = new CorrectnessValidator();
 		ReportCorrectnessValidationListener rcvl = new ReportCorrectnessValidationListener();
@@ -132,15 +125,8 @@ public class TestConfiguration {
 	@Test
 	public void testCompletenessOfMissingConfigures() {
 		Configuration configuration = new Configuration();
-		PropertyResource pr = new PropertyResource();
-		URI tavernaUri = null;
-		try {
-			tavernaUri = new URI("http://www.taverna.org.uk");
-		} catch (URISyntaxException e) {
-			return;
-		}
-		configuration.setJson(pr);
-		configuration.setType(tavernaUri);
+        configuration.setType(URI.create("http://www.example.com/"));
+        configuration.setJson("{ \"hello\": 1337  }");
 		
 		CorrectnessValidator cv = new CorrectnessValidator();
 		ReportCorrectnessValidationListener rcvl = new ReportCorrectnessValidationListener();
