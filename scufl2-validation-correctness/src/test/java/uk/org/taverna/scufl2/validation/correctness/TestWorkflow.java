@@ -159,7 +159,7 @@ public class TestWorkflow {
 	@Test
 	public void testCompletenessOfSpecifiedWorkflowIdentifier() throws URISyntaxException {
 		DummyWorkflow dw = new DummyWorkflow();
-		dw.setWorkflowIdentifier(new URI("http://www.mygrid.org.uk/fred/"));
+		dw.setIdentifier(new URI("http://www.mygrid.org.uk/fred/"));
 		
 		CorrectnessValidator cv = new CorrectnessValidator();
 		ReportCorrectnessValidationListener rcvl = new ReportCorrectnessValidationListener();
@@ -182,7 +182,7 @@ public class TestWorkflow {
 	public void testNonAbsoluteURI() throws URISyntaxException {
 		DummyWorkflow dw = new DummyWorkflow();
 		URI workflowIdentifier = new URI("fred/soup");
-		dw.setWorkflowIdentifier(workflowIdentifier);
+		dw.setIdentifier(workflowIdentifier);
 		
 		CorrectnessValidator cv = new CorrectnessValidator();
 		ReportCorrectnessValidationListener rcvl = new ReportCorrectnessValidationListener();
@@ -203,7 +203,7 @@ public class TestWorkflow {
 	public void testFileURI() throws URISyntaxException {
 		DummyWorkflow dw = new DummyWorkflow();
 		URI workflowIdentifier = new URI("file:///fred/soup");
-		dw.setWorkflowIdentifier(workflowIdentifier);
+		dw.setIdentifier(workflowIdentifier);
 		
 		CorrectnessValidator cv = new CorrectnessValidator();
 		ReportCorrectnessValidationListener rcvl = new ReportCorrectnessValidationListener();

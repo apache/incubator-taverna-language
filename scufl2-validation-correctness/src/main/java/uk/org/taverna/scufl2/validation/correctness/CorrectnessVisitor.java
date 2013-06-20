@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Configurable;
@@ -56,9 +58,6 @@ import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
-import uk.org.taverna.scufl2.api.property.PropertyObject;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
-import uk.org.taverna.scufl2.api.property.PropertyVisit;
 
 /**
  * @author alanrw
@@ -222,11 +221,11 @@ public class CorrectnessVisitor extends DispatchingVisitor {
 	@Override
 	public void visitConfiguration(Configuration bean) {
 		Configurable configures = bean.getConfigures();
-		PropertyResource propertyResource = bean.getJson();
-		URI configuresType = null;
+		JsonNode json = bean.getJson();
+		URI type = null;
 		if (configures != null) {
 			if (configures instanceof Typed) {
-				configuresType = ((Typed) configures).getType();
+				type = ((Typed) configures).getType();
 			}
 		}
 		// Correct check cannot be completed unless property descriptions are available
@@ -237,14 +236,13 @@ public class CorrectnessVisitor extends DispatchingVisitor {
 //			}
 //		}
 		
-		// TODO Check that the PropertyResource is correct
 		
 		if (checkComplete) {
 			if (configures == null) {
 				listener.nullField(bean, "configures");
 			}
-			if (propertyResource == null) {
-				listener.nullField(bean, "propertyResource");
+			if (json == null) {
+				listener.nullField(bean, "json");
 			}
 			// TODO Check that the PropertyResource is complete
 		}
@@ -744,18 +742,6 @@ public class CorrectnessVisitor extends DispatchingVisitor {
 	/* (non-Javadoc)
 	 * @see uk.org.taverna.scufl2.validation.correctness.DispatchingVisitor#visitPropertyObject(uk.org.taverna.scufl2.api.property.PropertyObject)
 	 */
-	@Override
-	public void visitPropertyObject(PropertyObject bean) {
-		// TODO
-	}
-
-	/* (non-Javadoc)
-	 * @see uk.org.taverna.scufl2.validation.correctness.DispatchingVisitor#visitPropertyVisit(uk.org.taverna.scufl2.api.property.PropertyResource.PropertyVisit)
-	 */
-	@Override
-	public void visitPropertyVisit(PropertyVisit bean) {
-		// TODO
-	}
 
 	/* (non-Javadoc)
 	 * @see uk.org.taverna.scufl2.validation.correctness.DispatchingVisitor#visitReceiverPort(uk.org.taverna.scufl2.api.port.ReceiverPort)
@@ -826,7 +812,7 @@ public class CorrectnessVisitor extends DispatchingVisitor {
 		// ports are done in Ported
 		
 		NamedSet<Processor> processors = bean.getProcessors();
-		URI workflowIdentifier = bean.getWorkflowIdentifier();
+		URI workflowIdentifier = bean.getIdentifier();
 		
 		if (workflowIdentifier != null) {
 			if (!workflowIdentifier.isAbsolute()) {

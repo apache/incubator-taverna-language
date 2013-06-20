@@ -43,8 +43,6 @@ import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
-import uk.org.taverna.scufl2.api.property.PropertyObject;
-import uk.org.taverna.scufl2.api.property.PropertyVisit;
 
 /**
  * 
@@ -367,24 +365,6 @@ public class DefaultDispatchingVisitor extends DispatchingVisitor {
 	 */
 	@Override
 	public void visitProfile(Profile bean) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
-	 * @see uk.org.taverna.scufl2.validation.correctness.DispatchingVisitor#visitPropertyObject(uk.org.taverna.scufl2.api.property.PropertyObject)
-	 */
-	@Override
-	public void visitPropertyObject(PropertyObject bean) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
-	 * @see uk.org.taverna.scufl2.validation.correctness.DispatchingVisitor#visitPropertyVisit(uk.org.taverna.scufl2.api.property.PropertyResource.PropertyVisit)
-	 */
-	@Override
-	public void visitPropertyVisit(PropertyVisit bean) {
 		// TODO Auto-generated method stub
 
 	}

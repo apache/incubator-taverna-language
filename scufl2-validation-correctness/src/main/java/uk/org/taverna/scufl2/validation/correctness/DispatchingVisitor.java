@@ -49,8 +49,6 @@ import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
-import uk.org.taverna.scufl2.api.property.PropertyObject;
-import uk.org.taverna.scufl2.api.property.PropertyVisit;
 
 /**
  * @author alanrw
@@ -108,9 +106,6 @@ public abstract class DispatchingVisitor extends Visitor.VisitorWithPath {
 		}
 		if (bean instanceof ProcessorPortBinding) {
 			visitProcessorPortBinding((ProcessorPortBinding) bean);
-		}
-		if (bean instanceof PropertyObject) {
-			visitPropertyObject((PropertyObject) bean);
 		}
 		if (bean instanceof ReceiverPort) {
 			visitReceiverPort((ReceiverPort) bean);
@@ -171,8 +166,6 @@ public abstract class DispatchingVisitor extends Visitor.VisitorWithPath {
 			visitProcessorOutputPortBinding((ProcessorOutputPortBinding) bean);
 		} else if (bean instanceof Profile) {
 			visitProfile((Profile) bean);
-		} else if (bean instanceof PropertyVisit) {
-			visitPropertyVisit((PropertyVisit) bean);
 		} else if (bean instanceof Workflow) {
 			visitWorkflow((Workflow) bean);
 		} else if (bean instanceof WorkflowBundle) {
@@ -188,8 +181,6 @@ public abstract class DispatchingVisitor extends Visitor.VisitorWithPath {
 	public abstract void visitWorkflowBundle(WorkflowBundle bean);
 
 	public abstract void visitWorkflow(Workflow bean);
-
-	public abstract void visitPropertyVisit(PropertyVisit bean);
 
 	public abstract void visitProfile(Profile bean);
 
@@ -242,8 +233,6 @@ public abstract class DispatchingVisitor extends Visitor.VisitorWithPath {
 	public abstract void visitRoot(Root bean);
 
 	public abstract void visitReceiverPort(ReceiverPort bean);
-
-	public abstract void visitPropertyObject(PropertyObject bean);
 
 	public abstract void visitProcessorPortBinding(ProcessorPortBinding bean);
 
