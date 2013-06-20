@@ -10,7 +10,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Test;
@@ -32,7 +31,7 @@ public class MotifAnalysisIT {
             try (FileSystem origfs = FileSystems.newFileSystem(orig, null)) {
                 Path origFolder = origfs.getPath("motifAnalysis/");
                 Bundles.copyRecursively(origFolder, 
-                        bundle.getRoot(), StandardCopyOption.REPLACE_EXISTING);
+                        bundle.getRoot(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.COPY_ATTRIBUTES);
             }
 
             
@@ -87,10 +86,17 @@ public class MotifAnalysisIT {
             PathAnnotation readmeAnnotation = new PathAnnotation();
             readmeAnnotation.setAbout(URI.create("/"));
             readmeAnnotation.setContent(URI.create("/README.txt"));
-            readmeAnnotation.updateAnnotationId();
+            readmeAnnotation.generateAnnotationId();
             manifest.getAnnotations().add(readmeAnnotation);
 
-            
+            PathAnnotation website = new PathAnnotation();
+            website.setAbout(URI.create("/"));
+            website.setContent(URI.create("http://www.oeg-upm.net/files/dgarijo/motifAnalysisSite/"));
+            website.generateAnnotationId();
+            manifest.getAnnotations().add(website);
+
+            // Write out manifest
+            // TODO: This should be done automatically on close()
             manifest.writeAsJsonLD();
         }
 
