@@ -166,7 +166,7 @@ public class TestURITools {
 	public void workflowIdentifier() {
 		Workflow wf = wfBundle.getMainWorkflow();
 		String uuidPath = uriTools.relativePath(Workflow.WORKFLOW_ROOT,
-				wf.getWorkflowIdentifier()).getPath();
+				wf.getIdentifier()).getPath();
 		assertTrue(uuidPath.endsWith("/"));
 		// Should be a valid uuid
 		UUID.fromString(uuidPath.substring(0, uuidPath.length() - 1));

@@ -136,18 +136,6 @@ public class Workflow extends AbstractRevisioned implements
 	}
 
 	/**
-	 * Returns the workflow identifier.
-	 *
-	 * @deprecated for {@link #getIdentifier()} 
-	 * 
-	 * @return the workflow identifier
-	 */
-	@Deprecated
-	public URI getWorkflowIdentifier() {
-		return getIdentifier();
-	}
-
-	/**
 	 * Set the <code>ControlLink</code>s to be the contents of the specified
 	 * set.
 	 * <p>
@@ -239,19 +227,6 @@ public class Workflow extends AbstractRevisioned implements
 		for (Processor processor : processors) {
 			processor.setParent(this);
 		}
-	}
-
-	/**
-	 * Set the workflow identifier.
-     *
-	 * @deprecated for {@link #setIdentifier(URI)}
-	 * 
-	 * @param workflowIdentifier
-	 *            the workflow identifier
-	 */
-	@Deprecated
-	public void setWorkflowIdentifier(URI workflowIdentifier) {
-		setIdentifier(workflowIdentifier);
 	}
 
 	/**
