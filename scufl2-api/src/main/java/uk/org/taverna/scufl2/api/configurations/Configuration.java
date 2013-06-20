@@ -3,6 +3,7 @@
  */
 package uk.org.taverna.scufl2.api.configurations;
 
+import java.io.IOException;
 import java.net.URI;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
@@ -18,7 +19,10 @@ import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
 import uk.org.taverna.scufl2.api.port.Port;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -200,5 +204,17 @@ public class Configuration extends AbstractNamed implements Child<Profile>, Type
     public void setJsonSchema(JsonSchema jsonSchema) {
         this.jsonSchema = jsonSchema;
     }
-	
+
+    public void setJson(String jsonString) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            JsonParser parser = mapper.getFactory().createParser(jsonString);
+            JsonNode jsonNode = parser.readValueAs(JsonNode.class);
+            setJson(jsonNode);
+        } catch (JsonParseException e) {
+            throw new IllegalArgumentException("Not valid JSON string", e);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Not valid JSON string", e);
+        }
+    }	
 }
