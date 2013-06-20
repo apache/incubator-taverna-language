@@ -136,7 +136,7 @@ public class ProfileParser extends AbstractParser {
 		    // TODO: Parse and represent as JSON-LD?
 //		    System.out.println(original);
 		}
-		getParserState().pop();
+//		getParserState().pop();
 		getParserState().pop();
 	}
 
