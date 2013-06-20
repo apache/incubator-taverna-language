@@ -11,7 +11,12 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.junit.Test;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
+import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 
 public class TestStructureReader {
@@ -41,6 +46,34 @@ public class TestStructureReader {
 		assertEquals(getStructureFormatWorkflowBundle(), bundleTxt);
 		
 	}
+	
+	@Test
+    public void multiLineJson() throws Exception {
+	    String struct = getStructureFormatWorkflowBundle();
+	    // Make JSON multi-line by adding some whitespace
+	    struct = struct.replace("{", "{\n         ");
+	    struct = struct.replace("\":\"", "\":\n             \"");
+	    struct = struct.replace("}", "\n        }\n");
+	    // EG: 
+//       {
+//        "script":
+//            "hello = \"Hello, \" + personName;\nJOptionPane.showMessageDialog(null, hello);"
+//       }
+	    
+//	    System.out.println(struct);
+	    
+	    InputStream inputStream = new ByteArrayInputStream(
+	            struct.getBytes("utf-8"));
+        WorkflowBundle readBundle = bundleIO.readBundle(inputStream,
+                TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
+        assertEquals(1, readBundle.getMainProfile().getConfigurations().size());
+        
+        Configuration config = readBundle.getMainProfile().getConfigurations().getByName("Hello");
+        String script = config.getJson().get("script").asText();
+        String expected = "hello = \"Hello, \" + personName;\n"
+                + "JOptionPane.showMessageDialog(null, hello);";
+        assertEquals(expected, script);        
+    }
 
 
 }

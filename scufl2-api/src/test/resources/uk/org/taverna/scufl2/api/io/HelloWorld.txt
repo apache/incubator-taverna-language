@@ -29,9 +29,7 @@ WorkflowBundle 'HelloWorld'
     Configuration 'Hello'
       Type <http://ns.taverna.org.uk/2010/activity/beanshell#Config>
       Configures 'activity/HelloScript'
-      Property <http://ns.taverna.org.uk/2010/activity/beanshell#script>
-        '''hello = "Hello, " + personName;
-System.out.println("Server says: " + hello);'''
+        {"script":"hello = \"Hello, \" + personName;\nSystem.out.println(\"Server says: \" + hello);"}
   Profile 'tavernaWorkbench'
     Activity 'HelloScript'
       Type <http://ns.taverna.org.uk/2010/activity/beanshell>
@@ -47,6 +45,4 @@ System.out.println("Server says: " + hello);'''
     Configuration 'Hello'
       Type <http://ns.taverna.org.uk/2010/activity/beanshell#Config>
       Configures 'activity/HelloScript'
-      Property <http://ns.taverna.org.uk/2010/activity/beanshell#script>
-        '''hello = "Hello, " + personName;
-JOptionPane.showMessageDialog(null, hello);'''
+        {"script":"hello = \"Hello, \" + personName;\nJOptionPane.showMessageDialog(null, hello);"}

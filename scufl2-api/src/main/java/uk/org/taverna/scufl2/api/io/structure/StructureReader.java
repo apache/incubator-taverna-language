@@ -1,13 +1,16 @@
 package uk.org.taverna.scufl2.api.io.structure;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.Collections;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -35,6 +38,12 @@ import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * A <code>WorkflowBundleReader</code> that reads a {@link WorkflowBundle} in Scufl2 Structure
  * format.
@@ -42,7 +51,7 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
 public class StructureReader implements WorkflowBundleReader {
 
 	public enum Level {
-		WorkflowBundle, Workflow, Processor, Activity, Links, Profile, Configuration, ProcessorBinding, OutputPortBindings, InputPortBindings, Property, Controls
+		WorkflowBundle, Workflow, Processor, Activity, Links, Profile, Configuration, ProcessorBinding, OutputPortBindings, InputPortBindings, JSON, Controls
 
 	}
 
@@ -76,21 +85,21 @@ public class StructureReader implements WorkflowBundleReader {
 
 	private ProcessorBinding processorBinding;
 
-	private URI propertyUri;
-
 	private StringBuffer propertyString;
 
-	private StringBuffer largeString;
+    protected Scanner scanner;
 
 	@Override
 	public Set<String> getMediaTypes() {
 		return Collections.singleton(TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
 	}
 
-	protected WorkflowBundle parse(InputStream is) throws ReaderException {
+	protected synchronized WorkflowBundle parse(InputStream is) throws ReaderException {
 
+	    // synchronized because we share wb/scanner fields across the instance
+	    
 		wb = new WorkflowBundle();
-		Scanner scanner = new Scanner(is);
+		scanner = new Scanner(is);
 		try {
 			while (scanner.hasNextLine()) {
 				parseLine(scanner.nextLine());
@@ -102,8 +111,12 @@ public class StructureReader implements WorkflowBundleReader {
 		return wb;
 	}
 
-	protected void parseLine(String nextLine) throws ReaderException {
+	protected void parseLine(final String nextLine) throws ReaderException {
 		Scanner scanner = new Scanner(nextLine.trim());
+		// In case it is the last line
+		if (! scanner.hasNext()) {
+		    return;
+		}
 		// allow any whitespace
 		String next = scanner.next();
 
@@ -329,51 +342,65 @@ public class StructureReader implements WorkflowBundleReader {
 						ACTIVITY_SLASH.length(), configures.length());
 				activity = profile.getActivities().getByName(activityName);
 				configuration.setConfigures(activity);
+				level = Level.JSON;
 				return;
 			} else {
 				throw new UnsupportedOperationException("Unknown Configures "
 						+ configures);
 			}
 		}
-		if (next.equals("Property")) {
-			propertyUri = URI.create(nextLine.split("[<>]")[1]);
-			level = Level.Property;
-			return;
-		}
-		if (level == Level.Property) {
-		    // FIXME: Read in JSON
-		    
-			boolean finished = false;
-			String[] split = nextLine.split("'''", 3);
-			if (split.length == 1) {
-				largeString.append(split[0]);
-				largeString.append('\n');
-			} else if (next.startsWith("'''")) {
-				largeString = new StringBuffer();
-				largeString.append(split[1]);
-				if (split.length == 3) {
-					// It was a one-liner
-					finished = true;
-				} else {
-					largeString.append('\n');
-				}
-			} else {
-				largeString.append(split[0]);
-				// Assuming length is 2
-				finished = true;
-			}
+        if (level == Level.JSON) {
 
-			if (finished) {
-//				configuration.getJson().addPropertyAsString(
-//						propertyUri, largeString.toString());
-				largeString = null;
-				propertyUri = null;
-				level = Level.Configuration;
-			}
+            // A silly reader that feeds (no more than) a single line
+            // at a time from our parent scanner, starting with the current line
+            Reader reader = new Reader() {
+                char[] line = nextLine.toCharArray();
+                int pos = 0;
 
-		}
+                @Override
+                public int read(char[] cbuf, int off, int len)
+                        throws IOException {
+                    if (pos >= line.length) {
+                        // Need to read next line to fill buffer
+                        if (! StructureReader.this.scanner.hasNextLine()) {
+                            return -1;
+                        }
+                        String newLine = StructureReader.this.scanner.nextLine();
+                        pos = 0;
+                        line = newLine.toCharArray();
+//                        System.out.println("Read new line: " + newLine);
+                    }
+                    int length = Math.min(len, line.length - pos);
+                    if (length <= 0) {
+                        return 0;
+                    }
+                    System.arraycopy(line, pos, cbuf, off, length);
+                    pos += length;
+                    return length;
+                }
 
-	}
+                @Override
+                public void close() throws IOException {
+                    line = null;
+                }
+            };
+            
+            
+            ObjectMapper mapper = new ObjectMapper();
+            try {
+                JsonParser parser = mapper.getFactory().createParser(reader);
+                JsonNode jsonNode = parser.readValueAs(JsonNode.class);
+//                System.out.println("Parsed " + jsonNode);
+                configuration.setJson(jsonNode);
+            } catch (JsonParseException e) {
+                throw new ReaderException("Can't parse json", e);
+            } catch (IOException e) {
+                throw new ReaderException("Can't parse json", e);
+            }
+            level = Level.Configuration;
+            return;
+        }
+    }
 
 
 	private String parseName(Scanner scanner) {
@@ -394,7 +421,7 @@ public class StructureReader implements WorkflowBundleReader {
 	}
 
 	@Override
-	public WorkflowBundle readBundle(InputStream inputStream, String mediaType)
+ 	public WorkflowBundle readBundle(InputStream inputStream, String mediaType)
 	throws IOException, ReaderException {
 		return parse(inputStream);
 
