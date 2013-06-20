@@ -338,6 +338,15 @@ public class BundleFileSystemProvider extends FileSystemProvider {
     public <V extends FileAttributeView> V getFileAttributeView(Path path,
             Class<V> type, LinkOption... options) {
         BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
+        if (path.toAbsolutePath().equals(fs.getRootDirectory())) {
+            // Bug in ZipFS, it will fall over as there is no entry for /
+            //
+            // Instead we'll just give a view of the source (e.g. the zipfile itself).
+            // Modifying its times is a bit futile since they are likely to be
+            // overriden when closing, but this avoids a NullPointerException
+            // in Files.setTimes().
+            return Files.getFileAttributeView(fs.getSource(), type, options);
+        }
         return origProvider(path).getFileAttributeView(fs.unwrap(path), type,
                 options);
     }
