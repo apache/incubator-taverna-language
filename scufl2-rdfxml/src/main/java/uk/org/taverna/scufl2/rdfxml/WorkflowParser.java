@@ -276,7 +276,7 @@ public class WorkflowParser extends AbstractParser {
 			}
 			if (workflow.getWorkflowIdentifier() != null
 					&& workflow.getWorkflowIdentifier().getResource() != null) {
-				wf.setWorkflowIdentifier(getParserState()
+				wf.setIdentifier(getParserState()
 						.getCurrentBase()
 						.resolve(workflow.getWorkflowIdentifier().getResource()));
 			}

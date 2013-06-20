@@ -189,7 +189,7 @@ public class TestRDFXMLReader {
 	public void workflowIdentifier() throws Exception {
 		assertEquals(
 				"http://ns.taverna.org.uk/2010/workflow/00626652-55ae-4a9e-80d4-c8e9ac84e2ca/",
-				workflowBundle.getMainWorkflow().getWorkflowIdentifier()
+				workflowBundle.getMainWorkflow().getIdentifier()
 						.toASCIIString());
 	}
 

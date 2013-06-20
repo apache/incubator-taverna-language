@@ -57,10 +57,6 @@ import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
-import uk.org.taverna.scufl2.api.property.PropertyLiteral;
-import uk.org.taverna.scufl2.api.property.PropertyObject;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
-import uk.org.taverna.scufl2.api.property.PropertyVisit;
 import uk.org.taverna.scufl2.rdfxml.impl.NamespacePrefixMapperJAXB_RI;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Blocking;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Control;
@@ -119,15 +115,8 @@ public class RDFXMLSerializer {
 			configuration.setType(type(node));
 
 			URI baseUri = uriTools.uriForBean(profile);
-			PropertyResourceSerialiser visitor = new PropertyResourceSerialiser(
-					baseUri);
-			node.getJson().accept(visitor);
-			// We don't want the root element (eg. beanshell:Configuration) again, as we're
-			// already inside the general Configuration element which rdf:type is set
-			NodeList childNodes = visitor.getRootElement().getChildNodes();
-			for (int i = 0; i < childNodes.getLength(); i++) {
-				configuration.getAny().add(childNodes.item(i));
-			}
+			// TODO: Serialize json to separate file in bundle			
+//			node.getJson().accept(visitor);
 
 			// TODO: No way in API to mark non-activated configurations
 			profileElem.getActivateConfiguration().add(resource(uri(node)));
@@ -328,17 +317,13 @@ public class RDFXMLSerializer {
 				workflow.setAbout("");
 				workflow.setName(wf.getName());
 
-				if (wf.getWorkflowIdentifier() != null) {
+				if (wf.getIdentifier() != null) {
 					Resource wfId = rdfObjectFactory.createResource();
-					wfId.setResource(wf.getWorkflowIdentifier().toASCIIString());
+					wfId.setResource(wf.getIdentifier().toASCIIString());
 					workflow.setWorkflowIdentifier(wfId);
 				}
 			}
-			
-			if (node instanceof PropertyVisit || node instanceof PropertyObject) {
-				return false;
-			}
-			
+						
 			URI uri = uriTools.relativeUriForBean(node, wf);
 
 			if (node instanceof InputWorkflowPort) {
@@ -589,70 +574,55 @@ public class RDFXMLSerializer {
 			ann.setBody(pathUri);
 		}
 
-		// Miniature OA description for now
-		// See http://openannotation.org/spec/core/20130205/
-		final PropertyResource annProv = new PropertyResource();
-		annProv.setResourceURI(annUri);
-		annProv.setTypeURI(OA.resolve("#Annotation"));
+		// TODO: Add annotation to RO manifest
 		
-		if (ann.getAnnotatedAt() != null) {
-			annProv.addProperty(OA.resolve("#annotedAt"),
-					new PropertyLiteral(ann.getAnnotatedAt()));
-		}
-		if (ann.getSerializedAt() != null) {
-			annProv.addProperty(OA.resolve("#serializedAt"),
-					new PropertyLiteral(ann.getSerializedAt()));
-		}
-		
-		if (ann.getAnnotatedBy() != null) {
-			annProv.addPropertyReference(OA.resolve("#annotatedBy"),
-					ann.getAnnotatedBy());
-		}
-		if (ann.getSerializedBy() != null) {
-			annProv.addPropertyReference(OA.resolve("#serializedBy"),
-					ann.getSerializedBy());
-		}
-		
-		if (ann.getBody() != null) {
-			annProv.addPropertyReference(OA.resolve("#hasBody"), ann.getBody());
-		} else if (! ann.getBodyStatements().isEmpty()){						
-			// FIXME: Hack - Our body is also the annotation!
-			annProv.addPropertyReference(OA.resolve("#hasBody"), pathUri);
-		}
-		
-		// CHECK: should this be a relative reference instead?
-		annProv.addPropertyReference(OA.resolve("#hasTarget"), 
-				uriTools.uriForBean(ann.getTarget()));					
-		// Serialize the metadata
-
-		
-		PropertyResourceSerialiser visitor = new PropertyResourceSerialiser(
-				annUri) {
-			@Override
-			public boolean visit() {
-				if (getCurrentNode() instanceof Annotation) {
-					annProv.accept(this);
-					// visit our children, serialized as normal by superclass
-					// -- but don't call super.visit() which don't understand
-					// Annotation
-					return true;
-				}
-				return super.visit();
-			}
-		};
-		ann.accept(visitor);
-
-
-		try {
-			/*
-			 * TODO: Serialize manually with nicer indentation/namespaces etc.,
-			 * as done for our other RDF/XML documents
-			 */
-			wfBundle.getResources()
-					.addResource(visitor.getDoc(), pathUri.toASCIIString(), APPLICATION_RDF_XML);
-		} catch (IOException e) {
-			logger.log(Level.WARNING, "Can't write annotation to " + pathUri, e);
-		}
+//		// Miniature OA description for now
+//		// See http://openannotation.org/spec/core/20130205/
+//		final PropertyResource annProv = new PropertyResource();
+//		annProv.setResourceURI(annUri);
+//		annProv.setTypeURI(OA.resolve("#Annotation"));
+//		
+//		if (ann.getAnnotatedAt() != null) {
+//			annProv.addProperty(OA.resolve("#annotedAt"),
+//					new PropertyLiteral(ann.getAnnotatedAt()));
+//		}
+//		if (ann.getSerializedAt() != null) {
+//			annProv.addProperty(OA.resolve("#serializedAt"),
+//					new PropertyLiteral(ann.getSerializedAt()));
+//		}
+//		
+//		if (ann.getAnnotatedBy() != null) {
+//			annProv.addPropertyReference(OA.resolve("#annotatedBy"),
+//					ann.getAnnotatedBy());
+//		}
+//		if (ann.getSerializedBy() != null) {
+//			annProv.addPropertyReference(OA.resolve("#serializedBy"),
+//					ann.getSerializedBy());
+//		}
+//		
+//		if (ann.getBody() != null) {
+//			annProv.addPropertyReference(OA.resolve("#hasBody"), ann.getBody());
+//		} else if (! ann.getBodyStatements().isEmpty()){						
+//			// FIXME: Hack - Our body is also the annotation!
+//			annProv.addPropertyReference(OA.resolve("#hasBody"), pathUri);
+//		}
+//		
+//		// CHECK: should this be a relative reference instead?
+//		annProv.addPropertyReference(OA.resolve("#hasTarget"), 
+//				uriTools.uriForBean(ann.getTarget()));					
+//		// Serialize the metadata
+//
+//	
+//		try {
+//			/*
+//			 * TODO: Serialize manually with nicer indentation/namespaces etc.,
+//			 * as done for our other RDF/XML documents
+//			 */
+//			wfBundle.getResources()
+//					.addResource(visitor.getDoc(), pathUri.toASCIIString(), APPLICATION_RDF_XML);
+//		} catch (IOException e) {
+//			logger.log(Level.WARNING, "Can't write annotation to " + pathUri, e);
+//		}
 		
 	}
 

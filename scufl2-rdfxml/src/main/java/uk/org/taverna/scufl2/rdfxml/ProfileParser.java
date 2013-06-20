@@ -1,13 +1,5 @@
 package uk.org.taverna.scufl2.rdfxml;
 
-import static uk.org.taverna.scufl2.rdfxml.PropertyResourceSerialiser.COLLECTION;
-import static uk.org.taverna.scufl2.rdfxml.PropertyResourceSerialiser.DATATYPE;
-import static uk.org.taverna.scufl2.rdfxml.PropertyResourceSerialiser.LI;
-import static uk.org.taverna.scufl2.rdfxml.PropertyResourceSerialiser.LITERAL;
-import static uk.org.taverna.scufl2.rdfxml.PropertyResourceSerialiser.PARSE_TYPE;
-import static uk.org.taverna.scufl2.rdfxml.PropertyResourceSerialiser.RDF;
-import static uk.org.taverna.scufl2.rdfxml.PropertyResourceSerialiser.RESOURCE;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -16,7 +8,6 @@ import java.util.Iterator;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 
-import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -33,11 +24,6 @@ import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
 import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
-import uk.org.taverna.scufl2.api.property.PropertyList;
-import uk.org.taverna.scufl2.api.property.PropertyLiteral;
-import uk.org.taverna.scufl2.api.property.PropertyObject;
-import uk.org.taverna.scufl2.api.property.PropertyReference;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Configuration;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ProcessorBinding.InputPortBinding;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ProcessorBinding.OutputPortBinding;
@@ -143,42 +129,15 @@ public class ProfileParser extends AbstractParser {
 		}
 
 		getParserState().push(config);
-		getParserState().push(config.getJson());
 		for (Object o : original.getAny()) {
-			parseProperty(o);
+		    // Legacy SCUFL2 <= 0.11.0  PropertyResource configuration
+		    // Just ignoring it for now :(
+		    // 
+		    // TODO: Parse and represent as JSON-LD?
+//		    System.out.println(original);
 		}
 		getParserState().pop();
 		getParserState().pop();
-	}
-
-	private PropertyObject parseElement(Element element) throws ReaderException {
-		Element childElement = getChildElement(element);
-		String parseType = element.getAttributeNS(RDF, PARSE_TYPE);
-		PropertyObject property = null;
-		if (parseType.equals(COLLECTION)) {
-			property = parseList(element);
-		} else if (parseType.equals(RESOURCE)) {
-			property = parseResource(element);
-		} else if (parseType.equals(LITERAL)) {
-			property = parseXmlLiteral(childElement);
-		} else if (!parseType.isEmpty()) {
-			throw new ReaderException("Unsupported rdf:parseType=" + parseType);
-		}
-
-		Attr resourceAttr = element.getAttributeNodeNS(RDF, RESOURCE);
-		if (resourceAttr != null) {
-			property = new PropertyReference(
-					URI.create(resourceAttr.getValue()));
-		}
-
-		if (childElement == null && property == null) {
-			property = parseLiteral(element);
-		}
-		if (property == null) {
-			// If we made it down here, we're a resource
-			property = parseResource(childElement);
-		}
-		return property;
 	}
 
 	protected void parseInputActivityPort(
@@ -207,29 +166,6 @@ public class ProfileParser extends AbstractParser {
 				InputProcessorPort.class));
 		binding.setParent(getParserState().getCurrent(ProcessorBinding.class));
 
-	}
-
-	protected PropertyObject parseList(Element element) throws ReaderException {
-		PropertyList propertyList = new PropertyList();
-		for (Node node : nodeIterable(element.getChildNodes())) {
-			if (!(node instanceof Element)) {
-				continue;
-			}
-			PropertyObject propertyObject = parseElement((Element) node);
-			propertyList.add(propertyObject);
-
-		}
-		return propertyList;
-	}
-
-	protected PropertyObject parseLiteral(Element element) {
-		String text = element.getTextContent();
-		PropertyLiteral property = new PropertyLiteral(text);
-		String dataType = element.getAttributeNS(RDF, DATATYPE);
-		if (!dataType.isEmpty()) {
-			property.setLiteralType(URI.create(dataType));
-		}
-		return property;
 	}
 
 	protected void parseOutputActivityPort(
@@ -323,47 +259,6 @@ public class ProfileParser extends AbstractParser {
 		// TODO: Parse activates config etc.
 		getParserState().pop();
 
-	}
-
-	protected void parseProperty(Object o) throws ReaderException {
-		if (!(o instanceof Element)) {
-			// throw new ReaderException("Unexpected property element " + o);
-			return;
-		}
-
-		Element element = (Element) o;
-		URI predicate = URI.create(element.getNamespaceURI()
-				+ element.getLocalName());
-
-		PropertyObject property = parseElement(element);
-
-		PropertyResource propResource = getParserState().getCurrent(
-				PropertyResource.class);
-		propResource.addProperty(predicate, property);
-	}
-
-	private PropertyResource parseResource(Element element)
-			throws ReaderException {
-		String parseType = element.getAttributeNS(RDF, PARSE_TYPE);
-		PropertyResource resource = new PropertyResource();
-		boolean isListItem = element.getNamespaceURI().equals(RDF)
-				&& element.getLocalName().equals(LI);
-		if (!parseType.equals(RESOURCE) && !isListItem) {
-			URI typeURI = URI.create(element.getNamespaceURI()
-					+ element.getLocalName());
-			resource.setTypeURI(typeURI);
-		}
-		getParserState().push(resource);
-		for (Node node : nodeIterable(element.getChildNodes())) {
-			parseProperty(node);
-		}
-		getParserState().pop();
-		return resource;
-	}
-
-	private PropertyLiteral parseXmlLiteral(Element childElement) {
-		PropertyLiteral literal = new PropertyLiteral(childElement);
-		return literal;
 	}
 
 	protected void readProfile(URI profileUri, URI source)

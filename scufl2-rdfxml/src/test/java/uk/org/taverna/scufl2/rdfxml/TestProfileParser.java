@@ -2,7 +2,6 @@ package uk.org.taverna.scufl2.rdfxml;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -25,8 +24,6 @@ import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
-import uk.org.taverna.scufl2.api.property.PropertyLiteral;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
 
 public class TestProfileParser {
 	private static final String PROFILE_RDF = "example/profile/tavernaWorkbench.rdf";
@@ -144,24 +141,6 @@ public class TestProfileParser {
 	@Test
 	public void profileName() throws Exception {
 		assertEquals("tavernaWorkbench", profile.getName());
-	}
-
-	@Test
-	public void propertyResource() throws Exception {
-		Configuration hello = profile.getConfigurations().getByName("Hello");
-		PropertyResource propResource = hello.getJson();
-		assertEquals(
-"http://ns.taverna.org.uk/2010/activity/beanshell#Config",
-				propResource.getTypeURI().toASCIIString());
-		assertNull(propResource.getResourceURI());
-		assertEquals(1, propResource.getProperties().size());
-		URI scriptUri = URI
-				.create("http://ns.taverna.org.uk/2010/activity/beanshell#script");
-		String script = propResource.getPropertyAsString(scriptUri);
-		assertEquals("hello = \"Hello, \" + personName;\n"
-				+ "JOptionPane.showMessageDialog(null, hello);", script);
-		PropertyLiteral literal = propResource.getPropertyAsLiteral(scriptUri);
-		assertEquals(PropertyLiteral.XSD_STRING, literal.getLiteralType());
 	}
 
 	@Before
