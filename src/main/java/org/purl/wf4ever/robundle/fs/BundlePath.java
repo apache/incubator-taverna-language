@@ -3,6 +3,7 @@ package org.purl.wf4ever.robundle.fs;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent.Kind;
@@ -153,8 +154,13 @@ public class BundlePath implements Path {
     @JsonValue
     public URI toUri() {
         Path abs = zipPath.toAbsolutePath();
-        String path = abs.toString();
-        return fs.getBaseURI().resolve(path);
+        URI pathRel;
+        try {
+            pathRel = new URI(null, null, abs.toString(), null);
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException("Can't create URL for " + zipPath, e);
+        }
+        return fs.getBaseURI().resolve(pathRel);
     }
 
 }
