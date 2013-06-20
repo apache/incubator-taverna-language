@@ -19,8 +19,11 @@ import uk.org.taverna.scufl2.api.port.Port;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.jsonschema.JsonSchema;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ValueNode;
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 
 /**
  * Configuration of a {@link Configurable} workflow bean.
@@ -105,12 +108,15 @@ public class Configuration extends AbstractNamed implements Child<Profile>, Type
 		return parent;
 	}
 
-	/**
-	 * Return the underlying {@link PropertyResource} which contains the properties set by this
-	 * configuration.
-	 * 
-	 * @return the backing {@link PropertyResource}.
-	 */
+    /**
+     * Return the underlying JSON {@link JsonNode} which contains the properties
+     * set by this configuration.
+     * <p>
+     * The JSON node is typically an {@link ObjectNode} or {@link ArrayNode},
+     * but could also be a {@link ValueNode}. The default node for a freshly
+     * constructed Configuration is an {@link ObjectNode}. * @return the backing
+     * {@link ObjectNode}.
+     */
 	public JsonNode getJson() {
 		return json;
 	}
@@ -148,20 +154,21 @@ public class Configuration extends AbstractNamed implements Child<Profile>, Type
 
 	}
 
-	/**
-	 * Set the underlying {@link PropertyResource} which contains the properties
-	 * set by this configuration.
-	 * <p>
-	 * If the provided PropertyResource is <code>null</code>, a new, blank
-	 * PropertyResource will be set instead.
-	 * 
-	 * @param json
-	 *            the underlying <code>PropertyResource</code> which contains
-	 *            the properties set by this configuration.
-	 */
+	    /**
+     * Set the underlying JSON {@link JsonNode} which contains the properties
+     * set by this configuration. The JSON node is typically an
+     * {@link ObjectNode} or {@link ArrayNode}, but could also be a
+     * {@link ValueNode}.
+     * <p>
+     * If the provided ObjectNode is <code>null</code>, a new, blank
+     * {@link ObjectNode} will be set.
+     * 
+     * @param json
+     *            the underlying <code>JsonNode</code> which contains the
+     *            properties set by this configuration.
+     */
 	public void setJson(JsonNode json) {
 		if (json == null) {
-		    // TODO: Should this be JSON_NODE_FACTORY.nullNode();
 			this.json = JSON_NODE_FACTORY.objectNode();
 		}
 		this.json = json;
