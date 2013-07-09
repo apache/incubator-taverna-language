@@ -1,5 +1,6 @@
 package uk.org.taverna.scufl2.translator.t2flow;
 
+import java.io.CharArrayWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +23,6 @@ import java.util.Map.Entry;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -35,6 +35,12 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -74,9 +80,6 @@ import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
-import uk.org.taverna.scufl2.api.property.PropertyLiteral;
-import uk.org.taverna.scufl2.api.property.PropertyObject;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Activity;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedGranularDepthPort;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.AnnotatedGranularDepthPorts;
@@ -109,6 +112,8 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.Processors;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Raven;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Role;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.TopIterationNode;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class T2FlowParser {
 
@@ -157,6 +162,7 @@ public class T2FlowParser {
 	private static Scufl2Tools scufl2Tools = new Scufl2Tools();
 
 	private static URITools uriTools = new URITools();
+    private static TransformerFactory transformerFactory;
 
 	protected Set<T2Parser> t2Parsers = null;
 	protected final JAXBContext jaxbContext;
@@ -465,25 +471,38 @@ public class T2FlowParser {
 						+ parserState.get().getCurrentT2Parser() + " for "						
 						+ parserState.get().getCurrentConfigurable());
 			}
-			// We'll have to fake it
+			// We'll have to fall back by just keeping the existing XML
+			
 			configuration = new Configuration();
 			configuration.setType(configBeanURI.resolve("Config"));
-
-			URI fallBackURI = configBeanURI.resolve(configBean.getEncoding());
-
-			java.util.Map<URI, SortedSet<PropertyObject>> properties = configuration
-					.getJson().getProperties();
-			Object any = configBean.getAny();
-			Element element = (Element) configBean.getAny();
-			PropertyLiteral literal = new PropertyLiteral(element);
-			// literal.setLiteralValue(configBean.getAny().toString());
-			// literal.setLiteralType(PropertyLiteral.XML_LITERAL);
-			properties.get(fallBackURI).add(literal);
+			String xml = elementToXML((Element) configBean.getAny());
+			String encoding = configBean.getEncoding();
+			ObjectNode json = (ObjectNode)configuration.getJson();
+			json.put(encoding, xml);
 		}
 		return configuration;
 		
 		
 	}
+	
+	protected String elementToXML(Element element) {
+	    try {
+           Transformer transformer = getTransformer();
+           CharArrayWriter writer = new CharArrayWriter();
+            transformer.transform(new DOMSource(element), new StreamResult(writer));
+            return writer.toString();
+        } catch (TransformerException e) {
+            throw new IllegalStateException("Can't write XML", e);
+        }
+	}
+
+    protected static Transformer getTransformer() throws TransformerConfigurationException {
+        if (transformerFactory == null) {
+            transformerFactory = TransformerFactory.newInstance();
+        }
+        return transformerFactory.newTransformer();
+    }
+	
 
 	public Unmarshaller getUnmarshaller() {
 		Unmarshaller u = unmarshaller.get();
@@ -704,35 +723,58 @@ public class T2FlowParser {
 				WorkflowBundle workflowBundle = parserState.get().getCurrentWorkflowBundle();
 				annotation.setParent(workflowBundle);
 				
+                String path = "annotation/" + annotation.getName() + ".ttl";
+                URI bodyURI = URI.create(path);
 				
 				annotation.setTarget(annotatedBean);
 				annotation.setAnnotatedAt(cal);
 				//annotation.setAnnotator();
 				annotation.setSerializedBy(t2flowParserURI);
 				annotation.setSerializedAt(new GregorianCalendar());
-				
-				PropertyResource p = new PropertyResource();
 				URI annotatedSubject = uriTools.relativeUriForBean(annotatedBean,
 						annotation);
-				p.setResourceURI(annotatedSubject);
-				if (clazz.equals(SEMANTIC_ANNOTATION)) {
-					URI annURI = uriTools.uriForBean(annotation);
+				String body;
+                if (clazz.equals(SEMANTIC_ANNOTATION)) {
+					
 					// TODO: Add the correct @base					
-					// TODO: Use correct path
-					String path = "asdf";
-					try {
-						workflowBundle.getResources().addResource(value, path, semanticMediaType);
-					} catch (IOException e) {
-						throw new ReaderException("Could not store annotation body to " + path, e);
-					}
-					URI bodyURI = URI.create(path);
-					annotation.setBody(bodyURI);
+					body = value;
+				} else {
+				    // Generate Turtle from 'classic' annotation 
+				    URI predicate = getPredicatesForClass().get(clazz);
+	                if (predicate == null) {
+	                    if (isStrict()) {
+	                        throw new ReaderException("Unsupported annotation class " + clazz);
+	                    } 
+	                    return;
+	                }
+	               
+	                
+	               StringBuilder turtle = new StringBuilder();
+	               turtle.append("<");
+	               turtle.append(annotatedSubject.toASCIIString());
+	               turtle.append("> ");
+	               
+	               turtle.append("<");
+                   turtle.append(predicate.toASCIIString());
+                   turtle.append("> ");
+                   
+                   // A potentially multi-line string
+                   turtle.append("\"\"\"");
+                   // Escape existing """ to \"\"\"  (beware Java's escaping of \ and ")
+                   String escaped = value.replace("\"\"\"", "\\\"\\\"\\\"");
+                   turtle.append(escaped);
+                   turtle.append("\"\"\"");
+                   turtle.append(" .");
+                   body = turtle.toString();
+                   
 				}
-				URI predicate = getPredicatesForClass().get(clazz);
-				if (predicate != null) {
-					p.addPropertyAsString(predicate, value);
-				}
-				annotation.getBodyStatements().add(p);				
+                try {
+                    workflowBundle.getResources().addResource(body, path, semanticMediaType);
+                } catch (IOException e) {
+                    throw new ReaderException("Could not store annotation body to " + path, e);
+                }
+                annotation.setBody(bodyURI);
+				
 			}
 		}
 	}
