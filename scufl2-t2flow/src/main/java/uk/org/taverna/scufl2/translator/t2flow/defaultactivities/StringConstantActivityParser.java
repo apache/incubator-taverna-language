@@ -11,6 +11,8 @@ import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.StringConstantConfig;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 public class StringConstantActivityParser extends AbstractActivityParser {
 
 	private static final String VALUE = "value";
@@ -45,10 +47,10 @@ public class StringConstantActivityParser extends AbstractActivityParser {
 			throw new ReaderException("String constant configuration has no value set");
 		}
 		Configuration configuration = new Configuration();
-		configuration.getJson().setTypeURI(
+		ObjectNode json = (ObjectNode) configuration.getJson();
+        configuration.setType(
 				CONSTANT.resolve("#Config"));
-		configuration.getJson().addPropertyAsString(
-				CONSTANT.resolve("#string"), value);
+		json.put("string", value);
 		
 		Activity activity = parserState.getCurrentActivity();
 		OutputActivityPort valuePort = new OutputActivityPort(activity, VALUE);
