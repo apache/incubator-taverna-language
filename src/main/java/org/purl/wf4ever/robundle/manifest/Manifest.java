@@ -147,7 +147,7 @@ public class Manifest {
                 super.postVisitDirectory(dir, exc);
                 if (potentiallyEmptyFolders.remove(dir)) {
                     PathMetadata metadata = new PathMetadata();
-                    // Strip out the widget:// magic
+                    // Strip out the app:// magic
                     metadata.setFile(ROOT.resolve(dir.getRoot().toUri()
                             .relativize(withSlash(dir).toUri())));
                     metadata.setFolder(withSlash(dir.getParent()));
@@ -180,7 +180,7 @@ public class Manifest {
                 }
                 // super.visitFile(file, attrs);
                 PathMetadata metadata = new PathMetadata();
-                // Strip out the widget:// magic
+                // Strip out the app:// magic
                 metadata.setFile(ROOT.resolve(file.getRoot().toUri()
                         .relativize(file.toUri())));
                 metadata.setFolder(withSlash(file.getParent()));

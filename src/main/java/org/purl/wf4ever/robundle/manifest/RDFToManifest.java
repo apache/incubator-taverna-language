@@ -218,7 +218,7 @@ public class RDFToManifest {
             if (uriStr != null) {
                 URI uri = ROOT.resolve(uriStr);
                 if (! uri.isAbsolute()) {
-                    // TODO: Also check for widget:// absolute URIs
+                    // TODO: Also check for app:// absolute URIs
                     meta.setFile(uri);
                 } else {
                     meta.setUri(uri);
