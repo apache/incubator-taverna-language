@@ -45,7 +45,7 @@ public class TestRecursiveCopyFileVisitor {
         Bundles.copyRecursively(orig, dest);
     }
 
-    private Path tempDir(String name) throws IOException {
+    protected Path tempDir(String name) throws IOException {
         Path dir = Files.createTempDirectory(name);
         tmps.add(dir);
         return dir;
