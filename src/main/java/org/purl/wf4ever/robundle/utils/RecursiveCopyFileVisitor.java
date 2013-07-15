@@ -146,15 +146,49 @@ public class RecursiveCopyFileVisitor extends SimpleFileVisitor<Path> {
         // The above does not work as ZipPath throws ProviderMisMatchException
         // when given a relative filesystem Path
 
-        URI rel = uriWithSlash(source).relativize(path.toUri());
+        URI rel = pathOnly(uriWithSlash(source)).relativize(
+                pathOnly(path.toUri()));
+        if (rel.isAbsolute()) {
+            throw new IllegalStateException("Can't relativize " + rel);
+        }
         URI dest = uriWithSlash(destination).resolve(rel);
-        return Paths.get(dest);
+        return destination.getFileSystem().provider().getPath(dest);        
+    }
+
+    private URI pathOnly(URI uri) {
+        if (!uri.isAbsolute()) {
+            return uri;
+        }
+        String path = uri.getRawPath();
+        // if (! uri.isOpaque()) {
+        // path = uri.getPath();
+        // }
+        if (uri.getScheme().equals("jar")) {
+            String part = uri.getSchemeSpecificPart();
+            int slashPos = part.indexOf("!/");
+            path = part.substring(slashPos + 1, part.length());
+        }
+        if (path == null) {
+            throw new IllegalArgumentException("Can't extract path from URI "
+                    + uri);
+        }
+
+        if (!path.startsWith("/")) {
+            path = "/" + path;
+        }
+        try {
+            return new URI(null, null, path, null);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Can't extract path from URI "
+                    + uri, e);
+        }
+
     }
 
     private URI uriWithSlash(Path dir) {
         URI uri = dir.toUri();
-        if (!uri.equals(uri.resolve("."))) {
-            return uri.resolve(dir.getFileName().toString() + "/");
+        if (!uri.toString().endsWith("/")) {
+            return URI.create(uri.toString() + "/");
         }
         return uri;
     }
