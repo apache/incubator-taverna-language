@@ -14,10 +14,7 @@ public class TestProfile {
     @Test
     public void profileName() throws Exception {
         Profile p = new Profile();
-        String name = p.getName();
-        assertTrue(name.startsWith("pf-"));
-        String uuidStr = name.replaceAll("^pf-", "");        
-        UUID uuid = UUID.fromString(uuidStr);
+        UUID uuid = UUID.fromString(p.getName());
         assertEquals(4, uuid.version());
         
     }
@@ -25,23 +22,14 @@ public class TestProfile {
     @Test
     public void workflow() throws Exception {
         Workflow wf = new Workflow();
-        String name = wf.getName();
-        assertTrue(name.startsWith("wf-"));
-        String uuidStr = name.replaceAll("^wf-", "");        
-        UUID uuid = UUID.fromString(uuidStr);
+        UUID uuid = UUID.fromString(wf.getName());
         assertEquals(4, uuid.version());
     }
     
     @Test
     public void workflowBundle() throws Exception {
         WorkflowBundle wfBundle = new WorkflowBundle();
-        String name = wfBundle.getName();
-        System.out.println(name);
-        System.out.println(wfBundle.getIdentifier());
-        System.out.println(wfBundle.getCurrentRevision());
-        assertTrue(name.startsWith("wf-"));
-        String uuidStr = name.replaceAll("^wf-", "");        
-        UUID uuid = UUID.fromString(uuidStr);
+        UUID uuid = UUID.fromString(wfBundle.getName());
         assertEquals(4, uuid.version());
     }
 }

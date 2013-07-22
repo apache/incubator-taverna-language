@@ -41,9 +41,6 @@ public class Profile extends AbstractRevisioned implements Child<WorkflowBundle>
 	 */
 	public Profile() {
 		super();
-		String profileId = getIdentifierRoot().relativize(getIdentifier())
-				.toASCIIString().replace("/", "");
-		setName("pf-" + profileId);
 	}
 
 	/**
