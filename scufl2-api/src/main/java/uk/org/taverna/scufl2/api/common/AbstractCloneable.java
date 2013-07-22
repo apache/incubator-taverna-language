@@ -1,6 +1,7 @@
 package uk.org.taverna.scufl2.api.common;
 
-import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.Map;
 
 public abstract class AbstractCloneable implements WorkflowBean {
 	
@@ -59,7 +60,9 @@ public abstract class AbstractCloneable implements WorkflowBean {
 	}
 	
 	public static class Cloning {
-		private HashMap<WorkflowBean, WorkflowBean> cloned = new HashMap<WorkflowBean, WorkflowBean>();
+	    // Use identify map so we always make new copies of objects that just
+	    // may look alike, but are different, like empty lists
+		private Map<WorkflowBean, WorkflowBean> cloned = new IdentityHashMap<WorkflowBean, WorkflowBean>();
 
 		
 		/**
