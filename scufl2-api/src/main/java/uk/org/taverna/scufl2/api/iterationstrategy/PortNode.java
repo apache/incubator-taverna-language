@@ -48,7 +48,55 @@ public class PortNode extends AbstractCloneable implements IterationStrategyNode
 		this.inputProcessorPort = inputProcessorPort;
 	}
 
-	@Override
+	/* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((desiredDepth == null) ? 0 : desiredDepth.hashCode());
+        result = prime
+                * result
+                + ((inputProcessorPort == null) ? 0 : inputProcessorPort
+                        .hashCode());
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof PortNode)) {
+            return false;
+        }
+        PortNode other = (PortNode) obj;
+        if (desiredDepth == null) {
+            if (other.desiredDepth != null) {
+                return false;
+            }
+        } else if (!desiredDepth.equals(other.desiredDepth)) {
+            return false;
+        }
+        if (inputProcessorPort == null) {
+            if (other.inputProcessorPort != null) {
+                return false;
+            }
+        } else if (!inputProcessorPort.equals(other.inputProcessorPort)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
 	public void setParent(IterationStrategyParent newParent) {
 		if (parent == newParent) {
 			return;
