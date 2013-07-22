@@ -18,7 +18,10 @@ public abstract class AbstractRevisioned extends AbstractNamed implements Revisi
 	protected abstract URI getIdentifierRoot();
 
 	public AbstractRevisioned() {
-		newRevision();
+	    newRevision();
+	    String id = getIdentifierRoot().relativize(getIdentifier())
+                .toASCIIString().replace("/", "");
+        setName(id);
 	}
 
 	public AbstractRevisioned(String name) {
