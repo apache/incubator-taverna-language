@@ -49,7 +49,7 @@ public class Workflow extends AbstractRevisioned implements
 	 */
 	public Workflow() {	
 		String workflowId = getIdentifierRoot().relativize(getIdentifier())
-				.toASCIIString();
+                .toASCIIString().replace("/", "");
 		setName("wf-" + workflowId);
 	}
 
