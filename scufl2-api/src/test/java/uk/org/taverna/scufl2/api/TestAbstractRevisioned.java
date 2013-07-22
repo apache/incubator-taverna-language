@@ -10,7 +10,7 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 
-public class TestProfile {
+public class TestAbstractRevisioned {
     @Test
     public void profileName() throws Exception {
         Profile p = new Profile();
