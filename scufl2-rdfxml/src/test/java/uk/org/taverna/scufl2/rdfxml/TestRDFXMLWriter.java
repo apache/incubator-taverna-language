@@ -1,5 +1,6 @@
 package uk.org.taverna.scufl2.rdfxml;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
@@ -7,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +17,7 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.TestWorkflowBundleIO;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
 import uk.org.taverna.scufl2.ucfpackage.UCFPackage;
+import uk.org.taverna.scufl2.ucfpackage.UCFPackage.ResourceEntry;
 
 public class TestRDFXMLWriter {
 
@@ -27,6 +30,30 @@ public class TestRDFXMLWriter {
 	public void makeExampleWorkflow() {
 		workflowBundle = new TestWorkflowBundleIO().makeWorkflowBundle();
 	}
+	
+	@Test
+    public void awkwardFilenames() throws Exception {
+	    workflowBundle.getProfiles().removeByName("tavernaServer");
+	    String funnyName = "Funny_/_characters_50%_of the time";
+        workflowBundle.getMainProfile().setName(funnyName);        
+        workflowBundle.getMainWorkflow().setName(funnyName);
+        File bundleFile = tempFile();
+        bundleIO.writeBundle(workflowBundle, bundleFile,
+                APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE);
+        UCFPackage ucfPackage = new UCFPackage(bundleFile);
+        Map<String, ResourceEntry> profiles = ucfPackage.listResources("profile");
+        assertEquals(1, profiles.size());
+        assertEquals("Funny_%2f_characters_50%25_of%20the%20time.rdf", profiles.keySet().iterator().next());
+        
+        Map<String, ResourceEntry> workflows = ucfPackage.listResources("workflow");
+        assertEquals(1, workflows.size());
+        assertEquals("Funny_%2f_characters_50%25_of%20the%20time.rdf", workflows.keySet().iterator().next());
+        
+        // and.. can we read it in again correctly?
+        WorkflowBundle readBundle = bundleIO.readBundle(bundleFile, APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE);
+        assertEquals(funnyName, readBundle.getMainProfile().getName());
+        assertEquals(funnyName, readBundle.getMainWorkflow().getName());
+    }
 
 	@Test
 	public void writeBundleToFile() throws Exception {

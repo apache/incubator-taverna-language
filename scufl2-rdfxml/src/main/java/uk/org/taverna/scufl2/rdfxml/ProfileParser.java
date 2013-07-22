@@ -268,7 +268,7 @@ public class ProfileParser extends AbstractParser {
 					+ source);
 		}
 		InputStream bundleStream = getParserState().getUcfPackage()
-				.getResourceAsInputStream(source.getPath());
+				.getResourceAsInputStream(source.getRawPath());
 		if (bundleStream == null) {
 		    throw new ReaderException("Can't find profile " + source.getPath());
 		}

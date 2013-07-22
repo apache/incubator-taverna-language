@@ -344,7 +344,7 @@ public class WorkflowParser extends AbstractParser {
 		}
 
 		InputStream bundleStream = getParserState().getUcfPackage()
-				.getResourceAsInputStream(source.getPath());
+				.getResourceAsInputStream(source.getRawPath());
 
 		JAXBElement<WorkflowDocument> elem;
 		try {
