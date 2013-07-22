@@ -28,6 +28,11 @@ public class DotProduct extends ArrayList<IterationStrategyNode> implements
 		}
 		return visitor.visitLeave(this);
 	}
+	
+	@Override
+    public boolean equals(Object o) {
+        return o instanceof DotProduct && super.equals(o);
+    }
 
 	@Override
 	public IterationStrategyParent getParent() {

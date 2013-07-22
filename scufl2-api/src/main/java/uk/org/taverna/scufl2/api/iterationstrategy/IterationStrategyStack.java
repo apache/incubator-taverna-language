@@ -22,6 +22,11 @@ public class IterationStrategyStack extends ArrayList<IterationStrategyTopNode>
 	public IterationStrategyStack(Processor parent) {
 		setParent(parent);
 	}
+	
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof IterationStrategyStack && super.equals(o);
+    }
 
 	@Override
 	public boolean accept(Visitor visitor) {
