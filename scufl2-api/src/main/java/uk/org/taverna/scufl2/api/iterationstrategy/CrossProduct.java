@@ -30,6 +30,11 @@ public class CrossProduct extends ArrayList<IterationStrategyNode> implements
 	}
 
 	@Override
+	public boolean equals(Object o) {
+	    return o instanceof CrossProduct && super.equals(o);
+	}
+	
+	@Override
 	public IterationStrategyParent getParent() {
 		return parent;
 	}
