@@ -5,12 +5,12 @@ import java.net.URI;
 
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
-import uk.org.taverna.scufl2.api.property.PropertyLiteral;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.SoaplabConfig;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class SoaplabActivityParser extends AbstractActivityParser {
 	private static URI activityRavenURI = T2FlowParser.ravenURI
@@ -41,29 +41,26 @@ public class SoaplabActivityParser extends AbstractActivityParser {
 		Configuration configuration = new Configuration();
 		configuration.setParent(parserState.getCurrentProfile());
 
-		PropertyResource configResource = configuration.getJson();
-		configResource.setTypeURI(scufl2Uri.resolve("#Config"));
+		ObjectNode json = (ObjectNode) configuration.getJson();
+		configuration.setType(scufl2Uri.resolve("#Config"));
 
 		String endpoint = soaplabConfig.getEndpoint();
 		if (endpoint == null || endpoint.equals("")) {
 			throw new ReaderException("Soablab config has no endpoint set");
 		}
-		configResource.addPropertyAsString(scufl2Uri.resolve("#endpoint"), endpoint);
+		json.put("endpoint", endpoint);
 
 		double pollingBackoff = soaplabConfig.getPollingBackoff();
-		configResource.addProperty(scufl2Uri.resolve("#pollingBackoff"), new PropertyLiteral(
-				pollingBackoff));
+		json.put("pollingBackoff", pollingBackoff);
 
 		BigInteger pollingInterval = soaplabConfig.getPollingInterval();
 		if (pollingInterval != null) {
-			configResource.addProperty(scufl2Uri.resolve("#pollingInterval"), new PropertyLiteral(
-					pollingInterval.intValue()));
+            json.put("pollingInterval", pollingInterval.intValue());
 		}
 
 		BigInteger pollingIntervalMax = soaplabConfig.getPollingIntervalMax();
 		if (pollingIntervalMax != null) {
-			configResource.addProperty(scufl2Uri.resolve("#pollingIntervalMax"),
-					new PropertyLiteral(pollingIntervalMax.intValue()));
+            json.put("pollingIntervalMax", pollingIntervalMax.intValue());
 		}
 
 		return configuration;
