@@ -11,6 +11,8 @@ import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.DataflowConfig;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 public class DataflowActivityParser extends AbstractActivityParser {
 
 	private URITools uriTools = new URITools();
@@ -46,9 +48,9 @@ public class DataflowActivityParser extends AbstractActivityParser {
 		String wfId = dataflowConfig.getRef();
 		URI wfUri = Workflow.WORKFLOW_ROOT.resolve(wfId + "/");
 		Workflow wf = (Workflow) getUriTools().resolveUri(wfUri, parserState.getCurrentWorkflowBundle());		
-		URI uri = getUriTools().relativeUriForBean(wf, parserState.getCurrentProfile());
 
-		configuration.getJson().addPropertyReference(nestedUri.resolve("#workflow"), uri);		
+		ObjectNode json = (ObjectNode) configuration.getJson();
+		json.put("nestedWorkflow", wf.getName());
 		return configuration;
 	}
 
