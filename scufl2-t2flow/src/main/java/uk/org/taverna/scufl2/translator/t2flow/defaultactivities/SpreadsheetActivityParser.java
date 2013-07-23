@@ -1,20 +1,18 @@
 package uk.org.taverna.scufl2.translator.t2flow.defaultactivities;
 
 import java.net.URI;
-import java.util.List;
 
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
-import uk.org.taverna.scufl2.api.property.PropertyLiteral;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
-import uk.org.taverna.scufl2.xml.t2flow.jaxb.OutputFormat;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.SpreadsheetColumnNameEntry;
-import uk.org.taverna.scufl2.xml.t2flow.jaxb.SpreadsheetExcludes;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.SpreadsheetImportConfig;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.SpreadsheetRange;
+
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class SpreadsheetActivityParser extends AbstractActivityParser {
 
@@ -53,58 +51,63 @@ public class SpreadsheetActivityParser extends AbstractActivityParser {
 		Configuration configuration = new Configuration();
 		configuration.setParent(parserState.getCurrentProfile());
 
-		PropertyResource configResource = configuration.getJson();
-		configResource.setTypeURI(ACTIVITY_URI.resolve("#Config"));
+		ObjectNode json = (ObjectNode) configuration.getJson();
+		configuration.setType(ACTIVITY_URI.resolve("#Config"));
 
-		addRange(config.getColumnRange(), configResource, ACTIVITY_URI.resolve("#columnRange"));
+		ArrayNode columnRanges = json.arrayNode();
+		json.put("columnRange", columnRanges);
+		addRange(config.getColumnRange(), columnRanges);
 
-		addRange(config.getRowRange(), configResource, ACTIVITY_URI.resolve("#rowRange"));
+		ArrayNode rowRanges = json.arrayNode();
+        json.put("rowRange", rowRanges);
+		addRange(config.getRowRange(), rowRanges);
 
-		configResource.addPropertyAsString(ACTIVITY_URI.resolve("#emptyCellValue"),
-				config.getEmptyCellValue());
-
-		for (SpreadsheetColumnNameEntry entry : config.getColumnNames().getEntry()) {
-			PropertyResource mappingResource = configResource.addPropertyAsNewResource(
-					ACTIVITY_URI.resolve("#columnNames"), MAPPING_URI);
-			mappingResource.addPropertyAsString(MAPPING_URI.resolve("#column"), entry.getString()
-					.get(0));
-			mappingResource.addPropertyAsString(MAPPING_URI.resolve("#port"), entry.getString()
-					.get(1));
-
+		if (config.getEmptyCellValue() != null) {
+		    json.put("emptyCellValue", config.getEmptyCellValue());
 		}
-
-		configResource.addProperty(ACTIVITY_URI.resolve("#allRows"),
-				new PropertyLiteral(config.isAllRows()));
-
-		configResource.addProperty(ACTIVITY_URI.resolve("#excludeFirstRow"), new PropertyLiteral(
-				config.isExcludeFirstRow()));
-
-		configResource.addProperty(ACTIVITY_URI.resolve("#ignoreBlankRows"), new PropertyLiteral(
-				config.isIgnoreBlankRows()));
-
-		configResource.addPropertyAsString(ACTIVITY_URI.resolve("#emptyCellPolicy"), config
-				.getEmptyCellPolicy().value());
 		
-		OutputFormat outputFormat = config.getOutputFormat();
-		if(outputFormat != null)
-			configResource.addPropertyAsString(ACTIVITY_URI.resolve("#outputFormat"), outputFormat.value());
+		ArrayNode columnNames = json.arrayNode();
+        if (config.getColumnNames() != null && config.getColumnNames().getEntry() != null) {
+    		for (SpreadsheetColumnNameEntry entry : config.getColumnNames().getEntry()) {
+    		    ObjectNode mapping = json.objectNode();
+    		    columnNames.add(mapping);
+                mapping.put("column", entry.getString().get(0));
+                mapping.put("port", entry.getString().get(1));
+    		}
+    		if (columnNames.size() > 0) {
+    		    json.put("columnNames", columnNames);
+    		}
+        }
 		
-		String csvDelimiter = config.getCsvDelimiter();
-		if(csvDelimiter != null)
-			configResource.addPropertyAsString(ACTIVITY_URI.resolve("#csvDelimiter"), csvDelimiter);
+        json.put("allRows", config.isAllRows());
+        json.put("excludeFirstRow", config.isExcludeFirstRow());
+        json.put("ignoreBlankRows", config.isIgnoreBlankRows());
+        if (config.getEmptyCellPolicy() != null) {
+            json.put("emptyCellPolicy", config.getEmptyCellPolicy().value());
+        }
+		if(config.getOutputFormat() != null) {
+            json.put("outputFormat", config.getOutputFormat().value());
+        }
+        if(config.getCsvDelimiter() != null) {
+            json.put("csvDelimiter", config.getCsvDelimiter());
+        }
 
 		return configuration;
 	}
 
-	private void addRange(SpreadsheetRange range, PropertyResource resource, URI uri) {
-		PropertyResource rangeResource = resource.addPropertyAsNewResource(uri, RANGE_URI);
-		rangeResource.addProperty(RANGE_URI.resolve("#start"), new PropertyLiteral(range.getStart()
-				.intValue()));
-		rangeResource.addProperty(RANGE_URI.resolve("#end"), new PropertyLiteral(range.getEnd()
-				.intValue()));
+	private void addRange(SpreadsheetRange range, ArrayNode arrayNode) {
+	    ObjectNode rangeJson = arrayNode.objectNode();
+	    arrayNode.add(rangeJson);
+	    
+		rangeJson.put("start", range.getStart().longValue());
+        rangeJson.put("end", range.getStart().longValue());
+        
+        ArrayNode excludes = arrayNode.arrayNode();
 		for (SpreadsheetRange excludesRange : range.getExcludes().getExclude()) {
-			addRange(excludesRange, rangeResource, RANGE_URI.resolve("#excludes"));
+			addRange(excludesRange, excludes);
 		}
-
+		if (excludes.size() > 0) {
+		    rangeJson.put("excludes", excludes);
+		}
 	}
 }
