@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.bind.PropertyException;
+
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.common.URITools;
@@ -15,16 +17,17 @@ import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.OutputActivityPort;
-import uk.org.taverna.scufl2.api.property.PropertyException;
-import uk.org.taverna.scufl2.api.property.PropertyLiteral;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityPortDefinitionBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.RShellConfig;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.RShellConnection;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.RShellSymanticType;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.RShellSymanticType.RShellPortSymanticTypeBean;
+
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class RshellActivityParser extends AbstractActivityParser {
 
@@ -71,101 +74,68 @@ public class RshellActivityParser extends AbstractActivityParser {
 		Configuration configuration = new Configuration();
 		configuration.setParent(parserState.getCurrentProfile());
 
-		PropertyResource configResource = configuration.getJson();
-		configResource.setTypeURI(ACTIVITY_URI.resolve("#Config"));
+		ObjectNode json = (ObjectNode) configuration.getJson();
+		configuration.setType(ACTIVITY_URI.resolve("#Config"));
 
 		// Basic properties
 		String script = rshellConfig.getScript();
-		configResource.addPropertyAsString(ACTIVITY_URI.resolve("#script"),
-				script);
+		json.put("script", script);
 		if (rshellConfig.getRVersion() != null) {
-			configResource.addPropertyAsString(
-					ACTIVITY_URI.resolve("#rVersion"),
-					rshellConfig.getRVersion());
+            json.put("rVersion", rshellConfig.getRVersion());
 		}
 
 		// Connection
-		PropertyResource connection = configResource.addPropertyAsNewResource(
-				ACTIVITY_URI.resolve("#connection"),
-				ACTIVITY_URI.resolve("#Connection"));
-		connection.addPropertyAsString(ACTIVITY_URI.resolve("#hostname"),
-				rshellConfig.getConnectionSettings().getHost());
-		PropertyLiteral port = new PropertyLiteral(rshellConfig
-				.getConnectionSettings().getPort());
-		port.setLiteralType(PropertyLiteral.XSD_UNSIGNEDSHORT);
-		connection.addProperty(ACTIVITY_URI.resolve("#port"), port);
+		ObjectNode connection = json.objectNode();
+		json.put("connection", connection);
+        RShellConnection conn = rshellConfig.getConnectionSettings();
+        connection.put("hostname", conn.getHost());
+        json.put("port", conn.getPort());
 
 		// ignored - Taverna 2.3+ uses credential manager
-		// connection.addPropertyAsString(ACTIVITY_URI.resolve("#username"),
-		// rshellConfig.getConnectionSettings().getUsername());
-		// connection.addPropertyAsString(ACTIVITY_URI.resolve("#password"),
-		// rshellConfig.getConnectionSettings().getPassword());
-		//
-		connection.addProperty(ACTIVITY_URI.resolve("#keepSessionAlive"),
-				new PropertyLiteral(rshellConfig.getConnectionSettings()
-						.isKeepSessionAlive()));
+		// connection.put("username", conn.getUsername());
+		// connection.put("password", conn.getPassword());
+        
+        connection.put("keepSessionAlive", conn.isKeepSessionAlive());
 
 		// ignoooooored - we won't support the legacy ones anymore
 		// if (rshellConfig.getConnectionSettings().isNewRVersion() == null || !
 		// rshellConfig.getConnectionSettings().isNewRVersion()) {
-		// connection.addProperty(ACTIVITY_URI.resolve("#legacy"),
-		// new PropertyLiteral(true));
+		// connection.put("legacy", true);
 		// }
 
 		// Activity ports
 		Activity activity = parserState.getCurrentActivity();
 		activity.getInputPorts().clear();
 		activity.getOutputPorts().clear();
-		Map<URI, PropertyResource> portDefs = new HashMap<URI, PropertyResource>();
+		
+		
 		for (ActivityPortDefinitionBean portBean : rshellConfig
 				.getInputs()
 				.getNetSfTavernaT2WorkflowmodelProcessorActivityConfigActivityInputPortDefinitionBean()) {
-			PropertyResource portDef = parseAndAddInputPortDefinition(portBean,
+			parseAndAddInputPortDefinition(portBean,
 					configuration, activity);
-			try {
-				URI portURI = portDef
-						.getPropertyAsResourceURI(Scufl2Tools.PORT_DEFINITION
-								.resolve("#definesInputPort"));
-				portDefs.put(portURI, portDef);
-			} catch (PropertyException ex) {
-				throw new ReaderException("Did not define port in " + portDef);
-			}
 		}
 		for (ActivityPortDefinitionBean portBean : rshellConfig
 				.getOutputs()
 				.getNetSfTavernaT2WorkflowmodelProcessorActivityConfigActivityOutputPortDefinitionBean()) {
-			PropertyResource portDef = parseAndAddOutputPortDefinition(
+			parseAndAddOutputPortDefinition(
 					portBean, configuration, activity);
-			try {
-
-				URI portURI = portDef
-						.getPropertyAsResourceURI(Scufl2Tools.PORT_DEFINITION
-								.resolve("#definesOutputPort"));
-				portDefs.put(portURI, portDef);
-			} catch (PropertyException ex) {
-				throw new ReaderException("Did not define port in " + portDef);
-			}
-
 		}
 
+
+
+		
 		RShellSymanticType inputSymanticTypes = rshellConfig
 				.getInputSymanticTypes();
 		List<String> foundInputTypes = new ArrayList<String>();
+
+		ArrayNode inputPorts = json.arrayNode();
+		json.put("inputSemanticTypes", inputPorts);
 		for (RShellPortSymanticTypeBean symanticType : inputSymanticTypes
 				.getNetSfTavernaT2ActivitiesRshellRShellPortSymanticTypeBean()) {
-			String portName = symanticType.getName();
-			InputActivityPort symanticPort = parserState
-					.getCurrentActivity().getInputPorts().getByName(portName);
-			URI portUri = new URITools().relativeUriForBean(symanticPort,
-					configuration);
-
-			PropertyResource portDef = portDefs.get(portUri);
-			if (portDef == null) {
-				throw new ReaderException("Can't find the port definition for "
-						+ portUri);
-			}
-			String symanticValue = symanticType.getSymanticType().getValue();
-
+            ObjectNode semanticPort = json.objectNode();
+			semanticPort.put("port", symanticType.getName());
+			String symanticValue = symanticType.getSymanticType().getValue(); 
 			String reference = symanticType.getSymanticType().getReference();
 			if (reference != null) {
 
@@ -181,13 +151,11 @@ public class RshellActivityParser extends AbstractActivityParser {
 				symanticValue = foundInputTypes
 						.get(Integer.parseInt(position) - 1);
 			}
-
+			
 			foundInputTypes.add(symanticValue); // Even if it's null - so the
 												// index is correct
 			if (symanticValue != null) {
-				portDef.addPropertyReference(
-						Scufl2Tools.PORT_DEFINITION.resolve("#dataType"),
-						ACTIVITY_URI.resolve("#" + symanticValue));
+			    semanticPort.put("dataType", symanticValue);
 			}
 		}
 		// FIXME: Avoid this repetition. Would require a fair bit of parser
@@ -195,21 +163,15 @@ public class RshellActivityParser extends AbstractActivityParser {
 		RShellSymanticType outputSymanticTypes = rshellConfig
 				.getOutputSymanticTypes();
 		List<String> foundOutputTypes = new ArrayList<String>();
+        ArrayNode outputPorts = json.arrayNode();
+        json.put("outputSemanticTypes", outputPorts);
+
 		for (RShellPortSymanticTypeBean symanticType : outputSymanticTypes
 				.getNetSfTavernaT2ActivitiesRshellRShellPortSymanticTypeBean()) {
-			String portName = symanticType.getName();
-			OutputActivityPort symanticPort = parserState
-					.getCurrentActivity().getOutputPorts().getByName(portName);
-			URI portUri = new URITools().relativeUriForBean(symanticPort,
-					configuration);
+            ObjectNode semanticPort = json.objectNode();
+            semanticPort.put("port", symanticType.getName());
 
-			PropertyResource portDef = portDefs.get(portUri);
-			if (portDef == null) {
-				throw new ReaderException("Can't find the port definition for "
-						+ portUri);
-			}
 			String symanticValue = symanticType.getSymanticType().getValue();
-
 			String reference = symanticType.getSymanticType().getReference();
 			if (reference != null) {
 				// A lovely artifact of xstream 'efficiency' - Xpath
@@ -244,9 +206,7 @@ public class RshellActivityParser extends AbstractActivityParser {
 			foundOutputTypes.add(symanticValue); // Even if it's null - so the
 													// index is correct
 			if (symanticValue != null) {
-				portDef.addPropertyReference(
-						Scufl2Tools.PORT_DEFINITION.resolve("#dataType"),
-						ACTIVITY_URI.resolve("#" + symanticValue));
+                semanticPort.put("dataType", symanticValue);
 			}
 		}
 
