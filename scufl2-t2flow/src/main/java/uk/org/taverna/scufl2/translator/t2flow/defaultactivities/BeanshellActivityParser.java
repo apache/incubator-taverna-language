@@ -6,7 +6,6 @@ import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityPortDefinitionBean;
@@ -14,6 +13,9 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.BasicArtifact;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.BeanshellConfig;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ClassLoaderSharing;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
+
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class BeanshellActivityParser extends AbstractActivityParser {
 
@@ -72,8 +74,8 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 		Configuration configuration = new Configuration();
 		configuration.setParent(parserState.getCurrentProfile());
 
-		PropertyResource configResource = configuration.getJson();
-		configResource.setTypeURI(ACTIVITY_URI.resolve("#Config"));
+		ObjectNode json = (ObjectNode) configuration.getJson();
+		configuration.setType(ACTIVITY_URI.resolve("#Config"));
 		
 		if (beanshellConfig.getLocalworkerName() != null) {
 			URI localWorkerURI = LOCAL_WORKER_URI.resolve(uriTools.validFilename(beanshellConfig.getLocalworkerName()));
@@ -81,41 +83,47 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 			// FIXME: As we can't read the annotation chain yet, we can't tell
 			// whether this local worker has been edited or not, and so 
 			// can't use #definedBy
-			configResource.addPropertyReference(relation, 
-					localWorkerURI);
+			json.put("derivedFrom", localWorkerURI.toString());
 		}
 		
 		
 		String script = beanshellConfig.getScript();
-		configResource.addPropertyAsString(ACTIVITY_URI.resolve("#script"), script);
-
+		json.put("script", script);
 
 		ClassLoaderSharing classLoaderSharing = beanshellConfig.getClassLoaderSharing();
 		if (classLoaderSharing == ClassLoaderSharing.SYSTEM) {
-			configResource.addPropertyReference(DEPENDENCY_URI.resolve("#classLoader"), 
-					DEPENDENCY_URI.resolve("#SystemClassLoader"));				
-		} // default is WorkflowClassLoader
+		    json.put("classLoaderSharing", "system");
+		} else {
+		    // default is "workflow" but don't need to be expressed
+//		    json.put("classLoaderSharing", "workflow");
+		}
  		
 		if (beanshellConfig.getLocalDependencies() != null) {			
+		    ArrayNode dependencies = json.arrayNode();
 			for (String localDep : beanshellConfig.getLocalDependencies().getString()) {
-				PropertyResource dependency = configResource.addPropertyAsNewResource(DEPENDENCY_URI.resolve("#dependency"), 
-						DEPENDENCY_URI.resolve("#LocalJarDependency"));
-				dependency.addPropertyAsString(DEPENDENCY_URI.resolve("#jarFile"), localDep);
+			    dependencies.add(localDep);
+			}
+			if (dependencies.size() > 0) {
+			    json.put("localDependency", dependencies);
 			}
 		}
 
-
 		/**
 		 * Note: Maven Dependencies are not supported by Taverna 3 - 
-		 * only here for t2flow->t2flow scenarios
+		 * only here for informational purposes and 
+		 * potential t2flow->t2flow scenarios
 		 */
 		if (beanshellConfig.getArtifactDependencies() != null) {			
+		    ArrayNode dependencies = json.arrayNode();
 			for (BasicArtifact mavenDep : beanshellConfig.getArtifactDependencies().getNetSfTavernaRavenRepositoryBasicArtifact()) {
-				PropertyResource dependency = configResource.addPropertyAsNewResource(DEPENDENCY_URI.resolve("#dependency"), 
-						DEPENDENCY_URI.resolve("#MavenDependency"));				
-				dependency.addPropertyAsString(DEPENDENCY_URI.resolve("#mavenGroupId"), mavenDep.getGroupId());
-				dependency.addPropertyAsString(DEPENDENCY_URI.resolve("#mavenArtifactId"), mavenDep.getArtifactId());
-				dependency.addPropertyAsString(DEPENDENCY_URI.resolve("#mavenVersion"), mavenDep.getVersion());
+			    ObjectNode mavenDependency = json.objectNode();
+			    dependencies.add(mavenDependency);
+			    mavenDependency.put("groupId", mavenDep.getGroupId());
+                mavenDependency.put("artifactId", mavenDep.getArtifactId());
+                mavenDependency.put("version", mavenDep.getVersion());
+			}
+			if (dependencies.size() > 0) {
+			    json.put("mavenDependency", dependencies);
 			}
 		}
 		
