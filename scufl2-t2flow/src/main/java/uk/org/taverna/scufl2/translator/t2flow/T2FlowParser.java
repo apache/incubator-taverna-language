@@ -485,7 +485,7 @@ public class T2FlowParser {
 		
 	}
 	
-	protected String elementToXML(Element element) {
+	public static String elementToXML(Element element) {
 	    try {
            Transformer transformer = getTransformer();
            CharArrayWriter writer = new CharArrayWriter();
@@ -496,7 +496,7 @@ public class T2FlowParser {
         }
 	}
 
-    protected static Transformer getTransformer() throws TransformerConfigurationException {
+    public static Transformer getTransformer() throws TransformerConfigurationException {
         if (transformerFactory == null) {
             transformerFactory = TransformerFactory.newInstance();
         }
