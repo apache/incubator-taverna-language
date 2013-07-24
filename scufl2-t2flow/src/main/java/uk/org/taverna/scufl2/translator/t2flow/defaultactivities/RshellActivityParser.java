@@ -2,21 +2,13 @@ package uk.org.taverna.scufl2.translator.t2flow.defaultactivities;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.bind.PropertyException;
-
 import uk.org.taverna.scufl2.api.activity.Activity;
-import uk.org.taverna.scufl2.api.common.Scufl2Tools;
-import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
-import uk.org.taverna.scufl2.api.port.InputActivityPort;
-import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityPortDefinitionBean;
@@ -80,9 +72,9 @@ public class RshellActivityParser extends AbstractActivityParser {
 		// Basic properties
 		String script = rshellConfig.getScript();
 		json.put("script", script);
-		if (rshellConfig.getRVersion() != null) {
-            json.put("rVersion", rshellConfig.getRVersion());
-		}
+//		if (rshellConfig.getRVersion() != null) {
+//            json.put("rVersion", rshellConfig.getRVersion());
+//		}
 
 		// Connection
 		ObjectNode connection = json.objectNode();
@@ -130,12 +122,12 @@ public class RshellActivityParser extends AbstractActivityParser {
 		List<String> foundInputTypes = new ArrayList<String>();
 
 		ArrayNode inputPorts = json.arrayNode();
-		json.put("inputSemanticTypes", inputPorts);
+		json.put("inputTypes", inputPorts);
 		for (RShellPortSymanticTypeBean symanticType : inputSymanticTypes
 				.getNetSfTavernaT2ActivitiesRshellRShellPortSymanticTypeBean()) {
-            ObjectNode semanticPort = json.objectNode();
-			semanticPort.put("port", symanticType.getName());
-			String symanticValue = symanticType.getSymanticType().getValue(); 
+            ObjectNode port = json.objectNode();
+			port.put("port", symanticType.getName());
+			String dataType = symanticType.getSymanticType().getValue(); 
 			String reference = symanticType.getSymanticType().getReference();
 			if (reference != null) {
 
@@ -148,14 +140,14 @@ public class RshellActivityParser extends AbstractActivityParser {
 				if (position == null) {
 					position = "1";
 				}
-				symanticValue = foundInputTypes
+				dataType = foundInputTypes
 						.get(Integer.parseInt(position) - 1);
 			}
 			
-			foundInputTypes.add(symanticValue); // Even if it's null - so the
+			foundInputTypes.add(dataType); // Even if it's null - so the
 												// index is correct
-			if (symanticValue != null) {
-			    semanticPort.put("dataType", symanticValue);
+			if (dataType != null) {
+			    port.put("dataType", dataType);
 			}
 		}
 		// FIXME: Avoid this repetition. Would require a fair bit of parser
@@ -164,14 +156,14 @@ public class RshellActivityParser extends AbstractActivityParser {
 				.getOutputSymanticTypes();
 		List<String> foundOutputTypes = new ArrayList<String>();
         ArrayNode outputPorts = json.arrayNode();
-        json.put("outputSemanticTypes", outputPorts);
+        json.put("outputTypes", outputPorts);
 
 		for (RShellPortSymanticTypeBean symanticType : outputSymanticTypes
 				.getNetSfTavernaT2ActivitiesRshellRShellPortSymanticTypeBean()) {
-            ObjectNode semanticPort = json.objectNode();
-            semanticPort.put("port", symanticType.getName());
+            ObjectNode port = json.objectNode();
+            port.put("port", symanticType.getName());
 
-			String symanticValue = symanticType.getSymanticType().getValue();
+			String dataType = symanticType.getSymanticType().getValue();
 			String reference = symanticType.getSymanticType().getReference();
 			if (reference != null) {
 				// A lovely artifact of xstream 'efficiency' - Xpath
@@ -195,18 +187,18 @@ public class RshellActivityParser extends AbstractActivityParser {
 					position = "1";
 				}
 				if (isInputSymantic) {
-					symanticValue = foundInputTypes.get(Integer
+					dataType = foundInputTypes.get(Integer
 							.parseInt(position) - 1);
 				} else {
-					symanticValue = foundOutputTypes.get(Integer
+					dataType = foundOutputTypes.get(Integer
 							.parseInt(position) - 1);
 				}
 			}
 
-			foundOutputTypes.add(symanticValue); // Even if it's null - so the
+			foundOutputTypes.add(dataType); // Even if it's null - so the
 													// index is correct
-			if (symanticValue != null) {
-                semanticPort.put("dataType", symanticValue);
+			if (dataType != null) {
+                port.put("dataType", dataType);
 			}
 		}
 
