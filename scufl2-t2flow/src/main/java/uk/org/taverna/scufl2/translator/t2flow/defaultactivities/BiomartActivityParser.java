@@ -6,11 +6,11 @@ import org.w3c.dom.Element;
 
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
-import uk.org.taverna.scufl2.api.property.PropertyLiteral;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class BiomartActivityParser extends AbstractActivityParser {
 
@@ -40,11 +40,10 @@ public class BiomartActivityParser extends AbstractActivityParser {
 		Configuration configuration = new Configuration();
 		configuration.setParent(parserState.getCurrentProfile());
 
-		PropertyResource configResource = configuration.getJson();
-		configResource.setTypeURI(ACTIVITY_URI.resolve("#Config"));
+		ObjectNode json = (ObjectNode)configuration.getJson();
+		configuration.setType(ACTIVITY_URI.resolve("#Config"));
 
-		PropertyLiteral literalXml = new PropertyLiteral((Element) configBean.getAny());
-		configResource.addProperty(ACTIVITY_URI.resolve("#martQuery"), literalXml);
+		json.put("martQuery", T2FlowParser.elementToXML((Element)configBean.getAny()));
 
 		return configuration;
 	}
