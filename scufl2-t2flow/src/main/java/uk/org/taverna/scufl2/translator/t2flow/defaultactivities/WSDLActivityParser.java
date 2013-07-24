@@ -4,11 +4,12 @@ import java.net.URI;
 
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.WSDLConfig;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class WSDLActivityParser extends AbstractActivityParser {
 
@@ -47,7 +48,7 @@ public class WSDLActivityParser extends AbstractActivityParser {
 				"xstream", WSDLConfig.class);
 
 		Configuration configuration = new Configuration();
-		configuration.getJson().setTypeURI(
+		configuration.setType(
 				WSDL.resolve("#Config"));
 
 		URI wsdl;
@@ -68,18 +69,19 @@ public class WSDLActivityParser extends AbstractActivityParser {
 			throw new ReaderException("WSDL config has no operation set");
 		}
 
-		PropertyResource wsdlOperation = configuration.getJson()
-				.addPropertyAsNewResource(WSDL.resolve("#operation"),
-						OPERATION);
-		wsdlOperation.addPropertyReference(OPERATION.resolve("#wsdl"), wsdl);
-		wsdlOperation.addPropertyAsString(OPERATION.resolve("#name"), operation);
+		ObjectNode json = (ObjectNode) configuration.getJson();
+		
+		ObjectNode wsdlOperation = json.objectNode();
+		json.put("operation", wsdlOperation);
+		
+		wsdlOperation.put("wsdl", wsdl.toString());
+		wsdlOperation.put("name", operation);
 
 		if (wsdlConfig.getSecurityProfile() != null
 				&& !wsdlConfig.getSecurityProfile().isEmpty()) {
 			URI securityProfileURI = SECURITY.resolve("#" + wsdlConfig
 					.getSecurityProfile());
-			configuration.getJson().addPropertyReference(
-					WSDL.resolve("#securityProfile"), securityProfileURI);
+			json.put("securityProfile", securityProfileURI.toString());
 		}
 		return configuration;
 	}
