@@ -187,144 +187,132 @@ WorkflowBundle 'Workflow1'
     Configuration 'Concatenate_two_strings'
       Type <http://ns.taverna.org.uk/2010/activity/beanshell#Config>
       Configures 'activity/Concatenate_two_strings'
-      Property <http://ns.taverna.org.uk/2010/activity/beanshell#derivedFrom>
-      Property <http://ns.taverna.org.uk/2010/activity/beanshell#script>
-        '''output = string1 + string2;'''
-      Property <http://ns.taverna.org.uk/2010/scufl2#inputPortDefinition>
-      Property <http://ns.taverna.org.uk/2010/scufl2#outputPortDefinition>
+        {"derivedFrom":"http://ns.taverna.org.uk/2010/activity/localworker/org.embl.ebi.escience.scuflworkers.java.StringConcat","script":"output = string1 + string2;"}
     Configuration 'Concatenate_two_strings-dispatch-0'
       Type <http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Parallelize#Config>
       Configures '../../workflow/Workflow1/processor/Concatenate_two_strings/dispatchstack/0/'
+        {}
     Configuration 'Concatenate_two_strings-dispatch-01'
       Type <http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Parallelize#Config>
       Configures '../../workflow/Workflow19/processor/Concatenate_two_strings/dispatchstack/0/'
+        {}
     Configuration 'Concatenate_two_strings-dispatch-3'
       Type <http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Retry#Config>
       Configures '../../workflow/Workflow1/processor/Concatenate_two_strings/dispatchstack/3/'
+        {}
     Configuration 'Concatenate_two_strings-dispatch-31'
       Type <http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Retry#Config>
       Configures '../../workflow/Workflow19/processor/Concatenate_two_strings/dispatchstack/3/'
+        {}
     Configuration 'Concatenate_two_strings1'
       Type <http://ns.taverna.org.uk/2010/activity/beanshell#Config>
       Configures 'activity/Concatenate_two_strings1'
-      Property <http://ns.taverna.org.uk/2010/activity/beanshell#derivedFrom>
-      Property <http://ns.taverna.org.uk/2010/activity/beanshell#script>
-        '''output = string1 + string2;'''
-      Property <http://ns.taverna.org.uk/2010/scufl2#inputPortDefinition>
-      Property <http://ns.taverna.org.uk/2010/scufl2#outputPortDefinition>
+        {"derivedFrom":"http://ns.taverna.org.uk/2010/activity/localworker/org.embl.ebi.escience.scuflworkers.java.StringConcat","script":"output = string1 + string2;"}
     Configuration 'Concatenate_two_strings_2'
       Type <http://ns.taverna.org.uk/2010/activity/beanshell#Config>
       Configures 'activity/Concatenate_two_strings_2'
-      Property <http://ns.taverna.org.uk/2010/activity/beanshell#derivedFrom>
-      Property <http://ns.taverna.org.uk/2010/activity/beanshell#script>
-        '''output = string1 + string2;'''
-      Property <http://ns.taverna.org.uk/2010/scufl2#inputPortDefinition>
-      Property <http://ns.taverna.org.uk/2010/scufl2#outputPortDefinition>
+        {"derivedFrom":"http://ns.taverna.org.uk/2010/activity/localworker/org.embl.ebi.escience.scuflworkers.java.StringConcat","script":"output = string1 + string2;"}
     Configuration 'Concatenate_two_strings_2-dispatch-0'
       Type <http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Parallelize#Config>
       Configures '../../workflow/Workflow1/processor/Concatenate_two_strings_2/dispatchstack/0/'
+        {}
     Configuration 'Concatenate_two_strings_2-dispatch-3'
       Type <http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Retry#Config>
       Configures '../../workflow/Workflow1/processor/Concatenate_two_strings_2/dispatchstack/3/'
+        {}
     Configuration 'Concatenate_two_strings_3'
       Type <http://ns.taverna.org.uk/2010/activity/beanshell#Config>
       Configures 'activity/Concatenate_two_strings_3'
-      Property <http://ns.taverna.org.uk/2010/activity/beanshell#derivedFrom>
-      Property <http://ns.taverna.org.uk/2010/activity/beanshell#script>
-        '''output = string1 + string2;'''
-      Property <http://ns.taverna.org.uk/2010/scufl2#inputPortDefinition>
-      Property <http://ns.taverna.org.uk/2010/scufl2#outputPortDefinition>
+        {"derivedFrom":"http://ns.taverna.org.uk/2010/activity/localworker/org.embl.ebi.escience.scuflworkers.java.StringConcat","script":"output = string1 + string2;"}
     Configuration 'Concatenate_two_strings_3-dispatch-0'
       Type <http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Parallelize#Config>
       Configures '../../workflow/Workflow1/processor/Concatenate_two_strings_3/dispatchstack/0/'
+        {}
     Configuration 'Concatenate_two_strings_3-dispatch-3'
       Type <http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Retry#Config>
       Configures '../../workflow/Workflow1/processor/Concatenate_two_strings_3/dispatchstack/3/'
+        {}
     Configuration 'Concatenate_two_strings_4'
       Type <http://ns.taverna.org.uk/2010/activity/beanshell#Config>
       Configures 'activity/Concatenate_two_strings_4'
-      Property <http://ns.taverna.org.uk/2010/activity/beanshell#derivedFrom>
-      Property <http://ns.taverna.org.uk/2010/activity/beanshell#script>
-        '''output = string1 + string2;'''
-      Property <http://ns.taverna.org.uk/2010/scufl2#inputPortDefinition>
-      Property <http://ns.taverna.org.uk/2010/scufl2#outputPortDefinition>
+        {"derivedFrom":"http://ns.taverna.org.uk/2010/activity/localworker/org.embl.ebi.escience.scuflworkers.java.StringConcat","script":"output = string1 + string2;"}
     Configuration 'Concatenate_two_strings_4-dispatch-0'
       Type <http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Parallelize#Config>
       Configures '../../workflow/Workflow1/processor/Concatenate_two_strings_4/dispatchstack/0/'
+        {}
     Configuration 'Concatenate_two_strings_4-dispatch-3'
       Type <http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Retry#Config>
       Configures '../../workflow/Workflow1/processor/Concatenate_two_strings_4/dispatchstack/3/'
+        {}
     Configuration 'Create_Lots_Of_Strings'
       Type <http://ns.taverna.org.uk/2010/activity/beanshell#Config>
       Configures 'activity/Create_Lots_Of_Strings'
-      Property <http://ns.taverna.org.uk/2010/activity/beanshell#derivedFrom>
-      Property <http://ns.taverna.org.uk/2010/activity/beanshell#script>
-        '''List strings = new ArrayList();
-for (int i = 0; i < 40; i++) {
-	strings.add("String" + i);
-}
-'''
-      Property <http://ns.taverna.org.uk/2010/scufl2#outputPortDefinition>
+        {"derivedFrom":"http://ns.taverna.org.uk/2010/activity/localworker/org.embl.ebi.escience.scuflworkers.java.EmitLotsOfStrings","script":"List strings = new ArrayList();\nfor (int i = 0; i < 40; i++) {\n\tstrings.add(\"String\" + i);\n}\n"}
     Configuration 'Create_Lots_Of_Strings-dispatch-0'
       Type <http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Parallelize#Config>
       Configures '../../workflow/Workflow1/processor/Create_Lots_Of_Strings/dispatchstack/0/'
+        {}
     Configuration 'Create_Lots_Of_Strings-dispatch-3'
       Type <http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Retry#Config>
       Configures '../../workflow/Workflow1/processor/Create_Lots_Of_Strings/dispatchstack/3/'
+        {}
     Configuration 'Echo_List'
       Type <http://ns.taverna.org.uk/2010/activity/beanshell#Config>
       Configures 'activity/Echo_List'
-      Property <http://ns.taverna.org.uk/2010/activity/beanshell#derivedFrom>
-      Property <http://ns.taverna.org.uk/2010/activity/beanshell#script>
-        '''outputlist = inputlist;'''
-      Property <http://ns.taverna.org.uk/2010/scufl2#inputPortDefinition>
-      Property <http://ns.taverna.org.uk/2010/scufl2#outputPortDefinition>
+        {"derivedFrom":"http://ns.taverna.org.uk/2010/activity/localworker/org.embl.ebi.escience.scuflworkers.java.EchoList","script":"outputlist = inputlist;"}
     Configuration 'Echo_List-dispatch-0'
       Type <http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Parallelize#Config>
       Configures '../../workflow/Workflow1/processor/Echo_List/dispatchstack/0/'
+        {}
     Configuration 'Echo_List-dispatch-3'
       Type <http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Retry#Config>
       Configures '../../workflow/Workflow1/processor/Echo_List/dispatchstack/3/'
+        {}
     Configuration 'String_constant'
       Type <http://ns.taverna.org.uk/2010/activity/constant#Config>
       Configures 'activity/String_constant'
-      Property <http://ns.taverna.org.uk/2010/activity/constant#string>
-        '''Add your own value here'''
+        {"string":"Add your own value here"}
     Configuration 'String_constant-dispatch-0'
       Type <http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Parallelize#Config>
       Configures '../../workflow/Workflow1/processor/String_constant/dispatchstack/0/'
+        {}
     Configuration 'String_constant-dispatch-01'
       Type <http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Parallelize#Config>
       Configures '../../workflow/Workflow19/processor/String_constant/dispatchstack/0/'
+        {}
     Configuration 'String_constant-dispatch-3'
       Type <http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Retry#Config>
       Configures '../../workflow/Workflow1/processor/String_constant/dispatchstack/3/'
+        {}
     Configuration 'String_constant-dispatch-31'
       Type <http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Retry#Config>
       Configures '../../workflow/Workflow19/processor/String_constant/dispatchstack/3/'
+        {}
     Configuration 'String_constant1'
       Type <http://ns.taverna.org.uk/2010/activity/constant#Config>
       Configures 'activity/String_constant1'
-      Property <http://ns.taverna.org.uk/2010/activity/constant#string>
-        '''Add your own value here'''
+        {"string":"Add your own value here"}
     Configuration 'Workflow19'
       Type <http://ns.taverna.org.uk/2010/activity/nested-workflow#Config>
       Configures 'activity/Workflow19'
-      Property <http://ns.taverna.org.uk/2010/activity/nested-workflow#workflow>
+        {"nestedWorkflow":"Workflow19"}
     Configuration 'Workflow19-dispatch-0'
       Type <http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Parallelize#Config>
       Configures '../../workflow/Workflow1/processor/Workflow19/dispatchstack/0/'
+        {}
     Configuration 'Workflow19-dispatch-3'
       Type <http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Retry#Config>
       Configures '../../workflow/Workflow1/processor/Workflow19/dispatchstack/3/'
+        {}
     Configuration 'string1_value'
       Type <http://ns.taverna.org.uk/2010/activity/constant#Config>
       Configures 'activity/string1_value'
-      Property <http://ns.taverna.org.uk/2010/activity/constant#string>
-        '''kjkj'''
+        {"string":"kjkj"}
     Configuration 'string1_value-dispatch-0'
       Type <http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Parallelize#Config>
       Configures '../../workflow/Workflow19/processor/string1_value/dispatchstack/0/'
+        {}
     Configuration 'string1_value-dispatch-3'
       Type <http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Retry#Config>
       Configures '../../workflow/Workflow19/processor/string1_value/dispatchstack/3/'
+        {}
