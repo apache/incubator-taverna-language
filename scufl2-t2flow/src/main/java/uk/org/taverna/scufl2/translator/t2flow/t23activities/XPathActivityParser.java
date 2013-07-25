@@ -7,12 +7,14 @@ import java.util.List;
 
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.defaultactivities.AbstractActivityParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.XPathConfig;
+
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class XPathActivityParser extends AbstractActivityParser {
 
@@ -69,31 +71,31 @@ public class XPathActivityParser extends AbstractActivityParser {
 		parserState.setCurrentConfiguration(configuration);
 
 		try {
-
-			PropertyResource configResource = configuration
-					.getJson();
-			configResource.setTypeURI(ACTIVITY_URI.resolve("#Config"));
+		    
+		    ObjectNode json = (ObjectNode)configuration.getJson();
+		    configuration.setType(ACTIVITY_URI.resolve("#Config"));
 
 			String xmlDocument = xpathConfig.getXmlDocument();
 			if (xmlDocument != null) {
-				configResource.addPropertyAsString(
-					ACTIVITY_URI.resolve("#exampleXmlDocument"), xmlDocument);
+			    json.put("exampleXmlDocument", xmlDocument);
 			}
 
 			String xpathExpression = xpathConfig.getXpathExpression();
-			configResource.addPropertyAsString(
-					ACTIVITY_URI.resolve("#xpathExpression"), xpathExpression);
+			json.put("xpathExpression", xpathExpression);
 
+			
+            ArrayNode namespaceMap = json.arrayNode();
+            json.put("xpathNamespaceMap", namespaceMap);
+			
 			for (uk.org.taverna.scufl2.xml.t2flow.jaxb.XPathNamespaceMap.List list : xpathConfig
 					.getXpathNamespaceMap().getList()) {
-
 				String namespacePrefix = list.getContent().get(0).getValue();
 				String namespaceURI = list.getContent().get(1).getValue();
-
-				PropertyResource namespaceMapping = configResource.addPropertyAsNewResource(
-						ACTIVITY_URI.resolve("#xpathNamespaceMap"), NAMESPACE_MAPPING_URI);
-				namespaceMapping.addPropertyAsString(NAMESPACE_MAPPING_URI.resolve("#prefix"), namespacePrefix);
-				namespaceMapping.addPropertyReference(NAMESPACE_MAPPING_URI.resolve("#uri"), URI.create(namespaceURI));
+				
+				ObjectNode map = json.objectNode();
+				map.put("prefix", namespacePrefix);
+				map.put("uri", namespaceURI);
+				namespaceMap.add(map);
 			}
 
 		} finally {
