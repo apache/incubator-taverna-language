@@ -7,15 +7,15 @@ import java.util.List;
 
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
-import uk.org.taverna.scufl2.api.property.PropertyList;
-import uk.org.taverna.scufl2.api.property.PropertyLiteral;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.defaultactivities.AbstractActivityParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.HTTPHeaders;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.RESTConfig;
+
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class RESTActivityParser extends AbstractActivityParser {
 
@@ -74,45 +74,39 @@ public class RESTActivityParser extends AbstractActivityParser {
 		configuration.setParent(parserState.getCurrentProfile());
 		parserState.setCurrentConfiguration(configuration);
 		try {
-			PropertyResource configResource = configuration
-					.getJson();
-			configResource.setTypeURI(ACTIVITY_URI.resolve("#Config"));
+		    
+		    ObjectNode json = (ObjectNode)configuration.getJson();
+		    
+		    configuration.setType(ACTIVITY_URI.resolve("#Config"));
 
-			PropertyResource request = configResource.addPropertyAsNewResource(ACTIVITY_URI.resolve("#request"),
-					ACTIVITY_URI.resolve("#Request"));
+		    ObjectNode request = json.objectNode();
+		    json.put("request", request);
 
-			URI method = HTTP_METHODS_URI.resolve("#" + restConfig.getHttpMethod().toUpperCase());
-			request.addPropertyReference(HTTP_URI.resolve("#mthd"), method);
-
-			request.addPropertyAsString(ACTIVITY_URI.resolve("#absoluteURITemplate"), restConfig.getUrlSignature());
-
-			PropertyList headers = new PropertyList();
-			request.addProperty(HTTP_URI.resolve("#headers"), headers);
+		    String method = restConfig.getHttpMethod().toUpperCase();
+            json.put("httpMethod", method);
+		    json.put("absoluteURITemplate", restConfig.getUrlSignature());
+		    
+		    ArrayNode headers = json.arrayNode();
+		    json.put("headers", headers);
 
 			if (restConfig.getAcceptsHeaderValue() != null && ! restConfig.getAcceptsHeaderValue().isEmpty()) {
-				PropertyResource accept = new PropertyResource();
-				accept.setTypeURI(HTTP_URI.resolve("#RequestHeader"));
-				accept.addPropertyAsString(HTTP_URI.resolve("#fieldName"), "Accept");
-				accept.addPropertyAsString(HTTP_URI.resolve("#fieldValue"), restConfig.getAcceptsHeaderValue());
-				//accept.addPropertyReference(HTTP_URI.resolve("#hdrName"), HTTP_METHODS_URI.resolve("#accept"));
-				headers.add(accept);
+			    ObjectNode accept = json.objectNode();
+			    headers.add(accept);
+			    accept.put("header", "Accept");
+			    accept.put("value", restConfig.getAcceptsHeaderValue());
 			}
-			if (hasContent(method)) {
+            if (hasContent(method)) {
 				if (restConfig.getContentTypeForUpdates() != null && ! restConfig.getContentTypeForUpdates().isEmpty()) {
-					PropertyResource contentType = new PropertyResource();
-					contentType.setTypeURI(HTTP_URI.resolve("#RequestHeader"));
-					contentType.addPropertyAsString(HTTP_URI.resolve("#fieldName"), "Content-Type");
-					contentType.addPropertyAsString(HTTP_URI.resolve("#fieldValue"), restConfig.getContentTypeForUpdates());
-					//accept.addPropertyReference(HTTP_URI.resolve("#hdrName"), HTTP_METHODS_URI.resolve("#content-type"));
-					headers.add(contentType);
+				    ObjectNode accept = json.objectNode();
+	                headers.add(accept);
+	                accept.put("header", "Content-Type");
+	                accept.put("value", restConfig.getContentTypeForUpdates());
 				}
 				if (restConfig.isSendHTTPExpectRequestHeader()) {
-					PropertyResource expect = new PropertyResource();
-					expect.setTypeURI(HTTP_URI.resolve("#RequestHeader"));
-					expect.addPropertyAsString(HTTP_URI.resolve("#fieldName"), "Expect");
-					expect.addProperty(ACTIVITY_URI.resolve("#use100Continue"), new PropertyLiteral(true));
-					//accept.addPropertyReference(HTTP_URI.resolve("#hdrName"), HTTP_METHODS_URI.resolve("#expect"));
-					headers.add(expect);
+                    ObjectNode accept = json.objectNode();
+                    headers.add(accept);
+                    accept.put("header", "Expect");
+                    accept.put("value", "100-Continue");
 				}
 			}
 			if (restConfig.getOtherHTTPHeaders() != null && restConfig.getOtherHTTPHeaders().getList() != null) {
@@ -120,22 +114,20 @@ public class RESTActivityParser extends AbstractActivityParser {
 					String fieldName = list.getContent().get(0).getValue();
 					String fieldValue = list.getContent().get(1).getValue();
 
-					PropertyResource header = new PropertyResource();
-					header.setTypeURI(HTTP_URI.resolve("#RequestHeader"));
-					header.addPropertyAsString(HTTP_URI.resolve("#fieldName"), fieldName);
-					header.addPropertyAsString(HTTP_URI.resolve("#fieldValue"), fieldValue);
-					headers.add(header);
+                    ObjectNode accept = json.objectNode();
+                    headers.add(accept);
+                    accept.put("header", fieldName);
+                    accept.put("value", fieldValue);
 				}
 			}
 			if (restConfig.isShowRedirectionOutputPort()) {
-				configResource.addProperty(ACTIVITY_URI.resolve("#showRedirectionOutputPort"), new PropertyLiteral(true));
+			    json.put("showRedirectionOutputPort", true);
 			}
 			if (restConfig.getEscapeParameters() != null && ! restConfig.getEscapeParameters()) {
-				// Default: true
-				configResource.addProperty(ACTIVITY_URI.resolve("#escapeParameters"), new PropertyLiteral(false));
+	             json.put("escapeParameters", false);
 			}
 			if (restConfig.getOutgoingDataFormat() != null) {
-				configResource.addProperty(ACTIVITY_URI.resolve("#outgoingDataFormat"), new PropertyLiteral(restConfig.getOutgoingDataFormat()));
+			    json.put("outgoingDataFormat", restConfig.getOutgoingDataFormat());
 			}
 			return configuration;
 		} finally {
@@ -143,12 +135,7 @@ public class RESTActivityParser extends AbstractActivityParser {
 		}
 	}
 
-	private boolean hasContent(URI method) {
-		if (! (method.resolve("#").equals(HTTP_METHODS_URI))) {
-			throw new IllegalArgumentException("Only standard HTTP methods from " +
-					HTTP_METHODS_URI + " are supported");
-		}
-		String methodName = method.getFragment();
+	private boolean hasContent(String methodName) {
 		if (Arrays.asList("GET", "HEAD", "DELETE", "CONNECT").contains(methodName)) {
 			return false;
 		}
