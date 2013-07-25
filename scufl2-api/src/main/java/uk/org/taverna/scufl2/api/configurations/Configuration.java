@@ -27,7 +27,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
-import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 
 /**
  * Configuration of a {@link Configurable} workflow bean.
@@ -125,6 +124,31 @@ public class Configuration extends AbstractNamed implements Child<Profile>, Type
 		return json;
 	}
 
+    /**
+     * Return a string representation of the {@link #getJson()} configuration,
+     * the string is valid JSON.
+     * 
+     * @return
+     */
+    public String getJsonAsString() {
+        return json.toString();
+    }
+
+    /**
+     * Return the {@link #getJson()} configuration as an {@link ObjectNode}. This is
+     * the default type for a new {@link Configuration}. 
+     * 
+     * @throws IllegalStateException if the {@link #getJson()} is not an {@link ObjectNode}
+     * 
+     * @return
+     */
+	public ObjectNode getJsonAsObjectNode() {
+	    if (! json.isObject()) {
+	        throw new IllegalStateException("JSON is not an ObjectNode, but " + json);
+	    }
+	    return (ObjectNode)json;
+	}
+	
 	/**
 	 * Return the type of the <code>Configuration</code>.
 	 * <p>
