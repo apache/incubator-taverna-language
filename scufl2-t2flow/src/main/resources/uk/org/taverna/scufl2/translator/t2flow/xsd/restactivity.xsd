@@ -36,6 +36,9 @@
 					<xsd:element name="outgoingDataFormat" type="xsd:string" />
 					<xsd:element name="sendHTTPExpectRequestHeader" type="xsd:boolean" />
 					<xsd:element name="showRedirectionOutputPort" type="xsd:boolean" />
+                    <xsd:element name="showActualUrlPort" type="xsd:boolean" minOccurs="0" />
+                    <xsd:element name="showResponseHeadersPort" type="xsd:boolean" minOccurs="0" />
+                    
 					<xsd:element name="escapeParameters" type="xsd:boolean" minOccurs="0" />
 					<xsd:element name="otherHTTPHeaders" type="HTTPHeaders" minOccurs="0" />
 					<xsd:element name="activityInputs" type="ActivityInputs" />

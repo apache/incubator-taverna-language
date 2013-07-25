@@ -120,6 +120,13 @@ public class RESTActivityParser extends AbstractActivityParser {
                     accept.put("value", fieldValue);
 				}
 			}
+			if (restConfig.getShowActualUrlPort() != null) {
+			    json.put("showActualURLPort", restConfig.getShowActualUrlPort().booleanValue());
+			}
+            if (restConfig.getShowResponseHeadersPort()) {
+                json.put("showResponseHeadersPort", restConfig.getShowResponseHeadersPort().booleanValue());
+            }
+
 			if (restConfig.isShowRedirectionOutputPort()) {
 			    json.put("showRedirectionOutputPort", true);
 			}
