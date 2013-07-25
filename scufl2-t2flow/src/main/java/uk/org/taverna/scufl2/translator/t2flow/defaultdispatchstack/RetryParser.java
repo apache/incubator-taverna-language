@@ -5,13 +5,13 @@ import java.net.URI;
 
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
-import uk.org.taverna.scufl2.api.property.PropertyLiteral;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.defaultactivities.AbstractActivityParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.RetryConfig;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class RetryParser extends AbstractActivityParser {
 
@@ -57,32 +57,33 @@ public class RetryParser extends AbstractActivityParser {
 		Configuration c = new Configuration();		
 		c.setType(scufl2Uri.resolve("#Config"));
 
-		PropertyResource resource = c.getJson();
-
-		BigInteger maxRetries = config.getMaxRetries();
-		if (maxRetries != null && maxRetries.longValue() != Defaults.MAX_RETRIES || maxRetries.longValue() < 0) {
-			PropertyLiteral maxRetriesProp = new PropertyLiteral(maxRetries.longValue());
-			resource.addProperty(scufl2Uri.resolve("#maxRetries"), maxRetriesProp);
-		}
+		ObjectNode json = (ObjectNode) c.getJson();
+		
+        BigInteger maxRetries = config.getMaxRetries();
+        if (maxRetries != null
+                && maxRetries.longValue() != Defaults.MAX_RETRIES
+                || maxRetries.longValue() < 0) {
+            json.put("maxRetries", maxRetries.longValue());
+        }
 
 		if (maxRetries.longValue() != 0) {
 			// Neither of these makes sense if retries are disabled
 
-			if (config.getInitialDelay() != Defaults.INITIAL_DELAY && config.getInitialDelay() > -1) {
-				PropertyLiteral initialDelayProp = new PropertyLiteral(config.getInitialDelay());
-				resource.addProperty(scufl2Uri.resolve("#initialDelay"), initialDelayProp);
-			}
-			
-			if (config.getMaxDelay() != Defaults.MAX_DELAY && config.getMaxDelay() > -1) {
-				PropertyLiteral maxDelay = new PropertyLiteral(config.getMaxDelay());
-				resource.addProperty(scufl2Uri.resolve("#maxDelay"), maxDelay);
-			}
+            if (config.getInitialDelay() != Defaults.INITIAL_DELAY
+                    && config.getInitialDelay() > -1) {
+                json.put("initialDelay", config.getInitialDelay());
+            }
 
-			double delta = Math.abs(config.getBackoffFactor() - Defaults.BACKOFF_FACTOR);			
-			if (config.getBackoffFactor() > 0 && delta > 1e-14) {
-				PropertyLiteral backoffFactor = new PropertyLiteral(config.getBackoffFactor());
-				resource.addProperty(scufl2Uri.resolve("#backoffFactor"), backoffFactor);
-			}
+            if (config.getMaxDelay() != Defaults.MAX_DELAY
+                    && config.getMaxDelay() > -1) {
+                json.put("maxDelay", config.getMaxDelay());
+            }
+
+            double delta = Math.abs(config.getBackoffFactor()
+                    - Defaults.BACKOFF_FACTOR);
+            if (config.getBackoffFactor() > 0 && delta > 1e-14) {
+                json.put("backoffFactor", config.getBackoffFactor());
+            }
 		}
 		return c;
 	}
