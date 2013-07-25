@@ -7,13 +7,14 @@ import javax.xml.bind.JAXBException;
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.defaultactivities.AbstractActivityParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Activity;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.LoopConfig;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class LoopParser extends AbstractActivityParser {
 	private static URITools uriTools = new URITools();
@@ -77,7 +78,7 @@ public class LoopParser extends AbstractActivityParser {
 		final Configuration c = new Configuration();		
 		c.setType(scufl2Uri.resolve("Config"));
 
-		final PropertyResource resource = c.getJson();
+		ObjectNode json = (ObjectNode) c.getJson();
 		
 		String conditionXml = loopConfig.getConditionXML();	
 		if (conditionXml == null) {
@@ -97,10 +98,9 @@ public class LoopParser extends AbstractActivityParser {
 			Configuration newConfig = internalParser.parseConfiguration(conditionActivity.getConfigBean());
 			newConfig.setName(name);
 			newConfig.setConfigures(newActivity);
-			parserState.getCurrentProfile().getConfigurations().addWithUniqueName(newConfig);
-			
-			URI uriActivity = uriTools.relativeUriForBean(newActivity, parserState.getCurrentProfile());
-			resource.addPropertyReference(scufl2Uri.resolve("#condition"), uriActivity);
+			parserState.getCurrentProfile().getConfigurations().addWithUniqueName(newConfig);			
+//			URI uriActivity = uriTools.relativeUriForBean(newActivity, parserState.getCurrentProfile());
+			json.put("conditionActivity", newActivity.getName());
 		} catch (JAXBException e) {
 			throw new ReaderException("Can't parse conditional loop activity", e);			
 		}		
