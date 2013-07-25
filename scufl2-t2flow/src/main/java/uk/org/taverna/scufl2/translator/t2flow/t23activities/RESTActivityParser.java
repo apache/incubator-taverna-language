@@ -83,11 +83,11 @@ public class RESTActivityParser extends AbstractActivityParser {
 		    json.put("request", request);
 
 		    String method = restConfig.getHttpMethod().toUpperCase();
-            json.put("httpMethod", method);
-		    json.put("absoluteURITemplate", restConfig.getUrlSignature());
+		    request.put("httpMethod", method);
+		    request.put("absoluteURITemplate", restConfig.getUrlSignature());
 		    
 		    ArrayNode headers = json.arrayNode();
-		    json.put("headers", headers);
+		    request.put("headers", headers);
 
 			if (restConfig.getAcceptsHeaderValue() != null && ! restConfig.getAcceptsHeaderValue().isEmpty()) {
 			    ObjectNode accept = json.objectNode();
