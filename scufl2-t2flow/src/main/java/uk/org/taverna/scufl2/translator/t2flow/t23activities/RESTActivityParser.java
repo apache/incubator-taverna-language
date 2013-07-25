@@ -123,7 +123,7 @@ public class RESTActivityParser extends AbstractActivityParser {
 			if (restConfig.getShowActualUrlPort() != null) {
 			    json.put("showActualURLPort", restConfig.getShowActualUrlPort().booleanValue());
 			}
-            if (restConfig.getShowResponseHeadersPort()) {
+            if (restConfig.getShowResponseHeadersPort() != null) {
                 json.put("showResponseHeadersPort", restConfig.getShowResponseHeadersPort().booleanValue());
             }
 
