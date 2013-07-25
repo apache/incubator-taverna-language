@@ -1,36 +1,26 @@
 package uk.org.taverna.scufl2.translator.t2flow;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static uk.org.taverna.scufl2.api.common.Scufl2Tools.PORT_DEFINITION;
 import static uk.org.taverna.scufl2.translator.t2flow.defaultactivities.BeanshellActivityParser.ACTIVITY_URI;
-import static uk.org.taverna.scufl2.translator.t2flow.defaultactivities.BeanshellActivityParser.DEPENDENCY_URI;
 
-import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.SortedSet;
 
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
-import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
-import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.api.profiles.Profile;
-import uk.org.taverna.scufl2.translator.t2flow.defaultactivities.BeanshellActivityParser;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class TestBeanshellActivityParser {
 
@@ -66,8 +56,8 @@ public class TestBeanshellActivityParser {
 		ObjectNode configResource = concatConfig.getJsonAsObjectNode();
 		assertEquals(ACTIVITY_URI.resolve("#Config"), concatConfig.getType());
 		
-		assertEquals(URI.create("http://ns.taverna.org.uk/2010/activity/localworker/org.embl.ebi.escience.scuflworkers.java.StringConcat"), 
-				configResource.get("derivedFrom"));
+		assertEquals("http://ns.taverna.org.uk/2010/activity/localworker/org.embl.ebi.escience.scuflworkers.java.StringConcat", 
+				configResource.get("derivedFrom").asText());
 		
 		String script = configResource.get("script").asText();
 		assertEquals("output = string1 + string2;", script);

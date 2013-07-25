@@ -28,7 +28,7 @@ public class TestXPathActivityParser {
 		URL wfResource = getClass().getResource(XPATH_WORKFLOW_SANS_EXAMPLE_XML);
 		assertNotNull("Could not find workflow " + XPATH_WORKFLOW_SANS_EXAMPLE_XML, wfResource);
 		T2FlowParser parser = new T2FlowParser();
-		parser.setStrict(true);
+		parser.setStrict(false);
 		WorkflowBundle wfBundle = parser.parseT2Flow(wfResource.openStream());
 		Profile profile = wfBundle.getMainProfile();
 		//XPath_height has missing xmlDocument from its configuration
