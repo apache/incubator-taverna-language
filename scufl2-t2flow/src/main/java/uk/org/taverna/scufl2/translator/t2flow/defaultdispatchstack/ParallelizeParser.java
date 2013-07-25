@@ -5,12 +5,13 @@ import java.net.URI;
 
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
-import uk.org.taverna.scufl2.api.property.PropertyLiteral;
 import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.defaultactivities.AbstractActivityParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ParallelizeConfig;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class ParallelizeParser extends AbstractActivityParser {
 
@@ -50,8 +51,8 @@ public class ParallelizeParser extends AbstractActivityParser {
 
 			BigInteger maxJobs = parallelConfig.getMaxJobs();
 			if (maxJobs != null && maxJobs.intValue() > 0 && maxJobs.intValue() != Defaults.maxJobs) {
-				PropertyLiteral p = new PropertyLiteral(maxJobs.intValue());
-				c.getJson().addProperty(scufl2Uri.resolve("#maxJobs"), p);
+			    ObjectNode json = (ObjectNode) c.getJson();
+			    json.put("maxJobs", maxJobs.intValue());
 			}
 			return c;
 		}
