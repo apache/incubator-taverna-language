@@ -10,11 +10,12 @@ import java.net.URL;
 
 import org.junit.Test;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.profiles.Profile;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 
 public class TestXPathActivityParser {
@@ -32,18 +33,18 @@ public class TestXPathActivityParser {
 		Profile profile = wfBundle.getMainProfile();
 		//XPath_height has missing xmlDocument from its configuration
 		Processor heightProc = wfBundle.getMainWorkflow().getProcessors().getByName("XPath_height");
-		PropertyResource heightConfig = scufl2Tools
-				.configurationForActivityBoundToProcessor(heightProc, profile).getJson();
+		ObjectNode heightConfig = scufl2Tools
+				.configurationForActivityBoundToProcessor(heightProc, profile).getJsonAsObjectNode();
 		assertNotNull(heightConfig);
-		assertEquals("//height/text()",heightConfig.getPropertyAsString(ACTIVITY_URI.resolve("#xpathExpression")));
-		assertFalse(heightConfig.hasProperty(ACTIVITY_URI.resolve("#exampleXmlDocument")));
+		assertEquals("//height/text()",heightConfig.get("xpathExpression").textValue());
+		assertFalse(heightConfig.has("exampleXmlDocument"));
 		//XPath_width has xmlDocument
 		Processor widthProc = wfBundle.getMainWorkflow().getProcessors().getByName("XPath_width");
-		PropertyResource widthConfig = scufl2Tools
-				.configurationForActivityBoundToProcessor(widthProc, profile).getJson();		
+		ObjectNode widthConfig = scufl2Tools
+				.configurationForActivityBoundToProcessor(widthProc, profile).getJsonAsObjectNode();		
 		assertNotNull(widthConfig);		
-		assertEquals("//width/text()",widthConfig.getPropertyAsString(ACTIVITY_URI.resolve("#xpathExpression")));		
-		assertTrue(widthConfig.hasProperty(ACTIVITY_URI.resolve("#exampleXmlDocument")));		
+		assertEquals("//width/text()",widthConfig.get("xpathExpression").asText());		
+		assertTrue(widthConfig.has("exampleXmlDocument"));		
 	}
 	
 }
