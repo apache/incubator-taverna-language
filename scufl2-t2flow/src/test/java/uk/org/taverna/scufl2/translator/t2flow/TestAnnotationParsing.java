@@ -71,7 +71,7 @@ public class TestAnnotationParsing {
 		assertEquals(4, wfBundle.getAnnotations().size());
 		for (Annotation x : wfBundle.getAnnotations()) {
 			System.out.println(x.getTarget());
-			System.out.println(x.getBodyStatements().get(0));
+//			System.out.println(x.getBodyStatements().get(0));
 		}
 		File f = File.createTempFile("annotation", ".wfbundle");
 		System.err.println(f);

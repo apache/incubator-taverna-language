@@ -1,7 +1,8 @@
 package uk.org.taverna.scufl2.translator.t2flow;
 
-import static org.junit.Assert.*;
-import static uk.org.taverna.scufl2.translator.t2flow.defaultactivities.SpreadsheetActivityParser.ACTIVITY_URI;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 import java.net.URL;
 
@@ -11,7 +12,8 @@ import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.profiles.Profile;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class TestSpreadsheetActivityParser {
 
@@ -28,12 +30,12 @@ public class TestSpreadsheetActivityParser {
 		WorkflowBundle wfBundle = parser.parseT2Flow(wfResource.openStream());
 		Profile profile = wfBundle.getMainProfile();
 		Processor proc = wfBundle.getMainWorkflow().getProcessors().getByName("SpreadsheetImport");
-		PropertyResource config = scufl2Tools
-				.configurationForActivityBoundToProcessor(proc, profile).getJson();
+		ObjectNode config = scufl2Tools
+				.configurationForActivityBoundToProcessor(proc, profile).getJsonAsObjectNode();
 		assertNotNull(config);
-		assertEquals("",config.getPropertyAsString(ACTIVITY_URI.resolve("#emptyCellValue")));
-		assertFalse(config.hasProperty(ACTIVITY_URI.resolve("#outputFormat")));
-		assertFalse(config.hasProperty(ACTIVITY_URI.resolve("#csvDelimiter")));
+		assertEquals("",config.get("emptyCellValue"));
+		assertFalse(config.has("outputFormat"));
+		assertFalse(config.has("csvDelimiter"));
 	}
 	
 }
