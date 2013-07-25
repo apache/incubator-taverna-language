@@ -76,6 +76,7 @@ import uk.org.taverna.scufl2.rdfxml.jaxb.ProfileDocument;
 import uk.org.taverna.scufl2.rdfxml.jaxb.SeeAlsoType;
 import uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowBundleDocument;
 import uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowDocument;
+import uk.org.taverna.scufl2.ucfpackage.UCFPackage;
 
 public class RDFXMLSerializer {
 
@@ -109,15 +110,21 @@ public class RDFXMLSerializer {
 		private void configuration(Configuration node) {
 			uk.org.taverna.scufl2.rdfxml.jaxb.Configuration configuration = objectFactory
 					.createConfiguration();
-			configuration.setAbout(uri(node));
 			configuration.setConfigure(resource(uri(node.getConfigures())));
 			configuration.setName(node.getName());
 			configuration.setType(type(node));
 
 			URI baseUri = uriTools.uriForBean(profile);
-			// TODO: Serialize json to separate file in bundle			
-//			node.getJson().accept(visitor);
-
+			String jsonPath = "configuration/" + uriTools.validFilename(node.getName() + ".json");
+			UCFPackage bundle = profile.getParent().getResources();
+			try {
+                bundle.addResource(node.getJsonAsString(), jsonPath, "application/json");
+            } catch (IOException e) {
+                logger.log(Level.WARNING, "Can't save JSON to " + jsonPath, e);
+            }
+			// FIXME: Make this relative URI dynamically
+			configuration.setAbout("../" + jsonPath);
+            
 			// TODO: No way in API to mark non-activated configurations
 			profileElem.getActivateConfiguration().add(resource(uri(node)));
 			doc.getAny().add(configuration);
