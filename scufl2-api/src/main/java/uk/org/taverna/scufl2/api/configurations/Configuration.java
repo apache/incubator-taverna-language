@@ -70,7 +70,7 @@ public class Configuration extends AbstractNamed implements Child<Profile>, Type
     private Configurable configures;
 	private Profile parent;
 	private JsonNode json = JSON_NODE_FACTORY.objectNode();
-	private JsonSchema jsonSchema;
+	private JsonNode jsonSchema;
     private URI type;
 
 	/**
@@ -197,20 +197,28 @@ public class Configuration extends AbstractNamed implements Child<Profile>, Type
 		cloneConfig.setConfigures(cloning.cloneOrOriginal(getConfigures()));
 	}
 
-    public JsonSchema getJsonSchema() {
+    public JsonNode getJsonSchema() {
         return jsonSchema;
     }
 
-    public void setJsonSchema(JsonSchema jsonSchema) {
+    public void setJsonSchema(JsonNode jsonSchema) {
         this.jsonSchema = jsonSchema;
     }
 
+    public void setJsonSchema(String jsonString) {
+        setJsonSchema(parseJson(jsonString));
+    }
+
+    
     public void setJson(String jsonString) {
+        setJson(parseJson(jsonString));
+    }
+
+    protected JsonNode parseJson(String jsonString) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             JsonParser parser = mapper.getFactory().createParser(jsonString);
-            JsonNode jsonNode = parser.readValueAs(JsonNode.class);
-            setJson(jsonNode);
+            return parser.readValueAs(JsonNode.class);
         } catch (JsonParseException e) {
             throw new IllegalArgumentException("Not valid JSON string", e);
         } catch (IOException e) {
