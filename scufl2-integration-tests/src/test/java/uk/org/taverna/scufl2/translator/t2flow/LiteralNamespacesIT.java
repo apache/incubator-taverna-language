@@ -31,9 +31,6 @@ public class LiteralNamespacesIT {
 		workflowBundleIO.writeBundle(wfBundle, bundleFile, "application/vnd.taverna.scufl2.workflow-bundle");
 		wfBundle = workflowBundleIO.readBundle(bundleFile, null);
 		String profile = wfBundle.getResources().getResourceAsString("profile/taverna-2.3.0.rdf");		
-		// Quick and rude way to check that prefixes were used
-		assertTrue(profile.contains("<rdf:li rdf:datatype="));
-		assertTrue(profile.contains("rdf:parseType="));
 	}
 	
 }
