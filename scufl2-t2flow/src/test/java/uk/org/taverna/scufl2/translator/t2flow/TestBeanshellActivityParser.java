@@ -63,7 +63,7 @@ public class TestBeanshellActivityParser {
 				concatAct.getType());
 
 		JsonNode configResource = concatConfig.getJson();
-		assertEquals(ACTIVITY_URI.resolve("#Config"), configResource.getTypeURI());
+		assertEquals(ACTIVITY_URI.resolve("#Config"), concatConfig.getTypeURI());
 		
 		assertEquals(URI.create("http://ns.taverna.org.uk/2010/activity/localworker/org.embl.ebi.escience.scuflworkers.java.StringConcat"), 
 				configResource.getPropertyAsResourceURI(

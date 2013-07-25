@@ -1,50 +1,74 @@
 package uk.org.taverna.scufl2.translator.t2flow;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static uk.org.taverna.scufl2.api.common.Scufl2Tools.PORT_DEFINITION;
 
-import java.net.URI;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.junit.Test;
 
-import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
-import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
-import uk.org.taverna.scufl2.api.core.Processor;
-import uk.org.taverna.scufl2.api.port.InputActivityPort;
-import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.api.profiles.Profile;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
-import uk.org.taverna.scufl2.translator.t2flow.defaultactivities.BeanshellActivityParser;
 
 public class TestActivityParsing {
 
-	private static final String WF_ALL_ACTIVITIES = "/defaultActivitiesTaverna2.2.t2flow";
-	private static final String WF_AS = "/as.t2flow";
-	private static Scufl2Tools scufl2Tools = new Scufl2Tools();
+    private static final String WF_FASTA_AND_PSCAN = "/fasta_and_pscan.t2flow";
+    private static final String WF_FASTA_PSCAN_AND_DBFETCH = "/fasta_pscan_and_dbfetch.t2flow";
+    private static final String WF_SIMPLE_FASTA = "/simple_fasta.t2flow";
 
-	@Test
-	public void readSimpleWorkflow() throws Exception {
-		URL wfResource = getClass().getResource(WF_ALL_ACTIVITIES);
-		assertNotNull("Could not find workflow " + WF_ALL_ACTIVITIES,
-				wfResource);
-		T2FlowParser parser = new T2FlowParser();
-		parser.setValidating(true);
-		// parser.setStrict(true);
-		WorkflowBundle wfBundle = parser
-				.parseT2Flow(wfResource.openStream());
-		// System.out.println(researchObj.getProfiles().iterator().next()
-		// .getConfigurations());
+    
+    private static Scufl2Tools scufl2Tools = new Scufl2Tools();
 
-	}
+    @Test
+    public void fastaPscan() throws Exception {
+        URL wfResource = getClass().getResource(WF_FASTA_AND_PSCAN);
+        assertNotNull("Could not find workflow " + WF_FASTA_AND_PSCAN,
+                wfResource);
+        T2FlowParser parser = new T2FlowParser();
+        parser.setValidating(true);
+        // parser.setStrict(true);
+        WorkflowBundle wfBundle = parser.parseT2Flow(wfResource.openStream());
+
+        Profile p = wfBundle.getMainProfile();
+        for (Configuration c : p.getConfigurations()) {
+            System.out.println(c.getConfigures());
+            System.out.println(c.getJson());
+        }
+    }
+
+    @Test
+    public void fastaPscanDbfetch() throws Exception {
+        URL wfResource = getClass().getResource(WF_FASTA_PSCAN_AND_DBFETCH);
+        assertNotNull("Could not find workflow " + WF_FASTA_PSCAN_AND_DBFETCH,
+                wfResource);
+        T2FlowParser parser = new T2FlowParser();
+        parser.setValidating(true);
+        // parser.setStrict(true);
+        WorkflowBundle wfBundle = parser.parseT2Flow(wfResource.openStream());
+
+        Profile p = wfBundle.getMainProfile();
+        for (Configuration c : p.getConfigurations()) {
+            System.out.println(c.getConfigures());
+            System.out.println(c.getJson());
+        }
+    }
+
+    @Test
+    public void simpleFasta() throws Exception {
+        URL wfResource = getClass().getResource(WF_SIMPLE_FASTA);
+        assertNotNull("Could not find workflow " + WF_SIMPLE_FASTA,
+                wfResource);
+        T2FlowParser parser = new T2FlowParser();
+        parser.setValidating(true);
+        // parser.setStrict(true);
+        WorkflowBundle wfBundle = parser.parseT2Flow(wfResource.openStream());
+
+        Profile p = wfBundle.getMainProfile();
+        for (Configuration c : p.getConfigurations()) {
+            System.out.println(c.getConfigures());
+            System.out.println(c.getJson());
+        }
+    }
 
 }
