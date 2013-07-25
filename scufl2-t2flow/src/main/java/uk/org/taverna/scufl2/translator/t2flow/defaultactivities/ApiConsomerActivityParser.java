@@ -5,37 +5,37 @@ import java.net.URI;
 
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
-import uk.org.taverna.scufl2.api.property.PropertyList;
-import uk.org.taverna.scufl2.api.property.PropertyLiteral;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ApiConsumerConfig;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 public class ApiConsomerActivityParser extends AbstractActivityParser {
 
-	private static URI activityRavenURI = T2FlowParser.ravenURI
-			.resolve("net.sf.taverna.t2.activities/apiconsumer-activity/");
+    private static URI activityRavenURI = T2FlowParser.ravenURI
+            .resolve("net.sf.taverna.t2.activities/apiconsumer-activity/");
 
-	private static String activityClassName = "net.sf.taverna.t2.activities.apiconsumer.ApiConsumerActivity";
+    private static String activityClassName = "net.sf.taverna.t2.activities.apiconsumer.ApiConsumerActivity";
 
-	public static URI ACTIVITY_URI = URI
-			.create("http://ns.taverna.org.uk/2010/activity/apiconsumer");
+    public static URI ACTIVITY_URI = URI
+            .create("http://ns.taverna.org.uk/2010/activity/apiconsumer");
 
-	@Override
-	public boolean canHandlePlugin(URI activityURI) {
-		String activityUriStr = activityURI.toASCIIString();
-		return activityUriStr.startsWith(activityRavenURI.toASCIIString())
-				&& activityUriStr.endsWith(activityClassName);
-	}
+    @Override
+    public boolean canHandlePlugin(URI activityURI) {
+        String activityUriStr = activityURI.toASCIIString();
+        return activityUriStr.startsWith(activityRavenURI.toASCIIString())
+                && activityUriStr.endsWith(activityClassName);
+    }
 
-	@Override
-	public URI mapT2flowRavenIdToScufl2URI(URI t2flowActivity) {
-		return ACTIVITY_URI;
-	}
+    @Override
+    public URI mapT2flowRavenIdToScufl2URI(URI t2flowActivity) {
+        return ACTIVITY_URI;
+    }
 
-	@Override
+    @Override
 	public Configuration parseConfiguration(T2FlowParser t2FlowParser, ConfigBean configBean,
 			ParserState parserState) throws ReaderException {
 		ApiConsumerConfig config = unmarshallConfig(t2FlowParser, configBean, "xstream",
@@ -44,49 +44,39 @@ public class ApiConsomerActivityParser extends AbstractActivityParser {
 		Configuration configuration = new Configuration();
 		configuration.setParent(parserState.getCurrentProfile());
 
-		PropertyResource configResource = configuration.getJson();
-		configResource.setTypeURI(ACTIVITY_URI.resolve("#Config"));
+		ObjectNode json = (ObjectNode) configuration.getJson();
+		configuration.setType(ACTIVITY_URI.resolve("#Config"));
 
-		configResource.addPropertyAsString(ACTIVITY_URI.resolve("#apiConsumerDescription"),
-				config.getApiConsumerDescription());
-		configResource.addPropertyAsString(ACTIVITY_URI.resolve("#apiConsumerName"),
-				config.getApiConsumerName());
-		configResource.addPropertyAsString(ACTIVITY_URI.resolve("#description"),
-				config.getDescription());
-		configResource.addPropertyAsString(ACTIVITY_URI.resolve("#className"),
-				config.getClassName());
-		configResource.addPropertyAsString(ACTIVITY_URI.resolve("#methodName"),
-				config.getMethodName());
+        json.put("apiConsumerDescription", config.getApiConsumerDescription());
+        json.put("apiConsumerName", config.getApiConsumerName());
+        json.put("description", config.getDescription());
+        json.put("className", config.getClassName());
+        json.put("methodName", config.getMethodName());
 
-		PropertyList parameterNames = new PropertyList();
+        ArrayNode parameterNames = json.arrayNode();
+        json.put("parameterNames", parameterNames);
 		for (String parameterName : config.getParameterNames().getString()) {
-			parameterNames.add(new PropertyLiteral(parameterName));
+			parameterNames.add(parameterName);
 		}
-		configResource.addProperty(ACTIVITY_URI.resolve("#parameterNames"), parameterNames);
-
-		PropertyList parameterDimensions = new PropertyList();
+		
+		ArrayNode parameterDimensions = json.arrayNode();
+		json.put("parameterDimensions", parameterDimensions);
 		for (BigInteger parameterDimension : config.getParameterDimensions().getInt()) {
-			parameterDimensions.add(new PropertyLiteral(parameterDimension.intValue()));
+			parameterDimensions.add(parameterDimension.intValue());
 		}
-		configResource.addProperty(ACTIVITY_URI.resolve("#parameterDimensions"),
-				parameterDimensions);
+		
 
-		PropertyList parameterTypes = new PropertyList();
+        ArrayNode parameterTypes = json.arrayNode();
+        json.put("parameterTypes", parameterTypes);
 		for (String parameterType : config.getParameterTypes().getString()) {
-			parameterTypes.add(new PropertyLiteral(parameterType));
+			parameterTypes.add(parameterType);
 		}
-		configResource.addProperty(ACTIVITY_URI.resolve("#parameterTypes"), parameterTypes);
 
-		configResource.addPropertyAsString(ACTIVITY_URI.resolve("#returnType"),
-				config.getReturnType());
-		configResource.addProperty(ACTIVITY_URI.resolve("#returnDimension"), new PropertyLiteral(
-				config.getReturnDimension().intValue()));
-		configResource.addProperty(ACTIVITY_URI.resolve("#isMethodConstructor"),
-				new PropertyLiteral(config.isIsMethodConstructor()));
-		configResource.addProperty(ACTIVITY_URI.resolve("#isMethodStatic"), new PropertyLiteral(
-				config.isIsMethodStatic()));
+		json.put("returnType", config.getReturnType());
+		json.put("returnDimension", config.getReturnDimension().intValue());
+		json.put("isMethodConstructor", config.isIsMethodConstructor());
+		json.put("isMethodStatic", config.isIsMethodStatic());
 
 		return configuration;
 	}
-
 }
