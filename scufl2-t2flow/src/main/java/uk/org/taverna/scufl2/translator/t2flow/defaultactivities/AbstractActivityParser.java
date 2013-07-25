@@ -94,7 +94,7 @@ public abstract class AbstractActivityParser implements T2Parser {
 		return configElemElem.getValue();
 	}
 
-	protected JsonNode parseAndAddOutputPortDefinition(ActivityPortDefinitionBean portBean,
+	protected ObjectNode parseAndAddOutputPortDefinition(ActivityPortDefinitionBean portBean,
 			Configuration configuration, Activity activity) {
 		ObjectNode configResource = (ObjectNode) configuration.getJson();
 		OutputActivityPort outputPort = new OutputActivityPort();
@@ -121,6 +121,11 @@ public abstract class AbstractActivityParser implements T2Parser {
 		URI portUri = new URITools().relativeUriForBean(outputPort, configuration);
 //		portConfig.addPropertyReference(Scufl2Tools.PORT_DEFINITION.resolve("#definesOutputPort"), portUri);
 
+	      // Legacy duplication of port details for XMLSplitter activities
+        portConfig.put("name", outputPort.getName());
+        portConfig.put("depth", outputPort.getDepth());
+        portConfig.put("granularDepth", outputPort.getDepth());
+		
 		parseMimeTypes(portBean, portConfig);
 		return portConfig;
 	}
@@ -147,17 +152,19 @@ public abstract class AbstractActivityParser implements T2Parser {
 	protected ObjectNode parseAndAddInputPortDefinition(ActivityPortDefinitionBean portBean,
 			Configuration configuration, Activity activity) {
 	    ObjectNode configResource = (ObjectNode) configuration.getJson();
+	    ObjectNode portConfig = configResource.objectNode();
 
 		InputActivityPort inputPort = new InputActivityPort();
 		inputPort.setName(getPortElement(portBean, "name", String.class));
 		inputPort.setParent(activity);
-
+		
+		
 		BigInteger depth = getPortElement(portBean, "depth", BigInteger.class);
 		if (depth != null) {
 			inputPort.setDepth(depth.intValue());
 		}
 
-		ObjectNode portConfig = configResource.objectNode();
+		
 		
 //		PropertyResource portConfig = configResource.addPropertyAsNewResource(
 //				Scufl2Tools.PORT_DEFINITION.resolve("#inputPortDefinition"),
@@ -178,6 +185,12 @@ public abstract class AbstractActivityParser implements T2Parser {
 			// TODO: Include mapping to XSD types like xsd:string
 		}
 		// T2-1681: Ignoring isAllowsLiteralValues and handledReferenceScheme
+
+		// Legacy duplication of port details for XMLSplitter activities
+        portConfig.put("name", inputPort.getName());
+        portConfig.put("depth", inputPort.getDepth());
+		
+		
 		return portConfig;
 
 	}
@@ -201,7 +214,8 @@ public abstract class AbstractActivityParser implements T2Parser {
 				}
 //				portConfig.addPropertyReference(mimeType,
 //						MEDIATYPES_URI.resolve(s));
-                portConfig.put("expectedMimeType", s);
+                portConfig.put("mimeType", s);
+                return; // Just first mimeType survives
 			}
 		}
 	}

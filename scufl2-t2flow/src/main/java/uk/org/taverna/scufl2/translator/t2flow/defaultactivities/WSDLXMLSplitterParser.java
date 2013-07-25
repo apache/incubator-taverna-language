@@ -7,13 +7,13 @@ import java.net.URI;
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
-import uk.org.taverna.scufl2.api.property.PropertyLiteral;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
 import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityPortDefinitionBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.XMLSplitterConfig;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class WSDLXMLSplitterParser extends AbstractActivityParser {
 
@@ -62,28 +62,27 @@ public class WSDLXMLSplitterParser extends AbstractActivityParser {
 		Configuration configuration = new Configuration();
 		configuration.setParent(parserState.getCurrentProfile());
 		
-		PropertyResource resource = configuration.getJson();		
-		resource.setTypeURI(
-				SPLITTER.resolve("#Config"));
+		ObjectNode json = (ObjectNode)configuration.getJson();
+		configuration.setType(SPLITTER.resolve("#Config"));
 
 		String wrappedTypeXML = splitterConfig.getWrappedTypeXML();
-		PropertyLiteral literalXml = new PropertyLiteral(wrappedTypeXML, PropertyLiteral.XML_LITERAL);
-		resource.addProperty(SPLITTER.resolve("#wrappedType"), literalXml);
-		
+
+		json.put("wrappedType", wrappedTypeXML);
 
 		Activity activity = parserState.getCurrentActivity();
 		activity.getInputPorts().clear();
 		activity.getOutputPorts().clear();
 		
-		for (ActivityPortDefinitionBean portBean : splitterConfig
+		
+        for (ActivityPortDefinitionBean portBean : splitterConfig
 				.getInputs()
 				.getNetSfTavernaT2WorkflowmodelProcessorActivityConfigActivityInputPortDefinitionBean()) {
-			parseAndAddInputPortDefinition(portBean, configuration, activity);
+            ObjectNode def = parseAndAddInputPortDefinition(portBean, configuration, activity);
 		}		
 		for (ActivityPortDefinitionBean portBean : splitterConfig
 				.getOutputs()
 				.getNetSfTavernaT2WorkflowmodelProcessorActivityConfigActivityOutputPortDefinitionBean()) {
-			parseAndAddOutputPortDefinition(portBean, configuration, activity);			
+		    ObjectNode def = parseAndAddOutputPortDefinition(portBean, configuration, activity);			
 		}
 	
 		return configuration;
