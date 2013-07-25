@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Iterator;
+import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -32,6 +33,9 @@ import uk.org.taverna.scufl2.rdfxml.jaxb.ProfileDocument;
 
 public class ProfileParser extends AbstractParser {
 
+    private static Logger logger = Logger.getLogger(ProfileParser.class
+            .getCanonicalName());
+    
 	public ProfileParser() {
 		super();
 	}
@@ -129,13 +133,22 @@ public class ProfileParser extends AbstractParser {
 		}
 
 		getParserState().push(config);
+		
+		String about = original.getAbout();
+		URI resource = resolve(about);
+		System.out.println(resource.getPath());
+		// TODO: Parse json, if it exists!
+		
 		for (Object o : original.getAny()) {
 		    // Legacy SCUFL2 <= 0.11.0  PropertyResource configuration
 		    // Just ignoring it for now :(
 		    // 
 		    // TODO: Parse and represent as JSON-LD?
 //		    System.out.println(original);
+		    logger.warning("Ignoring unsupported PropertyResource (from SCUFL2 0.11 or older) for " + config);
 		}
+		
+		
 //		getParserState().pop();
 		getParserState().pop();
 	}
