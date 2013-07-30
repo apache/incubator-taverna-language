@@ -12,9 +12,4 @@
 		<property name="writers" ref="writers" />
 	</bean>
 
-	<bean id="propertyLiteral" class="uk.org.taverna.scufl2.api.property.PropertyLiteral">
-		<property name="documentBuilderFactory" ref="documentBuilderFactory" />
-		<property name="transformerFactory" ref="transformerFactory" />
-	</bean>
-
 </beans>
