@@ -178,11 +178,7 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 //						mechanismName);
 //				invocation.addProperty(ACTIVITY_URI.resolve("#mechanismXML"), new PropertyLiteral(
 //						mechanismXML, PropertyLiteral.XML_LITERAL));
-//				try {
-//					parseMechanismXML(invocation);
-//				} catch (PropertyException ex) {
-//					throw new ReaderException("Can't parse mechanism XML", ex);
-//				}
+				parseMechanismXML(json);
 
                 ObjectNode toolDescription = json.objectNode();
     			parseToolDescription(toolDescription, externalToolConfig.getUseCaseDescription(),
@@ -200,7 +196,9 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 		}
 	}
 
-	private void parseMechanismXML(PropertyResource invocation) throws PropertyException {
+	private void parseMechanismXML(ObjectNode invocation) {
+	    type = invocatoin.
+	    
 		URI type = invocation.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#mechanismType"));
 		if (type.equals(ACTIVITY_URI.resolve("#local"))) {
 			Element xml = invocation.getPropertyAsLiteral(ACTIVITY_URI.resolve("#mechanismXML"))
