@@ -1,7 +1,6 @@
 package uk.org.taverna.scufl2.translator.t2flow.t23activities;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,16 +11,9 @@ import java.util.Map;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.io.ReaderException;
-import uk.org.taverna.scufl2.api.port.ActivityPort;
-import uk.org.taverna.scufl2.api.port.InputActivityPort;
-import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.translator.t2flow.ParserState;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.defaultactivities.AbstractActivityParser;
@@ -34,6 +26,9 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.ScriptInputUser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ScriptOutput;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.UsecaseConfig;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.UsecaseDescription;
+
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class ExternalToolActivityParser extends AbstractActivityParser {
 
@@ -178,7 +173,9 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 //						mechanismName);
 //				invocation.addProperty(ACTIVITY_URI.resolve("#mechanismXML"), new PropertyLiteral(
 //						mechanismXML, PropertyLiteral.XML_LITERAL));
-				parseMechanismXML(json);
+                
+                // TODO: Extract SSH hostname etc. from mechanismXML
+//				parseMechanismXML(json);
 
                 ObjectNode toolDescription = json.objectNode();
     			parseToolDescription(toolDescription, externalToolConfig.getUseCaseDescription(),
@@ -196,66 +193,66 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 		}
 	}
 
-	private void parseMechanismXML(ObjectNode invocation) {
-	    type = invocatoin.
-	    
-		URI type = invocation.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#mechanismType"));
-		if (type.equals(ACTIVITY_URI.resolve("#local"))) {
-			Element xml = invocation.getPropertyAsLiteral(ACTIVITY_URI.resolve("#mechanismXML"))
-					.getLiteralValueAsElement();
-
-			String directory = elementByTag(xml, "directory");
-			String linkCommand = elementByTag(xml, "linkCommand");
-			String shellPrefix = elementByTag(xml, "shellPrefix");
-			PropertyResource node = new PropertyResource();
-			node.setTypeURI(ACTIVITY_URI.resolve("#LocalNode"));
-			if (directory != null) {
-				node.addPropertyAsString(ACTIVITY_URI.resolve("#directory"), directory);
-			}
-			if (linkCommand != null) {
-				node.addPropertyAsString(ACTIVITY_URI.resolve("#linkCommand"), linkCommand);
-			}
-			if (shellPrefix != null) {
-				node.addPropertyAsString(ACTIVITY_URI.resolve("#shellPrefix"), shellPrefix);
-			}
-			if (!node.getProperties().isEmpty()) {
-				// Only add if it is customized
-				invocation.addProperty(ACTIVITY_URI.resolve("#node"), node);
-			}
-
-			invocation.getProperties().remove(ACTIVITY_URI.resolve("#mechanismXML"));
-		} else if (type.equals(ACTIVITY_URI.resolve("#ssh"))) {
-			Element xml = invocation.getPropertyAsLiteral(ACTIVITY_URI.resolve("#mechanismXML"))
-					.getLiteralValueAsElement();
-			for (Element sshNode : elementIter(xml.getElementsByTagName("sshNode"))) {
-				String hostname = elementByTag(sshNode, "host");
-				String port = elementByTag(sshNode, "port");
-				String directory = elementByTag(sshNode, "directory");
-				String linkCommand = elementByTag(sshNode, "linkCommand");
-				String copyCommand = elementByTag(sshNode, "copyCommand");
-
-				PropertyResource node = invocation.addPropertyAsNewResource(
-						ACTIVITY_URI.resolve("#node"), ACTIVITY_URI.resolve("#SSHNode"));
-				node.addPropertyAsString(ACTIVITY_URI.resolve("#hostname"), hostname);
-				if (port != null) {
-					PropertyLiteral portLit = new PropertyLiteral(port, PropertyLiteral.XSD_INT);
-					node.addProperty(ACTIVITY_URI.resolve("#port"), portLit);
-				}
-				if (directory != null) {
-					node.addPropertyAsString(ACTIVITY_URI.resolve("#directory"), directory);
-				}
-				if (linkCommand != null) {
-					node.addPropertyAsString(ACTIVITY_URI.resolve("#linkCommand"), linkCommand);
-				}
-				if (copyCommand != null) {
-					node.addPropertyAsString(ACTIVITY_URI.resolve("#copyCommand"), copyCommand);
-				}
-			}
-			invocation.clearProperties(ACTIVITY_URI.resolve("#mechanismXML"));
-		} else {
-
-		}
-	}
+//	private void parseMechanismXML(ObjectNode invocation) {
+//	    type = invocatoin.
+//	    
+//		URI type = invocation.getPropertyAsResourceURI(ACTIVITY_URI.resolve("#mechanismType"));
+//		if (type.equals(ACTIVITY_URI.resolve("#local"))) {
+//			Element xml = invocation.getPropertyAsLiteral(ACTIVITY_URI.resolve("#mechanismXML"))
+//					.getLiteralValueAsElement();
+//
+//			String directory = elementByTag(xml, "directory");
+//			String linkCommand = elementByTag(xml, "linkCommand");
+//			String shellPrefix = elementByTag(xml, "shellPrefix");
+//			PropertyResource node = new PropertyResource();
+//			node.setTypeURI(ACTIVITY_URI.resolve("#LocalNode"));
+//			if (directory != null) {
+//				node.addPropertyAsString(ACTIVITY_URI.resolve("#directory"), directory);
+//			}
+//			if (linkCommand != null) {
+//				node.addPropertyAsString(ACTIVITY_URI.resolve("#linkCommand"), linkCommand);
+//			}
+//			if (shellPrefix != null) {
+//				node.addPropertyAsString(ACTIVITY_URI.resolve("#shellPrefix"), shellPrefix);
+//			}
+//			if (!node.getProperties().isEmpty()) {
+//				// Only add if it is customized
+//				invocation.addProperty(ACTIVITY_URI.resolve("#node"), node);
+//			}
+//
+//			invocation.getProperties().remove(ACTIVITY_URI.resolve("#mechanismXML"));
+//		} else if (type.equals(ACTIVITY_URI.resolve("#ssh"))) {
+//			Element xml = invocation.getPropertyAsLiteral(ACTIVITY_URI.resolve("#mechanismXML"))
+//					.getLiteralValueAsElement();
+//			for (Element sshNode : elementIter(xml.getElementsByTagName("sshNode"))) {
+//				String hostname = elementByTag(sshNode, "host");
+//				String port = elementByTag(sshNode, "port");
+//				String directory = elementByTag(sshNode, "directory");
+//				String linkCommand = elementByTag(sshNode, "linkCommand");
+//				String copyCommand = elementByTag(sshNode, "copyCommand");
+//
+//				PropertyResource node = invocation.addPropertyAsNewResource(
+//						ACTIVITY_URI.resolve("#node"), ACTIVITY_URI.resolve("#SSHNode"));
+//				node.addPropertyAsString(ACTIVITY_URI.resolve("#hostname"), hostname);
+//				if (port != null) {
+//					PropertyLiteral portLit = new PropertyLiteral(port, PropertyLiteral.XSD_INT);
+//					node.addProperty(ACTIVITY_URI.resolve("#port"), portLit);
+//				}
+//				if (directory != null) {
+//					node.addPropertyAsString(ACTIVITY_URI.resolve("#directory"), directory);
+//				}
+//				if (linkCommand != null) {
+//					node.addPropertyAsString(ACTIVITY_URI.resolve("#linkCommand"), linkCommand);
+//				}
+//				if (copyCommand != null) {
+//					node.addPropertyAsString(ACTIVITY_URI.resolve("#copyCommand"), copyCommand);
+//				}
+//			}
+//			invocation.clearProperties(ACTIVITY_URI.resolve("#mechanismXML"));
+//		} else {
+//
+//		}
+//	}
 
 	private Iterable<Element> elementIter(final NodeList nodeList) {
 		return new Iterable<Element>() {
@@ -295,7 +292,7 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 	protected ObjectNode parseToolDescription(ObjectNode json, UsecaseDescription toolDesc,
 			ParserState parserState) {
 	    
-	    ObjectNode description = description.objectNode();
+	    ObjectNode description = json.objectNode();
 	    description.put("dc:title", toolDesc.getUsecaseid());
 		if (toolDesc.getGroup() != null) {
 		    description.put("group", toolDesc.getGroup());
@@ -442,80 +439,80 @@ public class ExternalToolActivityParser extends AbstractActivityParser {
 
 		return description;
 	}
-
-	private PropertyResource generatePortDefinition(String portName, String tag, String charSet,
-			boolean isInput, boolean isList, boolean isBinary, boolean isFile, boolean isTempFile,
-			boolean isForceCopy, boolean isConcatenate, boolean isStatic, ParserState parserState) {
-
-		ActivityPort actPort;
-		if (isStatic) {
-			resource.setTypeURI(ACTIVITY_URI.resolve("#StaticInput"));
-		} else {
-
-			if (isInput) {
-				resource.setTypeURI(Scufl2Tools.PORT_DEFINITION.resolve("#InputPortDefinition"));
-				actPort = new InputActivityPort(parserState.getCurrentActivity(), portName);
-				URI portUri = uriTools.relativeUriForBean(actPort,
-						parserState.getCurrentConfiguration());
-				resource.addPropertyReference(
-						Scufl2Tools.PORT_DEFINITION.resolve("#definesInputPort"), portUri);
-			} else {
-				resource.setTypeURI(Scufl2Tools.PORT_DEFINITION.resolve("#OutputPortDefinition"));
-				actPort = new OutputActivityPort(parserState.getCurrentActivity(), portName);
-				URI portUri = uriTools.relativeUriForBean(actPort,
-						parserState.getCurrentConfiguration());
-				resource.addPropertyReference(
-						Scufl2Tools.PORT_DEFINITION.resolve("#definesOutputPort"), portUri);
-			}
-
-			if (isList) {
-				actPort.setDepth(1);
-			} else {
-				actPort.setDepth(0);
-			}
-		}
-
-		URI dataType = PropertyLiteral.XSD_STRING;
-		if (isFile || isTempFile) {
-			if (isForceCopy) {
-				resource.addProperty(ACTIVITY_URI.resolve("#forceCopy"), new PropertyLiteral(true));
-			}
-
-			if (isBinary) {
-				// FIXME: Is there a good URI for raw bytes? xsd:byte is just
-				// one byte,
-				// xsd:hexBinary and xsd:base64Binary both mandate an encoding
-				dataType = Scufl2Tools.PORT_DEFINITION.resolve("#binary");
-			} else if (charSet != null) {
-				resource.addPropertyReference(ACTIVITY_URI.resolve("#charset"),
-						CHARSET.resolve("#" + uriTools.validFilename(charSet)));
-				// TODO: Check with
-				// http://www.w3.org/International/www-international.html if
-				// this URI scheme really make sense
-			} else {
-				resource.addPropertyReference(ACTIVITY_URI.resolve("#charset"),
-						CHARSET.resolve("#UTF-8"));
-			}
-		}
-		resource.addPropertyReference(Scufl2Tools.PORT_DEFINITION.resolve("#dataType"), dataType);
-
-		resource.addPropertyAsString(ACTIVITY_URI.resolve("#substitutes"), tag);
-		URI subsitutionType;
-		if (isFile) {
-			subsitutionType = ACTIVITY_URI.resolve("#File");
-		} else if (isTempFile) {
-			subsitutionType = ACTIVITY_URI.resolve("#TempFile");
-		} else {
-			subsitutionType = ACTIVITY_URI.resolve("#Parameter");
-		}
-		resource.addPropertyReference(ACTIVITY_URI.resolve("#substitutionType"), subsitutionType);
-
-		if (isList && isConcatenate) {
-			resource.addProperty(ACTIVITY_URI.resolve("#concatenate"), new PropertyLiteral(true));
-		}
-
-		return resource;
-	}
+//
+//	private PropertyResource generatePortDefinition(String portName, String tag, String charSet,
+//			boolean isInput, boolean isList, boolean isBinary, boolean isFile, boolean isTempFile,
+//			boolean isForceCopy, boolean isConcatenate, boolean isStatic, ParserState parserState) {
+//
+//		ActivityPort actPort;
+//		if (isStatic) {
+//			resource.setTypeURI(ACTIVITY_URI.resolve("#StaticInput"));
+//		} else {
+//
+//			if (isInput) {
+//				resource.setTypeURI(Scufl2Tools.PORT_DEFINITION.resolve("#InputPortDefinition"));
+//				actPort = new InputActivityPort(parserState.getCurrentActivity(), portName);
+//				URI portUri = uriTools.relativeUriForBean(actPort,
+//						parserState.getCurrentConfiguration());
+//				resource.addPropertyReference(
+//						Scufl2Tools.PORT_DEFINITION.resolve("#definesInputPort"), portUri);
+//			} else {
+//				resource.setTypeURI(Scufl2Tools.PORT_DEFINITION.resolve("#OutputPortDefinition"));
+//				actPort = new OutputActivityPort(parserState.getCurrentActivity(), portName);
+//				URI portUri = uriTools.relativeUriForBean(actPort,
+//						parserState.getCurrentConfiguration());
+//				resource.addPropertyReference(
+//						Scufl2Tools.PORT_DEFINITION.resolve("#definesOutputPort"), portUri);
+//			}
+//
+//			if (isList) {
+//				actPort.setDepth(1);
+//			} else {
+//				actPort.setDepth(0);
+//			}
+//		}
+//
+//		URI dataType = PropertyLiteral.XSD_STRING;
+//		if (isFile || isTempFile) {
+//			if (isForceCopy) {
+//				resource.addProperty(ACTIVITY_URI.resolve("#forceCopy"), new PropertyLiteral(true));
+//			}
+//
+//			if (isBinary) {
+//				// FIXME: Is there a good URI for raw bytes? xsd:byte is just
+//				// one byte,
+//				// xsd:hexBinary and xsd:base64Binary both mandate an encoding
+//				dataType = Scufl2Tools.PORT_DEFINITION.resolve("#binary");
+//			} else if (charSet != null) {
+//				resource.addPropertyReference(ACTIVITY_URI.resolve("#charset"),
+//						CHARSET.resolve("#" + uriTools.validFilename(charSet)));
+//				// TODO: Check with
+//				// http://www.w3.org/International/www-international.html if
+//				// this URI scheme really make sense
+//			} else {
+//				resource.addPropertyReference(ACTIVITY_URI.resolve("#charset"),
+//						CHARSET.resolve("#UTF-8"));
+//			}
+//		}
+//		resource.addPropertyReference(Scufl2Tools.PORT_DEFINITION.resolve("#dataType"), dataType);
+//
+//		resource.addPropertyAsString(ACTIVITY_URI.resolve("#substitutes"), tag);
+//		URI subsitutionType;
+//		if (isFile) {
+//			subsitutionType = ACTIVITY_URI.resolve("#File");
+//		} else if (isTempFile) {
+//			subsitutionType = ACTIVITY_URI.resolve("#TempFile");
+//		} else {
+//			subsitutionType = ACTIVITY_URI.resolve("#Parameter");
+//		}
+//		resource.addPropertyReference(ACTIVITY_URI.resolve("#substitutionType"), subsitutionType);
+//
+//		if (isList && isConcatenate) {
+//			resource.addProperty(ACTIVITY_URI.resolve("#concatenate"), new PropertyLiteral(true));
+//		}
+//
+//		return resource;
+//	}
 
 //	protected PropertyObject parseGroup(Group group) {
 //		PropertyResource propertyResource = new PropertyResource();
