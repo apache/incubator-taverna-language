@@ -16,7 +16,7 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
-                        <Export-Package>uk.org.taverna.scufl2.validation;provide:=true</Export-Package>
+                        <Export-Package>uk.org.taverna.scufl2.validation.structural.*;provide:=true</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>
