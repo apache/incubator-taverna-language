@@ -79,7 +79,6 @@ public class BeanshellActivityParser extends AbstractActivityParser {
 		
 		if (beanshellConfig.getLocalworkerName() != null) {
 			URI localWorkerURI = LOCAL_WORKER_URI.resolve(uriTools.validFilename(beanshellConfig.getLocalworkerName()));
-			URI relation = ACTIVITY_URI.resolve("#derivedFrom");
 			// FIXME: As we can't read the annotation chain yet, we can't tell
 			// whether this local worker has been edited or not, and so 
 			// can't use #definedBy
