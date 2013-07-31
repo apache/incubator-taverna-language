@@ -10,7 +10,7 @@ uk.org.taverna.scufl2.translator.t2flow.defaultactivities.WSDLXMLSplitterParser
 uk.org.taverna.scufl2.translator.t2flow.defaultactivities.BiomartActivityParser
 uk.org.taverna.scufl2.translator.t2flow.defaultactivities.ApiConsomerActivityParser
 
-#uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser
+uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser
 uk.org.taverna.scufl2.translator.t2flow.t23activities.RESTActivityParser
 uk.org.taverna.scufl2.translator.t2flow.t23activities.XPathActivityParser
 

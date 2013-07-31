@@ -26,9 +26,7 @@
 	<bean id="biomartActivityParser" class="uk.org.taverna.scufl2.translator.t2flow.defaultactivities.BiomartActivityParser" />
 	<bean id="apiConsomerActivityParser" class="uk.org.taverna.scufl2.translator.t2flow.defaultactivities.ApiConsomerActivityParser" />
 
-<!-- 
 	<bean id="externalToolActivityParser" class="uk.org.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser" />
- -->
 	<bean id="restActivityParser" class="uk.org.taverna.scufl2.translator.t2flow.t23activities.RESTActivityParser" />
 	<bean id="xPathActivityParser" class="uk.org.taverna.scufl2.translator.t2flow.t23activities.XPathActivityParser" />
 
