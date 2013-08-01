@@ -2,7 +2,6 @@ package com.example;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -33,7 +32,7 @@ public class ServiceTypes {
 			
 			for (Profile profile : wfBundle.getProfiles()) {
 				for (Activity activity : profile.getActivities()) {
-					types.add(activity.getConfigurableType().toASCIIString());
+					types.add(activity.getType().toASCIIString());
 				}
 			}			
 		}

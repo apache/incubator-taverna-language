@@ -28,7 +28,6 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
 
 public class WorkflowMaker {
 	private static Scufl2Tools scufl2Tools = new Scufl2Tools();
-	private static URITools uriTools = new URITools();
 	private static WorkflowBundleIO bundleIO = new WorkflowBundleIO();
 
 	public static void main(String[] args) throws Exception {
@@ -234,8 +233,9 @@ public class WorkflowMaker {
 		 */
 		URI BEANSHELL = URI
 				.create("http://ns.taverna.org.uk/2010/activity/beanshell");
-		myBeanshell.setConfigurableType(BEANSHELL);
+		myBeanshell.setType(BEANSHELL);
 
+		
 		/**
 		 * Activities are activated within a particular profile (Therefore
 		 * execution of a profile requires the engine to support all types of
@@ -349,13 +349,11 @@ public class WorkflowMaker {
 		/**
 		 * Depending on the configuration type specified above, certain
 		 * *properties* should be specified, and other properties might be
-		 * optional. In this case, only
-		 * <http://ns.taverna.org.uk/2010/activity/beanshell#script> is
+		 * optional. In this case, only "script" is
 		 * specified, as a string value. (more complex properties can be
-		 * specified using other methods of the PropertyResource)
+		 * specified using Jackson JSON methods of the ObjectNode)
 		 */
-		beanshellConfig.getPropertyResource().addPropertyAsString(
-				BEANSHELL.resolve("#script"), "out1 = in1");
+		beanshellConfig.getJsonAsObjectNode().put("script", "out1 = in1");
 		/**
 		 * Note that property names are specified as URIs, which are often
 		 * related to the URI of the configuration type - but might be reused

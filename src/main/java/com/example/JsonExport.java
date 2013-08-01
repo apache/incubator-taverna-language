@@ -7,9 +7,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
-import java.util.SortedSet;
 
 import uk.org.taverna.scufl2.api.annotation.Annotation;
 import uk.org.taverna.scufl2.api.annotation.Revision;
@@ -30,16 +28,13 @@ import uk.org.taverna.scufl2.api.io.WriterException;
 import uk.org.taverna.scufl2.api.port.DepthPort;
 import uk.org.taverna.scufl2.api.port.GranularDepthPort;
 import uk.org.taverna.scufl2.api.port.Port;
-import uk.org.taverna.scufl2.api.property.PropertyLiteral;
-import uk.org.taverna.scufl2.api.property.PropertyObject;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
+import uk.org.taverna.scufl2.api.profiles.Profile;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 
 public class JsonExport {
@@ -115,25 +110,8 @@ public class JsonExport {
         ObjectNode node = mapper.createObjectNode();
         for (Annotation ann : scufl2Tools.annotationsFor(bean)) {
             URI annUri = uriTools.uriForBean(ann);
-            for (PropertyObject s : ann.getBodyStatements()) {
-                if (s instanceof PropertyResource) {
-                    PropertyResource r = (PropertyResource) s;
-                    URI resourceUri = annUri.resolve(r.getResourceURI());
-                    for (Entry<URI, SortedSet<PropertyObject>> entry: r.getProperties().entrySet()) {
-                        URI property = annUri.resolve(entry.getKey());
-                        if (entry.getValue().size() == 1) {
-                            PropertyObject obj = entry.getValue().iterator().next();
-                            node.put(property.toString(), toJson(obj, annUri));
-                        } else {
-                            ArrayNode list = mapper.createArrayNode();
-                            node.put(property.toString(), list);
-                            for (PropertyObject obj : entry.getValue()) {
-                                list.add(toJson(obj, annUri));
-                            }
-                        }
-                    }
-                }
-            }
+            
+            // TODO: include annotation body?
         }
         return node;
     }
@@ -216,16 +194,6 @@ public class JsonExport {
         return p;
     }
     
-    protected JsonNode toJson(PropertyObject obj, URI annUri) {
-        if (obj instanceof PropertyLiteral) {
-            PropertyLiteral lit = (PropertyLiteral) obj;
-            return new TextNode(lit.getLiteralValue());
-            // TODO: Support different literal types like integers
-        }
-        // TODO: Other types of annotations!
-        return null;
-    }
-
     protected JsonNode toJson(Revision currentRevision) {
         ArrayNode revisions = mapper.createArrayNode();
         while (currentRevision != null) {
@@ -316,7 +284,16 @@ public class JsonExport {
 //        root.put("revisions", toJson(wfBundle.getCurrentRevision()));
         
         root.put("workflow", toJson(wfBundle.getMainWorkflow()));
+        root.put("profile", toJson(wfBundle.getMainProfile()));
         
         return root;
+    }
+
+    private JsonNode toJson(Profile profile) {
+        ObjectNode pf = mapper.createObjectNode();
+
+        pf.putPOJO("id", uriTools.relativeUriForBean(profile, profile.getParent()));
+        // TODO: Activities and configurations
+        return pf;
     }
 }
