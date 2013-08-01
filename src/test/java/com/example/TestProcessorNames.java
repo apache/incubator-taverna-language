@@ -53,7 +53,6 @@ public class TestProcessorNames {
 	}
 	
 
-	@Ignore
 	@Test
 	public void nestedWorkflowBundle() throws JAXBException, IOException, ReaderException {
 		InputStream workflow = getClass().getResourceAsStream(
