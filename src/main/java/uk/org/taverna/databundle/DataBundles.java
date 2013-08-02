@@ -35,8 +35,6 @@ import uk.org.taverna.scufl2.api.io.WriterException;
  * 
  */
 public class DataBundles extends Bundles {
-
-
     protected static final class ExtensionIgnoringFilter implements Filter<Path> {
         private final String fname;
 
@@ -50,7 +48,9 @@ public class DataBundles extends Bundles {
         }
     }
     
+    private static final String WFDESC_TURTLE = "text/vnd.wf4ever.wfdesc+turtle";
     private static final String WORKFLOW = "workflow";
+    private static final String DOT_WFDESC_TTL = ".wfdesc.ttl";
     private static final String DOT_WFBUNDLE = ".wfbundle";
     private static final String WORKFLOWRUN_PROV_TTL = "workflowrun.prov.ttl";
 	private static final String DOT_ERR = ".err";
@@ -300,6 +300,11 @@ public class DataBundles extends Bundles {
     public static Path getWorkflow(Bundle dataBundle) throws IOException {
         return anyExtension(dataBundle.getRoot(), WORKFLOW);
     }
+
+    public static Path getWorkflowDescription(Bundle dataBundle) throws IOException {
+        Path annotations = Bundles.getAnnotations(dataBundle);
+        return annotations.resolve(WORKFLOW + DOT_WFDESC_TTL);
+    }
     
     public static void setWorkflowBundle(Bundle dataBundle,
             WorkflowBundle wfBundle) throws IOException {
@@ -314,6 +319,14 @@ public class DataBundles extends Bundles {
         } catch (WriterException e) {
             throw new IOException("Can't write workflow bundle to: " + bundlePath, e);
         } 
+        
+        // wfdesc
+//        Path wfdescPath = getWorkflowDescription(dataBundle);
+//        try (OutputStream outputStream = Files.newOutputStream(wfdescPath)) {
+//            wfBundleIO.writeBundle(wfBundle, outputStream, WFDESC_TURTLE);
+//        } catch (WriterException e) {
+//            throw new IOException("Can't write workflow bundle to: " + bundlePath, e);
+//        } 
     }
     
     public static WorkflowBundle getWorkflowBundle(Bundle dataBundle)
