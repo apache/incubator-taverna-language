@@ -150,7 +150,6 @@ public class BundlePath implements Path {
         return zipPath.toString();
     }
 
-    @JsonValue
     public URI toUri() {
         Path abs = zipPath.toAbsolutePath();
         String path = abs.toString();

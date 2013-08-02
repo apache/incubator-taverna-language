@@ -5,7 +5,7 @@ import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder(value = { "file", "uri", "folder", "mediatype", "createdOn",
@@ -19,11 +19,22 @@ public class PathMetadata {
     private URI proxy;
     private URI uri;
 
+    public PathMetadata() {
+    }
+
+    @JsonCreator
+    public PathMetadata(String uriStr) {
+        uri = URI.create(uriStr);
+        if (! uri.isAbsolute()) {
+            file = uri;
+            uri = null;
+        }
+    }
+    
     public List<Agent> getCreatedBy() {
         return createdBy;
     }
 
-    @JsonIgnore
     public FileTime getCreatedOn() {
         return createdOn;
     }
@@ -32,7 +43,6 @@ public class PathMetadata {
         return file;
     }
 
-    @JsonIgnore
     public Path getFolder() {
         return folder;
     }

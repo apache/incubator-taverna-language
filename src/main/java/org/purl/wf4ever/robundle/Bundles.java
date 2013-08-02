@@ -33,6 +33,10 @@ import org.purl.wf4ever.robundle.utils.RecursiveDeleteVisitor;
  */
 public class Bundles {
 
+    private static final String ANNOTATIONS = "annotations";
+    private static final String DOT_RO = ".ro";
+
+
     protected static final String DOT_URL = ".url";
 
     private static final Charset ASCII = Charset.forName("ASCII");
@@ -249,6 +253,12 @@ public class Bundles {
         // Everything after the last . - or just the end
         String newP = p.replaceFirst("(\\.[^.]*)?$", extension);
         return path.resolveSibling(newP);
+    }
+
+    public static Path getAnnotations(Bundle dataBundle) throws IOException {
+        Path dir = dataBundle.getFileSystem().getPath(DOT_RO, ANNOTATIONS);
+        Files.createDirectories(dir);
+        return dir;
     }
 
 }

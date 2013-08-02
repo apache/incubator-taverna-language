@@ -25,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
@@ -33,6 +34,16 @@ import com.fasterxml.jackson.databind.SerializationFeature;
         "aggregates", "annotations", "@graph" })
 public class Manifest {
 
+    public abstract class PathMixin {
+        @JsonValue
+        public abstract String toString();
+    }
+    public abstract class FileTimeMixin {
+        @JsonValue
+        public abstract String toString();
+    }
+    
+    
     private static final String META_INF = "/META-INF";
     private static final String MIMETYPE = "/mimetype";
     private static final String RO = "/.ro";
@@ -87,7 +98,6 @@ public class Manifest {
         return authoredBy;
     }
 
-    @JsonIgnore
     public FileTime getAuthoredOn() {
         return authoredOn;
     }
@@ -101,18 +111,21 @@ public class Manifest {
     public List<Object> getContext() {
         ArrayList<Object> context = new ArrayList<>();
         HashMap<Object, Object> map = new HashMap<>();
-        map.put("@base", getBundle().getRoot().toUri());
+        map.put("@base", getBaseURI());
         context.add(map);
         context.add(URI
                 .create("http://purl.org/wf4ever/ro-bundle/context.json"));
         return context;
     }
 
+    private URI getBaseURI() {
+        return getBundle().getRoot().toUri();
+    }
+
     public List<Agent> getCreatedBy() {
         return createdBy;
     }
 
-    @JsonIgnore
     public FileTime getCreatedOn() {
         return createdOn;
     }
@@ -121,7 +134,6 @@ public class Manifest {
         return graph;
     }
 
-    @JsonIgnore
     public List<Path> getHistory() {
         return history;
     }
@@ -243,6 +255,8 @@ public class Manifest {
             manifest.add(0, jsonld);
         }
         ObjectMapper om = new ObjectMapper();
+        om.addMixInAnnotations(Path.class, PathMixin.class);
+        om.addMixInAnnotations(FileTime.class, FileTimeMixin.class);
         om.enable(SerializationFeature.INDENT_OUTPUT);
         om.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
         om.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
