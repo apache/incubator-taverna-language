@@ -4,10 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.purl.wf4ever</groupId>
     <artifactId>scufl2-wfdesc</artifactId>
+    <packaging>bundle</packaging>    
     <version>0.3.0-SNAPSHOT</version>
     <description>Convert Scufl2 workflow to wfdesc structure (from Wf4Ever RO ontology)</description>
     <properties>
-        <scufl2.version>0.11.0-SNAPSHOT</scufl2.version>
+        <scufl2.version>1.0.0-SNAPSHOT</scufl2.version>
         <elmo.version>1.5</elmo.version>
         <sesame.version>2.3.2</sesame.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -15,6 +16,16 @@
     </properties>
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Export-Package>uk.org.taverna.scufl2.api.io;provide:=true</Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -71,38 +82,53 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <target>
-                                <property name="compile_classpath" refid="maven.compile.classpath" />
-                                <property name="runtime_classpath" refid="maven.runtime.classpath" />
-                                <property name="test_classpath" refid="maven.test.classpath" />
-                                <property name="plugin_classpath" refid="maven.plugin.classpath" />
+                                <property name="compile_classpath"
+                                    refid="maven.compile.classpath" />
+                                <property name="runtime_classpath"
+                                    refid="maven.runtime.classpath" />
+                                <property name="test_classpath"
+                                    refid="maven.test.classpath" />
+                                <property name="plugin_classpath"
+                                    refid="maven.plugin.classpath" />
 
                                 <!-- inspired by http://openprovenance.org/java/maven-releases/org/openprovenance/opm-elmo/1.1.1/opm-elmo-1.1.1.pom -->
 
                                 <mkdir dir="${project.build.directory}" />
-                                <mkdir dir="${project.build.directory}/generated-sources" />
-                                <mkdir dir="${project.build.directory}/generated-sources/elmo" />
+                                <mkdir
+                                    dir="${project.build.directory}/generated-sources" />
+                                <mkdir
+                                    dir="${project.build.directory}/generated-sources/elmo" />
 
-                                <java classname="org.openrdf.elmo.codegen.OntologyConverter"
-                                    fork="true" failonerror="true" maxmemory="128m">
+                                <java
+                                    classname="org.openrdf.elmo.codegen.OntologyConverter"
+                                    fork="true" failonerror="true"
+                                    maxmemory="128m">
                                     <arg value="-b" />
-                                    <arg value="org.purl.wf4ever.wfdesc=http://purl.org/wf4ever/wfdesc#" />
+                                    <arg
+                                        value="org.purl.wf4ever.wfdesc=http://purl.org/wf4ever/wfdesc#" />
                                     <arg value="-b" />
                                     <arg
                                         value="org.purl.wf4ever.wf4ever=http://purl.org/wf4ever/wf4ever#" />
                                     <arg value="-b" />
-                                    <arg value="org.purl.wf4ever.wfprov=http://purl.org/wf4ever/wfprov#" />
+                                    <arg
+                                        value="org.purl.wf4ever.wfprov=http://purl.org/wf4ever/wfprov#" />
 
-                                    <!-- <arg value="-p" /> <arg value="wfdesc" /> -->
+                                    <!-- <arg value="-p" /> <arg value="wfdesc" 
+                                        /> -->
                                     <arg value="-j" />
                                     <arg value="target/wfdesc-ontology.jar" />
-                                    
+
                                     <arg value="-p" />
                                     <arg value="wf" /> <!-- Windows freaks out if this is really empty -->
-                                    
-                                    <!-- <arg value="http://purl.org/wf4ever/wfdesc" /> -->
-                                    <arg value="src/main/resources/org/purl/wf4ever/wfdesc/wfdesc.ttl" />
-                                    <arg value="src/main/resources/org/purl/wf4ever/wfdesc/wf4ever.ttl" />
-                                    <arg value="src/main/resources/com/xmlns/foaf/foaf.rdf" />
+
+                                    <!-- <arg value="http://purl.org/wf4ever/wfdesc" 
+                                        /> -->
+                                    <arg
+                                        value="src/main/resources/org/purl/wf4ever/wfdesc/wfdesc.ttl" />
+                                    <arg
+                                        value="src/main/resources/org/purl/wf4ever/wfdesc/wf4ever.ttl" />
+                                    <arg
+                                        value="src/main/resources/com/xmlns/foaf/foaf.rdf" />
 
 
                                     <classpath refid="maven.plugin.classpath" />
@@ -111,7 +137,8 @@
                                     </classpath>
                                     project.name
                                 </java>
-                                <unzip src="${project.build.directory}/wfdesc-ontology.jar"
+                                <unzip
+                                    src="${project.build.directory}/wfdesc-ontology.jar"
                                     dest="${project.build.directory}/generated-sources/elmo">
                                     <patternset>
                                         <exclude name="**/*.class" />
@@ -164,27 +191,27 @@
                 </executions>
             </plugin>
             <plugin>
-                   <groupId>org.codehaus.mojo</groupId>
-                   <artifactId>appassembler-maven-plugin</artifactId>
-                   <version>1.1.1</version>
-                   <executions>
-                           <execution>
-                                   <id>assemble</id>
-                                   <phase>package</phase>
-                                   <goals>
-                                           <goal>assemble</goal>
-                                   </goals>
-                           </execution>
-                   </executions>
-                   <configuration>
-                       <assembleDirectory>${project.build.directory}/${project.artifactId}</assembleDirectory>
-                           <programs>
-                                   <program>
-                                       <mainClass>org.purl.wf4ever.wfdesc.scufl2.ConvertToWfdesc</mainClass>
-                                       <name>scufl2-to-wfdesc</name>
-                                   </program>
-                           </programs>
-                   </configuration>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>appassembler-maven-plugin</artifactId>
+                <version>1.1.1</version>
+                <executions>
+                    <execution>
+                        <id>assemble</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>assemble</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <assembleDirectory>${project.build.directory}/${project.artifactId}</assembleDirectory>
+                    <programs>
+                        <program>
+                            <mainClass>org.purl.wf4ever.wfdesc.scufl2.ConvertToWfdesc</mainClass>
+                            <name>scufl2-to-wfdesc</name>
+                        </program>
+                    </programs>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -201,14 +228,16 @@
                             <shadedArtifactAttached>true</shadedArtifactAttached>
                             <shadedClassifierName>standalone</shadedClassifierName>
                             <transformers>
-                              <transformer
+                                <transformer
                                     implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>org.purl.wf4ever.wfdesc.scufl2.ConvertToWfdesc</mainClass>
-                              </transformer>
-                              <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                              <transformer implementation="org.apache.maven.plugins.shade.resource.XmlAppendingTransformer">
-                                  <resource>META-INF/spring</resource>
-                              </transformer>
+                                </transformer>
+                                <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                                <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.XmlAppendingTransformer">
+                                    <resource>META-INF/spring</resource>
+                                </transformer>
                             </transformers>
                         </configuration>
                     </execution>
@@ -217,7 +246,8 @@
         </plugins>
         <pluginManagement>
             <plugins>
-                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+                <!--This plugin's configuration is used to store Eclipse 
+                    m2e settings only. It has no influence on the Maven build itself. -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
                     <artifactId>lifecycle-mapping</artifactId>

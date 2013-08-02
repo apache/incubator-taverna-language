@@ -21,6 +21,8 @@ import org.purl.wf4ever.wfdesc.Input;
 import org.purl.wf4ever.wfdesc.Output;
 import org.purl.wf4ever.wfdesc.Process;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Named;
@@ -38,8 +40,6 @@ import uk.org.taverna.scufl2.api.port.InputPort;
 import uk.org.taverna.scufl2.api.port.OutputPort;
 import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
-import uk.org.taverna.scufl2.api.property.PropertyException;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
 
 public class WfdescSerialiser {
 
@@ -112,34 +112,33 @@ public class WfdescSerialiser {
 					if (profile != null) {
 						for (ProcessorBinding b : scufl2Tools.processorBindingsForProcessor((Processor)node, profile)) {							
 							Activity a = b.getBoundActivity();
-							URI type = a.getConfigurableType();
 							try {
+							    URI type = a.getType();
 								Configuration c = scufl2Tools.configurationFor(a, profile);
-							PropertyResource props = c.getPropertyResource();							
-							if (type.equals(BEANSHELL)) { 									
-								BeanshellScript script = sesameManager.designateEntity(process, BeanshellScript.class);							
-								String s = props.getPropertyAsString(BEANSHELL.resolve("#script"));
-								script.getWfScript().add(s);
-							}
-							if (type.equals(RSHELL)) { 									
-								RScript script = sesameManager.designateEntity(process, RScript.class);
-								String s = props.getPropertyAsString(RSHELL.resolve("#script"));
-								script.getWfScript().add(s);
-							}
-							if (type.equals(WSDL)) {
-								SOAPService soap = sesameManager.designateEntity(process, SOAPService.class);
-								PropertyResource operation = props.getPropertyAsResource(WSDL.resolve("#operation"));
-								soap.getWfWsdlURI().add(operation.getPropertyAsResourceURI(OPERATION.resolve("#wsdl")));
-								soap.getWfWsdlOperationName().add(operation.getPropertyAsReference(OPERATION.resolve("#name")));								
-							} 
-							if (type.equals(TOOL)) {
-								CommandLineTool cmd = sesameManager.designateEntity(process, CommandLineTool.class);
-								PropertyResource desc = props.getPropertyAsResource(TOOL.resolve("#toolDescription"));
-								cmd.getWfCommand().add(desc.getPropertyAsString(TOOL.resolve("#command")));
-							} 
+								JsonNode json = c.getJson();
+    							if (type.equals(BEANSHELL)) { 									
+    								BeanshellScript script = sesameManager.designateEntity(process, BeanshellScript.class);							
+    								String s = json.get("script").asText();
+    								script.getWfScript().add(s);
+    							}
+    							if (type.equals(RSHELL)) { 									
+    								RScript script = sesameManager.designateEntity(process, RScript.class);
+                                    String s = json.get("script").asText();
+    								script.getWfScript().add(s);
+    							}
+    							if (type.equals(WSDL)) {
+    								SOAPService soap = sesameManager.designateEntity(process, SOAPService.class);
+                                    JsonNode operation = json.get("operation");
+    								soap.getWfWsdlURI().add(URI.create(operation.get("wsdl").asText()));
+    								soap.getWfWsdlOperationName().add(operation.get("name").asText());								
+    							} 
+    							if (type.equals(TOOL)) {
+                                    CommandLineTool cmd = sesameManager.designateEntity(process, CommandLineTool.class);
+                                    JsonNode desc = json.get("toolDescription");
+                                    // FIXME: Is it guaranteed that 'command' will be there?
+                                    //cmd.getWfCommand().add(desc.get("command").asText());
+                                } 
 							} catch (IndexOutOfBoundsException ex) {
-								continue;
-							} catch (PropertyException ex) {
 								continue;
 							}
 							
