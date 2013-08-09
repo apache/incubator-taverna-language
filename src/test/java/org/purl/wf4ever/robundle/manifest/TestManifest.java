@@ -3,9 +3,11 @@ package org.purl.wf4ever.robundle.manifest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,6 +21,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.purl.wf4ever.robundle.Bundle;
 import org.purl.wf4ever.robundle.Bundles;
+
+import com.hp.hpl.jena.query.Query;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.QueryFactory;
+import com.hp.hpl.jena.query.QuerySolution;
+import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.Resource;
 
 public class TestManifest {
     private Bundle bundle;
@@ -37,7 +48,7 @@ public class TestManifest {
             Path path = uri2path(base, s.getFile());
             assertNotNull(path.getParent());
             assertEquals(Manifest.withSlash(path.getParent()), s.getFolder());
-            if (s.getFile().equals(URI.create("f/nested/empty/"))) {
+            if (s.getFile().equals(URI.create("/f/nested/empty/"))) {
                 continue;
                 // Folder's don't need proxy and createdOn
             }            
@@ -45,14 +56,15 @@ public class TestManifest {
             UUID.fromString(s.getProxy().getSchemeSpecificPart().replace("uuid:", ""));
             assertEquals(s.getCreatedOn(), Files.getLastModifiedTime(path));
         }
-        assertFalse(uris.contains("mimetype"));
-        assertFalse(uris.contains("META-INF"));
-        assertTrue(uris.remove("hello.txt"));
-        assertTrue(uris.remove("f/file1.txt"));
-        assertTrue(uris.remove("f/file2.txt"));
-        assertTrue(uris.remove("f/file3.txt"));
-        assertTrue(uris.remove("f/nested/file1.txt"));
-        assertTrue(uris.remove("f/nested/empty/"));
+        System.out.println(uris);
+        assertFalse(uris.contains("/mimetype"));
+        assertFalse(uris.contains("/META-INF"));
+        assertTrue(uris.remove("/hello.txt"));
+        assertTrue(uris.remove("/f/file1.txt"));
+        assertTrue(uris.remove("/f/file2.txt"));
+        assertTrue(uris.remove("/f/file3.txt"));
+        assertTrue(uris.remove("/f/nested/file1.txt"));
+        assertTrue(uris.remove("/f/nested/empty/"));
         assertTrue(uris.isEmpty());
     }
 
@@ -88,11 +100,83 @@ public class TestManifest {
         // TODO: Check as JSON-LD graph 
         assertTrue(manifestStr.contains("@context"));
         assertTrue(manifestStr.contains("http://purl.org/wf4ever/ro-bundle/context.json"));
-        assertTrue(manifestStr.contains("f/file2.txt"));
-        assertTrue(manifestStr.contains("hello.txt"));
+        assertTrue(manifestStr.contains("/f/file2.txt"));
+        assertTrue(manifestStr.contains("/hello.txt"));
         assertTrue(manifestStr.contains(helloMeta.getProxy().toASCIIString()));
+        
+        // Parse back as JSON-LD
+        try (InputStream jsonIn = Files.newInputStream(jsonld)) {        
+            Model model = RDFToManifest.jsonLdAsJenaModel(jsonIn);
+            model.write(System.out, "TURTLE");
+           
+            String queryStr = "PREFIX ore: <http://www.openarchives.org/ore/terms/>" +
+            		"PREFIX bundle: <http://purl.org/wf4ever/bundle#>" +
+            		"SELECT ?file ?proxy " +
+            		"WHERE {" +
+            		"    ?ro ore:aggregates ?file ." +
+            		"    OPTIONAL { ?file bundle:hasProxy ?proxy . } " +
+            		"}";
+            Query query = QueryFactory.create(queryStr) ;
+            QueryExecution qexec = QueryExecutionFactory.create(query, model);
+            
+            try {
+                ResultSet results = qexec.execSelect();
+                int aggregationCount=0;
+                for (; results.hasNext(); aggregationCount++) {
+                    QuerySolution soln = results.nextSolution();
+                    Resource fileRes = soln.getResource("file");
+                    Resource proxy = soln.getResource("proxy");
+                    Path file = Paths.get(asURI(fileRes));
+                    assertTrue(Files.exists(file));
+                    PathMetadata meta = manifest.getAggregation(file);                    
+                    assertEquals(asURI(proxy), meta.getProxy());
+                }
+                assertEquals("Could not find all aggregations from manifest: " + manifest.getAggregates(),
+                        manifest.getAggregates().size(), aggregationCount);
+            } finally {
+                // WHY is not QueryExecution an instance of Closable?
+                qexec.close();
+            }            
+        }        
     }
     
+
+    @Test
+    public void readManifest() throws Exception {
+        Manifest manifest = new Manifest(bundle);
+        
+        new RDFToManifest().readTo(
+                getClass().getResourceAsStream("/manifest.json"), manifest);
+
+        Path r = bundle.getRoot();
+        assertNotNull(manifest.getAggregation(r.resolve("/README.txt")));
+//        assertEquals("http://example.com/foaf#bob",
+//                manifest.getAggregation(r.resolve("/README.txt"))
+//                        .getCreatedBy().get(0).getUri());
+//        assertEquals("Bob Builder",
+//                manifest.getAggregation(r.resolve("/README.txt"))
+//                        .getCreatedBy().get(0).getName());
+//        assertEquals("text/plain",
+//                manifest.getAggregation(r.resolve("/README.txt"))
+//                .getMediatype());
+
+        
+        assertNull(manifest.getAggregation(r.resolve("/README.txt")).getProxy());
+//        assertNotNull(manifest.getAggregation(URI.create("http://example.com/comments.txt")).getProxy());
+        
+    }
+    
+    private URI asURI(Resource proxy) {
+        if (proxy == null) {
+            return null;
+        }
+        String uri = proxy.getURI();
+        if (uri == null) {
+            return null;
+        }
+        return URI.create(uri);
+    }
+
     @Before
     public void exampleBundle() throws IOException {
         Path source;

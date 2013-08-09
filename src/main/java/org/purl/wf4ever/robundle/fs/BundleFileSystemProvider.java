@@ -158,7 +158,7 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 
     private static final Charset UTF8 = Charset.forName("UTF-8");
 
-    private static final String WIDGET = "widget";
+    private static final String APP = "app";
 
     protected static void addMimeTypeToZip(ZipOutputStream out, String mimetype)
             throws IOException {
@@ -209,9 +209,9 @@ public class BundleFileSystemProvider extends FileSystemProvider {
             throws FileNotFoundException, IOException {
         URI w;
         try {
-            w = new URI("widget", bundle.toUri().toASCIIString(), null);
+            w = new URI(APP, bundle.toUri().toASCIIString(), null);
         } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("Can't create widget: URI for "
+            throw new IllegalArgumentException("Can't create app: URI for "
                     + bundle);
         }
 
@@ -274,7 +274,7 @@ public class BundleFileSystemProvider extends FileSystemProvider {
     }
 
     protected URI baseURIFor(URI uri) {
-        if (!(uri.getScheme().equals(WIDGET))) {
+        if (!(uri.getScheme().equals(APP))) {
             throw new IllegalArgumentException("Unsupported scheme in: " + uri);
         }
         if (!uri.isOpaque()) {
@@ -291,9 +291,9 @@ public class BundleFileSystemProvider extends FileSystemProvider {
         UUID uuid = UUID.nameUUIDFromBytes(realPath.toUri().toASCIIString()
                 .getBytes(UTF8));
         try {
-            return new URI(WIDGET, uuid.toString(), "/", null);
+            return new URI(APP, uuid.toString(), "/", null);
         } catch (URISyntaxException e) {
-            throw new IllegalStateException("Can't create widget:// URI for: "
+            throw new IllegalStateException("Can't create app:// URI for: "
                     + uuid);
         }
     }
@@ -338,6 +338,15 @@ public class BundleFileSystemProvider extends FileSystemProvider {
     public <V extends FileAttributeView> V getFileAttributeView(Path path,
             Class<V> type, LinkOption... options) {
         BundleFileSystem fs = (BundleFileSystem) path.getFileSystem();
+        if (path.toAbsolutePath().equals(fs.getRootDirectory())) {
+            // Bug in ZipFS, it will fall over as there is no entry for /
+            //
+            // Instead we'll just give a view of the source (e.g. the zipfile itself).
+            // Modifying its times is a bit futile since they are likely to be
+            // overriden when closing, but this avoids a NullPointerException
+            // in Files.setTimes().
+            return Files.getFileAttributeView(fs.getSource(), type, options);
+        }
         return origProvider(path).getFileAttributeView(fs.unwrap(path), type,
                 options);
     }
@@ -378,7 +387,7 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 
     @Override
     public String getScheme() {
-        return WIDGET;
+        return APP;
     }
 
     @Override

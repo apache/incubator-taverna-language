@@ -1,6 +1,7 @@
 package org.purl.wf4ever.robundle.manifest;
 
 import java.net.URI;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -32,5 +33,9 @@ public class PathAnnotation {
 
     public void setContent(URI content) {
         this.content = content;
+    }
+
+    public void generateAnnotationId() {
+        setAnnotation(URI.create("urn:uuid:" + UUID.randomUUID()));
     }
 }

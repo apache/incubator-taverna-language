@@ -33,6 +33,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
         "createdBy", "createdOn", "authoredOn", "authoredBy", "history",
         "aggregates", "annotations", "@graph" })
 public class Manifest {
+    
+    private static URI ROOT = URI.create("/");
 
     public abstract class PathMixin {
         @JsonValue
@@ -157,9 +159,9 @@ public class Manifest {
                 super.postVisitDirectory(dir, exc);
                 if (potentiallyEmptyFolders.remove(dir)) {
                     PathMetadata metadata = new PathMetadata();
-                    // Strip out the widget:// magic
-                    metadata.setFile(dir.getRoot().toUri()
-                            .relativize(withSlash(dir).toUri()));
+                    // Strip out the app:// magic
+                    metadata.setFile(ROOT.resolve(dir.getRoot().toUri()
+                            .relativize(withSlash(dir).toUri())));
                     metadata.setFolder(withSlash(dir.getParent()));
                     // metadata.proxy = URI.create("urn:uuid:" +
                     // UUID.randomUUID());
@@ -190,9 +192,9 @@ public class Manifest {
                 }
                 // super.visitFile(file, attrs);
                 PathMetadata metadata = new PathMetadata();
-                // Strip out the widget:// magic
-                metadata.setFile(file.getRoot().toUri()
-                        .relativize(file.toUri()));
+                // Strip out the app:// magic
+                metadata.setFile(ROOT.resolve(file.getRoot().toUri()
+                        .relativize(file.toUri())));
                 metadata.setFolder(withSlash(file.getParent()));
                 metadata.setProxy(URI.create("urn:uuid:" + UUID.randomUUID()));
                 metadata.setCreatedOn(Files.getLastModifiedTime(file));
@@ -272,17 +274,16 @@ public class Manifest {
 
     public PathMetadata getAggregation(Path file) {
         URI fileUri = file.toUri();
-        fileUri = file.getRoot().toUri().relativize(fileUri);
+        fileUri = ROOT.resolve(file.getRoot().toUri().relativize(fileUri));
+        return getAggregation(fileUri);
+    }
+
+    public PathMetadata getAggregation(URI uri) {
         for (PathMetadata meta : getAggregates()) {
-            if (fileUri.equals(meta.getFile()) || fileUri.equals(meta.getUri())) {
+            if (uri.equals(meta.getFile()) || uri.equals(meta.getUri()) || uri.equals(meta.getProxy())) {
                 return meta;
             }
         }
-        // Let's add it
-//        PathMetadata meta = new PathMetadata();
-//        meta.setFile(fileUri);
-//        getAggregates().add(meta);
-//        return meta;
         return null;
     }
 }

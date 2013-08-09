@@ -67,9 +67,9 @@ public class TestFileSystemProvider {
 		path.toFile().deleteOnExit();
 		BundleFileSystemProvider.createBundleAsZip(path, null);
 
-		// HACK: Use a opaque version of widget: with the file URI as scheme
+		// HACK: Use a opaque version of app: with the file URI as scheme
 		// specific part
-		URI w = new URI("widget", path.toUri().toASCIIString(), null);
+		URI w = new URI("app", path.toUri().toASCIIString(), null);
 		try (FileSystem fs = FileSystems.newFileSystem(w,
 				Collections.<String, Object> emptyMap())) {
 		    assertTrue(fs instanceof BundleFileSystem);
@@ -88,13 +88,13 @@ public class TestFileSystemProvider {
         // Neither does this work, as it does not double-escape:
         // URI jar = URI.create("jar:" + path.toUri().toASCIIString());                
 
-        URI widget = new URI("widget", path.toUri().toString(), null);
-        assertTrue(widget.toASCIIString().contains("with%2520several%2520spaces"));
+        URI app = new URI("app", path.toUri().toString(), null);
+        assertTrue(app.toASCIIString().contains("with%2520several%2520spaces"));
         
         Map<String, Object> env = new HashMap<>();
         env.put("create", "true");
  
-        try (FileSystem fs = FileSystems.newFileSystem(widget, env)) {
+        try (FileSystem fs = FileSystems.newFileSystem(app, env)) {
         } 
         assertTrue(Files.exists(path));
         // Reopen from now-existing Path to check that the URI is
@@ -116,16 +116,16 @@ public class TestFileSystemProvider {
         path.toFile().deleteOnExit();
         Files.delete(path);
         //System.out.println(path); // Should contain a electrical symbol and smiley
-        URI widget = new URI("widget", path.toUri().toString(), null);
+        URI app = new URI("app", path.toUri().toString(), null);
         // FIXME: The below passes on Windows 8 but not in Linux!?
-        //System.out.println(widget);
-        //assertTrue(widget.toString().contains("\u2301"));
-        //assertTrue(widget.toString().contains("\u263b"));        
+        //System.out.println(app);
+        //assertTrue(app.toString().contains("\u2301"));
+        //assertTrue(app.toString().contains("\u263b"));        
         
         Map<String, Object> env = new HashMap<>();
         env.put("create", "true");
  
-        try (FileSystem fs = FileSystems.newFileSystem(widget, env)) {     
+        try (FileSystem fs = FileSystems.newFileSystem(app, env)) {     
         }
         assertTrue(Files.exists(path));
         // Reopen from now-existing Path to check that the URI is

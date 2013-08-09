@@ -10,6 +10,13 @@ public class Agent {
     private URI orcid;
     private URI uri;
 
+    public Agent() {
+    }
+    
+    public Agent(String name) {
+        setName(name);
+    }
+
     public String getName() {
         return name;
     }
