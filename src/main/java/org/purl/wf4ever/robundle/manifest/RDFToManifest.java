@@ -3,14 +3,17 @@ package org.purl.wf4ever.robundle.manifest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import com.github.jsonldjava.core.JSONLD;
 import com.github.jsonldjava.core.JSONLDProcessingError;
 import com.github.jsonldjava.core.JSONLDTripleCallback;
+import com.github.jsonldjava.core.Options;
 import com.github.jsonldjava.impl.JenaTripleCallback;
 import com.github.jsonldjava.utils.JSONUtils;
 import com.hp.hpl.jena.ontology.DatatypeProperty;
@@ -80,11 +83,11 @@ public class RDFToManifest {
 
     
     
-    protected static Model jsonLdAsJenaModel(InputStream jsonIn) throws IOException,
+    protected static Model jsonLdAsJenaModel(InputStream jsonIn, URI base) throws IOException,
             JSONLDProcessingError {
         Object input = JSONUtils.fromInputStream(jsonIn);
-        JSONLDTripleCallback callback = new JenaTripleCallback();
-        Model model = (Model)JSONLD.toRDF(input, callback);
+        JSONLDTripleCallback callback = new JenaTripleCallback();        
+        Model model = (Model)JSONLD.toRDF(input, callback, new Options(base.toASCIIString()));
         return model;
     }
     
@@ -207,35 +210,39 @@ public class RDFToManifest {
 
     public void readTo(InputStream resourceAsStream, Manifest manifest) throws IOException, JSONLDProcessingError {
         OntModel model = new RDFToManifest().getOntModel();
-        try (InputStream jsonIn = getClass().getResourceAsStream("/manifest.json")) {   
-            model.add(jsonLdAsJenaModel(jsonIn));
+        URI base;
+        try {
+            base = makeBaseURI();
+        } catch (URISyntaxException e) {
+            throw new IllegalStateException("Can't make base URI of form app://{uuid}/", e);
+        }
+        try (InputStream jsonIn = getClass().getResourceAsStream("/manifest.json")) {
+            model.add(jsonLdAsJenaModel(jsonIn, base));
         }
         
-        Individual ro = findRO(model);
+        Individual ro = findRO(model, base);
         for (Individual in : listObjectProperties(ro, aggregates)) {
             String uriStr = in.getURI();
             PathMetadata meta = new PathMetadata();
             if (uriStr != null) {
-                URI uri = ROOT.resolve(uriStr);
-                meta.setUri(uri);
+                meta.setUri(relativizeFromBase(uriStr, base));
             }
             Resource proxy = in.getPropertyResourceValue(proxyFor);
             if (proxy != null && proxy.getURI() != null) {
-                meta.setProxy(ROOT.resolve(proxy.getURI()));
+                meta.setProxy(relativizeFromBase(proxy.getURI(), base));
             }
             
             List<Agent> creators = new ArrayList<>();
             for (Individual agent : listObjectProperties(in, createdBy)) {
                 Agent a = new Agent();
                 if (agent.getURI() != null) {
-                    a.setUri(ROOT.resolve(agent.getURI()));
+                    a.setUri(relativizeFromBase(agent.getURI(), base));
                     
                     RDFNode name = agent.getPropertyValue(foafName);
                     if (name != null && name.isLiteral()) {
                         a.setName(name.asLiteral().getLexicalForm());
                     }
-                }
-                
+                }                
                 creators.add(a);
             }
             if (! creators.isEmpty()) {
@@ -249,6 +256,14 @@ public class RDFToManifest {
         
 //        model.write(System.out, "TURTLE");
         
+    }
+
+    private URI relativizeFromBase(String uriStr, URI base) {
+        return ROOT.resolve(base.relativize(URI.create(uriStr)));
+    }
+
+    protected static URI makeBaseURI() throws URISyntaxException {
+        return new URI("app", UUID.randomUUID().toString(), "/", (String)null);
     }
 
 
@@ -268,7 +283,7 @@ public class RDFToManifest {
         return results;
     }
 
-    private Individual findRO(OntModel model) {
+    private Individual findRO(OntModel model, URI base) {
         try (ClosableIterable<? extends OntResource> instances = iterate(aggregation.listInstances())) {
             for (OntResource o : instances) {
                 System.out.println("Woo " + o);
@@ -277,7 +292,7 @@ public class RDFToManifest {
         }
         // Fallback - resolve as "/"
         // TODO: Ensure it's an Aggregation?
-        return model.getIndividual("/");
+        return model.getIndividual(base.toString());
     }
 
 }

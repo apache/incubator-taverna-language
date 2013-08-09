@@ -105,8 +105,11 @@ public class TestManifest {
         
         // Parse back as JSON-LD
         try (InputStream jsonIn = Files.newInputStream(jsonld)) {        
-            Model model = RDFToManifest.jsonLdAsJenaModel(jsonIn);
-            model.write(System.out, "TURTLE");
+            URI baseURI = bundle.getRoot().toUri(); 
+                    //RDFToManifest.makeBaseURI();
+            Model model = RDFToManifest.jsonLdAsJenaModel(jsonIn, baseURI);
+            model.write(System.out, "TURTLE", baseURI.toString());
+            model.write(System.out, "RDF/XML", baseURI.toString());
            
             String queryStr = "PREFIX ore: <http://www.openarchives.org/ore/terms/>" +
             		"PREFIX bundle: <http://purl.org/wf4ever/bundle#>" +
