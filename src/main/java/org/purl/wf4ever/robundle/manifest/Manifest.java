@@ -16,7 +16,6 @@ import java.util.GregorianCalendar;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import org.purl.wf4ever.robundle.Bundle;
 
@@ -115,7 +114,7 @@ public class Manifest {
 //        map.put("@base", getBaseURI());
 //        context.add(map);
         context.add(URI
-                .create("http://purl.org/wf4ever/ro-bundle/context.json"));
+                .create("https://w3id.org/bundle/context"));
         return context;
     }
 
@@ -144,7 +143,6 @@ public class Manifest {
         return id;
     }
 
-    @JsonIgnore
     public List<Path> getManifest() {
         return manifest;
     }
@@ -245,7 +243,7 @@ public class Manifest {
     }
 
     public Path writeAsJsonLD() throws IOException {
-        Path jsonld = bundle.getFileSystem().getPath(".ro", "manifest.json");
+        Path jsonld = bundle.getFileSystem().getPath(RO, "manifest.json");
         Files.createDirectories(jsonld.getParent());
         Files.createFile(jsonld);
         if (!getManifest().contains(jsonld)) {
