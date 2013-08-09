@@ -321,12 +321,12 @@ public class DataBundles extends Bundles {
         } 
         
         // wfdesc
-//        Path wfdescPath = getWorkflowDescription(dataBundle);
-//        try (OutputStream outputStream = Files.newOutputStream(wfdescPath)) {
-//            wfBundleIO.writeBundle(wfBundle, outputStream, WFDESC_TURTLE);
-//        } catch (WriterException e) {
-//            throw new IOException("Can't write workflow bundle to: " + bundlePath, e);
-//        } 
+        Path wfdescPath = getWorkflowDescription(dataBundle);
+        try (OutputStream outputStream = Files.newOutputStream(wfdescPath)) {
+            wfBundleIO.writeBundle(wfBundle, outputStream, WFDESC_TURTLE);
+        } catch (WriterException e) {
+            throw new IOException("Can't write workflow bundle to: " + bundlePath, e);
+        } 
     }
     
     public static WorkflowBundle getWorkflowBundle(Bundle dataBundle)
