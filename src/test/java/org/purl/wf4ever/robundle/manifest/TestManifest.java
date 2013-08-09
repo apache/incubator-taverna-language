@@ -105,8 +105,7 @@ public class TestManifest {
         
         // Parse back as JSON-LD
         try (InputStream jsonIn = Files.newInputStream(jsonld)) {        
-            URI baseURI = bundle.getRoot().toUri(); 
-                    //RDFToManifest.makeBaseURI();
+            URI baseURI = jsonld.toUri();
             Model model = RDFToManifest.jsonLdAsJenaModel(jsonIn, baseURI);
             model.write(System.out, "TURTLE", baseURI.toString());
             model.write(System.out, "RDF/XML", baseURI.toString());
