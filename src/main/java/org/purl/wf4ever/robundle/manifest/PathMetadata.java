@@ -4,6 +4,7 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.util.List;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -13,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class PathMetadata {
     private List<Agent> createdBy;
     private FileTime createdOn;
-    private URI file;
+    private Path file;
     private Path folder;
     private String mediatype;
     private URI proxy;
@@ -24,11 +25,7 @@ public class PathMetadata {
 
     @JsonCreator
     public PathMetadata(String uriStr) {
-        uri = URI.create(uriStr);
-        if (! uri.isAbsolute()) {
-            file = uri;
-            uri = null;
-        }
+        setUri(URI.create(uriStr));
     }
     
     public List<Agent> getCreatedBy() {
@@ -39,7 +36,7 @@ public class PathMetadata {
         return createdOn;
     }
 
-    public URI getFile() {
+    public Path getFile() {
         return file;
     }
 
@@ -67,7 +64,7 @@ public class PathMetadata {
         this.createdOn = createdOn;
     }
 
-    public void setFile(URI file) {
+    public void setFile(Path file) {
         this.file = file;
     }
 
@@ -79,12 +76,21 @@ public class PathMetadata {
         this.mediatype = mediatype;
     }
 
+    public void setProxy() {
+        setProxy(URI.create("urn:uuid:" + UUID.randomUUID()));
+    }
+    
     public void setProxy(URI proxy) {
         this.proxy = proxy;
     }
 
     public void setUri(URI uri) {
         this.uri = uri;
+        if (! uri.isAbsolute()) {
+            // TODO: How to create a Path without knowing the root?
+//            file = uri;
+//            this.uri = null;
+        }
     }
     
     @Override
@@ -95,7 +101,10 @@ public class PathMetadata {
         if (getFile() != null) {
             return getFile().toString();
         }
-        return getProxy().toString();
+        if (getProxy() != null) { 
+            return getProxy().toString();
+        }
+        return "PathMetadata <null>";
     }
 
 }

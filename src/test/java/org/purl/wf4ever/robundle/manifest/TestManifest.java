@@ -44,8 +44,8 @@ public class TestManifest {
 
         List<String> uris = new ArrayList<>();
         for (PathMetadata s : manifest.getAggregates()) {
-            uris.add(s.getFile().toASCIIString());
-            Path path = uri2path(base, s.getFile());
+            uris.add(s.getFile().toString());
+            Path path = s.getFile();
             assertNotNull(path.getParent());
             assertEquals(Manifest.withSlash(path.getParent()), s.getFolder());
             if (s.getFile().equals(URI.create("/f/nested/empty/"))) {
@@ -78,10 +78,9 @@ public class TestManifest {
     public void writeAsJsonLD() throws Exception {
         Manifest manifest = new Manifest(bundle);
         manifest.populateFromBundle();
-        PathMetadata helloMeta = null;
-        for (PathMetadata meta : manifest.getAggregates()) {
-            URI root = URI.create("/");
-            if (root.resolve(meta.getFile()).equals(root.resolve("hello.txt"))) {
+        PathMetadata helloMeta = null;        
+        for (PathMetadata meta : manifest.getAggregates()) {            
+            if (meta.getFile().endsWith("hello.txt")) {
                 helloMeta = meta;
             }
         }
@@ -174,7 +173,7 @@ public class TestManifest {
         if (uri == null) {
             return null;
         }
-        return URI.create(uri);
+        return bundle.getRoot().toUri().resolve(uri);
     }
 
     @Before

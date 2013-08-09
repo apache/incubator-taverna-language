@@ -217,12 +217,7 @@ public class RDFToManifest {
             PathMetadata meta = new PathMetadata();
             if (uriStr != null) {
                 URI uri = ROOT.resolve(uriStr);
-                if (! uri.isAbsolute()) {
-                    // TODO: Also check for app:// absolute URIs
-                    meta.setFile(uri);
-                } else {
-                    meta.setUri(uri);
-                }
+                meta.setUri(uri);
             }
             Resource proxy = in.getPropertyResourceValue(proxyFor);
             if (proxy != null && proxy.getURI() != null) {

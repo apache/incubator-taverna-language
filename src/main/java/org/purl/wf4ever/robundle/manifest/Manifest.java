@@ -13,7 +13,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -112,15 +111,16 @@ public class Manifest {
     @JsonProperty(value = "@context")
     public List<Object> getContext() {
         ArrayList<Object> context = new ArrayList<>();
-        HashMap<Object, Object> map = new HashMap<>();
-        map.put("@base", getBaseURI());
-        context.add(map);
+//        HashMap<Object, Object> map = new HashMap<>();
+//        map.put("@base", getBaseURI());
+//        context.add(map);
         context.add(URI
                 .create("http://purl.org/wf4ever/ro-bundle/context.json"));
         return context;
     }
 
-    private URI getBaseURI() {
+    @JsonIgnore
+    public URI getBaseURI() {
         return getBundle().getRoot().toUri();
     }
 
@@ -159,13 +159,10 @@ public class Manifest {
                 super.postVisitDirectory(dir, exc);
                 if (potentiallyEmptyFolders.remove(dir)) {
                     PathMetadata metadata = new PathMetadata();
-                    // Strip out the app:// magic
-                    metadata.setFile(ROOT.resolve(dir.getRoot().toUri()
-                            .relativize(withSlash(dir).toUri())));
+                    metadata.setFile(withSlash(dir));
                     metadata.setFolder(withSlash(dir.getParent()));
-                    // metadata.proxy = URI.create("urn:uuid:" +
-                    // UUID.randomUUID());
-                    // metadata.createdOn = Files.getLastModifiedTime(dir);
+                    metadata.setProxy();
+                    metadata.setCreatedOn(Files.getLastModifiedTime(dir));
                     aggregates.add(metadata);
                     potentiallyEmptyFolders.remove(withSlash(dir.getParent()));
                     return FileVisitResult.CONTINUE;
@@ -192,11 +189,9 @@ public class Manifest {
                 }
                 // super.visitFile(file, attrs);
                 PathMetadata metadata = new PathMetadata();
-                // Strip out the app:// magic
-                metadata.setFile(ROOT.resolve(file.getRoot().toUri()
-                        .relativize(file.toUri())));
+                metadata.setFile(file);
                 metadata.setFolder(withSlash(file.getParent()));
-                metadata.setProxy(URI.create("urn:uuid:" + UUID.randomUUID()));
+                metadata.setProxy();
                 metadata.setCreatedOn(Files.getLastModifiedTime(file));
                 aggregates.add(metadata);
                 potentiallyEmptyFolders.remove(file.getParent());
@@ -253,8 +248,8 @@ public class Manifest {
         Path jsonld = bundle.getFileSystem().getPath(".ro", "manifest.json");
         Files.createDirectories(jsonld.getParent());
         Files.createFile(jsonld);
-        if (!manifest.contains(jsonld)) {
-            manifest.add(0, jsonld);
+        if (!getManifest().contains(jsonld)) {
+            getManifest().add(0, jsonld);
         }
         ObjectMapper om = new ObjectMapper();
         om.addMixInAnnotations(Path.class, PathMixin.class);
@@ -280,7 +275,10 @@ public class Manifest {
 
     public PathMetadata getAggregation(URI uri) {
         for (PathMetadata meta : getAggregates()) {
-            if (uri.equals(meta.getFile()) || uri.equals(meta.getUri()) || uri.equals(meta.getProxy())) {
+            if (uri.equals(meta.getUri()) || uri.equals(meta.getProxy())) {
+                return meta;
+            }
+            if (meta.getFile() != null && uri.equals(URI.create(meta.getFile().toUri().getRawPath()))) {
                 return meta;
             }
         }
