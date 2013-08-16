@@ -3,6 +3,7 @@ package uk.org.taverna.databundle;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.Desktop;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
@@ -10,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
+import java.util.UUID;
 
 import org.junit.Test;
 import org.purl.wf4ever.robundle.Bundle;
@@ -17,11 +19,16 @@ import org.purl.wf4ever.robundle.manifest.Agent;
 import org.purl.wf4ever.robundle.manifest.Manifest;
 import org.purl.wf4ever.robundle.manifest.PathAnnotation;
 
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
 
 public class TestMusicClassification {
+
+    private static final String WFDESC = "http://purl.org/wf4ever/wfdesc#";
 
     private static String RUN = "/MusicProcessTaverna/example-run/";
 
@@ -117,10 +124,31 @@ public class TestMusicClassification {
         // And the workflow definition is about the workflow
         PathAnnotation wfBundleAboutWf = new PathAnnotation();
         URITools uriTools = new URITools();
-        wfBundleAboutWf.setAbout(uriTools.uriForBean(wfBundle.getMainWorkflow()));
+        URI mainWorkflow = uriTools.uriForBean(wfBundle.getMainWorkflow());
+        wfBundleAboutWf.setAbout(mainWorkflow);
         wfBundleAboutWf.setContent(URI.create(workflow.toUri().getPath()));
         manifest.getAnnotations().add(wfBundleAboutWf);
 
+        // hasWorkflowDefinition
+        PathAnnotation hasWorkflowDefinition = new PathAnnotation();
+        hasWorkflowDefinition.setAbout(mainWorkflow);        
+        UUID uuid = UUID.randomUUID();
+        hasWorkflowDefinition.setAnnotation(URI.create("urn:uuid:" + uuid));
+        Path annotationBody = DataBundles.getAnnotations(dataBundle).resolve(uuid + ".ttl");
+        hasWorkflowDefinition.setContent(URI.create(annotationBody.toUri().getPath()));
+        Model model = ModelFactory.createDefaultModel();
+        URI relPathToWfBundle = uriTools.relativePath(annotationBody.toUri(), workflow.toUri());
+        System.out.println(relPathToWfBundle);
+        model.setNsPrefix("wfdesc", WFDESC);
+        model.add(model.createResource(mainWorkflow.toASCIIString()), 
+                model.createProperty(WFDESC + "hasWorkflowDefinition"), 
+                model.createResource(relPathToWfBundle.toASCIIString()));
+        try (OutputStream out = Files.newOutputStream(annotationBody)) {
+            model.write(out, "TURTLE", annotationBody.toUri().toASCIIString());
+        }
+        manifest.getAnnotations().add(hasWorkflowDefinition);
+        
+        
         PathAnnotation wfBundleAboutWfB = new PathAnnotation();
         wfBundleAboutWfB.setAbout(wfBundle.getGlobalBaseURI());
         wfBundleAboutWfB.setContent(URI.create(workflow.toUri().getPath()));
