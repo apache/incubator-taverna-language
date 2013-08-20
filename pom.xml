@@ -136,7 +136,7 @@
                                         <!-- 
                                          -->
                                     <arg
-                                        value="src/main/resources/org/purl/wf4ever/wfdesc/roterms.rdf" />
+                                        value="src/main/resources/org/purl/wf4ever/wfdesc/roterms.ttl" />
 
 
                                     <classpath refid="maven.plugin.classpath" />

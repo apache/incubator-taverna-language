@@ -2,16 +2,19 @@ package org.purl.wf4ever.wfdesc.scufl2;
 
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.UUID;
 
 import javax.xml.namespace.QName;
 
 import org.openrdf.OpenRDFException;
+import org.openrdf.concepts.rdfs.Resource;
 import org.openrdf.elmo.ElmoModule;
 import org.openrdf.elmo.sesame.SesameManager;
 import org.openrdf.elmo.sesame.SesameManagerFactory;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.contextaware.ContextAwareConnection;
 import org.openrdf.rio.helpers.OrganizedRDFWriter;
+import org.purl.wf4ever.roterms.RotermsResource;
 import org.purl.wf4ever.wf4ever.BeanshellScript;
 import org.purl.wf4ever.wf4ever.CommandLineTool;
 import org.purl.wf4ever.wf4ever.RESTService;
@@ -124,6 +127,22 @@ public class WfdescSerialiser {
     								BeanshellScript script = sesameManager.designateEntity(process, BeanshellScript.class);							
     								String s = json.get("script").asText();
     								script.getWfScript().add(s);
+
+    								JsonNode localDep = json.get("localDependency");
+    								if (localDep != null && localDep.isArray()) {
+    								    for (int i=0; i<localDep.size(); i++) {
+    								        String depStr = localDep.get(i).asText();
+    								        RotermsResource res = sesameManager.designateEntity(script, RotermsResource.class);
+    								        Resource dep = sesameManager.create(Resource.class);
+    								        dep.setRdfsLabel(depStr);
+    								        dep.setRdfsComment("JAR dependency");
+    								        res.getWfRequiresSoftware().add(dep);
+    								        // Somehow this gets the whole thing to fall out of the graph!
+//    								        QName depQ = new QName("http://google.com/", ""+ UUID.randomUUID());
+//    								        sesameManager.rename(dep, depQ);
+    								        
+    								    }
+    								}
     							}
     							if (type.equals(RSHELL)) { 									
     								RScript script = sesameManager.designateEntity(process, RScript.class);
@@ -141,7 +160,7 @@ public class WfdescSerialiser {
     							} 
     							if (type.equals(REST)) {
     							    RESTService rest = sesameManager.designateEntity(process, RESTService.class);
-                                    System.out.println(json);
+//                                    System.out.println(json);
                                     JsonNode request = json.get("request");
                                     String uriTemplate = request.get("absoluteURITemplate").asText();
                                     uriTemplate = uriTemplate.replace("{", "");
@@ -235,6 +254,9 @@ public class WfdescSerialiser {
 						"http://purl.org/wf4ever/wfdesc#");
 				connection.setNamespace("wf4ever",
 						"http://purl.org/wf4ever/wf4ever#");
+                connection.setNamespace("roterms",
+                        "http://purl.org/wf4ever/roterms#");
+
 				connection.setNamespace("rdfs",
 						"http://www.w3.org/2000/01/rdf-schema#");
 				connection.setNamespace("xsd", "http://www.w3.org/2001/XMLSchema#");
