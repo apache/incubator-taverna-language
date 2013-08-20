@@ -1,4 +1,5 @@
 # @base <file:/C:/Users/stain/Desktop/MusicClassificationExperiment/workflowrun.prov.ttl> .
+@prefix : <#> .
 @prefix cnt: <http://www.w3.org/2011/content#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix doap: <http://usefulinc.com/ns/doap#> .
