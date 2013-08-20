@@ -126,12 +126,13 @@ public class TestMusicClassification {
         URITools uriTools = new URITools();
         URI mainWorkflow = uriTools.uriForBean(wfBundle.getMainWorkflow());
         wfBundleAboutWf.setAbout(mainWorkflow);
-        wfBundleAboutWf.setContent(URI.create(workflow.toUri().getPath()));
+        URI wfBundlePath = URI.create(workflow.toUri().getPath());
+        wfBundleAboutWf.setContent(wfBundlePath);
         manifest.getAnnotations().add(wfBundleAboutWf);
 
         // hasWorkflowDefinition
         PathAnnotation hasWorkflowDefinition = new PathAnnotation();
-        hasWorkflowDefinition.setAbout(mainWorkflow);        
+        hasWorkflowDefinition.setAbout(wfBundlePath);        
         UUID uuid = UUID.randomUUID();
         hasWorkflowDefinition.setAnnotation(URI.create("urn:uuid:" + uuid));
         Path annotationBody = DataBundles.getAnnotations(dataBundle).resolve(uuid + ".ttl");
