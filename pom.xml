@@ -112,6 +112,10 @@
                                     <arg value="-b" />
                                     <arg
                                         value="org.purl.wf4ever.wfprov=http://purl.org/wf4ever/wfprov#" />
+                                    <arg value="-b" />
+                                    <arg
+                                        value="org.purl.wf4ever.roterms=http://purl.org/wf4ever/roterms#" />
+                                        
 
                                     <!-- <arg value="-p" /> <arg value="wfdesc" 
                                         /> -->
@@ -129,6 +133,10 @@
                                         value="src/main/resources/org/purl/wf4ever/wfdesc/wf4ever.ttl" />
                                     <arg
                                         value="src/main/resources/com/xmlns/foaf/foaf.rdf" />
+                                        <!-- 
+                                         -->
+                                    <arg
+                                        value="src/main/resources/org/purl/wf4ever/wfdesc/roterms.rdf" />
 
 
                                     <classpath refid="maven.plugin.classpath" />
