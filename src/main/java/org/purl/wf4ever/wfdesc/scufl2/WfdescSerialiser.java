@@ -14,6 +14,7 @@ import org.openrdf.repository.contextaware.ContextAwareConnection;
 import org.openrdf.rio.helpers.OrganizedRDFWriter;
 import org.purl.wf4ever.wf4ever.BeanshellScript;
 import org.purl.wf4ever.wf4ever.CommandLineTool;
+import org.purl.wf4ever.wf4ever.RESTService;
 import org.purl.wf4ever.wf4ever.RScript;
 import org.purl.wf4ever.wf4ever.SOAPService;
 import org.purl.wf4ever.wfdesc.Description;
@@ -43,6 +44,8 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
 
 public class WfdescSerialiser {
 
+    public static URI REST = URI
+            .create("http://ns.taverna.org.uk/2010/activity/rest");
 	public static URI WSDL = URI
 			.create("http://ns.taverna.org.uk/2010/activity/wsdl");
 	public static URI SECURITY = WSDL.resolve("wsdl/security");
@@ -92,7 +95,8 @@ public class WfdescSerialiser {
 	protected void save(uk.org.taverna.scufl2.api.core.Workflow workflow, final Profile profile) {
 		workflow.accept(new VisitorAdapter() {
 			Scufl2Tools scufl2Tools = new Scufl2Tools();
-			public boolean visit(WorkflowBean node) {
+			@SuppressWarnings("unchecked")
+            public boolean visit(WorkflowBean node) {
 				@SuppressWarnings("rawtypes")
 				QName parentQName = qnameForBean(((Child) node).getParent());
 				QName qName = qnameForBean(node);
@@ -129,9 +133,23 @@ public class WfdescSerialiser {
     							if (type.equals(WSDL)) {
     								SOAPService soap = sesameManager.designateEntity(process, SOAPService.class);
                                     JsonNode operation = json.get("operation");
-    								soap.getWfWsdlURI().add(URI.create(operation.get("wsdl").asText()));
-    								soap.getWfWsdlOperationName().add(operation.get("name").asText());								
+                                    URI wsdl = URI.create(operation.get("wsdl").asText());
+    								soap.getWfWsdlURI().add(wsdl);
+    								soap.getWfWsdlOperationName().add(operation.get("name").asText());
+                                    soap.getWfRootURI().add(wsdl.resolve("/"));
+
     							} 
+    							if (type.equals(REST)) {
+    							    RESTService rest = sesameManager.designateEntity(process, RESTService.class);
+                                    System.out.println(json);
+                                    JsonNode request = json.get("request");
+                                    String uriTemplate = request.get("absoluteURITemplate").asText();
+                                    uriTemplate = uriTemplate.replace("{", "");
+                                    uriTemplate = uriTemplate.replace("}", "");
+                                    // TODO: Detect {}
+                                    URI root = URI.create(uriTemplate).resolve("/");
+                                    rest.getWfRootURI().add(root);
+                                } 
     							if (type.equals(TOOL)) {
                                     CommandLineTool cmd = sesameManager.designateEntity(process, CommandLineTool.class);
                                     JsonNode desc = json.get("toolDescription");
@@ -219,7 +237,11 @@ public class WfdescSerialiser {
 						"http://purl.org/wf4ever/wf4ever#");
 				connection.setNamespace("rdfs",
 						"http://www.w3.org/2000/01/rdf-schema#");
+				connection.setNamespace("xsd", "http://www.w3.org/2001/XMLSchema#");
+				connection.setNamespace("owl", "http://www.w3.org/2002/07/owl#");
+                connection.setNamespace("", "#");
 
+				
 				connection.export(new OrganizedRDFWriter(
 						new TurtleWriterWithBase(output, baseURI)));
 			} catch (OpenRDFException e) {
