@@ -48,6 +48,10 @@ public class DataBundles extends Bundles {
         }
     }
     
+    private static WorkflowBundleIO wfBundleIO;
+    
+    
+    
     private static final String WFDESC_TURTLE = "text/vnd.wf4ever.wfdesc+turtle";
     private static final String WORKFLOW = "workflow";
     private static final String DOT_WFDESC_TTL = ".wfdesc.ttl";
@@ -311,10 +315,10 @@ public class DataBundles extends Bundles {
         Path bundlePath = withExtension(getWorkflow(dataBundle), DOT_WFBUNDLE); 
         checkExistingAnyExtension(bundlePath);
         
-        WorkflowBundleIO wfBundleIO = new WorkflowBundleIO();
+       
         // TODO: Save as nested folder?
         try (OutputStream outputStream = Files.newOutputStream(bundlePath)) {
-            wfBundleIO.writeBundle(wfBundle, 
+            getWfBundleIO().writeBundle(wfBundle, 
                     outputStream, "application/vnd.taverna.scufl2.workflow-bundle");
         } catch (WriterException e) {
             throw new IOException("Can't write workflow bundle to: " + bundlePath, e);
@@ -323,7 +327,7 @@ public class DataBundles extends Bundles {
         // wfdesc
         Path wfdescPath = getWorkflowDescription(dataBundle);
         try (OutputStream outputStream = Files.newOutputStream(wfdescPath)) {
-            wfBundleIO.writeBundle(wfBundle, outputStream, WFDESC_TURTLE);
+            getWfBundleIO().writeBundle(wfBundle, outputStream, WFDESC_TURTLE);
         } catch (WriterException e) {
             throw new IOException("Can't write workflow bundle to: " + bundlePath, e);
         } 
@@ -371,6 +375,20 @@ public class DataBundles extends Bundles {
         }
         return max+1;
 
+    }
+
+    public static WorkflowBundleIO getWfBundleIO() {
+        if (wfBundleIO == null) {
+            wfBundleIO = new WorkflowBundleIO();
+        }
+        return wfBundleIO;
+    }
+
+    public static void setWfBundleIO(WorkflowBundleIO wfBundleIO) {
+        if (wfBundleIO == null) {
+            throw new NullPointerException();
+        }
+        DataBundles.wfBundleIO = wfBundleIO;
     }
 
 }
