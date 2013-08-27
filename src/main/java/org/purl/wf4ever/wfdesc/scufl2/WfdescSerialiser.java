@@ -11,6 +11,9 @@ import org.openrdf.concepts.rdfs.Resource;
 import org.openrdf.elmo.ElmoModule;
 import org.openrdf.elmo.sesame.SesameManager;
 import org.openrdf.elmo.sesame.SesameManagerFactory;
+import org.openrdf.query.parser.QueryParserFactory;
+import org.openrdf.query.parser.QueryParserRegistry;
+import org.openrdf.query.parser.sparql.SPARQLParserFactory;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.contextaware.ContextAwareConnection;
 import org.openrdf.rio.helpers.OrganizedRDFWriter;
@@ -75,6 +78,10 @@ public class WfdescSerialiser {
 
 	public SesameManager getSesameManager() {
 		if (sesameManager == null) {
+		    
+		    // Raven workaround - register SPARQLParserFactory
+		    QueryParserRegistry.getInstance().add(new SPARQLParserFactory());
+		    
 			ElmoModule module = new ElmoModule();
 			module.addConcept(Labelled.class);
 			SesameManagerFactory factory = new SesameManagerFactory(module);

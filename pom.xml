@@ -10,7 +10,7 @@
     <properties>
         <scufl2.version>1.0.0-SNAPSHOT</scufl2.version>
         <elmo.version>1.5</elmo.version>
-        <sesame.version>2.3.2</sesame.version>
+        <sesame.version>2.2.4</sesame.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
@@ -20,11 +20,13 @@
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
+                <!-- NO - this adds them to this JAR which breaks everywhere else! 
                 <configuration>
                     <instructions>
                         <Export-Package>uk.org.taverna.scufl2.api.io;provide:=true</Export-Package>
                     </instructions>
                 </configuration>
+                 -->
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
