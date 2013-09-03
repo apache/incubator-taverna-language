@@ -256,7 +256,6 @@ public class RDFXMLSerializer {
 				processorOutputPortBinding((ProcessorOutputPortBinding) node);
 			} else if (node instanceof Configuration) {
 				configuration((Configuration) node);
-				return false;
 			} else {
 				throw new IllegalStateException("Unexpected node " + node);
 			}
