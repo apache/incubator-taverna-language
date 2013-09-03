@@ -89,7 +89,7 @@ public class TestManifest {
         
         
         Path jsonld = manifest.writeAsJsonLD();
-        assertEquals(bundle.getFileSystem().getPath(".ro",  "manifest.json"), jsonld);
+        assertEquals(bundle.getFileSystem().getPath("/.ro",  "manifest.json"), jsonld);
         assertTrue(Files.exists(jsonld));
         String manifestStr = new String(Files.readAllBytes(jsonld), "UTF8");
         System.out.println(manifestStr);
@@ -98,7 +98,7 @@ public class TestManifest {
         // TODO: Read back and check as JSON structure
         // TODO: Check as JSON-LD graph 
         assertTrue(manifestStr.contains("@context"));
-        assertTrue(manifestStr.contains("http://purl.org/wf4ever/ro-bundle/context.json"));
+        assertTrue(manifestStr.contains("https://w3id.org/bundle/context"));
         assertTrue(manifestStr.contains("/f/file2.txt"));
         assertTrue(manifestStr.contains("/hello.txt"));
         assertTrue(manifestStr.contains(helloMeta.getProxy().toASCIIString()));
