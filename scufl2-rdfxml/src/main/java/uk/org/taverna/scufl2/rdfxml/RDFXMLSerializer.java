@@ -113,17 +113,20 @@ public class RDFXMLSerializer {
 			configuration.setConfigure(resource(uri(node.getConfigures())));
 			configuration.setName(node.getName());
 			configuration.setType(type(node));
+			
+			String jsonPath = uriTools.relativeUriForBean(node, profile).toString();
 
-			URI baseUri = uriTools.uriForBean(profile);
-			String jsonPath = "configuration/" + uriTools.validFilename(node.getName() + ".json");
+			URI profilePath = uriTools.relativeUriForBean(profile, profile.getParent());
+			
+			String bundlePath = profilePath + jsonPath;
+			
 			UCFPackage bundle = profile.getParent().getResources();
 			try {
-                bundle.addResource(node.getJsonAsString(), jsonPath, "application/json");
+                bundle.addResource(node.getJsonAsString(), bundlePath, "application/json");
             } catch (IOException e) {
-                logger.log(Level.WARNING, "Can't save JSON to " + jsonPath, e);
+                logger.log(Level.WARNING, "Can't save JSON to " + bundlePath, e);
             }
-			// FIXME: Make this relative URI dynamically
-			configuration.setAbout("../../" + jsonPath);
+			configuration.setAbout(jsonPath);
             
 			// TODO: No way in API to mark non-activated configurations
 			profileElem.getActivateConfiguration().add(resource(uri(node)));

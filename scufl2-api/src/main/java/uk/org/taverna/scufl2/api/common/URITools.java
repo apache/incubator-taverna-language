@@ -178,7 +178,9 @@ public class URITools {
 			if (bean instanceof Named) {
 				Named named = (Named) bean;
 				String name = validFilename(named.getName());
-				if (!(bean instanceof Port || bean instanceof Annotation)) {
+				if (bean instanceof Configuration) { 
+				    name = name + ".json";
+				} else if (!(bean instanceof Port || bean instanceof Annotation)) {
 					name = name + "/";
 				}
 				return relationURI.resolve(name);
