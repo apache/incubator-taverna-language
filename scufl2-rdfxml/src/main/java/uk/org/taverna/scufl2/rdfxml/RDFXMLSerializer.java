@@ -114,7 +114,7 @@ public class RDFXMLSerializer {
 			configuration.setName(node.getName());
 			configuration.setType(type(node));
 			
-			String jsonPath = uriTools.relativeUriForBean(node, profile).toString();
+			String jsonPath = uriTools.relativeUriForBean(node, profile) + ".json";
 
 			URI profilePath = uriTools.relativeUriForBean(profile, profile.getParent());
 			

@@ -79,7 +79,7 @@ public class TestURIToolsResolve {
 
 		assertSame(config,
 				uriTools.resolveUri(
-						PROFILE_URI.resolve("configuration/Hello/"),
+						PROFILE_URI.resolve("configuration/Hello"),
 						wfBundle));
 	}
 
