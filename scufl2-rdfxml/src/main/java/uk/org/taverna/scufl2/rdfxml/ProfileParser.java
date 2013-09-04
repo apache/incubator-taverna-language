@@ -161,7 +161,7 @@ public class ProfileParser extends AbstractParser {
 		    // 
 		    // TODO: Parse and represent as JSON-LD?
 //		    System.out.println(original);
-		    logger.warning("Ignoring unsupported PropertyResource (from SCUFL2 0.11 or older) for " + config);
+		    logger.warning("Ignoring unsupported PropertyResource (from SCUFL2 0.11 or older) for " + config + " " + o);
 		}
 		
 		

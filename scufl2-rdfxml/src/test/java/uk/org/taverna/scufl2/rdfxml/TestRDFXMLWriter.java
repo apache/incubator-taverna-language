@@ -13,6 +13,8 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.TestWorkflowBundleIO;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
@@ -54,6 +56,12 @@ public class TestRDFXMLWriter {
         WorkflowBundle readBundle = bundleIO.readBundle(bundleFile, APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE);
         assertEquals(funnyName, readBundle.getMainProfile().getName());
         assertEquals(funnyName, readBundle.getMainWorkflow().getName());
+        // did the JSON parse back in?
+        JsonNode oldJson = workflowBundle.getMainProfile().getConfigurations().getByName("Hello").getJson();
+        assertTrue(oldJson.get("script").asText().startsWith("hello"));           
+        JsonNode newJson = readBundle.getMainProfile().getConfigurations().getByName("Hello").getJson();
+        assertTrue(newJson.get("script").asText().startsWith("hello"));        
+        assertEquals(oldJson, newJson);
     }
 
 	@Test
