@@ -44,7 +44,7 @@ public class TestRDFXMLWriter {
         Map<String, ResourceEntry> profiles = ucfPackage.listResources("profile");
         assertEquals(2, profiles.size());
         assertTrue(profiles.keySet().contains("Funny_%2f_characters_50%25_of%20the%20time.rdf"));
-        assertTrue(profiles.keySet().contains("Funny_%2f_characters_50%25_of%20the%20time"));
+        assertTrue(profiles.keySet().contains("Funny_%2f_characters_50%25_of%20the%20time/"));
         
         Map<String, ResourceEntry> workflows = ucfPackage.listResources("workflow");
         assertEquals(1, workflows.size());

@@ -114,7 +114,9 @@ public class TestRDFXMLSerializer {
 		assertXpathEquals("../../workflow/HelloWorld/processor/Hello/out/greeting", binding, "./s:outputPortBinding/s:OutputPortBinding/s:bindOutputProcessorPort/@rdf:resource");
 
 
-		assertXpathEquals("Hello.json", configuration, "./@rdf:about");
+		assertXpathEquals("configuration/Hello/", configuration, "./@rdf:about");
+		assertXpathEquals("configuration/Hello.json", configuration, "./rdfs:seeAlso/@rdf:resource");
+
 		assertXpathEquals(
 				"http://ns.taverna.org.uk/2010/activity/beanshell#Config",
 				configuration, "./rdf:type/@rdf:resource");
