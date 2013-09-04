@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Iterator;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBElement;
@@ -134,10 +135,25 @@ public class ProfileParser extends AbstractParser {
 
 		getParserState().push(config);
 		
-		String about = original.getAbout();
-		URI resource = resolve(about);
-		System.out.println(resource.getPath());
-		// TODO: Parse json, if it exists!
+		if (original.getSeeAlso() != null) {
+		    
+    		String about = original.getSeeAlso().getResource();
+    		if (about != null) {
+    		    URI resource = resolve(about);
+    		    URI bundleBase = parserState.get().getLocation();
+    		    URI path = uriTools.relativePath(bundleBase, resource);    		    
+    		    try {
+    //    		    System.out.println(path);
+    		        // TODO: Should the path in the UCF Package be %-escaped or not?
+    		        // See TestRDFXMLWriter.awkwardFilenames
+                    config.setJson(parserState.get().getUcfPackage().getResourceAsString(path.getRawPath()));
+                } catch (IllegalArgumentException e) {
+                    logger.log(Level.WARNING, "Could not parse JSON configuration " + path, e);
+    		    } catch (IOException e) {
+                    logger.log(Level.WARNING, "Could not load JSON configuration " + path, e);
+                }
+    		}
+		}
 		
 		for (Object o : original.getAny()) {
 		    // Legacy SCUFL2 <= 0.11.0  PropertyResource configuration
@@ -175,7 +191,7 @@ public class ProfileParser extends AbstractParser {
 				.getBindInputActivityPort().getResource(),
 				InputActivityPort.class));
 		binding.setBoundProcessorPort(resolveBeanUri(original
-				.getBindInputProcessorPort().getResource(),
+				.getBindInputProcessorPort().getResource(), 
 				InputProcessorPort.class));
 		binding.setParent(getParserState().getCurrent(ProcessorBinding.class));
 
