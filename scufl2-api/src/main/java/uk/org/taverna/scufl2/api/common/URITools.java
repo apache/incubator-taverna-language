@@ -115,8 +115,7 @@ public class URITools {
     				    uriToBean.put(uri, existing);
     				}
 				}
-
-				return !(node instanceof Configuration);
+				return true;
 			}
 		});
 		if (!uri.isAbsolute()) {
@@ -178,7 +177,7 @@ public class URITools {
 			if (bean instanceof Named) {
 				Named named = (Named) bean;
 				String name = validFilename(named.getName());
-				if (!(bean instanceof Port || bean instanceof Annotation || bean instanceof Configuration)) {
+				if (!(bean instanceof Port || bean instanceof Annotation)) {
 					name = name + "/";
 				}
 				return relationURI.resolve(name);

@@ -114,7 +114,8 @@ public class RDFXMLSerializer {
 			configuration.setName(node.getName());
 			configuration.setType(type(node));
 			
-			String jsonPath = uriTools.relativeUriForBean(node, profile) + ".json";
+			URI configUri = uriTools.relativeUriForBean(node, profile);
+            String jsonPath = configUri.toString().replaceFirst("/$", ".json");
 
 			URI profilePath = uriTools.relativeUriForBean(profile, profile.getParent());
 			
@@ -126,7 +127,11 @@ public class RDFXMLSerializer {
             } catch (IOException e) {
                 logger.log(Level.WARNING, "Can't save JSON to " + bundlePath, e);
             }
-			configuration.setAbout(jsonPath);
+			configuration.setAbout(configUri.toString());
+			
+			SeeAlso seeAlso = rdfsObjectFactory.createSeeAlso();
+			seeAlso.setResource(jsonPath);
+			configuration.setSeeAlso(seeAlso);
             
 			// TODO: No way in API to mark non-activated configurations
 			profileElem.getActivateConfiguration().add(resource(uri(node)));
