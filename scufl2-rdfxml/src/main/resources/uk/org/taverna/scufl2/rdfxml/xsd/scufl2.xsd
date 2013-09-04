@@ -112,6 +112,7 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="rdf:type" />
+                <xs:element ref="rdfs:seeAlso" minOccurs="0" />
 				<xs:element ref="scufl2:name" minOccurs="0" />
 				<xs:element name="configure" type="rdf:Resource" />
 				<xs:any namespace="##other" minOccurs="0" maxOccurs="unbounded"

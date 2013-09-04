@@ -42,8 +42,9 @@ public class TestRDFXMLWriter {
                 APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE);
         UCFPackage ucfPackage = new UCFPackage(bundleFile);
         Map<String, ResourceEntry> profiles = ucfPackage.listResources("profile");
-        assertEquals(1, profiles.size());
-        assertEquals("Funny_%2f_characters_50%25_of%20the%20time.rdf", profiles.keySet().iterator().next());
+        assertEquals(2, profiles.size());
+        assertTrue(profiles.keySet().contains("Funny_%2f_characters_50%25_of%20the%20time.rdf"));
+        assertTrue(profiles.keySet().contains("Funny_%2f_characters_50%25_of%20the%20time"));
         
         Map<String, ResourceEntry> workflows = ucfPackage.listResources("workflow");
         assertEquals(1, workflows.size());
