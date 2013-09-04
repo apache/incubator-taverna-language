@@ -1,7 +1,7 @@
 package uk.org.taverna.scufl2.rdfxml;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,13 +13,13 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.TestWorkflowBundleIO;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
 import uk.org.taverna.scufl2.ucfpackage.UCFPackage;
 import uk.org.taverna.scufl2.ucfpackage.UCFPackage.ResourceEntry;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class TestRDFXMLWriter {
 
