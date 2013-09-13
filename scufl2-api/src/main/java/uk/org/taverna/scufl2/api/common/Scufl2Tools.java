@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -49,7 +50,10 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
  */
 public class Scufl2Tools {
 
-	public static URI PORT_DEFINITION = URI
+	private static final String CONSTANT_STRING = "string";
+    private static final String CONSTANT_VALUE_PORT = "value";
+
+    public static URI PORT_DEFINITION = URI
 			.create("http://ns.taverna.org.uk/2010/scufl2#portDefinition");
 
 	private static URITools uriTools = new URITools();
@@ -855,5 +859,61 @@ public class Scufl2Tools {
 			}
 		};
 	}
+
+    public static URI CONSTANT = URI
+            .create("http://ns.taverna.org.uk/2010/activity/constant");
+    
+    public static URI CONSTANT_CONFIG = CONSTANT.resolve("#Config");
+
+    public Processor createConstant(Workflow workflow, Profile profile,
+            String name) {
+        Processor processor = new Processor(null, name);
+        workflow.getProcessors().addWithUniqueName(processor);
+        processor.setParent(workflow);
+        OutputProcessorPort valuePort = new OutputProcessorPort(processor, CONSTANT_VALUE_PORT);
+        valuePort.setDepth(0);
+        valuePort.setGranularDepth(0);
+        
+        Activity activity = createActivityFromProcessor(processor, profile);
+        activity.setType(CONSTANT);
+        createConfigurationFor(activity, CONSTANT_CONFIG);
+        return processor;
+    }
+
+    private Configuration createConfigurationFor(Activity activity, URI configType) {
+        Profile profile = activity.getParent();
+        
+        Configuration config = new Configuration(activity.getName());
+        profile.getConfigurations().addWithUniqueName(config);
+        config.setParent(profile);
+        
+        config.setConfigures(activity);
+        config.setType(configType);
+        return config;
+    }
+
+    public void setConstantStringValue(Processor constant, String value, Profile profile) {
+        Configuration config = configurationForActivityBoundToProcessor(constant, profile);
+        config.getJsonAsObjectNode().put(CONSTANT_STRING, value);
+    }
+    
+    public String getConstantStringValue(Processor constant, Profile profile) {
+        Configuration config = configurationForActivityBoundToProcessor(constant, profile);
+        return config.getJson().get(CONSTANT_STRING).asText();
+    }
+    
+    public Set<Processor> getConstants(Workflow workflow, Profile profile) {        
+        Set<Processor> procs = new LinkedHashSet<Processor>();
+        for (Configuration config : profile.getConfigurations()) {
+            Configurable configurable = config.getConfigures();
+            if (! CONSTANT.equals(configurable.getType()) || ! (configurable instanceof Activity)) {
+                continue;
+            }
+            for (ProcessorBinding bind :  processorBindingsToActivity((Activity)configurable)) {
+                procs.add(bind.getBoundProcessor());
+            }
+        }
+        return procs;
+    }
 
 }
