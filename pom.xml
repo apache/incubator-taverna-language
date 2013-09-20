@@ -13,8 +13,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <scufl2.version>0.11.0</scufl2.version>
-        <jackson.version>2.2.1</jackson.version>
         <jsonld.version>0.3-SNAPSHOT</jsonld.version>
+        <!-- Raven: Jena and Jackson versions must match dependencies
+        from jsonld *and* scufl2 --> 
+        <jena.version>2.10.0</jena.version>
+        <jackson.version>2.2.3</jackson.version>
     </properties>
     <dependencies>
         <dependency>
@@ -63,7 +66,7 @@
         <dependency>
             <groupId>org.apache.jena</groupId>
             <artifactId>jena-arq</artifactId>
-            <version>2.10.1</version>
+            <version>${jena.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- for UUIDv5 SHA named 
@@ -114,6 +117,12 @@
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Embed-Dependency>*;groupId=com.github.jsonld-java</Embed-Dependency>
+                        <Embed-Transitive>true</Embed-Transitive>
+                    </instructions>
+                </configuration>
             </plugin>
 
             <plugin>
