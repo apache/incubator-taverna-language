@@ -17,6 +17,7 @@ import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import org.apache.log4j.Logger;
 import org.purl.wf4ever.robundle.Bundle;
 import org.purl.wf4ever.robundle.Bundles;
 
@@ -49,6 +50,10 @@ public class DataBundles extends Bundles {
     }
     
     private static WorkflowBundleIO wfBundleIO;
+
+
+
+    private static Logger logger = Logger.getLogger(DataBundles.class);
     
     
     
@@ -328,8 +333,10 @@ public class DataBundles extends Bundles {
         Path wfdescPath = getWorkflowDescription(dataBundle);
         try (OutputStream outputStream = Files.newOutputStream(wfdescPath)) {
             getWfBundleIO().writeBundle(wfBundle, outputStream, WFDESC_TURTLE);
-        } catch (WriterException e) {
-            throw new IOException("Can't write workflow bundle to: " + bundlePath, e);
+        } catch (IllegalArgumentException|WriterException e) {
+            logger.warn("Can't write wfdesc to: " + bundlePath, e);
+            Files.delete(wfdescPath);
+//            throw new IOException("Can't write wfdesc to: " + bundlePath, e);
         } 
     }
     
