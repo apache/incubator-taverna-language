@@ -182,6 +182,7 @@ public class Manifest {
             @Override
             public FileVisitResult visitFile(Path file,
                     BasicFileAttributes attrs) throws IOException {
+                potentiallyEmptyFolders.remove(withSlash(file.getParent()));
                 if (file.startsWith(MIMETYPE)) {
                     return FileVisitResult.CONTINUE;
                 }
@@ -267,11 +268,11 @@ public class Manifest {
 
     public PathMetadata getAggregation(Path file) {
         URI fileUri = file.toUri();
-        fileUri = ROOT.resolve(file.getRoot().toUri().relativize(fileUri));
         return getAggregation(fileUri);
     }
 
     public PathMetadata getAggregation(URI uri) {
+        uri = relativeToBundleRoot(uri);
         for (PathMetadata meta : getAggregates()) {
             if (uri.equals(meta.getUri()) || uri.equals(meta.getProxy())) {
                 return meta;
@@ -281,5 +282,10 @@ public class Manifest {
             }
         }
         return null;
+    }
+
+    private URI relativeToBundleRoot(URI uri) {
+        uri = ROOT.resolve(bundle.getRoot().toUri().relativize(uri));
+        return uri;
     }
 }
