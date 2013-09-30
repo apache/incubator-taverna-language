@@ -21,7 +21,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<jaxb.version>2.2.4-1</jaxb.version>
-        <jackson.version>2.2.2</jackson.version>
+        <jackson.version>2.2.3</jackson.version>
 	</properties>
 	<dependencies>
 		<!-- Common dependencies - keep these to a minimum as we want to reduce 
