@@ -10,12 +10,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import com.github.jsonldjava.core.JSONLD;
-import com.github.jsonldjava.core.JSONLDProcessingError;
-import com.github.jsonldjava.core.JSONLDTripleCallback;
-import com.github.jsonldjava.core.Options;
-import com.github.jsonldjava.impl.JenaTripleCallback;
-import com.github.jsonldjava.utils.JSONUtils;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RiotException;
+
+import com.github.jsonldjava.jena.JenaJSONLD;
 import com.hp.hpl.jena.ontology.DatatypeProperty;
 import com.hp.hpl.jena.ontology.Individual;
 import com.hp.hpl.jena.ontology.ObjectProperty;
@@ -84,11 +82,17 @@ public class RDFToManifest {
     
     
     protected static Model jsonLdAsJenaModel(InputStream jsonIn, URI base) throws IOException,
-            JSONLDProcessingError {
-        Object input = JSONUtils.fromInputStream(jsonIn);
-        JSONLDTripleCallback callback = new JenaTripleCallback();        
-        Model model = (Model)JSONLD.toRDF(input, callback, new Options(base.toASCIIString()));
+            RiotException {
+        JenaJSONLD.init();
+        Model model = ModelFactory.createDefaultModel();
+        RDFDataMgr.read(model, jsonIn, base.toASCIIString(), JenaJSONLD.JSONLD);
         return model;
+        
+//        
+//        Object input = JSONUtils.fromInputStream(jsonIn);
+//        JSONLDTripleCallback callback = new JenaTripleCallback();        
+//        Model model = (Model)JSONLD.toRDF(input, callback, new Options(base.toASCIIString()));
+//        return model;
     }
     
     private void checkNotNull(Object... possiblyNulls) {
@@ -208,7 +212,7 @@ public class RDFToManifest {
         }       
     }
 
-    public void readTo(InputStream resourceAsStream, Manifest manifest) throws IOException, JSONLDProcessingError {
+    public void readTo(InputStream resourceAsStream, Manifest manifest) throws IOException, RiotException {
         OntModel model = new RDFToManifest().getOntModel();
         URI base;
         try {

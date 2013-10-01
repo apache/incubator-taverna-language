@@ -13,12 +13,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <scufl2.version>0.11.0</scufl2.version>
-        <jsonld.version>0.3-SNAPSHOT</jsonld.version>
+        <jsonld.version>0.2.99-mygrid</jsonld.version>
         <!-- Raven: Jena and Jackson versions must match dependencies
         from jsonld *and* scufl2 --> 
-        <jena.version>2.10.0</jena.version>
+        <jena.version>2.11.0</jena.version>
         <jackson.version>2.2.3</jackson.version>
-    </properties>
+    </properties>    
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
