@@ -62,12 +62,10 @@
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.jena</groupId>
             <artifactId>jena-arq</artifactId>
             <version>${jena.version}</version>
-            <scope>test</scope>
         </dependency>
         <!-- for UUIDv5 SHA named 
         <dependency>
@@ -190,6 +188,15 @@
         </pluginManagement>
     </build>
     <repositories>
+        <repository>
+            <releases />
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>mygrid-repository</id>
+            <name>myGrid epository</name>
+            <url>http://www.mygrid.org.uk/maven/repository</url>
+        </repository>
         <repository>
             <releases>
                 <enabled>false</enabled>
