@@ -7,7 +7,7 @@
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>scufl2-integration-tests</artifactId>
-	<name>Taverna Scufl 2 Integration tests</name>
+	<name>Taverna Scufl 2 integration tests</name>
 	<description>Integration tests depending on multiple modules</description>
 	<build>
 		<plugins>
