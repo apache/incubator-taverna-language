@@ -97,9 +97,9 @@
     </build>
 
     <scm>
-        <connection>scm:git:git://github.com/myGrid/databundle.git</connection>
-        <developerConnection>scm:git:ssh://git@github.com/myGrid/databundle.git</developerConnection>
-        <url>https://github.com/myGrid/databundle/</url>
+		<connection>scm:git:git://github.com/myGrid/databundle.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/myGrid/databundle.git</developerConnection>
+		<url>https://github.com/myGrid/databundle/</url>
     </scm>
     <licenses>
         <license>
