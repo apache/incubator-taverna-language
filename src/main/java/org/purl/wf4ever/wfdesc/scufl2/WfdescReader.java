@@ -4,8 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
 
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
@@ -20,7 +19,8 @@ public class WfdescReader implements WorkflowBundleReader {
 
 	@Override
 	public Set<String> getMediaTypes() {
-		return new HashSet<String>(Arrays.asList(TEXT_VND_WF4EVER_WFDESC_TURTLE, TEXT_TURTLE, APPLICATION_RDF_XML));
+		return Collections.emptySet();
+	    //return new HashSet<String>(Arrays.asList(TEXT_VND_WF4EVER_WFDESC_TURTLE, TEXT_TURTLE, APPLICATION_RDF_XML));
 	}
 
 	@Override

@@ -2,7 +2,6 @@ package org.purl.wf4ever.wfdesc.scufl2;
 
 import java.io.OutputStream;
 import java.net.URI;
-import java.util.UUID;
 
 import javax.xml.namespace.QName;
 
@@ -11,7 +10,6 @@ import org.openrdf.concepts.rdfs.Resource;
 import org.openrdf.elmo.ElmoModule;
 import org.openrdf.elmo.sesame.SesameManager;
 import org.openrdf.elmo.sesame.SesameManagerFactory;
-import org.openrdf.query.parser.QueryParserFactory;
 import org.openrdf.query.parser.QueryParserRegistry;
 import org.openrdf.query.parser.sparql.SPARQLParserFactory;
 import org.openrdf.repository.Repository;
@@ -27,8 +25,6 @@ import org.purl.wf4ever.wfdesc.Description;
 import org.purl.wf4ever.wfdesc.Input;
 import org.purl.wf4ever.wfdesc.Output;
 import org.purl.wf4ever.wfdesc.Process;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.Child;
@@ -47,6 +43,8 @@ import uk.org.taverna.scufl2.api.port.InputPort;
 import uk.org.taverna.scufl2.api.port.OutputPort;
 import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class WfdescSerialiser {
 
@@ -105,7 +103,6 @@ public class WfdescSerialiser {
 	protected void save(uk.org.taverna.scufl2.api.core.Workflow workflow, final Profile profile) {
 		workflow.accept(new VisitorAdapter() {
 			Scufl2Tools scufl2Tools = new Scufl2Tools();
-			@SuppressWarnings("unchecked")
             public boolean visit(WorkflowBean node) {
 				@SuppressWarnings("rawtypes")
 				QName parentQName = qnameForBean(((Child) node).getParent());
