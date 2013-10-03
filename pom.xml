@@ -4,8 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.purl.wf4ever</groupId>
     <artifactId>scufl2-wfdesc</artifactId>
-    <packaging>bundle</packaging>    
     <version>0.3.0-SNAPSHOT</version>
+    <packaging>bundle</packaging>    
+    <name>SCUFL2 to wfdesc</name>
     <description>Convert Scufl2 workflow to wfdesc structure (from Wf4Ever RO ontology)</description>
     <properties>
         <scufl2.version>0.12.0</scufl2.version>
@@ -14,6 +15,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
+    <url>https://github.com/wf4ever/scufl2-wfdesc/</url>
+	<scm>
+		<connection>scm:git:git://github.com/wf4ever/scufl2-wfdesc.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/wf4ever/scufl2-wfdesc.git</developerConnection>
+		<url>https://github.com/wf4ever/scufl2-wfdesc/</url>
+  </scm>    
     <build>
         <plugins>
             <plugin>
@@ -444,5 +451,4 @@
             <url>http://repo.aduna-software.org/maven2/releases</url>
         </pluginRepository>
     </pluginRepositories>
-    <name>SCUFL2 to wfdesc</name>
 </project>
