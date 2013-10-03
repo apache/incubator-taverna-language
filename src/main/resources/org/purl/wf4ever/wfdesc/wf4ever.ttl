@@ -99,9 +99,20 @@ wf4ever:wsdlURI rdf:type owl:DatatypeProperty ;
                 
                 rdfs:domain wf4ever:SOAPService ;
                 
+
                 rdfs:subPropertyOf wf4ever:serviceURI .
 
-
+wf4ever:rootURI rdf:type owl:DatatypeProperty ;
+                rdfs:comment """The root of the service. This is not
+                necessarily the 'base' of the service, but should
+                more predictably be accessible for HTTP HEAD.
+                
+                Example: if the REST service template is
+                <http://kronos.ifs.tuwien.ac.at:8080/fex/featureExtractionREST?voucher={voucher}&music={mp3Base64}>
+                then the wf4ever:rootURI is
+                <http://kronos.ifs.tuwien.ac.at:8080/>.  """@en ;
+                rdfs:domain wf4ever:WebService;
+                rdfs:range xsd:anyURI .
 
 
 

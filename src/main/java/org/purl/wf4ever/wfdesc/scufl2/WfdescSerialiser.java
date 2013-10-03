@@ -6,14 +6,19 @@ import java.net.URI;
 import javax.xml.namespace.QName;
 
 import org.openrdf.OpenRDFException;
+import org.openrdf.concepts.rdfs.Resource;
 import org.openrdf.elmo.ElmoModule;
 import org.openrdf.elmo.sesame.SesameManager;
 import org.openrdf.elmo.sesame.SesameManagerFactory;
+import org.openrdf.query.parser.QueryParserRegistry;
+import org.openrdf.query.parser.sparql.SPARQLParserFactory;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.contextaware.ContextAwareConnection;
 import org.openrdf.rio.helpers.OrganizedRDFWriter;
+import org.purl.wf4ever.roterms.RotermsResource;
 import org.purl.wf4ever.wf4ever.BeanshellScript;
 import org.purl.wf4ever.wf4ever.CommandLineTool;
+import org.purl.wf4ever.wf4ever.RESTService;
 import org.purl.wf4ever.wf4ever.RScript;
 import org.purl.wf4ever.wf4ever.SOAPService;
 import org.purl.wf4ever.wfdesc.Description;
@@ -38,11 +43,13 @@ import uk.org.taverna.scufl2.api.port.InputPort;
 import uk.org.taverna.scufl2.api.port.OutputPort;
 import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
-import uk.org.taverna.scufl2.api.property.PropertyException;
-import uk.org.taverna.scufl2.api.property.PropertyResource;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class WfdescSerialiser {
 
+    public static URI REST = URI
+            .create("http://ns.taverna.org.uk/2010/activity/rest");
 	public static URI WSDL = URI
 			.create("http://ns.taverna.org.uk/2010/activity/wsdl");
 	public static URI SECURITY = WSDL.resolve("wsdl/security");
@@ -69,6 +76,10 @@ public class WfdescSerialiser {
 
 	public SesameManager getSesameManager() {
 		if (sesameManager == null) {
+		    
+		    // Raven workaround - register SPARQLParserFactory
+		    QueryParserRegistry.getInstance().add(new SPARQLParserFactory());
+		    
 			ElmoModule module = new ElmoModule();
 			module.addConcept(Labelled.class);
 			SesameManagerFactory factory = new SesameManagerFactory(module);
@@ -92,7 +103,7 @@ public class WfdescSerialiser {
 	protected void save(uk.org.taverna.scufl2.api.core.Workflow workflow, final Profile profile) {
 		workflow.accept(new VisitorAdapter() {
 			Scufl2Tools scufl2Tools = new Scufl2Tools();
-			public boolean visit(WorkflowBean node) {
+            public boolean visit(WorkflowBean node) {
 				@SuppressWarnings("rawtypes")
 				QName parentQName = qnameForBean(((Child) node).getParent());
 				QName qName = qnameForBean(node);
@@ -112,34 +123,63 @@ public class WfdescSerialiser {
 					if (profile != null) {
 						for (ProcessorBinding b : scufl2Tools.processorBindingsForProcessor((Processor)node, profile)) {							
 							Activity a = b.getBoundActivity();
-							URI type = a.getConfigurableType();
 							try {
+							    URI type = a.getType();
 								Configuration c = scufl2Tools.configurationFor(a, profile);
-							PropertyResource props = c.getPropertyResource();							
-							if (type.equals(BEANSHELL)) { 									
-								BeanshellScript script = sesameManager.designateEntity(process, BeanshellScript.class);							
-								String s = props.getPropertyAsString(BEANSHELL.resolve("#script"));
-								script.getWfScript().add(s);
-							}
-							if (type.equals(RSHELL)) { 									
-								RScript script = sesameManager.designateEntity(process, RScript.class);
-								String s = props.getPropertyAsString(RSHELL.resolve("#script"));
-								script.getWfScript().add(s);
-							}
-							if (type.equals(WSDL)) {
-								SOAPService soap = sesameManager.designateEntity(process, SOAPService.class);
-								PropertyResource operation = props.getPropertyAsResource(WSDL.resolve("#operation"));
-								soap.getWfWsdlURI().add(operation.getPropertyAsResourceURI(OPERATION.resolve("#wsdl")));
-								soap.getWfWsdlOperationName().add(operation.getPropertyAsReference(OPERATION.resolve("#name")));								
-							} 
-							if (type.equals(TOOL)) {
-								CommandLineTool cmd = sesameManager.designateEntity(process, CommandLineTool.class);
-								PropertyResource desc = props.getPropertyAsResource(TOOL.resolve("#toolDescription"));
-								cmd.getWfCommand().add(desc.getPropertyAsString(TOOL.resolve("#command")));
-							} 
+								JsonNode json = c.getJson();
+    							if (type.equals(BEANSHELL)) { 									
+    								BeanshellScript script = sesameManager.designateEntity(process, BeanshellScript.class);							
+    								String s = json.get("script").asText();
+    								script.getWfScript().add(s);
+
+    								JsonNode localDep = json.get("localDependency");
+    								if (localDep != null && localDep.isArray()) {
+    								    for (int i=0; i<localDep.size(); i++) {
+    								        String depStr = localDep.get(i).asText();
+    								        RotermsResource res = sesameManager.designateEntity(script, RotermsResource.class);
+    								        Resource dep = sesameManager.create(Resource.class);
+    								        dep.setRdfsLabel(depStr);
+    								        dep.setRdfsComment("JAR dependency");
+    								        res.getWfRequiresSoftware().add(dep);
+    								        // Somehow this gets the whole thing to fall out of the graph!
+//    								        QName depQ = new QName("http://google.com/", ""+ UUID.randomUUID());
+//    								        sesameManager.rename(dep, depQ);
+    								        
+    								    }
+    								}
+    							}
+    							if (type.equals(RSHELL)) { 									
+    								RScript script = sesameManager.designateEntity(process, RScript.class);
+                                    String s = json.get("script").asText();
+    								script.getWfScript().add(s);
+    							}
+    							if (type.equals(WSDL)) {
+    								SOAPService soap = sesameManager.designateEntity(process, SOAPService.class);
+                                    JsonNode operation = json.get("operation");
+                                    URI wsdl = URI.create(operation.get("wsdl").asText());
+    								soap.getWfWsdlURI().add(wsdl);
+    								soap.getWfWsdlOperationName().add(operation.get("name").asText());
+                                    soap.getWfRootURI().add(wsdl.resolve("/"));
+
+    							} 
+    							if (type.equals(REST)) {
+    							    RESTService rest = sesameManager.designateEntity(process, RESTService.class);
+//                                    System.out.println(json);
+                                    JsonNode request = json.get("request");
+                                    String uriTemplate = request.get("absoluteURITemplate").asText();
+                                    uriTemplate = uriTemplate.replace("{", "");
+                                    uriTemplate = uriTemplate.replace("}", "");
+                                    // TODO: Detect {}
+                                    URI root = URI.create(uriTemplate).resolve("/");
+                                    rest.getWfRootURI().add(root);
+                                } 
+    							if (type.equals(TOOL)) {
+                                    CommandLineTool cmd = sesameManager.designateEntity(process, CommandLineTool.class);
+                                    JsonNode desc = json.get("toolDescription");
+                                    // FIXME: Is it guaranteed that 'command' will be there?
+                                    //cmd.getWfCommand().add(desc.get("command").asText());
+                                } 
 							} catch (IndexOutOfBoundsException ex) {
-								continue;
-							} catch (PropertyException ex) {
 								continue;
 							}
 							
@@ -218,9 +258,16 @@ public class WfdescSerialiser {
 						"http://purl.org/wf4ever/wfdesc#");
 				connection.setNamespace("wf4ever",
 						"http://purl.org/wf4ever/wf4ever#");
+                connection.setNamespace("roterms",
+                        "http://purl.org/wf4ever/roterms#");
+
 				connection.setNamespace("rdfs",
 						"http://www.w3.org/2000/01/rdf-schema#");
+				connection.setNamespace("xsd", "http://www.w3.org/2001/XMLSchema#");
+				connection.setNamespace("owl", "http://www.w3.org/2002/07/owl#");
+                connection.setNamespace("", "#");
 
+				
 				connection.export(new OrganizedRDFWriter(
 						new TurtleWriterWithBase(output, baseURI)));
 			} catch (OpenRDFException e) {
