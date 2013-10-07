@@ -31,6 +31,7 @@ public class OdfFileEntry {
     private String mPath;
     private String mMediaType = "";
     private int mSize = -1;
+    private String version = null;
     private EncryptionData _encryptionData;    // The following static attributes are used for JDK 5 media type detection
     private static Map<String, String> MEDIA_TYPE_MAP = null;
     private static final String DEFAULT_TYPE = "application/octet-stream";
@@ -88,7 +89,7 @@ public class OdfFileEntry {
     public String getMediaType() {
         return mMediaType;
     }
-
+    
     /**
      * Get the media type from the given file reference
      * 
@@ -201,6 +202,14 @@ public class OdfFileEntry {
 
     public EncryptionData getEncryptionData() {
         return _encryptionData;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 }
 

@@ -24,6 +24,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.namespace.QName;
 
 import org.oasis_open.names.tc.opendocument.xmlns.container.Container;
 import org.oasis_open.names.tc.opendocument.xmlns.container.Container.RootFiles;
@@ -428,11 +429,13 @@ public class UCFPackage implements Cloneable {
 		private final String path;
 		private final long size;
 		private String mediaType;
+        private String version;
 
 		protected ResourceEntry(OdfFileEntry odfEntry) {
 			path = odfEntry.getPath();
 			size = odfEntry.getSize();
 			mediaType = odfEntry.getMediaType();
+			version = odfEntry.getVersion();
 		}
 
 		public String getPath() {
@@ -477,18 +480,26 @@ public class UCFPackage implements Cloneable {
 			return result;
 		}
 
+        public String getVersion() {
+            return version;
+        }
 	}
 
 	public Map<String, ResourceEntry> listAllResources() {
 		return listResources("", true);
 	}
+	
+	public void setRootFile(String path) {
+	    setRootFile(path, null);
+	}
 
 	@SuppressWarnings("rawtypes")
-	public void setRootFile(String path) {
+	public void setRootFile(String path, String version) {
 		ResourceEntry rootFile = getResourceEntry(path);
 		if (rootFile == null) {
 			throw new IllegalArgumentException("Unknown resource: " + path);
-		}
+		}		
+		odfPackage.getManifestEntries().get(path).setVersion(version);
 
 		Container container = containerXml.getValue();
 
@@ -520,6 +531,7 @@ public class UCFPackage implements Cloneable {
 			if (mediaType != null) {
 				rootFileElem.setMediaType(mediaType);
 			}
+			
 			foundExisting = true;
 		}
 		if (!foundExisting) {
@@ -551,7 +563,7 @@ public class UCFPackage implements Cloneable {
 				containerFactory.createContainerRootFiles(rootFiles));
 		return rootFiles;
 	}
-
+	
 	@SuppressWarnings("rawtypes")
 	public List<ResourceEntry> getRootFiles() {
 		ArrayList<UCFPackage.ResourceEntry> rootFiles = new ArrayList<UCFPackage.ResourceEntry>();
@@ -686,5 +698,9 @@ public class UCFPackage implements Cloneable {
 		}.start();
 		return inputStream;
 	}
+
+    public String getRootFileVersion(String rootFile) {
+        return getResourceEntry(rootFile).getVersion();
+    }
 
 }

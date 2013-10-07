@@ -1317,6 +1317,12 @@ public class OdfPackage {
 					buf.append(i);
 					buf.append("\"");
 				}
+				if (fileEntry.getVersion() != null) { 
+				    buf.append(" manifest:version=\"");
+	                buf.append(encodeXMLAttributes(fileEntry.getVersion()));
+	                buf.append("\"");
+				}
+				
 				EncryptionData enc = fileEntry.getEncryptionData();
 
 				if (enc != null) {
@@ -1742,6 +1748,7 @@ public class OdfPackage {
 								+ atts.getValue("manifest:size"));
 					}
 				}
+                _currentFileEntry.setVersion(atts.getValue("manifest:version"));
 			} else if (localName.equals("encryption-data")) {
 				_currentEncryptionData = new EncryptionData();
 				if (_currentFileEntry != null) {

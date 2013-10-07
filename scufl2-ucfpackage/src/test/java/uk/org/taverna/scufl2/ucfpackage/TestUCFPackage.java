@@ -40,7 +40,7 @@ import uk.org.taverna.scufl2.ucfpackage.UCFPackage.ResourceEntry;
 public class TestUCFPackage {
 
 	private static final int MIME_OFFSET = 30;
-	private static final boolean DELETE_FILES = true;
+	private static final boolean DELETE_FILES = false;
 	private static final Namespace MANIFEST_NS = Namespace.getNamespace("manifest", 
 			"urn:oasis:names:tc:opendocument:xmlns:manifest:1.0");
 	private static final Namespace EXAMPLE_NS = Namespace.getNamespace("ex", "http://example.com/");
@@ -808,6 +808,34 @@ public class TestUCFPackage {
 		assertEquals("Should not be able to modify rootFiles list", 1,
 				container.getRootFiles().size());
 	}
+
+
+    @Test
+    public void rootFileVersion() throws Exception {
+        UCFPackage container = new UCFPackage();
+        container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
+        container.addResource("Hello there", "helloworld.txt", "text/plain");
+        container.setRootFile("helloworld.txt", "1.2.3");
+        container.save(tmpFile);
+        UCFPackage reloaded = new UCFPackage(tmpFile);
+        ResourceEntry rootFile = reloaded.getRootFiles().get(0);
+        assertEquals("helloworld.txt", rootFile.getPath());
+        assertEquals("1.2.3", reloaded.getRootFileVersion("helloworld.txt"));
+    }
+	
+    @Test
+    public void rootFileVersionNull() throws Exception {
+        UCFPackage container = new UCFPackage();
+        container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
+        container.addResource("Hello there", "helloworld.txt", "text/plain");
+        container.setRootFile("helloworld.txt", "1.2.3");
+        container.save(tmpFile);
+        UCFPackage reloaded = new UCFPackage(tmpFile);
+        reloaded.setRootFile("helloworld.txt");
+        reloaded.save(tmpFile);
+        UCFPackage again = new UCFPackage(tmpFile);
+        assertNull(reloaded.getRootFileVersion("helloworld.txt"));
+    }
 
 	@Test
 	public void multipleRootfiles() throws Exception {
