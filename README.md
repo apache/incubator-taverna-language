@@ -8,7 +8,7 @@ See also the [SCUFL2 wiki][1]
 Licensed under the [GNU Lesser General Public License (LGPL) 2.1][6]. 
 See LICENSE.txt for the full terms of LGPL 2.1.
 
-This is the API, model and format of [SCUFL2][1], which replaces 
+This is the [API][9], model and format of [SCUFL2][1], which replaces 
 [Taverna][5]'s workflow format .t2flow. This API allows 
 JVM applications to inspect, generate and modify Taverna workflow
 definitions without depending on the Taverna runtime.
@@ -140,3 +140,4 @@ Experimental modules:
 [6]: http://www.gnu.org/licenses/lgpl-2.1.html
 [7]: http://www.mygrid.org.uk/dev/wiki/display/developer/Taverna+Workflow+Bundle
 [8]: https://github.com/mygrid/scufl2-examples
+[9]: http://www.mygrid.org.uk/dev/wiki/display/developer/SCUFL2-API
