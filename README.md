@@ -36,7 +36,7 @@ Building
 * `mvn clean install`
 
 This will build each module and run their tests, producing JARs like
-`scufl2-api/target/scufl2-api-0.11.0.jar`. 
+`scufl2-api/target/scufl2-api-0.12.0.jar`. 
 
 First time you build Scufl2 this might download dependencies needed for
 compliation. These have separate open source licenses, but should be
@@ -61,17 +61,17 @@ project's POM file, add this to your `<dependencies>` section:
 		<dependency>
 			<groupId>uk.org.taverna.scufl2</groupId>
 			<artifactId>scufl2-api</artifactId>
-			<version>0.11.0</version>
+			<version>0.12.0</version>
 		</dependency>
 		<dependency>
 			<groupId>uk.org.taverna.scufl2</groupId>
 			<artifactId>scufl2-rdfxml</artifactId>
-			<version>0.11.0</version>
+			<version>0.12.0</version>
 		</dependency>
 		<dependency>
 			<groupId>uk.org.taverna.scufl2</groupId>
 			<artifactId>scufl2-t2flow</artifactId>
-			<version>0.11.0</version>
+			<version>0.12.0</version>
 		</dependency>
 
 All Scufl2 modules are also valid OSGi bundles.
@@ -79,9 +79,9 @@ All Scufl2 modules are also valid OSGi bundles.
 You can alternatively copy and add the JARs from these modules to your
 classpath:
 
-* scufl2-api/target/scufl2-api-0.11.0.jar
-* scufl2-rdfxml/target/scufl2-rdfxml-0.11.0.jar
-* scufl2-t2flow/target/scufl2-t2flow-0.11.0.jar
+* scufl2-api/target/scufl2-api-0.12.0.jar
+* scufl2-rdfxml/target/scufl2-rdfxml-0.12.0.jar
+* scufl2-t2flow/target/scufl2-t2flow-0.12.0.jar
 
 
 See the *scufl2-validation* folder for examples of
