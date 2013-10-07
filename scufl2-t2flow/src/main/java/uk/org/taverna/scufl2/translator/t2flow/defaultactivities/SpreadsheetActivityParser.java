@@ -54,13 +54,13 @@ public class SpreadsheetActivityParser extends AbstractActivityParser {
 		ObjectNode json = (ObjectNode) configuration.getJson();
 		configuration.setType(ACTIVITY_URI.resolve("#Config"));
 
-		ArrayNode columnRanges = json.arrayNode();
-		json.put("columnRange", columnRanges);
-		addRange(config.getColumnRange(), columnRanges);
+		ObjectNode columnRange = json.objectNode();
+		json.put("columnRange", columnRange);
+		makeRange(config.getColumnRange(), columnRange);
 
-		ArrayNode rowRanges = json.arrayNode();
-        json.put("rowRange", rowRanges);
-		addRange(config.getRowRange(), rowRanges);
+		ObjectNode rowRange = json.objectNode();
+        json.put("rowRange", rowRange);
+        makeRange(config.getRowRange(), rowRange);
 
 		if (config.getEmptyCellValue() != null) {
 		    json.put("emptyCellValue", config.getEmptyCellValue());
@@ -95,16 +95,15 @@ public class SpreadsheetActivityParser extends AbstractActivityParser {
 		return configuration;
 	}
 
-	private void addRange(SpreadsheetRange range, ArrayNode arrayNode) {
-	    ObjectNode rangeJson = arrayNode.objectNode();
-	    arrayNode.add(rangeJson);
-	    
+	private void makeRange(SpreadsheetRange range, ObjectNode rangeJson) {
 		rangeJson.put("start", range.getStart().longValue());
         rangeJson.put("end", range.getStart().longValue());
         
-        ArrayNode excludes = arrayNode.arrayNode();
+        ArrayNode excludes = rangeJson.arrayNode();
 		for (SpreadsheetRange excludesRange : range.getExcludes().getExclude()) {
-			addRange(excludesRange, excludes);
+			ObjectNode exclude = rangeJson.objectNode();
+			makeRange(excludesRange, exclude);
+		    excludes.add(exclude);
 		}
 		if (excludes.size() > 0) {
 		    rangeJson.put("excludes", excludes);

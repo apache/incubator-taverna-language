@@ -33,6 +33,7 @@ public class TestSpreadsheetActivityParser {
 		ObjectNode config = scufl2Tools
 				.configurationForActivityBoundToProcessor(proc, profile).getJsonAsObjectNode();
 		assertNotNull(config);
+		System.out.println(config);
 		assertEquals("",config.get("emptyCellValue").asText());
 		assertFalse(config.has("outputFormat"));
 		assertFalse(config.has("csvDelimiter"));
