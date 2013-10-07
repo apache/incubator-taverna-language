@@ -22,6 +22,8 @@ the `scufl2-rdfxml` module) does not guarantee it is valid or
 structurally sound. The experimental modules `scufl2-validation-*` will
 in the future be able to provide such verification.
 
+For more information, see the [SCUFL2 API][9] pages, the
+[Javadoc][10] and the [SCUFL2 examples][8].
 
 Requisites
 ----------
@@ -140,4 +142,5 @@ Experimental modules:
 [6]: http://www.gnu.org/licenses/lgpl-2.1.html
 [7]: http://www.mygrid.org.uk/dev/wiki/display/developer/Taverna+Workflow+Bundle
 [8]: https://github.com/mygrid/scufl2-examples
-[9]: http://www.mygrid.org.uk/dev/wiki/display/developer/SCUFL2-API
+[9]: http://www.mygrid.org.uk/dev/wiki/display/developer/SCUFL2+API
+[10]: http://mygrid.github.io/scufl2/api/0.12/
