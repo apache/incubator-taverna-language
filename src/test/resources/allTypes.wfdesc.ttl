@@ -1,30 +1,71 @@
-@base <http://ns.taverna.org.uk/2010/workflowBundle/0f6bc83f-13c9-4b92-a2c1-fd8260117788/workflow/All_types/> .
+@base <http://ns.taverna.org.uk/2010/workflowBundle/fef54d5c-8476-475e-9e08-04eb43ae427f/workflow/All_types/> .
 @prefix wfdesc: <http://purl.org/wf4ever/wfdesc#> .
 @prefix wf4ever: <http://purl.org/wf4ever/wf4ever#> .
+@prefix roterms: <http://purl.org/wf4ever/roterms#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix : <#> .
 
-<processor/theBeanshell/> a wfdesc:Process , wfdesc:Description , <http://www.w3.org/2002/07/owl#Thing> , wf4ever:BeanshellScript ;
-	wf4ever:script "s = \"a beanshell script\";" ;
+<processor/theBeanshell/> a wfdesc:Process , wfdesc:Description , owl:Thing , wf4ever:BeanshellScript ;
 	rdfs:label "theBeanshell" ;
-	wfdesc:hasOutput <processor/theBeanshell/out/s> .
+	wfdesc:hasOutput <processor/theBeanshell/out/s> ;
+	wf4ever:script "s = \"a beanshell script\";" .
 
-<processor/theTool/> a wfdesc:Process , wfdesc:Description , <http://www.w3.org/2002/07/owl#Thing> , wf4ever:CommandLineTool ;
-	wf4ever:command "echo \"Hello there\"" ;
+<../Workflow5/processor/Concatenate_two_strings/> a wfdesc:Process , wfdesc:Description , owl:Thing , wf4ever:BeanshellScript ;
+	rdfs:label "Concatenate_two_strings" ;
+	wfdesc:hasInput <../Workflow5/processor/Concatenate_two_strings/in/string1> ;
+	wfdesc:hasOutput <../Workflow5/processor/Concatenate_two_strings/out/output> ;
+	wf4ever:script "output = string1 + string2;" .
+
+<processor/cat/> a wfdesc:Process , wfdesc:Description , owl:Thing , wf4ever:CommandLineTool ;
+	rdfs:label "cat" ;
+	wfdesc:hasInput <processor/cat/in/First_file> .
+
+<processor/theTool/> a wfdesc:Process , wfdesc:Description , owl:Thing , wf4ever:CommandLineTool ;
 	rdfs:label "theTool" ;
 	wfdesc:hasInput <processor/theTool/in/STDIN> ;
 	wfdesc:hasOutput <processor/theTool/out/STDOUT> .
 
-<processor/theRscript/> a wfdesc:Process , wfdesc:Description , <http://www.w3.org/2002/07/owl#Thing> , wf4ever:RScript ;
-	wf4ever:script "\"some r-script\"" ;
+<processor/REST_Service/> a wfdesc:Process , wfdesc:Description , owl:Thing , wf4ever:RESTService ;
+	rdfs:label "REST_Service" ;
+	wfdesc:hasInput <processor/REST_Service/in/id> ;
+	wfdesc:hasOutput <processor/REST_Service/out/status> ;
+	wf4ever:rootURI "http://www.uniprot.org/"^^xsd:anyURI .
+
+<processor/theRscript/> a wfdesc:Process , wfdesc:Description , owl:Thing , wf4ever:RScript ;
 	rdfs:label "theRscript" ;
 	wfdesc:hasInput <processor/theRscript/in/in1> ;
-	wfdesc:hasOutput <processor/theRscript/out/out1> .
+	wfdesc:hasOutput <processor/theRscript/out/out1> ;
+	wf4ever:script "\"some r-script\"" .
 
-<processor/theWsdl/> a wfdesc:Process , wfdesc:Description , <http://www.w3.org/2002/07/owl#Thing> , wf4ever:SOAPService ;
-	wf4ever:wsdlURI "http://www.ebi.ac.uk/ws/services/urn:Dbfetch?wsdl"^^<http://www.w3.org/2001/XMLSchema#anyURI> ;
+<processor/theWsdl/> a wfdesc:Process , wfdesc:Description , owl:Thing , wf4ever:SOAPService ;
 	rdfs:label "theWsdl" ;
-	wfdesc:hasInput <processor/theWsdl/in/format> ;
-	wfdesc:hasOutput <processor/theWsdl/out/fetchBatchReturn> .
+	wfdesc:hasInput <processor/theWsdl/in/format> , <processor/theWsdl/in/ids> ;
+	wfdesc:hasOutput <processor/theWsdl/out/attachmentList> , <processor/theWsdl/out/fetchBatchReturn> ;
+	wf4ever:wsdlURI "http://www.ebi.ac.uk/ws/services/urn:Dbfetch?wsdl"^^xsd:anyURI ;
+	wf4ever:wsdlOperationName "fetchBatch" ;
+	wf4ever:rootURI "http://www.ebi.ac.uk/"^^xsd:anyURI .
+
+<datalink?from=processor/Nested_workflow/out/b&to=processor/XPath_Service/in/xml_text> a wfdesc:DataLink ;
+	wfdesc:hasSource <processor/Nested_workflow/out/b> ;
+	wfdesc:hasSink <processor/XPath_Service/in/xml_text> .
+
+<datalink?from=processor/REST_Service/out/status&to=processor/SpreadsheetImport/in/fileurl> a wfdesc:DataLink ;
+	wfdesc:hasSource <processor/REST_Service/out/status> ;
+	wfdesc:hasSink <processor/SpreadsheetImport/in/fileurl> .
+
+<datalink?from=processor/SpreadsheetImport/out/a1&to=processor/Nested_workflow/in/a> a wfdesc:DataLink ;
+	wfdesc:hasSource <processor/SpreadsheetImport/out/a1> ;
+	wfdesc:hasSink <processor/Nested_workflow/in/a> .
+
+<datalink?from=processor/Text_constant/out/value&to=processor/REST_Service/in/id> a wfdesc:DataLink ;
+	wfdesc:hasSource <processor/Text_constant/out/value> ;
+	wfdesc:hasSink <processor/REST_Service/in/id> .
+
+<datalink?from=processor/XPath_Service/out/nodelist&to=processor/theWsdl/in/ids> a wfdesc:DataLink ;
+	wfdesc:hasSource <processor/XPath_Service/out/nodelist> ;
+	wfdesc:hasSink <processor/theWsdl/in/ids> .
 
 <datalink?from=processor/theBeanshell/out/s&to=processor/theWsdl/in/format> a wfdesc:DataLink ;
 	wfdesc:hasSource <processor/theBeanshell/out/s> ;
@@ -38,18 +79,82 @@
 	wfdesc:hasSource <processor/theTool/out/STDOUT> ;
 	wfdesc:hasSink <processor/theRscript/in/in1> .
 
+<datalink?from=processor/theWsdl/out/attachmentList&to=processor/cat/in/First_file> a wfdesc:DataLink ;
+	wfdesc:hasSource <processor/theWsdl/out/attachmentList> ;
+	wfdesc:hasSink <processor/cat/in/First_file> .
+
 <datalink?from=processor/theWsdl/out/fetchBatchReturn&to=processor/theTool/in/STDIN> a wfdesc:DataLink ;
 	wfdesc:hasSource <processor/theWsdl/out/fetchBatchReturn> ;
 	wfdesc:hasSink <processor/theTool/in/STDIN> .
 
+<../Workflow5/datalink?from=in/a&to=processor/Concatenate_two_strings/in/string1> a wfdesc:DataLink ;
+	wfdesc:hasSource <../Workflow5/in/a> ;
+	wfdesc:hasSink <../Workflow5/processor/Concatenate_two_strings/in/string1> .
+
+<../Workflow5/datalink?from=processor/Concatenate_two_strings/out/output&to=out/b> a wfdesc:DataLink ;
+	wfdesc:hasSource <../Workflow5/processor/Concatenate_two_strings/out/output> ;
+	wfdesc:hasSink <../Workflow5/out/b> .
+
 <> a wfdesc:Workflow , wfdesc:Description , wfdesc:Process ;
 	rdfs:label "All_types" ;
 	wfdesc:hasOutput <out/out> ;
-	wfdesc:hasSubProcess <processor/theBeanshell/> , <processor/theRscript/> , <processor/theTool/> , <processor/theWsdl/> ;
-	wfdesc:hasDataLink <datalink?from=processor/theBeanshell/out/s&to=processor/theWsdl/in/format> , <datalink?from=processor/theRscript/out/out1&to=out/out> , <datalink?from=processor/theTool/out/STDOUT&to=processor/theRscript/in/in1> , <datalink?from=processor/theWsdl/out/fetchBatchReturn&to=processor/theTool/in/STDIN> .
+	wfdesc:hasSubProcess <processor/Nested_workflow/> , <processor/REST_Service/> , <processor/SpreadsheetImport/> , <processor/Text_constant/> , <processor/XPath_Service/> , <processor/cat/> , <processor/theBeanshell/> , <processor/theRscript/> , <processor/theTool/> , <processor/theWsdl/> ;
+	wfdesc:hasDataLink <datalink?from=processor/Nested_workflow/out/b&to=processor/XPath_Service/in/xml_text> , <datalink?from=processor/REST_Service/out/status&to=processor/SpreadsheetImport/in/fileurl> , <datalink?from=processor/SpreadsheetImport/out/a1&to=processor/Nested_workflow/in/a> , <datalink?from=processor/Text_constant/out/value&to=processor/REST_Service/in/id> , <datalink?from=processor/XPath_Service/out/nodelist&to=processor/theWsdl/in/ids> , <datalink?from=processor/theBeanshell/out/s&to=processor/theWsdl/in/format> , <datalink?from=processor/theRscript/out/out1&to=out/out> , <datalink?from=processor/theTool/out/STDOUT&to=processor/theRscript/in/in1> , <datalink?from=processor/theWsdl/out/attachmentList&to=processor/cat/in/First_file> , <datalink?from=processor/theWsdl/out/fetchBatchReturn&to=processor/theTool/in/STDIN> .
 
 <out/out> a wfdesc:Output , wfdesc:Description , wfdesc:Input ;
 	rdfs:label "out" .
+
+<processor/Nested_workflow/> a wfdesc:Process , wfdesc:Description , <http://www.w3.org/ns/prov#Entity> , owl:Thing , wfdesc:Workflow ;
+	rdfs:label "Nested_workflow" ;
+	wfdesc:hasInput <processor/Nested_workflow/in/a> ;
+	wfdesc:hasOutput <processor/Nested_workflow/out/b> ;
+	<http://www.w3.org/ns/prov#specializationOf> <../Workflow5/> .
+
+<processor/Nested_workflow/in/a> a wfdesc:Input , wfdesc:Description , <http://www.w3.org/ns/prov#Entity> ;
+	rdfs:label "a" ;
+	<http://www.w3.org/ns/prov#specializationOf> <../Workflow5/in/a> .
+
+<processor/Nested_workflow/out/b> a wfdesc:Output , wfdesc:Description , <http://www.w3.org/ns/prov#Entity> ;
+	rdfs:label "b" ;
+	<http://www.w3.org/ns/prov#specializationOf> <../Workflow5/out/b> .
+
+<processor/REST_Service/in/id> a wfdesc:Input , wfdesc:Description ;
+	rdfs:label "id" .
+
+<processor/REST_Service/out/status> a wfdesc:Output , wfdesc:Description ;
+	rdfs:label "status" .
+
+<processor/SpreadsheetImport/> a wfdesc:Process , wfdesc:Description ;
+	rdfs:label "SpreadsheetImport" ;
+	wfdesc:hasInput <processor/SpreadsheetImport/in/fileurl> ;
+	wfdesc:hasOutput <processor/SpreadsheetImport/out/a1> .
+
+<processor/SpreadsheetImport/in/fileurl> a wfdesc:Input , wfdesc:Description ;
+	rdfs:label "fileurl" .
+
+<processor/SpreadsheetImport/out/a1> a wfdesc:Output , wfdesc:Description ;
+	rdfs:label "a1" .
+
+<processor/Text_constant/> a wfdesc:Process , wfdesc:Description ;
+	rdfs:label "Text_constant" ;
+	wfdesc:hasOutput <processor/Text_constant/out/value> .
+
+<processor/Text_constant/out/value> a wfdesc:Output , wfdesc:Description ;
+	rdfs:label "value" .
+
+<processor/XPath_Service/> a wfdesc:Process , wfdesc:Description ;
+	rdfs:label "XPath_Service" ;
+	wfdesc:hasInput <processor/XPath_Service/in/xml_text> ;
+	wfdesc:hasOutput <processor/XPath_Service/out/nodelist> .
+
+<processor/XPath_Service/in/xml_text> a wfdesc:Input , wfdesc:Description ;
+	rdfs:label "xml_text" .
+
+<processor/XPath_Service/out/nodelist> a wfdesc:Output , wfdesc:Description ;
+	rdfs:label "nodelist" .
+
+<processor/cat/in/First_file> a wfdesc:Input , wfdesc:Description ;
+	rdfs:label "First_file" .
 
 <processor/theBeanshell/out/s> a wfdesc:Output , wfdesc:Description ;
 	rdfs:label "s" .
@@ -69,5 +174,31 @@
 <processor/theWsdl/in/format> a wfdesc:Input , wfdesc:Description ;
 	rdfs:label "format" .
 
+<processor/theWsdl/in/ids> a wfdesc:Input , wfdesc:Description ;
+	rdfs:label "ids" .
+
+<processor/theWsdl/out/attachmentList> a wfdesc:Output , wfdesc:Description ;
+	rdfs:label "attachmentList" .
+
 <processor/theWsdl/out/fetchBatchReturn> a wfdesc:Output , wfdesc:Description ;
 	rdfs:label "fetchBatchReturn" .
+
+<../Workflow5/> a wfdesc:Workflow , wfdesc:Description , wfdesc:Process , <http://www.w3.org/ns/prov#Entity> ;
+	rdfs:label "Workflow5" ;
+	wfdesc:hasInput <../Workflow5/in/a> ;
+	wfdesc:hasOutput <../Workflow5/out/b> ;
+	wfdesc:hasSubProcess <../Workflow5/processor/Concatenate_two_strings/> ;
+	wfdesc:hasDataLink <../Workflow5/datalink?from=processor/Concatenate_two_strings/out/output&to=out/b> , <../Workflow5/datalink?from=in/a&to=processor/Concatenate_two_strings/in/string1> .
+
+<../Workflow5/in/a> a wfdesc:Input , wfdesc:Description , wfdesc:Output , <http://www.w3.org/ns/prov#Entity> ;
+	rdfs:label "a" .
+
+<../Workflow5/out/b> a wfdesc:Output , wfdesc:Description , wfdesc:Input , <http://www.w3.org/ns/prov#Entity> ;
+	rdfs:label "b" .
+
+<../Workflow5/processor/Concatenate_two_strings/in/string1> a wfdesc:Input , wfdesc:Description ;
+	rdfs:label "string1" .
+
+<../Workflow5/processor/Concatenate_two_strings/out/output> a wfdesc:Output , wfdesc:Description ;
+	rdfs:label "output" .
+

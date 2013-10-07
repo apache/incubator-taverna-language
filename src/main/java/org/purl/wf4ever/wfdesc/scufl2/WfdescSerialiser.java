@@ -210,7 +210,7 @@ public class WfdescSerialiser {
                         if (type.equals(TOOL)) {
                             CommandLineTool cmd = getSesameManager().designateEntity(process, CommandLineTool.class);
                             JsonNode desc = json.get("toolDescription");
-//                            System.out.println(json);
+                            System.out.println(json);
                             JsonNode command = desc.get("command");
                             if (command != null) { 
                                 cmd.getWfCommand().add(command.asText());
@@ -227,12 +227,18 @@ public class WfdescSerialiser {
                             // ProcessorPorts specialize the WorkflowPort 
                             for (ProcessorPortBinding portBinding : b.getInputPortBindings()) {
                                 // Map from activity port (not in wfdesc) to WorkflowPort
-                                WorkflowPort wfPort = nestedWf.getInputPorts().getByName(portBinding.getBoundActivityPort().getName());                                     
+                                WorkflowPort wfPort = nestedWf.getInputPorts().getByName(portBinding.getBoundActivityPort().getName());
+                                if (wfPort == null) { 
+                                    continue;
+                                }
                                 specializationOf(portBinding.getBoundProcessorPort(), wfPort);                                                                                         
                             }
                             for (ProcessorPortBinding portBinding : b.getOutputPortBindings()) {
-                                WorkflowPort wfPort = nestedWf.getOutputPorts().getByName(portBinding.getBoundActivityPort().getName());                                        
-                                specializationOf(portBinding.getBoundProcessorPort(), portBinding.getBoundActivityPort());                         
+                                WorkflowPort wfPort = nestedWf.getOutputPorts().getByName(portBinding.getBoundActivityPort().getName());
+                                if (wfPort == null) { 
+                                    continue;
+                                }
+                                specializationOf(portBinding.getBoundProcessorPort(), wfPort);                         
                             }
                         }
                     } catch (IndexOutOfBoundsException ex) {
@@ -297,17 +303,18 @@ public class WfdescSerialiser {
 			}
 			ContextAwareConnection connection = getSesameManager().getConnection();
 			try {
-				connection.setNamespace("wfdesc",
-						"http://purl.org/wf4ever/wfdesc#");
-				connection.setNamespace("wf4ever",
-						"http://purl.org/wf4ever/wf4ever#");
-                connection.setNamespace("roterms",
-                        "http://purl.org/wf4ever/roterms#");
 
 				connection.setNamespace("rdfs",
 						"http://www.w3.org/2000/01/rdf-schema#");
 				connection.setNamespace("xsd", "http://www.w3.org/2001/XMLSchema#");
 				connection.setNamespace("owl", "http://www.w3.org/2002/07/owl#");
+				connection.setNamespace("prov", "http://www.w3.org/ns/prov#");
+				connection.setNamespace("wfdesc",
+				        "http://purl.org/wf4ever/wfdesc#");
+				connection.setNamespace("wf4ever",
+				        "http://purl.org/wf4ever/wf4ever#");
+				connection.setNamespace("roterms",
+				        "http://purl.org/wf4ever/roterms#");
                 connection.setNamespace("", "#");
 
 				
