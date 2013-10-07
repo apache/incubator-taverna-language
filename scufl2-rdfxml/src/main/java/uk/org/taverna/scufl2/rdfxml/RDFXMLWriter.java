@@ -42,6 +42,11 @@ public class RDFXMLWriter implements WorkflowBundleWriter {
 		RDFXMLWriter.uriTools = uriTools;
 	}
 
+	/**
+	 * Version of Workflow Bundle format
+	 */
+    public final String WORKFLOW_BUNDLE_VERSION = "0.3.0";
+
 	@Override
 	public Set<String> getMediaTypes() {
 		return Collections
@@ -114,7 +119,7 @@ public class RDFXMLWriter implements WorkflowBundleWriter {
 		}
 		
 		if (ucfPackage.getPackageMediaType().equals(APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE)) {
-			ucfPackage.setRootFile(WORKFLOW_BUNDLE_RDF);
+			ucfPackage.setRootFile(WORKFLOW_BUNDLE_RDF, WORKFLOW_BUNDLE_VERSION);
 		}
 
 		String path = HISTORY + "wfbundle" + REVISIONS + RDF;
