@@ -25,40 +25,40 @@ import org.openrdf.sail.memory.MemoryStore;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
 
-public class TestAllTypes {
+public class TestNested {
 
-	private static final String ALLTYPES_T2FLOW = "/allTypes.t2flow";
-	private File allTypesWfdesc;
+	private static final String NESTED_T2FLOW = "/nested.t2flow";
+	private File nestedWfdesc;
 
-	private URL allTypesT2flow;
+	private URL nestedT2flow;
 
 	@Before
 	public void loadT2flow() throws Exception {
-		allTypesT2flow = getClass().getResource(ALLTYPES_T2FLOW);
-		assertNotNull("Could not load " + ALLTYPES_T2FLOW, allTypesT2flow);
+		nestedT2flow = getClass().getResource(NESTED_T2FLOW);
+		assertNotNull("Could not load " + NESTED_T2FLOW, nestedT2flow);
 	}
 
 	@Before
 	public void tempFile() throws IOException {
-		allTypesWfdesc = File.createTempFile("scufl2-wfdesc", ".ttl");
-		allTypesWfdesc.delete();
+		nestedWfdesc = File.createTempFile("scufl2-wfdesc", ".ttl");
+		nestedWfdesc.delete();
 //		allTypesWfdesc.deleteOnExit();
-		 System.out.println(allTypesWfdesc);
+		 System.out.println(nestedWfdesc);
 	}
 
 	@Test
 	public void convert() throws Exception {
-		assertFalse(allTypesWfdesc.exists());
+		assertFalse(nestedWfdesc.exists());
 		WorkflowBundleIO io = new WorkflowBundleIO();
-		WorkflowBundle wfBundle = io.readBundle(allTypesT2flow, null);
-		io.writeBundle(wfBundle, allTypesWfdesc,
+		WorkflowBundle wfBundle = io.readBundle(nestedT2flow, null);
+		io.writeBundle(wfBundle, nestedWfdesc,
 				"text/vnd.wf4ever.wfdesc+turtle");
-		assertTrue(allTypesWfdesc.exists());
+		assertTrue(nestedWfdesc.exists());
 
 		Repository myRepository = new SailRepository(new MemoryStore());
 		myRepository.initialize();
 		RepositoryConnection con = myRepository.getConnection();
-		con.add(allTypesWfdesc, allTypesWfdesc.toURI().toASCIIString(),
+		con.add(nestedWfdesc, nestedWfdesc.toURI().toASCIIString(),
 				RDFFormat.TURTLE);
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -72,7 +72,9 @@ public class TestAllTypes {
 						+ "SELECT ?wf ?proc ?procType ?procLabel "
 						+ "WHERE {"
 						+ "	?wf a wfdesc:Workflow;"
-						+ "       wfdesc:hasSubProcess ?proc. "
+						+ "       wfdesc:hasSubProcess ?nested . "
+						+ " ?nested a wfdesc:Workflow ;" +
+						"         wfdesc:hasSubProcess ?proc ."
 						+ " ?proc rdfs:label ?procLabel ."
 						// Ignore non-specific types
 						+ "OPTIONAL { ?proc a ?procType . FILTER (?procType != wfdesc:Description && ?procType != wfdesc:Process && ?procType != owl:Thing) }"
@@ -90,14 +92,12 @@ public class TestAllTypes {
 			}
 			String proc = binding.path("proc").path("value").asText();
 			String procType = binding.path("procType").path("value").asText();
-			String procTypeShort = null;
+			String procTypeshort = null;
 			if (procType != null) {
-                procTypeShort = URI.create(procType).getFragment();
-			} else {
-			    System.err.println("No type for "  + proc);
+			    procTypeshort = URI.create(procType).getFragment();
 			}
 			String procLabel = binding.path("procLabel").path("value").asText();
-			System.out.println(" Processor " + procLabel + " (" + procTypeShort
+			System.out.println(" Processor " + procLabel + " (" + procTypeshort
 					+ ")");
 			System.out.println("   " + proc + " " + procType);
 		}

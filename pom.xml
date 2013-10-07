@@ -110,7 +110,12 @@
                                     <arg value="-b" />
                                     <arg value="org.purl.wf4ever.wfprov=http://purl.org/wf4ever/wfprov#" />
                                     <arg value="-b" />
+                                    <arg value="org.w3.prov=http://www.w3.org/ns/prov#" />
+                                    <arg value="-b" />
                                     <arg value="org.purl.wf4ever.roterms=http://purl.org/wf4ever/roterms#" />
+                                    <arg value="-b" />
+                                    <arg value="org.w3.rdfs=http://www.w3.org/2000/01/rdf-schema#" />
+                                    
                                         
 
                                     <!-- <arg value="-p" /> <arg value="wfdesc" /> -->
@@ -124,6 +129,8 @@
                                     <arg value="src/main/resources/org/purl/wf4ever/wfdesc/wfdesc.ttl" />
                                     <arg value="src/main/resources/org/purl/wf4ever/wfdesc/wf4ever.ttl" />
                                     <arg value="src/main/resources/com/xmlns/foaf/foaf.rdf" />
+                                    <arg value="src/main/resources/org/w3/prov-o.ttl" />
+
                                         <!-- 
                                          -->
                                     <arg value="src/main/resources/org/purl/wf4ever/wfdesc/roterms.ttl" />

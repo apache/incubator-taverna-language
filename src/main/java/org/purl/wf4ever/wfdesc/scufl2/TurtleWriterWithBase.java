@@ -45,4 +45,6 @@ public class TurtleWriterWithBase extends TurtleWriter {
 		writer.write("> .");
 		writer.writeEOL();
 	}
+	
+	
 }
