@@ -3,6 +3,7 @@ package uk.org.taverna.scufl2.translator.t2flow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.net.URL;
 
@@ -33,8 +34,17 @@ public class TestSpreadsheetActivityParser {
 		ObjectNode config = scufl2Tools
 				.configurationForActivityBoundToProcessor(proc, profile).getJsonAsObjectNode();
 		assertNotNull(config);
-		System.out.println(config);
+		// 		System.out.println(config);
+		assertEquals(0, config.get("columnRange").get("start").asInt());
+		assertEquals(1, config.get("columnRange").get("end").asInt());
+		
+		assertEquals(0, config.get("rowRange").get("start").asInt());
+        assertEquals(-1, config.get("rowRange").get("end").asInt());
 		assertEquals("",config.get("emptyCellValue").asText());
+		assertEquals("EMPTY_STRING", config.get("emptyCellPolicy").asText());
+		assertTrue(config.get("allRows").asBoolean());
+        assertFalse(config.get("excludeFirstRow").asBoolean());
+		assertTrue(config.get("ignoreBlankRows").asBoolean());
 		assertFalse(config.has("outputFormat"));
 		assertFalse(config.has("csvDelimiter"));
 	}
