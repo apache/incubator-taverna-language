@@ -97,7 +97,7 @@ public class SpreadsheetActivityParser extends AbstractActivityParser {
 
 	private void makeRange(SpreadsheetRange range, ObjectNode rangeJson) {
 		rangeJson.put("start", range.getStart().longValue());
-        rangeJson.put("end", range.getStart().longValue());
+        rangeJson.put("end", range.getEnd().longValue());
         
         ArrayNode excludes = rangeJson.arrayNode();
 		for (SpreadsheetRange excludesRange : range.getExcludes().getExclude()) {
