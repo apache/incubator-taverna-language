@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
@@ -70,9 +71,18 @@ public class TestRDFXMLWriter {
 		bundleIO.writeBundle(workflowBundle, bundleFile,
 				APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE);
 		UCFPackage ucfPackage = new UCFPackage(bundleFile);
+		verifyRootFile(ucfPackage);
 		verifyPackageStructure(ucfPackage);
 		// TODO: Check RDF/XML using xpath
 	}
+
+    private void verifyRootFile(UCFPackage ucfPackage) {
+        List<ResourceEntry> rootFiles = ucfPackage.getRootFiles();
+        assertEquals(1, rootFiles.size());
+		assertEquals("workflowBundle.rdf", rootFiles.get(0).getPath());
+		assertEquals("application/rdf+xml", rootFiles.get(0).getMediaType());
+		assertEquals("0.3.0", rootFiles.get(0).getVersion());
+    }
 
 	
 	@Test
