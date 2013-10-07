@@ -3,7 +3,7 @@
   <parent>
     <artifactId>scufl2</artifactId>
     <groupId>uk.org.taverna.scufl2</groupId>
-    <version>0.12.1</version>
+    <version>1.0.0-SNAPSHOT</version>
   </parent>
   <packaging>bundle</packaging>
   <artifactId>scufl2-validation</artifactId>
