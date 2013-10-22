@@ -426,6 +426,7 @@ public class T2FlowParser {
 			configuration.setName(parserState.get().getCurrentActivity()
 					.getName());
 		} else {
+		    // TODO: Create processor JSON configuration instead
 			DispatchStackLayer layer = (DispatchStackLayer) parserState.get().getCurrentConfigurable();
 			configuration.setName(parserState.get().getCurrentProcessor().getName() +
 					"-dispatch-" + parserState.get().getCurrentDispatchStack().size());
@@ -957,17 +958,11 @@ public class T2FlowParser {
 		return newLinks;
 	}
 
-	protected uk.org.taverna.scufl2.api.dispatchstack.DispatchStack parseDispatchStack(
+	protected void parseDispatchStack(
 			DispatchStack dispatchStack) throws ReaderException {
-		uk.org.taverna.scufl2.api.dispatchstack.DispatchStack newStack = new uk.org.taverna.scufl2.api.dispatchstack.DispatchStack();
-		parserState.get().setCurrentDispatchStack(newStack);
-		try { 
-			for (DispatchLayer dispatchLayer : dispatchStack.getDispatchLayer()) {
-				DispatchStackLayer layer = parseDispatchStack(dispatchLayer);
-				newStack.add(layer);
-			}
-		} finally {
-			parserState.get().setCurrentDispatchStack(null);
+		for (DispatchLayer dispatchLayer : dispatchStack.getDispatchLayer()) {
+			DispatchStackLayer layer = parseDispatchStack(dispatchLayer);
+			newStack.add(layer);
 		}
 		return newStack;
 	}

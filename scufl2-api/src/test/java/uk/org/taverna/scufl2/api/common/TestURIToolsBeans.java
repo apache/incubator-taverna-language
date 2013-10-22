@@ -119,21 +119,6 @@ public class TestURIToolsBeans {
 	}
 
 	@Test
-	public void uriForDispatchStack() throws Exception {
-		URI uri = uriTools.uriForBean(wfBundle.getMainWorkflow()
-				.getProcessors().getByName("Hello").getDispatchStack());
-		assertEquals(HELLO_URI + "dispatchstack/", uri.toASCIIString());
-	}
-
-	@Test
-	public void uriForDispatchStackLayer() throws Exception {
-		Processor hello = wfBundle.getMainWorkflow().getProcessors()
-				.getByName("Hello");
-		URI uri = uriTools.uriForBean(hello.getDispatchStack().get(0));
-		assertEquals(HELLO_URI + "dispatchstack/0/", uri.toASCIIString());
-	}
-
-	@Test
 	public void uriForIterationStrategyCross() throws Exception {
 		Processor hello = wfBundle.getMainWorkflow().getProcessors()
 				.getByName("Hello");

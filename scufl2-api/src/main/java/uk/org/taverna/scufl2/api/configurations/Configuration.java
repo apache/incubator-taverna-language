@@ -15,7 +15,6 @@ import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
-import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
 import uk.org.taverna.scufl2.api.port.Port;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 
@@ -97,7 +96,7 @@ public class Configuration extends AbstractNamed implements Child<Profile>, Type
 
 	/**
 	 * Return the {@link Configurable} workflow bean that is configured. Typically an
-	 * {@link Activity} or {@link DispatchStackLayer}, but in theory also {@link Processor},
+	 * {@link Activity} or {@link Processor},
 	 * {@link Workflow} and {@link Port} can be configured.
 	 * 
 	 * @return the <code>Configurable</code> <code>WorkflowBean</code> that is configured

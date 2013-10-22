@@ -108,6 +108,7 @@ public class WorkflowParser extends AbstractParser {
 
 	protected void parseDispatchStack(DispatchStack original) {
 		uk.org.taverna.scufl2.api.dispatchstack.DispatchStack stack = new uk.org.taverna.scufl2.api.dispatchstack.DispatchStack();
+		// FIXME: Legacy code - support parsing old dispatch stack configurations
 		if (original.getType() != null) {
 			stack.setType(getParserState().getCurrentBase().resolve(
 					original.getType().getResource()));
@@ -131,6 +132,7 @@ public class WorkflowParser extends AbstractParser {
 
 	protected void parseDispatchStackLayer(DispatchStackLayer original) {
 		uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer layer = new uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer();
+        // FIXME: Legacy code - support parsing old dispatch stack configurations
 		layer.setType(getParserState().getCurrentBase().resolve(
 				original.getType().getResource()));
 		layer.setParent(getParserState().getCurrent(

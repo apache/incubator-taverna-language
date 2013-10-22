@@ -43,30 +43,6 @@ public class TestRDFXMLReader {
 		assertEquals("HelloWorld", workflowBundle.getName());
 	}
 
-	@Test
-	public void dispatchStack() throws Exception {
-		Processor hello = workflowBundle.getMainWorkflow().getProcessors()
-				.getByName("Hello");
-		assertEquals(
-				"http://ns.taverna.org.uk/2010/taverna/2.2/DefaultDispatchStack",
-				hello.getDispatchStack().getType().toASCIIString());
-		assertEquals(7, hello.getDispatchStack().size());
-		assertEquals("http://ns.taverna.org.uk/2010/scufl2/taverna#Failover",
-				hello.getDispatchStack().get(3).getType()
-						.toASCIIString());
-	}
-
-
-	@Test
-	public void dispatchStackWait4Me() throws Exception {
-		Processor wait4me = workflowBundle.getMainWorkflow().getProcessors()
-				.getByName("wait4me");
-		assertEquals(
-				"http://ns.taverna.org.uk/2010/scufl2/taverna#defaultDispatchStack",
-				wait4me.getDispatchStack().getType().toASCIIString());
-		assertEquals(0, wait4me.getDispatchStack().size());
-	}
-
 	@Before
 	public void exampleBundle() throws ReaderException, IOException {
 		String name = EXAMPLE_SCUFL2;

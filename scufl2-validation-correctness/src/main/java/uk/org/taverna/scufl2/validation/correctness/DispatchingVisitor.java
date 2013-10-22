@@ -19,8 +19,6 @@ import uk.org.taverna.scufl2.api.core.ControlLink;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
-import uk.org.taverna.scufl2.api.dispatchstack.DispatchStack;
-import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
 import uk.org.taverna.scufl2.api.iterationstrategy.CrossProduct;
 import uk.org.taverna.scufl2.api.iterationstrategy.DotProduct;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyNode;
@@ -134,10 +132,6 @@ public abstract class DispatchingVisitor extends Visitor.VisitorWithPath {
 			visitCrossProduct((CrossProduct) bean);
 		}  else if (bean instanceof DataLink) {
 			visitDataLink((DataLink) bean);
-		} else if (bean instanceof DispatchStack) {
-			visitDispatchStack((DispatchStack) bean);
-		} else if (bean instanceof DispatchStackLayer) {
-			visitDispatchStackLayer((DispatchStackLayer) bean);
 		} else if (bean instanceof DotProduct) {
 			visitDotProduct((DotProduct) bean);
 		} else if (bean instanceof InputActivityPort) {
@@ -209,10 +203,6 @@ public abstract class DispatchingVisitor extends Visitor.VisitorWithPath {
 	public abstract void visitInputActivityPort(InputActivityPort bean);
 
 	public abstract void visitDotProduct(DotProduct bean);
-
-	public abstract void visitDispatchStackLayer(DispatchStackLayer bean);
-
-	public abstract void visitDispatchStack(DispatchStack bean);
 
 	public abstract void visitDataLink(DataLink bean);
 

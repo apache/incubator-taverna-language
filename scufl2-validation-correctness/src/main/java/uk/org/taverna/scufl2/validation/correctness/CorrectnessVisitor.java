@@ -28,8 +28,6 @@ import uk.org.taverna.scufl2.api.core.ControlLink;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
-import uk.org.taverna.scufl2.api.dispatchstack.DispatchStack;
-import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
 import uk.org.taverna.scufl2.api.iterationstrategy.CrossProduct;
 import uk.org.taverna.scufl2.api.iterationstrategy.DotProduct;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyNode;
@@ -308,24 +306,6 @@ public class CorrectnessVisitor extends DispatchingVisitor {
 	}
 
 	/* (non-Javadoc)
-	 * @see uk.org.taverna.scufl2.validation.correctness.DispatchingVisitor#visitDispatchStack(uk.org.taverna.scufl2.api.dispatchstack.DispatchStack)
-	 */
-	@Override
-	public void visitDispatchStack(DispatchStack bean) {
-		// All done in Child
-		
-		// The type needs sorting out. Is it mandatory?
-	}
-
-	/* (non-Javadoc)
-	 * @see uk.org.taverna.scufl2.validation.correctness.DispatchingVisitor#visitDispatchStackLayer(uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer)
-	 */
-	@Override
-	public void visitDispatchStackLayer(DispatchStackLayer bean) {
-		// All done in Typed and Child
-	}
-
-	/* (non-Javadoc)
 	 * @see uk.org.taverna.scufl2.validation.correctness.DispatchingVisitor#visitDotProduct(uk.org.taverna.scufl2.api.iterationstrategy.DotProduct)
 	 */
 	@Override
@@ -569,9 +549,6 @@ public class CorrectnessVisitor extends DispatchingVisitor {
 		if (checkComplete) {
 			if (bean.getIterationStrategyStack() == null) {
 				listener.nullField(bean, "iterationStrategyStack");
-			}
-			if (bean.getDispatchStack() == null) {
-				listener.nullField(bean, "dispatchStack");
 			}
 		}
 	}

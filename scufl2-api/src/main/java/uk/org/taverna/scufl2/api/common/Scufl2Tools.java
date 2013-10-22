@@ -13,8 +13,6 @@ import java.util.Set;
 
 import javax.xml.bind.PropertyException;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.annotation.Annotation;
 import uk.org.taverna.scufl2.api.common.Visitor.VisitorWithPath;
@@ -25,7 +23,6 @@ import uk.org.taverna.scufl2.api.core.ControlLink;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
-import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
 import uk.org.taverna.scufl2.api.port.ActivityPort;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.InputPort;
@@ -42,6 +39,8 @@ import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Utility methods for dealing with SCUFL2 models
@@ -374,22 +373,6 @@ public class Scufl2Tools {
 			}
 
 		});
-	}
-
-	public DispatchStackLayer dispatchStackByType(Processor processor, URI type) {
-		DispatchStackLayer candidate = null;
-		for (DispatchStackLayer layer : processor.getDispatchStack()) {
-			if (layer.getType().equals(type)) {
-				if (candidate != null) {
-					throw new IllegalStateException(
-							"Found multiple dispatch stack layers of type "
-									+ type + " in " + processor);
-				}
-				candidate = layer;
-			}
-		}
-		return candidate;
-
 	}
 
 	/**

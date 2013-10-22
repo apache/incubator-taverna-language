@@ -2,9 +2,6 @@ package uk.org.taverna.scufl2.api;
 
 import java.net.URI;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
@@ -13,8 +10,6 @@ import uk.org.taverna.scufl2.api.core.BlockingControlLink;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
-import uk.org.taverna.scufl2.api.dispatchstack.DispatchStack;
-import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
 import uk.org.taverna.scufl2.api.iterationstrategy.CrossProduct;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
 import uk.org.taverna.scufl2.api.iterationstrategy.PortNode;
@@ -28,6 +23,9 @@ import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
+
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class ExampleWorkflow {
 
@@ -73,27 +71,6 @@ public class ExampleWorkflow {
 				"hello = \"Hello, \" + personName;\n"
 								+ "JOptionPane.showMessageDialog(null, hello);");
 		return configuration;
-	}
-
-	public DispatchStack makeDispatchStack() {
-
-		// See scufl2-rdf/src/main/resources/taverna-2.2.ttl
-
-		DispatchStack dispatchStack = new DispatchStack();
-		new DispatchStackLayer(dispatchStack,
-				TAVERNA_2_2.resolve("Parallelise"));
-		new DispatchStackLayer(dispatchStack,
-				TAVERNA_2_2.resolve("ErrorBounce"));
-		new DispatchStackLayer(dispatchStack, TAVERNA_2_2.resolve("Failover"));
-		new DispatchStackLayer(dispatchStack, TAVERNA_2_2.resolve("Retry"));
-		new DispatchStackLayer(dispatchStack, TAVERNA_2_2.resolve("Stop"));
-		new DispatchStackLayer(dispatchStack, TAVERNA_2_2.resolve("Invoke"));
-
-		// TODO: Should not be included, perhaps.. as it would not be changed
-		// if the stack is modified!
-		dispatchStack.setType(TAVERNA_2_2.resolve("DefaultDispatchStack"));
-
-		return dispatchStack;
 	}
 
 	public IterationStrategyStack makeIterationStrategyStack(
@@ -169,9 +146,6 @@ public class ExampleWorkflow {
 		processorGreeting.setDepth(0);
 		processorGreeting.setGranularDepth(0);
 
-		// FIXME: Should not need to make default dispatch stack
-		makeDispatchStack().setParent(processor);
-
 		// FIXME: Should not need to make default iteration stack
 		makeIterationStrategyStack(processorName).setParent(processor);
 
@@ -180,9 +154,6 @@ public class ExampleWorkflow {
 
 	public Processor makeProcessor2() {
 		wait4me = new Processor(workflow, "wait4me");
-
-		// FIXME: Should not need to make default dispatch stack
-		makeDispatchStack().setParent(wait4me);
 
 		// FIXME: Should not need to make default iteration stack
 		makeIterationStrategyStack().setParent(wait4me);

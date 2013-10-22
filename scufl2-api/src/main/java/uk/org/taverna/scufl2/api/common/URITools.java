@@ -10,13 +10,10 @@ import java.util.Map;
 import uk.org.taverna.scufl2.api.annotation.Annotation;
 import uk.org.taverna.scufl2.api.annotation.Revision;
 import uk.org.taverna.scufl2.api.common.Visitor.VisitorWithPath;
-import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.BlockingControlLink;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Workflow;
-import uk.org.taverna.scufl2.api.dispatchstack.DispatchStack;
-import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyNode;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
 import uk.org.taverna.scufl2.api.port.InputPort;
@@ -211,15 +208,6 @@ public class URITools {
 						"{0}?{1}={2}&{3}={4}", "control", "block", start,
 						"untilFinished", after);
 				return wfUri.resolve(conditionUri);
-			} else if (bean instanceof DispatchStack) {
-				return relationURI;
-			} else if (bean instanceof DispatchStackLayer) {
-				DispatchStackLayer dispatchStackLayer = (DispatchStackLayer) bean;
-				parent = dispatchStackLayer.getParent();
-				@SuppressWarnings("unchecked")
-				List<IterationStrategyNode> parentList = (List<IterationStrategyNode>) parent;
-				int index = parentList.indexOf(dispatchStackLayer);
-				return parentUri.resolve(index + "/");
 			} else if (bean instanceof IterationStrategyStack) {
 				return relationURI;
 			} else if (bean instanceof IterationStrategyNode) {

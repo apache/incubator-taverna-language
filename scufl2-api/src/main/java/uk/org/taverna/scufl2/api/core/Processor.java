@@ -11,21 +11,24 @@ import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.Ported;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
-import uk.org.taverna.scufl2.api.dispatchstack.DispatchStack;
+import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
 import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 
 /**
- * A <code>Processor</code> is a {@link Workflow} component that controls the invocation of
- * activities.
+ * A <code>Processor</code> is a {@link Workflow} component that controls the
+ * invocation of activities.
  * <p>
- * When a <code>Workflow</code> is run, a particular {@link Activity} will be specified as bound to
- * the <code>Processor</code> by the {@link Profile}.
+ * When a <code>Workflow</code> is run, a particular {@link Activity} will be
+ * specified as bound to the <code>Processor</code> by the {@link Profile}.
  * <p>
- * A <code>Processor</code> contains an {@link IterationStrategyStack} and a {@link DispatchStack}
- * and may have {@link InputProcessorPort input} and {@link OutputProcessorPort output} ports.
+ * A <code>Processor</code> contains an {@link IterationStrategyStack} and may
+ * have {@link InputProcessorPort input} and {@link OutputProcessorPort output}
+ * ports. The <code>Processor</code> can be configured with a
+ * {@link Configuration} within each {@link Profile} to specify execution
+ * details such as retries or parallel jobs.
  * 
  * @author Alan R Williams
  * @author Stian Soiland-Reyes
@@ -35,7 +38,6 @@ public class Processor extends AbstractNamed implements Child<Workflow>, Ported 
 	private final NamedSet<OutputProcessorPort> outputPorts = new NamedSet<OutputProcessorPort>();
 	private final NamedSet<InputProcessorPort> inputPorts = new NamedSet<InputProcessorPort>();
 	private IterationStrategyStack iterationStrategyStack = new IterationStrategyStack(this);
-	private DispatchStack dispatchStack = new DispatchStack(this);
 	private Workflow parent;
 
 	/**
@@ -77,23 +79,10 @@ public class Processor extends AbstractNamed implements Child<Workflow>, Ported 
 			if (getIterationStrategyStack() != null) {
 				getIterationStrategyStack().accept(visitor);
 			}
-			if (getDispatchStack() != null) {
-				getDispatchStack().accept(visitor);
-			}
 		}
 		return visitor.visitLeave(this);
 	}
 
-	/**
-	 * Returns the <code>DispatchStack</code> or <code>null</code> if there is no
-	 * <code>DispatchStack</code>.
-	 * 
-	 * @return the <code>DispatchStack</code> or <code>null</code> if there is no
-	 *         <code>DispatchStack</code>
-	 */
-	public DispatchStack getDispatchStack() {
-		return dispatchStack;
-	}
 
 	/**
 	 * Returns the <code>NamedSet</code> of input ports.
@@ -138,19 +127,6 @@ public class Processor extends AbstractNamed implements Child<Workflow>, Ported 
 	@Override
 	public Workflow getParent() {
 		return parent;
-	}
-
-	/**
-	 * Sets the <code>DispatchStack</code>.
-	 * 
-	 * @param dispatchStack
-	 *            the <code>DispatchStack</code>. Can be <code>null</code>
-	 */
-	public void setDispatchStack(DispatchStack dispatchStack) {
-		this.dispatchStack = dispatchStack;
-		if (dispatchStack != null) {
-			dispatchStack.setParent(this);
-		}
 	}
 
 	/**

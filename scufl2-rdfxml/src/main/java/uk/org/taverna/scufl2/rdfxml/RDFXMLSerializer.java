@@ -1,7 +1,5 @@
 package uk.org.taverna.scufl2.rdfxml;
 
-import static uk.org.taverna.scufl2.rdfxml.RDFXMLReader.APPLICATION_RDF_XML;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
@@ -24,7 +22,6 @@ import org.w3._1999._02._22_rdf_syntax_ns.RDF;
 import org.w3._1999._02._22_rdf_syntax_ns.Resource;
 import org.w3._1999._02._22_rdf_syntax_ns.Type;
 import org.w3._2000._01.rdf_schema.SeeAlso;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
@@ -39,8 +36,6 @@ import uk.org.taverna.scufl2.api.core.BlockingControlLink;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
-import uk.org.taverna.scufl2.api.dispatchstack.DispatchStack;
-import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
 import uk.org.taverna.scufl2.api.io.WriterException;
 import uk.org.taverna.scufl2.api.iterationstrategy.CrossProduct;
 import uk.org.taverna.scufl2.api.iterationstrategy.DotProduct;
@@ -62,7 +57,6 @@ import uk.org.taverna.scufl2.rdfxml.jaxb.Blocking;
 import uk.org.taverna.scufl2.rdfxml.jaxb.Control;
 import uk.org.taverna.scufl2.rdfxml.jaxb.DataLink.MergePosition;
 import uk.org.taverna.scufl2.rdfxml.jaxb.DataLinkEntry;
-import uk.org.taverna.scufl2.rdfxml.jaxb.DispatchStack.DispatchStackLayers;
 import uk.org.taverna.scufl2.rdfxml.jaxb.GranularPortDepth;
 import uk.org.taverna.scufl2.rdfxml.jaxb.IterationStrategyStack.IterationStrategies;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ObjectFactory;
@@ -407,39 +401,6 @@ public class RDFXMLSerializer {
 						.createProcessorOutputProcessorPort();
 				outputProcessorPort.setOutputProcessorPort(port);
 				proc.getOutputProcessorPort().add(outputProcessorPort);
-			}
-			if (node instanceof DispatchStack) {
-				DispatchStack stack = (DispatchStack) node;
-				dispatchStack = objectFactory.createDispatchStack();
-				dispatchStack.setAbout(uri.toASCIIString());
-				uk.org.taverna.scufl2.rdfxml.jaxb.Processor.DispatchStack procDisStack = objectFactory
-						.createProcessorDispatchStack();
-				proc.setDispatchStack(procDisStack);
-				procDisStack.setDispatchStack(dispatchStack);
-				if (stack.getType() != null) {
-					Type type = rdfObjectFactory.createType();
-					type.setResource(stack.getType().toASCIIString());
-					dispatchStack.setType(type);
-				}
-				DispatchStackLayers dispatchStackLayers = objectFactory
-						.createDispatchStackDispatchStackLayers();
-				dispatchStackLayers.setParseType(dispatchStackLayers
-						.getParseType());
-				dispatchStack.setDispatchStackLayers(dispatchStackLayers);
-			}
-			if (node instanceof DispatchStackLayer) {
-				DispatchStackLayer dispatchStackLayer = (DispatchStackLayer) node;
-				uk.org.taverna.scufl2.rdfxml.jaxb.DispatchStackLayer layer = objectFactory
-						.createDispatchStackLayer();
-				layer.setAbout(uri.toASCIIString());
-				if (dispatchStackLayer.getType() != null) {
-					Type type = rdfObjectFactory.createType();
-					type.setResource(dispatchStackLayer.getType()
-							.toASCIIString());
-					layer.setType(type);
-				}
-				dispatchStack.getDispatchStackLayers().getDispatchStackLayer()
-						.add(layer);
 			}
 			if (node instanceof IterationStrategyStack) {
 				iterationStrategyStack = objectFactory

@@ -180,22 +180,6 @@ public class TestURIToolsResolve {
 	}
 
 	@Test
-	public void resolveProcessorDispatchStack() throws Exception {
-		Processor hello = wfBundle.getMainWorkflow().getProcessors()
-				.getByName("Hello");
-		assertSame(hello.getDispatchStack(), uriTools.resolveUri(
-				HELLO_URI.resolve("dispatchstack/"), wfBundle));
-	}
-
-	@Test
-	public void resolveProcessorDispatchStackLayer() throws Exception {
-		Processor hello = wfBundle.getMainWorkflow().getProcessors()
-				.getByName("Hello");
-		assertSame(hello.getDispatchStack().get(5), uriTools.resolveUri(
-				HELLO_URI.resolve("dispatchstack/5/"), wfBundle));
-	}
-
-	@Test
 	public void resolveProcessorInput() throws Exception {
 		Processor hello = wfBundle.getMainWorkflow().getProcessors()
 				.getByName("Hello");
