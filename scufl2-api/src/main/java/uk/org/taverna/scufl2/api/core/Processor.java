@@ -1,5 +1,6 @@
 package uk.org.taverna.scufl2.api.core;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -7,6 +8,7 @@ import java.util.Set;
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.AbstractNamed;
 import uk.org.taverna.scufl2.api.common.Child;
+import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.Ported;
 import uk.org.taverna.scufl2.api.common.Visitor;
@@ -27,18 +29,19 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
  * A <code>Processor</code> contains an {@link IterationStrategyStack} and may
  * have {@link InputProcessorPort input} and {@link OutputProcessorPort output}
  * ports. The <code>Processor</code> can be configured with a
- * {@link Configuration} within each {@link Profile} to specify execution
+ * {@link Configuration} within a {@link Profile} to specify execution
  * details such as retries or parallel jobs.
  * 
  * @author Alan R Williams
  * @author Stian Soiland-Reyes
  */
-public class Processor extends AbstractNamed implements Child<Workflow>, Ported {
+public class Processor extends AbstractNamed implements Child<Workflow>, Ported, Configurable {
 
 	private final NamedSet<OutputProcessorPort> outputPorts = new NamedSet<OutputProcessorPort>();
 	private final NamedSet<InputProcessorPort> inputPorts = new NamedSet<InputProcessorPort>();
 	private IterationStrategyStack iterationStrategyStack = new IterationStrategyStack(this);
 	private Workflow parent;
+    private URI type = URI.create("http://ns.taverna.org.uk/2010/scufl2#Processor");
 
 	/**
 	 * Constructs a <code>Processor</code> with a random UUID as the name and no parent
@@ -171,5 +174,15 @@ public class Processor extends AbstractNamed implements Child<Workflow>, Ported 
 			parent.getProcessors().add(this);
 		}
 	}
+
+    @Override
+    public URI getType() {
+        return type;
+    }
+
+    @Override
+    public void setType(URI type) {
+        this.type = type;
+    }
 
 }
