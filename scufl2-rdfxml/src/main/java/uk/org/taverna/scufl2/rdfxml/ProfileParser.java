@@ -113,27 +113,37 @@ public class ProfileParser extends AbstractParser {
 
 	}
 
+   private static final URI INTERNAL_DISPATCH_PREFIX = URI.create("http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/");
+
 	protected void parseConfiguration(Configuration original)
 			throws ReaderException {
 		uk.org.taverna.scufl2.api.configurations.Configuration config = new uk.org.taverna.scufl2.api.configurations.Configuration();
-		mapBean(original.getAbout(), config);
-		config.setParent(getParserState().getCurrent(
-				uk.org.taverna.scufl2.api.profiles.Profile.class));
-
-		if (original.getName() != null) {
-			config.setName(original.getName());
-		}
 
 		if (original.getType() != null) {
-			config.setType(resolve(original.getType().getResource()));
+			URI type = resolve(original.getType().getResource());
+			if (! INTERNAL_DISPATCH_PREFIX.relativize(type).isAbsolute()) {
+                logger.fine("Ignoring unsupported Dispatch stack configuration (SCUFL2-130)");
+                logger.finest(original.getAbout());
+                return;
+			}
+            config.setType(type);
 		}
+
+        if (original.getName() != null) {
+            config.setName(original.getName());
+        }
+        mapBean(original.getAbout(), config);    		
+		
 		if (original.getConfigure() != null) {
 			Configurable configurable = resolveBeanUri(original.getConfigure()
 					.getResource(), Configurable.class);
 			config.setConfigures(configurable);
 		}
+        config.setParent(getParserState().getCurrent(
+                uk.org.taverna.scufl2.api.profiles.Profile.class));
 
-		getParserState().push(config);
+        getParserState().push(config);
+
 		
 		if (original.getSeeAlso() != null) {
 		    
@@ -161,7 +171,7 @@ public class ProfileParser extends AbstractParser {
 		    // 
 		    // TODO: Parse and represent as JSON-LD?
 //		    System.out.println(original);
-		    logger.warning("Ignoring unsupported PropertyResource (from SCUFL2 0.11 or older) for " + config + " " + o);
+		    logger.warning("Ignoring unsupported PropertyResource (from wfbundle 0.2.0 or older) for " + config + " " + o);
 		}
 		
 		

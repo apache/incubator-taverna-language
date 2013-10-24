@@ -5,7 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
+import uk.org.taverna.scufl2.api.configurations.Configuration;
+import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.ucfpackage.UCFPackage;
 
 public class ParserState {
@@ -15,6 +19,7 @@ public class ParserState {
 	private Stack<WorkflowBean> stack = new Stack<WorkflowBean>();
 	private UCFPackage ucfPackage;
 	private Map<URI, WorkflowBean> uriToBean = new HashMap<URI, WorkflowBean>();
+	private Map<Processor, ObjectNode> dispatchConfigs = new HashMap<Processor, ObjectNode>();
 
 	public Map<WorkflowBean, URI> getBeanToUri() {
 		return beanToUri;
@@ -95,5 +100,13 @@ public class ParserState {
 	public void setUriToBean(Map<URI, WorkflowBean> uriToBean) {
 		this.uriToBean = uriToBean;
 	}
+
+    public Map<Processor, ObjectNode> getDispatchConfigs() {
+        return dispatchConfigs;
+    }
+
+    public void setDispatchConfigs(Map<Processor, ObjectNode> dispatchConfigs) {
+        this.dispatchConfigs = dispatchConfigs;
+    }
 
 }

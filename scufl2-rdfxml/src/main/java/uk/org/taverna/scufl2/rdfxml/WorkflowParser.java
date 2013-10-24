@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -21,7 +22,6 @@ import uk.org.taverna.scufl2.rdfxml.jaxb.Blocking;
 import uk.org.taverna.scufl2.rdfxml.jaxb.CrossProduct;
 import uk.org.taverna.scufl2.rdfxml.jaxb.DataLink;
 import uk.org.taverna.scufl2.rdfxml.jaxb.DispatchStack;
-import uk.org.taverna.scufl2.rdfxml.jaxb.DispatchStackLayer;
 import uk.org.taverna.scufl2.rdfxml.jaxb.DotProduct;
 import uk.org.taverna.scufl2.rdfxml.jaxb.IterationStrategyStack;
 import uk.org.taverna.scufl2.rdfxml.jaxb.PortNode;
@@ -30,8 +30,14 @@ import uk.org.taverna.scufl2.rdfxml.jaxb.Processor.OutputProcessorPort;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ProductOf;
 import uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowDocument;
 
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+
 public class WorkflowParser extends AbstractParser {
 
+    private static Logger logger = Logger.getLogger(WorkflowParser.class.getCanonicalName());
+    
+    private static final JsonNodeFactory JSON_NODE_FACTORY = JsonNodeFactory.instance;
+    
 	public WorkflowParser() {
 	}
 
@@ -107,39 +113,45 @@ public class WorkflowParser extends AbstractParser {
 	}
 
 	protected void parseDispatchStack(DispatchStack original) {
-		uk.org.taverna.scufl2.api.dispatchstack.DispatchStack stack = new uk.org.taverna.scufl2.api.dispatchstack.DispatchStack();
-		// FIXME: Legacy code - support parsing old dispatch stack configurations
-		if (original.getType() != null) {
-			stack.setType(getParserState().getCurrentBase().resolve(
-					original.getType().getResource()));
-		}
-		stack.setParent(getParserState().getCurrent(
-				uk.org.taverna.scufl2.api.core.Processor.class));
-		mapBean(getParserState().getCurrentBase().resolve(original.getAbout()),
-				stack);
-		getParserState().push(stack);
-		try {
-			if (original.getDispatchStackLayers() != null) {
-				for (DispatchStackLayer dispatchStackLayer : original
-						.getDispatchStackLayers().getDispatchStackLayer()) {
-					parseDispatchStackLayer(dispatchStackLayer);
-				}
-			}
-		} finally {
-			getParserState().pop();
-		}
+        logger.fine("Ignoring Dispatch stack: not supported (SCUFL2-130)");
+        return;
+
+//        // FIXME: Legacy code - support parsing old dispatch stack configurations
+//		Processor processor = getParserState().getCurrent(
+//				uk.org.taverna.scufl2.api.core.Processor.class);
+//        ObjectNode config = JSON_NODE_FACTORY.objectNode();
+//        getParserState().getDispatchConfigs().put(processor, config);        
+//		if (original.getDispatchStackLayers() != null) {
+//			for (DispatchStackLayer dispatchStackLayer : original
+//					.getDispatchStackLayers().getDispatchStackLayer()) {
+//				parseDispatchStackLayer(dispatchStackLayer);
+//			}
+//		}
 	}
 
-	protected void parseDispatchStackLayer(DispatchStackLayer original) {
-		uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer layer = new uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer();
-        // FIXME: Legacy code - support parsing old dispatch stack configurations
-		layer.setType(getParserState().getCurrentBase().resolve(
-				original.getType().getResource()));
-		layer.setParent(getParserState().getCurrent(
-				uk.org.taverna.scufl2.api.dispatchstack.DispatchStack.class));
-		mapBean(getParserState().getCurrentBase().resolve(original.getAbout()),
-				layer);
-	}
+//	protected void parseDispatchStackLayer(DispatchStackLayer original) {
+//	    Processor processor = getParserState().getCurrent(Processor.class);
+//	    URI type = getParserState().getCurrentBase().resolve(
+//				original.getType().getResource());
+//	    URI config = getParserState().getCurrentBase().resolve(original.getAbout());
+//	    // TODO: SCUFL2-130
+//	    // Add Legacy code for wfbundle 0.3.0 to
+//	    // support parsing old dispatch stack configurations
+//	    // 
+//	    // The difficult bit is that the layers themselves has moved to 
+//	    // to be a Configuration on a Processor - but we are here within
+//	    // parsing of the Workflow. In 0.3.0 each layer is then configured
+//	    // separately. So we need to pass over somehow the current stack 
+//	    // to the ParserState so that it can be picked up in ProfileParser
+//	    // and added to each of the profiles -- or at least where the
+//	    // stack layers have been configured.
+//	    // 
+//	    // Here's an idea on how it can work. Here we should push each layer to a
+//	    // List<Pair<URI,URI>> that we can keep in the ParserState. 
+//	    // Then, within ProfileParser, we can pick them up and
+//      // recreate what the Processor config would look like for
+//      // the default configs - and then delete those dangling configs
+//	}
 
 	protected void parseDotProduct(DotProduct original) throws ReaderException {
 		uk.org.taverna.scufl2.api.iterationstrategy.DotProduct dot = new uk.org.taverna.scufl2.api.iterationstrategy.DotProduct();
@@ -234,6 +246,7 @@ public class WorkflowParser extends AbstractParser {
 						.getOutputProcessorPort());
 			}
 			if (processor.getDispatchStack() != null) {
+			    // Legacy wfbundle
 				parseDispatchStack(processor.getDispatchStack()
 						.getDispatchStack());
 			}
