@@ -62,7 +62,6 @@ import uk.org.taverna.scufl2.api.core.ControlLink;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
-import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
 import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyNode;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
@@ -117,7 +116,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class T2FlowParser {
 
-	private static final String TEXT_TURTLE = "text/turtle";
+	private static final URI INTERNAL_DISPATCH_PREFIX = URI.create("http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/");
+    private static final String TEXT_TURTLE = "text/turtle";
 	private static final String SEMANTIC_ANNOTATION = "net.sf.taverna.t2.annotation.annotationbeans.SemanticAnnotation";
 	private static final String IDENTIFICATION_ASSERTION = "net.sf.taverna.t2.annotation.annotationbeans.IdentificationAssertion";
 	private static final String T2FLOW_EXTENDED_XSD = "xsd/t2flow-extended.xsd";
@@ -416,26 +416,23 @@ public class T2FlowParser {
 		activity, dispatchLayer
 	};
 
-	protected void parseConfigurationAndAddToProfile(ConfigBean configBean,
+	protected Configuration parseConfigurationAndAddToProfile(ConfigBean configBean,
 			Configures configures) throws JAXBException, ReaderException {
 		Configuration configuration = parseConfiguration(configBean);
 		if (configuration == null) { 
-			return;
+			return null;
 		}
-		if (configures == Configures.activity) {
+		Profile profile = parserState.get().getCurrentProfile();
+        if (configures == Configures.activity) {
 			configuration.setName(parserState.get().getCurrentActivity()
 					.getName());
+            profile.getConfigurations().addWithUniqueName(configuration);
+            configuration.setConfigures(parserState.get().getCurrentConfigurable());
 		} else {
-		    // TODO: Create processor JSON configuration instead
-			DispatchStackLayer layer = (DispatchStackLayer) parserState.get().getCurrentConfigurable();
-			configuration.setName(parserState.get().getCurrentProcessor().getName() +
-					"-dispatch-" + parserState.get().getCurrentDispatchStack().size());
-
+		    // We won't add dispatch layer configs as they are
+		    // to be merged into the Processor config
 		}
-		parserState.get().getCurrentProfile().getConfigurations()
-				.addWithUniqueName(configuration);
-		configuration.setConfigures(parserState.get().getCurrentConfigurable());
-		parserState.get().getCurrentProfile().getConfigurations().addWithUniqueName(configuration);
+        return configuration;
 		
 	}
 	
@@ -960,23 +957,63 @@ public class T2FlowParser {
 
 	protected void parseDispatchStack(
 			DispatchStack dispatchStack) throws ReaderException {
-		for (DispatchLayer dispatchLayer : dispatchStack.getDispatchLayer()) {
-			DispatchStackLayer layer = parseDispatchStack(dispatchLayer);
-			newStack.add(layer);
-		}
-		return newStack;
-	}
-
-	protected DispatchStackLayer parseDispatchStack(DispatchLayer dispatchLayer)
+        Processor processor = parserState.get().getCurrentProcessor();
+        Configuration procConfig = scufl2Tools.createConfigurationFor(processor, parserState.get().getCurrentProfile());
+        parserState.get().setCurrentConfigurable(processor);
+        parserState.get().setCurrentConfiguration(procConfig);
+        parserState.get().setPreviousDispatchLayerName(null);
+        try {
+            for (DispatchLayer dispatchLayer : dispatchStack.getDispatchLayer()) {
+                parseDispatchStack(dispatchLayer);
+            }
+        } finally {
+            parserState.get().setCurrentConfigurable(null);
+            parserState.get().setCurrentConfiguration(null);
+            parserState.get().setPreviousDispatchLayerName(null);
+        }
+    }
+	
+	protected void parseDispatchStack(DispatchLayer dispatchLayer)
 			throws ReaderException {
-		DispatchStackLayer dispatchStackLayer = new DispatchStackLayer();
 		URI typeUri = mapTypeFromRaven(dispatchLayer.getRaven(),
 				dispatchLayer.getClazz());
-		dispatchStackLayer.setType(typeUri);
-		parserState.get().setCurrentConfigurable(dispatchStackLayer);
+		ObjectNode procConfig = parserState.get().getCurrentConfiguration().getJsonAsObjectNode();
+		
 		try {
-			parseConfigurationAndAddToProfile(dispatchLayer.getConfigBean(),
+			Configuration dispatchConfig = parseConfigurationAndAddToProfile(dispatchLayer.getConfigBean(),
 					Configures.dispatchLayer);
+			URI relUri = INTERNAL_DISPATCH_PREFIX.relativize(typeUri);
+			String name;
+			if (! relUri.isAbsolute()) {
+			    // It's an internal layer. We'll put it under the name which we'll cleverly fish out 
+			    // of the URI path, eg. "retry" or "parallelize"
+                name = relUri.getPath().toLowerCase();
+			    if (dispatchConfig != null && dispatchConfig.getJson().size() > 0) {
+			        // But only if non-empty (non-default)
+			        procConfig.put(name, dispatchConfig.getJson());
+			    }
+			} else {
+			    ObjectNode json;
+			    if (dispatchConfig != null && dispatchConfig.getJson().isObject()) {
+			        json = dispatchConfig.getJsonAsObjectNode();
+			    } else {
+			        // We'll still need to create an objectNode to keep _type and _after
+			        json = procConfig.objectNode();
+			        if (dispatchConfig != null) {
+			            // We'll put the non-objectnode here
+			            json.put("_config", dispatchConfig.getJson());
+			        }
+			    }
+			    
+			    // Not really much to go from here, we don't want to use the typeUri as the name
+			    // as third-party layers in theory could be added several times for same type
+			    name = UUID.randomUUID().toString();
+			    json.put("_type", typeUri.toString());
+			    // Might be null - meaning "top"
+			    json.put("_after", parserState.get().getPreviousDispatchLayerName());
+			    procConfig.put(name, json);
+			}
+			parserState.get().setPreviousDispatchLayerName(name);			
 		} catch (JAXBException ex) {
 			String message = "Can't parse configuration for dispatch layer in "
 					+ parserState.get().getCurrentProcessor();
@@ -986,7 +1023,6 @@ public class T2FlowParser {
 			}
 
 		}
-		return dispatchStackLayer;
 	}
 
 	@SuppressWarnings("boxing")
@@ -1132,8 +1168,8 @@ public class T2FlowParser {
 					origProc.getInputPorts()));
 			newProc.setOutputPorts(parseProcessorOutputPorts(newProc,
 					origProc.getOutputPorts()));
-			newProc.setDispatchStack(parseDispatchStack(origProc
-					.getDispatchStack()));
+			parseDispatchStack(origProc
+					.getDispatchStack());
 			newProc.setIterationStrategyStack(parseIterationStrategyStack(origProc
 					.getIterationStrategyStack()));
 			parseAnnotations(newProc, origProc.getAnnotations());

@@ -78,8 +78,16 @@ public class ParserState {
 	private T2FlowParser t2FlowParser;
 	private Configuration currentConfiguration;
 	private Configurable currentConfigurable;
+    private String previousDispatchLayerName;
 
-	public final T2FlowParser getT2FlowParser() {
+	/**
+     * @return the previousDispatchLayerName
+     */
+    public String getPreviousDispatchLayerName() {
+        return previousDispatchLayerName;
+    }
+
+    public final T2FlowParser getT2FlowParser() {
 		return t2FlowParser;
 	}
 
@@ -103,5 +111,9 @@ public class ParserState {
 	public void setCurrentConfigurable(Configurable currentConfigurable) {
 		this.currentConfigurable = currentConfigurable;
 	}
+
+    public void setPreviousDispatchLayerName(String previousDispatchLayerName) {
+        this.previousDispatchLayerName = previousDispatchLayerName;
+    }
 	
 }
