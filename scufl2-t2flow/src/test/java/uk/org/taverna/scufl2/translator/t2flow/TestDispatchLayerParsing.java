@@ -1,38 +1,45 @@
 package uk.org.taverna.scufl2.translator.t2flow;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
-import uk.org.taverna.scufl2.api.dispatchstack.DispatchStackLayer;
 import uk.org.taverna.scufl2.api.profiles.Profile;
-import uk.org.taverna.scufl2.translator.t2flow.defaultdispatchstack.RetryParser.Defaults;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class TestDispatchLayerParsing {
 
-	private static final String WF_DISPATCH_LAYERS = "/dispatchlayers.t2flow";
-	private static Scufl2Tools scufl2Tools = new Scufl2Tools();
+    private static final String LOOP = "loop";
+	private static final String INVOKE = "invoke";
+    private static final String RETRY = "retry";
+    private static final String FAILOVER = "failover";
+    private static final String ERRORBOUNCE = "errorbounce";
+    private static final String PARALLELIZE = "parallelize";
+    private static Scufl2Tools scufl2Tools = new Scufl2Tools();
 	private T2FlowParser parser;
 	private WorkflowBundle wfBundle;
 	private Profile profile;
 	private Workflow workflow;
 	private NamedSet<Processor> processors;
 	
-	private URI DISPATCH_LAYER = URI.create("http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/");
+	private String WF_DISPATCH_LAYERS = "/dispatchlayers.t2flow";
 	
 	@Before
 	public void readWorkflow() throws Exception {		
@@ -53,142 +60,136 @@ public class TestDispatchLayerParsing {
 	@Test
 	public void whichLayers() throws Exception {
 		Processor parallelise = processors.getByName("retries");
-		URI RETRY = DISPATCH_LAYER.resolve("Retry");
 		// As inspected in /scufl2-t2flow/src/test/resources/dispatchlayers-xsd.t2flow
-		List<String> expectedNames = Arrays.asList("Parallelize", "ErrorBounce", "Failover", "Retry", "Invoke");
-		List<String> foundNames = new ArrayList<String>();
-		
-		for (DispatchStackLayer layer : parallelise.getDispatchStack()) {
-			URI type = layer.getType();
-			foundNames.add(DISPATCH_LAYER.relativize(type).toASCIIString());
-		}		
-		assertEquals(expectedNames, foundNames);
+
+		//		List<String> expectedNames = Arrays.asList(PARALLELIZE, ERRORBOUNCE, FAILOVER, RETRY, INVOKE);
+		// NOTE: Only those with configuration are present
+		List<String> expectedNames = Arrays.asList(RETRY);
+        
+		Configuration config = scufl2Tools.configurationFor(parallelise, profile);
+		ObjectNode json = config.getJsonAsObjectNode();
+        for (String name : expectedNames) {
+		    assertTrue("Could not find config for dispatch layer " + name, 
+		            json.has(name)); 		}
+		assertEquals("Additional dispatch layer configurations found", 
+		        expectedNames.size(), json.size());
+
 	}
 	
 	@Test
 	public void retriesDefault() throws Exception {
 		Processor parallelise = processors.getByName("parallelise");
-		URI RETRY = DISPATCH_LAYER.resolve("Retry");
-		DispatchStackLayer retry = scufl2Tools.dispatchStackByType(parallelise, RETRY);
-		Configuration retryConfig = scufl2Tools.configurationFor(retry, profile);
-		assertEquals(RETRY.resolve("#Config"), retryConfig.getType());
-		assertEquals(0, retryConfig.getJsonAsObjectNode().size());				
+		Configuration config = scufl2Tools.configurationFor(parallelise, profile);
+		JsonNode retry = config.getJsonAsObjectNode().get(RETRY);
+		assertNull(retry);
 	}
 	
 	@Test
 	public void retriesDefaultFromT1() throws Exception {
 		Processor alternates = processors.getByName("alternates");
-		URI RETRY = DISPATCH_LAYER.resolve("Retry");
-		DispatchStackLayer retry = scufl2Tools.dispatchStackByType(alternates, RETRY);
-		Configuration retryConfig = scufl2Tools.configurationFor(retry, profile);
-		assertEquals(RETRY.resolve("#Config"), retryConfig.getType());
-        assertEquals(0, retryConfig.getJsonAsObjectNode().size());              
+        Configuration config = scufl2Tools.configurationFor(alternates, profile);
+        JsonNode retry = config.getJsonAsObjectNode().get(RETRY);
+        assertNull(retry);
 	}
 	
 	
 	@Test
 	public void parallelizeDefault() throws Exception {
 		Processor retry = processors.getByName("retries");
-		URI PARALLELIZE = DISPATCH_LAYER.resolve("Parallelize");
-		DispatchStackLayer parallelize = scufl2Tools.dispatchStackByType(retry, PARALLELIZE);
-		Configuration parallelizeConfig = scufl2Tools.configurationFor(parallelize, profile);
-		assertEquals(PARALLELIZE.resolve("#Config"), parallelizeConfig.getType());
-        assertEquals(0, parallelizeConfig.getJsonAsObjectNode().size());              
+        Configuration config = scufl2Tools.configurationFor(retry, profile);
+        JsonNode parallelize = config.getJsonAsObjectNode().get(PARALLELIZE);
+        assertNull(parallelize);
 	}
 	
 	@Test
 	public void errorBounceEmpty() throws Exception {
 		Processor retry = processors.getByName("retries");
-		URI ERRORBOUNCE = DISPATCH_LAYER.resolve("ErrorBounce");
-		DispatchStackLayer errorbounce = scufl2Tools.dispatchStackByType(retry, ERRORBOUNCE);
-		assertNotNull(errorbounce);
-		assertTrue(scufl2Tools.configurationsFor(errorbounce, profile).isEmpty());
+        Configuration config = scufl2Tools.configurationFor(retry, profile);
+        JsonNode errorbounce = config.getJsonAsObjectNode().get(ERRORBOUNCE);
+        assertNull(errorbounce);
 	}
 	
 
 	@Test
-	public void failoverEmpty() throws Exception {
-		Processor retry = processors.getByName("retries");
-		URI FAILOVER = DISPATCH_LAYER.resolve("Failover");
-		DispatchStackLayer failover = scufl2Tools.dispatchStackByType(retry, FAILOVER);
-		assertNotNull(failover);
-		assertTrue(scufl2Tools.configurationsFor(failover, profile).isEmpty());
+	public void failoverEmpty() throws Exception {	    
+	    Processor retry = processors.getByName("retries");
+        Configuration config = scufl2Tools.configurationFor(retry, profile);
+        JsonNode failover = config.getJsonAsObjectNode().get(FAILOVER);
+        assertNull(failover);	    
 	}
 	
 	@Test
 	public void invokeEmpty() throws Exception {
 		Processor retry = processors.getByName("retries");
-		URI INVOKE = DISPATCH_LAYER.resolve("Failover");
-		DispatchStackLayer invoke = scufl2Tools.dispatchStackByType(retry, INVOKE);
-		assertNotNull(invoke);
-		assertTrue(scufl2Tools.configurationsFor(invoke, profile).isEmpty());
+        Configuration config = scufl2Tools.configurationFor(retry, profile);
+        assertNull(config.getJsonAsObjectNode().get(INVOKE));
 	}
 	
 
 	@Test
 	public void parallelizeDefaultFromT1() throws Exception {
 		Processor alternates = processors.getByName("alternates");
-		URI PARALLELIZE = DISPATCH_LAYER.resolve("Parallelize");
-		DispatchStackLayer parallelize = scufl2Tools.dispatchStackByType(alternates, PARALLELIZE);
-		Configuration parallelizeConfig = scufl2Tools.configurationFor(parallelize, profile);
-		assertEquals(PARALLELIZE.resolve("#Config"), parallelizeConfig.getType());
-        assertEquals(0, parallelizeConfig.getJsonAsObjectNode().size());              
+		Configuration config = scufl2Tools.configurationFor(alternates, profile);
+        assertNull(config.getJsonAsObjectNode().get(PARALLELIZE));
 	}
 	
 	@Test
 	public void parallelize() throws Exception {
-		Processor retry = processors.getByName("parallelise");
-		URI PARALLELIZE = DISPATCH_LAYER.resolve("Parallelize");
-		DispatchStackLayer parallelize = scufl2Tools.dispatchStackByType(retry, PARALLELIZE);
-		Configuration parallelizeConfig = scufl2Tools.configurationFor(parallelize, profile);
-		assertEquals(PARALLELIZE.resolve("#Config"), parallelizeConfig.getType());
-		assertEquals(5, parallelizeConfig.getJsonAsObjectNode().get("maxJobs").intValue());
+		Processor proc = processors.getByName("parallelise");
+        Configuration config = scufl2Tools.configurationFor(proc, profile);
+        JsonNode parallelize = config.getJsonAsObjectNode().get(PARALLELIZE);
+		assertEquals(5, parallelize.get("maxJobs").intValue());
 	}
 	
 	
 	@Test
 	public void retriesCustom() throws Exception {
 		Processor retries = processors.getByName("retries_custom");
-		URI RETRY = DISPATCH_LAYER.resolve("Retry");
-		DispatchStackLayer retry = scufl2Tools.dispatchStackByType(retries, RETRY);
-		Configuration retryConfig = scufl2Tools.configurationFor(retry, profile);
-		assertEquals(RETRY.resolve("#Config"), retryConfig.getType());
 
-		/* TODO: Update test
-		assertTrue(retryConfig.getJson().hasProperty(RETRY.resolve("#maxRetries")));
-		assertTrue(retryConfig.getJson().hasProperty(RETRY.resolve("#initialDelay")));
-		assertTrue(retryConfig.getJson().hasProperty(RETRY.resolve("#maxDelay")));
-		assertTrue(retryConfig.getJson().hasProperty(RETRY.resolve("#backoffFactor")));
+        Configuration config = scufl2Tools.configurationFor(retries, profile);
+        JsonNode retry = config.getJsonAsObjectNode().get(RETRY);
 
-		assertEquals(5, retryConfig.getJson().getPropertyAsLiteral(RETRY.resolve("#maxRetries")).getLiteralValueAsInt());
-		assertEquals(1337, retryConfig.getJson().getPropertyAsLiteral(RETRY.resolve("#initialDelay")).getLiteralValueAsInt());
-		assertEquals(7000, retryConfig.getJson().getPropertyAsLiteral(RETRY.resolve("#maxDelay")).getLiteralValueAsInt());
-		assertEquals(1.13, retryConfig.getJson().getPropertyAsLiteral(RETRY.resolve("#backoffFactor")).getLiteralValueAsDouble(), 0.001);
-		*/
+        assertEquals(5, retry.get("maxRetries").intValue());
+        assertEquals(1337, retry.get("initialDelay").intValue());
+        assertEquals(7000, retry.get("maxDelay").intValue());
+        assertEquals(1.13, retry.get("backoffFactor").doubleValue(), 0.01);
+        assertEquals(4, retry.size());
 	}
 	
 
 	@Test
 	public void retries() throws Exception {
 		Processor retries = processors.getByName("retries");
-		URI RETRY = DISPATCH_LAYER.resolve("Retry");
-		DispatchStackLayer retry = scufl2Tools.dispatchStackByType(retries, RETRY);
-		Configuration retryConfig = scufl2Tools.configurationFor(retry, profile);
-		assertEquals(RETRY.resolve("#Config"), retryConfig.getType());
-		/* TODO: Update test
-		assertEquals(3, retryConfig.getJson().getPropertyAsLiteral(RETRY.resolve("#maxRetries")).getLiteralValueAsInt());
+        Configuration config = scufl2Tools.configurationFor(retries, profile);
+        JsonNode retry = config.getJsonAsObjectNode().get(RETRY);
 
-		assertFalse(retryConfig.getJson().hasProperty(RETRY.resolve("#initialDelay")));
-		assertFalse(retryConfig.getJson().hasProperty(RETRY.resolve("#maxDelay")));
-		assertFalse(retryConfig.getJson().hasProperty(RETRY.resolve("#backoffFactor")));
-
-*/
-//		assertEquals(1000, retryConfig.getPropertyResource().getPropertyAsLiteral(RETRY.resolve("#initialDelay")).getLiteralValueAsInt());
-//		assertEquals(5000, retryConfig.getPropertyResource().getPropertyAsLiteral(RETRY.resolve("#maxDelay")).getLiteralValueAsInt());
-//		assertEquals(1.0, retryConfig.getPropertyResource().getPropertyAsLiteral(RETRY.resolve("#backoffFactor")).getLiteralValueAsDouble(), 0.001);
-		
+        assertEquals(3, retry.get("maxRetries").intValue());
+        // The remaining properties are at default and should NOT be present
+//        assertEquals(1000, retry.get("initialDelay").intValue());
+//        assertEquals(5000, retry.get("maxDelay").intValue());
+//        assertEquals(1.0, retry.get("backoffFactor").doubleValue(), 0.01);        
+        assertEquals(1, retry.size());
 	}
 
+    @Test
+    public void looping() throws Exception {
+        Processor looping = processors.getByName("looping");
+        Configuration config = scufl2Tools.configurationFor(looping, profile);
+        ObjectNode json = config.getJsonAsObjectNode();
+        JsonNode loop = json.get(LOOP);
+        System.out.println(loop);
+        String activityName = loop.get("conditionActivity").asText();
+        Activity activity = profile.getActivities().getByName(activityName);
+        assertNotNull("Unknown activity " + activityName, activity);
+        
+        assertEquals(true, loop.get("runFirst").asBoolean());
+
+        // The properties
+        assertEquals("fred", loop.get("compareValue").asText());
+        assertEquals("value", loop.get("comparePort").asText());
+        assertEquals(0.5, loop.get("delay").asDouble(), 0.01);
+        assertEquals(false, loop.get("isFeedBack").asBoolean());
+    }
 	
 }
 

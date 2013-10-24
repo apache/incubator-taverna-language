@@ -13,6 +13,7 @@ import uk.org.taverna.scufl2.translator.t2flow.defaultactivities.AbstractActivit
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.Activity;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.LoopConfig;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.Property;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -73,17 +74,24 @@ public class LoopParser extends AbstractActivityParser {
 
 		LoopConfig loopConfig = unmarshallConfig(t2FlowParser, configBean,
 				"xstream", LoopConfig.class);
-
+		
 		
 		final Configuration c = new Configuration();		
 		c.setType(scufl2Uri.resolve("Config"));
 
 		ObjectNode json = (ObjectNode) c.getJson();
+
+		json.put("runFirst", loopConfig.isRunFirst());
+		
+		for (Property prop : loopConfig.getProperties().getProperty()) {
+		    json.put(prop.getName(), prop.getValue());
+		}
 		
 		String conditionXml = loopConfig.getConditionXML();	
 		if (conditionXml == null) {
-			// Unconfigured
-			return null;			
+		    // activity is unconfigured (bug in T2). 
+		    // Return c only if there are properties beyond "runFirst"
+			return json.size() > 1 ? c : null;			
 		}
 		Activity conditionActivity = unmarshallXml(parserState.getT2FlowParser(), conditionXml, Activity.class);				
 		try {
