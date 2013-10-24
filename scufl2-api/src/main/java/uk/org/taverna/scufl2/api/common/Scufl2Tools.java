@@ -863,7 +863,7 @@ public class Scufl2Tools {
         return processor;
     }
 
-    private Configuration createConfigurationFor(Activity activity, URI configType) {
+    public Configuration createConfigurationFor(Activity activity, URI configType) {
         Profile profile = activity.getParent();
         
         Configuration config = new Configuration(activity.getName());
@@ -872,6 +872,15 @@ public class Scufl2Tools {
         
         config.setConfigures(activity);
         config.setType(configType);
+        return config;
+    }
+    
+    public Configuration createConfigurationFor(Processor processor, Profile profile) {
+        Configuration config = new Configuration(processor.getName() + "-proc");
+        profile.getConfigurations().addWithUniqueName(config);
+        config.setParent(profile);       
+        config.setConfigures(processor);
+        config.setType(Processor.CONFIG_TYPE);
         return config;
     }
 
