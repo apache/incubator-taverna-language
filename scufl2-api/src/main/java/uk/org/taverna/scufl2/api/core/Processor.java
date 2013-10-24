@@ -37,11 +37,14 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
  */
 public class Processor extends AbstractNamed implements Child<Workflow>, Ported, Configurable {
 
-	private final NamedSet<OutputProcessorPort> outputPorts = new NamedSet<OutputProcessorPort>();
+	public static final URI PROCESSOR_TYPE = URI.create("http://ns.taverna.org.uk/2010/scufl2#Processor");
+	public static final URI CONFIG_TYPE = URI.create("http://ns.taverna.org.uk/2010/scufl2#ProcessorConfig");
+
+    private final NamedSet<OutputProcessorPort> outputPorts = new NamedSet<OutputProcessorPort>();
 	private final NamedSet<InputProcessorPort> inputPorts = new NamedSet<InputProcessorPort>();
 	private IterationStrategyStack iterationStrategyStack = new IterationStrategyStack(this);
 	private Workflow parent;
-    private URI type = URI.create("http://ns.taverna.org.uk/2010/scufl2#Processor");
+    private URI type = PROCESSOR_TYPE;
 
 	/**
 	 * Constructs a <code>Processor</code> with a random UUID as the name and no parent
