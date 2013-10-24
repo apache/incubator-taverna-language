@@ -394,8 +394,7 @@ public class T2FlowParser {
 		parserState.get().setCurrentConfigurable(newActivity);
 
 		try {
-			parseConfigurationAndAddToProfile(origActivity.getConfigBean(),
-					Configures.activity);
+			parseConfigurationAndAddToProfile(origActivity.getConfigBean());
 		} catch (JAXBException e) {
 			if (isStrict()) {
 				throw e;
@@ -412,26 +411,16 @@ public class T2FlowParser {
 		parserState.get().setCurrentProcessorBinding(null);
 	}
 
-	protected enum Configures {
-		activity, dispatchLayer
-	};
-
-	protected Configuration parseConfigurationAndAddToProfile(ConfigBean configBean,
-			Configures configures) throws JAXBException, ReaderException {
+	protected Configuration parseConfigurationAndAddToProfile(ConfigBean configBean) throws JAXBException, ReaderException {
 		Configuration configuration = parseConfiguration(configBean);
 		if (configuration == null) { 
 			return null;
 		}
 		Profile profile = parserState.get().getCurrentProfile();
-        if (configures == Configures.activity) {
-			configuration.setName(parserState.get().getCurrentActivity()
-					.getName());
-            profile.getConfigurations().addWithUniqueName(configuration);
-            configuration.setConfigures(parserState.get().getCurrentConfigurable());
-		} else {
-		    // We won't add dispatch layer configs as they are
-		    // to be merged into the Processor config
-		}
+		configuration.setName(parserState.get().getCurrentActivity()
+				.getName());
+        profile.getConfigurations().addWithUniqueName(configuration);
+        configuration.setConfigures(parserState.get().getCurrentConfigurable());
         return configuration;
 		
 	}
@@ -980,8 +969,7 @@ public class T2FlowParser {
 		ObjectNode procConfig = parserState.get().getCurrentConfiguration().getJsonAsObjectNode();
 		
 		try {
-			Configuration dispatchConfig = parseConfigurationAndAddToProfile(dispatchLayer.getConfigBean(),
-					Configures.dispatchLayer);
+			Configuration dispatchConfig = parseConfiguration(dispatchLayer.getConfigBean());
 			URI relUri = INTERNAL_DISPATCH_PREFIX.relativize(typeUri);
 			String name;
 			if (! relUri.isAbsolute()) {
