@@ -249,12 +249,6 @@ public class TestRDFXMLSerializer {
 		assertXpathEquals("http://www.w3.org/2001/XMLSchema#integer",
 				wf, "./s:processor[1]/s:Processor/s:outputProcessorPort/s:OutputProcessorPort/s:granularPortDepth/@rdf:datatype");
 
-		// FIXME: probably not what we want - at least we should say it's an *instance* of the default dispatch stack
-		assertXpathEquals("http://ns.taverna.org.uk/2010/taverna/2.2/DefaultDispatchStack",
-				wf, "./s:processor[1]/s:Processor/s:dispatchStack/s:DispatchStack/rdf:type/@rdf:resource");
-		assertXpathEquals("processor/Hello/dispatchstack/",
-				wf, "./s:processor[1]/s:Processor/s:dispatchStack/s:DispatchStack/@rdf:about");
-
 		assertXpathEquals("processor/Hello/iterationstrategy/", wf, "./s:processor[1]/s:Processor/s:iterationStrategyStack/s:IterationStrategyStack/@rdf:about");
 		assertXpathEquals("Collection", wf, "./s:processor[1]/s:Processor/s:iterationStrategyStack/s:IterationStrategyStack/s:iterationStrategies/@rdf:parseType");
 		assertXpathEquals("processor/Hello/iterationstrategy/0/", wf, "./s:processor[1]/s:Processor/s:iterationStrategyStack/s:IterationStrategyStack/s:iterationStrategies/s:CrossProduct/@rdf:about");
