@@ -177,7 +177,7 @@ public class TestDispatchLayerParsing {
         Configuration config = scufl2Tools.configurationFor(looping, profile);
         ObjectNode json = config.getJsonAsObjectNode();
         JsonNode loop = json.get(LOOP);
-        System.out.println(loop);
+//        System.out.println(loop);
         String activityName = loop.get("conditionActivity").asText();
         Activity activity = profile.getActivities().getByName(activityName);
         assertNotNull("Unknown activity " + activityName, activity);
