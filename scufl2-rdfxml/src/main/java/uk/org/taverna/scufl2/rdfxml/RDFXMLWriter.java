@@ -45,7 +45,7 @@ public class RDFXMLWriter implements WorkflowBundleWriter {
 	/**
 	 * Version of Workflow Bundle format
 	 */
-    public final String WORKFLOW_BUNDLE_VERSION = "0.3.0";
+    public final String WORKFLOW_BUNDLE_VERSION = "0.4.0";
 
 	@Override
 	public Set<String> getMediaTypes() {
