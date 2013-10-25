@@ -81,7 +81,7 @@ public class TestRDFXMLWriter {
         assertEquals(1, rootFiles.size());
 		assertEquals("workflowBundle.rdf", rootFiles.get(0).getPath());
 		assertEquals("application/rdf+xml", rootFiles.get(0).getMediaType());
-		assertEquals("0.3.0", rootFiles.get(0).getVersion());
+		assertEquals("0.4.0", rootFiles.get(0).getVersion());
     }
 
 	
