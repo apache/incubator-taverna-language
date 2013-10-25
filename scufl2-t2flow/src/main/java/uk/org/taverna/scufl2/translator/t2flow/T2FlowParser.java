@@ -985,7 +985,7 @@ public class T2FlowParser {
 			    if (dispatchConfig != null && dispatchConfig.getJson().isObject()) {
 			        json = dispatchConfig.getJsonAsObjectNode();
 			    } else {
-			        // We'll still need to create an objectNode to keep _type and _after
+			        // We'll still need to create an objectNode to keep _type and _below
 			        json = procConfig.objectNode();
 			        if (dispatchConfig != null) {
 			            // We'll put the non-objectnode here
@@ -998,7 +998,7 @@ public class T2FlowParser {
 			    name = UUID.randomUUID().toString();
 			    json.put("_type", typeUri.toString());
 			    // Might be null - meaning "top"
-			    json.put("_after", parserState.get().getPreviousDispatchLayerName());
+			    json.put("_below", parserState.get().getPreviousDispatchLayerName());
 			    procConfig.put(name, json);
 			}
 			parserState.get().setPreviousDispatchLayerName(name);			
