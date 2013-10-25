@@ -119,12 +119,14 @@ public class ProfileParser extends AbstractParser {
 			throws ReaderException {
 		uk.org.taverna.scufl2.api.configurations.Configuration config = new uk.org.taverna.scufl2.api.configurations.Configuration();
 
+		boolean ignoreConfig = false;
+		
 		if (original.getType() != null) {
 			URI type = resolve(original.getType().getResource());
 			if (! INTERNAL_DISPATCH_PREFIX.relativize(type).isAbsolute()) {
                 logger.fine("Ignoring unsupported Dispatch stack configuration (SCUFL2-130)");
                 logger.finest(original.getAbout());
-                return;
+                ignoreConfig = true;
 			}
             config.setType(type);
 		}
@@ -132,15 +134,18 @@ public class ProfileParser extends AbstractParser {
         if (original.getName() != null) {
             config.setName(original.getName());
         }
-        mapBean(original.getAbout(), config);    		
-		
-		if (original.getConfigure() != null) {
-			Configurable configurable = resolveBeanUri(original.getConfigure()
-					.getResource(), Configurable.class);
-			config.setConfigures(configurable);
-		}
-        config.setParent(getParserState().getCurrent(
-                uk.org.taverna.scufl2.api.profiles.Profile.class));
+        
+        if (! ignoreConfig) {
+            mapBean(original.getAbout(), config);    		
+    		
+    		if (original.getConfigure() != null) {
+    			Configurable configurable = resolveBeanUri(original.getConfigure()
+    					.getResource(), Configurable.class);
+    			config.setConfigures(configurable);
+    		}
+            config.setParent(getParserState().getCurrent(
+                    uk.org.taverna.scufl2.api.profiles.Profile.class));
+        }
 
         getParserState().push(config);
 
@@ -150,18 +155,23 @@ public class ProfileParser extends AbstractParser {
     		String about = original.getSeeAlso().getResource();
     		if (about != null) {
     		    URI resource = resolve(about);
-    		    URI bundleBase = parserState.get().getLocation();
+    		    URI bundleBase = parserState .get().getLocation();
     		    URI path = uriTools.relativePath(bundleBase, resource);    		    
-    		    try {
-    //    		    System.out.println(path);
-    		        // TODO: Should the path in the UCF Package be %-escaped or not?
-    		        // See TestRDFXMLWriter.awkwardFilenames
-                    config.setJson(parserState.get().getUcfPackage().getResourceAsString(path.getRawPath()));
-                } catch (IllegalArgumentException e) {
-                    logger.log(Level.WARNING, "Could not parse JSON configuration " + path, e);
-    		    } catch (IOException e) {
-                    logger.log(Level.WARNING, "Could not load JSON configuration " + path, e);
-                }
+    		    if (ignoreConfig) {
+    		        logger.finest("Deleting " + path + " (SCUFL2-130)");
+    		        parserState.get().getUcfPackage().removeResource(path.getRawPath());
+    		    } else {
+        		    try {
+        //    		    System.out.println(path);
+        		        // TODO: Should the path in the UCF Package be %-escaped or not?
+        		        // See TestRDFXMLWriter.awkwardFilenames
+                        config.setJson(parserState.get().getUcfPackage().getResourceAsString(path.getRawPath()));
+                    } catch (IllegalArgumentException e) {
+                        logger.log(Level.WARNING, "Could not parse JSON configuration " + path, e);
+        		    } catch (IOException e) {
+                        logger.log(Level.WARNING, "Could not load JSON configuration " + path, e);
+                    }
+    		    }
     		}
 		}
 		
