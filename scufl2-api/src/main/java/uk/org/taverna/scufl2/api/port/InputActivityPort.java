@@ -34,9 +34,9 @@ public class InputActivityPort extends AbstractDepthPort implements ActivityPort
 	 *            the name of the <code>Port</code>. <strong>Must not</strong> be <code>null</code>
 	 *            or an empty String.
 	 */
-	public InputActivityPort(Activity activity, String portName) {
+	public InputActivityPort(Activity activity, String name) {
+	    super(name);
 		setParent(activity);
-		setName(portName);
 	}
 
 	@Override

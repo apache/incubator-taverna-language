@@ -50,6 +50,17 @@ public class Workflow extends AbstractRevisioned implements
 	public Workflow() {	
 	}
 
+	       /**
+     * Constructs a <code>Workflow</code> with the specified name.
+     * 
+     * @param name
+     *            The name of the <code>Workflow</code>. <strong>Must
+     *            not</strong> be <code>null</code> or an empty String.
+     */
+    public Workflow(String name) {
+        super(name);
+    }
+	
 	@Override
 	public boolean accept(Visitor visitor) {
 		if (visitor.visitEnter(this)) {

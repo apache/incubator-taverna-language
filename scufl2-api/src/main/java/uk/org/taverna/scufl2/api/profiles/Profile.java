@@ -47,7 +47,7 @@ public class Profile extends AbstractRevisioned implements Child<WorkflowBundle>
 	 * Constructs a <code>Profile</code> with the specified name.
 	 * 
 	 * @param name
-	 *            the name of the <code>Port</code>. <strong>Must not</strong> be <code>null</code>
+	 *            the name of the <code>Profile</code>. <strong>Must not</strong> be <code>null</code>
 	 *            or an empty String.
 	 */
 	public Profile(String name) {

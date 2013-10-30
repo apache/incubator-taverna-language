@@ -34,9 +34,9 @@ OutputPort, GranularDepthPort {
 	 *            the name of the <code>Port</code>. <strong>Must not</strong> be <code>null</code>
 	 *            or an empty String.
 	 */
-	public OutputActivityPort(Activity activity, String portName) {
+	public OutputActivityPort(Activity activity, String name) {
+	    super(name);
 		setParent(activity);
-		setName(portName);
 	}
 
 	@Override

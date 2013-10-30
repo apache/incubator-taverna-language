@@ -21,6 +21,7 @@ import uk.org.taverna.scufl2.api.common.Root;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.core.Workflow;
+import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.ucfpackage.UCFPackage;
 
@@ -56,13 +57,38 @@ public class WorkflowBundle extends AbstractRevisioned implements WorkflowBean,
 		return WORKFLOW_BUNDLE_ROOT.resolve(UUID.randomUUID().toString() + "/");
 	}
 
-	private NamedSet<Annotation> annotations = new NamedSet<Annotation>();
+    private NamedSet<Annotation> annotations = new NamedSet<Annotation>();
 	private final NamedSet<Profile> profiles = new NamedSet<Profile>();
 	private final NamedSet<Workflow> workflows = new NamedSet<Workflow>();
 	private Workflow mainWorkflow;
 	private Profile mainProfile;
 	private UCFPackage resources;
 
+
+    /**
+     * Construct a new WorkflowBundle with a randomly generated name.
+     * <p>
+     * A WorkflowBundle can also be created using
+     * {@link WorkflowBundleIO#createBundle()} or loaded from an existing bundle
+     * using {@link WorkflowBundleIO#readBundle(java.io.File, String)},
+     * {@link WorkflowBundleIO#readBundle(java.io.InputStream, String)} or
+     * {@link WorkflowBundleIO#readBundle(java.net.URL, String)}.
+     */
+    public WorkflowBundle() {
+        super();
+    }
+
+    /**
+     * Construct a new WorkflowBundle with the specified name.
+     * 
+     * @param name
+     *            The name of the <code>WorkflowBundle</code>. <strong>Must
+     *            not</strong> be <code>null</code> or an empty String.
+     */
+    public WorkflowBundle(String name) {
+        super(name);
+    }
+	
 	@Override
 	public boolean accept(Visitor visitor) {
 		if (visitor.visitEnter(this)) {
