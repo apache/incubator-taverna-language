@@ -1,6 +1,7 @@
 package uk.org.taverna.databundle;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
@@ -26,6 +27,9 @@ import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
 import uk.org.taverna.scufl2.api.io.WriterException;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * Utility functions for dealing with data bundles.
  * <p>
@@ -36,6 +40,11 @@ import uk.org.taverna.scufl2.api.io.WriterException;
  * 
  */
 public class DataBundles extends Bundles {
+    private static class OBJECT_MAPPER {       
+        // Lazy initialization of singleton
+        private static final ObjectMapper instance = new ObjectMapper();
+    }
+
     protected static final class ExtensionIgnoringFilter implements Filter<Path> {
         private final String fname;
 
@@ -51,17 +60,14 @@ public class DataBundles extends Bundles {
     
     private static WorkflowBundleIO wfBundleIO;
 
-
-
     private static Logger logger = Logger.getLogger(DataBundles.class);
-    
-    
     
     private static final String WFDESC_TURTLE = "text/vnd.wf4ever.wfdesc+turtle";
     private static final String WORKFLOW = "workflow";
     private static final String DOT_WFDESC_TTL = ".wfdesc.ttl";
     private static final String DOT_WFBUNDLE = ".wfbundle";
     private static final String WORKFLOWRUN_PROV_TTL = "workflowrun.prov.ttl";
+    private static final String WORKFLOWRUN_JSON = "workflowrun.json";
 	private static final String DOT_ERR = ".err";
 	private static final String INPUTS = "inputs";
 	private static final String INTERMEDIATES = "intermediates";
@@ -306,6 +312,24 @@ public class DataBundles extends Bundles {
         return dataBundle.getRoot().resolve(WORKFLOWRUN_PROV_TTL);
     }
 
+    public static Path getWorkflowRunReport(Bundle dataBundle) {
+        return dataBundle.getRoot().resolve(WORKFLOWRUN_JSON);
+    }
+
+    public static JsonNode getWorkflowRunReportAsJson(Bundle dataBundle) throws IOException {
+        Path path = getWorkflowRunReport(dataBundle);
+        try (InputStream jsonIn = Files.newInputStream(path)) {
+            return OBJECT_MAPPER.instance.readTree(jsonIn);
+        }
+    }
+    
+    public static void setWorkflowRunReport(Bundle dataBundle, JsonNode workflowRunReport) throws IOException {
+        Path path = getWorkflowRunReport(dataBundle);
+        try (OutputStream out = Files.newOutputStream(path)) {
+            OBJECT_MAPPER.instance.writeValue(out, workflowRunReport);
+        }
+    }
+    
     public static Path getWorkflow(Bundle dataBundle) throws IOException {
         return anyExtension(dataBundle.getRoot(), WORKFLOW);
     }
@@ -320,7 +344,6 @@ public class DataBundles extends Bundles {
         Path bundlePath = withExtension(getWorkflow(dataBundle), DOT_WFBUNDLE); 
         checkExistingAnyExtension(bundlePath);
         
-       
         // TODO: Save as nested folder?
         try (OutputStream outputStream = Files.newOutputStream(bundlePath)) {
             getWfBundleIO().writeBundle(wfBundle, 

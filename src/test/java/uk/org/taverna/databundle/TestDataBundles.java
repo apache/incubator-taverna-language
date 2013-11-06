@@ -1,5 +1,6 @@
 package uk.org.taverna.databundle;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -26,6 +27,12 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.purl.wf4ever.robundle.Bundle;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
@@ -754,10 +761,35 @@ public class TestDataBundles {
         wfBundle = DataBundles.getWorkflowBundle(dataBundle);        
         assertEquals(name, wfBundle.getName());
         assertEquals(wfName, wfBundle.getMainWorkflow().getName());        
-        assertEquals(id, wfBundle.getIdentifier());
-        
+        assertEquals(id, wfBundle.getIdentifier());        
     }
 
+    @Test
+    public void getWorkflowReport() throws Exception {
+        Path runReport = DataBundles.getWorkflowRunReport(dataBundle);
+        assertEquals("/workflowrun.json", runReport.toString());
+    }
+    
+    @Test
+    public void getWorkflowReportAsJson() throws Exception {        
+        Path runReport = DataBundles.getWorkflowRunReport(dataBundle);
+        DataBundles.setStringValue(runReport, "{ \"valid\": \"not really\", \"number\": 1337 }");
+        JsonNode json = DataBundles.getWorkflowRunReportAsJson(dataBundle);
+        assertEquals("not really", json.path("valid").asText());
+        assertEquals(1337, json.path("number").asInt());
+    }
+    
+    @Test
+    public void setWorkflowReport() throws Exception {
+        ObjectNode report = JsonNodeFactory.instance.objectNode();
+        report.put("number", 1337);
+        DataBundles.setWorkflowRunReport(dataBundle, report);
+        Path runReport = DataBundles.getWorkflowRunReport(dataBundle);
+        String json = DataBundles.getStringValue(runReport);
+        assertTrue(json.contains("number"));
+        assertTrue(json.contains("1337"));
+    }
+    
 
 }
 
