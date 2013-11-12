@@ -366,7 +366,6 @@ public class DataBundles extends Bundles {
     public static WorkflowBundle getWorkflowBundle(Bundle dataBundle)
             throws ReaderException, IOException {
         Path wf = getWorkflow(dataBundle);
-        WorkflowBundleIO wfBundleIO = new WorkflowBundleIO();
         String type = Files.probeContentType(wf);
         return wfBundleIO.readBundle(Files.newInputStream(wf), type);
     }
