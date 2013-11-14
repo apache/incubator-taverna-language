@@ -722,9 +722,8 @@ public class T2FlowParser {
 						annotation);
 				String body;
                 if (clazz.equals(SEMANTIC_ANNOTATION)) {
-					
-					// TODO: Add the correct @base					
-					body = value;
+                    String baseStr = "@base <" + annotatedSubject.toASCIIString() + "> .\n";
+					body = baseStr + value;
 				} else {
 				    // Generate Turtle from 'classic' annotation 
 				    URI predicate = getPredicatesForClass().get(clazz);
