@@ -2,8 +2,12 @@ package org.purl.wf4ever.wfdesc.scufl2;
 
 import static uk.org.taverna.scufl2.api.common.Scufl2Tools.NESTED_WORKFLOW;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.namespace.QName;
 
@@ -16,6 +20,7 @@ import org.openrdf.query.parser.QueryParserRegistry;
 import org.openrdf.query.parser.sparql.SPARQLParserFactory;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.contextaware.ContextAwareConnection;
+import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.helpers.OrganizedRDFWriter;
 import org.purl.wf4ever.roterms.RotermsResource;
 import org.purl.wf4ever.wf4ever.BeanshellScript;
@@ -29,6 +34,7 @@ import org.purl.wf4ever.wfdesc.Process;
 import org.w3.prov.Entity;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
+import uk.org.taverna.scufl2.api.annotation.Annotation;
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Named;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
@@ -41,7 +47,6 @@ import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.io.WriterException;
-import uk.org.taverna.scufl2.api.port.ActivityPort;
 import uk.org.taverna.scufl2.api.port.InputPort;
 import uk.org.taverna.scufl2.api.port.OutputPort;
 import uk.org.taverna.scufl2.api.port.WorkflowPort;
@@ -53,6 +58,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public class WfdescSerialiser {
 
+    private static Logger logger = Logger.getLogger(WfdescSerialiser.class.getCanonicalName());
+    
     public static URI REST = URI
             .create("http://ns.taverna.org.uk/2010/activity/rest");
 	public static URI WSDL = URI
@@ -248,6 +255,26 @@ public class WfdescSerialiser {
 //				    System.out.println("--NO!");
 					return false;
 				}
+                for (Annotation ann : scufl2Tools.annotationsFor(node, bundle)) {
+                    String annotationBody = ann.getBody().toASCIIString();
+                    String baseURI = bundle.getGlobalBaseURI().resolve(ann.getBody()).toASCIIString();
+                    InputStream annotationStream;
+                    try {                        
+                        annotationStream = bundle.getResources().getResourceAsInputStream(
+                                annotationBody);
+                   
+                        RDFFormat dataFormat = RDFFormat.TURTLE;
+                        try {
+                            getSesameManager().getConnection().add(annotationStream, baseURI, dataFormat);                    
+                        } catch (OpenRDFException e) {
+                            logger.log(Level.WARNING, "Can't parse RDF Turtle from " + annotationBody, e); 
+                        } finally {
+                            annotationStream.close();
+                        } 
+                    } catch (IOException e) {
+                        logger.log(Level.WARNING, "Can't read " + annotationBody, e);
+                    }
+                }            
 				if (node instanceof Named) {
 					Named named = (Named) node;
                     Labelled labelled = entityForBean(node, Labelled.class);
@@ -315,6 +342,12 @@ public class WfdescSerialiser {
 				        "http://purl.org/wf4ever/wf4ever#");
 				connection.setNamespace("roterms",
 				        "http://purl.org/wf4ever/roterms#");
+				connection.setNamespace("dc", "http://purl.org/dc/elements/1.1/");
+				connection.setNamespace("dcterms", "http://purl.org/dc/terms/");
+				connection.setNamespace("comp", "http://purl.org/DP/components#");
+				connection.setNamespace("dep", "http://scape.keep.pt/vocab/dependencies#");
+				connection.setNamespace("biocat", "http://biocatalogue.org/attribute/");
+				
                 connection.setNamespace("", "#");
 
 				
