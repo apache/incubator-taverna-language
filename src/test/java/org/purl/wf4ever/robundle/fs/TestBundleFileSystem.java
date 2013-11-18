@@ -18,6 +18,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.purl.wf4ever.robundle.Bundle;
+import org.purl.wf4ever.robundle.Bundles;
 
 public class TestBundleFileSystem extends Helper {
 
@@ -27,6 +29,27 @@ public class TestBundleFileSystem extends Helper {
         Files.newBufferedWriter(file, Charset.defaultCharset()).close();
     }
 
+    @Test
+    public void reopenNew() throws Exception {
+        Path x = Files.createTempFile("temp", ".zip");
+        Bundle bundle = Bundles.createBundle(x);
+        Path newFile = Files.createTempFile("temp", ".zip");
+        Bundles.closeAndSaveBundle(bundle, newFile);
+        Bundles.openBundle(newFile);
+    }
+    
+
+    @Test
+    public void closeAndSaveToPreserveOriginal() throws Exception {
+        Path x = Files.createTempFile("temp", ".zip");
+        Bundle bundle = Bundles.createBundle(x);
+        Path newFile = Files.createTempFile("temp", ".zip");
+        Bundles.closeAndSaveBundle(bundle, newFile);
+        Bundles.openBundle(x);
+    }
+    
+    
+    
     /**
      * Test that BundleFileSystem does not allow a ZIP file to also become a
      * directory. See http://stackoverflow.com/questions/16588321/ as Java 7'z
