@@ -32,7 +32,7 @@ public class MemoryEfficiencyIT extends Helper {
 
     Random rand = new Random();
 
-    int MAX_WORKERS = 100;
+    int MAX_WORKERS = 10;
     
     
     @Test
