@@ -28,8 +28,8 @@ For more information, see the [SCUFL2 API][9] pages, the
 Requisites
 ----------
 
-* Java 1.6 or newer
-* Maven 2.2.1 or newer (for building)
+* Java 1.6 or newer (tested with Java 1.7)
+* Maven 2.2.2 or newer (for building, tested with Maven 3.0.5)
 
 
 Building
@@ -38,7 +38,7 @@ Building
 * `mvn clean install`
 
 This will build each module and run their tests, producing JARs like
-`scufl2-api/target/scufl2-api-0.13.0.jar`. 
+`scufl2-api/target/scufl2-api-0.13.1.jar`. 
 
 First time you build Scufl2 this might download dependencies needed for
 compliation. These have separate open source licenses, but should be
@@ -63,27 +63,28 @@ project's POM file, add this to your `<dependencies>` section:
 		<dependency>
 			<groupId>uk.org.taverna.scufl2</groupId>
 			<artifactId>scufl2-api</artifactId>
-			<version>0.13.0</version>
+			<version>0.13.1</version>
 		</dependency>
 		<dependency>
 			<groupId>uk.org.taverna.scufl2</groupId>
 			<artifactId>scufl2-rdfxml</artifactId>
-			<version>0.13.0</version>
+			<version>0.13.1</version>
 		</dependency>
 		<dependency>
 			<groupId>uk.org.taverna.scufl2</groupId>
 			<artifactId>scufl2-t2flow</artifactId>
-			<version>0.13.0</version>
+			<version>0.13.1</version>
 		</dependency>
 
-All Scufl2 modules are also valid OSGi bundles.
+All Scufl2 modules are also valid OSGi bundles, see the OSGi section
+below.  
 
 You can alternatively copy and add the JARs from these modules to your
 classpath:
 
-* scufl2-api/target/scufl2-api-0.13.0.jar
-* scufl2-rdfxml/target/scufl2-rdfxml-0.13.0.jar
-* scufl2-t2flow/target/scufl2-t2flow-0.13.0.jar
+* scufl2-api/target/scufl2-api-0.13.1.jar
+* scufl2-rdfxml/target/scufl2-rdfxml-0.13.1.jar
+* scufl2-t2flow/target/scufl2-t2flow-0.13.1.jar
 
 
 See the *scufl2-validation* folder for examples of
@@ -108,6 +109,63 @@ Example of converting .t2flow to .wfbundle:
 
 Check out the GitHub project scufl2-examples[8] for examples of using Scufl2, 
 including the above code.
+
+Supported file formats with WorkflowBundleIO and their required modules:
+
+<table>
+    <tr><th>Media type</th>  <th>Support</th> <th>JAR</th> <th>Description</th> </tr>
+    <tr><td>application/vnd.taverna.t2flow+xml</td><td>read</td><td>scufl2-t2flow</td><td>Taverna 2 t2flow</td></tr>
+    <tr><td>application/vnd.taverna.scufl2.workflow-bundle</td><td>read/write</td><td>scufl2-rdfxml</td><td>Taverna 3 workflow bundle</td></tr>
+    <tr><td>application/vnd.taverna.scufl+xml</td><td>read</td><td>scufl2-scufl</td><td>Taverna 1 SCUFL (experimental)</td></tr>
+    <tr><td>text/vnd.taverna.scufl2.structure</td><td>read/write</td><td>scufl2-api</td><td>Textual format for testing/debugging</td></tr>
+    <tr><td>text/vnd.wf4ever.wfdesc+turtle</td><td>write</td><td><a href="https://github.com/wf4ever/scufl2-wfdesc">scufl2-wfdesc</a></td><td>Abstract workflow structure in <a href="http://www.w3.org/TR/turtle/">RDF Turtle</a> according to the <a href="http://purl.org/wf4ever/model#wfdesc">Wf4Ever wfdesc ontology</a></td></tr>
+    <tr><td>text/vnd.mgrast.awe.awf+json</td><td>read</td><td><a href="https://github.com/stain/scufl2-awf">scufl2-awf</a></td> <td>Workflow definition of the MG-RAST <a href="https://github.com/MG-RAST/AWE">AWE</a> workflow engine. (experimental)</td></tr>
+    <tr><td>application/vnd.shiwa.iwir+xml</td><td>read/write</td> <td><a href="https://github.com/stain/scufl2-iwir/">scufl2-iwir</a></td> <td><a href="http://www.shiwa-workflow.eu/">SHIWA</a>'s <a href="https://www.shiwa-workflow.eu/documents/10753/55350/IWIR+v1.1+Specification">IWIR</a> interoperabile workflow language (experimental)</td></tr>
+    <tr><td>application/json</td> <td>write</td> <td><a href="https://github.com/myGrid/scufl2-examples">scufl2-examples</a></td> <td>Abstract workflow as JSON (experimental)</td></tr>
+</table>
+
+
+OSGi services
+-------------
+To use SCUFL2 from OSGi, use the following OSGi Services. Example, from
+META-INF/spring/run-context.osgi.xml:
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <beans:beans xmlns="http://www.springframework.org/schema/osgi"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xmlns:beans="http://www.springframework.org/schema/beans"
+                xsi:schemaLocation="http://www.springframework.org/schema/beans
+                                    http://www.springframework.org/schema/beans/spring-beans.xsd
+                                    http://www.springframework.org/schema/osgi
+                                    http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+        <service ref="myService" interface="com.example.MyService"/>
+
+        <reference id="workflowBundleIO" interface="uk.org.taverna.scufl2.api.io.WorkflowBundleIO" />
+
+    </beans:beans>
+
+And in run-context.xml:
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+                            http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+        <bean id="myService" class="com.example.impl.MyServiceImpl" >
+                <property name="workflowBundleIO" ref="workflowBundleIO"/>
+        </bean>
+
+    </beans>
+
+This will provide a WorkflowBundleIO instance with its readers and
+writers loaded through OSGi, which when the bundles for scufl2-t2flow
+and scufl2-rdfxml are loaded, would include support for the Taverna 2
+t2flow format and the Taverna 3 wfbundle format.
+
+Note that you do not need to use OSGi services to instantiate
+Scufl2Tools or URITools, but may do so if you wish.
 
 
 Modules
@@ -143,4 +201,4 @@ Experimental modules:
 [7]: http://www.mygrid.org.uk/dev/wiki/display/developer/Taverna+Workflow+Bundle
 [8]: https://github.com/mygrid/scufl2-examples
 [9]: http://www.mygrid.org.uk/dev/wiki/display/developer/SCUFL2+API
-[10]: http://mygrid.github.io/scufl2/api/0.12/
+[10]: http://mygrid.github.io/scufl2/api/0.13/
