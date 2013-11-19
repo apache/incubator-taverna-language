@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,15 +37,28 @@ public class TestBundles {
 	}
 
 	@Test
-	public void close() throws Exception {
+	public void closeDeleteTemp() throws Exception {
 		Bundle bundle = Bundles.createBundle();
 		assertTrue(Files.exists(bundle.getSource()));
 		assertTrue(bundle.getFileSystem().isOpen());
-
+        assertTrue(bundle.isDeleteOnClose());
 		bundle.close();
 		assertFalse(Files.exists(bundle.getSource()));
 		assertFalse(bundle.getFileSystem().isOpen());
 	}
+	
+    @Test
+    public void closeNotDelete() throws Exception {        
+        Path path = Files.createTempFile("bundle", ".zip");
+        Bundle bundle = Bundles.createBundle(path);
+        assertFalse(bundle.isDeleteOnClose());
+        assertTrue(Files.exists(bundle.getSource()));
+        assertTrue(bundle.getFileSystem().isOpen());
+        
+        bundle.close();
+        assertTrue(Files.exists(bundle.getSource()));
+        assertFalse(bundle.getFileSystem().isOpen());
+    }
 
 	@Test
 	public void closeAndOpenBundle() throws Exception {
@@ -67,7 +81,7 @@ public class TestBundles {
 	}
 
 	@Test
-	public void closeAndSaveBundle() throws Exception {
+	public void closeAndSaveBundleDelete() throws Exception {
 		Bundle bundle = Bundles.createBundle();
 		Path destination = Files.createTempFile("test", ".zip");
 		destination.toFile().deleteOnExit();
@@ -77,6 +91,19 @@ public class TestBundles {
 		assertTrue(Files.exists(destination));
 		assertFalse(Files.exists(bundle.getSource()));
 	}
+	
+	@Test
+    public void closeAndSaveBundleNotDelete() throws Exception {
+        Path path = Files.createTempFile("bundle", ".zip");
+        Bundle bundle = Bundles.createBundle(path);
+        Path destination = Files.createTempFile("test", ".zip");
+        destination.toFile().deleteOnExit();
+        Files.delete(destination);
+        assertFalse(Files.exists(destination));
+        Bundles.closeAndSaveBundle(bundle, destination);
+        assertTrue(Files.exists(destination));
+        assertTrue(Files.exists(bundle.getSource()));
+    }
 
 	@Test
 	public void closeBundle() throws Exception {
@@ -232,11 +259,57 @@ public class TestBundles {
 		try (Bundle db = Bundles.createBundle()) {
     		Path f2 = db.getRoot().resolve("f2");
     		Bundles.safeMove(f1, f2);
+    		assertFalse(Files.exists(f1));
     		assertTrue(isEmpty(tmp));
     		assertEquals(Arrays.asList("f2", "mimetype"), ls(db.getRoot()));
 		}
 
 	}
+	
+	   
+    @Test
+    public void safeCopy() throws Exception {
+        Path tmp = Files.createTempDirectory("test");
+        tmp.toFile().deleteOnExit();
+        Path f1 = tmp.resolve("f1");
+        f1.toFile().deleteOnExit();
+        Files.createFile(f1);
+        assertFalse(isEmpty(tmp));
+
+        try (Bundle db = Bundles.createBundle()) {
+            Path f2 = db.getRoot().resolve("f2");
+            Bundles.safeCopy(f1, f2);
+            assertTrue(Files.exists(f1));
+            assertTrue(Files.exists(f2));           
+            assertEquals(Arrays.asList("f2", "mimetype"), ls(db.getRoot()));
+        }
+
+    }
+    
+
+    @Test(expected = DirectoryNotEmptyException.class)
+    public void safeCopyFails() throws Exception {
+        Path tmp = Files.createTempDirectory("test");
+        tmp.toFile().deleteOnExit();
+        Path f1 = tmp.resolve("f1");
+        f1.toFile().deleteOnExit();
+        Path d1 = tmp.resolve("d1");
+        d1.toFile().deleteOnExit();
+        Files.createFile(f1);
+
+        // Make d1 difficult to overwrite
+        Files.createDirectory(d1);
+        Files.createFile(d1.resolve("child"));
+
+        try {
+//            Files.copy(f1, d1, StandardCopyOption.REPLACE_EXISTING);
+            Bundles.safeCopy(f1, d1);
+        } finally {
+            assertEquals(Arrays.asList("d1", "f1"), ls(tmp));
+            assertTrue(Files.exists(f1));
+            assertTrue(Files.isDirectory(d1));
+        }
+    }
 	
 
 	@Test(expected = IOException.class)
@@ -248,7 +321,11 @@ public class TestBundles {
 		Path d1 = tmp.resolve("d1");
 		d1.toFile().deleteOnExit();
 		Files.createFile(f1);
+
+		// Make d1 difficult to overwrite
 		Files.createDirectory(d1);
+        Files.createFile(d1.resolve("child"));
+
 		try {
 			Bundles.safeMove(f1, d1);
 		} finally {

@@ -10,6 +10,8 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.CopyOption;
+import java.nio.file.DirectoryNotEmptyException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -48,8 +50,11 @@ public class Bundles {
     public static void closeAndSaveBundle(Bundle bundle, Path destination)
             throws IOException {
         Path zipPath = closeBundle(bundle);
-        // Files.move(zipPath, destination);
-        safeMove(zipPath, destination);
+        if (bundle.isDeleteOnClose()) {
+            safeMove(zipPath, destination);
+        } else {
+            safeCopy(zipPath, destination);
+        }
     }
 
     public static Path closeBundle(Bundle bundle) throws IOException {
@@ -145,11 +150,21 @@ public class Bundles {
         return new Bundle(fs.getRootDirectory(), false);
     }
 
+    public static void safeCopy(Path source, Path destination)
+            throws IOException {
+        safeMoveOrCopy(source, destination, false);
+    }
+    
     public static void safeMove(Path source, Path destination)
+            throws IOException {
+        safeMoveOrCopy(source, destination, true);
+    }
+
+    protected static void safeMoveOrCopy(Path source, Path destination, boolean move)
             throws IOException {
 
         // First just try to do an atomic move with overwrite
-        if (source.getFileSystem().provider()
+        if (move && source.getFileSystem().provider()
                 .equals(destination.getFileSystem().provider())) {
             try {
                 Files.move(source, destination, ATOMIC_MOVE, REPLACE_EXISTING);
@@ -164,21 +179,37 @@ public class Bundles {
                 tmpName, ".tmp");
         Path backup = null;
         try {
-            // This might do a copy if filestores differ
-            // .. hence to avoid an incomplete (and partially overwritten)
-            // destination, we do it first to a temporary file
-            Files.move(source, tmpDestination, REPLACE_EXISTING);
+            if (move) {
+                // This might do a copy if filestores differ
+                // .. hence to avoid an incomplete (and partially overwritten)
+                // destination, we do it first to a temporary file
+                Files.move(source, tmpDestination, REPLACE_EXISTING);
+            } else {
+                Files.copy(source, tmpDestination, REPLACE_EXISTING);
+            }
 
             if (Files.exists(destination)) {
+                if (Files.isDirectory(destination)) {
+                    // ensure it is empty
+                    try (DirectoryStream<Path> ds = Files.newDirectoryStream(destination)) {
+                        for (Path p : ds) {
+                            throw new DirectoryNotEmptyException(destination.toString());
+                        }
+                    }
+                }
                 // Keep the files for roll-back in case it goes bad
                 backup = Files.createTempFile(destination.getParent(), tmpName,
                         ".orig");
                 Files.move(destination, backup, REPLACE_EXISTING);
             }
-            // OK ; let's swap over:
+            // OK ; let's swap over
             try {
+                // prefer ATOMIC_MOVE
                 Files.move(tmpDestination, destination, REPLACE_EXISTING,
                         ATOMIC_MOVE);
+            } catch (AtomicMoveNotSupportedException ex) {
+                // possibly a network file system as src/dest should be in same folder
+                Files.move(tmpDestination, destination, REPLACE_EXISTING);
             } finally {
                 if (!Files.exists(destination) && backup != null) {
                     // Restore the backup
@@ -193,7 +224,7 @@ public class Bundles {
             Files.deleteIfExists(tmpDestination);
         }
     }
-
+    
     public static Path setReference(Path path, URI ref) throws IOException {
         path = withExtension(path, DOT_URL);
 
