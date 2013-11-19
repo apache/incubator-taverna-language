@@ -11,7 +11,7 @@
     </prerequisites>
     <groupId>uk.org.taverna.databundle</groupId>
     <artifactId>databundle</artifactId>
-    <version>0.2.0-SNAPSHOT</version>
+    <version>0.2.0</version>
     <name>Databundle API</name>
     <description>API for dealing with Data Bundles</description>
     <properties>
