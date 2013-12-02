@@ -217,7 +217,7 @@ public class WfdescSerialiser {
                         if (type.equals(TOOL)) {
                             CommandLineTool cmd = getSesameManager().designateEntity(process, CommandLineTool.class);
                             JsonNode desc = json.get("toolDescription");
-                            System.out.println(json);
+                            //System.out.println(json);
                             JsonNode command = desc.get("command");
                             if (command != null) { 
                                 cmd.getWfCommand().add(command.asText());
