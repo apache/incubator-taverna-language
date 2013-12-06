@@ -46,19 +46,17 @@ public class BundleFileSystem extends FileSystem {
     protected Path findSource() {
         Path zipRoot = getRootDirectory().getZipPath();
         URI uri = zipRoot.toUri();
-        String s = uri.getSchemeSpecificPart();
-        if (!s.endsWith("!/")) { // sanity check
+        String schemeSpecific;
+        if (provider().getJarDoubleEscaping()) {
+            schemeSpecific = uri.getSchemeSpecificPart();
+        } else {
+            // http://dev.mygrid.org.uk/issues/browse/T3-954
+            schemeSpecific = uri.getRawSchemeSpecificPart();
+        }
+        if (!schemeSpecific.endsWith("!/")) { // sanity check
             throw new IllegalStateException("Can't parse JAR URI: " + uri);
         }
-        URI zip;
-        try {
-            zip = URI.create(s.substring(0, s.length() - 2)); 
-        } catch (IllegalArgumentException ex) {
-            // TODO: Is the zipPath.toUri() guaranteed to be double-escaped before !/ ? This is not
-            // consistent with https://bugs.openjdk.java.net/browse/JDK-8001178
-            // See also http://dev.mygrid.org.uk/issues/browse/T3-954
-            throw new IllegalStateException("Can't parse URI of source " + s, ex);
-        }
+        URI zip = URI.create(schemeSpecific.substring(0, schemeSpecific.length() - 2)); 
         return Paths.get(zip); // Look up our path
     }
 
