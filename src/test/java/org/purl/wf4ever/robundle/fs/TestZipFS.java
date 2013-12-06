@@ -27,7 +27,6 @@ import java.util.zip.ZipOutputStream;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.purl.wf4ever.robundle.Bundles;
 
@@ -189,110 +188,6 @@ public class TestZipFS {
     public void deleteTempFS() throws IOException {
         fs.close();
         Files.deleteIfExists(zip);
-    }
-    
-    /* http://stackoverflow.com/a/16584723/412540 */
-    @Test
-    public void jarWithSpaces() throws Exception {
-        Path path = Files.createTempFile("with several spaces", ".zip");
-        Files.delete(path);
-        path.toFile().deleteOnExit();
-
-        // Will fail with FileSystemNotFoundException without env:
-        //FileSystems.newFileSystem(path, null);
-
-        // Neither does this work, as it does not double-escape:
-        // URI jar = URI.create("jar:" + path.toUri().toASCIIString());                
-
-        URI jar = new URI("jar", path.toUri().toString(), null);
-        assertTrue(jar.toASCIIString().contains("with%2520several%2520spaces"));
-
-        Map<String, Object> env = new HashMap<>();
-        env.put("create", "true");
-
-        try (FileSystem fs = FileSystems.newFileSystem(jar, env)) {
-            URI root = fs.getPath("/").toUri();    
-            assertTrue(root.toString().contains("with%2520several%2520spaces"));
-        } 
-        // Reopen from now-existing Path to check that the URI is
-        // escaped in the same way
-        try (FileSystem fs = FileSystems.newFileSystem(path, null)) {
-            URI root = fs.getPath("/").toUri();
-            //System.out.println(root.toASCIIString());
-            assertTrue(root.toString().contains("with%2520several%2520spaces"));
-        }
-    }
-
-    /**
-     * See http://stackoverflow.com/a/14034572/412540 - spaces in filename seems
-     * broken in Java 8. This test passes in Java 7 and should pass in Java 8
-     * for regression testing.
-     */
-    @Test
-    public void jarWithSpacesJava8() throws Exception {
-
-        Path dir = Files.createTempDirectory("test");
-        try {
-            dir.resolve("test");
-    
-            Path path = dir.resolve("with several spaces.zip");
-    
-            // Make empty zip file - the old way!
-            try (ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(
-                    path, StandardOpenOption.CREATE,
-                    StandardOpenOption.TRUNCATE_EXISTING))) {
-                out.closeEntry();
-            }
-    
-            Map<String, Object> env = new HashMap<>();
-    
-            URI root;
-            // Open by path
-            try (FileSystem fs = FileSystems.newFileSystem(path, null)) {
-                // Works fine
-                root = fs.getPath("/").toUri();
-                //System.out.println(root.toASCIIString());
-    
-                // Double-escaped, as expected and compatible with Java 7
-                assertTrue(root.toString().contains("with%2520several%2520spaces.zip")) ;
-            }
-    
-            // Open it again from the URI
-            try (FileSystem fs = FileSystems.newFileSystem(root, env)) {
-                root = fs.getPath("/").toUri();
-                //System.out.println(root.toASCIIString());
-                assertTrue(root.toString().contains("with%2520several%2520spaces.zip"));
-            }
-            
-            // What if we construct the JAR URI as in Java 7?
-            URI jar = new URI("jar", path.toUri().toString(), null);
-            try (FileSystem fs = FileSystems.newFileSystem(jar, env)) {
-                root = fs.getPath("/").toUri();
-                //System.out.println(root.toASCIIString());
-                assertTrue(root.toString().contains("with%2520several%2520spaces.zip"));
-            }
-    
-            // OK, let's just create one and see what we get
-            env.put("create", "true");
-            Files.delete(path);
-    
-            try (FileSystem fs = FileSystems.newFileSystem(jar, env)) {
-                root = fs.getPath("/").toUri();
-                //System.out.println(root.toASCIIString());
-                assertTrue(root.toString().contains("with%2520several%2520spaces.zip"));
-            }
-    
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
-                for (Path file : stream) {
-                    assertEquals("with several spaces.zip", file.getFileName().toString());
-                    // not with%20several%20spaces.zip
-                }
-            } 
-        
-        } finally {
-            Bundles.deleteRecursively(dir);
-        }
-
     }
 
 }

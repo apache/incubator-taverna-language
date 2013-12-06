@@ -50,7 +50,15 @@ public class BundleFileSystem extends FileSystem {
         if (!s.endsWith("!/")) { // sanity check
             throw new IllegalStateException("Can't parse JAR URI: " + uri);
         }
-        URI zip = URI.create(s.substring(0, s.length() - 2));
+        URI zip;
+        try {
+            zip = URI.create(s.substring(0, s.length() - 2)); 
+        } catch (IllegalArgumentException ex) {
+            // TODO: Is the zipPath.toUri() guaranteed to be double-escaped before !/ ? This is not
+            // consistent with https://bugs.openjdk.java.net/browse/JDK-8001178
+            // See also http://dev.mygrid.org.uk/issues/browse/T3-954
+            throw new IllegalStateException("Can't parse URI of source " + s, ex);
+        }
         return Paths.get(zip); // Look up our path
     }
 

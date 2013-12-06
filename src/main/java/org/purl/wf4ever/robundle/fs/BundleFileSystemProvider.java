@@ -201,6 +201,7 @@ public class BundleFileSystemProvider extends FileSystemProvider {
                 return (BundleFileSystemProvider) provider;
             }
         }
+        // Not installed! 
         // Fallback for OSGi environments
         return Singleton.INSTANCE;
     }
@@ -503,23 +504,29 @@ public class BundleFileSystemProvider extends FileSystemProvider {
     }
 
     @Override
+    public FileSystem newFileSystem(Path path, Map<String, ?> env)
+            throws IOException {
+        URI uri;
+        try {
+            uri = new URI(APP, path.toUri().toASCIIString(), null);
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("Can't create app: URI for "
+                    + path);
+        }
+        return newFileSystem(uri, env);
+    }
+    
+    @Override
     public BundleFileSystem newFileSystem(URI uri, Map<String, ?> env)
             throws IOException {
 
         Path localPath = localPathFor(uri);
         URI baseURI = baseURIFor(uri);
 
-        // Open using ZIP provider
-        URI jar;
-        try {
-            jar = new URI("jar", localPath.toUri().toString(), null);
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("Can't construct JAR uri for "
-                    + localPath);
+        if (asBoolean(env.get("create"), false)) {
+            createBundleAsZip(localPath, (String)env.get("mimetype"));
         }
-        // Pass on env
-        FileSystem origFs = FileSystems.newFileSystem(jar, env);
-
+        
         BundleFileSystem fs;
         synchronized (openFilesystems) {
             WeakReference<BundleFileSystem> existingRef = openFilesystems
@@ -531,11 +538,22 @@ public class BundleFileSystemProvider extends FileSystemProvider {
                             baseURI.toASCIIString());
                 }
             }
+            FileSystem origFs = FileSystems.newFileSystem(localPath, null);
             fs = new BundleFileSystem(origFs, baseURI);
             openFilesystems.put(baseURI,
                     new WeakReference<BundleFileSystem>(fs));
         }
         return fs;
+    }
+
+    private boolean asBoolean(Object object, boolean defaultValue) {
+        if (object instanceof Boolean) {
+            return (Boolean)object;
+        }
+        if (object instanceof String) {
+            return Boolean.valueOf((String)object);
+        }
+        return defaultValue;
     }
 
     @Override
