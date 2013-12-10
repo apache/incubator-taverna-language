@@ -1,5 +1,6 @@
 package org.purl.wf4ever.robundle;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -265,6 +266,32 @@ public class TestBundles {
 		}
 
 	}
+	
+	@Test
+    public void openBundleReadOnly() throws Exception {
+	    Path untouched = Files.createTempFile("test-openBundleReadOnly", ".zip");
+	    try (Bundle bundle = Bundles.createBundle(untouched)) {
+	        Bundles.setStringValue(bundle.getRoot().resolve("file.txt"), "Untouched");
+	    }	    
+	    try (Bundle readOnly = Bundles.openBundleReadOnly(untouched)) {
+	        Path file = readOnly.getRoot().resolve("file.txt");
+	        // You can change the open file system
+            Bundles.setStringValue(file, "Modified");
+	        assertEquals("Modified", Bundles.getStringValue(file));
+	        // and even make new resources
+	        Path newFile = readOnly.getRoot().resolve("newfile.txt");
+            Files.createFile(newFile);	        
+	        assertTrue(Files.exists(newFile));
+	        
+	    }
+	    try (Bundle readOnly = Bundles.openBundleReadOnly(untouched)) {
+	        // But that is not persisted in the zip
+	        Path file = readOnly.getRoot().resolve("file.txt");
+            assertEquals("Untouched", Bundles.getStringValue(file));
+	        Path newfile = readOnly.getRoot().resolve("newfile.txt");
+            assertFalse(Files.exists(newfile));
+        }
+    }
 	
 	   
     @Test

@@ -45,6 +45,8 @@ import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.purl.wf4ever.robundle.utils.TemporaryFiles;
+
 public class BundleFileSystemProvider extends FileSystemProvider {
     public class BundleFileChannel extends FileChannel {
 
@@ -249,20 +251,12 @@ public class BundleFileSystemProvider extends FileSystemProvider {
     }
 
     public static BundleFileSystem newFileSystemFromTemporary()
-            throws IOException {
-        Path tempDir = Files.createTempDirectory("robundle");
-        tempDir.toFile().deleteOnExit();
-
-        // Why inside a tempDir? Because ZipFileSystemProvider
-        // creates neighbouring temporary files
-        // per file that is written to zip, which could mean a lot of
-        // temporary files directly in /tmp - making it difficult to clean up
-        Path bundle = tempDir.resolve("robundle.zip");
+            throws IOException {        
+        Path bundle = TemporaryFiles.temporaryBundle();
         BundleFileSystem fs = BundleFileSystemProvider.newFileSystemFromNew(
                 bundle, null);
-        bundle.toFile().deleteOnExit();
         return fs;
-    }
+    }    
 
     /**
      * Public constructor provided for FileSystemProvider.installedProviders().

@@ -23,6 +23,7 @@ import org.purl.wf4ever.robundle.fs.BundleFileSystem;
 import org.purl.wf4ever.robundle.fs.BundleFileSystemProvider;
 import org.purl.wf4ever.robundle.utils.RecursiveCopyFileVisitor;
 import org.purl.wf4ever.robundle.utils.RecursiveDeleteVisitor;
+import org.purl.wf4ever.robundle.utils.TemporaryFiles;
 
 /**
  * Utility functions for dealing with RO bundles.
@@ -150,6 +151,15 @@ public class Bundles {
         return new Bundle(fs.getRootDirectory(), false);
     }
 
+    public static Bundle openBundleReadOnly(Path zip) throws IOException {
+        Path tmpBundle = TemporaryFiles.temporaryBundle();
+        // BundleFileSystemProvider requires write-access, so we'll have to copy it
+        Files.copy(zip, tmpBundle);
+        BundleFileSystem fs = BundleFileSystemProvider
+                .newFileSystemFromExisting(tmpBundle);
+        return new Bundle(fs.getRootDirectory(), false);
+    }
+    
     public static void safeCopy(Path source, Path destination)
             throws IOException {
         safeMoveOrCopy(source, destination, false);
