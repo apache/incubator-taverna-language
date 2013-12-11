@@ -36,6 +36,7 @@ import org.purl.wf4ever.robundle.utils.TemporaryFiles;
  */
 public class Bundles {
 
+    private static final String MANIFEST_JSON = "manifest.json";
     private static final String ANNOTATIONS = "annotations";
     private static final String DOT_RO = ".ro";
 
@@ -302,6 +303,10 @@ public class Bundles {
         return dir;
     }
 
+    public static Path getManifestPath(Bundle bundle) {
+        return bundle.getRoot().resolve(DOT_RO).resolve(MANIFEST_JSON);     
+    }
+
     public static String getMimeType(Bundle bundle) throws IOException {
         Path mimetypePath = bundle.getRoot().resolve(BundleFileSystemProvider.MIMETYPE_FILE);
         String mimetype = getStringValue(mimetypePath);
@@ -329,5 +334,6 @@ public class Bundles {
         }
         setStringValue(mimetypePath, mimetype);
     }
+
 
  }
