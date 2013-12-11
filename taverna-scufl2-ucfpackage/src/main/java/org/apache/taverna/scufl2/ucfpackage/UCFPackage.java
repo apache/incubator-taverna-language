@@ -49,6 +49,12 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.taverna.scufl2.ucfpackage.impl.odfdom.pkg.OdfPackage;
 import org.apache.taverna.scufl2.ucfpackage.impl.odfdom.pkg.manifest.OdfFileEntry;
@@ -272,16 +278,29 @@ public class UCFPackage implements Cloneable {
         manifest.getAggregation(bundlePath).setMediatype(mediaType);
 	}
 
+	@Deprecated
 	public void addResource(Document document, String path, String mediaType)
 			throws IOException {
-		try {
-			odfPackage.insert(document, path, mediaType);
-		} catch (IOException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new IOException("Could not add " + path, e);
-		}
-		if (path.equals(CONTAINER_XML))
+
+        Path bundlePath = bundle.getRoot().resolve(path);
+        TransformerFactory tFactory = TransformerFactory.newInstance();
+        Transformer transformer;
+        try {
+            transformer = tFactory.newTransformer();
+        } catch (TransformerConfigurationException e) {
+            throw new IOException("Can't create XML transformer to save "
+                    + path, e);
+        }
+
+        DOMSource source = new DOMSource(document);
+        try (OutputStream outStream = Files.newOutputStream(bundlePath)) {
+            StreamResult result = new StreamResult(outStream);
+            transformer.transform(source, result);
+        } catch (TransformerException e) {
+            throw new IOException("Can't save XML to " + path, e);
+        }
+
+		if (path.equals(CONTAINER_XML)) {
 			parseContainerXML();
 	}
 
