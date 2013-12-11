@@ -36,6 +36,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -332,6 +333,9 @@ public class UCFPackage implements Cloneable {
 
 	public InputStream getResourceAsInputStream(String path) throws IOException {
 	    Path bundlePath = bundle.getRoot().resolve(path);
+	    if (! Files.isReadable(bundlePath)) { 
+	        return null;
+	    }
 	    return Files.newInputStream(bundlePath);
 	}
 
@@ -346,10 +350,17 @@ public class UCFPackage implements Cloneable {
 	protected Map<String, ResourceEntry> listResources(String folderPath,
 			boolean recursive) {
 	    Path bundlePath = bundle.getRoot().resolve(folderPath);
-
+	    List<Path> reserved = Arrays.asList(bundle.getRoot().resolve("META-INF"), 
+	            bundle.getRoot().resolve(".ro"),
+	            bundle.getRoot().resolve("mimetype")
+	            );
+	    
 	    HashMap<String, ResourceEntry> content = new HashMap<String, ResourceEntry>();
 	    try (DirectoryStream<Path> ds = Files.newDirectoryStream(bundlePath)) {
 	        for (Path path : ds) {
+	            if (reserved.contains(path)) { 
+	                continue;	              
+	            }
 	            content.put(path.toString(), new ResourceEntry(path));
 	        }
 	    } catch (IOException e) {
