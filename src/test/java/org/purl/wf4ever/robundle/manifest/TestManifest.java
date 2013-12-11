@@ -188,19 +188,22 @@ public class TestManifest {
 
         Path r = bundle.getRoot();
         assertNotNull(manifest.getAggregation(r.resolve("/README.txt")));
-//        assertEquals("http://example.com/foaf#bob",
-//                manifest.getAggregation(r.resolve("/README.txt"))
-//                        .getCreatedBy().get(0).getUri());
-//        assertEquals("Bob Builder",
-//                manifest.getAggregation(r.resolve("/README.txt"))
-//                        .getCreatedBy().get(0).getName());
-//        assertEquals("text/plain",
-//                manifest.getAggregation(r.resolve("/README.txt"))
-//                .getMediatype());
+        assertEquals("http://example.com/foaf#bob",
+                manifest.getAggregation(r.resolve("/README.txt"))
+                        .getCreatedBy().get(0).getUri());
+        assertEquals("Bob Builder",
+                manifest.getAggregation(r.resolve("/README.txt"))
+                        .getCreatedBy().get(0).getName());
+        assertEquals("text/plain",
+                manifest.getAggregation(r.resolve("/README.txt"))
+                .getMediatype());
 
         
         assertNull(manifest.getAggregation(r.resolve("/README.txt")).getProxy());
-//        assertNotNull(manifest.getAggregation(URI.create("http://example.com/comments.txt")).getProxy());
+        assertNotNull(manifest.getAggregation(URI.create("http://example.com/comments.txt")).getProxy());
+
+        assertEquals(3, manifest.getAnnotations().size());
+        
         
     }
     

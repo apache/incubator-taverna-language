@@ -41,8 +41,9 @@ public class RDFToManifest {
     private static final String PAV = "http://purl.org/pav/";
 
     private static final String DCT = "http://purl.org/dc/terms/";
-    private static final String RO = "http://purl.org/wf4ever/ro#";
+    //private static final String RO = "http://purl.org/wf4ever/ro#";
     private static final String ORE = "http://www.openarchives.org/ore/terms/";
+    private static final String OA = "http://www.w3.org/ns/oa#";
     private static final String FOAF_RDF = "/ontologies/foaf.rdf";
     private static final String PAV_RDF = "/ontologies/pav.rdf";
     private static final String PROV_O_RDF = "/ontologies/prov-o.rdf";
@@ -62,12 +63,18 @@ public class RDFToManifest {
     private ObjectProperty hasProvenance;
     private OntModel dct;
     private ObjectProperty conformsTo;
-    private OntClass Standard;
+    private OntClass standard;
     private ObjectProperty authoredBy;
     private DatatypeProperty createdOn;
     private DatatypeProperty authoredOn;
 
     private DatatypeProperty format;
+
+    private OntModel oa;
+
+    private ObjectProperty hasBody;
+
+    private ObjectProperty hasTarget;
 
     public RDFToManifest() {
         loadOntologies();
@@ -80,6 +87,7 @@ public class RDFToManifest {
         loadPROVO();
         loadPAV();
         loadPROVAQ();
+        loadOA();
     }
 
 
@@ -201,15 +209,26 @@ public class RDFToManifest {
         OntModel ontModel = loadOntologyFromClasspath("/ontologies/dcterms_od.owl", "http://purl.org/wf4ever/dcterms_od");            
         
         // properties from dct
-        Standard = ontModel.getOntClass(DCT + "Standard");
+        standard = ontModel.getOntClass(DCT + "Standard");
         conformsTo = ontModel.getObjectProperty(DCT + "conformsTo");
 
         // We'll cheat dc:format in
         format = ontModel.createDatatypeProperty("http://purl.org/dc/elements/1.1/" + "format");
-        checkNotNull(Standard, conformsTo, format);
+        checkNotNull(standard, conformsTo, format);
                 
         dct = ontModel;  
         
+    }
+    
+    protected synchronized void loadOA() {
+        if (oa != null) {
+            return;
+        }
+        OntModel ontModel = loadOntologyFromClasspath("/ontologies/oa.rdf", OA);
+        hasTarget = ontModel.getObjectProperty(OA + "hasTarget");
+        hasBody = ontModel.getObjectProperty(OA + "hasBody");        
+        checkNotNull(hasTarget, hasBody);
+        oa = ontModel;
     }
     
     protected synchronized void loadORE() {
@@ -321,7 +340,32 @@ public class RDFToManifest {
             
         }
         
-        
+        try (ClosableIterable<Resource> annotations = iterate( model.listResourcesWithProperty(hasTarget) )) {
+            for (Resource ann : annotations) {
+                System.out.println("Found annotation " + ann);
+                
+                // Normally just one body per annotation, but just in case we'll iterate
+                // and split them out
+                for (Individual body : listObjectProperties(model.getOntResource(ann), hasBody)) { 
+                    PathAnnotation pathAnn = new PathAnnotation();
+                    
+                    if (ann.getURI() != null) {
+                        pathAnn.setAnnotation(relativizeFromBase(ann.getURI(), base));
+                    }
+    
+                    Resource target = ann.getPropertyResourceValue(hasTarget);
+                    if (target != null && target.getURI() != null) {
+                        pathAnn.setAbout(relativizeFromBase(target.getURI(), base));
+                    }
+                    if (body.getURI() != null) {
+                        pathAnn.setContent(relativizeFromBase(body.getURI(), base));
+                    } else { 
+                        logger.warning("Can't find annotation body for anonymous " + body);
+                    }
+                    manifest.getAnnotations().add(pathAnn);
+                }
+            }            
+        }
         
 //        model.write(System.out, "TURTLE");
         
@@ -369,10 +413,10 @@ public class RDFToManifest {
 
 
 
-    private Set<Individual> listObjectProperties(Individual in,
+    private Set<Individual> listObjectProperties(OntResource ontResource,
             ObjectProperty prop) {
         LinkedHashSet<Individual> results = new LinkedHashSet<>();
-        try (ClosableIterable<RDFNode> props = iterate(in.listPropertyValues(prop))) {
+        try (ClosableIterable<RDFNode> props = iterate(ontResource.listPropertyValues(prop))) {
             for (RDFNode node : props) {
                 if (! node.isResource() || ! node.canAs(Individual.class)) {
                     continue;
