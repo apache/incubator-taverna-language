@@ -51,9 +51,10 @@ public class TestManifest {
             if (s.getFile().equals(URI.create("/f/nested/empty/"))) {
                 continue;
                 // Folder's don't need proxy and createdOn
-            }            
+            }
             assertEquals("urn", s.getProxy().getScheme());
-            UUID.fromString(s.getProxy().getSchemeSpecificPart().replace("uuid:", ""));
+            UUID.fromString(s.getProxy().getSchemeSpecificPart()
+                    .replace("uuid:", ""));
             assertEquals(s.getCreatedOn(), Files.getLastModifiedTime(path));
         }
         System.out.println(uris);
@@ -67,7 +68,6 @@ public class TestManifest {
         assertTrue(uris.remove("/f/nested/empty/"));
         assertTrue(uris.isEmpty());
     }
-    
 
     @Test
     public void repopulateFromBundle() throws Exception {
@@ -88,9 +88,10 @@ public class TestManifest {
             if (s.getFile().equals(URI.create("/f/nested/empty/"))) {
                 continue;
                 // Folder's don't need proxy and createdOn
-            }            
+            }
             assertEquals("urn", s.getProxy().getScheme());
-            UUID.fromString(s.getProxy().getSchemeSpecificPart().replace("uuid:", ""));
+            UUID.fromString(s.getProxy().getSchemeSpecificPart()
+                    .replace("uuid:", ""));
             assertEquals(s.getCreatedOn(), Files.getLastModifiedTime(path));
         }
         System.out.println(uris);
@@ -110,103 +111,99 @@ public class TestManifest {
         return Paths.get(fileUri);
     }
 
-
     @Test
     public void writeAsJsonLD() throws Exception {
         Manifest manifest = new Manifest(bundle);
         manifest.populateFromBundle();
-        PathMetadata helloMeta = null;        
-        for (PathMetadata meta : manifest.getAggregates()) {            
+        PathMetadata helloMeta = null;
+        for (PathMetadata meta : manifest.getAggregates()) {
             if (meta.getFile().endsWith("hello.txt")) {
                 helloMeta = meta;
             }
         }
         assertNotNull("No metadata for </hello.txt>", helloMeta);
-        
-        
-        
+
         Path jsonld = manifest.writeAsJsonLD();
-        assertEquals(bundle.getFileSystem().getPath("/.ro",  "manifest.json"), jsonld);
+        assertEquals(bundle.getFileSystem().getPath("/.ro", "manifest.json"),
+                jsonld);
         assertTrue(Files.exists(jsonld));
         String manifestStr = new String(Files.readAllBytes(jsonld), "UTF8");
         System.out.println(manifestStr);
-        
+
         // Rough and ready that somethings are there
         // TODO: Read back and check as JSON structure
-        // TODO: Check as JSON-LD graph 
+        // TODO: Check as JSON-LD graph
         assertTrue(manifestStr.contains("@context"));
         assertTrue(manifestStr.contains("https://w3id.org/bundle/context"));
         assertTrue(manifestStr.contains("/f/file2.txt"));
         assertTrue(manifestStr.contains("/hello.txt"));
         assertTrue(manifestStr.contains(helloMeta.getProxy().toASCIIString()));
-        
+
         // Parse back as JSON-LD
-        try (InputStream jsonIn = Files.newInputStream(jsonld)) {        
+        try (InputStream jsonIn = Files.newInputStream(jsonld)) {
             URI baseURI = jsonld.toUri();
             Model model = RDFToManifest.jsonLdAsJenaModel(jsonIn, baseURI);
             model.write(System.out, "TURTLE", baseURI.toString());
             model.write(System.out, "RDF/XML", baseURI.toString());
-           
-            String queryStr = "PREFIX ore: <http://www.openarchives.org/ore/terms/>" +
-            		"PREFIX bundle: <http://purl.org/wf4ever/bundle#>" +
-            		"SELECT ?file ?proxy " +
-            		"WHERE {" +
-            		"    ?ro ore:aggregates ?file ." +
-            		"    OPTIONAL { ?file bundle:hasProxy ?proxy . } " +
-            		"}";
-            Query query = QueryFactory.create(queryStr) ;
+
+            String queryStr = "PREFIX ore: <http://www.openarchives.org/ore/terms/>"
+                    + "PREFIX bundle: <http://purl.org/wf4ever/bundle#>"
+                    + "SELECT ?file ?proxy "
+                    + "WHERE {"
+                    + "    ?ro ore:aggregates ?file ."
+                    + "    OPTIONAL { ?file bundle:hasProxy ?proxy . } " + "}";
+            Query query = QueryFactory.create(queryStr);
             QueryExecution qexec = QueryExecutionFactory.create(query, model);
-            
+
             try {
                 ResultSet results = qexec.execSelect();
-                int aggregationCount=0;
+                int aggregationCount = 0;
                 for (; results.hasNext(); aggregationCount++) {
                     QuerySolution soln = results.nextSolution();
                     Resource fileRes = soln.getResource("file");
                     Resource proxy = soln.getResource("proxy");
                     Path file = Paths.get(asURI(fileRes));
                     assertTrue(Files.exists(file));
-                    PathMetadata meta = manifest.getAggregation(file);                    
+                    PathMetadata meta = manifest.getAggregation(file);
                     assertEquals(asURI(proxy), meta.getProxy());
                 }
-                assertEquals("Could not find all aggregations from manifest: " + manifest.getAggregates(),
-                        manifest.getAggregates().size(), aggregationCount);
+                assertEquals("Could not find all aggregations from manifest: "
+                        + manifest.getAggregates(), manifest.getAggregates()
+                        .size(), aggregationCount);
             } finally {
                 // WHY is not QueryExecution an instance of Closable?
                 qexec.close();
-            }            
-        }        
+            }
+        }
     }
-    
 
     @Test
     public void readManifest() throws Exception {
         Manifest manifest = new Manifest(bundle);
-        
+
         new RDFToManifest().readTo(
                 getClass().getResourceAsStream("/manifest.json"), manifest);
 
         Path r = bundle.getRoot();
         assertNotNull(manifest.getAggregation(r.resolve("/README.txt")));
-        assertEquals("http://example.com/foaf#bob",
-                manifest.getAggregation(r.resolve("/README.txt"))
-                        .getCreatedBy().get(0).getUri());
+        PathMetadata readme = manifest.getAggregation(r.resolve("/README.txt"));
+        assertEquals("http://example.com/foaf#bob", readme.getCreatedBy()
+                .get(0).getUri());
         assertEquals("Bob Builder",
                 manifest.getAggregation(r.resolve("/README.txt"))
                         .getCreatedBy().get(0).getName());
         assertEquals("text/plain",
                 manifest.getAggregation(r.resolve("/README.txt"))
-                .getMediatype());
+                        .getMediatype());
 
-        
         assertNull(manifest.getAggregation(r.resolve("/README.txt")).getProxy());
-        assertNotNull(manifest.getAggregation(URI.create("http://example.com/comments.txt")).getProxy());
+        assertNotNull(manifest.getAggregation(
+                URI.create("http://example.com/comments.txt")).getProxy());
 
         assertEquals(3, manifest.getAnnotations().size());
-        
-        
+
     }
-    
+
     private URI asURI(Resource proxy) {
         if (proxy == null) {
             return null;
@@ -240,10 +237,10 @@ public class TestManifest {
         }
         bundle = Bundles.openBundle(source);
     }
-    
+
     @After
     public void closeBundle() throws IOException {
         bundle.close();
-        
+
     }
 }

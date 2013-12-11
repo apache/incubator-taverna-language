@@ -3,6 +3,7 @@ package org.purl.wf4ever.robundle.manifest;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder(value = { "file", "uri", "folder", "mediatype", "createdOn",
         "createdBy", "conformsTo", "proxy" })
 public class PathMetadata {
-    private List<Agent> createdBy;
+    private List<Agent> createdBy = new ArrayList<>();
     private FileTime createdOn;
     private Path file;
     private Path folder;

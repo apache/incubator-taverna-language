@@ -12,6 +12,7 @@ import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -79,13 +80,13 @@ public class Manifest {
 
     private Map<URI,PathMetadata> aggregates = new LinkedHashMap<>();             
     private List<PathAnnotation> annotations = new ArrayList<>();
-    private List<Agent> authoredBy;
+    private List<Agent> authoredBy = new ArrayList<>();
     private FileTime authoredOn;
     private Bundle bundle;
     private List<Agent> createdBy = new ArrayList<>();
     private FileTime createdOn = now();
     private List<String> graph;
-    private List<Path> history;
+    private List<Path> history = new ArrayList<>();
     private URI id = URI.create("/");
     private List<Path> manifest = new ArrayList<>();
 
@@ -252,6 +253,9 @@ public class Manifest {
     }
 
     public void setAuthoredBy(List<Agent> authoredBy) {
+        if (authoredBy == null) { 
+            throw new NullPointerException("authoredBy can't be null");
+        }
         this.authoredBy = authoredBy;
     }
 
@@ -264,6 +268,9 @@ public class Manifest {
     }
 
     public void setCreatedBy(List<Agent> createdBy) {
+        if (createdBy == null) { 
+            throw new NullPointerException("createdBy can't be null");
+        }
         this.createdBy = createdBy;
     }
 
@@ -276,6 +283,9 @@ public class Manifest {
     }
 
     public void setHistory(List<Path> history) {
+        if (history == null) {
+            throw new NullPointerException("history can't be null");
+        }
         this.history = history;
     }
 
@@ -298,6 +308,7 @@ public class Manifest {
         om.addMixInAnnotations(Path.class, PathMixin.class);
         om.addMixInAnnotations(FileTime.class, FileTimeMixin.class);
         om.enable(SerializationFeature.INDENT_OUTPUT);
+        om.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
         om.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
         om.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
 
