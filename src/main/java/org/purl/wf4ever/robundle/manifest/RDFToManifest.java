@@ -4,35 +4,44 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RiotException;
 
 import com.github.jsonldjava.jena.JenaJSONLD;
+import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
 import com.hp.hpl.jena.ontology.DatatypeProperty;
 import com.hp.hpl.jena.ontology.Individual;
 import com.hp.hpl.jena.ontology.ObjectProperty;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntResource;
+import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+import com.hp.hpl.jena.vocabulary.XSD;
 
 public class RDFToManifest {
+    private static Logger logger = Logger.getLogger(RDFToManifest.class.getCanonicalName());
+    
     private static final URI ROOT = URI.create("/");
     private static final String PROV = "http://www.w3.org/ns/prov#";
     private static final String PROV_O = "http://www.w3.org/ns/prov-o#";
     private static final String FOAF_0_1 = "http://xmlns.com/foaf/0.1/";
     private static final String PAV = "http://purl.org/pav/";
 
+    private static final String DCT = "http://purl.org/dc/terms/";
     private static final String RO = "http://purl.org/wf4ever/ro#";
     private static final String ORE = "http://www.openarchives.org/ore/terms/";
     private static final String FOAF_RDF = "/ontologies/foaf.rdf";
@@ -52,18 +61,28 @@ public class RDFToManifest {
     private OntModel prov;
     private OntModel provaq;
     private ObjectProperty hasProvenance;
+    private OntModel dct;
+    private ObjectProperty conformsTo;
+    private OntClass Standard;
+    private ObjectProperty authoredBy;
+    private DatatypeProperty createdOn;
+    private DatatypeProperty authoredOn;
+
+    private DatatypeProperty format;
 
     public RDFToManifest() {
         loadOntologies();
     }
     
     protected void loadOntologies() {
+        loadDCT();
         loadORE();
         loadFOAF();
         loadPROVO();
         loadPAV();
         loadPROVAQ();
     }
+
 
     protected OntModel loadOntologyFromClasspath(String classPathUri, String uri) {
         OntModel ontModel = ModelFactory.createOntologyModel();
@@ -113,6 +132,7 @@ public class RDFToManifest {
         ontModel.setNsPrefix("prov", PROV);
         ontModel.setNsPrefix("ore", ORE);
         ontModel.setNsPrefix("pav", PAV);
+        ontModel.setNsPrefix("dct", DCT);
 //        ontModel.getDocumentManager().loadImports(foaf.getOntModel());
         return ontModel;
     }
@@ -138,10 +158,12 @@ public class RDFToManifest {
         }
 
         OntModel ontModel = loadOntologyFromClasspath(PAV_RDF, PAV);            
-        
         // properties from foaf
         createdBy = ontModel.getObjectProperty(PAV + "createdBy");
-        checkNotNull(createdBy);
+        createdOn = ontModel.getDatatypeProperty(PAV + "createdOn");
+        authoredBy = ontModel.getObjectProperty(PAV + "authoredBy");
+        authoredOn = ontModel.getDatatypeProperty(PAV + "authoredOn");
+        checkNotNull(createdBy,createdOn, authoredBy, authoredOn);
                 
         pav = ontModel;            
     }
@@ -171,6 +193,25 @@ public class RDFToManifest {
         provaq = ontModel;            
     }
 
+
+    protected synchronized void loadDCT() {
+        if (dct != null) {
+            return;
+        }
+
+        OntModel ontModel = loadOntologyFromClasspath("/ontologies/dcterms_od.owl", "http://purl.org/wf4ever/dcterms_od");            
+        
+        // properties from dct
+        Standard = ontModel.getOntClass(DCT + "Standard");
+        conformsTo = ontModel.getObjectProperty(DCT + "conformsTo");
+
+        // We'll cheat dc:format in
+        format = ontModel.createDatatypeProperty("http://purl.org/dc/elements/1.1/" + "format");
+        checkNotNull(Standard, conformsTo, format);
+                
+        dct = ontModel;  
+        
+    }
     
     protected synchronized void loadORE() {
         if (ore != null) {
@@ -225,32 +266,51 @@ public class RDFToManifest {
         }
         
         Individual ro = findRO(model, base);
-        for (Individual in : listObjectProperties(ro, aggregates)) {
-            String uriStr = in.getURI();
+        
+
+
+        List<Agent> creators = getAgents(base, ro, createdBy);
+        if (! creators.isEmpty()) {
+            manifest.setCreatedBy(creators);            
+        }
+        RDFNode created = ro.getPropertyValue(createdOn);
+        manifest.setCreatedOn(literalAsFileTime(created));
+
+        List<Agent> authors = getAgents(base, ro, authoredBy);
+        if (! authors.isEmpty()) {
+            manifest.setAuthoredBy(authors);
+        }
+        RDFNode authored = ro.getPropertyValue(authoredOn);
+        manifest.setAuthoredOn(literalAsFileTime(authored));
+        
+        
+        for (Individual aggrResource : listObjectProperties(ro, aggregates)) {
+            String uriStr = aggrResource.getURI();
             PathMetadata meta = new PathMetadata();
             if (uriStr != null) {
                 meta.setUri(relativizeFromBase(uriStr, base));
             }
-            Resource proxy = in.getPropertyResourceValue(proxyFor);
+            Resource proxy = aggrResource.getPropertyResourceValue(proxyFor);
             if (proxy != null && proxy.getURI() != null) {
                 meta.setProxy(relativizeFromBase(proxy.getURI(), base));
             }
-            
-            List<Agent> creators = new ArrayList<>();
-            for (Individual agent : listObjectProperties(in, createdBy)) {
-                Agent a = new Agent();
-                if (agent.getURI() != null) {
-                    a.setUri(relativizeFromBase(agent.getURI(), base));
-                    
-                    RDFNode name = agent.getPropertyValue(foafName);
-                    if (name != null && name.isLiteral()) {
-                        a.setName(name.asLiteral().getLexicalForm());
-                    }
-                }                
-                creators.add(a);
-            }
+
+            creators = getAgents(base, aggrResource, createdBy);
             if (! creators.isEmpty()) {
-                manifest.setCreatedBy(creators);
+                manifest.setCreatedBy(creators);            
+            }
+            meta.setCreatedOn(literalAsFileTime(aggrResource.getPropertyValue(createdOn)));
+
+            
+            for (Individual standard : listObjectProperties(aggrResource, conformsTo)) {
+                if (standard.getURI() != null) {
+                    meta.setConformsTo(relativizeFromBase(standard.getURI(), base));
+                }
+            }
+            
+            RDFNode mediaType = aggrResource.getPropertyValue(format);            
+            if (mediaType != null && mediaType.isLiteral()) {
+                meta.setMediatype(mediaType.asLiteral().getLexicalForm());
             }
             
             manifest.getAggregates().add(meta);
@@ -260,6 +320,41 @@ public class RDFToManifest {
         
 //        model.write(System.out, "TURTLE");
         
+    }
+
+    private FileTime literalAsFileTime(RDFNode rdfNode) {
+        if (rdfNode == null) { 
+            return null;
+        }
+        if (! rdfNode.isLiteral()) { 
+            logger.warning("Expected literal. not " + rdfNode);
+        }
+        Literal literal = rdfNode.asLiteral();
+        Object value = literal.getValue();
+        if (! (value instanceof XSDDateTime)) {
+            logger.warning("Literal not an XSDDateTime, but: " + value.getClass() + " " + value);
+            return null;
+        }        
+        XSDDateTime dateTime = (XSDDateTime) value;
+        long millis = dateTime.asCalendar().getTimeInMillis();                            
+        return FileTime.fromMillis(millis);
+    }
+
+    private List<Agent> getAgents(URI base, Individual in, ObjectProperty property) {
+        List<Agent> creators = new ArrayList<>();
+        for (Individual agent : listObjectProperties(in, property)) {
+            Agent a = new Agent();
+            if (agent.getURI() != null) {
+                a.setUri(relativizeFromBase(agent.getURI(), base));
+                
+                RDFNode name = agent.getPropertyValue(foafName);
+                if (name != null && name.isLiteral()) {
+                    a.setName(name.asLiteral().getLexicalForm());
+                }
+            }                
+            creators.add(a);
+        }
+        return creators;
     }
 
     private URI relativizeFromBase(String uriStr, URI base) {
