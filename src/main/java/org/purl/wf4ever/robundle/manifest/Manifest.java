@@ -246,7 +246,7 @@ public class Manifest {
     public Path writeAsJsonLD() throws IOException {
         Path jsonld = bundle.getFileSystem().getPath(RO, "manifest.json");
         Files.createDirectories(jsonld.getParent());
-        Files.createFile(jsonld);
+        //Files.createFile(jsonld);
         if (!getManifest().contains(jsonld)) {
             getManifest().add(0, jsonld);
         }
@@ -260,7 +260,7 @@ public class Manifest {
         om.setSerializationInclusion(Include.NON_NULL);
         try (Writer w = Files.newBufferedWriter(jsonld,
                 Charset.forName("UTF-8"), StandardOpenOption.WRITE,
-                StandardOpenOption.TRUNCATE_EXISTING)) {
+                StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
             om.writeValue(w, this);
         }
         return jsonld;
