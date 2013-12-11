@@ -321,7 +321,7 @@ public class RDFToManifest {
             
             creators = getAgents(base, aggrResource, createdBy);
             if (! creators.isEmpty()) {
-                manifest.setCreatedBy(creators);            
+                meta.setCreatedBy(creators);            
             }
             meta.setCreatedOn(literalAsFileTime(aggrResource.getPropertyValue(createdOn)));
 
@@ -395,11 +395,11 @@ public class RDFToManifest {
             Agent a = new Agent();
             if (agent.getURI() != null) {
                 a.setUri(relativizeFromBase(agent.getURI(), base));
+            }
                 
-                RDFNode name = agent.getPropertyValue(foafName);
-                if (name != null && name.isLiteral()) {
-                    a.setName(name.asLiteral().getLexicalForm());
-                }
+            RDFNode name = agent.getPropertyValue(foafName);
+            if (name != null && name.isLiteral()) {
+                a.setName(name.asLiteral().getLexicalForm());
             }                
             creators.add(a);
         }
