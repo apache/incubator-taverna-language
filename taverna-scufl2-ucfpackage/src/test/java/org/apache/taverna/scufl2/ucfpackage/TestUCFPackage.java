@@ -952,6 +952,7 @@ public class TestUCFPackage {
 		container.addResource("Hello there", "helloworld.txt", "text/plain");
 		container.addResource("Soup for everyone", "soup.txt", "text/plain");
 		container.setRootFile("helloworld.txt");
+//		System.out.println(container.listAllResources());
 		assertEquals(2, container.listAllResources().size());
 
 		UCFPackage clone = container.clone();
@@ -970,6 +971,7 @@ public class TestUCFPackage {
 		assertEquals("text/plain", helloWorldEntry.getMediaType());
 		assertEquals("Soup for everyone", clone.getResourceAsString("soup.txt"));
 		assertEquals(Arrays.asList(helloWorldEntry), clone.getRootFiles());
+//		System.out.println(clone.listAllResources());
 		assertEquals(2, clone.listAllResources().size());		
 	}
 	
