@@ -21,7 +21,7 @@ public class PathMetadata {
     private URI uri;
     private URI conformsTo;
 
-    public PathMetadata() {
+    protected PathMetadata() {
     }
 
     @JsonCreator

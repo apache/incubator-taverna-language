@@ -229,7 +229,7 @@ public class Manifest {
     public void setAggregates(List<PathMetadata> aggregates) {
         this.aggregates.clear();
         
-        for (PathMetadata meta : getAggregates()) {
+        for (PathMetadata meta : aggregates) {
             URI uri = null;
             if (meta.getFile() != null) {
                 relativeToBundleRoot(meta.getFile().toUri());
