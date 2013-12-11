@@ -24,9 +24,7 @@ package org.apache.taverna.scufl2.ucfpackage;
 import static java.io.File.createTempFile;
 import static java.util.logging.Level.INFO;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -34,12 +32,16 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+//import java.util.Map.Entry;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBContext;
@@ -54,8 +56,12 @@ import org.oasis_open.names.tc.opendocument.xmlns.container.Container;
 import org.oasis_open.names.tc.opendocument.xmlns.container.Container.RootFiles;
 import org.oasis_open.names.tc.opendocument.xmlns.container.ObjectFactory;
 import org.oasis_open.names.tc.opendocument.xmlns.container.RootFile;
+import org.purl.wf4ever.robundle.Bundle;
+import org.purl.wf4ever.robundle.Bundles;
+import org.purl.wf4ever.robundle.manifest.Manifest;
+import org.purl.wf4ever.robundle.manifest.PathMetadata;
+import org.purl.wf4ever.robundle.utils.RecursiveDeleteVisitor;
 import org.w3c.dom.Document;
-
 
 public class UCFPackage implements Cloneable {
 	private static Logger logger = Logger.getLogger(UCFPackage.class.getName());
@@ -67,19 +73,18 @@ public class UCFPackage implements Cloneable {
 	public static final String MIME_RDF = "application/rdf+xml";
 	public static final String MIME_EPUB = "application/epub+zip";
 	public static final String MIME_WORKFLOW_BUNDLE = "application/vnd.taverna.workflow-bundle";
-	public static final String MIME_DATA_BUNDLE = "application/vnd.taverna.data-bundle";
-	public static final String MIME_WORKFLOW_RUN_BUNDLE = "application/vnd.taverna.workflow-run-bundle";
-	public static final String MIME_SERVICE_BUNDLE = "application/vnd.taverna.service-bundle";
 
 	private static Charset ASCII = Charset.forName("ascii");
 	private OdfPackage odfPackage;
 	private static JAXBContext jaxbContext;
 	private JAXBElement<Container> containerXml;
 	private boolean createdContainerXml = false;
+    private Bundle bundle;
 	private static ObjectFactory containerFactory = new ObjectFactory();
 
 	public UCFPackage() throws IOException {
 		try {
+		    bundle = Bundles.createBundle();
 			odfPackage = OdfPackage.create();
 			parseContainerXML();
 		} catch (IOException e) {
@@ -95,10 +100,15 @@ public class UCFPackage implements Cloneable {
 	}
 
 	protected void open(File containerFile) throws IOException {
-		try (BufferedInputStream stream = new BufferedInputStream(
-				new FileInputStream(containerFile))) {
-			open(stream);
-		}
+	    bundle = Bundles.openBundleReadOnly(containerFile.toPath());
+//
+//		BufferedInputStream stream = new BufferedInputStream(
+//				new FileInputStream(containerFile));
+//		try {
+//			open(stream);
+//		} finally {
+//			stream.close();
+//		}
 	}
 
 	public UCFPackage(InputStream inputStream) throws IOException {
@@ -107,7 +117,7 @@ public class UCFPackage implements Cloneable {
 
 	protected void open(InputStream inputStream) throws IOException {
 		try {
-			odfPackage = OdfPackage.loadPackage(inputStream);
+//			odfPackage = OdfPackage.loadPackage(inputStream);
 			parseContainerXML();
 		} catch (IOException e) {
 			throw e;
@@ -138,60 +148,31 @@ public class UCFPackage implements Cloneable {
 	}
 
 	public String getPackageMediaType() {
-		return odfPackage.getMediaType();
+	    try {
+            return Bundles.getMimeType(bundle);
+        } catch (IOException e) {
+            return MIME_WORKFLOW_BUNDLE;
+        }
 	}
 
 	public void setPackageMediaType(String mediaType) {
-		if (mediaType == null || !mediaType.contains("/"))
-			throw new IllegalArgumentException("Invalid media type "
-					+ mediaType);
-		if (!ASCII.newEncoder().canEncode(mediaType))
-			throw new IllegalArgumentException("Media type must be ASCII: "
-					+ mediaType);
-		odfPackage.setMediaType(mediaType);
-	}
+		try {
+					Bundles.setMimeType(bundle, mediaType);
+			} catch (IOException e) {
+					throw new RuntimeException("Can't set media type", e);
+			}
+}
 
 	public void save(File packageFile) throws IOException {
-		File tempFile = createTempFile("." + packageFile.getName(), ".tmp",
-				packageFile.getCanonicalFile().getParentFile());
-		prepareAndSave(tempFile);
-		boolean renamed = tempFile.renameTo(packageFile);
-		if (!renamed && packageFile.exists() && tempFile.exists()) {
-			// Could happen on Windows
-			if (!packageFile.delete())
-				// Could have been permission problem
-				throw new IOException("Could not delete existing "
-						+ packageFile);
-			renamed = tempFile.renameTo(packageFile);
-		}
-		if (!renamed)
-			throw new IOException("Could not rename temp file " + tempFile
-					+ " to " + packageFile);
-	}
+	    prepareContainerXML();
 
-	protected void prepareAndSave(File tempFile) throws IOException {
-		if (getPackageMediaType() == null)
-			throw new IllegalStateException("Package media type must be set");
-
-		// Write using temp file, and do rename in the end
-
-		try {
-			prepareContainerXML();
-			odfPackage.save(tempFile);
-		} catch (IOException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new IOException("Could not save bundle to " + tempFile, e);
-		} finally {
-			odfPackage.close();
-		}
-
-		try {
-			open(tempFile);
-		} catch (Exception e) {
-			throw new IOException("Could not reload package from " + tempFile,
-					e);
-		}
+	    Path source = bundle.getSource();
+	    boolean deleteOnClose = bundle.isDeleteOnClose();
+	    bundle.setDeleteOnClose(false);
+	    Bundles.closeAndSaveBundle(bundle, packageFile.toPath());
+	    // Re-open the original source (usually a tmpfile)
+	    bundle = Bundles.openBundle(source);
+	    bundle.setDeleteOnClose(deleteOnClose);
 	}
 
 	protected void prepareContainerXML() throws IOException {
@@ -271,27 +252,18 @@ public class UCFPackage implements Cloneable {
 
 	public void addResource(String stringValue, String path, String mediaType)
 			throws IOException {
-		try {
-			odfPackage.insert(stringValue.getBytes(UTF_8), path, mediaType);
-		} catch (IOException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new IOException("Could not add " + path, e);
-		}
-		parseContainerXML();
+	    Path bundlePath = bundle.getRoot().resolve(path);
+	    Bundles.setStringValue(bundlePath, stringValue);
+	    Manifest manifest = bundle.getManifest();
+	    manifest.getAggregation(bundlePath).setMediatype(mediaType);
 	}
 
 	public void addResource(byte[] bytesValue, String path, String mediaType)
 			throws IOException {
-		try {
-			odfPackage.insert(bytesValue, path, mediaType);
-		} catch (IOException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new IOException("Could not add " + path, e);
-		}
-		if (path.equals(CONTAINER_XML))
-			parseContainerXML();
+	    Path bundlePath = bundle.getRoot().resolve(path);
+	    Files.write(bundlePath, bytesValue);
+        Manifest manifest = bundle.getManifest();
+        manifest.getAggregation(bundlePath).setMediatype(mediaType);
 	}
 
 	public void addResource(Document document, String path, String mediaType)
@@ -309,59 +281,33 @@ public class UCFPackage implements Cloneable {
 
 	public void addResource(InputStream inputStream, String path,
 			String mediaType) throws IOException {
-		try {
-			odfPackage.insert(inputStream, path, mediaType);
-		} catch (IOException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new IOException("Could not add " + path, e);
-		}
-		if (path.equals(CONTAINER_XML))
-			parseContainerXML();
+	    Path bundlePath = bundle.getRoot().resolve(path);
+	    Files.copy(inputStream, bundlePath);
+        Manifest manifest = bundle.getManifest();
+        manifest.getAggregation(bundlePath).setMediatype(mediaType);
 	}
 
 	public void addResource(URI uri, String path, String mediaType)
 			throws IOException {
-		try {
-			odfPackage.insert(uri, path, mediaType);
-		} catch (IOException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new IOException("Could not add " + path, e);
-		}
-
-		if (path.equals(CONTAINER_XML))
-			parseContainerXML();
+	    Path bundlePath = bundle.getRoot().resolve(path);
+        Bundles.setReference(bundlePath, uri);
+        Manifest manifest = bundle.getManifest();
+        manifest.getAggregation(bundlePath).setMediatype(mediaType);
 	}
 
 	public String getResourceAsString(String path) throws IOException {
-		try {
-			return new String(odfPackage.getBytes(path), UTF_8);
-		} catch (IOException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new IOException("Could not get " + path, e);
-		}
+	    Path bundlePath = bundle.getRoot().resolve(path);
+	    return Bundles.getStringValue(bundlePath);
 	}
 
 	public byte[] getResourceAsBytes(String path) throws IOException {
-		try {
-			return odfPackage.getBytes(path);
-		} catch (IOException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new IOException("Could not get " + path, e);
-		}
+        Path bundlePath = bundle.getRoot().resolve(path);
+        return Files.readAllBytes(bundlePath);
 	}
 
 	public InputStream getResourceAsInputStream(String path) throws IOException {
-		try {
-			return odfPackage.getInputStream(path);
-		} catch (IOException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new IOException("Could not get " + path, e);
-		}
+	    Path bundlePath = bundle.getRoot().resolve(path);
+	    return Files.newInputStream(bundlePath);
 	}
 
 	public Map<String, ResourceEntry> listResources() {
@@ -374,74 +320,67 @@ public class UCFPackage implements Cloneable {
 
 	protected Map<String, ResourceEntry> listResources(String folderPath,
 			boolean recursive) {
-		if (!folderPath.isEmpty() && !folderPath.endsWith("/"))
-			folderPath = folderPath + "/";
-		HashMap<String, ResourceEntry> content = new HashMap<>();
+	    Path bundlePath = bundle.getRoot().resolve(folderPath);
 
-		for (Entry<String, OdfFileEntry> entry : odfPackage
-				.getManifestEntries().entrySet()) {
-			String entryPath = entry.getKey();
-			if (!entryPath.startsWith(folderPath))
-				continue;
-			String subPath = entryPath.substring(folderPath.length(),
-					entryPath.length());
-			if (subPath.isEmpty())
-				// The folder itself
-				continue;
-			int firstSlash = subPath.indexOf("/");
-			if (!recursive && firstSlash > -1
-					&& firstSlash < subPath.length() - 1)
-				/*
-				 * Children of a folder (note that we'll include the folder
-				 * itself which ends in /)
-				 */
-				continue;
-			content.put(subPath, new ResourceEntry(entry.getValue()));
-		}
+	    HashMap<String, ResourceEntry> content = new HashMap<String, ResourceEntry>();
+	    try (DirectoryStream<Path> ds = Files.newDirectoryStream(bundlePath)) {
+	        for (Path path : ds) {
+	            content.put(path.toString(), new ResourceEntry(path));
+	        }
+	    } catch (IOException e) {
+            throw new RuntimeException("Can't list resources of "  +folderPath, e);
+        }
 		return content;
 	}
 
 	public void removeResource(String path) {
-		if (!odfPackage.contains(path))
-			return;
-		if (path.endsWith("/"))
-			for (ResourceEntry childEntry : listResources(path).values())
-				removeResource(childEntry.getPath());
-		odfPackage.remove(path);
+	    Path bundlePath = bundle.getRoot().resolve(path);
+	    try {
+            RecursiveDeleteVisitor.deleteRecursively(bundlePath);
+        } catch (IOException e) {
+            throw new RuntimeException("Could not delete " + path + " or its children", e);
+        }
 	}
 
 	public class ResourceEntry {
-		private final String path;
-		private final long size;
-		private String mediaType;
-		private String version;
+        private Path path;
 
-		protected ResourceEntry(OdfFileEntry odfEntry) {
-			path = odfEntry.getPath();
-			size = odfEntry.getSize();
-			mediaType = odfEntry.getMediaType();
-			version = odfEntry.getVersion();
-		}
+		public ResourceEntry(Path path) {
+            this.path = path;
+        }
 
-		public String getPath() {
-			return path;
+        public String getPath() {
+			return path.toString();
 		}
 
 		public long getSize() {
-			return size;
+			try {
+                return Files.size(path);
+            } catch (IOException e) {
+               throw new RuntimeException("Can't determine size of " + path, e);
+            }
 		}
 
 		public String getMediaType() {
-			return mediaType;
+			try {
+                return bundle.getManifest().getAggregation(path).getMediatype();
+            } catch (IOException e) {
+                throw new RuntimeException("Can't get media type for " + path, e);
+            }
 		}
 
 		public boolean isFolder() {
-			return path.endsWith("/");
+			return Files.isDirectory(path);
 		}
 
 		public UCFPackage getUcfPackage() {
 			return UCFPackage.this;
 		}
+
+		@Override
+		public String toString() {
+		    return getPath();
+		};
 
 		@Override
 		public boolean equals(Object obj) {
@@ -451,7 +390,8 @@ public class UCFPackage implements Cloneable {
 
 			if (!getUcfPackage().equals(other.getUcfPackage()))
 				return false;
-			return getPath().equals(other.getPath());
+			}
+			return path.equals(other.path);
 		}
 
 		@Override
@@ -463,9 +403,23 @@ public class UCFPackage implements Cloneable {
 			return result;
 		}
 
-		public String getVersion() {
-			return version;
-		}
+        public String getVersion() {
+            URI conformsTo;
+            try {
+                conformsTo = bundle.getManifest().getAggregation(path).getConformsTo();
+            } catch (IOException e) {
+                throw new RuntimeException("Can't look up version for " + path, e);
+            }
+            if (conformsTo != null) {
+                URI scufl2Release = URI.create("http://ns.taverna.org.uk/2010/scufl2/");
+                URI version = scufl2Release.relativize(conformsTo);
+                if (!version.isAbsolute()) {
+                    return version.toString();
+                }
+            }
+            return null;
+
+        }
 	}
 
 	public Map<String, ResourceEntry> listAllResources() {
@@ -555,19 +509,24 @@ public class UCFPackage implements Cloneable {
 			RootFile rf = (RootFile) anyOrRoot;
 			ResourceEntry entry = getResourceEntry(rf.getFullPath());
 			if (rf.getMediaType() != null
-					&& rf.getMediaType() != entry.mediaType)
+					&& rf.getMediaType() != entry.getMediaType()) {
 				// Override the mime type in the returned entry
-				entry.mediaType = rf.getMediaType();
+			    PathMetadata aggr;
+                try {
+                    aggr = bundle.getManifest().getAggregation(entry.path);
+                } catch (IOException e) {
+                    throw new RuntimeException("Can't get aggregation for " + entry, e);
+                }
+			    aggr.setMediatype(rf.getMediaType());
+			}
 			rootFiles.add(entry);
 		}
 		return rootFiles;
 	}
 
 	public ResourceEntry getResourceEntry(String path) {
-		OdfFileEntry odfFileEntry = odfPackage.getManifestEntries().get(path);
-		if (odfFileEntry == null)
-			return null;
-		return new ResourceEntry(odfFileEntry);
+	    Path bundlePath = bundle.getRoot().resolve(path);
+		return new ResourceEntry(bundlePath);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -592,22 +551,17 @@ public class UCFPackage implements Cloneable {
 	}
 
 	public void save(OutputStream output) throws IOException {
-		File tempFile = createTempFile("ucfpackage", ".tmp");
-		prepareAndSave(tempFile);
+        prepareContainerXML();
+        Path source = bundle.getSource();
+        boolean deleteOnClose = bundle.isDeleteOnClose();
+        bundle.setDeleteOnClose(false);
+        Bundles.closeBundle(bundle);
 
-		// Copy file to the output
+        Files.copy(source, output);
 
-		// Note - Should use IOUtils, but we're trying to avoid external dependencies
-		try (InputStream inStream = new FileInputStream(tempFile)) {
-			byte[] buffer = new byte[8192];
-			int n = 0;
-			do {
-				output.write(buffer, 0, n);
-				n = inStream.read(buffer);
-			} while (n > -1);
-		} finally {
-			tempFile.delete();
-		}
+        // Re-open the original source (usually a tmpfile)
+        bundle = Bundles.openBundle(source);
+        bundle.setDeleteOnClose(deleteOnClose);
 	}
 
 	public OutputStream addResourceUsingOutputStream(String path,
