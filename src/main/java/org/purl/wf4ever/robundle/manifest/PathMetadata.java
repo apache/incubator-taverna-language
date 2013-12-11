@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder(value = { "file", "uri", "folder", "mediatype", "createdOn",
-        "createdBy", "proxy" })
+        "createdBy", "conformsTo", "proxy" })
 public class PathMetadata {
     private List<Agent> createdBy;
     private FileTime createdOn;
@@ -19,6 +19,7 @@ public class PathMetadata {
     private String mediatype;
     private URI proxy;
     private URI uri;
+    private URI conformsTo;
 
     public PathMetadata() {
     }
@@ -26,6 +27,10 @@ public class PathMetadata {
     @JsonCreator
     public PathMetadata(String uriStr) {
         setUri(URI.create(uriStr));
+    }
+    
+    public URI getConformsTo() {
+        return conformsTo;
     }
     
     public List<Agent> getCreatedBy() {
@@ -55,6 +60,10 @@ public class PathMetadata {
     public URI getUri() {
         return uri;
     }
+    
+    public void setConformsTo(URI conformsTo) {
+        this.conformsTo = conformsTo;
+    }    
 
     public void setCreatedBy(List<Agent> createdBy) {
         this.createdBy = createdBy;
@@ -106,5 +115,8 @@ public class PathMetadata {
         }
         return "PathMetadata <null>";
     }
+
+
+    
 
 }
