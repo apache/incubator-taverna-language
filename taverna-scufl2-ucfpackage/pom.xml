@@ -45,6 +45,11 @@
       <version>${jaxen.version}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>taverna-robundle</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 	</dependencies>
 	<licenses>
 		<license>
