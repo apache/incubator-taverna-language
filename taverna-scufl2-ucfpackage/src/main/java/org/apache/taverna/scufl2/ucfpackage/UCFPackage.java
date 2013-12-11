@@ -61,10 +61,12 @@ import org.purl.wf4ever.robundle.Bundles;
 import org.purl.wf4ever.robundle.manifest.Manifest;
 import org.purl.wf4ever.robundle.manifest.PathMetadata;
 import org.purl.wf4ever.robundle.utils.RecursiveDeleteVisitor;
+import org.purl.wf4ever.robundle.utils.TemporaryFiles;
 import org.w3c.dom.Document;
 
 public class UCFPackage implements Cloneable {
 	private static Logger logger = Logger.getLogger(UCFPackage.class.getName());
+	private static final URI VERSION_BASE = URI.create("http://ns.taverna.org.uk/2010/scufl2/");
 	private static final String CONTAINER_XML = "META-INF/container.xml";
 	private static final Charset UTF_8 = Charset.forName("utf-8");
 	public static final String MIME_BINARY = "application/octet-stream";
@@ -75,7 +77,7 @@ public class UCFPackage implements Cloneable {
 	public static final String MIME_WORKFLOW_BUNDLE = "application/vnd.taverna.workflow-bundle";
 
 	private static Charset ASCII = Charset.forName("ascii");
-	private OdfPackage odfPackage;
+//	private OdfPackage odfPackage;
 	private static JAXBContext jaxbContext;
 	private JAXBElement<Container> containerXml;
 	private boolean createdContainerXml = false;
@@ -85,7 +87,7 @@ public class UCFPackage implements Cloneable {
 	public UCFPackage() throws IOException {
 		try {
 		    bundle = Bundles.createBundle();
-			odfPackage = OdfPackage.create();
+			//odfPackage = OdfPackage.create();
 			parseContainerXML();
 		} catch (IOException e) {
 			throw e;
@@ -101,23 +103,24 @@ public class UCFPackage implements Cloneable {
 
 	protected void open(File containerFile) throws IOException {
 	    bundle = Bundles.openBundleReadOnly(containerFile.toPath());
-//
-//		BufferedInputStream stream = new BufferedInputStream(
-//				new FileInputStream(containerFile));
-//		try {
-//			open(stream);
-//		} finally {
-//			stream.close();
-//		}
+	    parseContainerXML();
 	}
 
 	public UCFPackage(InputStream inputStream) throws IOException {
 		open(inputStream);
 	}
 
-	protected void open(InputStream inputStream) throws IOException {
+	protected UCFPackage(Bundle bundle) {
+	    this.bundle = bundle;
+    }
+
+    protected void open(InputStream inputStream) throws IOException {
 		try {
-//			odfPackage = OdfPackage.loadPackage(inputStream);
+		    Path bundlePath = TemporaryFiles.temporaryBundle();
+		    Files.copy(inputStream, bundlePath);
+		    bundle = Bundles.openBundle(bundlePath);
+		    bundle.setDeleteOnClose(true);
+
 			parseContainerXML();
 		} catch (IOException e) {
 			throw e;
@@ -215,13 +218,16 @@ public class UCFPackage implements Cloneable {
 			// "http://www.w3.org/2000/09/xmldsig#");
 			// xmlStreamWriter.setPrefix("xmlenc",
 			// "http://www.w3.org/2001/04/xmlenc#");
-			try (OutputStream outStream = odfPackage
-					.insertOutputStream(CONTAINER_XML)) {
-				// FIXME: Set namespace prefixes and default namespace
-				marshaller.setProperty("jaxb.formatted.output", true);
-				// TODO: Ensure using default namespace
-				marshaller.marshal(containerXml, outStream);
-			}
+			outStream = Files.newOutputStream(bundle.getRoot().resolve(CONTAINER_XML));
+			//outStream = odfPackage.insertOutputStream(CONTAINER_XML);
+
+			// FIXME: Set namespace prefixes and default namespace
+
+			marshaller.setProperty("jaxb.formatted.output", true);
+
+			// TODO: Ensure using default namespace
+			marshaller.marshal(containerXml, outStream);
+
 		} catch (IOException e) {
 			throw e;
 		} catch (Exception e) {
@@ -343,6 +349,7 @@ public class UCFPackage implements Cloneable {
 	}
 
 	public class ResourceEntry {
+
         private Path path;
 
 		public ResourceEntry(Path path) {
@@ -411,8 +418,7 @@ public class UCFPackage implements Cloneable {
                 throw new RuntimeException("Can't look up version for " + path, e);
             }
             if (conformsTo != null) {
-                URI scufl2Release = URI.create("http://ns.taverna.org.uk/2010/scufl2/");
-                URI version = scufl2Release.relativize(conformsTo);
+                URI version = VERSION_BASE.relativize(conformsTo);
                 if (!version.isAbsolute()) {
                     return version.toString();
                 }
@@ -435,7 +441,19 @@ public class UCFPackage implements Cloneable {
 		ResourceEntry rootFile = getResourceEntry(path);
 		if (rootFile == null)
 			throw new IllegalArgumentException("Unknown resource: " + path);
-		odfPackage.getManifestEntries().get(path).setVersion(version);
+		}
+
+		URI conformsTo = null;
+		if (version != null) {
+		    conformsTo = VERSION_BASE.resolve(version);
+		    PathMetadata aggregation;
+            try {
+                aggregation = bundle.getManifest().getAggregation(rootFile.path);
+            } catch (IOException e) {
+                throw new RuntimeException("Can't get root file aggregation for " + path, e);
+            }
+		    aggregation.setConformsTo(conformsTo);
+		}
 
 		Container container = containerXml.getValue();
 
@@ -570,25 +588,47 @@ public class UCFPackage implements Cloneable {
 			// as we need to parse it after insertion, this must fail
 			throw new IllegalArgumentException("Can't add " + CONTAINER_XML
 					+ " using OutputStream");
-		try {
-			return odfPackage.insertOutputStream(path, mediaType);
-		} catch (IOException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new IOException("Could not add " + path, e);
+			// as we need to parse it after insertion
 		}
+		Path bundlePath = bundle.getRoot().resolve(path);
+	    return Files.newOutputStream(bundlePath);
 	}
 
 	@Override
 	public UCFPackage clone() {
-		final PipedOutputStream outputStream = new PipedOutputStream();
-		try {
-			try (PipedInputStream inputStream = copyToOutputStream(outputStream)) {
-				return new UCFPackage(inputStream);
-			}
-		} catch (IOException e) {
-			throw new RuntimeException("Could not clone UCFPackage", e);
-		}
+
+	        try {
+                prepareContainerXML();
+            } catch (IOException e) {
+                throw new RuntimeException("Could not prepare " + CONTAINER_XML, e);
+            }
+
+	        Path source = bundle.getSource();
+	        boolean deleteOnClose = bundle.isDeleteOnClose();
+	        bundle.setDeleteOnClose(false);
+	        try {
+                Bundles.closeBundle(bundle);
+            } catch (IOException e) {
+                throw new RuntimeException("Could not save bundle to " + source, e);
+            }
+
+	        Bundle clonedBundle;
+            try {
+                clonedBundle = Bundles.openBundleReadOnly(source);
+            } catch (IOException e) {
+                throw new RuntimeException("Could not copy bundle from " + source, e);
+            }
+
+	        // Re-open the original source (usually a tmpfile)
+	        try {
+                bundle = Bundles.openBundle(source);
+            } catch (IOException e) {
+                throw new RuntimeException("Could not re-open from " + source, e);
+            }
+	        bundle.setDeleteOnClose(deleteOnClose);
+
+	        return new UCFPackage(clonedBundle);
+
 	}
 
 	private PipedInputStream copyToOutputStream(
