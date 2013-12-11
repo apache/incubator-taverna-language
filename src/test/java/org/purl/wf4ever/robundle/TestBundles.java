@@ -20,6 +20,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
+import org.purl.wf4ever.robundle.fs.BundleFileSystem;
+import org.purl.wf4ever.robundle.fs.BundleFileSystemProvider;
+import org.purl.wf4ever.robundle.utils.TemporaryFiles;
 
 public class TestBundles {
 	protected void checkSignature(Path zip) throws IOException {
@@ -163,6 +166,76 @@ public class TestBundles {
         }
     }
 
+    @Test
+    public void getMimeType() throws Exception {
+        Path bundlePath = TemporaryFiles.temporaryBundle();
+        try (BundleFileSystem bundleFs = BundleFileSystemProvider.newFileSystemFromNew(bundlePath, "application/x-test")) {
+            Bundle bundle = new Bundle(bundleFs.getPath("/"), false);
+            assertEquals("application/x-test", Bundles.getMimeType(bundle));
+        }
+    }
+    
+    @Test
+    public void setMimeType() throws Exception {
+        try (Bundle bundle = Bundles.createBundle()) {
+            Path mimetypePath = bundle.getRoot().resolve("mimetype");
+            assertEquals("application/vnd.wf4ever.robundle+zip", Bundles.getStringValue(mimetypePath));
+    
+            Bundles.setMimeType(bundle, "application/x-test");
+            assertEquals("application/x-test", Bundles.getStringValue(mimetypePath)); 
+        }
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void setMimeTypeNoNewlines() throws Exception {
+        try (Bundle bundle = Bundles.createBundle()) {
+            Bundles.setMimeType(bundle, "application/x-test\nNo newlines allowed");
+        }
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void setMimeTypeNoSlash() throws Exception {
+        try (Bundle bundle = Bundles.createBundle()) {
+            Bundles.setMimeType(bundle, "test");
+        }
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void setMimeTypeEmpty() throws Exception {
+        try (Bundle bundle = Bundles.createBundle()) {
+            Bundles.setMimeType(bundle, "");
+        }
+    }
+    
+
+    @Test(expected=IllegalArgumentException.class)
+    public void setMimeTypeNonAscii() throws Exception {
+        try (Bundle bundle = Bundles.createBundle()) {
+            Bundles.setMimeType(bundle, "application/x-test-\u00E9"); // Include the e accent from latin1
+        }
+    }
+    
+    @Test
+    public void getMimeTypeMissing() throws Exception {
+        try (Bundle bundle = Bundles.createBundle()) {
+            Path mimetypePath = bundle.getRoot().resolve("mimetype");
+            Files.delete(mimetypePath);
+            // Fall back according to our spec
+            assertEquals("application/vnd.wf4ever.robundle+zip", Bundles.getMimeType(bundle));
+        }
+    }
+    
+    @Test(expected=IOException.class)
+    public void setMimeTypeMissing() throws Exception {
+        try (Bundle bundle = Bundles.createBundle()) {
+            Path mimetypePath = bundle.getRoot().resolve("mimetype");
+            Files.delete(mimetypePath);
+            // sadly now we can't set it (the mimetype file must be uncompressed and at beginning of file, 
+            // which we don't have the possibility to do now that file system is open)
+            Bundles.setMimeType(bundle, "application/x-test");
+        }
+    }
+    
 	@Test
 	public void getReference() throws Exception {
 		try (Bundle bundle = Bundles.createBundle()) {

@@ -302,4 +302,32 @@ public class Bundles {
         return dir;
     }
 
-}
+    public static String getMimeType(Bundle bundle) throws IOException {
+        Path mimetypePath = bundle.getRoot().resolve(BundleFileSystemProvider.MIMETYPE_FILE);
+        String mimetype = getStringValue(mimetypePath);
+        if (mimetype == null || mimetype.isEmpty()) {
+            return BundleFileSystemProvider.APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP;
+        }
+        return mimetype.trim();
+    }
+    
+    public static void setMimeType(Bundle bundle, String mimetype) throws IOException {
+        if (! ASCII.newEncoder().canEncode(mimetype)) { 
+            throw new IllegalArgumentException("mimetype must be ASCII, not " + mimetype);
+        }
+        if (mimetype.contains("\n") || mimetype.contains("\r")) { 
+            throw new IllegalArgumentException("mimetype can't contain newlines");
+        }
+        if (! mimetype.contains("/")) {
+            throw new IllegalArgumentException("Invalid mimetype: " + mimetype);
+        }
+        Path mimetypePath = bundle.getRoot().resolve(BundleFileSystemProvider.MIMETYPE_FILE);
+        if (! Files.isRegularFile(mimetypePath)) {
+            // It would require low-level zip-modification to properly add 'mimetype' now
+            throw new IOException("Special file '" + BundleFileSystemProvider.MIMETYPE_FILE + 
+                    "' missing from bundle, can't set mimetype");
+        }
+        setStringValue(mimetypePath, mimetype);
+    }
+
+ }

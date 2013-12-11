@@ -48,6 +48,8 @@ import java.util.zip.ZipOutputStream;
 import org.purl.wf4ever.robundle.utils.TemporaryFiles;
 
 public class BundleFileSystemProvider extends FileSystemProvider {
+    public static final String MIMETYPE_FILE = "mimetype";
+
     public class BundleFileChannel extends FileChannel {
 
         @SuppressWarnings("unused")
@@ -149,7 +151,7 @@ public class BundleFileSystemProvider extends FileSystemProvider {
         // Fallback for OSGi environments
         private static final BundleFileSystemProvider INSTANCE = new BundleFileSystemProvider();
     }
-    private static final String APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP = "application/vnd.wf4ever.robundle+zip";
+    public static final String APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP = "application/vnd.wf4ever.robundle+zip";
     /**
      * The list of open file systems. This is static so that it is shared across
      * eventual multiple instances of this provider (such as when running in an
@@ -173,7 +175,7 @@ public class BundleFileSystemProvider extends FileSystemProvider {
         // We'll have to do the mimetype file quite low-level
         // in order to ensure it is STORED and not COMPRESSED
 
-        ZipEntry entry = new ZipEntry("mimetype");
+        ZipEntry entry = new ZipEntry(MIMETYPE_FILE);
         entry.setMethod(ZipEntry.STORED);
         entry.setSize(bytes.length);
         CRC32 crc = new CRC32();
