@@ -364,8 +364,8 @@ public class UCFPackage implements Cloneable {
 	protected Map<String, ResourceEntry> listResources(String folderPath,
 			boolean recursive) {
 	    Path bundlePath = bundle.getRoot().resolve(folderPath);
-	    List<Path> reserved = Arrays.asList(bundle.getRoot().resolve("META-INF"),
-	            bundle.getRoot().resolve(".ro"),
+	    List<Path> reserved = Arrays.asList(bundle.getRoot().resolve("META-INF/"),
+	            bundle.getRoot().resolve(".ro/"),
 	            bundle.getRoot().resolve("mimetype")
 	            );
 
