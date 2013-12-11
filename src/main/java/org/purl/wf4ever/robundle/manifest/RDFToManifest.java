@@ -342,7 +342,7 @@ public class RDFToManifest {
         
         try (ClosableIterable<Resource> annotations = iterate( model.listResourcesWithProperty(hasTarget) )) {
             for (Resource ann : annotations) {
-                System.out.println("Found annotation " + ann);
+                //System.out.println("Found annotation " + ann);
                 
                 // Normally just one body per annotation, but just in case we'll iterate
                 // and split them out
@@ -430,7 +430,7 @@ public class RDFToManifest {
     private Individual findRO(OntModel model, URI base) {
         try (ClosableIterable<? extends OntResource> instances = iterate(aggregation.listInstances())) {
             for (OntResource o : instances) {
-                System.out.println("Woo " + o);
+//                System.out.println("Woo " + o);
                 return o.asIndividual();
             }
         }
