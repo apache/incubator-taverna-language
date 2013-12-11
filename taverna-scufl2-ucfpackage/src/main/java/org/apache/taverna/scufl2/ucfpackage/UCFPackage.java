@@ -117,8 +117,9 @@ public class UCFPackage implements Cloneable {
 		open(inputStream);
 	}
 
-	protected UCFPackage(Bundle bundle) {
+	protected UCFPackage(Bundle bundle) throws IOException {
 	    this.bundle = bundle;
+	    parseContainerXML();
     }
 
     protected void open(InputStream inputStream) throws IOException {
@@ -225,8 +226,8 @@ public class UCFPackage implements Cloneable {
 			// "http://www.w3.org/2000/09/xmldsig#");
 			// xmlStreamWriter.setPrefix("xmlenc",
 			// "http://www.w3.org/2001/04/xmlenc#");
-			outStream = Files.newOutputStream(bundle.getRoot().resolve(CONTAINER_XML));
-			//outStream = odfPackage.insertOutputStream(CONTAINER_XML);
+			Path containerPath = writableBundlePath(CONTAINER_XML);
+			outStream = Files.newOutputStream(containerPath);
 
 			// FIXME: Set namespace prefixes and default namespace
 
@@ -265,7 +266,7 @@ public class UCFPackage implements Cloneable {
 
 	public void addResource(String stringValue, String path, String mediaType)
 			throws IOException {
-	    Path bundlePath = bundle.getRoot().resolve(path);
+	    Path bundlePath = writableBundlePath(path);
 	    Bundles.setStringValue(bundlePath, stringValue);
 	    Manifest manifest = bundle.getManifest();
 	    manifest.getAggregation(bundlePath).setMediatype(mediaType);
@@ -273,17 +274,30 @@ public class UCFPackage implements Cloneable {
 
 	public void addResource(byte[] bytesValue, String path, String mediaType)
 			throws IOException {
-	    Path bundlePath = bundle.getRoot().resolve(path);
+
+	    Path bundlePath = writableBundlePath(path);
 	    Files.write(bundlePath, bytesValue);
         Manifest manifest = bundle.getManifest();
         manifest.getAggregation(bundlePath).setMediatype(mediaType);
 	}
 
+    private Path writableBundlePath(String path) {
+        Path bundlePath = bundle.getRoot().resolve(path);
+        if (bundlePath.getParent() != null) {
+            try {
+                Files.createDirectories(bundlePath.getParent());
+            } catch (IOException e) {
+                throw new RuntimeException("Could not create parent directories of " + path, e);
+            }
+        }
+        return bundlePath;
+    }
+
 	@Deprecated
 	public void addResource(Document document, String path, String mediaType)
 			throws IOException {
 
-        Path bundlePath = bundle.getRoot().resolve(path);
+        Path bundlePath = writableBundlePath(path);
         TransformerFactory tFactory = TransformerFactory.newInstance();
         Transformer transformer;
         try {
@@ -307,7 +321,7 @@ public class UCFPackage implements Cloneable {
 
 	public void addResource(InputStream inputStream, String path,
 			String mediaType) throws IOException {
-	    Path bundlePath = bundle.getRoot().resolve(path);
+	    Path bundlePath = writableBundlePath(path);
 	    Files.copy(inputStream, bundlePath);
         Manifest manifest = bundle.getManifest();
         manifest.getAggregation(bundlePath).setMediatype(mediaType);
@@ -315,7 +329,7 @@ public class UCFPackage implements Cloneable {
 
 	public void addResource(URI uri, String path, String mediaType)
 			throws IOException {
-	    Path bundlePath = bundle.getRoot().resolve(path);
+	    Path bundlePath = writableBundlePath(path);
         Bundles.setReference(bundlePath, uri);
         Manifest manifest = bundle.getManifest();
         manifest.getAggregation(bundlePath).setMediatype(mediaType);
@@ -327,13 +341,13 @@ public class UCFPackage implements Cloneable {
 	}
 
 	public byte[] getResourceAsBytes(String path) throws IOException {
-        Path bundlePath = bundle.getRoot().resolve(path);
+	    Path bundlePath = bundle.getRoot().resolve(path);
         return Files.readAllBytes(bundlePath);
 	}
 
 	public InputStream getResourceAsInputStream(String path) throws IOException {
 	    Path bundlePath = bundle.getRoot().resolve(path);
-	    if (! Files.isReadable(bundlePath)) { 
+	    if (! Files.isReadable(bundlePath)) {
 	        return null;
 	    }
 	    return Files.newInputStream(bundlePath);
@@ -350,16 +364,16 @@ public class UCFPackage implements Cloneable {
 	protected Map<String, ResourceEntry> listResources(String folderPath,
 			boolean recursive) {
 	    Path bundlePath = bundle.getRoot().resolve(folderPath);
-	    List<Path> reserved = Arrays.asList(bundle.getRoot().resolve("META-INF"), 
+	    List<Path> reserved = Arrays.asList(bundle.getRoot().resolve("META-INF"),
 	            bundle.getRoot().resolve(".ro"),
 	            bundle.getRoot().resolve("mimetype")
 	            );
-	    
+
 	    HashMap<String, ResourceEntry> content = new HashMap<String, ResourceEntry>();
 	    try (DirectoryStream<Path> ds = Files.newDirectoryStream(bundlePath)) {
 	        for (Path path : ds) {
-	            if (reserved.contains(path)) { 
-	                continue;	              
+	            if (reserved.contains(path)) {
+	                continue;
 	            }
 	            content.put(path.toString(), new ResourceEntry(path));
 	        }
@@ -459,7 +473,7 @@ public class UCFPackage implements Cloneable {
 	}
 
 	public Map<String, ResourceEntry> listAllResources() {
-		return listResources("", true);
+		return listResources("/", true);
 	}
 
 	public void setRootFile(String path) {
@@ -620,7 +634,7 @@ public class UCFPackage implements Cloneable {
 					+ " using OutputStream");
 			// as we need to parse it after insertion
 		}
-		Path bundlePath = bundle.getRoot().resolve(path);
+		Path bundlePath = writableBundlePath(path);
 	    return Files.newOutputStream(bundlePath);
 	}
 
@@ -652,13 +666,11 @@ public class UCFPackage implements Cloneable {
 	        // Re-open the original source (usually a tmpfile)
 	        try {
                 bundle = Bundles.openBundle(source);
+                bundle.setDeleteOnClose(deleteOnClose);
+                return new UCFPackage(clonedBundle);
             } catch (IOException e) {
                 throw new RuntimeException("Could not re-open from " + source, e);
             }
-	        bundle.setDeleteOnClose(deleteOnClose);
-
-	        return new UCFPackage(clonedBundle);
-
 	}
 
 	private PipedInputStream copyToOutputStream(
