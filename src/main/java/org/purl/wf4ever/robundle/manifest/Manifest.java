@@ -13,6 +13,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -155,7 +156,8 @@ public class Manifest {
     public void populateFromBundle() throws IOException {
         final Set<Path> potentiallyEmptyFolders = new LinkedHashSet<>();
 
-
+        final Set<URI> existingAggregationsToPrune = new HashSet<>(aggregates.keySet()); 
+        
         Files.walkFileTree(bundle.getRoot(), new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult postVisitDirectory(Path dir, IOException exc)
@@ -163,6 +165,7 @@ public class Manifest {
                 super.postVisitDirectory(dir, exc);
                 if (potentiallyEmptyFolders.remove(dir)) {
                     URI uri = relativeToBundleRoot(dir.toUri());
+                    existingAggregationsToPrune.remove(uri);
                     PathMetadata metadata = aggregates.get(uri);
                     if (metadata == null) {
                         metadata = new PathMetadata();
@@ -198,6 +201,7 @@ public class Manifest {
                 }
                 // super.visitFile(file, attrs);
                 URI uri = relativeToBundleRoot(file.toUri());
+                existingAggregationsToPrune.remove(uri);
                 PathMetadata metadata = aggregates.get(uri);
                 if (metadata == null) {
                     metadata = new PathMetadata();
@@ -211,6 +215,14 @@ public class Manifest {
                 return FileVisitResult.CONTINUE;
             }
         });
+        for (URI preExisting : existingAggregationsToPrune) {
+            PathMetadata meta = aggregates.get(preExisting);
+            if (meta.getFile() != null) {
+                // Don't remove 'virtual' resources, only aggregations
+                // that went to files
+                aggregates.remove(preExisting);
+            }
+        }
     }
 
     public void setAggregates(List<PathMetadata> aggregates) {
