@@ -2,6 +2,7 @@ package org.purl.wf4ever.robundle;
 
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static org.purl.wf4ever.robundle.utils.PathHelper.relativizeFromBase;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -334,6 +335,19 @@ public class Bundles {
         }
         setStringValue(mimetypePath, mimetype);
     }
+
+    public static Path uriToBundlePath(Bundle bundle, URI uri) {
+        URI rootUri = bundle.getRoot().toUri();
+        uri = relativizeFromBase(uri, rootUri);
+        if (uri.isAbsolute() || uri.getFragment() != null) {
+            return null;
+        }        
+        return bundle.getFileSystem().provider().getPath(rootUri.resolve(uri));
+    }
+    
+
+ 
+
 
 
  }

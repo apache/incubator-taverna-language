@@ -1,12 +1,13 @@
 package org.purl.wf4ever.robundle.manifest;
 
+import static org.purl.wf4ever.robundle.utils.PathHelper.relativizeFromBase;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,12 +31,10 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
-import com.hp.hpl.jena.vocabulary.XSD;
 
 public class RDFToManifest {
     private static Logger logger = Logger.getLogger(RDFToManifest.class.getCanonicalName());
     
-    private static final URI ROOT = URI.create("/");
     private static final String PROV = "http://www.w3.org/ns/prov#";
     private static final String PROV_O = "http://www.w3.org/ns/prov-o#";
     private static final String FOAF_0_1 = "http://xmlns.com/foaf/0.1/";
@@ -286,15 +285,21 @@ public class RDFToManifest {
         
         for (Individual aggrResource : listObjectProperties(ro, aggregates)) {
             String uriStr = aggrResource.getURI();
-            PathMetadata meta = new PathMetadata();
-            if (uriStr != null) {
-                meta.setUri(relativizeFromBase(uriStr, base));
+            //PathMetadata meta = new PathMetadata();
+            if (uriStr == null) {
+                logger.warning("Skipping aggregation without URI: " + aggrResource);
+                continue;
             }
+            
+            PathMetadata meta = manifest.getAggregation(relativizeFromBase(uriStr, base));
+            
             Resource proxy = aggrResource.getPropertyResourceValue(proxyFor);
             if (proxy != null && proxy.getURI() != null) {
                 meta.setProxy(relativizeFromBase(proxy.getURI(), base));
             }
 
+
+            
             creators = getAgents(base, aggrResource, createdBy);
             if (! creators.isEmpty()) {
                 manifest.setCreatedBy(creators);            
@@ -313,7 +318,7 @@ public class RDFToManifest {
                 meta.setMediatype(mediaType.asLiteral().getLexicalForm());
             }
             
-            manifest.getAggregates().add(meta);
+            
         }
         
         
@@ -355,10 +360,6 @@ public class RDFToManifest {
             creators.add(a);
         }
         return creators;
-    }
-
-    private URI relativizeFromBase(String uriStr, URI base) {
-        return ROOT.resolve(base.relativize(URI.create(uriStr)));
     }
 
     protected static URI makeBaseURI() throws URISyntaxException {

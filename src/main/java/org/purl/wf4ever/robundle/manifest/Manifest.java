@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.purl.wf4ever.robundle.Bundle;
+import org.purl.wf4ever.robundle.Bundles;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -316,7 +317,18 @@ public class Manifest {
 
     public PathMetadata getAggregation(URI uri) {
         uri = relativeToBundleRoot(uri);
-        return aggregates.get(uri);
+        PathMetadata metadata = aggregates.get(uri);
+        if (metadata == null) {
+            metadata = new PathMetadata();
+            if (! uri.isAbsolute() && uri.getFragment() == null) {                
+                Path path = Bundles.uriToBundlePath(bundle, uri);
+                metadata.setFile(path);             
+            } else { 
+                metadata.setUri(uri);
+            }
+            aggregates.put(uri, metadata);
+        }
+        return metadata;
     }
 
     private URI relativeToBundleRoot(URI uri) {
