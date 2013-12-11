@@ -3,7 +3,8 @@
     <!--<owl:Ontology rdf:about="http://purl.org/NET/dc_owl2dl/terms_od">
         <owl:imports rdf:resource="http://purl.org/NET/dc_owl2dl/dcam"/> -->
 <owl:Ontology rdf:about="http://purl.org/wf4ever/dcterms_od">
-    <owl:imports rdf:resource="http://purl.org/wf4ever/dcam"/> -->
+    
+    <!-- <owl:imports rdf:resource="http://purl.org/wf4ever/dcam"/> -->
     <rdfs:label xml:lang="en">DCMI metadata terms</rdfs:label>
     <rdfs:comment xml:lang="en">OWL 2 DL ontology for Dublin Core metadata terms from the http://purl.org/dc/terms/ namespace; this version uses object and datatype properties instead of annotation properties where possible. Note that, because of this, when using this ontology you are restricted to using literals and non-literals in certain cases and especially you cannot use DCMI's DCSV.</rdfs:comment>
   </owl:Ontology>
