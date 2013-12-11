@@ -15,13 +15,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Ignore;
+import org.junit.Assume;
 import org.junit.Test;
 import org.purl.wf4ever.robundle.Bundles;
 import org.purl.wf4ever.robundle.utils.RecursiveCopyFileVisitor.RecursiveCopyOption;
 
-@Ignore
 public class MemoryEfficiencyIT extends Helper {
+
+    private static final int MANY_FOLDERS = 100;
+
+    private static final int MANY_FILS = 10000;
 
     private Runtime rt = Runtime.getRuntime();
     
@@ -44,7 +47,7 @@ public class MemoryEfficiencyIT extends Helper {
 
         Path folder = fs.getPath("folder");
         
-        for (int i=0 ; i<100 ; i++) {
+        for (int i=0 ; i<MANY_FOLDERS ; i++) {
             Path dir = folder.resolve("dir" + i);
             Files.createDirectories(dir);
         }
@@ -54,7 +57,7 @@ public class MemoryEfficiencyIT extends Helper {
 
         ExecutorService pool = Executors.newFixedThreadPool(MAX_WORKERS);
         try {
-            int numFiles = 10000;
+            int numFiles = MANY_FILS;
             System.out.println("Writing " + numFiles + " files in parallell over max " + MAX_WORKERS + " threads");
             for (int i=0; i< numFiles; i++) {
                 int folderNo = i % 100;
@@ -99,6 +102,9 @@ public class MemoryEfficiencyIT extends Helper {
         
     }
     
+    /** This file may take a few minutes to complete depending on your OS and disk 
+     * 
+     */
     @Test
     public void writeGigaFile() throws Exception {
 
@@ -106,9 +112,8 @@ public class MemoryEfficiencyIT extends Helper {
         
         Path file = fs.getPath("bigfile");
         long size = 5l * GiB;
-        if (fs.getFileStore().getUsableSpace() < size) {
-            throw new IllegalStateException("This test requires at least " + size/GiB + "GiB free disk space");
-        }
+        Assume.assumeTrue("This test requires at least " + size/GiB + "GiB free disk space", 
+                fs.getFileStore().getUsableSpace() < size);
         System.out.println("Writing " + size/GiB + "GiB to bundle");
         
         // We'll use FileChannel as it allows calling .position. This should
