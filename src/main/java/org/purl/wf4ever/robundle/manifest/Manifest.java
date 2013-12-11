@@ -13,9 +13,12 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.purl.wf4ever.robundle.Bundle;
 
@@ -31,6 +34,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
         "createdBy", "createdOn", "authoredOn", "authoredBy", "history",
         "aggregates", "annotations", "@graph" })
 public class Manifest {
+    
+    private static Logger logger = Logger.getLogger(Manifest.class.getCanonicalName());
     
     private static URI ROOT = URI.create("/");
 
@@ -70,7 +75,7 @@ public class Manifest {
         return dir;
     }
 
-    private List<PathMetadata> aggregates = new ArrayList<>();
+    private Map<URI,PathMetadata> aggregates = new LinkedHashMap<>();             
     private List<PathAnnotation> annotations = new ArrayList<>();
     private List<Agent> authoredBy;
     private FileTime authoredOn;
@@ -87,7 +92,7 @@ public class Manifest {
     }
 
     public List<PathMetadata> getAggregates() {
-        return aggregates;
+        return new ArrayList(aggregates.values());
     }
 
     public List<PathAnnotation> getAnnotations() {
@@ -150,18 +155,23 @@ public class Manifest {
     public void populateFromBundle() throws IOException {
         final Set<Path> potentiallyEmptyFolders = new LinkedHashSet<>();
 
+
         Files.walkFileTree(bundle.getRoot(), new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult postVisitDirectory(Path dir, IOException exc)
                     throws IOException {
                 super.postVisitDirectory(dir, exc);
                 if (potentiallyEmptyFolders.remove(dir)) {
-                    PathMetadata metadata = new PathMetadata();
+                    URI uri = relativeToBundleRoot(dir.toUri());
+                    PathMetadata metadata = aggregates.get(uri);
+                    if (metadata == null) {
+                        metadata = new PathMetadata();
+                        aggregates.put(uri, metadata);              
+                    }
                     metadata.setFile(withSlash(dir));
                     metadata.setFolder(withSlash(dir.getParent()));
                     metadata.setProxy();
                     metadata.setCreatedOn(Files.getLastModifiedTime(dir));
-                    aggregates.add(metadata);
                     potentiallyEmptyFolders.remove(withSlash(dir.getParent()));
                     return FileVisitResult.CONTINUE;
                 }
@@ -187,12 +197,16 @@ public class Manifest {
                     return FileVisitResult.CONTINUE;
                 }
                 // super.visitFile(file, attrs);
-                PathMetadata metadata = new PathMetadata();
+                URI uri = relativeToBundleRoot(file.toUri());
+                PathMetadata metadata = aggregates.get(uri);
+                if (metadata == null) {
+                    metadata = new PathMetadata();
+                    aggregates.put(uri, metadata);              
+                }
                 metadata.setFile(file);
                 metadata.setFolder(withSlash(file.getParent()));
                 metadata.setProxy();
                 metadata.setCreatedOn(Files.getLastModifiedTime(file));
-                aggregates.add(metadata);
                 potentiallyEmptyFolders.remove(file.getParent());
                 return FileVisitResult.CONTINUE;
             }
@@ -200,7 +214,24 @@ public class Manifest {
     }
 
     public void setAggregates(List<PathMetadata> aggregates) {
-        this.aggregates = aggregates;
+        this.aggregates.clear();
+        
+        for (PathMetadata meta : getAggregates()) {
+            URI uri = null;
+            if (meta.getFile() != null) {
+                relativeToBundleRoot(meta.getFile().toUri());
+            } else if (meta.getUri() != null ){ 
+                uri = relativeToBundleRoot(meta.getUri());
+            } else {
+                uri = relativeToBundleRoot(meta.getProxy());
+            }
+            if (uri == null) {
+                logger.warning("Unknown URI for aggregation " + meta);
+                continue; 
+            }
+            this.aggregates.put(uri, meta);
+        }
+        
     }
 
     public void setAnnotations(List<PathAnnotation> annotations) {
@@ -273,15 +304,7 @@ public class Manifest {
 
     public PathMetadata getAggregation(URI uri) {
         uri = relativeToBundleRoot(uri);
-        for (PathMetadata meta : getAggregates()) {
-            if (uri.equals(meta.getUri()) || uri.equals(meta.getProxy())) {
-                return meta;
-            }
-            if (meta.getFile() != null && uri.equals(URI.create(meta.getFile().toUri().getRawPath()))) {
-                return meta;
-            }
-        }
-        return null;
+        return aggregates.get(uri);
     }
 
     private URI relativeToBundleRoot(URI uri) {

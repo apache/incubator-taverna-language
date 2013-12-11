@@ -67,6 +67,43 @@ public class TestManifest {
         assertTrue(uris.remove("/f/nested/empty/"));
         assertTrue(uris.isEmpty());
     }
+    
+
+    @Test
+    public void repopulateFromBundle() throws Exception {
+        Path r = bundle.getRoot();
+        URI base = r.toUri();
+
+        Manifest manifest = new Manifest(bundle);
+        manifest.populateFromBundle();
+        // Second populate should not add additional entries
+        manifest.populateFromBundle();
+
+        List<String> uris = new ArrayList<>();
+        for (PathMetadata s : manifest.getAggregates()) {
+            uris.add(s.getFile().toString());
+            Path path = s.getFile();
+            assertNotNull(path.getParent());
+            assertEquals(Manifest.withSlash(path.getParent()), s.getFolder());
+            if (s.getFile().equals(URI.create("/f/nested/empty/"))) {
+                continue;
+                // Folder's don't need proxy and createdOn
+            }            
+            assertEquals("urn", s.getProxy().getScheme());
+            UUID.fromString(s.getProxy().getSchemeSpecificPart().replace("uuid:", ""));
+            assertEquals(s.getCreatedOn(), Files.getLastModifiedTime(path));
+        }
+        System.out.println(uris);
+        assertFalse(uris.contains("/mimetype"));
+        assertFalse(uris.contains("/META-INF"));
+        assertTrue(uris.remove("/hello.txt"));
+        assertTrue(uris.remove("/f/file1.txt"));
+        assertTrue(uris.remove("/f/file2.txt"));
+        assertTrue(uris.remove("/f/file3.txt"));
+        assertTrue(uris.remove("/f/nested/file1.txt"));
+        assertTrue(uris.remove("/f/nested/empty/"));
+        assertTrue(uris.isEmpty());
+    }
 
     private Path uri2path(URI base, URI uri) {
         URI fileUri = base.resolve(uri);
