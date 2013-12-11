@@ -38,8 +38,7 @@ public class MotifAnalysisIT {
             // TODO: Generating manifest should be automatic!
             
             // Generate manifest
-            Manifest manifest = new Manifest(bundle);
-            manifest.populateFromBundle();
+            Manifest manifest = bundle.getManifest();
 
 
             // attributions
@@ -96,8 +95,8 @@ public class MotifAnalysisIT {
             manifest.getAnnotations().add(website);
 
             // Write out manifest
-            // TODO: This should be done automatically on close()
-            manifest.writeAsJsonLD();
+            // This is now done automatically on close()
+            //manifest.writeAsJsonLD();
         }
 
         System.out.println("Generated " + ro);
