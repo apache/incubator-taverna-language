@@ -159,7 +159,8 @@ public class Bundles {
         Files.copy(zip, tmpBundle);
         BundleFileSystem fs = BundleFileSystemProvider
                 .newFileSystemFromExisting(tmpBundle);
-        return new Bundle(fs.getRootDirectory(), false);
+        // And this temporary file will be deleted afterwards
+        return new Bundle(fs.getRootDirectory(), true);
     }
     
     public static void safeCopy(Path source, Path destination)
