@@ -31,7 +31,10 @@ public class Bundle implements Closeable {
     protected void close(boolean deleteOnClose) throws IOException {
         if (! getFileSystem().isOpen()) {
             return;
+
         }
+        // update manifest
+        getManifest().populateFromBundle();
         getManifest().writeAsJsonLD();
         
         getFileSystem().close();
