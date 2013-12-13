@@ -279,9 +279,8 @@ public class RDFToManifest {
         } catch (URISyntaxException e) {
             throw new IllegalStateException("Can't make base URI of form app://{uuid}/", e);
         }
-        try (InputStream jsonIn = getClass().getResourceAsStream("/manifest.json")) {
-            model.add(jsonLdAsJenaModel(jsonIn, base));
-        }
+        
+        model.add(jsonLdAsJenaModel(resourceAsStream, base));
         
         Individual ro = findRO(model, base);
         
