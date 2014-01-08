@@ -7,11 +7,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.TreeSet;
 
 import uk.org.taverna.scufl2.api.annotation.Revisioned;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
@@ -132,7 +135,7 @@ public class WorkflowBundleIO {
 		}
 		return null;
 	}
-
+	
 	/**
 	 * Returns all the available <code>WorkflowBundleReader</code>s.
 	 * 
@@ -146,6 +149,36 @@ public class WorkflowBundleIO {
 	}
 
 	/**
+     * Get the supported media types for reading.
+     * <p>
+     * Returned media types can be used with {@link #readBundle(File, String)}, {@link #readBundle(InputStream, String)} and/or {@link #readBundle(URL, String)}.
+     * 
+     * @return A (usually sorted) set of media types
+     */
+    public Set<String> getSupportedReaderMediaTypes() {	    
+        Set<String> mediaTypes = new TreeSet<String>();
+        for (WorkflowBundleReader reader : getReaders()) {
+            mediaTypes.addAll(reader.getMediaTypes());
+        }
+        return mediaTypes;
+    }
+
+    /**
+     * Get the supported media types for writing.
+     * <p>
+     * Returned media types can be used with {@link #writeBundle(WorkflowBundle, File, String) and/or #writeBundle(WorkflowBundle, OutputStream, String).
+     * 
+     * @return A (usually sorted) set of media types
+     */
+    public Set<String> getSupportedWriterMediaTypes() {
+        Set<String> mediaTypes = new TreeSet<String>();
+        for (WorkflowBundleWriter writer : getWriters()) {
+            mediaTypes.addAll(writer.getMediaTypes());
+        }
+        return mediaTypes;
+    }
+
+    /**
 	 * Returns a <code>WorkflowBundleWriter</code> for the specified media type.
 	 * 
 	 * If there is more than one <code>WorkflowBundleWriter</code> for the specified media type the
@@ -316,13 +349,57 @@ public class WorkflowBundleIO {
 	 * @throws IllegalArgumentException
 	 *             if a <code>WorkflowBundleReader</code> cannot be found for the media type
 	 */
-	public WorkflowBundle readBundle(URL url, String mediaType) throws ReaderException, IOException {
-		// TODO: Pass URL to reader
-		// TODO: Use known media type for Accept header
-		// TODO: Extract Content-Type from result
-		return readBundle(url.openStream(), mediaType);
+    public WorkflowBundle readBundle(URL url, String mediaType)
+            throws ReaderException, IOException {
+        URLConnection connection = url.openConnection();
+        if (mediaType != null && !mediaType.isEmpty()) {
+            addAcceptHeaders(mediaType, connection);
+        } else {
+            for (String supportedType : getSupportedReaderMediaTypes()) {
+                addAcceptHeaders(supportedType, connection);
+                connection.addRequestProperty("Accept", "*/*;q=0.1");
+            }
+        }
 
-	}
+        InputStream inputStream = connection.getInputStream();
+        try {
+            String contentType = connection.getContentType();
+            List<String> ignoreTypes = Arrays.asList("text/plain",
+                    "application/octet-stream", "application/zip",
+                    "application/x-zip-compressed", "text/xml",
+                    "application/xml");
+            if (contentType == null || contentType.isEmpty()) {
+                contentType = mediaType; // might still be null -> guess
+            } else {
+                for (String ignore : ignoreTypes) {
+                    if (contentType.toLowerCase().startsWith(ignore)) {
+                        contentType = mediaType; // might still be null -> guess
+                    }
+                }
+            }
+            // TODO: Pass URL to reader (as baseURI)
+            return readBundle(url.openStream(), contentType);
+        } finally {
+            inputStream.close();
+        }
+    }
+
+    private void addAcceptHeaders(String mediaType, URLConnection connection) {
+        connection.addRequestProperty("Accept", mediaType);
+
+        if (mediaType.endsWith("+zip")
+                || mediaType.equals("vnd.taverna.scufl2.workflow-bundle")) {
+            connection
+                    .addRequestProperty("Accept", "application/zip;q=0.5");
+            connection.addRequestProperty("Accept",
+                    "application/x-zip-compressed;q=0.5");
+        } else if (mediaType.endsWith("+xml")) {
+            connection
+                    .setRequestProperty("Accept", "application/xml;q=0.6");
+            connection.setRequestProperty("Accept", "text/xml;q=0.5");
+        }
+    }
+
 
 	/**
 	 * Sets the <code>WorkflowBundleReader</code>s.
