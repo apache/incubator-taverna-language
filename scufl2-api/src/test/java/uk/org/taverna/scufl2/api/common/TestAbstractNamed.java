@@ -33,7 +33,52 @@ public class TestAbstractNamed {
 		assertEquals(fish, wf.getProcessors().getByName("soup"));
 		assertNull(wf.getProcessors().getByName("fish"));
 	}
+	
+	
+	@Test(expected=NullPointerException.class)
+    public void nameNull() throws Exception {
+        Processor p = new Processor();
+        p.setName(null);
+    }
+	
+    @Test(expected=IllegalArgumentException.class)
+    public void nameEmpty() throws Exception {
+        Processor p = new Processor();
+        p.setName("");
+    }
+	
+    @Test(expected=IllegalArgumentException.class)
+    public void nameWithNewline() throws Exception {
+        Processor p = new Processor();
+        p.setName("new\nline");
+    }
+    
 
+    @Test(expected=IllegalArgumentException.class)
+    public void nameWithControlChar() throws Exception {
+        Processor p = new Processor();
+        p.setName("no\bell");
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void nameWithColon() throws Exception {
+        Processor p = new Processor();
+        p.setName("not:url");
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void nameWithSlash() throws Exception {
+        Processor p = new Processor();
+        p.setName("no/slash");
+    }
+    
+    @Test
+    public void nameWithSpace() throws Exception {
+        Processor p = new Processor();
+        p.setName("space allowed");
+    }
+
+    
 	@Test
 	public void setName() throws Exception {
 		Workflow wf = new Workflow();

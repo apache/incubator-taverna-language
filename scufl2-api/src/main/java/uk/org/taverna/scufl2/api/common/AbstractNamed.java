@@ -2,6 +2,8 @@ package uk.org.taverna.scufl2.api.common;
 
 import java.net.URI;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Abstract implementation of a {@link Named} {@link WorkflowBean}.
@@ -141,6 +143,8 @@ public abstract class AbstractNamed extends AbstractCloneable implements Named  
 		return result;
 	}
 
+
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -151,8 +155,11 @@ public abstract class AbstractNamed extends AbstractCloneable implements Named  
 		if (name == null) {
 			throw new NullPointerException("Name can't be null");
 		}
-		if (name.length() == 0) {
-			throw new IllegalArgumentException("Name can't be empty");
+		Matcher invalidMatcher = INVALID_NAME.matcher(name);
+		if (invalidMatcher.find()) {
+		    // http://dev.mygrid.org.uk/issues/browse/SCUFL2-87
+		    // TODO: Any other characters that must be disallowed?
+		    throw new IllegalArgumentException("Name invalid in position " + invalidMatcher.regionStart() + ": '" + name + "'");
 		}
 
 		if (this instanceof Child) {
