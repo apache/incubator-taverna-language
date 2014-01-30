@@ -186,6 +186,8 @@ public class Bundles {
                 // Do the fallback by temporary files below
             }
         }
+        
+        destination = destination.toAbsolutePath();
 
         String tmpName = destination.getFileName().toString();
         Path tmpDestination = Files.createTempFile(destination.getParent(),
