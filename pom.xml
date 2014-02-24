@@ -11,7 +11,7 @@
     </prerequisites>
     <groupId>uk.org.taverna.databundle</groupId>
     <artifactId>databundle</artifactId>
-    <version>0.3.0</version>
+    <version>0.3.1-SNAPSHOT</version>
     <name>Databundle API</name>
     <description>API for dealing with Data Bundles</description>
     <properties>
@@ -101,7 +101,7 @@
 		<connection>scm:git:git://github.com/myGrid/databundle.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/myGrid/databundle.git</developerConnection>
 		<url>https://github.com/myGrid/databundle/</url>
-      <tag>0.3.0</tag>
+      <tag>HEAD</tag>
   </scm>
     <licenses>
         <license>
