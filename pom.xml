@@ -11,7 +11,7 @@
     </prerequisites>
     <groupId>uk.org.taverna.databundle</groupId>
     <artifactId>databundle</artifactId>
-    <version>0.2.2-SNAPSHOT</version>
+    <version>0.3.0-SNAPSHOT</version>
     <name>Databundle API</name>
     <description>API for dealing with Data Bundles</description>
     <properties>
@@ -65,7 +65,7 @@
         <dependency>
             <groupId>org.purl.wf4ever.robundle</groupId>
             <artifactId>robundle</artifactId>
-            <version>0.2.0</version>
+            <version>0.3.0</version>
         </dependency>
     </dependencies>
 
