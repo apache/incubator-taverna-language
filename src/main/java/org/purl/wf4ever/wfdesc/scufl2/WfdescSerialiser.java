@@ -178,9 +178,9 @@ public class WfdescSerialiser {
                                 for (int i=0; i<localDep.size(); i++) {
                                     String depStr = localDep.get(i).asText();
                                     RotermsResource res = getSesameManager().designateEntity(script, RotermsResource.class);
-                                    Resource dep = getSesameManager().create(Resource.class);
-                                    dep.setRdfsLabel(depStr);
-                                    dep.setRdfsComment("JAR dependency");
+                                    RotermsResource dep = getSesameManager().create(RotermsResource.class);
+                                    dep.getWfLabel().add(depStr);
+                                    dep.getWfComment().add("JAR dependency");
                                     res.getWfRequiresSoftware().add(dep);
                                     // Somehow this gets the whole thing to fall out of the graph!
 //                                  QName depQ = new QName("http://google.com/", ""+ UUID.randomUUID());
