@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -207,12 +208,18 @@ public class WfdescSerialiser {
                             RESTService rest = getSesameManager().designateEntity(process, RESTService.class);
 //                            System.out.println(json);
                             JsonNode request = json.get("request");
-                            String uriTemplate = request.get("absoluteURITemplate").asText();
-                            uriTemplate = uriTemplate.replace("{", "");
+                            String absoluteURITemplate = request.get("absoluteURITemplate").asText();
+                            String uriTemplate = absoluteURITemplate.replace("{", "");
                             uriTemplate = uriTemplate.replace("}", "");
                             // TODO: Detect {}
-                            URI root = URI.create(uriTemplate).resolve("/");
-                            rest.getWfRootURI().add(root);
+                            try {
+                            	URI root = new URI(uriTemplate).resolve("/");
+                            	rest.getWfRootURI().add(root);
+                            } catch (URISyntaxException e) {
+                            	logger.warning("Potentially invalid URI template: " + absoluteURITemplate);
+//                            	Uncomment to temporarily break TestInvalidURITemplate:
+//								rest.getWfRootURI().add(URI.create("http://example.com/FRED"));
+							}
                         } 
                         if (type.equals(TOOL)) {
                             CommandLineTool cmd = getSesameManager().designateEntity(process, CommandLineTool.class);
