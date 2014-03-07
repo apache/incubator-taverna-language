@@ -12,7 +12,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <scufl2.version>0.11.0</scufl2.version>
-        <jsonld.version>0.2.99-mygrid</jsonld.version>
+        <jsonld.version>0.3</jsonld.version>
         <!-- Raven: Jena and Jackson versions must match dependencies
         from jsonld *and* scufl2 --> 
         <jena.version>2.11.0</jena.version>
@@ -74,7 +74,12 @@
             <type>bundle</type>
         </dependency>
          -->
-       
+
+        <dependency>
+        	<groupId>uk.org.taverna.httpclientjarcache</groupId>
+        	<artifactId>httpclient-jarcache</artifactId>
+        	<version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <scm>
