@@ -15,13 +15,9 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.cache.CachingHttpClient;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RiotException;
 
-import uk.org.taverna.httpclient.jarcache.JarCacheStorage;
-
-import com.github.jsonldjava.core.DocumentLoader;
 import com.github.jsonldjava.jena.JenaJSONLD;
 import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
 import com.hp.hpl.jena.ontology.DatatypeProperty;
@@ -130,21 +126,27 @@ public class RDFToManifest {
 		// Options(base.toASCIIString()));
 		// return model;
 	}
-
+	
 	/**
 	 * Use a JarCacheStorage so that our JSON-LD @context can be loaded from our
 	 * classpath and not require network connectivity
 	 * 
 	 */
 	protected static void setCachedHttpClientInJsonLD() {
-		JarCacheStorage cacheStorage = new JarCacheStorage(
-				RDFToManifest.class.getClassLoader());
-		synchronized (DocumentLoader.class) {
-			HttpClient oldHttpClient = DocumentLoader.getHttpClient();
-			CachingHttpClient wrappedHttpClient = new CachingHttpClient(
-					oldHttpClient, cacheStorage, cacheStorage.getCacheConfig());
-			DocumentLoader.setHttpClient(wrappedHttpClient);
-		}
+//		JarCacheStorage cacheStorage = new JarCacheStorage(
+//				RDFToManifest.class.getClassLoader());
+//		synchronized (DocumentLoader.class) {
+//			HttpClient oldHttpClient = DocumentLoader.getHttpClient();
+//			CachingHttpClient wrappedHttpClient = new CachingHttpClient(
+//					oldHttpClient, cacheStorage, cacheStorage.getCacheConfig());
+//			DocumentLoader.setHttpClient(wrappedHttpClient);
+//		}
+//		synchronized (JSONUtils.class) {
+//			HttpClient oldHttpClient = JSONUtilsSub.getHttpClient();
+//			CachingHttpClient wrappedHttpClient = new CachingHttpClient(
+//					oldHttpClient, cacheStorage, cacheStorage.getCacheConfig());
+//			JSONUtilsSub.setHttpClient(wrappedHttpClient);
+//		}
 	}
 
 	private void checkNotNull(Object... possiblyNulls) {
