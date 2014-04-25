@@ -345,7 +345,7 @@ public class Manifest {
         return metadata;
     }
 
-    private URI relativeToBundleRoot(URI uri) {
+    public URI relativeToBundleRoot(URI uri) {
         uri = ROOT.resolve(bundle.getRoot().toUri().relativize(uri));
         return uri;
     }
