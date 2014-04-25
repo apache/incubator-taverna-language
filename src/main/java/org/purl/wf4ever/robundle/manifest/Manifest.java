@@ -200,6 +200,10 @@ public class Manifest {
                 if (file.startsWith(MIMETYPE)) {
                     return FileVisitResult.CONTINUE;
                 }
+                if (manifest.contains(file)) {
+                	// Don't aggregate the manifests
+                	return FileVisitResult.CONTINUE;
+                }
                 // super.visitFile(file, attrs);
                 URI uri = relativeToBundleRoot(file.toUri());
                 existingAggregationsToPrune.remove(uri);
