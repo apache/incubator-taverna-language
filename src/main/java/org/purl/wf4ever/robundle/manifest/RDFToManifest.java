@@ -1,12 +1,12 @@
 package org.purl.wf4ever.robundle.manifest;
 
 import static org.purl.wf4ever.robundle.utils.PathHelper.relativizeFromBase;
+import static org.purl.wf4ever.robundle.utils.RDFUtils.literalAsFileTime;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -14,19 +14,16 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-import org.apache.http.client.HttpClient;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RiotException;
 
 import com.github.jsonldjava.jena.JenaJSONLD;
-import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
 import com.hp.hpl.jena.ontology.DatatypeProperty;
 import com.hp.hpl.jena.ontology.Individual;
 import com.hp.hpl.jena.ontology.ObjectProperty;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.RDFNode;
@@ -407,24 +404,7 @@ public class RDFToManifest {
 
 	}
 
-	private FileTime literalAsFileTime(RDFNode rdfNode) {
-		if (rdfNode == null) {
-			return null;
-		}
-		if (!rdfNode.isLiteral()) {
-			logger.warning("Expected literal. not " + rdfNode);
-		}
-		Literal literal = rdfNode.asLiteral();
-		Object value = literal.getValue();
-		if (!(value instanceof XSDDateTime)) {
-			logger.warning("Literal not an XSDDateTime, but: "
-					+ value.getClass() + " " + value);
-			return null;
-		}
-		XSDDateTime dateTime = (XSDDateTime) value;
-		long millis = dateTime.asCalendar().getTimeInMillis();
-		return FileTime.fromMillis(millis);
-	}
+	
 
 	private List<Agent> getAgents(URI base, Individual in,
 			ObjectProperty property) {
