@@ -232,7 +232,7 @@ public class Manifest {
         for (PathMetadata meta : aggregates) {
             URI uri = null;
             if (meta.getFile() != null) {
-                relativeToBundleRoot(meta.getFile().toUri());
+                uri = relativeToBundleRoot(meta.getFile().toUri());
             } else if (meta.getUri() != null ){ 
                 uri = relativeToBundleRoot(meta.getUri());
             } else {
