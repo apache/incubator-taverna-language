@@ -182,7 +182,8 @@ public class TestManifest {
         Manifest manifest = new Manifest(bundle);
 
         new RDFToManifest().readTo(
-                getClass().getResourceAsStream("/manifest.json"), manifest);
+                getClass().getResourceAsStream("/manifest.json"), manifest, 
+                manifest.getBaseURI().resolve("does/not/exist"));
 
         Path r = bundle.getRoot();
         assertNotNull(manifest.getAggregation(r.resolve("/README.txt")));
