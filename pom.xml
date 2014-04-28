@@ -5,7 +5,7 @@
 	</prerequisites>
 	<groupId>org.purl.wf4ever.robundle</groupId>
 	<artifactId>robundle</artifactId>
-	<version>0.4.0-SNAPSHOT</version>
+	<version>0.4.0</version>
 	<name>RO Bundle API</name>
 	<description>API for dealing with RO Bundles</description>
 	<properties>
@@ -82,7 +82,7 @@
 		<connection>scm:git:git://github.com/wf4ever/robundle.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/wf4ever/robundle.git</developerConnection>
 		<url>https://github.com/wf4ever/robundle/</url>
-		<tag>HEAD</tag>
+		<tag>0.4.0</tag>
 	</scm>
 	<licenses>
 		<license>
