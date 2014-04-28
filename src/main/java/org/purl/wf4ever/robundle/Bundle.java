@@ -80,7 +80,7 @@ public class Bundle implements Closeable {
         Path manifestPath = Bundles.getManifestPath(this);
         if (Files.exists(manifestPath)) { 
             try (InputStream manifestStream = Files.newInputStream(manifestPath)) { 
-                new RDFToManifest().readTo(manifestStream, newManifest);                
+                new RDFToManifest().readTo(manifestStream, newManifest, manifestPath.toUri());                
             }
             // TODO: Also support reading manifest.rdf?
         } else {

@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -79,6 +81,7 @@ public class RDFToManifest {
 	private ObjectProperty hasBody;
 
 	private ObjectProperty hasTarget;
+	private ObjectProperty isDescribedBy;
 
 	public RDFToManifest() {
 		loadOntologies();
@@ -268,8 +271,9 @@ public class RDFToManifest {
 		aggregates = ontModel.getObjectProperty(ORE + "aggregates");
 		proxyFor = ontModel.getObjectProperty(ORE + "proxyFor");
 		proxyIn = ontModel.getObjectProperty(ORE + "proxyIn");
-
-		checkNotNull(aggregation, aggregates, proxyFor, proxyIn);
+		isDescribedBy = ontModel.getObjectProperty(ORE + "isDescribedBy");
+		
+		checkNotNull(aggregation, aggregates, proxyFor, proxyIn, isDescribedBy);
 
 		ore = ontModel;
 	}
@@ -298,29 +302,36 @@ public class RDFToManifest {
 		}
 	}
 
-	public void readTo(InputStream resourceAsStream, Manifest manifest)
+	public void readTo(InputStream manifestResourceAsStream, Manifest manifest, URI manifestResourceBaseURI)
 			throws IOException, RiotException {
+		
+		
 		OntModel model = new RDFToManifest().getOntModel();
-		URI base;
-		try {
-			base = makeBaseURI();
-		} catch (URISyntaxException e) {
-			throw new IllegalStateException(
-					"Can't make base URI of form app://{uuid}/", e);
+		model.add(jsonLdAsJenaModel(manifestResourceAsStream, manifestResourceBaseURI));
+
+		URI root = manifestResourceBaseURI.resolve("/");
+		Individual ro = findRO(model, root);
+
+		for (Individual manifestResource : listObjectProperties(ro, isDescribedBy)) {
+			String uriStr = manifestResource.getURI();
+			if (uriStr == null) {
+				logger.warning("Skipping manifest without URI: "
+						+ manifestResource);
+				continue;
+			}			
+			URI relative = relativizeFromBase(uriStr, root);
+			Path path = manifest.getBundle().getFileSystem().provider().getPath(URI.create(uriStr));
+			manifest.getManifest().add(path);			
 		}
-
-		model.add(jsonLdAsJenaModel(resourceAsStream, base));
-
-		Individual ro = findRO(model, base);
-
-		List<Agent> creators = getAgents(base, ro, createdBy);
+		
+		List<Agent> creators = getAgents(root, ro, createdBy);
 		if (!creators.isEmpty()) {
 			manifest.setCreatedBy(creators);
 		}
 		RDFNode created = ro.getPropertyValue(createdOn);
 		manifest.setCreatedOn(literalAsFileTime(created));
 
-		List<Agent> authors = getAgents(base, ro, authoredBy);
+		List<Agent> authors = getAgents(root, ro, authoredBy);
 		if (!authors.isEmpty()) {
 			manifest.setAuthoredBy(authors);
 		}
@@ -337,14 +348,14 @@ public class RDFToManifest {
 			}
 
 			PathMetadata meta = manifest.getAggregation(relativizeFromBase(
-					uriStr, base));
+					uriStr, root));
 
 			Resource proxy = aggrResource.getPropertyResourceValue(proxyFor);
 			if (proxy != null && proxy.getURI() != null) {
-				meta.setProxy(relativizeFromBase(proxy.getURI(), base));
+				meta.setProxy(relativizeFromBase(proxy.getURI(), root));
 			}
 
-			creators = getAgents(base, aggrResource, createdBy);
+			creators = getAgents(root, aggrResource, createdBy);
 			if (!creators.isEmpty()) {
 				meta.setCreatedBy(creators);
 			}
@@ -355,7 +366,7 @@ public class RDFToManifest {
 					conformsTo)) {
 				if (standard.getURI() != null) {
 					meta.setConformsTo(relativizeFromBase(standard.getURI(),
-							base));
+							root));
 				}
 			}
 
@@ -380,17 +391,17 @@ public class RDFToManifest {
 
 					if (ann.getURI() != null) {
 						pathAnn.setAnnotation(relativizeFromBase(ann.getURI(),
-								base));
+								root));
 					}
 
 					Resource target = ann.getPropertyResourceValue(hasTarget);
 					if (target != null && target.getURI() != null) {
 						pathAnn.setAbout(relativizeFromBase(target.getURI(),
-								base));
+								root));
 					}
 					if (body.getURI() != null) {
 						pathAnn.setContent(relativizeFromBase(body.getURI(),
-								base));
+								root));
 					} else {
 						logger.warning("Can't find annotation body for anonymous "
 								+ body);
