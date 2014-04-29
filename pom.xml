@@ -388,19 +388,8 @@
                 <enabled>false</enabled>
             </snapshots>
             <id>aduna-opensource.releases</id>
-            <name>Aduna Open Source - Maven releases</name>
-            <url>http://repo.aduna-software.org/maven2/releases</url>
-        </repository>
-        <repository>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <id>aduna-opensource.snapshots</id>
-            <name>Aduna Open Source - Maven snapshots</name>
-            <url>http://repo.aduna-software.org/maven2/snapshots</url>
+            <name>Half-a-mirror of http://repo.aduna-software.org/maven2/releases/</name>
+            <url>http://build.mygrid.org.uk/maven/aduna/</url>
         </repository>
         <repository>
             <releases />
@@ -430,8 +419,8 @@
                 <enabled>false</enabled>
             </snapshots>
             <id>aduna-opensource.releases</id>
-            <name>Aduna Open Source - Maven releases</name>
-            <url>http://repo.aduna-software.org/maven2/releases</url>
+            <name>Half-a-mirror of http://repo.aduna-software.org/maven2/releases/</name>
+            <url>http://build.mygrid.org.uk/maven/aduna/</url>
         </pluginRepository>
     </pluginRepositories>
 </project>
