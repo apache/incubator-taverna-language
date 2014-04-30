@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>scufl2</artifactId>
 		<groupId>uk.org.taverna.scufl2</groupId>
-		<version>0.13.2-SNAPSHOT</version>
+		<version>0.14.1-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<artifactId>scufl2-integration-tests</artifactId>

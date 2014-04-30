@@ -11,7 +11,7 @@
     </prerequisites>
 	<groupId>uk.org.taverna.scufl2</groupId>
 	<artifactId>scufl2</artifactId>
-	<version>0.13.2-SNAPSHOT</version>
+	<version>0.14.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>Taverna Scufl 2</name>
