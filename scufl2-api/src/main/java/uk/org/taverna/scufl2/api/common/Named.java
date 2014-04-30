@@ -12,7 +12,7 @@ public interface Named extends WorkflowBean, Comparable {
 
     /**
      * Name must not match this regular expression, e.g. must not include:
-     * slash (/), colon(/), ASCII control characters
+     * slash (/), colon (:), ASCII control characters
      * 
      */
     public static final Pattern INVALID_NAME = Pattern
