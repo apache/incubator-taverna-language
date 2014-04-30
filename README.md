@@ -1,7 +1,7 @@
 SCUFL2 examples
 ===============
 
-Examples of using the [SCUFL2 API](http://dev.mygrid.org.uk/wiki/display/developer/SCUFL2+API) v0.12.0-SNAPSHOT.
+Examples of using the [SCUFL2 API](http://dev.mygrid.org.uk/wiki/display/developer/SCUFL2+API) v0.13.1.
 
 Download
 --------
