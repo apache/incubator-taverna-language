@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 
 import uk.org.taverna.scufl2.api.annotation.Revisioned;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
@@ -67,7 +68,8 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
  * </dl>
  */
 public class WorkflowBundleIO {
-
+	private static Logger log = Logger.getLogger(WorkflowBundleIO.class.getCanonicalName());
+	
 	private static final Scufl2Tools scufl2Tools = new Scufl2Tools();
 	// delay initialising the ServiceLoaders
 	protected ServiceLoader<WorkflowBundleWriter> writersLoader;
@@ -240,7 +242,7 @@ public class WorkflowBundleIO {
 			return null;
 		}
 		if (mediaTypes.size() > 1) {
-			// log.warn("Multiple media types found: " + mediaTypes)
+			log.warning("Multiple media types found: " + mediaTypes);
 			return null;
 		}
 		return mediaTypes.iterator().next();
