@@ -159,7 +159,7 @@ public abstract class AbstractNamed extends AbstractCloneable implements Named  
 		if (invalidMatcher.find()) {
 		    // http://dev.mygrid.org.uk/issues/browse/SCUFL2-87
 		    // TODO: Any other characters that must be disallowed?
-		    throw new IllegalArgumentException("Name invalid in position " + invalidMatcher.regionStart() + ": '" + name + "'");
+		    throw new IllegalArgumentException("Name invalid in position " + invalidMatcher.start() + ": '" + name + "'");
 		}
 
 		if (this instanceof Child) {
