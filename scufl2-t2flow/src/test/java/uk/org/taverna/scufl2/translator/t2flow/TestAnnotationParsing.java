@@ -1,7 +1,6 @@
 package uk.org.taverna.scufl2.translator.t2flow;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.net.URI;
@@ -58,6 +57,23 @@ public class TestAnnotationParsing {
 		assertEquals(expectedRevisions, foundRevisions);
 
 	}
+
+	@Test
+	public void readWorkflowWithEscapes() throws Exception {
+		URL wfResource = getClass().getResource("/annotation_with_backslash.t2flow");
+		assertNotNull("Could not find workflow " + WF_ANNOTATED, wfResource);
+		T2FlowParser parser = new T2FlowParser();
+		parser.setValidating(true);
+		parser.setStrict(true);
+		WorkflowBundle wfBundle = parser.parseT2Flow(wfResource.openStream());
+		Annotation ann = wfBundle.getAnnotations().iterator().next();		
+		String annStr  = wfBundle.getResources().getResourceAsString(ann.getBody().toString());
+		System.out.println(annStr);
+		// """c:\\Program Files\\"""
+		assertTrue(annStr.contains("\"\"\"c:\\\\Program Files\\\\\"\"\""));
+	}
+	
+	
 	
 
 	@Test

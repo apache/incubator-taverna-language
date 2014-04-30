@@ -746,8 +746,10 @@ public class T2FlowParser {
                    
                    // A potentially multi-line string
                    turtle.append("\"\"\"");
+                   // Escape existing \ to \\
+                   String escaped = value.replace("\\", "\\\\");
                    // Escape existing """ to \"\"\"  (beware Java's escaping of \ and ")
-                   String escaped = value.replace("\"\"\"", "\\\"\\\"\\\"");
+                   escaped = escaped.replace("\"\"\"", "\\\"\\\"\\\"");
                    turtle.append(escaped);
                    turtle.append("\"\"\"");
                    turtle.append(" .");
