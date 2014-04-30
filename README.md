@@ -86,6 +86,10 @@ classpath:
 * scufl2-rdfxml/target/scufl2-rdfxml-0.14.0.jar
 * scufl2-t2flow/target/scufl2-t2flow-0.14.0.jar
 
+See the [SCUFL2 Javadoc](http://mygrid.github.io/scufl2/api/0.14/) for 
+documentation of classes and methods of SCUFL2. The package
+[uk.o.rg.taverna.scufl2.api](http://mygrid.github.io/scufl2/api/0.14/uk/org/taverna/scufl2/api/package-summary.html)
+is a good starting point.
 
 See the *scufl2-validation* folder for examples of
 usage. The best classes to start exploring would be
