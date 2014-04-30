@@ -369,7 +369,7 @@ public class WorkflowBundleIO {
             List<String> ignoreTypes = Arrays.asList("text/plain",
                     "application/octet-stream", "application/zip",
                     "application/x-zip-compressed", "text/xml",
-                    "application/xml");
+                    "application/xml", "content/unknown");
             if (contentType == null || contentType.isEmpty()) {
                 contentType = mediaType; // might still be null -> guess
             } else {
