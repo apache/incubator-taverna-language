@@ -37,7 +37,7 @@ public class TestRDFXMLWriter {
 	@Test
     public void awkwardFilenames() throws Exception {
 	    workflowBundle.getProfiles().removeByName("tavernaServer");
-	    String funnyName = "Funny_/_characters_50%_of the time";
+	    String funnyName = "Funny_%2f_characters_50%_of the time";
         workflowBundle.getMainProfile().setName(funnyName);        
         workflowBundle.getMainWorkflow().setName(funnyName);
         File bundleFile = tempFile();
@@ -46,12 +46,12 @@ public class TestRDFXMLWriter {
         UCFPackage ucfPackage = new UCFPackage(bundleFile);
         Map<String, ResourceEntry> profiles = ucfPackage.listResources("profile");
         assertEquals(2, profiles.size());
-        assertTrue(profiles.keySet().contains("Funny_%2f_characters_50%25_of%20the%20time.rdf"));
-        assertTrue(profiles.keySet().contains("Funny_%2f_characters_50%25_of%20the%20time/"));
+        assertTrue(profiles.keySet().contains("Funny_%252f_characters_50%25_of%20the%20time.rdf"));
+        assertTrue(profiles.keySet().contains("Funny_%252f_characters_50%25_of%20the%20time/"));
         
         Map<String, ResourceEntry> workflows = ucfPackage.listResources("workflow");
         assertEquals(1, workflows.size());
-        assertEquals("Funny_%2f_characters_50%25_of%20the%20time.rdf", workflows.keySet().iterator().next());
+        assertEquals("Funny_%252f_characters_50%25_of%20the%20time.rdf", workflows.keySet().iterator().next());
         
         // and.. can we read it in again correctly?
         WorkflowBundle readBundle = bundleIO.readBundle(bundleFile, APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE);
