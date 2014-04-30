@@ -47,14 +47,14 @@ public class WfdescReader implements WorkflowBundleReader {
 		String mimeType = null;
 		
 		if (firstChars.contains("@prefix") || firstChars.contains("@base")) {
-			mimeType = TEXT_TURTLE;
+//			mimeType = TEXT_TURTLE;
 			if (firstChars.contains("http://purl.org/wf4ever/wfdesc")) {
 				mimeType = TEXT_VND_WF4EVER_WFDESC_TURTLE;
 			}
 		}
-		if (firstChars.contains("<") && firstChars.contains(">") && firstChars.contains("xmlns") && firstChars.contains("http://www.w3.org/1999/02/22-rdf-syntax-ns#")) {
-			mimeType = APPLICATION_RDF_XML;
-		}
+//		if (firstChars.contains("<") && firstChars.contains(">") && firstChars.contains("xmlns") && firstChars.contains("http://www.w3.org/1999/02/22-rdf-syntax-ns#")) {
+//			mimeType = APPLICATION_RDF_XML;
+//		}
 		return mimeType;
 	}
 
