@@ -1,6 +1,8 @@
 SCUFL2
 ======
 
+[![Build Status](https://travis-ci.org/myGrid/scufl2.svg?branch=master)](https://travis-ci.org/myGrid/scufl2)
+
 See also the [SCUFL2 wiki][1]
 
 (c) 2009-2014 University of Manchester, UK
