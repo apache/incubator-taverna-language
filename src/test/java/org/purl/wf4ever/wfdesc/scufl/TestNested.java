@@ -79,7 +79,7 @@ public class TestNested {
 						// Ignore non-specific types
 						+ "OPTIONAL { ?proc a ?procType . FILTER (?procType != wfdesc:Description && ?procType != wfdesc:Process && ?procType != owl:Thing) }"
 						+ "} " + "ORDER BY ?wf ").evaluate(writer);
-		 System.out.println(out.toString());
+		 //System.out.println(out.toString());
 
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode jsonNode = mapper.readValue(out.toByteArray(), JsonNode.class);
@@ -87,7 +87,7 @@ public class TestNested {
 		for (JsonNode binding : jsonNode.path("results").path("bindings")) {
 			String wf = binding.path("wf").path("value").asText();
 			if (!wf.equals(oldWf)) {
-				System.out.println(wf);
+				//System.out.println(wf);
 				oldWf = wf;
 			}
 			String proc = binding.path("proc").path("value").asText();
@@ -120,7 +120,7 @@ public class TestNested {
 						+ " ?toProc wfdesc:hasInput ?toPort ;"
 						+ "         rdfs:label ?toProcLabel ." + "} "
 						+ "ORDER BY ?wf ").evaluate(writer);
-		 System.out.println(out.toString());
+		 //System.out.println(out.toString());
 		jsonNode = mapper.readValue(out.toByteArray(), JsonNode.class);
 		for (JsonNode binding : jsonNode.path("results").path("bindings")) {
 			String wf = binding.path("wf").path("value").asText();

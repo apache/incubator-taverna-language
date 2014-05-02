@@ -54,7 +54,7 @@ public class TestLocalDependency {
 		myRepository.initialize();
 		RepositoryConnection con = myRepository.getConnection();
 		String root = "app://f0b5fb9c-b180-45b3-afb4-8d70bbb27190/";
-		System.out.write(output.toByteArray());
+		//System.out.write(output.toByteArray());
 		con.add(new ByteArrayInputStream(output.toByteArray()), root, RDFFormat.TURTLE);
 		
 		assertTrue(con.prepareBooleanQuery(QueryLanguage.SPARQL, 

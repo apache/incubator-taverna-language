@@ -64,7 +64,7 @@ public class WfdescAgent {
 	public JsonNode sparql(String query) throws JsonParseException, JsonMappingException, IOException {
 		WebResource sparql = base.path("sparql");
 		String json = sparql.queryParam("query", query).accept("application/sparql-results+json", "application/json").type("application/json").get(String.class);
-		System.out.println(json);
+		//System.out.println(json);
 		JsonNode jsonNode = mapper.readValue(json, JsonNode.class);
 		return jsonNode.path("results").path("bindings");		
 	}

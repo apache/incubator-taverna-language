@@ -54,7 +54,7 @@ public class TestInvalidURITemplate {
 		myRepository.initialize();
 		RepositoryConnection con = myRepository.getConnection();
 		String root = "app:///";
-		System.out.write(output.toByteArray());
+		//System.out.write(output.toByteArray());
 		con.add(new ByteArrayInputStream(output.toByteArray()), root, RDFFormat.TURTLE);
 		
 		assertFalse(con.prepareBooleanQuery(QueryLanguage.SPARQL, 
