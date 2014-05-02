@@ -25,6 +25,14 @@ For instance, for version 0.3.7:
 * http://build.mygrid.org.uk/maven/repository/org/purl/wf4ever/scufl2-wfdesc/0.3.7/scufl2-wfdesc-0.3.7-standalone.jar
 
 
+License
+-------
+(c) 2011-2014 University of MAnchester
+
+scufl2-wfdesc is licensed under the [MIT license](http://opensource.org/licenses/MIT). See the file [LICENCE.txt](LICENCE.txt) for details
+
+[SCUFL2 API](https://github.com/myGrid/scufl2/) is licensed under the [LGPL 2.1 license](https://www.gnu.org/licenses/lgpl-2.1.html) which applies
+to the build binary.
 
 Building
 --------
@@ -138,16 +146,18 @@ according to the [RO ontology wfdesc](https://w3id.org/ro#wfdesc) ontology.
 
 
 
-iExtracted annotations
-----------------------
-Annotations in the workflow are also extracted for the workflow, processors and input ports:
+Extracted annotations
+---------------------
+Annotations in the workflow are also extracted for the workflow, processors and input ports (see namespaces above):
 
  * dc:creator
  * dcterms:description
  * dcterms:title
  * biocat:exampleData
 
-Richer semantic annotations made using the Taverna Component plugin are also extracted, e.g.:
+Richer semantic annotations (e.g. on
+ [Taverna Components](http://dev.mygrid.org.uk/wiki/display/taverna/Components)) are 
+extracted verbatim, e.g.:
 
 	<> a wfdesc:Workflow , wfdesc:Description , wfdesc:Process ;
 		comp:fits comp:MigrationAction ;
@@ -157,7 +167,8 @@ Richer semantic annotations made using the Taverna Component plugin are also ext
 		comp:fromMimetype "image/tiff" ;
 		comp:toMimetype "image/tiff" .
 
-See [`valid_component_imagemagickconvert.wfdesc.ttl`](valid_component_imagemagickconvert.wfdesc.ttl) for the complete example.
+See [`valid_component_imagemagickconvert.wfdesc.ttl`](src/test/resources/valid_component_imagemagickconvert.wfdesc.ttl) 
+for the complete example.
 
 
 
