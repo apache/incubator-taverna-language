@@ -6,4 +6,4 @@ notifications:
   - soiland-reyes@cs.manchester.ac.uk
 env:
   global:
-    secure: QI7DNvW5sEb2d+l26f+oP1M4WKMuysBV28fiY/y070H8f/aMUcIKpp4TSg9+wKUPoxGZwOGWQ1W1/duhVAeXrK0/rrrjQOGchXoQtpmEhe/sSlEnrf18R7LxK96PKwswVRJjl/85Z8kAMJ/zLZUX02y3ORA0K1eUrshJmw7GTxg=
+    secure: UipjZs2MK2BPl0dBXVvUeTO7YX0orEadW5OgkwIiEXRqdfIMkqtUvISA8PXsqE5ybFdIWP5+9vJITsD8YVMit62kjujubyPMQ8ixPPj9YWeqHFpBKVu2YnDFE2C4lUKCNG01noJVLRc4CUQA55d6zt0AgPamgBesTyE2tnE8hV4=
