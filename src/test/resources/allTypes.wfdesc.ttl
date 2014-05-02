@@ -6,40 +6,45 @@
 @prefix wfdesc: <http://purl.org/wf4ever/wfdesc#> .
 @prefix wf4ever: <http://purl.org/wf4ever/wf4ever#> .
 @prefix roterms: <http://purl.org/wf4ever/roterms#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix comp: <http://purl.org/DP/components#> .
+@prefix dep: <http://scape.keep.pt/vocab/dependencies#> .
+@prefix biocat: <http://biocatalogue.org/attribute/> .
 @prefix : <#> .
 
-<processor/theBeanshell/> a wfdesc:Process , wfdesc:Description , owl:Thing , wf4ever:BeanshellScript ;
+<processor/theBeanshell/> a wfdesc:Process , wfdesc:Description , wf4ever:BeanshellScript ;
 	rdfs:label "theBeanshell" ;
 	wfdesc:hasOutput <processor/theBeanshell/out/s> ;
 	wf4ever:script "s = \"a beanshell script\";" .
 
-<../theWorkflow/processor/theLocal/> a wfdesc:Process , wfdesc:Description , owl:Thing , wf4ever:BeanshellScript ;
+<../theWorkflow/processor/theLocal/> a wfdesc:Process , wfdesc:Description , wf4ever:BeanshellScript ;
 	rdfs:label "theLocal" ;
 	wfdesc:hasInput <../theWorkflow/processor/theLocal/in/string1> ;
 	wfdesc:hasOutput <../theWorkflow/processor/theLocal/out/output> ;
 	wf4ever:script "output = string1 + string2;" .
 
-<processor/theTool/> a wfdesc:Process , wfdesc:Description , owl:Thing , wf4ever:CommandLineTool ;
+<processor/theTool/> a wfdesc:Process , wfdesc:Description , wf4ever:CommandLineTool ;
 	rdfs:label "theTool" ;
 	wfdesc:hasOutput <processor/theTool/out/STDERR> , <processor/theTool/out/STDOUT> .
 
-<processor/theToolRepository/> a wfdesc:Process , wfdesc:Description , owl:Thing , wf4ever:CommandLineTool ;
+<processor/theToolRepository/> a wfdesc:Process , wfdesc:Description , wf4ever:CommandLineTool ;
 	rdfs:label "theToolRepository" ;
 	wfdesc:hasInput <processor/theToolRepository/in/First_file> , <processor/theToolRepository/in/Second_file> .
 
-<processor/theREST/> a wfdesc:Process , wfdesc:Description , owl:Thing , wf4ever:RESTService ;
+<processor/theREST/> a wfdesc:Process , wfdesc:Description , wf4ever:RESTService ;
 	rdfs:label "theREST" ;
 	wfdesc:hasInput <processor/theREST/in/id> ;
 	wfdesc:hasOutput <processor/theREST/out/status> ;
 	wf4ever:rootURI "http://www.uniprot.org/"^^xsd:anyURI .
 
-<processor/theRscript/> a wfdesc:Process , wfdesc:Description , owl:Thing , wf4ever:RScript ;
+<processor/theRscript/> a wfdesc:Process , wfdesc:Description , wf4ever:RScript ;
 	rdfs:label "theRscript" ;
 	wfdesc:hasInput <processor/theRscript/in/in1> ;
 	wfdesc:hasOutput <processor/theRscript/out/out1> ;
 	wf4ever:script "\"some r-script\"" .
 
-<processor/theWsdl/> a wfdesc:Process , wfdesc:Description , owl:Thing , wf4ever:SOAPService ;
+<processor/theWsdl/> a wfdesc:Process , wfdesc:Description , wf4ever:SOAPService ;
 	rdfs:label "theWsdl" ;
 	wfdesc:hasInput <processor/theWsdl/in/format> , <processor/theWsdl/in/ids> ;
 	wfdesc:hasOutput <processor/theWsdl/out/attachmentList> ;
@@ -96,6 +101,9 @@
 	wfdesc:hasSink <../theWorkflow/out/b> .
 
 <> a wfdesc:Workflow , wfdesc:Description , wfdesc:Process ;
+	dcterms:description "All types currently supported by scul2-wfdesc. Other service types are also translated, but only as processors." ;
+	dc:creator "Stian Soiland-Reyes" ;
+	dcterms:title "All types" ;
 	rdfs:label "All_types" ;
 	wfdesc:hasOutput <out/out> ;
 	wfdesc:hasSubProcess <processor/theBeanshell/> , <processor/theNested/> , <processor/theREST/> , <processor/theRscript/> , <processor/theSpreadsheet/> , <processor/theText/> , <processor/theTool/> , <processor/theToolRepository/> , <processor/theWsdl/> , <processor/theXPath/> ;
@@ -107,7 +115,7 @@
 <processor/theBeanshell/out/s> a wfdesc:Output , wfdesc:Description ;
 	rdfs:label "s" .
 
-<processor/theNested/> a wfdesc:Process , wfdesc:Description , prov:Entity , owl:Thing , wfdesc:Workflow ;
+<processor/theNested/> a wfdesc:Process , wfdesc:Description , prov:Entity , wfdesc:Workflow ;
 	rdfs:label "theNested" ;
 	wfdesc:hasInput <processor/theNested/in/a> ;
 	wfdesc:hasOutput <processor/theNested/out/b> ;
@@ -184,6 +192,7 @@
 	rdfs:label "nodelist" .
 
 <../theWorkflow/> a wfdesc:Workflow , wfdesc:Description , wfdesc:Process , prov:Entity ;
+	dcterms:title "theWorkflow" ;
 	rdfs:label "theWorkflow" ;
 	wfdesc:hasInput <../theWorkflow/in/a> ;
 	wfdesc:hasOutput <../theWorkflow/out/b> ;
@@ -201,4 +210,3 @@
 
 <../theWorkflow/processor/theLocal/out/output> a wfdesc:Output , wfdesc:Description ;
 	rdfs:label "output" .
-

@@ -93,60 +93,71 @@ Example:
     : stain@ralph ~/src/wf4ever/scufl2-wfdesc; target/scufl2-wfdesc/bin/scufl2-to-wfdesc src/test/resources/helloworld.t2flow 
     Converted src/test/resources/helloworld.t2flow to src/test/resources/helloworld.wfdesc.ttl
 
+The output is a [RDF Turtle](http://www.w3.org/TR/turtle/) document containing statements about the workflow structure
+according to the [RO ontology wfdesc](https://w3id.org/ro#wfdesc) ontology.
 
     : stain@ralph ~/src/wf4ever/scufl2-wfdesc; cat src/test/resources/helloworld.wfdesc.ttl 
 
-    @base <http://ns.taverna.org.uk/2010/workflowBundle/01348671-5aaa-4cc2-84cc-477329b70b0d/workflow/Hello_Anyone/> .
-    @prefix wfdesc: <http://purl.org/wf4ever/wfdesc#> .
-    @prefix wf4ever: <http://purl.org/wf4ever/wf4ever#> .
-    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+	@base <http://ns.taverna.org.uk/2010/workflowBundle/8781d5f4-d0ba-48a8-a1d1-14281bd8a917/workflow/Hello_World/> .
+	@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+	@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+	@prefix owl: <http://www.w3.org/2002/07/owl#> .
+	@prefix prov: <http://www.w3.org/ns/prov#> .
+	@prefix wfdesc: <http://purl.org/wf4ever/wfdesc#> .
+	@prefix wf4ever: <http://purl.org/wf4ever/wf4ever#> .
+	@prefix roterms: <http://purl.org/wf4ever/roterms#> .
+	@prefix dc: <http://purl.org/dc/elements/1.1/> .
+	@prefix dcterms: <http://purl.org/dc/terms/> .
+	@prefix comp: <http://purl.org/DP/components#> .
+	@prefix dep: <http://scape.keep.pt/vocab/dependencies#> .
+	@prefix biocat: <http://biocatalogue.org/attribute/> .
+	@prefix : <#> .
 
-    <processor/Concatenate_two_strings/> a wfdesc:Process , wfdesc:Description , <http://www.w3.org/2002/07/owl#Thing> , wf4ever:BeanshellScript ;
-        wf4ever:script "output = string1 + string2;" ;
-        rdfs:label "Concatenate_two_strings" ;
-        wfdesc:hasInput <processor/Concatenate_two_strings/in/string1> , <processor/Concatenate_two_strings/in/string2> ;
-        wfdesc:hasOutput <processor/Concatenate_two_strings/out/output> .
+	<datalink?from=processor/hello/out/value&to=out/greeting> a wfdesc:DataLink ;
+		wfdesc:hasSource <processor/hello/out/value> ;
+		wfdesc:hasSink <out/greeting> .
 
-    <datalink?from=in/name&to=processor/Concatenate_two_strings/in/string2> a wfdesc:DataLink ;
-        wfdesc:hasSource <in/name> ;
-        wfdesc:hasSink <processor/Concatenate_two_strings/in/string2> .
+	<> a wfdesc:Workflow , wfdesc:Description , wfdesc:Process ;
+		dc:creator "Stian Soiland-Reyes" ;
+		dcterms:description "One of the simplest workflows possible. No workflow input ports, a single workflow output port \"greeting\",  outputting \"Hello, world!\" as produced by the String Constant \"hello\"." ;
+		dcterms:title "Hello World" ;
+		rdfs:label "Hello_World" ;
+		wfdesc:hasOutput <out/greeting> ;
+		wfdesc:hasSubProcess <processor/hello/> ;
+		wfdesc:hasDataLink <datalink?from=processor/hello/out/value&to=out/greeting> .
 
-    <datalink?from=processor/Concatenate_two_strings/out/output&to=out/greeting> a wfdesc:DataLink ;
-        wfdesc:hasSource <processor/Concatenate_two_strings/out/output> ;
-        wfdesc:hasSink <out/greeting> .
+	<out/greeting> a wfdesc:Output , wfdesc:Description , wfdesc:Input ;
+		rdfs:label "greeting" .
 
-    <datalink?from=processor/hello/out/value&to=processor/Concatenate_two_strings/in/string1> a wfdesc:DataLink ;
-        wfdesc:hasSource <processor/hello/out/value> ;
-        wfdesc:hasSink <processor/Concatenate_two_strings/in/string1> .
+	<processor/hello/> a wfdesc:Process , wfdesc:Description ;
+		rdfs:label "hello" ;
+		wfdesc:hasOutput <processor/hello/out/value> .
 
-    <> a wfdesc:Workflow , wfdesc:Description , wfdesc:Process ;
-        rdfs:label "Hello_Anyone" ;
-        wfdesc:hasInput <in/name> ;
-        wfdesc:hasOutput <out/greeting> ;
-        wfdesc:hasSubProcess <processor/Concatenate_two_strings/> , <processor/hello/> ;
-        wfdesc:hasDataLink <datalink?from=in/name&to=processor/Concatenate_two_strings/in/string2> , <datalink?from=processor/Concatenate_two_strings/out/output&to=out/greeting> , <datalink?from=processor/hello/out/value&to=processor/Concatenate_two_strings/in/string1> .
+	<processor/hello/out/value> a wfdesc:Output , wfdesc:Description ;
+		rdfs:label "value" .
 
-    <in/name> a wfdesc:Input , wfdesc:Description , wfdesc:Output ;
-        rdfs:label "name" .
 
-    <out/greeting> a wfdesc:Output , wfdesc:Description , wfdesc:Input ;
-        rdfs:label "greeting" .
 
-    <processor/Concatenate_two_strings/in/string1> a wfdesc:Input , wfdesc:Description ;
-        rdfs:label "string1" .
+iExtracted annotations
+----------------------
+Annotations in the workflow are also extracted for the workflow, processors and input ports:
 
-    <processor/Concatenate_two_strings/in/string2> a wfdesc:Input , wfdesc:Description ;
-        rdfs:label "string2" .
+ * dc:creator
+ * dcterms:description
+ * dcterms:title
+ * biocat:exampleData
 
-    <processor/Concatenate_two_strings/out/output> a wfdesc:Output , wfdesc:Description ;
-        rdfs:label "output" .
+Richer semantic annotations made using the Taverna Component plugin are also extracted, e.g.:
 
-    <processor/hello/> a wfdesc:Process , wfdesc:Description ;
-        rdfs:label "hello" ;
-        wfdesc:hasOutput <processor/hello/out/value> .
+	<> a wfdesc:Workflow , wfdesc:Description , wfdesc:Process ;
+		comp:fits comp:MigrationAction ;
+		comp:migrates _:node18musbm56x1 .
 
-    <processor/hello/out/value> a wfdesc:Output , wfdesc:Description ;
-        rdfs:label "value" .
+	_:node18musbm56x1 a comp:MigrationPath ;
+		comp:fromMimetype "image/tiff" ;
+		comp:toMimetype "image/tiff" .
+
+See [`valid_component_imagemagickconvert.wfdesc.ttl`](valid_component_imagemagickconvert.wfdesc.ttl) for the complete example.
 
 
 
