@@ -3,16 +3,20 @@ Convert SCUFL2 to wfdesc
 
 [![Build Status](https://travis-ci.org/wf4ever/scufl2-wfdesc.svg?branch=master)](https://travis-ci.org/wf4ever/scufl2-wfdesc)
 
-This is an extension to Scufl2 [1] which provides the export capability
-to wfdesc ontology from the Wf4Ever [2] RO wfdesc ontology v0.1 [3].
+This is an extension to [Scufl2](https://github.com/mygrid/scufl2/) which
+provides the export capability to wfdesc ontology from the
+[Wf4Ever](http://www.wf4ever-project.org/) [2] RO 
+[wfdesc ontology](https://w3id.org/ro#wfdesc).
 
-This is exposed as a command line tool "scufl2-to-wfdesc", but can also
-be accessed programmatically using the SCUFL2 APIs.
+This is exposed as a command line tool `scufl2-to-wfdesc`, but can also be
+accessed programmatically as a plugin for the 
+[SCUFL2 API](http://dev.mygrid.org.uk/wiki/display/developer/SCUFL2+API).
 
 
 Download
 --------
-You can download the latest scufl2-wfdesc command line tool from:
+You can download the latest `scufl2-wfdesc-*-standalone.jar` (command line tool)
+from the myGrid Maven repository:
 
 * http://build.mygrid.org.uk/maven/repository/org/purl/wf4ever/scufl2-wfdesc/ 
 
@@ -26,10 +30,11 @@ Building
 --------
 
 Requirements:
- * Java JDK 6 or higher [6], or OpenJDK 7 or higher [7]
- * Maven 2 or higher [9]  (only for building)
+ * [Java JDK 7](http://www.oracle.com/technetwork/java/javase/downloads/index.html) or [OpenJDK 7](http://openjdk.java.net/install/
+) (higher versions not tested)
+ * [Maven 3](http://maven.apache.org/download.html) or higher   (for building)
 
-To build, simply use "mvn clean install"
+To build, simply use `mvn clean install`
 
 Example:
 
@@ -198,16 +203,7 @@ Example:
 
 References
 ----------
- * SCUFL2 [4]
- * RO ontologies wfdesc [5]
+ * [SCUFL2 API](http://dev.mygrid.org.uk/wiki/display/developer/SCUFL2+API)
+ * [RO ontology wfdesc](https://w3id.org/ro#wfdesc)
+ * [RDF Turtle](http://www.w3.org/TR/turtle/)
 
-
-
-[1]: https://github.com/mygrid/scufl2/
-[2]: http://www.wf4ever-project.org/
-[3]: https://github.com/wf4ever/ro/tree/0.1
-[4]: http://www.mygrid.org.uk/dev/wiki/display/developer/2010-07+SCUFL2
-[5]: http://www.wf4ever-project.org/wiki/display/docs/Research+Object+Vocabulary+Specification+v0.1
-[6]: http://www.oracle.com/technetwork/java/javase/downloads/index.html
-[7]: http://openjdk.java.net/install/
-[8]: http://maven.apache.org/download.html
