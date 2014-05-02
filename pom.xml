@@ -40,12 +40,8 @@
                         </deployProperties>
                         <publisher>
                             <contextUrl>http://triton.cs.man.ac.uk/artifactory</contextUrl>
-<!--
-                            <username>${artifactory.username}</username>
-                            <password>${artifactory.password}</password>
--->
                             <username>bamboo</username>
-                            <password>{DESede}/1mVfGlmnj3kFM5MdH+DLQ==</password>
+                            <password>${env.ARTIFACTORY_PASSWORD}</password>
                             <repoKey>libs-releases-local</repoKey>
                             <snapshotRepoKey>libs-snapshots-local</snapshotRepoKey>
                         </publisher>
