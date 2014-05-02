@@ -23,6 +23,37 @@
   </scm>    
     <build>
         <plugins>
+
+        <plugin>
+            <groupId>org.jfrog.buildinfo</groupId>
+            <artifactId>artifactory-maven-plugin</artifactId>
+            <version>2.2.2</version>
+            <inherited>false</inherited>
+            <executions>
+                <execution>
+                    <id>build-info</id>
+                    <goals>
+                        <goal>publish</goal>
+                    </goals>
+                    <configuration>
+                        <deployProperties>
+                        </deployProperties>
+                        <publisher>
+                            <contextUrl>http://triton.cs.man.ac.uk/artifactory</contextUrl>
+<!--
+                            <username>${artifactory.username}</username>
+                            <password>${artifactory.password}</password>
+-->
+                            <username>bamboo</username>
+                            <password>{DESede}/1mVfGlmnj3kFM5MdH+DLQ==</password>
+                            <repoKey>libs-releases-local</repoKey>
+                            <snapshotRepoKey>libs-snapshots-local</snapshotRepoKey>
+                        </publisher>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -380,6 +411,7 @@
         </dependency>
     </dependencies>
     <repositories>
+<!--
         <repository>
             <releases>
                 <enabled>true</enabled>
@@ -409,8 +441,21 @@
             <name>myGrid Snapshot Repository</name>
             <url>http://www.mygrid.org.uk/maven/snapshot-repository</url>
         </repository>
+-->
+	<repository>
+		<id>central</id>
+		<url>http://triton.cs.man.ac.uk/artifactory/repo/</url>
+		<name>myGrid artifactory</name>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+	</repository>	
     </repositories>
     <pluginRepositories>
+<!--
         <pluginRepository>
             <releases>
                 <enabled>true</enabled>
@@ -422,5 +467,17 @@
             <name>Half-a-mirror of http://repo.aduna-software.org/maven2/releases/</name>
             <url>http://build.mygrid.org.uk/maven/aduna/</url>
         </pluginRepository>
+-->
+	<pluginRepository>
+		<id>central</id>
+		<url>http://triton.cs.man.ac.uk/artifactory/repo/</url>
+		<name>myGrid artifactory</name>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+	</pluginRepository>	
     </pluginRepositories>
 </project>

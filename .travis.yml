@@ -1,8 +1,9 @@
 language: java
 jdk:
-  - openjdk7
-#  - oraclejdk7
-#  - oraclejdk8
+- openjdk7
 notifications:
   email:
-    - soiland-reyes@cs.manchester.ac.uk
+  - soiland-reyes@cs.manchester.ac.uk
+env:
+  global:
+    secure: QI7DNvW5sEb2d+l26f+oP1M4WKMuysBV28fiY/y070H8f/aMUcIKpp4TSg9+wKUPoxGZwOGWQ1W1/duhVAeXrK0/rrrjQOGchXoQtpmEhe/sSlEnrf18R7LxK96PKwswVRJjl/85Z8kAMJ/zLZUX02y3ORA0K1eUrshJmw7GTxg=
