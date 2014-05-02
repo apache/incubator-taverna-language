@@ -10,7 +10,15 @@ This is exposed as a command line tool "scufl2-to-wfdesc", but can also
 be accessed programmatically using the SCUFL2 APIs.
 
 
+Download
+--------
+You can download the latest scufl2-wfdesc command line tool from:
 
+* http://build.mygrid.org.uk/maven/repository/org/purl/wf4ever/scufl2-wfdesc/ 
+
+For instance, for version 0.3.7:
+
+* http://build.mygrid.org.uk/maven/repository/org/purl/wf4ever/scufl2-wfdesc/0.3.7/scufl2-wfdesc-0.3.7-standalone.jar
 
 
 
@@ -58,21 +66,20 @@ connection this might take some time to complete.
 Command line tool
 -----------------
 
-After building, the folder "target/scufl2-wfdesc" contains a
-distribution of the command line tool "scufl2-to-wfdesc", with launchers
-generated for Unix and Windows.
-
-You may copy and distribute this folder for a standalone usage of the
+After building, the folder `target/scufl2-wfdesc` contains a
+distribution of the command line tool `scufl2-to-wfdesc`, with launchers
+generated for Unix and Windows.  You may copy and distribute this folder for a standalone usage of the
 conversion tool. 
 
-Alternatively, you can use the
-target/scufl2-wfdesc-0.3.0-SNAPSHOT-standalone.jar directly with 
-"java -jar" - this JAR embeds all required libraries.
+Alternatively, you can use the `target/scufl2-wfdesc-0.3.0-SNAPSHOT-standalone.jar` directly with 
+`java -jar` - this JAR embeds all required libraries and hence can
+be copied anywhere on your file system. This JAR is however not recommended for programmatic
+use as it embeds third party libraries.
 
 The command line tool takes a list of Taverna workflow filenames (supported file
-types are *.t2flow and *.wfbundle). If no filenames are given, the tool
+types are `*.t2flow` and `*.wfbundle`). If no filenames are given, the tool
 will read a workflow definition from STDIN and write wfdesc to STDOUT.
-The argument -h  and --help should give a minimal help.
+The argument `-h`  or `--help` should give a minimal help.
 
 
 
@@ -146,14 +153,14 @@ Add a Maven dependency to "scufl2-wfdesc":
     <dependency>
         <groupId>org.purl.wf4ever</groupId>
         <artifactId>scufl2-wfdesc</artifactId>
-        <version>0.3.0-SNAPSHOT</version>
+        <version>0.3.7</version>
     </dependency>
 
-See the pom.xml file here for the latest version. 
+See the pom.xml file of the latest git tag for the latest version. 
 
-Snapshot builds are available from
-http://www.mygrid.org.uk/maven/snapshot-repository/
--- to retrieve artifacts from the snapshot repository, also add
+Stable builds are available from
+http://www.mygrid.org.uk/maven/repository/
+-- to retrieve artifacts from the myGrid repository, also add
 to your POM:
 
     <repositories>
@@ -162,9 +169,9 @@ to your POM:
                 <enabled>false</enabled>
             </releases>
             <snapshots />
-            <id>mygrid-snapshot-repository</id>
-            <name>myGrid Snapshot Repository</name>
-            <url>http://www.mygrid.org.uk/maven/snapshot-repository</url>
+            <id>mygrid-repository</id>
+            <name>myGrid Repository</name>
+            <url>http://www.mygrid.org.uk/maven/repository</url>
         </repository>
     </repositories>
 
