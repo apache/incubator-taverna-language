@@ -1,6 +1,8 @@
 Convert SCUFL2 to wfdesc
 ========================
 
+[![Build Status](https://travis-ci.org/wf4ever/scufl2-wfdesc.svg?branch=master)](https://travis-ci.org/wf4ever/scufl2-wfdesc)
+
 This is an extension to Scufl2 [1] which provides the export capability
 to wfdesc ontology from the Wf4Ever [2] RO wfdesc ontology v0.1 [3].
 
