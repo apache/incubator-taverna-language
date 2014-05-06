@@ -39,7 +39,7 @@
                         <deployProperties>
                         </deployProperties>
                         <publisher>
-                            <contextUrl>http://triton.cs.man.ac.uk/artifactory</contextUrl>
+                            <contextUrl>http://triton.cs.man.ac.uk/artifactory/${env.ARTIFACTORY_PASSWORD}/</contextUrl>
                             <username>bamboo</username>
                             <password>${env.ARTIFACTORY_PASSWORD}</password>
                             <repoKey>libs-releases-local</repoKey>
