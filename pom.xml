@@ -39,9 +39,9 @@
                         <deployProperties>
                         </deployProperties>
                         <publisher>
-                            <contextUrl>http://triton.cs.man.ac.uk/artifactory/${env.ARTIFACTORY_PASSWORD}/</contextUrl>
+                            <contextUrl>http://triton.cs.man.ac.uk/artifactory/</contextUrl>
                             <username>bamboo</username>
-                            <password>${env.ARTIFACTORY_PASSWORD}</password>
+			    <password>{DESede}/1mVfGlmnj3kFM5MdH+DLQ==</password>
                             <repoKey>libs-releases-local</repoKey>
                             <snapshotRepoKey>libs-snapshots-local</snapshotRepoKey>
                         </publisher>
