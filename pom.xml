@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+	<?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.purl.wf4ever</groupId>
@@ -380,7 +380,6 @@
         </dependency>
     </dependencies>
     <repositories>
-<!--
         <repository>
             <releases>
                 <enabled>true</enabled>
@@ -390,7 +389,7 @@
             </snapshots>
             <id>aduna-opensource.releases</id>
             <name>Half-a-mirror of http://repo.aduna-software.org/maven2/releases/</name>
-            <url>http://build.mygrid.org.uk/maven/aduna/</url>
+            <url>http://repository.mygrid.org.uk/artifactory/aduna/</url>
         </repository>
         <repository>
             <releases />
@@ -399,7 +398,7 @@
             </snapshots>
             <id>mygrid-repository</id>
             <name>myGrid Repository</name>
-            <url>http://www.mygrid.org.uk/maven/repository</url>
+            <url>http://www.mygrid.org.uk/maven/repository/</url>
         </repository>
         <repository>
             <releases>
@@ -408,12 +407,12 @@
             <snapshots />
             <id>mygrid-snapshot-repository</id>
             <name>myGrid Snapshot Repository</name>
-            <url>http://www.mygrid.org.uk/maven/snapshot-repository</url>
+            <url>http://www.mygrid.org.uk/maven/snapshot-repository/</url>
         </repository>
--->
+<!--
 	<repository>
 		<id>central</id>
-		<url>http://triton.cs.man.ac.uk/artifactory/repo/</url>
+		<url>http://www.mygrid.org.uk/artifactory/repo/</url>
 		<name>myGrid artifactory</name>
             <releases>
                 <enabled>true</enabled>
@@ -422,9 +421,9 @@
                 <enabled>true</enabled>
             </snapshots>
 	</repository>	
+-->
     </repositories>
     <pluginRepositories>
-<!--
         <pluginRepository>
             <releases>
                 <enabled>true</enabled>
@@ -434,19 +433,7 @@
             </snapshots>
             <id>aduna-opensource.releases</id>
             <name>Half-a-mirror of http://repo.aduna-software.org/maven2/releases/</name>
-            <url>http://build.mygrid.org.uk/maven/aduna/</url>
+	    <url>http://repository.mygrid.org.uk/artifactory/aduna/</url>
         </pluginRepository>
--->
-	<pluginRepository>
-		<id>central</id>
-		<url>http://triton.cs.man.ac.uk/artifactory/repo/</url>
-		<name>myGrid artifactory</name>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-	</pluginRepository>	
     </pluginRepositories>
 </project>
