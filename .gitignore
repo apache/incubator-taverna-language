@@ -1,0 +1,24 @@
+# ignore project files #
+.classpath
+.project
+.settings/
+catalog-v001.xml
+
+# ignore target files #
+target/
+bin/
+build/
+dist/
+apidoc/
+*.swp
+
+# ignore svn files if there
+.svn
+
+# ignore log files #
+*.log
+/logs/*
+*/logs/*
+
+
+
