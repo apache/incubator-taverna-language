@@ -3,6 +3,7 @@ package org.purl.wf4ever.robundle.fs;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -608,6 +609,19 @@ public class BundleFileSystemProvider extends FileSystemProvider {
         return origProvider(path).newInputStream(fs.unwrap(path), options);
     }
 
+    @Override
+    public OutputStream newOutputStream(Path path, OpenOption... options)
+    		throws IOException {
+    	BundleFileSystem fileSystem = (BundleFileSystem) path.getFileSystem();
+		if (fileSystem.getRootDirectory().resolve(path).
+				equals(fileSystem.getRootDirectory().resolve(MIMETYPE_FILE))) { 
+    		// Special case to avoid compression
+			return origProvider(path).newOutputStream(
+					fileSystem.unwrap(path), options);    		
+    	}    	
+    	return super.newOutputStream(path, options);
+    }
+    
     private FileSystemProvider origProvider(Path path) {
         return ((BundlePath) path).getFileSystem().getOrigFS().provider();
     }

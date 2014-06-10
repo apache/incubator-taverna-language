@@ -330,12 +330,14 @@ public class Bundles {
         if (! mimetype.contains("/")) {
             throw new IllegalArgumentException("Invalid mimetype: " + mimetype);
         }
+        Path root = bundle.getRoot();
+        
         Path mimetypePath = bundle.getRoot().resolve(BundleFileSystemProvider.MIMETYPE_FILE);
         if (! Files.isRegularFile(mimetypePath)) {
             // It would require low-level zip-modification to properly add 'mimetype' now
             throw new IOException("Special file '" + BundleFileSystemProvider.MIMETYPE_FILE + 
                     "' missing from bundle, can't set mimetype");
-        }
+        }               
         setStringValue(mimetypePath, mimetype);
     }
 
