@@ -203,6 +203,7 @@ public class TestUCFPackage {
 		container.save(tmpFile);
 		ZipFile zipFile = new ZipFile(tmpFile);
 		ZipEntry manifestEntry = zipFile.getEntry("META-INF/manifest.xml");
+		assertNotNull("could not find manifest.xml", manifestEntry);
 		InputStream manifestStream = zipFile.getInputStream(manifestEntry);
 		//System.out.println(IOUtils.toString(manifestStream, "UTF-8"));
 		/*
