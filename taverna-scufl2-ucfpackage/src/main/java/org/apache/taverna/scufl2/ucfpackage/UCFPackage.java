@@ -57,8 +57,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.taverna.scufl2.ucfpackage.impl.odfdom.pkg.OdfPackage;
-import org.apache.taverna.scufl2.ucfpackage.impl.odfdom.pkg.manifest.OdfFileEntry;
+//import org.apache.taverna.scufl2.ucfpackage.impl.odfdom.pkg.OdfPackage;
+//import org.apache.taverna.scufl2.ucfpackage.impl.odfdom.pkg.manifest.OdfFileEntry;
 import org.oasis_open.names.tc.opendocument.xmlns.container.Container;
 import org.oasis_open.names.tc.opendocument.xmlns.container.Container.RootFiles;
 import org.oasis_open.names.tc.opendocument.xmlns.container.ObjectFactory;
