@@ -29,9 +29,9 @@
       "receivesFrom" : "workflow/Hello_World/processor/hello/out/value",
       "sendsTo" : "workflow/Hello_World/out/greeting"
     } ],
-    "controllinks" : [ ],
-    "http://purl.org/dc/terms/description" : "One of the simplest workflows possible. No workflow input ports, a single workflow output port \"greeting\",  outputting \"Hello, world!\" as produced by the String Constant \"hello\".",
-    "http://purl.org/dc/elements/1.1/creator" : "Stian Soiland-Reyes",
-    "http://purl.org/dc/terms/title" : "Hello World"
+    "controllinks" : [ ]
+  },
+  "profile" : {
+    "id" : "profile/taverna-2.2.0/"
   }
 }

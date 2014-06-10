@@ -21,9 +21,7 @@
     "inputs" : [ {
       "name" : "name",
       "id" : "workflow/Hello_Anyone/in/name",
-      "depth" : 0,
-      "http://purl.org/dc/terms/description" : "Your name for the greeting",
-      "http://biocatalogue.org/attribute/exampleData" : "World!"
+      "depth" : 0
     } ],
     "outputs" : [ {
       "name" : "greeting",
@@ -66,9 +64,9 @@
       "receivesFrom" : "workflow/Hello_Anyone/in/name",
       "sendsTo" : "workflow/Hello_Anyone/processor/Concatenate_two_strings/in/string2"
     } ],
-    "controllinks" : [ ],
-    "http://purl.org/dc/terms/description" : "An extension to helloworld.t2flow - this workflow takes a workflow input \"name\" which is combined with the string constant \"Hello, \" using the local worker \"Concatenate two strings\", and outputs the produced string to the workflow output \"greeting\".",
-    "http://purl.org/dc/terms/title" : "Hello Anyone",
-    "http://purl.org/dc/elements/1.1/creator" : "Stian Soiland-Reyes"
+    "controllinks" : [ ]
+  },
+  "profile" : {
+    "id" : "profile/taverna-2.2.0/"
   }
 }
