@@ -142,15 +142,15 @@ public class UCFPackage implements Cloneable {
 	@SuppressWarnings("unchecked")
 	protected void parseContainerXML() throws IOException {
 		createdContainerXml = false;
-		InputStream containerStream = getResourceAsInputStream(CONTAINER_XML);
-		if (containerStream == null) {
+		if (getResourceEntry(CONTAINER_XML) == null) {
 			// Make an empty containerXml
 			Container container = containerFactory.createContainer();
 			containerXml = containerFactory.createContainer(container);
 			createdContainerXml = true;
 			return;
 		}
-		try {
+		try {			
+			InputStream containerStream = getResourceAsInputStream(CONTAINER_XML);
 			Unmarshaller unMarshaller = createUnMarshaller();
 			containerXml = (JAXBElement<Container>) unMarshaller
 					.unmarshal(containerStream);
