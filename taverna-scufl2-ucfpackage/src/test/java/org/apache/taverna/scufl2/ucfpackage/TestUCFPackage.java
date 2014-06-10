@@ -134,6 +134,7 @@ public class TestUCFPackage {
 		container.setPackageMediaType(UCFPackage.MIME_EPUB);
 		assertEquals(UCFPackage.MIME_EPUB, container.getPackageMediaType());
 		container.save(tmpFile);
+		
 		assertTrue(tmpFile.exists());
 		ZipFile zipFile = new ZipFile(tmpFile);
 		// Must be first entry
@@ -295,7 +296,7 @@ public class TestUCFPackage {
 		OutputStream outStream = container.addResourceUsingOutputStream("randomBytes", "application/octet-stream");
 		IOUtils.write(bytes, outStream);
 
-		assertTrue(container.listResources().isEmpty());
+		assertFalse(container.listResources().isEmpty());
 		
 		outStream.close();		
 		assertFalse(container.listResources().isEmpty());
@@ -437,17 +438,13 @@ public class TestUCFPackage {
 		} catch (Exception ex) {
 			// OK
 		}
-
+		
 		container.save(tmpFile);
 		// reload
 		UCFPackage container2 = new UCFPackage(tmpFile);
 
 		assertTrue(container2.listAllResources().keySet().contains("sub/"));
-		container2.removeResource("sub"); // should not work
-		assertTrue(container2.listAllResources().keySet().contains("sub/"));
-		assertTrue(container2.listAllResources().keySet().contains("sub/1.txt"));
-
-		container2.removeResource("sub/");
+		container2.removeResource("sub"); 
 		assertFalse(container2.listAllResources().keySet().contains("sub/"));
 		assertFalse(container2.listAllResources().keySet()
 				.contains("sub/1.txt"));
