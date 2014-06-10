@@ -25,6 +25,7 @@ import static java.io.File.createTempFile;
 import static java.util.logging.Level.INFO;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -337,6 +338,12 @@ public class UCFPackage implements Cloneable {
 
 	public String getResourceAsString(String path) throws IOException {
 	    Path bundlePath = bundle.getRoot().resolve(path);
+	    if (! Files.exists(bundlePath)) {
+	    	throw new FileNotFoundException("Can't find: " + bundlePath);
+	    }
+	    if (! Files.isRegularFile(bundlePath)) {
+	    	throw new IOException("Not a regular file: " + bundlePath);
+	    }
 	    return Bundles.getStringValue(bundlePath);
 	}
 
@@ -348,7 +355,7 @@ public class UCFPackage implements Cloneable {
 	public InputStream getResourceAsInputStream(String path) throws IOException {
 	    Path bundlePath = bundle.getRoot().resolve(path);
 	    if (! Files.isReadable(bundlePath)) {
-	        return null;
+	        throw new IOException("Can't read " + bundlePath);
 	    }
 	    return Files.newInputStream(bundlePath);
 	}
@@ -375,7 +382,8 @@ public class UCFPackage implements Cloneable {
 	            if (reserved.contains(path)) {
 	                continue;
 	            }
-	            content.put(path.toString(), new ResourceEntry(path));
+	            String pathStr = bundle.getRoot().relativize(path).toString();
+	            content.put(pathStr, new ResourceEntry(path));
 	        }
 	    } catch (IOException e) {
             throw new RuntimeException("Can't list resources of "  +folderPath, e);
