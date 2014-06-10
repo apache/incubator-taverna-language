@@ -1,11 +1,11 @@
 package org.purl.wf4ever.robundle;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -18,13 +18,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.purl.wf4ever.robundle.fs.BundleFileSystem;
 import org.purl.wf4ever.robundle.fs.BundleFileSystemProvider;
 import org.purl.wf4ever.robundle.utils.TemporaryFiles;
 
 public class TestBundles {
+	
+	private static final int MIME_OFFSET = 30;
+	
 	protected void checkSignature(Path zip) throws IOException {
 		String MEDIATYPE = "application/vnd.wf4ever.robundle+zip";
 		// Check position 30++ according to RO Bundle specification
@@ -116,6 +122,45 @@ public class TestBundles {
 		assertTrue(Files.isReadable(zip));
 		assertEquals(zip, bundle.getSource());
 		checkSignature(zip);
+	}
+	
+
+	@Test
+	public void mimeTypePosition() throws Exception {
+		Bundle bundle = Bundles.createBundle();
+		String mimetype = "application/x-test";
+		Bundles.setMimeType(bundle, mimetype);
+		assertEquals(mimetype, Bundles.getMimeType(bundle));
+		Path zip = Bundles.closeBundle(bundle);
+		
+		assertTrue(Files.exists(zip));
+		ZipFile zipFile = new ZipFile(zip.toFile());
+		// Must be first entry
+		ZipEntry mimeEntry = zipFile.entries().nextElement();
+		assertEquals("First zip entry is not 'mimetype'", "mimetype",
+				mimeEntry.getName());
+		assertEquals(
+				"mimetype should be uncompressed, but compressed size mismatch",
+				mimeEntry.getCompressedSize(), mimeEntry.getSize());
+		assertEquals("mimetype should have STORED method", ZipEntry.STORED,
+				mimeEntry.getMethod());
+		assertEquals("Wrong mimetype", mimetype,
+				IOUtils.toString(zipFile.getInputStream(mimeEntry), "ASCII"));
+
+		// Check position 30++ according to
+		// http://livedocs.adobe.com/navigator/9/Navigator_SDK9_HTMLHelp/wwhelp/wwhimpl/common/html/wwhelp.htm?context=Navigator_SDK9_HTMLHelp&file=Appx_Packaging.6.1.html#1522568
+		byte[] expected = ("mimetype" + mimetype + "PK")
+				.getBytes("ASCII");
+		FileInputStream in = new FileInputStream(zip.toFile());
+		byte[] actual = new byte[expected.length];
+		
+		try {
+			assertEquals(MIME_OFFSET, in.skip(MIME_OFFSET));
+			assertEquals(expected.length, in.read(actual));
+		} finally {
+			in.close();
+		}
+		assertArrayEquals(expected, actual);
 	}
 
 	@Test
