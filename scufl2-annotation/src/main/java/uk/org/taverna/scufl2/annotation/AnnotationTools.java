@@ -44,6 +44,7 @@ public class AnnotationTools {
 			if (ann.getBody().isAbsolute()) {
 				logger.info("Skipping absolute annotation body URI: "
 						+ ann.getBody());
+				// TODO: Optional loading of external annotation bodies
 				continue;
 			}
 			String path = ann.getBody().getPath();
