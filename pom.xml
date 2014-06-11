@@ -175,9 +175,39 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>		
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jaxb2-maven-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<id>jaxb-xsd</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<xmlschema>true</xmlschema>
+							<schemaFiles>*.xsd</schemaFiles>
+						</configuration>
+					</execution>
+					<execution>
+						<id>jaxb-rng</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>xjc</goal>
+						</goals>
+						<configuration>
+							<xmlschema>false</xmlschema>
+							<relaxng>true</relaxng>
+							<schemaFiles>*.rng</schemaFiles>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
-
+		
 		<pluginManagement>
 			<plugins>
 				<plugin>

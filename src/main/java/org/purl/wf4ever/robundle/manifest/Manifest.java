@@ -37,7 +37,11 @@ import com.fasterxml.jackson.databind.SerializationFeature;
         "aggregates", "annotations", "@graph" })
 public class Manifest {
     
-    private static Logger logger = Logger.getLogger(Manifest.class.getCanonicalName());
+
+		private static final String MANIFEST_XML = "manifest.xml";
+	private static final String MANIFEST_JSON = "manifest.json";
+
+	private static Logger logger = Logger.getLogger(Manifest.class.getCanonicalName());
     
     private static URI ROOT = URI.create("/");
 
@@ -300,8 +304,14 @@ public class Manifest {
         this.manifest = manifest;
     }
 
+    /**
+     * Write as an RO Bundle JSON-LD manifest
+     * 
+     * @return The path of the written manifest (e.g. ".ro/manifest.json")
+     * @throws IOException
+     */
     public Path writeAsJsonLD() throws IOException {
-        Path jsonld = bundle.getFileSystem().getPath(RO, "manifest.json");
+        Path jsonld = bundle.getFileSystem().getPath(RO, MANIFEST_JSON);
         Files.createDirectories(jsonld.getParent());
         //Files.createFile(jsonld);
         if (!getManifest().contains(jsonld)) {
@@ -324,6 +334,22 @@ public class Manifest {
         return jsonld;
     }
 
+    /**
+     * Write as a ODF manifest.xml 
+     * 
+     * @see http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#__RefHeading__752807_826425813
+     * @return The path of the written manifest (e.g. "META-INF/manifest.xml")
+     * @throws IOException
+     */
+    public Path writeAsManifestXML() throws IOException {
+    	Path manifestxml = bundle.getFileSystem().getPath(META_INF, MANIFEST_XML);
+    	
+    	
+    	//return manifestxml;
+    	
+    	
+    }
+    
     public PathMetadata getAggregation(Path file) {
         URI fileUri = file.toUri();
         return getAggregation(fileUri);
