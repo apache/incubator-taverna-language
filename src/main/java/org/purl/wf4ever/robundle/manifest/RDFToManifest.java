@@ -29,6 +29,7 @@ import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
@@ -350,10 +351,14 @@ public class RDFToManifest {
 			PathMetadata meta = manifest.getAggregation(relativizeFromBase(
 					uriStr, root));
 
-			Resource proxy = aggrResource.getPropertyResourceValue(proxyFor);
-			if (proxy != null && proxy.getURI() != null) {
-				meta.setProxy(relativizeFromBase(proxy.getURI(), root));
+			ResIterator proxies = model.listSubjectsWithProperty(proxyFor, aggrResource);
+			if (proxies.hasNext()) {
+				Resource proxy = proxies.next();
+				if (proxy.getURI() != null) {
+					meta.setProxy(relativizeFromBase(proxy.getURI(), root));
+				}
 			}
+			
 
 			creators = getAgents(root, aggrResource, createdBy);
 			if (!creators.isEmpty()) {

@@ -7,7 +7,10 @@ import static org.purl.wf4ever.robundle.utils.PathHelper.relativizeFromBase;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.CopyOption;
@@ -15,6 +18,7 @@ import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.MessageFormat;
 
@@ -147,6 +151,28 @@ public class Bundles {
         return !isReference(path) && Files.isRegularFile(path);
     }
 
+    public static Bundle openBundle(URL url) throws IOException {    	
+		if ("file.".equals(url.getProtocol())) {  
+    		try {
+				return openBundle(Paths.get(url.toURI()));
+			} catch (URISyntaxException e) {
+				throw new IllegalArgumentException("Invalid URL " + url, e);
+			}
+    	} else { 
+    		try (InputStream in = url.openStream()) {
+    			return openBundle(in);
+    		}
+    	}    	
+    }
+    
+    public static Bundle openBundle(InputStream in) throws IOException {
+    	Path path = TemporaryFiles.temporaryBundle();
+    	Files.copy(in, path);
+    	Bundle bundle = openBundle(path);
+    	bundle.setDeleteOnClose(true);
+    	return bundle;
+    }
+    
     public static Bundle openBundle(Path zip) throws IOException {
         BundleFileSystem fs = BundleFileSystemProvider
                 .newFileSystemFromExisting(zip);

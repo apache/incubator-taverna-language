@@ -1,14 +1,12 @@
 package org.purl.wf4ever.robundle;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.DirectoryStream;
@@ -25,6 +23,8 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.purl.wf4ever.robundle.fs.BundleFileSystem;
 import org.purl.wf4ever.robundle.fs.BundleFileSystemProvider;
+import org.purl.wf4ever.robundle.manifest.Manifest;
+import org.purl.wf4ever.robundle.manifest.PathMetadata;
 import org.purl.wf4ever.robundle.utils.TemporaryFiles;
 
 public class TestBundles {
@@ -383,6 +383,38 @@ public class TestBundles {
     		assertEquals(Arrays.asList("f2", "mimetype"), ls(db.getRoot()));
 		}
 
+	}
+	
+
+	private void checkWorkflowrunBundle(Bundle b) throws IOException {
+		Path path = b.getRoot().resolve("workflowrun.prov.ttl");
+		assertTrue(Files.exists(path));
+		// Ensure manifest was read
+		Manifest manifest = b.getManifest();
+		PathMetadata aggregation = manifest.getAggregation(path);
+		URI proxy = aggregation.getProxy();
+		assertEquals(URI.create("urn:uuid:ac1c89cc-3ba2-462d-bd82-ab5b8297f98e"), 
+				proxy);
+	}
+	
+	@Test
+	public void openBundleInputStream() throws Exception {
+		try (InputStream stream = getClass().getResourceAsStream("/workflowrun.bundle.zip")) {
+			assertNotNull(stream);
+			try (Bundle b = Bundles.openBundle(stream)) {
+				checkWorkflowrunBundle(b);
+			}
+		}
+		
+	}
+	
+	@Test
+	public void openBundleURL() throws Exception {
+		URL url = getClass().getResource("/workflowrun.bundle.zip");
+		assertNotNull(url);
+		try (Bundle b = Bundles.openBundle(url)) {
+			checkWorkflowrunBundle(b);
+		}
 	}
 	
 	@Test

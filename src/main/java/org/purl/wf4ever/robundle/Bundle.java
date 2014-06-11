@@ -11,6 +11,7 @@ import org.apache.jena.riot.RiotException;
 import org.purl.wf4ever.robundle.fs.BundleFileSystem;
 import org.purl.wf4ever.robundle.manifest.Manifest;
 import org.purl.wf4ever.robundle.manifest.RDFToManifest;
+import org.purl.wf4ever.robundle.manifest.odf.ODFManifest;
 
 public class Bundle implements Closeable {
 
@@ -77,12 +78,14 @@ public class Bundle implements Closeable {
 
     protected Manifest readOrPopulateManifest() throws IOException {
         Manifest newManifest = new Manifest(this);                    
-        Path manifestPath = Bundles.getManifestPath(this);
+        Path manifestPath = Bundles.getManifestPath(this);        
         if (Files.exists(manifestPath)) { 
             try (InputStream manifestStream = Files.newInputStream(manifestPath)) { 
                 new RDFToManifest().readTo(manifestStream, newManifest, manifestPath.toUri());                
             }
-            // TODO: Also support reading manifest.rdf?
+            // TODO: Also support reading manifest.rdf?        
+        } else if (ODFManifest.containsManifest(this) ){
+        	new ODFManifest(newManifest).readManifestXML();        	
         } else {
             // Fallback (might be a fresh or 3rd party bundle), populate from zip content
             newManifest.populateFromBundle();

@@ -17,12 +17,14 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import org.purl.wf4ever.robundle.Bundle;
 import org.purl.wf4ever.robundle.Bundles;
+import org.purl.wf4ever.robundle.manifest.odf.ODFManifest;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -158,6 +160,53 @@ public class Manifest {
         return manifest;
     }
 
+    /** 
+	 * Guess media type based on extension
+	 * 
+	 * @see http://wf4ever.github.io/ro/bundle/#media-types
+	 * 
+	 * @param file A Path to a file
+	 * @return media-type, e.g. <code>application/xml</code> or <code>text/plain; charset="utf-8"</code> 
+	 */
+	public String guessMediaType(Path file) {
+		
+		String filename = file.getFileName().toString().toLowerCase(Locale.ENGLISH);
+		if (filename.endsWith(".txt")) { 
+			return "text/plain; charset=\"utf-8\"";
+		}
+		if (filename.endsWith(".ttl")) { 
+			return "text/turtle; charset=\"utf-8\"";
+		}
+		if (filename.endsWith(".rdf") || filename.endsWith(".owl")) {
+			return "application/rdf+xml";
+		}
+		if (filename.endsWith(".json")) { 
+			return "application/json";
+		}
+		if (filename.endsWith(".jsonld")) { 
+			return "application/ld+json";
+		}
+		if (filename.endsWith(".xml")) {
+			return "application/xml";
+		}
+		
+		// A few extra, common ones
+		
+		if (filename.endsWith(".png")) {
+			return "image/png";
+		}
+		if (filename.endsWith(".svg")) {
+			return "image/svg+xml";
+		}
+		if (filename.endsWith(".jpg") || filename.endsWith(".jpeg")) {
+			return "image/jpeg";
+		}
+		if (filename.endsWith(".pdf")) {
+			return "application/pdf";
+		}
+		return "application/octet-stream";
+	}
+    
     public void populateFromBundle() throws IOException {
         final Set<Path> potentiallyEmptyFolders = new LinkedHashSet<>();
 
@@ -176,7 +225,7 @@ public class Manifest {
                         metadata = new PathMetadata();
                         aggregates.put(uri, metadata);              
                     }
-                    metadata.setFile(withSlash(dir));
+                    metadata.setFile(withSlash(dir));                    
                     metadata.setFolder(withSlash(dir.getParent()));
                     metadata.setProxy();
                     metadata.setCreatedOn(Files.getLastModifiedTime(dir));
@@ -217,6 +266,10 @@ public class Manifest {
                     aggregates.put(uri, metadata);              
                 }
                 metadata.setFile(file);
+                if (metadata.getMediatype() == null) {
+                	// Don't override if already set
+                	metadata.setMediatype(guessMediaType(file));
+                }
                 metadata.setFolder(withSlash(file.getParent()));
                 metadata.setProxy();
                 metadata.setCreatedOn(Files.getLastModifiedTime(file));
@@ -342,12 +395,7 @@ public class Manifest {
      * @throws IOException
      */
     public Path writeAsManifestXML() throws IOException {
-    	Path manifestxml = bundle.getFileSystem().getPath(META_INF, MANIFEST_XML);
-    	int a = 0/0;
-    	
-    	return manifestxml;
-    	
-    	
+    	return new ODFManifest(this).createManifestXML();
     }
     
     public PathMetadata getAggregation(Path file) {
@@ -362,7 +410,8 @@ public class Manifest {
             metadata = new PathMetadata();
             if (! uri.isAbsolute() && uri.getFragment() == null) {                
                 Path path = Bundles.uriToBundlePath(bundle, uri);
-                metadata.setFile(path);             
+                metadata.setFile(path);                  
+                metadata.setMediatype(guessMediaType(path));                
             } else { 
                 metadata.setUri(uri);
             }
