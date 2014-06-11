@@ -187,6 +187,9 @@
 						<goals>
 							<goal>xjc</goal>
 						</goals>
+						<configuration>
+							<!-- <packageName>oasis.names.tc.opendocument.xmlns.manifest</packageName>-->
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
