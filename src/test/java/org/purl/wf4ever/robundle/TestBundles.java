@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLStreamHandler;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.DirectoryStream;
@@ -416,6 +418,23 @@ public class TestBundles {
 			checkWorkflowrunBundle(b);
 		}
 	}
+	
+	@Test
+	public void openBundleURLNonFile() throws Exception {
+		final URL url = getClass().getResource("/workflowrun.bundle.zip");
+		assertNotNull(url);
+		URLStreamHandler handler = new URLStreamHandler() {			
+			@Override
+			protected URLConnection openConnection(URL u) throws IOException {
+				return url.openConnection();
+			}
+		};
+		URL testUrl = new URL("test", "test", 0, "test", handler);
+		try (Bundle b = Bundles.openBundle(testUrl)) {
+			checkWorkflowrunBundle(b);
+		}
+	}
+	
 	
 	@Test
     public void openBundleReadOnly() throws Exception {
