@@ -48,6 +48,10 @@ public class Bundle implements Closeable {
         return getRoot().getFileSystem();
     }
 
+    public Path getPath(String path) {
+		return getRoot().resolve(path);
+	}
+    
     public Path getRoot() {
         return root;
     }
@@ -92,6 +96,8 @@ public class Bundle implements Closeable {
         }
         return newManifest;
     }
+
+	
 
 
 }
