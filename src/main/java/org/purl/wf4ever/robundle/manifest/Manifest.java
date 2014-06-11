@@ -169,7 +169,9 @@ public class Manifest {
 	 * @return media-type, e.g. <code>application/xml</code> or <code>text/plain; charset="utf-8"</code> 
 	 */
 	public String guessMediaType(Path file) {
-		
+		if (file.getFileName() == null) {
+			return null;
+		}
 		String filename = file.getFileName().toString().toLowerCase(Locale.ENGLISH);
 		if (filename.endsWith(".txt")) { 
 			return "text/plain; charset=\"utf-8\"";
