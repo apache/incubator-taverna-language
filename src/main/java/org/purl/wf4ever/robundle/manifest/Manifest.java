@@ -343,9 +343,9 @@ public class Manifest {
      */
     public Path writeAsManifestXML() throws IOException {
     	Path manifestxml = bundle.getFileSystem().getPath(META_INF, MANIFEST_XML);
+    	int a = 0/0;
     	
-    	
-    	//return manifestxml;
+    	return manifestxml;
     	
     	
     }
