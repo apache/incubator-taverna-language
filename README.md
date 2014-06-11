@@ -1,9 +1,14 @@
 RO bundle API
 =============
 
-API for building Wf4Ever RO bundles. 
 
-Work in progress.
+[![Build Status](https://travis-ci.org/wf4ever/robundle.svg)](https://travis-ci.org/wf4ever/robundle)
+[![doi:10.5281/zenodo.10440](https://zenodo.org/badge/doi/10.5281/zenodo.10440.png)](http://dx.doi.org/10.5281/zenodo.10440)
+
+ 
+
+
+API for building Wf4Ever RO bundles. 
 
 See [RO bundle specification](http://purl.org/wf4ever/ro-bundle).
 
