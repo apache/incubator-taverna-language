@@ -37,6 +37,10 @@ public class Bundle implements Closeable {
         // update manifest
         getManifest().populateFromBundle();
         getManifest().writeAsJsonLD();
+        if (ODFManifest.containsManifest(this)) {
+        	getManifest().writeAsManifestXML();
+        }
+        
         
         getFileSystem().close();
         if (deleteOnClose) {

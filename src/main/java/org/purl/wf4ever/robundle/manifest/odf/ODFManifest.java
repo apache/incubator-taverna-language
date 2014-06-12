@@ -74,7 +74,7 @@ public class ODFManifest {
 //				logger.fine("Not adding " + path + " to  manifest, not a regular file");
 //			}
 			FileEntry entry = manifestFactory.createFileEntry();
-			entry.setFullPath(path.toString());
+			entry.setFullPath(bundle.getRoot().relativize(path).toString());
 			if (pathMetadata.getMediatype() != null) {
 				entry.setMediaType(pathMetadata.getMediatype());
 			} else {
