@@ -100,9 +100,9 @@ public class MotifAnalysisIT {
         }
 
         System.out.println("Generated " + ro);
-        if (Desktop.isDesktopSupported()) {
-            Desktop.getDesktop().open(ro.toFile());
-        }
+        //if (Desktop.isDesktopSupported()) {
+        //    Desktop.getDesktop().open(ro.toFile());
+        //}
     }
 
 }
