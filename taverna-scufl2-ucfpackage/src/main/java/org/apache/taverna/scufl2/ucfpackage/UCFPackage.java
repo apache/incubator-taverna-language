@@ -102,6 +102,7 @@ public class UCFPackage implements Cloneable {
 		} catch (Exception e) {
 			throw new IOException("Could not create empty UCF Package", e);
 		}
+		Bundles.setMimeType(bundle, MIME_EPUB);
 		// odfPackage.setMediaType(MIME_EPUB);
 	}
 
@@ -149,7 +150,7 @@ public class UCFPackage implements Cloneable {
 			createdContainerXml = true;
 			return;
 		}
-		try {			
+		try {
 			InputStream containerStream = getResourceAsInputStream(CONTAINER_XML);
 			Unmarshaller unMarshaller = createUnMarshaller();
 			containerXml = (JAXBElement<Container>) unMarshaller
