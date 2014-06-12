@@ -3,6 +3,7 @@ package org.purl.wf4ever.robundle.manifest.odf;
 import static org.junit.Assert.*;
 
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.junit.Test;
@@ -23,6 +24,9 @@ public class TestODFManifest {
 					.getPath("history/8781d5f4-d0ba-48a8-a1d1-14281bd8a917.t2flow");
 			assertEquals("application/vnd.taverna.t2flow+xml", bundle
 					.getManifest().getAggregation(t2flow).getMediatype());
+			Path manifestRdf = bundle.getPath("META-INF/manifest.xml");
+			assertTrue(Files.exists(manifestRdf));
+			assertTrue(bundle.getManifest().getManifest().contains(manifestRdf));			
 		}
 	}
 

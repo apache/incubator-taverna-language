@@ -114,6 +114,9 @@ public class ODFManifest {
 			//logger.warning("Could not parse " + manifestXml);
 			throw new IOException("Could not parse " + manifestXml, e);
 		}
+		if (! manifest.getManifest().contains(manifestXml)) {
+			manifest.getManifest().add(manifestXml);
+		}
 		for (FileEntry f : odfManifest.getFileEntry()) {
 			Path path = bundle.getRoot().resolve(f.getFullPath());
 			if (! Files.exists(path)) { 
