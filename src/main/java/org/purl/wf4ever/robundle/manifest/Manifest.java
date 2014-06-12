@@ -38,16 +38,14 @@ import com.fasterxml.jackson.databind.SerializationFeature;
         "createdBy", "createdOn", "authoredOn", "authoredBy", "history",
         "aggregates", "annotations", "@graph" })
 public class Manifest {
-    
 
-		private static final String MANIFEST_XML = "manifest.xml";
 	private static final String MANIFEST_JSON = "manifest.json";
 
 	private static Logger logger = Logger.getLogger(Manifest.class.getCanonicalName());
     
     private static URI ROOT = URI.create("/");
 
-    public abstract class PathMixin {
+    public abstract class PathMixin {    	
         @JsonValue
         public abstract String toString();
     }
