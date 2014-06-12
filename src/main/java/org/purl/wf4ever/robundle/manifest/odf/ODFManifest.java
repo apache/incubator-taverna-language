@@ -23,7 +23,27 @@ import oasis.names.tc.opendocument.xmlns.manifest._1.ObjectFactory;
 import org.purl.wf4ever.robundle.Bundle;
 import org.purl.wf4ever.robundle.manifest.PathMetadata;
 
+import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
+
 public class ODFManifest {
+
+	public static class ManifestNamespacePrefixMapperJAXB_RI extends NamespacePrefixMapper {
+		@Override
+		public String getPreferredPrefix(String namespaceUri,
+				String suggestion, boolean requirePrefix) {
+			if (namespaceUri.equals("urn:oasis:names:tc:opendocument:xmlns:manifest:1.0")) {
+				return "manifest";
+			}
+			return suggestion;
+		}
+		
+		@Override
+		public String[] getPreDeclaredNamespaceUris() {
+			// TODO Auto-generated method stub
+			return super.getPreDeclaredNamespaceUris();
+		}
+
+	}
 
 	private static final String ODF_MANIFEST_VERSION = "1.2";
 	public static final String CONTAINER_XML = "META-INF/container.xml";
@@ -35,6 +55,7 @@ public class ODFManifest {
 	private org.purl.wf4ever.robundle.manifest.Manifest manifest;
 	private Bundle bundle;
 	private ObjectFactory manifestFactory = new oasis.names.tc.opendocument.xmlns.manifest._1.ObjectFactory();
+	private static boolean warnedPrefixMapper;
 
 	public ODFManifest(org.purl.wf4ever.robundle.manifest.Manifest manifest) {
 		this.manifest = manifest;
@@ -71,6 +92,7 @@ public class ODFManifest {
 			odfManifest.getFileEntry().add(entry);
 		}		
 		Path manifestXml = manifestXmlPath(bundle);
+		Files.createDirectories(manifestXml.getParent());
 		try (OutputStream outStream = Files.newOutputStream(manifestXml)) { 
 			try {
 				createMarshaller().marshal(odfManifest, outStream);
@@ -213,10 +235,39 @@ public class ODFManifest {
 //
 //	}
 
+	protected static void setPrefixMapper(Marshaller marshaller) {
+		boolean setPrefixMapper = false;
+
+		try {
+			// This only works with JAXB RI, in which case we can set the
+			// namespace prefix mapper
+			Class.forName("com.sun.xml.bind.marshaller.NamespacePrefixMapper");
+			marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper",
+					new ManifestNamespacePrefixMapperJAXB_RI());
+			// Note: A similar mapper for the built-in java
+			// (com.sun.xml.bind.internal.namespacePrefixMapper)
+			// is no longer included here, as it will not (easily) compile with
+			// Maven.
+			setPrefixMapper = true;
+		} catch (Exception e) {
+			logger.log(Level.FINE, "Can't find NamespacePrefixMapper", e);
+		}
+
+		if (!setPrefixMapper && ! warnedPrefixMapper) {
+			logger.info("Could not set prefix mapper (missing or incompatible JAXB) "
+					+ "- will use prefixes ns0, ns1, ..");
+			warnedPrefixMapper = true;
+		}
+	}
+
+
+	
 
 	protected static synchronized Marshaller createMarshaller()
 			throws JAXBException {
-		return getJaxbContext().createMarshaller();
+		Marshaller marshaller = getJaxbContext().createMarshaller();
+		setPrefixMapper(marshaller);
+		return marshaller;
 	}
 
 	protected static synchronized Unmarshaller createUnMarshaller()
