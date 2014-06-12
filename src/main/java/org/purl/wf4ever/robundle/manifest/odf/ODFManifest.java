@@ -99,28 +99,27 @@ public class ODFManifest {
 				continue;
 			}
 			PathMetadata metadata = manifest.getAggregation(path);
-			if (Files.isRegularFile(path)) {
-				if (f.getMediaType() != null && f.getMediaType().contains("/")) {
-					metadata.setMediatype(f.getMediaType());
+			if (f.getMediaType() != null && f.getMediaType().contains("/")) {
+				metadata.setMediatype(f.getMediaType());
+			}
+			if (f.getEncryptionData() != null) {
+				logger.warning("Unsupported encryption for " + path);
+				continue;
+			}
+			if (f.getVersion() != null) {
+				try {
+					metadata.setConformsTo(new URI(f.getVersion()));
+				} catch (URISyntaxException e) {
+					logger.warning("Ignoring unsupported version " + f.getVersion());
 				}
-				if (f.getSize() != null) {
-					long actualSize = Files.size(path);
-					long expectedSize = f.getSize().longValue();
-					if (expectedSize != actualSize) { 
-						logger.warning("Wrong file size for " + path + 
-								", expected: " + expectedSize + ", actually: " + actualSize);
-					}
-				}
-				if (f.getEncryptionData() != null) {
-					logger.warning("Unsupported encryption for " + path);
-					continue;
-				}
-				if (f.getVersion() != null) {
-					try {
-						metadata.setConformsTo(new URI(f.getVersion()));
-					} catch (URISyntaxException e) {
-						logger.warning("Ignoring unsupported version " + f.getVersion());
-					}
+			}
+			if (Files.isRegularFile(path) && f.getSize() != null) {
+				long actualSize = Files.size(path);
+				long expectedSize = f.getSize().longValue();
+				if (expectedSize != actualSize) { 
+					logger.warning("Wrong file size for " + path + 
+							", expected: " + expectedSize + ", actually: " + actualSize);
+				
 				}
 			}			
 		}

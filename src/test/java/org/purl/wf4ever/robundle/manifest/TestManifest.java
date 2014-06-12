@@ -151,7 +151,7 @@ public class TestManifest {
                     + "SELECT ?file ?proxy "
                     + "WHERE {"
                     + "    ?ro ore:aggregates ?file ."
-                    + "    OPTIONAL { ?file bundle:hasProxy ?proxy . } " + "}";
+                    + "    OPTIONAL { ?proxy ore:proxyFor ?file . } " + "}";
             Query query = QueryFactory.create(queryStr);
             QueryExecution qexec = QueryExecutionFactory.create(query, model);
 
