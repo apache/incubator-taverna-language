@@ -26,9 +26,8 @@ This API is the basis for the [Taverna Data Bundles API](https://github.com/myGr
 Slides
 ------
 
-[![Slides]()](http://www.slideshare.net/soilandreyes/diving-into-research-objects)
-
-<iframe src="http://www.slideshare.net/slideshow/embed_code/33890214" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px 1px 0; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="https://www.slideshare.net/soilandreyes/diving-into-research-objects" title="2014-04-24 A dip into Research Objects" target="_blank">2014-04-24 A dip into Research Objects</a> </strong> from <strong><a href="http://www.slideshare.net/soilandreyes" target="_blank">Stian Soiland-Reyes</a></strong> </div>
+[![Slides](http://image.slidesharecdn.com/2014-04-24-robundles-140424044958-phpapp01/95/slide-1-638.jpg?cb=1398333951)](http://www.slideshare.net/soilandreyes/diving-into-research-objects)
+[Slides 2014-04-24](https://onedrive.live.com/view.aspx?cid=37935FEEE4DF1087&resid=37935FEEE4DF1087%21679&app=PowerPoint&authkey=%21AI6c4YT_419J3zY&wdo=1)
 
 Building
 --------
