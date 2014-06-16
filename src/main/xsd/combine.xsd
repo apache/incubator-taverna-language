@@ -16,29 +16,31 @@ Copyright 2014, University of Manchester
 
 MIT license (See LICENSE.md or http://opensource.org/licenses/MIT)
 </xsd:documentation></xsd:annotation>
-    <xsd:element name="omexManifest" type="OmexManifest">
+    <xsd:element name="omexManifest">
     	<xsd:annotation>
     		<xsd:documentation>At the root of the COMBINE archive stands one file, with the prescribed name `manifest.xml`. 
 This file contains an instantiation of the *OmexManifest* class.</xsd:documentation>
-    	</xsd:annotation></xsd:element>
+    	</xsd:annotation>
+    
+	    <xsd:complexType>
+	        <xsd:annotation>
+	        	<xsd:documentation>The root of the COMBINE archive.
+	
+	It contains a number of `content` entries, one of which represents the manifest itself.</xsd:documentation>
+	        </xsd:annotation>
+	        <xsd:sequence>
+	    		<xsd:element name="content" type="Content" minOccurs="1" maxOccurs="unbounded">
+	    			<xsd:annotation>
+	    				<xsd:documentation>An entry in the *OmexManifest*.
+	
+	Note that a valid manifest needs to have at least one entry, that of the manifest itself, but may contain as many
+	entries as needed.</xsd:documentation>
+	    			</xsd:annotation></xsd:element>
+	    	</xsd:sequence>
+	    </xsd:complexType>
+   	</xsd:element>
 
-    <xsd:complexType name="OmexManifest">
-        <xsd:annotation>
-        	<xsd:documentation>The root of the COMBINE archive.
-
-It contains a number of `content` entries, one of which represents the manifest itself.</xsd:documentation>
-        </xsd:annotation>
-        <xsd:sequence>
-    		<xsd:element name="content" type="Content" minOccurs="1" maxOccurs="unbounded">
-    			<xsd:annotation>
-    				<xsd:documentation>An entry in the *OmexManifest*.
-
-Note that a valid manifest needs to have at least one entry, that of the manifest itself, but may contain as many
-entries as needed.</xsd:documentation>
-    			</xsd:annotation></xsd:element>
-    	</xsd:sequence>
-    </xsd:complexType>
-        
+            
     <xsd:complexType name="Content">
         <xsd:annotation>
         	<xsd:documentation>The *Content* class represents an entry in the *OmexManifest* and by extension a file in the _COMBINE archive_.</xsd:documentation>

@@ -1,5 +1,6 @@
 package org.purl.wf4ever.robundle.manifest.combine;
 
+import java.lang.ClassCastException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -14,12 +15,16 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.Source;
+import javax.xml.transform.sax.SAXSource;
 
 import org.identifiers.combine_specifications.omex_manifest.Content;
 import org.identifiers.combine_specifications.omex_manifest.ObjectFactory;
 import org.identifiers.combine_specifications.omex_manifest.OmexManifest;
 import org.purl.wf4ever.robundle.Bundle;
 import org.purl.wf4ever.robundle.manifest.PathMetadata;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
 
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 
@@ -131,8 +136,11 @@ public class CombineManifest {
 		Path manifestXml = manifestXmlPath(bundle);
 		OmexManifest omexManifest;
 		try (InputStream inStream = Files.newInputStream(manifestXml)) {
-			omexManifest = (OmexManifest) createUnMarshaller().unmarshal(inStream);
-		} catch (JAXBException e) {
+			InputSource src = new InputSource(inStream);
+			Source source = new SAXSource(src);
+			omexManifest = createUnMarshaller().unmarshal(source, OmexManifest.class).getValue();
+			//omexManifest = (OmexManifest) createUnMarshaller().unmarshal(inStream);
+		} catch (JAXBException|ClassCastException e) {
 			// logger.warning("Could not parse " + manifestXml);
 			throw new IOException("Could not parse " + manifestXml, e);
 		}
