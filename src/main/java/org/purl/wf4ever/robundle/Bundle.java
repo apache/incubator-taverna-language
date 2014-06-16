@@ -102,7 +102,7 @@ public class Bundle implements Closeable {
         } else if (ODFManifest.containsManifest(this) ){
         	new ODFManifest(newManifest).readManifestXML();
         } else if (CombineManifest.containsManifest(this)){
-        	new CombineManifest(newManifest).readManifestXML();
+        	new CombineManifest(newManifest).readCombineArchive();
         } else {
             // Fallback (might be a fresh or 3rd party bundle), populate from zip content
             newManifest.populateFromBundle();
