@@ -7,10 +7,10 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.apache.jena.riot.RiotException;
 import org.purl.wf4ever.robundle.fs.BundleFileSystem;
 import org.purl.wf4ever.robundle.manifest.Manifest;
 import org.purl.wf4ever.robundle.manifest.RDFToManifest;
+import org.purl.wf4ever.robundle.manifest.combine.CombineManifest;
 import org.purl.wf4ever.robundle.manifest.odf.ODFManifest;
 
 public class Bundle implements Closeable {
@@ -32,16 +32,23 @@ public class Bundle implements Closeable {
     protected void close(boolean deleteOnClose) throws IOException {
         if (! getFileSystem().isOpen()) {
             return;
+        }
 
+        if (! deleteOnClose) {	           
+	        // update manifest
+	        getManifest().populateFromBundle();
+	        getManifest().writeAsJsonLD();
+	        if (ODFManifest.containsManifest(this)) {
+	        	getManifest().writeAsODFManifest();
+	        }
+	        if (CombineManifest.containsManifest(this)) {
+	        	getManifest().writeAsCombineManifest();
+	        }
+        } else {
+        	// FIXME: Enable this if closing temporary bundles is 
+        	// slow doing closing (as those files are being compressed):
+        	//RecursiveDeleteVisitor.deleteRecursively(getRoot());
         }
-        // update manifest
-        getManifest().populateFromBundle();
-        getManifest().writeAsJsonLD();
-        if (ODFManifest.containsManifest(this)) {
-        	getManifest().writeAsManifestXML();
-        }
-        
-        
         getFileSystem().close();
         if (deleteOnClose) {
             Files.deleteIfExists(getSource());
@@ -93,7 +100,9 @@ public class Bundle implements Closeable {
             }
             // TODO: Also support reading manifest.rdf?        
         } else if (ODFManifest.containsManifest(this) ){
-        	new ODFManifest(newManifest).readManifestXML();        	
+        	new ODFManifest(newManifest).readManifestXML();
+        } else if (CombineManifest.containsManifest(this)){
+        	new CombineManifest(newManifest).readManifestXML();
         } else {
             // Fallback (might be a fresh or 3rd party bundle), populate from zip content
             newManifest.populateFromBundle();
