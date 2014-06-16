@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 
 import org.purl.wf4ever.robundle.Bundle;
 import org.purl.wf4ever.robundle.Bundles;
+import org.purl.wf4ever.robundle.manifest.combine.CombineManifest;
 import org.purl.wf4ever.robundle.manifest.odf.ODFManifest;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -394,7 +395,7 @@ public class Manifest {
      * @return The path of the written manifest (e.g. "META-INF/manifest.xml")
      * @throws IOException
      */
-    public Path writeAsManifestXML() throws IOException {
+    public Path writeAsODFManifest() throws IOException {
     	return new ODFManifest(this).createManifestXML();
     }
     
@@ -424,4 +425,8 @@ public class Manifest {
         uri = ROOT.resolve(bundle.getRoot().toUri().relativize(uri));
         return uri;
     }
+
+	public void writeAsCombineManifest() throws IOException {
+		new CombineManifest(this).createManifestXML();		
+	}
 }
