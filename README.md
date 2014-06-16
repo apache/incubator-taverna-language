@@ -170,7 +170,7 @@ extracted verbatim, e.g.:
 See [`valid_component_imagemagickconvert.wfdesc.ttl`](src/test/resources/valid_component_imagemagickconvert.wfdesc.ttl) 
 for the complete example.
 
-See the scufl2-wfdesc wiki for [common wfdesc queries](https://github.com/wf4ever/scufl2-wfdesc/wiki).
+See the scufl2-wfdesc wiki for [common wfdesc queries](https://github.com/wf4ever/scufl2-wfdesc/wiki/Common-queries).
 
 
 Programmatic use
