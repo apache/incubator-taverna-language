@@ -23,6 +23,12 @@ with more specific helper methods to work with RO Bundles.
 This API is the basis for the [Taverna Data Bundles API](https://github.com/myGrid/databundles).
 
 
+Slides
+------
+
+[![Slides](http://image.slidesharecdn.com/2014-04-24-robundles-140424044958-phpapp01/95/slide-1-638.jpg?cb=1398333951)](http://www.slideshare.net/soilandreyes/diving-into-research-objects)
+
+[Slides 2014-04-24](https://onedrive.live.com/view.aspx?cid=37935FEEE4DF1087&resid=37935FEEE4DF1087%21679&app=PowerPoint&authkey=%21AI6c4YT_419J3zY&wdo=1)
 
 Building
 --------
