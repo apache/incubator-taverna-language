@@ -31,6 +31,35 @@ Slides
 [Slides 2014-04-24](https://onedrive.live.com/view.aspx?cid=37935FEEE4DF1087&resid=37935FEEE4DF1087%21679&app=PowerPoint&authkey=%21AI6c4YT_419J3zY&wdo=1)
 
 
+Usage
+-----
+
+If you use [Maven 3](http://maven.apache.org/), then add to your `pom.xml`:
+
+```xml
+<dependencies>
+    <dependency>
+       	<groupId>org.purl.wf4ever.robundle</groupId>
+        <artifactId>robundle</artifactId>
+        <version>0.4.1</version>
+    </dependency>
+</dependencies>
+<repositories>
+    <repository>
+        <id>mygrid-repository</id>
+        <name>myGrid Repository</name>
+        <url>http://www.mygrid.org.uk/maven/repository</url>
+        <releases />
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+    </repository>
+</repositories>
+```
+
+To find the latest `<version>` (in case the above has not been updated), see the
+list of [robundle releases](https://github.com/wf4ever/robundle/releases).
+
 Building
 --------
 ```mvn clean install```
