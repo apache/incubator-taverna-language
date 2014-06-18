@@ -62,6 +62,8 @@ list of [robundle releases](https://github.com/wf4ever/robundle/releases).
 
 Building
 --------
+If you are building from source (this repository), then:
+
 ```mvn clean install```
 
 should normally work, given a recent version of [Maven 3](http://maven.apache.org/download.cgi) and 
@@ -71,6 +73,21 @@ should normally work, given a recent version of [Maven 3](http://maven.apache.or
 [robundle](http://build.mygrid.org.uk/ci/job/robundle/), which are deployed 
 to [myGrid's snapshot Maven repository](http://build.mygrid.org.uk/maven/snapshot-repository/org/purl/wf4ever/robundle/robundle/).
 
+To use a snapshot build, add this repository to `pom.xml`:
+
+```xml
+<repository>
+    <id>mygrid-snapshot-repository</id>
+    <name>myGrid Snapshot Repository</name>
+    <url>http://www.mygrid.org.uk/maven/snapshot-repository</url>
+    <releases>
+        <enabled>false</enabled>
+    </releases>
+    <snapshots />
+</repository>
+```
+
+And change your `<dependency>` to match the `-SNAPSHOT` version in this project's [pom.xml](pom.xml).
 
 Supported bundle formats
 ------------------------
