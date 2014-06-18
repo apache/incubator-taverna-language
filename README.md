@@ -87,7 +87,8 @@ To use a snapshot build, add this repository to `pom.xml`:
 </repository>
 ```
 
-And change your `<dependency>` to match the `-SNAPSHOT` version in this project's [pom.xml](pom.xml).
+Then change your `<dependency>` to match the `-SNAPSHOT` version in this project's [pom.xml](pom.xml).
+
 
 Supported bundle formats
 ------------------------
