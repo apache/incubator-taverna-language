@@ -5,3 +5,4 @@ target/
 .svn
 *.swp
 catalog-v001.xml
+/target
