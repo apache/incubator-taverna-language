@@ -34,8 +34,11 @@ import java.io.PipedOutputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -96,6 +99,8 @@ public class UCFPackage implements Cloneable {
 		try {
 		    bundle = Bundles.createBundle();
 			//odfPackage = OdfPackage.create();
+		    bundle.getManifest().populateFromBundle();
+		    bundle.getManifest().writeAsODFManifest();
 			parseContainerXML();
 		} catch (IOException e) {
 			throw e;
@@ -370,24 +375,60 @@ public class UCFPackage implements Cloneable {
 	}
 
 	protected Map<String, ResourceEntry> listResources(String folderPath,
-			boolean recursive) {
-	    Path bundlePath = bundle.getRoot().resolve(folderPath);
-	    List<Path> reserved = Arrays.asList(bundle.getRoot().resolve("META-INF/"),
+			final boolean recursive) {
+	    final Path bundlePath = bundle.getRoot().resolve(folderPath);
+	    final List<Path> reserved = Arrays.asList(bundle.getRoot().resolve("META-INF/"),
 	            bundle.getRoot().resolve(".ro/"),
 	            bundle.getRoot().resolve("mimetype")
 	            );
 
-	    HashMap<String, ResourceEntry> content = new HashMap<String, ResourceEntry>();
-	    try (DirectoryStream<Path> ds = Files.newDirectoryStream(bundlePath)) {
-	        for (Path path : ds) {
-	            if (reserved.contains(path)) {
-	                continue;
-	            }
-	            String pathStr = bundle.getRoot().relativize(path).toString();
+	    final HashMap<String, ResourceEntry> content = new HashMap<String, ResourceEntry>();
+	    FileVisitor<Path> visitor = new FileVisitor<Path>() {
+			@Override
+			public FileVisitResult preVisitDirectory(Path dir,
+					BasicFileAttributes attrs) throws IOException {
+				if (reserved.contains(dir)) {
+					return FileVisitResult.SKIP_SUBTREE;
+				}
+				if (! dir.equals(bundlePath)) {
+					storePath(dir);
+				}
+				return recursive ? FileVisitResult.CONTINUE : FileVisitResult.SKIP_SUBTREE;
+			}
+
+			private void storePath(Path path) {
+				String pathStr = bundlePath.relativize(path).toString();
 	            content.put(pathStr, new ResourceEntry(path));
-	        }
+			}
+
+			@Override
+			public FileVisitResult visitFile(Path file,
+					BasicFileAttributes attrs) throws IOException {
+				if (reserved.contains(file)) {
+					return FileVisitResult.CONTINUE;
+				}
+				storePath(file);
+				return FileVisitResult.CONTINUE;
+			}
+
+			@Override
+			public FileVisitResult visitFileFailed(Path file, IOException exc)
+					throws IOException {
+				logger.log(Level.WARNING, "Could not visit " + file, exc);
+				return FileVisitResult.CONTINUE;
+			}
+
+			@Override
+			public FileVisitResult postVisitDirectory(Path dir, IOException exc)
+					throws IOException {
+				return FileVisitResult.CONTINUE;
+			}
+		};
+
+		try {
+			Files.walkFileTree(bundlePath, visitor);
 	    } catch (IOException e) {
-            throw new RuntimeException("Can't list resources of "  +folderPath, e);
+            throw new RuntimeException("Can't list resources of " + folderPath, e);
         }
 		return content;
 	}
