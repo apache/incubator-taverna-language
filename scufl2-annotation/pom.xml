@@ -9,7 +9,7 @@
 		<version>0.14.1-SNAPSHOT</version>
 	</parent>
   	<artifactId>scufl2-annotation</artifactId>
-	<name>scufl2-annotation</name>		
+	<name>Taverna Scufl 2 annotations</name>		
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -33,4 +33,5 @@
 			<version>0.4</version>
 		</dependency>
 	</dependencies>
+	<description>Convenience methods for working with SCUFL2 annotations</description>
 </project>
