@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema elementFormDefault="unqualified"
+
+	xmlns:tool="http://taverna.sf.net/2011/xml/activity/xpath" xmlns:tav="http://taverna.sf.net/2008/xml/t2flow"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+	xmlns:activities="http://taverna.sf.net/2008/xml/t2activities"
+	jxb:version="1.0">
+
+	<xsd:annotation>
+		<xsd:appinfo>
+			<!-- See http://docs.rakeshv.org/java/jaxb/users-guide/jaxb-custom.html -->
+
+			<!-- <jxb:schemaBindings> <jxb:package name="uk.org.taverna.scufl2.xml.t2flow.interaction.jaxb"
+				/> </jxb:schemaBindings> -->
+		</xsd:appinfo>
+	</xsd:annotation>
+
+	<xsd:import namespace="http://taverna.sf.net/2008/xml/t2flow"
+		schemaLocation="t2flow.xsd" />
+		
+	<xsd:import namespace="http://taverna.sf.net/2008/xml/t2activities"
+		schemaLocation="t2activities.xsd" />
+
+	<xsd:element
+		name="net.sf.taverna.t2.activities.interaction.InteractionActivityConfigurationBean"
+		type="InteractionConfig" substitutionGroup="tav:abstractConfigBean" />
+
+	<xsd:complexType name="InteractionConfig">
+		<xsd:complexContent>
+			<xsd:extension base="tav:AbstractConfigBean">
+				<xsd:sequence>
+					<xsd:element name="inputs" type="activities:ActivityInputPorts" />
+					<xsd:element name="outputs" type="activities:ActivityOutputPorts" />
+				
+					<xsd:element name="presentationOrigin" type="xsd:string" minOccurs="0" />
+					<xsd:element name="interactionActivityType" type="xsd:string" minOccurs="0" />
+					<xsd:element name="progressNotification" type="xsd:boolean" minOccurs="0" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+</xsd:schema>
