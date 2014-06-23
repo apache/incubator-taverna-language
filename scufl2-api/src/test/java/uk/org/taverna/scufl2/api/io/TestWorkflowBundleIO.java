@@ -226,7 +226,10 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		bundleIO.writeBundle(readBundle, output, TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
 		String bundleTxt = new String(output.toByteArray(), UTF_8);
-		assertEquals(getStructureFormatWorkflowBundle(), bundleTxt);		
+                String getStructureFormatWorkflowBundle = getStructureFormatWorkflowBundle();
+                bundleTxt = bundleTxt.replaceAll("\r", "").replaceAll("\n", "");
+                getStructureFormatWorkflowBundle = getStructureFormatWorkflowBundle.replaceAll("\r", "").replaceAll("\n", "");
+		assertEquals(getStructureFormatWorkflowBundle, bundleTxt);
 	}
 
 	@Test
@@ -305,7 +308,10 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 		bundleIO.writeBundle(wfBundle, bundleFile,
 				TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
 		String bundleTxt = FileUtils.readFileToString(bundleFile, UTF_8);
-		assertEquals(getStructureFormatWorkflowBundle(), bundleTxt);
+                String getStructureFormatWorkflowBundle = getStructureFormatWorkflowBundle();
+                bundleTxt = bundleTxt.replaceAll("\r", "").replaceAll("\n", "");
+                getStructureFormatWorkflowBundle = getStructureFormatWorkflowBundle.replaceAll("\r", "").replaceAll("\n", "");
+		assertEquals(getStructureFormatWorkflowBundle, bundleTxt);
 	}
 
 	@Ignore
@@ -335,7 +341,10 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		bundleIO.writeBundle(wfBundle, output, TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
 		String bundleTxt = new String(output.toByteArray(), UTF_8);
-		assertEquals(getStructureFormatWorkflowBundle(), bundleTxt);
+                String getStructureFormatWorkflowBundle = getStructureFormatWorkflowBundle();
+                bundleTxt = bundleTxt.replaceAll("\r", "").replaceAll("\n", "");
+                getStructureFormatWorkflowBundle = getStructureFormatWorkflowBundle.replaceAll("\r", "").replaceAll("\n", "");
+		assertEquals(getStructureFormatWorkflowBundle, bundleTxt);
 	}
 
 	@Test(expected = IllegalArgumentException.class)

@@ -43,7 +43,10 @@ public class TestStructureReader {
 		bundleIO.writeBundle(readBundle, output, TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
 		assertEquals(1, readBundle.getMainProfile().getConfigurations().size());
 		String bundleTxt = new String(output.toByteArray(), UTF_8);
-		assertEquals(getStructureFormatWorkflowBundle(), bundleTxt);
+                String getStructureFormatWorkflowBundle = getStructureFormatWorkflowBundle();
+                bundleTxt = bundleTxt.replaceAll("\r", "").replaceAll("\n", "");
+                getStructureFormatWorkflowBundle = getStructureFormatWorkflowBundle.replaceAll("\r", "").replaceAll("\n", "");
+		assertEquals(getStructureFormatWorkflowBundle, bundleTxt);
 		
 	}
 	
