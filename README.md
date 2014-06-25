@@ -2,6 +2,9 @@ Convert SCUFL2 to wfdesc
 ========================
 
 [![Build Status](https://travis-ci.org/wf4ever/scufl2-wfdesc.svg?branch=master)](https://travis-ci.org/wf4ever/scufl2-wfdesc)
+[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.10650.png)](http://dx.doi.org/10.5281/zenodo.10650)
+
+
 
 This is an extension to [Scufl2](https://github.com/mygrid/scufl2/) which
 provides the export capability to wfdesc ontology from the
