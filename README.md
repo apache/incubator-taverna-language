@@ -1,7 +1,7 @@
 SCUFL2
 ======
 
-[![Build Status](https://travis-ci.org/myGrid/scufl2.svg?branch=master)](https://travis-ci.org/myGrid/scufl2)
+[![Build Status](https://travis-ci.org/taverna/taverna-scufl2.svg?branch=master)](https://travis-ci.org/taverna/taverna-scufl2)
 
 See also the [SCUFL2 wiki][1]
 
