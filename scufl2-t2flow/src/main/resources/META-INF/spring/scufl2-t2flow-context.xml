@@ -31,6 +31,7 @@
 	<bean id="xPathActivityParser" class="uk.org.taverna.scufl2.translator.t2flow.t23activities.XPathActivityParser" />
 
 	<bean id="interactionActivityParser" class="uk.org.taverna.scufl2.translator.t2flow.defaultactivities.InteractionActivityParser" />
+	<bean id="componentActivityParser" class="uk.org.taverna.scufl2.translator.t2flow.defaultactivities.ComponentActivityParser" />
 	
 	<bean id="parallelizeParser" class="uk.org.taverna.scufl2.translator.t2flow.defaultdispatchstack.ParallelizeParser" />
 	<bean id="errorBounceParser" class="uk.org.taverna.scufl2.translator.t2flow.defaultdispatchstack.ErrorBounceParser" />
