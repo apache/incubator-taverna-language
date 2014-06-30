@@ -48,8 +48,8 @@ public class ComponentActivityParser extends AbstractActivityParser {
 		json.put("registryBase", config.getRegistryBase());
 		json.put("familyName", config.getFamilyName());
 		json.put("componentName", config.getComponentName());
-		if (config.getVersion() != null)
-			json.put("componentVersion", (int) config.getVersion());
+		if (config.getComponentVersion() != null)
+			json.put("componentVersion", (int) config.getComponentVersion());
 
 		return configuration;
 	}

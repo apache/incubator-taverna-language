@@ -32,7 +32,7 @@
 					<xsd:element name="registryBase" type="xsd:anyURI" />
 					<xsd:element name="familyName" type="xsd:string" />
 					<xsd:element name="componentName" type="xsd:string" />
-					<xsd:element name="version" type="xsd:int" minOccurs="0"/>
+					<xsd:element name="componentVersion" type="xsd:int" minOccurs="0"/>
 				</xsd:sequence>
 			</xsd:extension>
 		</xsd:complexContent>
