@@ -119,6 +119,15 @@
 			</snapshots>
 
 		</repository>
+		<repository>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots />
+			<id>mygrid-snapshot-repository</id>
+			<name>myGrid Snapshot Repository</name>
+			<url>http://www.mygrid.org.uk/maven/snapshot-repository</url>
+		</repository>
 	</repositories>
 	<dependencyManagement>
 		<dependencies>
