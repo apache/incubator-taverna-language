@@ -173,9 +173,9 @@
 				<optional>true</optional>
 			</dependency>
 			<dependency>
-				<groupId>jaxen</groupId>
-				<artifactId>jaxen</artifactId>
-                <!-- 1.1.3 has missing dependencies -->
+				<groupId>org.jaxen</groupId>
+				<artifactId>com.springsource.org.jaxen</artifactId>
+                <!-- Was 1.1.4. as "1.1.3 has missing dependencies" but 1.1.1 appears to work fine -->
 				<version>${jaxen.version}</version>
 				<type>jar</type>
 				<scope>test</scope>

@@ -93,8 +93,8 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>jaxen</groupId>
-			<artifactId>jaxen</artifactId>
+			<groupId>org.jaxen</groupId>
+			<artifactId>com.springsource.org.jaxen</artifactId>
                         <version>${jaxen.version}</version>
 			<scope>test</scope>
 		</dependency>
