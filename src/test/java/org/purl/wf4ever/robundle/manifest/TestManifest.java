@@ -189,10 +189,10 @@ public class TestManifest {
         assertNotNull(manifest.getAggregation(r.resolve("/README.txt")));
         PathMetadata readme = manifest.getAggregation(r.resolve("/README.txt"));
         assertEquals("http://example.com/foaf#bob", readme.getCreatedBy()
-                .get(0).getUri().toString());
+                .getUri().toString());
         assertEquals("Bob Builder",
                 manifest.getAggregation(r.resolve("/README.txt"))
-                        .getCreatedBy().get(0).getName());
+                        .getCreatedBy().getName());
         assertEquals("text/plain",
                 manifest.getAggregation(r.resolve("/README.txt"))
                         .getMediatype());

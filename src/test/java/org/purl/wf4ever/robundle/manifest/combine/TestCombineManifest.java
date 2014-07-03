@@ -56,7 +56,7 @@ public class TestCombineManifest {
 				Path csvPath = bundle.getRoot().resolve("outputs_degree_of_block.csv");			
 				PathMetadata csv = manifest.getAggregation(csvPath);
 				assertEquals("text/csv", csv.getMediatype());
-				Agent csvCreator = csv.getCreatedBy().get(0);
+				Agent csvCreator = csv.getCreatedBy();
 				assertEquals("Gary Mirams", csvCreator.getName());
 				assertEquals("mbox:gary.mirams@cs.ox.ac.uk", csvCreator.getUri().toString());
 				assertEquals("2014-02-06T22:01:58Z", csv.getCreatedOn().toString());

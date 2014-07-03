@@ -13,8 +13,10 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder(value = { "file", "uri", "folder", "mediatype", "createdOn",
         "createdBy", "conformsTo", "proxy" })
 public class PathMetadata {
-    private List<Agent> createdBy = new ArrayList<>();
+    private Agent createdBy;
     private FileTime createdOn;
+    private List<Agent> authoredBy = new ArrayList<>();
+    private FileTime authoredOn;    
     private Path file;
     private Path folder;
     private String mediatype;
@@ -34,7 +36,7 @@ public class PathMetadata {
         return conformsTo;
     }
     
-    public List<Agent> getCreatedBy() {
+    public Agent getCreatedBy() {
         return createdBy;
     }
 
@@ -66,7 +68,7 @@ public class PathMetadata {
         this.conformsTo = conformsTo;
     }    
 
-    public void setCreatedBy(List<Agent> createdBy) {
+    public void setCreatedBy(Agent createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -116,6 +118,22 @@ public class PathMetadata {
         }
         return "PathMetadata <null>";
     }
+
+	public List<Agent> getAuthoredBy() {
+		return authoredBy;
+	}
+
+	public void setAuthoredBy(List<Agent> authoredBy) {
+		this.authoredBy = authoredBy;
+	}
+
+	public FileTime getAuthoredOn() {
+		return authoredOn;
+	}
+
+	public void setAuthoredOn(FileTime authoredOn) {
+		this.authoredOn = authoredOn;
+	}
 
 
     

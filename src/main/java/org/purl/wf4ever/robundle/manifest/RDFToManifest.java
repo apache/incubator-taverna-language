@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -320,15 +319,20 @@ public class RDFToManifest {
 						+ manifestResource);
 				continue;
 			}			
-			URI relative = relativizeFromBase(uriStr, root);
+			//URI relative = relativizeFromBase(uriStr, root);
 			Path path = manifest.getBundle().getFileSystem().provider().getPath(URI.create(uriStr));
 			manifest.getManifest().add(path);			
 		}
 		
 		List<Agent> creators = getAgents(root, ro, createdBy);
 		if (!creators.isEmpty()) {
-			manifest.setCreatedBy(creators);
+			manifest.setCreatedBy(creators.get(0));
+			if (creators.size() > 1) {
+				logger.warning("Ignoring additional createdBy agents");
+			}
+			
 		}
+		
 		RDFNode created = ro.getPropertyValue(createdOn);
 		manifest.setCreatedOn(literalAsFileTime(created));
 
@@ -362,7 +366,11 @@ public class RDFToManifest {
 
 			creators = getAgents(root, aggrResource, createdBy);
 			if (!creators.isEmpty()) {
-				meta.setCreatedBy(creators);
+				meta.setCreatedBy(creators.get(0));
+				if (creators.size() > 1) {
+					logger.warning("Ignoring additional createdBy agents for " + meta);
+				}
+
 			}
 			meta.setCreatedOn(literalAsFileTime(aggrResource
 					.getPropertyValue(createdOn)));

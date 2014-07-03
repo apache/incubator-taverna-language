@@ -1,6 +1,5 @@
 package org.purl.wf4ever.robundle;
 
-import java.awt.Desktop;
 import java.net.URI;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -9,7 +8,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -48,7 +46,7 @@ public class MotifAnalysisIT {
             stian.setUri(URI.create("http://soiland-reyes.com/stian/#me"));
             stian.setOrcid(URI.create("http://orcid.org/0000-0001-9842-9718"));
             stian.setName("Stian Soiland-Reyes");            
-            manifest.getCreatedBy().add(stian);
+            manifest.setCreatedBy(stian);
             // RO bundle was created "now"
             manifest.setCreatedOn(Files.getLastModifiedTime(ro));
 
@@ -75,7 +73,7 @@ public class MotifAnalysisIT {
             manifest.setAuthoredOn(Files.getLastModifiedTime(readme));
             
             // And who made the README file?
-            manifest.getAggregation(readme).setCreatedBy(Arrays.asList(daniel));
+            manifest.getAggregation(readme).setCreatedBy(daniel);
             manifest.getAggregation(readme).setMediatype("text/plain");
 
 

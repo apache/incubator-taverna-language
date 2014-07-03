@@ -87,7 +87,7 @@ public class Manifest {
     private List<Agent> authoredBy = new ArrayList<>();
     private FileTime authoredOn;
     private Bundle bundle;
-    private List<Agent> createdBy = new ArrayList<>();
+    private Agent createdBy = null;
     private FileTime createdOn = now();
     private List<String> graph;
     private List<Path> history = new ArrayList<>();
@@ -98,8 +98,8 @@ public class Manifest {
         this.bundle = bundle;
     }
 
-    public List<PathMetadata> getAggregates() {
-        return new ArrayList(aggregates.values());
+	public List<PathMetadata> getAggregates() {
+        return new ArrayList<>(aggregates.values());
     }
 
     public List<PathAnnotation> getAnnotations() {
@@ -135,7 +135,7 @@ public class Manifest {
         return getBundle().getRoot().toUri();
     }
 
-    public List<Agent> getCreatedBy() {
+    public Agent getCreatedBy() {
         return createdBy;
     }
 
@@ -328,10 +328,7 @@ public class Manifest {
         this.bundle = bundle;
     }
 
-    public void setCreatedBy(List<Agent> createdBy) {
-        if (createdBy == null) { 
-            throw new NullPointerException("createdBy can't be null");
-        }
+    public void setCreatedBy(Agent createdBy) {
         this.createdBy = createdBy;
     }
 

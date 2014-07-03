@@ -336,8 +336,12 @@ public class CombineManifest {
 			}
 			
 			for (RDFNode s : creatingAgentsFor(resource)) {
+				if (pathMetadata.getCreatedBy() != null) {
+					logger.warning("Ignoring additional createdBy agents for " + resource);
+					break;
+				}
 				if (s.isLiteral()) {
-					pathMetadata.getCreatedBy().add(new Agent(s.asLiteral().getLexicalForm()));
+					pathMetadata.setCreatedBy(new Agent(s.asLiteral().getLexicalForm()));
 				} else {
 					Resource agentResource = s.asResource();
 					Agent agent = new Agent();
@@ -355,7 +359,7 @@ public class CombineManifest {
 						}
 					}
 					agent.setName(nameForAgent(agentResource));
-					pathMetadata.getCreatedBy().add(agent);
+					pathMetadata.setCreatedBy(agent);
 				}
 			}
 			if (pathMetadata.getFile().equals(bundle.getRoot()) || 
