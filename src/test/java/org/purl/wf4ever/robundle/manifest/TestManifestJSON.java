@@ -76,6 +76,16 @@ public class TestManifestJSON {
 			comments.getOrCreateBundledAs().setFolder(bundle.getPath("/folder/"));
 			comments.getOrCreateBundledAs().setFilename("external.txt");
 			
+            PathAnnotation jpegAnn = new PathAnnotation();
+            jpegAnn.setAbout(jpeg);
+            Path soupProps = Bundles.getAnnotations(bundle).resolve("soup-properties.ttl");
+            Bundles.setStringValue(soupProps, "</folder/soup.jpeg> <http://xmlns.com/foaf/0.1/depicts> " +
+            		"<http://example.com/menu/tomato-soup> .");
+            jpegAnn.setContent(soupProps);
+//            jpegAnn.setContent(URI.create("annotations/soup-properties.ttl"));
+            jpegAnn.setAnnotation(URI.create("urn:uuid:d67466b4-3aeb-4855-8203-90febe71abdf"));
+            manifest.getAnnotations().add(jpegAnn);
+			
 			
 			
 			
