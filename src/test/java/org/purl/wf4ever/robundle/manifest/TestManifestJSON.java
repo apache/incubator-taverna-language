@@ -27,10 +27,10 @@ public class TestManifestJSON {
 		// http://wf4ever.github.io/ro/bundle/2013-05-21/
 		try (Bundle bundle = Bundles.createBundle()) {
 			Calendar createdOnCal = Calendar.getInstance(TimeZone.getTimeZone("Z"), Locale.ENGLISH);
-			createdOnCal.setTimeInMillis(0); // reset millis
 			// "2013-03-05T17:29:03Z"
 			// Remember months are 0-based in java.util.Calendar!
 			createdOnCal.set(2013, 3-1, 5, 17, 29, 03);			
+			createdOnCal.set(Calendar.MILLISECOND, 0);
 			FileTime createdOn = FileTime.fromMillis(createdOnCal.getTimeInMillis());			
 			Manifest manifest = bundle.getManifest();
 			manifest.setCreatedOn(createdOn);
@@ -45,6 +45,38 @@ public class TestManifestJSON {
 			Bundles.setStringValue(evolutionPath, "<manifest.json> < http://purl.org/pav/retrievedFrom> " +
 					"<http://wf4ever.github.io/ro/bundle/2013-05-21/example/.ro/manifest.json> .");
 			manifest.getHistory().add(evolutionPath);
+			
+			
+			Path jpeg = bundle.getPath("folder/soup.jpeg");
+			Files.createDirectory(jpeg.getParent());
+			Files.createFile(jpeg);
+			// register in manifest first
+			bundle.getManifest().getAggregation(jpeg);
+
+			URI blog = URI.create("http://example.com/blog/");
+			bundle.getManifest().getAggregation(blog);
+
+			Path readme = bundle.getPath("README.txt");
+			Files.createFile(readme);
+			PathMetadata readmeMeta = bundle.getManifest().getAggregation(readme);
+			readmeMeta.setMediatype("text/plain");
+			Agent readmeCreatedby = new Agent("Bob Builder");
+			readmeCreatedby.setUri(URI.create("http://example.com/foaf#bob"));
+			readmeMeta.setCreatedBy(readmeCreatedby);
+			
+			// 2013-02-12T19:37:32.939Z
+			createdOnCal.set(2013, 2-1, 12, 19, 37, 32);
+			createdOnCal.set(Calendar.MILLISECOND, 939);
+			createdOn = FileTime.fromMillis(createdOnCal.getTimeInMillis());
+			Files.setLastModifiedTime(readme, createdOn);
+			
+
+			PathMetadata comments = bundle.getManifest().getAggregation(URI.create("http://example.com/comments.txt"));
+			comments.getOrCreateBundledAs().setProxy(URI.create("urn:uuid:a0cf8616-bee4-4a71-b21e-c60e6499a644"));
+			comments.getOrCreateBundledAs().setFolder(bundle.getPath("/folder/"));
+			comments.getOrCreateBundledAs().setFilename("external.txt");
+			
+			
 			
 			
 			Path jsonPath = bundle.getManifest().writeAsJsonLD();
@@ -83,7 +115,7 @@ public class TestManifestJSON {
 				if (found) {
 					break;
 				}
-			}
+			};
 			assertTrue("Could not find 'manifest.json' in 'manifest' list: " + manifest, found);
 		}
 		

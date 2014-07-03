@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder(value = { "file", "uri", "mediatype", "createdOn",
@@ -25,7 +26,7 @@ public class PathMetadata {
     
     private URI conformsTo;
 
-    private Proxy bundledAs = new Proxy();
+    private Proxy bundledAs;
 
     protected PathMetadata() {
     }
@@ -51,18 +52,20 @@ public class PathMetadata {
         return file;
     }
 
+    @JsonIgnore
     @Deprecated
     public Path getFolder() {
-        return getBundledAs().getFolder();
+        return getOrCreateBundledAs().getFolder();
     }
 
     public String getMediatype() {
         return mediatype;
     }
 
+    @JsonIgnore
     @Deprecated
     public URI getProxy() {
-        return getBundledAs().getProxy();
+        return getOrCreateBundledAs().getProxy();
     }
 
     public URI getUri() {
@@ -87,7 +90,7 @@ public class PathMetadata {
 
     @Deprecated
     public void setFolder(Path folder) {
-    	getBundledAs().setFolder(folder);
+    	getOrCreateBundledAs().setFolder(folder);
     }
 
     public void setMediatype(String mediatype) {
@@ -97,10 +100,10 @@ public class PathMetadata {
     public void setProxy() {
         setProxy(URI.create("urn:uuid:" + UUID.randomUUID()));
     }
-    
+
     @Deprecated
     public void setProxy(URI proxy) {
-    	getBundledAs().setProxy(proxy);
+    	getOrCreateBundledAs().setProxy(proxy);
     }
 
     public void setUri(URI uri) {
@@ -145,6 +148,15 @@ public class PathMetadata {
 		this.authoredOn = authoredOn;
 	}
 
+	@JsonIgnore
+	public Proxy getOrCreateBundledAs() {
+		if (bundledAs == null) {
+			bundledAs = new Proxy();
+		}
+		return bundledAs;
+	}
+	
+	
 	public Proxy getBundledAs() {
 		return bundledAs;
 	}
