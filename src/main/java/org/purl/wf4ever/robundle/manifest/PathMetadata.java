@@ -25,7 +25,7 @@ public class PathMetadata {
     
     private URI conformsTo;
 
-    private Proxy bundledAs;
+    private Proxy bundledAs = new Proxy();
 
     protected PathMetadata() {
     }
