@@ -10,19 +10,22 @@ import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder(value = { "file", "uri", "folder", "mediatype", "createdOn",
-        "createdBy", "conformsTo", "proxy" })
+@JsonPropertyOrder(value = { "file", "uri", "mediatype", "createdOn",
+        "createdBy", "authoredOn", "authoredBy", "conformsTo", "bundledAs" })
 public class PathMetadata {
-    private Agent createdBy;
-    private FileTime createdOn;
-    private List<Agent> authoredBy = new ArrayList<>();
+	private Path file;
+	private URI uri;
+	private String mediatype;
+
+	private FileTime createdOn;
+	private Agent createdBy;
+    
     private FileTime authoredOn;    
-    private Path file;
-    private Path folder;
-    private String mediatype;
-    private URI proxy;
-    private URI uri;
+    private List<Agent> authoredBy = new ArrayList<>();
+    
     private URI conformsTo;
+
+    private Proxy bundledAs;
 
     protected PathMetadata() {
     }
@@ -48,16 +51,18 @@ public class PathMetadata {
         return file;
     }
 
+    @Deprecated
     public Path getFolder() {
-        return folder;
+        return getBundledAs().getFolder();
     }
 
     public String getMediatype() {
         return mediatype;
     }
 
+    @Deprecated
     public URI getProxy() {
-        return proxy;
+        return getBundledAs().getProxy();
     }
 
     public URI getUri() {
@@ -80,8 +85,9 @@ public class PathMetadata {
         this.file = file;
     }
 
+    @Deprecated
     public void setFolder(Path folder) {
-        this.folder = folder;
+    	getBundledAs().setFolder(folder);
     }
 
     public void setMediatype(String mediatype) {
@@ -92,8 +98,9 @@ public class PathMetadata {
         setProxy(URI.create("urn:uuid:" + UUID.randomUUID()));
     }
     
+    @Deprecated
     public void setProxy(URI proxy) {
-        this.proxy = proxy;
+    	getBundledAs().setProxy(proxy);
     }
 
     public void setUri(URI uri) {
@@ -124,6 +131,9 @@ public class PathMetadata {
 	}
 
 	public void setAuthoredBy(List<Agent> authoredBy) {
+		if (authoredBy == null) {
+			throw new NullPointerException("authoredBy list can't be empty");
+		}
 		this.authoredBy = authoredBy;
 	}
 
@@ -133,6 +143,17 @@ public class PathMetadata {
 
 	public void setAuthoredOn(FileTime authoredOn) {
 		this.authoredOn = authoredOn;
+	}
+
+	public Proxy getBundledAs() {
+		return bundledAs;
+	}
+
+	public void setBundledAs(Proxy bundledAs) {
+		if (bundledAs == null) { 
+			throw new NullPointerException("bundledAs can't be empty (try a new Proxy instance)");
+		}
+		this.bundledAs = bundledAs;
 	}
 
 
