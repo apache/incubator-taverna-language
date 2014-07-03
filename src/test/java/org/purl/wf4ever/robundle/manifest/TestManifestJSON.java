@@ -106,11 +106,8 @@ public class TestManifestJSON {
 			ObjectMapper objectMapper = new ObjectMapper();
 			String jsonStr = Bundles.getStringValue(jsonPath);
 			System.out.println(jsonStr);
-			JsonNode json = objectMapper.readTree(jsonStr);
-			
+			JsonNode json = objectMapper.readTree(jsonStr);			
 			checkManifestJson(json);
-				
-			
 		}
 	}
 	
