@@ -2,7 +2,6 @@ package org.purl.wf4ever.robundle;
 
 import static org.junit.Assert.assertEquals;
 
-import java.awt.Desktop;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.charset.Charset;

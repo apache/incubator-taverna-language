@@ -23,12 +23,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.zip.ZipOutputStream;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.purl.wf4ever.robundle.Bundles;
 
 public class TestZipFS {
 

@@ -12,8 +12,6 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.Iterator;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-
 public class BundlePath implements Path {
 
     private final BundleFileSystem fs;

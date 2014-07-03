@@ -19,7 +19,6 @@ import java.util.Map;
 
 import org.junit.Assume;
 import org.junit.Test;
-import org.purl.wf4ever.robundle.Bundles;
 
 public class TestFileSystemProvider {
 

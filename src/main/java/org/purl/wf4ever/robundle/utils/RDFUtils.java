@@ -1,13 +1,11 @@
 package org.purl.wf4ever.robundle.utils;
 
 import java.nio.file.attribute.FileTime;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.hp.hpl.jena.datatypes.DatatypeFormatException;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
-import com.hp.hpl.jena.datatypes.xsd.impl.XSDDateTimeType;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
