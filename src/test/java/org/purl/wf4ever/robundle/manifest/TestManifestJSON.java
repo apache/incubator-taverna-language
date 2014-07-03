@@ -30,12 +30,15 @@ public class TestManifestJSON {
 			FileTime createdOn = FileTime.fromMillis(createdOnCal.getTimeInMillis());			
 			bundle.getManifest().setCreatedOn(createdOn);
 			
+			//bundle.getManifest().getManifest().
+			
 			
 			Path jsonPath = bundle.getManifest().writeAsJsonLD();
 			ObjectMapper objectMapper = new ObjectMapper();
 			String jsonStr = Bundles.getStringValue(jsonPath);
 			System.out.println(jsonStr);
 			JsonNode json = objectMapper.readTree(jsonStr);
+			
 			checkManifestJson(json);
 				
 			
@@ -67,7 +70,7 @@ public class TestManifestJSON {
 					break;
 				}
 			}
-			assertTrue("Could not find 'manifest.json' in 'manifest' list", found);
+			assertTrue("Could not find 'manifest.json' in 'manifest' list: " + manifest, found);
 		}
 		
 		assertEquals("2013-03-05T17:29:03Z", json.get("createdOn").asText());
