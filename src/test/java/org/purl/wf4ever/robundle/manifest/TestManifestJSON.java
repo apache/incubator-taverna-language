@@ -69,7 +69,7 @@ public class TestManifestJSON {
 			createdOnCal.set(Calendar.MILLISECOND, 939);
 			createdOn = FileTime.fromMillis(createdOnCal.getTimeInMillis());
 			Files.setLastModifiedTime(readme, createdOn);
-			
+			readmeMeta.setCreatedOn(createdOn);
 
 			PathMetadata comments = bundle.getManifest().getAggregation(URI.create("http://example.com/comments.txt"));
 			comments.getOrCreateBundledAs().setProxy(URI.create("urn:uuid:a0cf8616-bee4-4a71-b21e-c60e6499a644"));
@@ -135,8 +135,19 @@ public class TestManifestJSON {
 		
 		JsonNode aggregates = json.get("aggregates");
 		assertTrue("aggregates not a list", aggregates.isArray());
-		assertEquals("/folder/soup.jpeg", aggregates.get(0).asText());
-		assertEquals("http://example.com/blog/", aggregates.get(1).asText());
+		JsonNode soup = aggregates.get(0);
+		if (soup.isValueNode()) { 
+			assertEquals("/folder/soup.jpeg", soup.asText());
+		} else {
+			assertEquals("/folder/soup.jpeg", soup.get("file").asText());
+		}
+		
+		JsonNode blog = aggregates.get(1);
+		if (blog.isValueNode()) {
+			assertEquals("http://example.com/blog/", blog.asText());
+		} else { 
+			assertEquals("http://example.com/blog/", blog.get("uri").asText());
+		}
 		
 		JsonNode readme = aggregates.get(2);
 		assertEquals("/README.txt", readme.get("file").asText());
