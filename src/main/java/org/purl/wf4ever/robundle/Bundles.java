@@ -327,8 +327,8 @@ public class Bundles {
         return path.resolveSibling(newP);
     }
 
-    public static Path getAnnotations(Bundle dataBundle) throws IOException {
-        Path dir = dataBundle.getFileSystem().getPath(DOT_RO, ANNOTATIONS);
+    public static Path getAnnotations(Bundle bundle) throws IOException {
+        Path dir = bundle.getFileSystem().getPath(DOT_RO, ANNOTATIONS);
         Files.createDirectories(dir);
         return dir;
     }
