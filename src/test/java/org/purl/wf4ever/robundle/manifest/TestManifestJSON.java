@@ -87,8 +87,21 @@ public class TestManifestJSON {
             manifest.getAnnotations().add(jpegAnn);
 			
 			
-			
-			
+            PathAnnotation proxyAnn = new PathAnnotation();
+            proxyAnn.setAbout(comments.getBundledAs().getProxy());
+			proxyAnn.setContent(URI.create("http://example.com/blog/they-aggregated-our-file"));
+            manifest.getAnnotations().add(proxyAnn);
+            
+            Path metaAnn = Bundles.getAnnotations(bundle).resolve("a-meta-annotation-in-this-ro.txt");
+            Bundles.setStringValue(metaAnn, "This bundle contains an annotation about /folder/soup.jpeg");
+            
+            PathAnnotation metaAnnotation = new PathAnnotation();
+            metaAnnotation.setAbout(bundle.getRoot());
+            metaAnnotation.getAboutList().add(URI.create("urn:uuid:d67466b4-3aeb-4855-8203-90febe71abdf"));
+            
+            metaAnnotation.setContent(metaAnn);
+			manifest.getAnnotations().add(metaAnnotation);
+            
 			Path jsonPath = bundle.getManifest().writeAsJsonLD();
 			ObjectMapper objectMapper = new ObjectMapper();
 			String jsonStr = Bundles.getStringValue(jsonPath);
