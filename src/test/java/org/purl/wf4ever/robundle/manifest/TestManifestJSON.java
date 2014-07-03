@@ -1,7 +1,12 @@
 package org.purl.wf4ever.robundle.manifest;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
+import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.util.Calendar;
@@ -14,7 +19,6 @@ import org.purl.wf4ever.robundle.Bundles;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.jsonldjava.utils.JsonUtils;
 
 public class TestManifestJSON {
 	@Test
@@ -28,9 +32,19 @@ public class TestManifestJSON {
 			// Remember months are 0-based in java.util.Calendar!
 			createdOnCal.set(2013, 3-1, 5, 17, 29, 03);			
 			FileTime createdOn = FileTime.fromMillis(createdOnCal.getTimeInMillis());			
-			bundle.getManifest().setCreatedOn(createdOn);
+			Manifest manifest = bundle.getManifest();
+			manifest.setCreatedOn(createdOn);
+			Agent createdBy = new Agent("Alice W. Land");
+			createdBy.setUri(URI.create("http://example.com/foaf#alice"));
+			createdBy.setOrcid(URI.create("http://orcid.org/0000-0002-1825-0097"));
 			
-			//bundle.getManifest().getManifest().
+			manifest.setCreatedBy(createdBy);
+			
+			Path evolutionPath = bundle.getPath(".ro/evolution.ttl");
+			Files.createDirectories(evolutionPath.getParent());
+			Bundles.setStringValue(evolutionPath, "<manifest.json> < http://purl.org/pav/retrievedFrom> " +
+					"<http://wf4ever.github.io/ro/bundle/2013-05-21/example/.ro/manifest.json> .");
+			manifest.getHistory().add(evolutionPath);
 			
 			
 			Path jsonPath = bundle.getManifest().writeAsJsonLD();
@@ -80,7 +94,13 @@ public class TestManifestJSON {
 		assertEquals("http://orcid.org/0000-0002-1825-0097", createdBy.get("orcid").asText());
 		assertEquals("Alice W. Land", createdBy.get("name").asText());
 
-		assertEquals("evolution.ttl", json.get("history").asText());
+		JsonNode history = json.get("history");
+		if (history.isValueNode()) {
+			assertEquals("evolution.ttl", history.asText());
+		} else {
+			assertEquals("evolution.ttl", history.get(0).asText());
+		}
+		
 		JsonNode aggregates = json.get("aggregates");
 		assertTrue("aggregates not a list", aggregates.isArray());
 		assertEquals("/folder/soup.jpeg", aggregates.get(0).asText());
