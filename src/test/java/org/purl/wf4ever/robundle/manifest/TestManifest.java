@@ -103,7 +103,7 @@ public class TestManifest {
         assertTrue(uris.remove("/f/file3.txt"));
         assertTrue(uris.remove("/f/nested/file1.txt"));
         assertTrue(uris.remove("/f/nested/empty/"));
-        assertTrue(uris.isEmpty());
+        assertTrue("Unexpected uri: " + uris, uris.isEmpty());
     }
 
     private Path uri2path(URI base, URI uri) {
