@@ -366,7 +366,7 @@ public class Manifest {
         Files.createDirectories(jsonld.getParent());
         //Files.createFile(jsonld);
         if (!getManifest().contains(jsonld)) {
-            getManifest().add(0, jsonld.getParent().relativize(jsonld));
+            getManifest().add(0, jsonld);
         }
         ObjectMapper om = new ObjectMapper();
         om.addMixInAnnotations(Path.class, PathMixin.class);

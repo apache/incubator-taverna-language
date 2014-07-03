@@ -145,8 +145,18 @@ public class BundlePath implements Path {
         return fs.wrap(zipPath.toRealPath(options));
     }
 
+    /** Note: This method is used by JSON serialization and should
+     * return a valid relative path from .ro/  or /
+     */
     public String toString() {
-        return zipPath.toString();
+    	if (zipPath.isAbsolute() && zipPath.startsWith(".ro")) {
+	    	// We'll use a fictional file in .ro/ as a base
+	    	// to avoid "" in the special case of the path .ro/manifest.json
+	        Path base = fs.getRootDirectory().zipPath.resolve(".ro/c1211bf1-56fc-4375-abee-c6b18de4a079");
+	        return base.relativize(zipPath).toString();
+    	} else {
+    		return zipPath.toString();
+    	}
     }
 
     public URI toUri() {
