@@ -17,6 +17,7 @@
     "file": "@id",
     "uri": "@id",
     "annotation": "@id",
+    "proxy": "@id",
 
     "manifest": {
         "@id": "ore:isDescribedBy",
@@ -62,6 +63,7 @@
         "@id": "roterms:orcid",
         "@type": "@id"
     },
+
     "history": {
         "@id": "prov:has_provenance",
         "@type": "@id"
@@ -74,16 +76,14 @@
         "@id": "dc:format"
     },
     "folder": {
-      "@id": "bundle:inFolder",
+      "@id": "bundle:folder",
       "@type": "@id"
     },
-    "proxy": {
-      "@reverse": "ore:proxyFor",
-      "@type": "@id"
+    "filename": { 
+        "@id": "ro:entryName"
     },
-    "bundledAs": { 
-        "@id": "bundle:name",
-        "@type": "@id"
+    "bundledAs": {
+        "@reverse": "ore:proxyFor"
     },
     "conformsTo": { 
         "@id": "dct:conformsTo",
@@ -102,9 +102,6 @@
        "@type": "@id" 
     }
 
-
   },
-  "http://purl.org/pav/retrievedFrom": {
-    "@id": "https://w3id.org/bundle/context"
-  }
+  "http://purl.org/pav/retrievedFrom": {"@id": "https://raw.githubusercontent.com/wf4ever/ro/0aff59bb4b8d55699a4e9d422a120079eebd52a3/bundle/draft/context.json"}
 }
