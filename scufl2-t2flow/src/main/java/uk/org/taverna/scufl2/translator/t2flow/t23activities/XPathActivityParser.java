@@ -87,8 +87,8 @@ public class XPathActivityParser extends AbstractActivityParser {
             ArrayNode namespaceMap = json.arrayNode();
             json.put("xpathNamespaceMap", namespaceMap);
 			
-			for (uk.org.taverna.scufl2.xml.t2flow.jaxb.XPathNamespaceMap.List list : xpathConfig
-					.getXpathNamespaceMap().getList()) {
+                    for (uk.org.taverna.scufl2.xml.t2flow.jaxb.XPathNamespaceMap.Entry list : xpathConfig
+                             .getXpathNamespaceMap().getEntry()) {
 				String namespacePrefix = list.getContent().get(0).getValue();
 				String namespaceURI = list.getContent().get(1).getValue();
 				

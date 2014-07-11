@@ -35,8 +35,8 @@
 
 	<xsd:complexType name="XPathNamespaceMap">
 		<xsd:sequence>
-			<xsd:element name="list" minOccurs="0" maxOccurs="unbounded">
-				<xsd:complexType>
+                        <xsd:element name="entry" minOccurs="0" maxOccurs="unbounded">
+                                <xsd:complexType>
 					<xsd:sequence>
 						<xsd:element name="string" type="xsd:string" />
 						<xsd:element name="string" type="xsd:string" />
