@@ -24,6 +24,7 @@ import com.hp.hpl.jena.ontology.Individual;
 import com.hp.hpl.jena.ontology.ObjectProperty;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
@@ -47,10 +48,13 @@ public class RDFToManifest {
 	private static final String PAV = "http://purl.org/pav/";
 
 	private static final String DCT = "http://purl.org/dc/terms/";
-	// private static final String RO = "http://purl.org/wf4ever/ro#";
+	private static final String RO = "http://purl.org/wf4ever/ro#";
+	private static final String BUNDLE = "http://purl.org/wf4ever/bundle#";
 	private static final String ORE = "http://www.openarchives.org/ore/terms/";
 	private static final String OA = "http://www.w3.org/ns/oa#";
+	private static final String OA_RDF = "/ontologies/oa.rdf";
 	private static final String FOAF_RDF = "/ontologies/foaf.rdf";
+	private static final String BUNDLE_RDF = "/ontologies/bundle.owl";	
 	private static final String PAV_RDF = "/ontologies/pav.rdf";
 	private static final String PROV_O_RDF = "/ontologies/prov-o.rdf";
 	private static final String PROV_AQ_RDF = "/ontologies/prov-aq.rdf";
@@ -82,6 +86,9 @@ public class RDFToManifest {
 
 	private ObjectProperty hasTarget;
 	private ObjectProperty isDescribedBy;
+	private OntModel bundle;
+	private ObjectProperty hasProxy;
+	private ObjectProperty inFolder;
 
 	public RDFToManifest() {
 		loadOntologies();
@@ -95,6 +102,7 @@ public class RDFToManifest {
 		loadPAV();
 		loadPROVAQ();
 		loadOA();
+		loadBundle();
 	}
 
 	protected OntModel loadOntologyFromClasspath(String classPathUri, String uri) {
@@ -161,7 +169,7 @@ public class RDFToManifest {
 	}
 
 	protected OntModel getOntModel() {
-		OntModel ontModel = ModelFactory.createOntologyModel();
+		OntModel ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_RULE_INF);
 		ontModel.setNsPrefix("foaf", FOAF_0_1);
 		ontModel.setNsPrefix("prov", PROV);
 		ontModel.setNsPrefix("ore", ORE);
@@ -253,13 +261,25 @@ public class RDFToManifest {
 		if (oa != null) {
 			return;
 		}
-		OntModel ontModel = loadOntologyFromClasspath("/ontologies/oa.rdf", OA);
+		OntModel ontModel = loadOntologyFromClasspath(OA_RDF, OA);
 		hasTarget = ontModel.getObjectProperty(OA + "hasTarget");
 		hasBody = ontModel.getObjectProperty(OA + "hasBody");
 		checkNotNull(hasTarget, hasBody);
 		oa = ontModel;
 	}
 
+	protected synchronized void loadBundle() {
+		if (bundle != null) {
+			return;
+		}
+		OntModel ontModel = loadOntologyFromClasspath(BUNDLE_RDF, BUNDLE);
+		hasProxy = ontModel.getObjectProperty(BUNDLE + "hasProxy");
+		inFolder = ontModel.getObjectProperty(BUNDLE + "inFolder");
+		checkNotNull(hasProxy, inFolder);
+		bundle = ontModel;
+	}
+
+	
 	protected synchronized void loadORE() {
 		if (ore != null) {
 			return;
@@ -361,6 +381,7 @@ public class RDFToManifest {
 				if (proxy.getURI() != null) {
 					meta.setProxy(relativizeFromBase(proxy.getURI(), root));
 				}
+			
 			}
 			
 
