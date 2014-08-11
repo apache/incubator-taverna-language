@@ -11,8 +11,8 @@
         "name":    "Alice W. Land" },
     "history":   "evolution.ttl",
     "aggregates": [
-       "/folder/soup.jpeg",
-       "http://example.com/blog/",
+       { "file":  "/folder/soup.jpeg" },
+       { "uri": "http://example.com/blog/" },
        { "file":      "/README.txt",
          "mediatype": "text/plain",
          "createdBy": {
@@ -20,8 +20,8 @@
              "name":    "Bob Builder" },
          "createdOn": "2013-02-12T19:37:32.939Z" },
        { "uri":    "http://example.com/comments.txt",
-         "bundledAs": { 
-            "proxy":    "urn:uuid:a0cf8616-bee4-4a71-b21e-c60e6499a644",
+         "bundledAs": {
+            "uri":    "urn:uuid:a0cf8616-bee4-4a71-b21e-c60e6499a644",
             "folder":   "/folder/",
             "filename": "external.txt" }
        }
@@ -30,10 +30,10 @@
       { "annotation": "urn:uuid:d67466b4-3aeb-4855-8203-90febe71abdf",
         "about":      "/folder/soup.jpeg",
         "content":    "annotations/soup-properties.ttl" },
-  
+
       { "about":   "urn:uuid:a0cf8616-bee4-4a71-b21e-c60e6499a644",
         "content": "http://example.com/blog/they-aggregated-our-file" },
-  
+
       { "about":   [ "/", "urn:uuid:d67466b4-3aeb-4855-8203-90febe71abdf" ],
         "content": "annotations/a-meta-annotation-in-this-ro.txt" }
     ]
