@@ -165,7 +165,7 @@ public class TestManifest {
                     Path file = Paths.get(asURI(fileRes));
                     assertTrue(Files.exists(file));
                     PathMetadata meta = manifest.getAggregation(file);
-                    assertEquals(asURI(proxy), meta.getProxy());
+                    assertEquals(meta.getProxy(), asURI(proxy));
                 }
                 assertEquals("Could not find all aggregations from manifest: "
                         + manifest.getAggregates(), manifest.getAggregates()
@@ -197,7 +197,7 @@ public class TestManifest {
                 manifest.getAggregation(r.resolve("/README.txt"))
                         .getMediatype());
 
-        assertNull(manifest.getAggregation(r.resolve("/README.txt")).getProxy());
+        assertNull(manifest.getAggregation(r.resolve("/README.txt")).getBundledAs());
         
 
         // Disabled: RO Bundle in flux on how to put external URIs in folders
