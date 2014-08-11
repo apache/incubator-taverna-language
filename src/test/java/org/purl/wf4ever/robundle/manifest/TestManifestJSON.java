@@ -72,7 +72,7 @@ public class TestManifestJSON {
 			readmeMeta.setCreatedOn(createdOn);
 
 			PathMetadata comments = bundle.getManifest().getAggregation(URI.create("http://example.com/comments.txt"));
-			comments.getOrCreateBundledAs().setProxy(URI.create("urn:uuid:a0cf8616-bee4-4a71-b21e-c60e6499a644"));
+			comments.getOrCreateBundledAs().setURI(URI.create("urn:uuid:a0cf8616-bee4-4a71-b21e-c60e6499a644"));
 			comments.getOrCreateBundledAs().setFolder(bundle.getPath("/folder/"));
 			comments.getOrCreateBundledAs().setFilename("external.txt");
 			
@@ -88,7 +88,7 @@ public class TestManifestJSON {
 			
 			
             PathAnnotation proxyAnn = new PathAnnotation();
-            proxyAnn.setAbout(comments.getBundledAs().getProxy());
+            proxyAnn.setAbout(comments.getBundledAs().getURI());
 			proxyAnn.setContent(URI.create("http://example.com/blog/they-aggregated-our-file"));
             manifest.getAnnotations().add(proxyAnn);
             
@@ -180,7 +180,7 @@ public class TestManifestJSON {
 		JsonNode comments = aggregates.get(3);
 		assertEquals("http://example.com/comments.txt", comments.get("uri").asText());
 		JsonNode bundledAs = comments.get("bundledAs");
-		assertEquals("urn:uuid:a0cf8616-bee4-4a71-b21e-c60e6499a644", bundledAs.get("proxy").asText());
+		assertEquals("urn:uuid:a0cf8616-bee4-4a71-b21e-c60e6499a644", bundledAs.get("uri").asText());
 		assertEquals("/folder/", bundledAs.get("folder").asText());
 		assertEquals("external.txt", bundledAs.get("filename").asText());
 		
