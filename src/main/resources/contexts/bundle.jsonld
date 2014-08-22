@@ -12,11 +12,18 @@
     "pav": "http://purl.org/pav/",
     "xsd": "http://www.w3.org/2001/XMLSchema#",
     "foaf": "http://xmlns.com/foaf/0.1/",
+    "owl": "http://www.w3.org/2002/07/owl#",
 
-    "id": "@id",
-    "file": "@id",
     "uri": "@id",
-    "annotation": "@id",
+    "id": {
+      "@id": "owl:sameAs",
+      "@type": "@id" },
+    "file": {
+      "@id": "owl:sameAs",
+      "@type": "@id" },
+    "annotation": {
+      "@id": "owl:sameAs",
+      "@type": "@id" },
 
     "manifest": {
         "@id": "ore:isDescribedBy",
@@ -63,6 +70,18 @@
         "@id": "pav:contributedBy",
         "@type": "@id"
     },
+    "retrievedOn": {
+        "@id": "pav:retrievedOn",
+        "@type": "xsd:dateTime"
+    },
+    "retrievedBy": {
+        "@id": "pav:retrievedBy",
+        "@type": "@id"
+    },
+    "retrievedFrom": {
+        "@id": "pav:retrievedFrom",
+        "@type": "@id"
+    },
     "name": {
         "@id": "foaf:name"
     },
@@ -86,7 +105,7 @@
       "@id": "bundle:inFolder",
       "@type": "@id"
     },
-    "filename": { 
+    "filename": {
         "@id": "ro:entryName"
     },
     "proxy": {
@@ -94,9 +113,10 @@
       "@type": "@id"
     },
     "bundledAs": {
-        "@reverse": "ore:proxyFor"
+        "@id": "bundle:bundledAs",
+        "@type": "@id"
     },
-    "conformsTo": { 
+    "conformsTo": {
         "@id": "dct:conformsTo",
         "@type": "@id"
     },
@@ -110,9 +130,8 @@
     },
     "about": {
        "@id": "oa:hasTarget",
-       "@type": "@id" 
+       "@type": "@id"
     }
 
-  },
-  "http://purl.org/pav/retrievedFrom": {"@id": "https://github.com/wf4ever/ro/blob/f06ab5959caed463238ce3127627d1a2ecba11f7/bundle/draft/context.json"}  
+  }
 }
