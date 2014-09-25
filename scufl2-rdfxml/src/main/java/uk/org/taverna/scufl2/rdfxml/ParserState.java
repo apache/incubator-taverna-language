@@ -5,43 +5,37 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
-import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.ucfpackage.UCFPackage;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 public class ParserState {
-	private Map<WorkflowBean, URI> beanToUri = new HashMap<WorkflowBean, URI>();
+	private Map<WorkflowBean, URI> beanToUri = new HashMap<>();
 	private URI currentBase;
 	private URI location;
-	private Stack<WorkflowBean> stack = new Stack<WorkflowBean>();
+	private Stack<WorkflowBean> stack = new Stack<>();
 	private UCFPackage ucfPackage;
-	private Map<URI, WorkflowBean> uriToBean = new HashMap<URI, WorkflowBean>();
-	private Map<Processor, ObjectNode> dispatchConfigs = new HashMap<Processor, ObjectNode>();
+	private Map<URI, WorkflowBean> uriToBean = new HashMap<>();
+	private Map<Processor, ObjectNode> dispatchConfigs = new HashMap<>();
 
 	public Map<WorkflowBean, URI> getBeanToUri() {
 		return beanToUri;
 	}
 
 	public <T extends WorkflowBean> T getCurrent(Class<T> beanType) {
-		if (getStack().isEmpty()) {
+		if (getStack().isEmpty())
 			throw new IllegalStateException("Parser stack is empty");
-		}
-		if (beanType.isInstance(getStack().peek())) {
+		if (beanType.isInstance(getStack().peek()))
 			return beanType.cast(getStack().peek());
-		}
 		T candidate = null;
-		for (WorkflowBean bean : getStack()) {
-			if (beanType.isInstance(bean)){
+		for (WorkflowBean bean : getStack())
+			if (beanType.isInstance(bean))
 				// Don't return - we want the *last* candidate
 				candidate = beanType.cast(bean);
-			}
-		}
-		if (candidate == null) {
+		if (candidate == null)
 			throw new IllegalStateException("Could not find a " + beanType + " on parser stack");
-		}
 		return candidate;
 	}
 
@@ -108,5 +102,4 @@ public class ParserState {
     public void setDispatchConfigs(Map<Processor, ObjectNode> dispatchConfigs) {
         this.dispatchConfigs = dispatchConfigs;
     }
-
 }

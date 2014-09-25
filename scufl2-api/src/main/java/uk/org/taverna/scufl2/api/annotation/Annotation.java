@@ -17,19 +17,16 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
  * Modelled after http://openannotation.org/spec/core/20120509
  * 
  * @author Stian Soiland-Reyes
- *
  */
 public class Annotation extends AbstractNamed implements Named, Child<WorkflowBundle> {
 	private Calendar annotatedAt;
 	private URI annotatedBy;
-
 	private Calendar serializedAt = new GregorianCalendar();
 	private URI serializedBy;
 	private WorkflowBean target;
 	private WorkflowBundle parent;
 	private URI body;
-	
-	
+
 	public Annotation(WorkflowBean target) {
 		setTarget(target);
 	}
@@ -54,9 +51,8 @@ public class Annotation extends AbstractNamed implements Named, Child<WorkflowBu
 		return serializedBy;
 	}
 	public WorkflowBean getTarget() {
-		if (target == null) {
+		if (target == null)
 			return this;
-		}
 		return target;
 	}
 	public void setAnnotatedAt(Calendar annotatedAt) {
@@ -72,9 +68,8 @@ public class Annotation extends AbstractNamed implements Named, Child<WorkflowBu
 		this.serializedBy = serializedBy;
 	}
 	public void setTarget(WorkflowBean target) {
-		if (target == null) {
+		if (target == null)
 			throw new NullPointerException("Target can't be null");
-		}
 		this.target = target;
 	}
 
@@ -85,14 +80,11 @@ public class Annotation extends AbstractNamed implements Named, Child<WorkflowBu
 
 	@Override
 	public void setParent(WorkflowBundle parent) {
-		if (this.parent != null && this.parent != parent) {
+		if (this.parent != null && this.parent != parent)
 			this.parent.getAnnotations().remove(this);
-		}
 		this.parent = parent;
-		if (parent != null) {
+		if (parent != null)
 			parent.getAnnotations().add(this);
-		}
-
 	}
 
 	public URI getBody() {
@@ -107,14 +99,12 @@ public class Annotation extends AbstractNamed implements Named, Child<WorkflowBu
 	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
 		super.cloneInto(clone, cloning);
 		Annotation cloneAnnotation = (Annotation)clone;
-		if (getAnnotatedAt() != null) {
+		if (getAnnotatedAt() != null)
 			cloneAnnotation.setAnnotatedAt((Calendar) getAnnotatedAt().clone());
-		}
 		cloneAnnotation.setAnnotatedBy(getAnnotatedBy());
 		cloneAnnotation.setBody(getBody());
-		if (getSerializedAt() != null) {
+		if (getSerializedAt() != null)
 			cloneAnnotation.setSerializedAt((Calendar) getSerializedAt().clone());
-		}
 		cloneAnnotation.setSerializedBy(getSerializedBy());
 		cloneAnnotation.setTarget(cloning.cloneOrOriginal(getTarget()));		
 	}	

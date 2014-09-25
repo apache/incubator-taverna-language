@@ -16,9 +16,9 @@ import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
-import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.NegativeValueProblem;
-import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.NullFieldProblem;
-import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.OutOfScopeValueProblem;
+import uk.org.taverna.scufl2.validation.correctness.report.NegativeValueProblem;
+import uk.org.taverna.scufl2.validation.correctness.report.NullFieldProblem;
+import uk.org.taverna.scufl2.validation.correctness.report.OutOfScopeValueProblem;
 
 /**
  * @author alanrw

@@ -38,15 +38,14 @@ import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
  * The {@link VisitorAdapter} class can be useful for avoiding to implement all
  * Visitor methods, while {@link VisitorWithPath} provides the
  * {@link VisitorAdapter#getCurrentPath()} .
- *
+ * 
  * @see http://c2.com/cgi/wiki?HierarchicalVisitorPattern
- *
+ * 
  * @author Stian Soiland-Reyes
- *
+ * 
  */
 public interface Visitor {
 	public static abstract class VisitorAdapter implements Visitor {
-
 		@Override
 		public boolean visit(WorkflowBean node) {
 			return true;
@@ -64,13 +63,12 @@ public interface Visitor {
 	}
 
 	public static abstract class VisitorWithPath implements Visitor {
-
-		private final Stack<WorkflowBean> currentPath = new Stack<WorkflowBean>();
+		private final Stack<WorkflowBean> currentPath = new Stack<>();
 		private WorkflowBean currentNode;
 
 		/**
 		 * Returns the {@link WorkflowBean} currently visited.
-		 *
+		 * 
 		 * @return the <code>WorkflowBean</code> currently visited
 		 */
 		public WorkflowBean getCurrentNode() {
@@ -99,7 +97,7 @@ public interface Visitor {
 		 * of the visitor, it is dynamically modified by
 		 * {@link #visitEnter(WorkflowBean)} and
 		 * {@link #visitLeave(WorkflowBean)}.
-		 *
+		 * 
 		 * @return A {@link List} of the current path of the ancestors of the
 		 *         currently visiting {@link WorkflowBean}.
 		 */
@@ -113,7 +111,7 @@ public interface Visitor {
 		 * <p>
 		 * The current node is available in {@link #getCurrentNode()}.
 		 * <p>
-		 *
+		 * 
 		 * @return <code>true</code> if this node's children should be visited.
 		 *         (return value is ignored for nodes which can't have children)
 		 */
@@ -121,7 +119,7 @@ public interface Visitor {
 
 		/**
 		 * Final to maintain current path. Override {@link #visit()} instead.
-		 *
+		 * 
 		 * @see #visit()
 		 */
 		@Override
@@ -132,7 +130,7 @@ public interface Visitor {
 
 		/**
 		 * Final to maintain current path. Override {@link #visit()} instead.
-		 *
+		 * 
 		 * @see #visit()
 		 */
 		@Override
@@ -145,7 +143,7 @@ public interface Visitor {
 
 		/**
 		 * Override this method to be informed when leaving a node.
-		 *
+		 * 
 		 * Similar to {@link Visitor#visitLeave(WorkflowBean)}, but also called
 		 * for nodes which can't have children.
 		 * <p>
@@ -163,16 +161,15 @@ public interface Visitor {
 		/**
 		 * Final to maintain current path. Override {@link #visitLeave()}
 		 * instead.
-		 *
+		 * 
 		 * @see #visitLeave()
 		 */
 		@Override
 		public final boolean visitLeave(WorkflowBean node) {
 			currentNode = currentPath.pop();
-			if (currentNode != node) {
+			if (currentNode != node)
 				throw new IllegalStateException("Unexpected visit to node "
 						+ node + " expected " + currentNode);
-			}
 			return visitLeave();
 		}
 	}
@@ -183,7 +180,7 @@ public interface Visitor {
 	 * <p>
 	 * A leaf node is a bean that can't have children, like
 	 * {@link InputWorkflowPort}, {@link PortNode} or {@link PropertyLiteral}.
-	 *
+	 * 
 	 * @see #visitEnter(WorkflowBean)
 	 * @param node
 	 *            the currently visited {@link WorkflowBean}
@@ -191,7 +188,7 @@ public interface Visitor {
 	 *         should continue, <code>false</code> to immediately leave the
 	 *         parent.
 	 */
-	public boolean visit(WorkflowBean node);
+	boolean visit(WorkflowBean node);
 
 	/**
 	 * Called by {@link WorkflowBean#accept(Visitor)} when first visiting a bean
@@ -205,7 +202,7 @@ public interface Visitor {
 	 * {@link #visit(WorkflowBean)} and others which are visited with
 	 * {@link #visitEnter(WorkflowBean)} (depending on if they themselves can
 	 * have children).
-	 *
+	 * 
 	 * @see #visit(WorkflowBean)
 	 * @see #visitLeave(WorkflowBean)
 	 * @param node
@@ -219,7 +216,7 @@ public interface Visitor {
 	 * previously visited with {@link #visitEnter(WorkflowBean)}. This is called
 	 * after all of the bean's children have been recursively visited, even if
 	 * any of those aborted the visit by returning <code>false</code>.
-	 *
+	 * 
 	 * @param node
 	 *            the currently visited {@link WorkflowBean}
 	 * @return <code>false</code> if the visits over the current beans' siblings

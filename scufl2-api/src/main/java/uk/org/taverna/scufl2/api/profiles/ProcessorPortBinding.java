@@ -31,7 +31,6 @@ import uk.org.taverna.scufl2.api.port.ProcessorPort;
  */
 public abstract class ProcessorPortBinding<A extends ActivityPort, P extends ProcessorPort>
 		extends AbstractCloneable implements Child<ProcessorBinding> {
-
 	private P boundProcessorPort;
 	private A boundActivityPort;
 
@@ -95,5 +94,4 @@ public abstract class ProcessorPortBinding<A extends ActivityPort, P extends Pro
 		cloneBinding.setBoundProcessorPort(cloning
 				.cloneOrOriginal(getBoundProcessorPort()));
 	}
-
 }

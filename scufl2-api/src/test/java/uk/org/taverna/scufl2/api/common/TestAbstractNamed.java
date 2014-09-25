@@ -13,12 +13,14 @@ import org.junit.Test;
 import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.core.Workflow;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class TestAbstractNamed {
 
 	@Test
 	public void replaceOnRename() throws Exception {
 		Workflow wf = new Workflow();
 		Processor fish = new Processor(wf, "fish");
+		@SuppressWarnings("unused")
 		Processor soup = new Processor(wf, "soup");
 		assertEquals(2, wf.getProcessors().size());
 

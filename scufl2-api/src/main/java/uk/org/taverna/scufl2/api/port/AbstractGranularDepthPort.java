@@ -1,38 +1,40 @@
 package uk.org.taverna.scufl2.api.port;
 
-import java.util.HashMap;
-
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 
 /**
- * Abstract implementation of a <code>Port</code> that has a granular depth property.
+ * Abstract implementation of a <code>Port</code> that has a granular depth
+ * property.
  * <p>
- * The granular depth of a <code>Port </code> specifies the granularity of the depth at which data
- * is emitted. The granular depth must be less than or equal to the depth.
+ * The granular depth of a <code>Port </code> specifies the granularity of the
+ * depth at which data is emitted. The granular depth must be less than or equal
+ * to the depth.
  * <p>
- * For example, if a <code>Port</code> has a depth of 1 and a granular depth of 0 the
- * <code>Port</code> will emit each element of the list separately.
+ * For example, if a <code>Port</code> has a depth of 1 and a granular depth of
+ * 0 the <code>Port</code> will emit each element of the list separately.
  * 
  * @author Alan R Williams
  * 
  */
-public abstract class AbstractGranularDepthPort extends AbstractDepthPort implements GranularDepthPort {
-	
+public abstract class AbstractGranularDepthPort extends AbstractDepthPort
+		implements GranularDepthPort {
 	private Integer granularDepth;
 
 	/**
-	 * Constructs an <code>AbstractGranularDepthPort</code> with a random UUID as the name.
+	 * Constructs an <code>AbstractGranularDepthPort</code> with a random UUID
+	 * as the name.
 	 */
 	public AbstractGranularDepthPort() {
 		super();
 	}
 
 	/**
-	 * Constructs an <code>AbstractGranularDepthPort</code> with the specified name.
+	 * Constructs an <code>AbstractGranularDepthPort</code> with the specified
+	 * name.
 	 * 
 	 * @param name
-	 *            the name of the <code>Port</code>. <strong>Must not</strong> be
-	 *            <code>null</code> or an empty String.
+	 *            the name of the <code>Port</code>. <strong>Must not</strong>
+	 *            be <code>null</code> or an empty String.
 	 */
 	public AbstractGranularDepthPort(String name) {
 		super(name);
@@ -43,6 +45,7 @@ public abstract class AbstractGranularDepthPort extends AbstractDepthPort implem
 	 * 
 	 * @return the granular depth of the <code>Port</code>
 	 */
+	@Override
 	public Integer getGranularDepth() {
 		return granularDepth;
 	}
@@ -53,16 +56,15 @@ public abstract class AbstractGranularDepthPort extends AbstractDepthPort implem
 	 * @param granularDepth
 	 *            the granular depth of the <code>Port</code>
 	 */
+	@Override
 	public void setGranularDepth(Integer granularDepth) {
 		this.granularDepth = granularDepth;
 	}
-	
+
 	@Override
 	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
 		super.cloneInto(clone, cloning);
-		AbstractGranularDepthPort clonePort = (AbstractGranularDepthPort)clone;
+		AbstractGranularDepthPort clonePort = (AbstractGranularDepthPort) clone;
 		clonePort.setGranularDepth(getGranularDepth());
 	}
-	
-	
 }

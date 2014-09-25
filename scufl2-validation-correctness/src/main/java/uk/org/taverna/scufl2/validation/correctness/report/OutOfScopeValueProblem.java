@@ -5,18 +5,16 @@ import uk.org.taverna.scufl2.validation.ValidationProblem;
 
 /**
  * @author alanrw
- *
  */
 public class OutOfScopeValueProblem extends ValidationProblem {
-
 	private final String fieldName;
 	private final Object value;
 
 	public OutOfScopeValueProblem(WorkflowBean bean, String fieldName,
 			Object value) {
 		super(bean);
-				this.fieldName = fieldName;
-				this.value = value;
+		this.fieldName = fieldName;
+		this.value = value;
 	}
 
 	/**
@@ -32,9 +30,9 @@ public class OutOfScopeValueProblem extends ValidationProblem {
 	public Object getValue() {
 		return value;
 	}
-	
-	public String toString() {
-		return (getBean() + " has " + fieldName + " with out of scope value " + value);
-	}
 
+	@Override
+	public String toString() {
+		return getBean() + " has " + fieldName + " with out of scope value " + value;
+	}
 }

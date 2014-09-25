@@ -16,9 +16,9 @@ import java.util.TreeMap;
  * <p>
  * Implementations of this class must implement {@link #getDefault(Object)} to
  * specify the default value to create.
- *
+ * 
  * @author Stian Soiland-Reyes
- *
+ * 
  * @param <KeyType>
  *            Type of key
  * @param <ValueType>
@@ -26,7 +26,6 @@ import java.util.TreeMap;
  */
 public abstract class LazyMap<KeyType, ValueType> extends
 		TreeMap<KeyType, ValueType> implements Map<KeyType, ValueType> {
-
 	private static final long serialVersionUID = 3284689384208221667L;
 
 	public LazyMap() {
@@ -44,7 +43,6 @@ public abstract class LazyMap<KeyType, ValueType> extends
 	public LazyMap(SortedMap<KeyType, ? extends ValueType> m) {
 		super(m);
 	}
-
 
 	@SuppressWarnings("unchecked")
 	@Override

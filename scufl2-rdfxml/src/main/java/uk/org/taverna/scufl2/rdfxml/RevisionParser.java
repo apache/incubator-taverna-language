@@ -24,12 +24,11 @@ import uk.org.taverna.scufl2.api.annotation.Revision;
 import uk.org.taverna.scufl2.api.io.ReaderException;
 
 public class RevisionParser {
-
 	private JAXBContext jaxbContext;
 
 	protected JAXBContext getJaxbContext() throws JAXBException {
 		if (jaxbContext == null) {
-			Class<?>[] packages = { 
+			Class<?>[] packages = {
 					org.purl.wf4ever.roevo.jaxb.ObjectFactory.class,
 					org.w3.prov.jaxb.ObjectFactory.class,
 					org.w3._1999._02._22_rdf_syntax_ns.ObjectFactory.class,
@@ -40,106 +39,114 @@ public class RevisionParser {
 	}
 
 	@SuppressWarnings({ "unchecked" })
-	public Map<URI, Revision> readRevisionChain(InputStream revisionDocumentStream, URI base) throws ReaderException {
+	public Map<URI, Revision> readRevisionChain(
+			InputStream revisionDocumentStream, URI base)
+			throws ReaderException {
 		JAXBElement<RoEvoDocument> roEvoDoc;
 		try {
 			Unmarshaller unmarshaller = getJaxbContext().createUnmarshaller();
-			roEvoDoc = (JAXBElement<RoEvoDocument>) unmarshaller.unmarshal(revisionDocumentStream);
+			roEvoDoc = (JAXBElement<RoEvoDocument>) unmarshaller
+					.unmarshal(revisionDocumentStream);
 		} catch (JAXBException e) {
 			throw new ReaderException(e);
 		}
 
 		RoEvoDocument document = roEvoDoc.getValue();
-		if (document.getBase() != null) {
+		if (document.getBase() != null)
 			base = base.resolve(document.getBase());
-		}
-		Map<URI, Revision> revisions = new LinkedHashMap<URI, Revision>();
+		Map<URI, Revision> revisions = new LinkedHashMap<>();
 		// NOTE: Silly hack to iterate/cast in one go.. will it work?
-		for (VersionableResource verResource : document.getAny().toArray(new VersionableResource[0])) {					
+		for (VersionableResource verResource : document.getAny().toArray(
+				new VersionableResource[0]))
 			parse(base, verResource, revisions);
-		}
 		return revisions;
 	}
 
-	private Revision parse(URI base, VersionableResource verResource, Map<URI, Revision> revisions) throws ReaderException {
+	private Revision parse(URI base, VersionableResource verResource,
+			Map<URI, Revision> revisions) throws ReaderException {
 		URI uri = base.resolve(verResource.getAbout());
 		Revision revision = addOrExisting(uri, revisions);
 
-		
 		if (verResource.getGeneratedAtTime() != null) {
-			XMLGregorianCalendar xmlCal = verResource.getGeneratedAtTime().getValue();
+			XMLGregorianCalendar xmlCal = verResource.getGeneratedAtTime()
+					.getValue();
 			revision.setGeneratedAtTime(xmlCal.toGregorianCalendar());
 		}
-		
+
 		Resource wasRevisionOf = verResource.getWasRevisionOf();
 		if (wasRevisionOf != null) {
 			// TODO Put these in a map
-			Revision r = addOrExisting(base.resolve(wasRevisionOf.getResource()), revisions);			
+			Revision r = addOrExisting(
+					base.resolve(wasRevisionOf.getResource()), revisions);
 			revision.setPreviousRevision(r);
 		}
-		
+
 		if (verResource.getWasChangedBy() != null) {
-			ChangeSpecification changeSpec = verResource.getWasChangedBy().getChangeSpecification();
+			ChangeSpecification changeSpec = verResource.getWasChangedBy()
+					.getChangeSpecification();
 			if (changeSpec.getFromVersion() != null) {
-				Revision r = addOrExisting(base.resolve(changeSpec.getFromVersion().getResource()), revisions);
-				if (revision.getPreviousRevision() != null && revision.getPreviousRevision() != r) {
-					throw new ReaderException("Inconsistent previous revision: " + revision.getPreviousRevision().getIdentifier() + " or " + r.getIdentifier());
-				}
+				Revision r = addOrExisting(
+						base.resolve(changeSpec.getFromVersion().getResource()),
+						revisions);
+				if (revision.getPreviousRevision() != null
+						&& revision.getPreviousRevision() != r)
+					throw new ReaderException(
+							"Inconsistent previous revision: "
+									+ revision.getPreviousRevision()
+											.getIdentifier() + " or "
+									+ r.getIdentifier());
 				revision.setPreviousRevision(r);
 			}
-			
-			if (changeSpec.getType() != null) {
-				revision.setChangeSpecificationType(base.resolve(
-						changeSpec.getType().getResource()));
-			}
-			
+
+			if (changeSpec.getType() != null)
+				revision.setChangeSpecificationType(base.resolve(changeSpec
+						.getType().getResource()));
+
 			for (HasChange hasChange : changeSpec.getHasChange()) {
 				if (hasChange.getAddition() != null) {
 					Set<URI> additions = parse(hasChange.getAddition(), base);
-					// Note: Use addAll in case a buggy XML has multiple <hasChange><Addition>
-					revision.getAdditionOf().addAll(additions);					
+					// Note: Use addAll in case a buggy XML has multiple
+					// <hasChange><Addition>
+					revision.getAdditionOf().addAll(additions);
 				}
 				if (hasChange.getModification() != null) {
-					Set<URI> modifications = parse(hasChange.getModification(), base);
-					revision.getModificationsOf().addAll(modifications);					
+					Set<URI> modifications = parse(hasChange.getModification(),
+							base);
+					revision.getModificationsOf().addAll(modifications);
 				}
 				if (hasChange.getRemoval() != null) {
 					Set<URI> removals = parse(hasChange.getRemoval(), base);
-					revision.getRemovalOf().addAll(removals);					
+					revision.getRemovalOf().addAll(removals);
 				}
 			}
 		}
-			
-		for (Resource assoc : verResource.getWasAttributedTo()) {
-			revision.getWasAttributedTo().add(
-					base.resolve(assoc.getResource()));
-		}
-			
+
+		for (Resource assoc : verResource.getWasAttributedTo())
+			revision.getWasAttributedTo()
+					.add(base.resolve(assoc.getResource()));
+
 		for (Resource assoc : verResource.getHadOriginalSource()) {
 			Revision r = addOrExisting(base.resolve(assoc.getResource()),
 					revisions);
 			revision.getHadOriginalSources().add(r);
 		}
-		
+
 		return revision;
 	}
 
-	private Revision addOrExisting(URI uri,
-			Map<URI, Revision> revisions) {
+	private Revision addOrExisting(URI uri, Map<URI, Revision> revisions) {
 		Revision rev = revisions.get(uri);
-		if (rev != null) {
+		if (rev != null)
 			return rev;
-		}
 		rev = new Revision(uri, null);
 		revisions.put(uri, rev);
 		return rev;
 	}
 
 	private Set<URI> parse(Change addition, URI base) {
-		Set<URI> uris = new LinkedHashSet<URI>();
-		for (Resource r : addition.getRelatedResource()) {
+		Set<URI> uris = new LinkedHashSet<>();
+		for (Resource r : addition.getRelatedResource())
 			uris.add(base.resolve(r.getResource()));
-		}
 		return uris;
 	}
 }

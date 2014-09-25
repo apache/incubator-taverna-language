@@ -23,8 +23,8 @@ public class ComponentActivityParser extends AbstractActivityParser {
 	@Override
 	public boolean canHandlePlugin(URI activityURI) {
 		String activityUriStr = activityURI.toASCIIString();
-		return (activityUriStr.startsWith(activityRavenURI.toASCIIString()) && activityUriStr
-				.endsWith(activityClassName));
+		return activityUriStr.startsWith(activityRavenURI.toASCIIString())
+				&& activityUriStr.endsWith(activityClassName);
 	}
 
 	@Override

@@ -14,10 +14,8 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
 
 /**
  * @author alanrw
- *
  */
 public class ParserState {
-
 	private ScuflParser currentParser;
 	private WorkflowBundle currentWorkflowBundle;
 	private Profile currentProfile;
@@ -25,8 +23,8 @@ public class ParserState {
 	private Processor currentProcessor;
 	private ScuflExtensionParser currentExtensionParser;
 	private Activity currentActivity;
-	
-	private HashMap<Object, WorkflowBean> forwardMapping = new HashMap<Object, WorkflowBean>();
+
+	private HashMap<Object, WorkflowBean> forwardMapping = new HashMap<>();
 
 	public void setCurrentWorkflowBundle(WorkflowBundle wfBundle) {
 		this.currentWorkflowBundle = wfBundle;
@@ -55,14 +53,16 @@ public class ParserState {
 	}
 
 	/**
-	 * @param currentParser the currentParser to set
+	 * @param currentParser
+	 *            the currentParser to set
 	 */
 	public void setCurrentParser(ScuflParser currentParser) {
 		this.currentParser = currentParser;
 	}
 
 	/**
-	 * @param currentWorkflow the currentWorkflow to set
+	 * @param currentWorkflow
+	 *            the currentWorkflow to set
 	 */
 	public void setCurrentWorkflow(Workflow currentWorkflow) {
 		this.currentWorkflow = currentWorkflow;
@@ -87,7 +87,8 @@ public class ParserState {
 	}
 
 	/**
-	 * @param currentProcessor the currentProcessor to set
+	 * @param currentProcessor
+	 *            the currentProcessor to set
 	 */
 	public void setCurrentProcessor(Processor currentProcessor) {
 		this.currentProcessor = currentProcessor;
@@ -101,7 +102,8 @@ public class ParserState {
 	}
 
 	/**
-	 * @param currentExtensionParser the currentExtensionParser to set
+	 * @param currentExtensionParser
+	 *            the currentExtensionParser to set
 	 */
 	public void setCurrentExtensionParser(
 			ScuflExtensionParser currentExtensionParser) {
@@ -116,10 +118,10 @@ public class ParserState {
 	}
 
 	/**
-	 * @param currentActivity the currentActivity to set
+	 * @param currentActivity
+	 *            the currentActivity to set
 	 */
 	public void setCurrentActivity(Activity currentActivity) {
 		this.currentActivity = currentActivity;
 	}
-
 }

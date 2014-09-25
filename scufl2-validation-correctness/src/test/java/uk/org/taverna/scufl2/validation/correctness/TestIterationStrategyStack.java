@@ -4,7 +4,6 @@
 package uk.org.taverna.scufl2.validation.correctness;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
 import java.util.Set;
@@ -17,8 +16,7 @@ import uk.org.taverna.scufl2.api.iterationstrategy.DotProduct;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
 import uk.org.taverna.scufl2.api.iterationstrategy.PortNode;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
-import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.NullFieldProblem;
-import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.PortMissingFromIterationStrategyStackProblem;
+import uk.org.taverna.scufl2.validation.correctness.report.PortMissingFromIterationStrategyStackProblem;
 
 /**
  * @author alanrw

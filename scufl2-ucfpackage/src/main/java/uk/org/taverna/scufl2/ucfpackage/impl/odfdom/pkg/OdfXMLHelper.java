@@ -52,7 +52,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 public class OdfXMLHelper {
-
 	/**
 	 * create an XMLReader
 	 * with a Resolver set to parse content in a ODF Package
@@ -64,7 +63,6 @@ public class OdfXMLHelper {
 	 */
 	public XMLReader newXMLReader(OdfPackage pkg)
 			throws SAXException, ParserConfigurationException {
-
 		// SAXParserFactory factory = new
 		// org.apache.xerces.jaxp.SAXParserFactoryImpl();
 
@@ -100,20 +98,15 @@ public class OdfXMLHelper {
 	 */
 	public void parse(OdfPackage pkg, String path, ContentHandler contentHandler, ErrorHandler errorHandler)
 			throws SAXException, ParserConfigurationException, IOException, IllegalArgumentException, TransformerConfigurationException, TransformerException {
-
-		InputStream is = null;
-		try {
-			is = pkg.getInputStream(path);
+		try (InputStream is = pkg.getInputStream(path)) {
 			XMLReader reader = newXMLReader(pkg);
 
 			String uri = pkg.getBaseURI() + path;
 
-			if (contentHandler != null) {
+			if (contentHandler != null)
 				reader.setContentHandler(contentHandler);
-			}
-			if (errorHandler != null) {
+			if (errorHandler != null)
 				reader.setErrorHandler(errorHandler);
-			}
 
 			InputSource ins = new InputSource(is);
 			ins.setSystemId(uri);
@@ -121,12 +114,6 @@ public class OdfXMLHelper {
 			reader.parse(ins);
 		} catch (Exception ex) {
 			Logger.getLogger(OdfXMLHelper.class.getName()).log(Level.SEVERE, null, ex);
-		} finally {
-			try {
-				is.close();
-			} catch (IOException ex) {
-				Logger.getLogger(OdfXMLHelper.class.getName()).log(Level.SEVERE, null, ex);
-			}
 		}
 	}
 
@@ -146,7 +133,6 @@ public class OdfXMLHelper {
 	public void transform(OdfPackage pkg, String path, String templatePath, String outPath)
 			throws TransformerConfigurationException, TransformerException,
 			IOException, IllegalArgumentException, SAXException, ParserConfigurationException {
-
 		transform(pkg, path, new File(templatePath), new File(outPath));
 	}
 
@@ -166,7 +152,6 @@ public class OdfXMLHelper {
 	public void transform(OdfPackage pkg, String path, Source templateSource, String outPath)
 			throws TransformerConfigurationException, TransformerException,
 			IOException, IllegalArgumentException, SAXException, ParserConfigurationException {
-
 		transform(pkg, path, templateSource, new File(outPath));
 	}
 
@@ -186,7 +171,6 @@ public class OdfXMLHelper {
 	public void transform(OdfPackage pkg, String path, Source templateSource, File out)
 			throws TransformerConfigurationException, TransformerException,
 			IOException, IllegalArgumentException, SAXException, ParserConfigurationException {
-
 		transform(pkg, path, templateSource, new StreamResult(out));
 	}
 
@@ -225,7 +209,6 @@ public class OdfXMLHelper {
 	public void transform(OdfPackage pkg, String path, File template, File out)
 			throws TransformerConfigurationException, TransformerException,
 			IOException, IllegalArgumentException, SAXException, ParserConfigurationException {
-
 		TransformerFactory transformerfactory = TransformerFactory.newInstance();
 
 		Templates templates = transformerfactory.newTemplates(new StreamSource(template));
@@ -248,7 +231,6 @@ public class OdfXMLHelper {
 	public void transform(OdfPackage pkg, String path, File template)
 			throws TransformerConfigurationException, TransformerException,
 			IOException, IllegalArgumentException, SAXException, ParserConfigurationException {
-
 		TransformerFactory transformerfactory = TransformerFactory.newInstance();
 
 		Templates templates = transformerfactory.newTemplates(new StreamSource(template));
@@ -309,7 +291,6 @@ public class OdfXMLHelper {
 			IOException, IllegalArgumentException, SAXException,
 			ParserConfigurationException {
 		try {
-
 			Source source = null;
 			String uri = pkg.getBaseURI() + path;
 			Document doc = pkg.getDom(path);
@@ -331,12 +312,10 @@ public class OdfXMLHelper {
 			}
 			DocumentType doctype = doc.getDoctype();
 			if (doctype != null) {
-				if (doctype.getPublicId() != null) {
+				if (doctype.getPublicId() != null)
 					transformer.setParameter("publicType", doctype.getPublicId());
-				}
-				if (doctype.getSystemId() != null) {
+				if (doctype.getSystemId() != null)
 					transformer.setParameter("systemType", doctype.getSystemId());
-				}
 			}
 
 			transformer.transform(source, result);
@@ -359,37 +338,33 @@ public class OdfXMLHelper {
 	 * @throws SAXException
 	 * @throws ParserConfigurationException
 	 */
+	@SuppressWarnings("null")
 	public void transform(OdfPackage pkg, String path, Templates templates)
 			throws TransformerConfigurationException, TransformerException,
-			IOException, IllegalArgumentException, SAXException, ParserConfigurationException {
-
+			IOException, IllegalArgumentException, SAXException,
+			ParserConfigurationException {
+		final boolean useDom = pkg.hasDom(path);
 		Result result = null;
 		ByteArrayOutputStream baos = null;
 
-		if (pkg.hasDom(path)) {
+		if (useDom)
 			result = new DOMResult();
-		} else {
+		else {
 			baos = new ByteArrayOutputStream();
 			result = new StreamResult(baos);
 		}
 
 		transform(pkg, path, templates, result);
 
-		if (pkg.hasDom(path)) {
-			try {
-				pkg.insert((Document) ((DOMResult) result).getNode(), path, null);
-			} catch (Exception ex) {
-				Logger.getLogger(OdfXMLHelper.class.getName()).log(Level.SEVERE, null, ex);
-			}
-		} else {
-			try {
-				byte[] data = baos.toByteArray();
-				pkg.insert(data, path, "text/xml");
-			} catch (Exception ex) {
-				Logger.getLogger(OdfXMLHelper.class.getName()).log(Level.SEVERE, null, ex);
-			}
+		try {
+			if (useDom)
+				pkg.insert((Document) ((DOMResult) result).getNode(), path,
+						null);
+			else
+				pkg.insert(baos.toByteArray(), path, "text/xml");
+		} catch (Exception ex) {
+			Logger.getLogger(OdfXMLHelper.class.getName()).log(Level.SEVERE,
+					null, ex);
 		}
-
 	}
 }
-

@@ -13,10 +13,8 @@ import uk.org.taverna.scufl2.api.common.WorkflowBean;
  * include when and who did the revision.
  * 
  * @author Stian Soiland-Reyes
- * 
  */
 public interface Revisioned extends WorkflowBean {
-
 	/**
 	 * Get the current Revision metadata.
 	 * <p>
@@ -25,7 +23,7 @@ public interface Revisioned extends WorkflowBean {
 	 * 
 	 * @return
 	 */
-	public Revision getCurrentRevision();
+	Revision getCurrentRevision();
 
 	/**
 	 * Set the current Revision.
@@ -36,7 +34,7 @@ public interface Revisioned extends WorkflowBean {
 	 * @param currentRevision
 	 *            The {@link Revision} to be set
 	 */
-	public void setCurrentRevision(Revision currentRevision);
+	void setCurrentRevision(Revision currentRevision);
 
 	/**
 	 * Make a new Revision to mark structural changes to this workflow bean.
@@ -49,12 +47,11 @@ public interface Revisioned extends WorkflowBean {
 	 * {@link Revision#getPreviousRevision()} and
 	 * {@link Revision#getGeneratedAtTime()} on the new revision will match the
 	 * current {@link GregorianCalendar} by default.
-	 * </p>
 	 * 
 	 * @return The new {@link #getCurrentRevision()}, for setting any further
 	 *         details.
 	 */
-	public Revision newRevision();
+	Revision newRevision();
 
 	/**
 	 * Make a new Revision to mark structural changes to this workflow bean with
@@ -66,14 +63,13 @@ public interface Revisioned extends WorkflowBean {
 	 * <p>
 	 * Note, unlike the convenience method {@link #newRevision()} this method
 	 * will not update {@link Revision#getGeneratedAtTime()}.
-	 * </p>
 	 * 
 	 * @param revisionIdentifier
 	 *            The new workflow identifier
 	 * @return The new {@link #getCurrentRevision()}, for setting any further
 	 *         details.
 	 */
-	public Revision newRevision(URI revisionIdentifier);
+	Revision newRevision(URI revisionIdentifier);
 
 	/**
 	 * Set the identifier.
@@ -88,7 +84,7 @@ public interface Revisioned extends WorkflowBean {
 	 * @param workflowIdentifier
 	 *            the identifier
 	 */
-	public void setIdentifier(URI workflowIdentifier);
+	void setIdentifier(URI workflowIdentifier);
 
 	/**
 	 * Returns the identifier of this bean.
@@ -97,9 +93,7 @@ public interface Revisioned extends WorkflowBean {
 	 * {@link #getCurrentRevision()}.
 	 * 
 	 * @see {@link #setIdentifier(URI)}
-	 * 
 	 * @return the identifier
 	 */
-	public URI getIdentifier();
-
+	URI getIdentifier();
 }

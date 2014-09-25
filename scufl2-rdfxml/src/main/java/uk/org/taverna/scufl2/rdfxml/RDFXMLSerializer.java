@@ -1,5 +1,11 @@
 package uk.org.taverna.scufl2.rdfxml;
 
+import static java.lang.Boolean.TRUE;
+import static java.util.logging.Level.FINE;
+import static java.util.logging.Level.WARNING;
+import static javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI;
+import static javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
@@ -7,10 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -73,16 +77,12 @@ import uk.org.taverna.scufl2.rdfxml.jaxb.WorkflowDocument;
 import uk.org.taverna.scufl2.ucfpackage.UCFPackage;
 
 public class RDFXMLSerializer {
-
 	private static final String DOT_RDF = ".rdf";
-
 	protected static final URI OA = URI.create("http://www.w3.org/ns/oa#");
 	protected static final URI PAV = URI.create("http://purl.org/pav/");
-
 	private static boolean warnedOnce = false;
 	
 	public class ProfileSerialisationVisitor implements Visitor {
-
 		private uk.org.taverna.scufl2.rdfxml.jaxb.Activity activity;
 		private final ProfileDocument doc;
 		private uk.org.taverna.scufl2.rdfxml.jaxb.Profile profileElem;
@@ -119,7 +119,7 @@ public class RDFXMLSerializer {
 			try {
                 bundle.addResource(node.getJsonAsString(), bundlePath, "application/json");
             } catch (IOException e) {
-                logger.log(Level.WARNING, "Can't save JSON to " + bundlePath, e);
+                logger.log(WARNING, "Can't save JSON to " + bundlePath, e);
             }
 			configuration.setAbout(configUri.toString());
 			
@@ -133,9 +133,8 @@ public class RDFXMLSerializer {
 		}
 
 		private GranularPortDepth granularPortDepth(Integer integer) {
-			if (integer == null) {
+			if (integer == null)
 				return null;
-			}
 			GranularPortDepth p = objectFactory.createGranularPortDepth();
 			p.setValue(integer);
 			p.setDatatype(p.getDatatype());
@@ -171,9 +170,8 @@ public class RDFXMLSerializer {
 		}
 
 		private PortDepth portDepth(Integer integer) {
-			if (integer == null) {
+			if (integer == null)
 				return null;
-			}
 			PortDepth p = objectFactory.createPortDepth();
 			p.setValue(integer);
 			p.setDatatype(p.getDatatype());
@@ -211,7 +209,6 @@ public class RDFXMLSerializer {
 					.createProcessorBindingInputPortBinding();
 			b.setInputPortBinding(inputBinding);
 			processorBindingElem.getInputPortBinding().add(b);
-
 		}
 
 		private void processorOutputPortBinding(ProcessorOutputPortBinding node) {
@@ -242,25 +239,24 @@ public class RDFXMLSerializer {
 
 		@Override
 		public boolean visit(WorkflowBean node) {
-			if (node instanceof Profile) {
+			if (node instanceof Profile)
 				profile((Profile) node);
-			} else if (node instanceof Activity) {
+			else if (node instanceof Activity)
 				activity((Activity) node);
-			} else if (node instanceof InputActivityPort) {
+			else if (node instanceof InputActivityPort)
 				inputActivityPort((InputActivityPort) node);
-			} else if (node instanceof OutputActivityPort) {
+			else if (node instanceof OutputActivityPort)
 				outputActivityPort((OutputActivityPort) node);
-			} else if (node instanceof ProcessorBinding) {
+			else if (node instanceof ProcessorBinding)
 				processorBinding((ProcessorBinding) node);
-			} else if (node instanceof ProcessorInputPortBinding) {
+			else if (node instanceof ProcessorInputPortBinding)
 				processorInputPortBinding((ProcessorInputPortBinding) node);
-			} else if (node instanceof ProcessorOutputPortBinding) {
+			else if (node instanceof ProcessorOutputPortBinding)
 				processorOutputPortBinding((ProcessorOutputPortBinding) node);
-			} else if (node instanceof Configuration) {
+			else if (node instanceof Configuration)
 				configuration((Configuration) node);
-			} else {
+			else
 				throw new IllegalStateException("Unexpected node " + node);
-			}
 			return true;
 		}
 
@@ -273,14 +269,13 @@ public class RDFXMLSerializer {
 		public boolean visitLeave(WorkflowBean node) {
 			return true;
 		}
-
 	}
 
 	public class WorkflowSerialisationVisitor implements Visitor {
-
 		private final uk.org.taverna.scufl2.rdfxml.jaxb.Workflow workflow;
 		private uk.org.taverna.scufl2.rdfxml.jaxb.Processor proc;
 		private Workflow wf;
+		@SuppressWarnings("unused")
 		private uk.org.taverna.scufl2.rdfxml.jaxb.DispatchStack dispatchStack;
 		private uk.org.taverna.scufl2.rdfxml.jaxb.IterationStrategyStack iterationStrategyStack;
 		private IterationStrategies iterationStrategies;
@@ -292,9 +287,8 @@ public class RDFXMLSerializer {
 		}
 
 		private GranularPortDepth makeGranularPortDepth(Integer granularDepth) {
-			if (granularDepth == null) {
+			if (granularDepth == null)
 				return null;
-			}
 			GranularPortDepth portDepth = objectFactory
 					.createGranularPortDepth();
 			portDepth.setValue(granularDepth);
@@ -303,9 +297,8 @@ public class RDFXMLSerializer {
 		}
 
 		private PortDepth makePortDepth(Integer depth) {
-			if (depth == null) {
+			if (depth == null)
 				return null;
-			}
 			PortDepth portDepth = objectFactory.createPortDepth();
 			portDepth.setValue(depth);
 			portDepth.setDatatype(portDepth.getDatatype());
@@ -505,7 +498,6 @@ public class RDFXMLSerializer {
 			// TODO: Datalinks
 
 			return true;
-
 		}
 
 		@Override
@@ -515,13 +507,11 @@ public class RDFXMLSerializer {
 
 		@Override
 		public boolean visitLeave(WorkflowBean node) {
-			if (node instanceof IterationStrategyTopNode) {
+			if (node instanceof IterationStrategyTopNode)
 				// Actually for any Cross/Dot product
 				productStack.pop();
-			}
 			return true;
 		}
-
 	}
 
 	protected synchronized static JAXBContext getJAxbContextStatic()
@@ -539,15 +529,13 @@ public class RDFXMLSerializer {
 		URI wfBundleURI = uriTools.uriForBean(wfBundle);
 		URI annUri = uriTools.uriForBean(ann);
 		URI bodyURI = ann.getBody();
-		if (bodyURI == null || bodyURI.isAbsolute()) {
+		if (bodyURI == null || bodyURI.isAbsolute())
 			// Workaround with separate file for the annotation alone
 			bodyURI = annUri.resolve(uriTools.validFilename(ann.getName()) + DOT_RDF);
-		}
 		URI pathUri = uriTools.relativePath(wfBundleURI, bodyURI);			
-		if (ann.getBody() == null || ann.getBody().equals(wfBundleURI.resolve(pathUri))) {
+		if (ann.getBody() == null || ann.getBody().equals(wfBundleURI.resolve(pathUri)))
 			// Set the relative path
 			ann.setBody(pathUri);
-		}
 
 		// TODO: Add annotation to RO manifest
 		
@@ -612,7 +600,7 @@ public class RDFXMLSerializer {
 
 	private JAXBContext jaxbContext;
 
-	private Map<WorkflowBean, URI> seeAlsoUris = new HashMap<WorkflowBean, URI>();
+	private Map<WorkflowBean, URI> seeAlsoUris = new HashMap<>();
 	private static JAXBContext jaxbContextStatic;
 	private static Logger logger = Logger.getLogger(RDFXMLSerializer.class
 			.getCanonicalName());
@@ -624,9 +612,8 @@ public class RDFXMLSerializer {
 	}
 
 	public JAXBContext getJaxbContext() throws JAXBException {
-		if (jaxbContext == null) {
+		if (jaxbContext == null)
 			return getJAxbContextStatic();
-		}
 		return jaxbContext;
 	}
 
@@ -638,14 +625,13 @@ public class RDFXMLSerializer {
 
 			if (isUsingSchema()) {
 				SchemaFactory schemaFactory = SchemaFactory
-						.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+						.newInstance(W3C_XML_SCHEMA_NS_URI);
 				Schema schema = schemaFactory.newSchema(getClass().getResource(
 						schemaPath));
 				// FIXME: re-enable schema
 				marshaller.setSchema(schema);
 			}
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,
-					Boolean.TRUE);
+			marshaller.setProperty(JAXB_FORMATTED_OUTPUT, TRUE);
 			marshaller
 					.setProperty(
 							"jaxb.schemaLocation",
@@ -659,7 +645,6 @@ public class RDFXMLSerializer {
 		}
 		setPrefixMapper(marshaller);
 		return marshaller;
-
 	}
 
 	public WorkflowBundle getWfBundle() {
@@ -673,8 +658,7 @@ public class RDFXMLSerializer {
 	protected ProfileDocument makeProfile(Profile pf, URI path) {
 		ProfileDocument doc = objectFactory.createProfileDocument();
 
-		objectFactory
-				.createProfile();
+		objectFactory.createProfile();
 		pf.accept(new ProfileSerialisationVisitor(doc) {
 		});
 		return doc;
@@ -682,12 +666,10 @@ public class RDFXMLSerializer {
 
 	protected uk.org.taverna.scufl2.rdfxml.jaxb.Workflow makeWorkflow(
 			Workflow wf, URI documentPath) {
-
 		uk.org.taverna.scufl2.rdfxml.jaxb.Workflow workflow = objectFactory
 				.createWorkflow();
 		wf.accept(new WorkflowSerialisationVisitor(workflow) {
 		});
-
 		return workflow;
 	}
 
@@ -710,16 +692,14 @@ public class RDFXMLSerializer {
 			SeeAlsoType seeAlsoElem = objectFactory.createSeeAlsoType();
 			seeAlsoElem.setAbout(uriTools.relativeUriForBean(wf, wfBundle)
 					.toASCIIString());
-			;
 
 			if (seeAlsoUris.containsKey(wf)) {
 				SeeAlso seeAlso = rdfsObjectFactory.createSeeAlso();
 				seeAlso.setResource(seeAlsoUris.get(wf).toASCIIString());
 				seeAlsoElem.setSeeAlso(seeAlso);
-			} else {
+			} else
 				logger.warning("Can't find bundle URI for workflow document "
 						+ wf.getName());
-			}
 
 			wfElem.setWorkflow(seeAlsoElem);
 			bundle.getWorkflow().add(wfElem);
@@ -737,16 +717,14 @@ public class RDFXMLSerializer {
 			SeeAlsoType seeAlsoElem = objectFactory.createSeeAlsoType();
 			seeAlsoElem.setAbout(uriTools.relativeUriForBean(pf, wfBundle)
 					.toASCIIString());
-			;
 
 			if (seeAlsoUris.containsKey(pf)) {
 				SeeAlso seeAlso = rdfsObjectFactory.createSeeAlso();
 				seeAlso.setResource(seeAlsoUris.get(pf).toASCIIString());
 				seeAlsoElem.setSeeAlso(seeAlso);
-			} else {
+			} else
 				logger.warning("Can't find bundle URI for profile document "
 						+ pf.getName());
-			}
 
 			wfElem.setProfile(seeAlsoElem);
 			bundle.getProfile().add(wfElem);
@@ -758,9 +736,8 @@ public class RDFXMLSerializer {
 			}
 		}
 
-		for (Annotation ann : wfBundle.getAnnotations()) {
+		for (Annotation ann : wfBundle.getAnnotations())
 			annotation(ann);
-		}
 		
 		return bundle;
 	}
@@ -772,11 +749,9 @@ public class RDFXMLSerializer {
 		URI wfUri = uriTools.relativeUriForBean(pf, wfBundle);
 		doc.setBase(uriTools.relativePath(path, wfUri).toASCIIString());
 
-		JAXBElement<RDF> element = rdfObjectFactory
-				.createRDF(doc);
+		JAXBElement<RDF> element = rdfObjectFactory.createRDF(doc);
 		getMarshaller().marshal(element, outputStream);
 		seeAlsoUris.put(pf, path);
-
 	}
 
 	private Resource resource(String uri) {
@@ -793,19 +768,21 @@ public class RDFXMLSerializer {
 		boolean setPrefixMapper = false;
 
 		try {
-			// This only works with JAXB RI, in which case we can set the
-			// namespace
-			// prefix mapper
+			/*
+			 * This only works with JAXB RI, in which case we can set the
+			 * namespace prefix mapper
+			 */
 			Class.forName("com.sun.xml.bind.marshaller.NamespacePrefixMapper");
 			marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper",
 					new NamespacePrefixMapperJAXB_RI());
-			// Note: A similar mapper for the built-in java
-			// (com.sun.xml.bind.internal.namespacePrefixMapper)
-			// is no longer included here, as it will not (easily) compile with
-			// Maven.
+			/*
+			 * Note: A similar mapper for the built-in java
+			 * (com.sun.xml.bind.internal.namespacePrefixMapper) is no longer
+			 * included here, as it will not (easily) compile with Maven.
+			 */
 			setPrefixMapper = true;
 		} catch (Exception e) {
-			logger.log(Level.FINE, "Can't find NamespacePrefixMapper", e);
+			logger.log(FINE, "Can't find NamespacePrefixMapper", e);
 		}
 
 		if (!setPrefixMapper && ! warnedOnce) {
@@ -824,9 +801,8 @@ public class RDFXMLSerializer {
 	}
 
 	private Type type(Typed typed) {
-		if (typed.getType() == null) {
+		if (typed.getType() == null)
 			return null;
-		}
 		Type t = rdfObjectFactory.createType();
 		t.setResource(typed.getType().toASCIIString());
 		return t;
@@ -840,8 +816,7 @@ public class RDFXMLSerializer {
 		doc.getAny().add(bundle);
 
 		doc.setBase(path.relativize(URI.create("./")).toASCIIString());
-		JAXBElement<RDF> element = rdfObjectFactory
-				.createRDF(doc);
+		JAXBElement<RDF> element = rdfObjectFactory.createRDF(doc);
 
 		getMarshaller().marshal(element, outputStream);
 		seeAlsoUris.put(wfBundle, path);
@@ -857,10 +832,8 @@ public class RDFXMLSerializer {
 		URI wfUri = uriTools.relativeUriForBean(wf, wfBundle);
 		doc.setBase(uriTools.relativePath(path, wfUri).toASCIIString());
 
-		JAXBElement<RDF> element = rdfObjectFactory
-				.createRDF(doc);
+		JAXBElement<RDF> element = rdfObjectFactory.createRDF(doc);
 		getMarshaller().marshal(element, outputStream);
 		seeAlsoUris.put(wf, path);
 	}
-
 }

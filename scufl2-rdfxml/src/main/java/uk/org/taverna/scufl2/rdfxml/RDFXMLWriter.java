@@ -23,7 +23,6 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.ucfpackage.UCFPackage;
 
 public class RDFXMLWriter implements WorkflowBundleWriter {
-
 	private static final String WF = "wf-";
 	private static final String REVISIONS = "-revisions";
 	protected static final String RDF = ".rdf";
@@ -64,24 +63,20 @@ public class RDFXMLWriter implements WorkflowBundleWriter {
 			throws IOException, WriterException {
 		//UCFPackage ucfPackage = new UCFPackage();
 		UCFPackage ucfPackage = wfBundle.getResources();		
-		if (ucfPackage.getPackageMediaType() == null) {
+		if (ucfPackage.getPackageMediaType() == null)
 			ucfPackage
 				.setPackageMediaType(APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE);
-		}
 
 		RDFXMLSerializer serializer = new RDFXMLSerializer(wfBundle);
 		
 		for (Workflow wf : wfBundle.getWorkflows()) {
 			String path = WORKFLOW + uriTools.validFilename(wf.getName()) + RDF;
 
-			OutputStream outputStream = ucfPackage
-					.addResourceUsingOutputStream(path, APPLICATION_RDF_XML);
-			try {
+			try (OutputStream outputStream = ucfPackage
+					.addResourceUsingOutputStream(path, APPLICATION_RDF_XML)) {
 				serializer.workflowDoc(outputStream, wf, URI.create(path));
 			} catch (JAXBException e) {
 				throw new WriterException("Can't generate " + path, e);
-			} finally {
-				outputStream.close();
 			}
 			
 			path = HISTORY + WF +  
@@ -91,51 +86,45 @@ public class RDFXMLWriter implements WorkflowBundleWriter {
 
 		for (Profile pf : wfBundle.getProfiles()) {
 			String path = PROFILE + uriTools.validFilename(pf.getName()) + RDF;
-			OutputStream outputStream = ucfPackage
-					.addResourceUsingOutputStream(path, APPLICATION_RDF_XML);
-			try {
+			try (OutputStream outputStream = ucfPackage
+					.addResourceUsingOutputStream(path, APPLICATION_RDF_XML)) {
 				serializer.profileDoc(outputStream, pf, URI.create(path));
 			} catch (JAXBException e) {
 				throw new WriterException("Can't generate " + path, e);
-			} finally {
-				outputStream.close();
 			}
 			path = HISTORY + "pf-" +  
 					uriTools.validFilename(pf.getName()) + REVISIONS + RDF;
 			addRevisions(pf, path, wfBundle);
-
 		}
 
-		OutputStream outputStream = ucfPackage.addResourceUsingOutputStream(
-				WORKFLOW_BUNDLE_RDF, APPLICATION_RDF_XML);
-		try {
+		try (OutputStream outputStream = ucfPackage
+				.addResourceUsingOutputStream(WORKFLOW_BUNDLE_RDF,
+						APPLICATION_RDF_XML)) {
 			serializer.workflowBundleDoc(outputStream,
 					URI.create(WORKFLOW_BUNDLE_RDF));
 		} catch (JAXBException e) {
 			throw new WriterException("Can't generate " + WORKFLOW_BUNDLE_RDF,
 					e);
-		} finally {
-			outputStream.close();
 		}
 		
-		if (ucfPackage.getPackageMediaType().equals(APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE)) {
-			ucfPackage.setRootFile(WORKFLOW_BUNDLE_RDF, WORKFLOW_BUNDLE_VERSION);
-		}
+		if (ucfPackage.getPackageMediaType().equals(
+				APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE))
+			ucfPackage
+					.setRootFile(WORKFLOW_BUNDLE_RDF, WORKFLOW_BUNDLE_VERSION);
 
 		String path = HISTORY + "wfbundle" + REVISIONS + RDF;
 		addRevisions(wfBundle, path, wfBundle);
 		
 		return ucfPackage;
-
 	}
 
 
 	protected void addRevisions(Revisioned revisioned, String path, WorkflowBundle wfBundle) throws WriterException {
+		@SuppressWarnings("unused")
 		URI uriBase = uriTools.uriForBean(wfBundle).resolve(path);		
 		Revision currentRevision = revisioned.getCurrentRevision();
-		if (currentRevision == null) {
+		if (currentRevision == null)
 			return;
-		}
 //		try {
 //			wfBundle.getResources()
 //					.addResource(visitor.getDoc(), path, APPLICATION_RDF_XML);
@@ -150,5 +139,4 @@ public class RDFXMLWriter implements WorkflowBundleWriter {
 		UCFPackage ucfPackage = makeUCFPackage(wfBundle);
 		ucfPackage.save(output);
 	}
-
 }

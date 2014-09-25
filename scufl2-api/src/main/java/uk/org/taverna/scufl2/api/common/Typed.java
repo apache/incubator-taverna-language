@@ -8,13 +8,12 @@ import java.net.URI;
  * @author Stian Soiland-Reyes
  */
 public interface Typed extends WorkflowBean {
-
 	/**
 	 * Returns the type of the {@link WorkflowBean}.
 	 * 
 	 * @return the type of the <code>WorkflowBean</code>
 	 */
-	public URI getType();
+	URI getType();
 
 	/**
 	 * Sets the type of the {@link WorkflowBean}.
@@ -22,6 +21,5 @@ public interface Typed extends WorkflowBean {
 	 * @param type
 	 *            the type of the <code>WorkflowBean</code>.
 	 */
-	public void setType(URI type);
-
+	void setType(URI type);
 }

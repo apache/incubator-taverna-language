@@ -41,13 +41,10 @@ import uk.org.taverna.scufl2.ucfpackage.UCFPackage;
  * 
  * @author Alan R Williams
  * @author Stian Soiland-Reyes
- * 
  */
 public class WorkflowBundle extends AbstractRevisioned implements WorkflowBean,
 		Named, Root, Revisioned {
-
 	public static final String APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE = "application/vnd.taverna.scufl2.workflow-bundle";
-	
 	public static final URI WORKFLOW_BUNDLE_ROOT = URI
 			.create("http://ns.taverna.org.uk/2010/workflowBundle/");
 
@@ -55,13 +52,12 @@ public class WorkflowBundle extends AbstractRevisioned implements WorkflowBean,
 		return WORKFLOW_BUNDLE_ROOT.resolve(UUID.randomUUID().toString() + "/");
 	}
 
-    private NamedSet<Annotation> annotations = new NamedSet<Annotation>();
-	private final NamedSet<Profile> profiles = new NamedSet<Profile>();
-	private final NamedSet<Workflow> workflows = new NamedSet<Workflow>();
+    private final NamedSet<Annotation> annotations = new NamedSet<>();
+	private final NamedSet<Profile> profiles = new NamedSet<>();
+	private final NamedSet<Workflow> workflows = new NamedSet<>();
 	private Workflow mainWorkflow;
 	private Profile mainProfile;
 	private UCFPackage resources;
-
 
     /**
      * Construct a new WorkflowBundle with a randomly generated name.
@@ -90,17 +86,14 @@ public class WorkflowBundle extends AbstractRevisioned implements WorkflowBean,
 	@Override
 	public boolean accept(Visitor visitor) {
 		if (visitor.visitEnter(this)) {
-			List<Iterable<? extends WorkflowBean>> children = new ArrayList<Iterable<? extends WorkflowBean>>();
+			List<Iterable<? extends WorkflowBean>> children = new ArrayList<>();
 			children.add(getWorkflows());
 			children.add(getProfiles());
 			children.add(getAnnotations());
-			outer: for (Iterable<? extends WorkflowBean> it : children) {
-				for (WorkflowBean bean : it) {
-					if (!bean.accept(visitor)) {
+			outer: for (Iterable<? extends WorkflowBean> it : children)
+				for (WorkflowBean bean : it)
+					if (!bean.accept(visitor))
 						break outer;
-					}
-				}
-			}
 		}
 		return visitor.visitLeave(this);
 	}
@@ -118,16 +111,17 @@ public class WorkflowBundle extends AbstractRevisioned implements WorkflowBean,
 	}
 
 	public UCFPackage getResources() {
-		if (resources == null) {
-			try {
+		try {
+			if (resources == null) {
 				resources = new UCFPackage();
-				resources.setPackageMediaType(APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE);
-			} catch (IOException e) {
-				throw new IllegalStateException(
-						"Can't create new UCF package, no access to tmpdir?", e);
+				resources
+						.setPackageMediaType(APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE);
 			}
+			return resources;
+		} catch (IOException e) {
+			throw new IllegalStateException(
+					"Can't create new UCF package, no access to tmpdir?", e);
 		}
-		return resources;
 	}
 
 	@Override
@@ -140,16 +134,14 @@ public class WorkflowBundle extends AbstractRevisioned implements WorkflowBean,
 	}
 
 	public void setMainProfile(Profile mainProfile) {
-		if (mainProfile != null) {
+		if (mainProfile != null)
 			getProfiles().add(mainProfile);
-		}
 		this.mainProfile = mainProfile;
 	}
 
 	public void setMainWorkflow(Workflow mainWorkflow) {
-		if (mainWorkflow != null) {
+		if (mainWorkflow != null)
 			getWorkflows().add(mainWorkflow);
-		}
 		this.mainWorkflow = mainWorkflow;
 	}
 
@@ -198,7 +190,6 @@ public class WorkflowBundle extends AbstractRevisioned implements WorkflowBean,
 	 * bean is considered equal only if its name matches and its parents are
 	 * (recursively) equal. You may however detach the children by setting their
 	 * parents to <code>null</code> and check for equality in isolation.
-	 * 
 	 */
 	@Override
 	public boolean equals(Object obj) {
@@ -207,18 +198,7 @@ public class WorkflowBundle extends AbstractRevisioned implements WorkflowBean,
 
 	@Override
 	public int hashCode() {
-		// TODO: Is there a way to call Object.hashCode() from here?
-		// Our super is hiding it.
-
-		// Possible workaround:
-		/*
-		 * private int hashCode = new Object().hashCode();
-		 * 
-		 * @Override public int hashCode() { return hashCode; }
-		 */
-
-		// We're overriding hashCode() as we also override equals(Object)  
-		return super.hashCode();
+		return System.identityHashCode(this);
 	}
 
 	public NamedSet<Annotation> getAnnotations() {
@@ -238,12 +218,10 @@ public class WorkflowBundle extends AbstractRevisioned implements WorkflowBean,
 		cloneBundle.setMainWorkflow(cloning.cloneIfNotInCache(getMainWorkflow()));
 		cloneBundle.setMainProfile(cloning.cloneIfNotInCache(getMainProfile()));
 		cloneBundle.setResources(getResources().clone());
-		
 	}
 
 	@Override
 	protected URI getIdentifierRoot() {
 		return WORKFLOW_BUNDLE_ROOT;
 	}
-
 }

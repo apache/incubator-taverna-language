@@ -28,10 +28,12 @@ class DummyWorkflow extends Workflow {
 	private NamedSet<OutputWorkflowPort> outputPorts = null;
 	private NamedSet<Processor> processors = null;
 	private Revision currentRevision = null;
+	@Override
 	public Revision getCurrentRevision() {
 		return currentRevision;
 	}
 
+	@Override
 	public void setCurrentRevision(Revision currentRevision) {
 		this.currentRevision = currentRevision;
 	}
@@ -48,6 +50,7 @@ class DummyWorkflow extends Workflow {
 		super.setParent(parent);
 	}
 	
+	@Override
 	public WorkflowBundle getParent() {
 		return dummyParent;
 	}
@@ -64,6 +67,7 @@ class DummyWorkflow extends Workflow {
 		/**
 	 * @return the inputPorts
 	 */
+	@Override
 	public NamedSet<InputWorkflowPort> getInputPorts() {
 		return inputPorts;
 	}
@@ -71,6 +75,7 @@ class DummyWorkflow extends Workflow {
 	/**
 	 * @return the outputPorts
 	 */
+	@Override
 	public NamedSet<OutputWorkflowPort> getOutputPorts() {
 		return outputPorts;
 	}
@@ -122,6 +127,7 @@ class DummyWorkflow extends Workflow {
 	/**
 	 * @return the dataLinks
 	 */
+	@Override
 	public TreeSet<DataLink> getDataLinks() {
 		return dataLinks;
 	}
@@ -136,6 +142,7 @@ class DummyWorkflow extends Workflow {
 	/**
 	 * @return the controlLinks
 	 */
+	@Override
 	public TreeSet<ControlLink> getControlLinks() {
 		return controlLinks;
 	}
@@ -150,6 +157,7 @@ class DummyWorkflow extends Workflow {
 	/**
 	 * @return the processors
 	 */
+	@Override
 	public NamedSet<Processor> getProcessors() {
 		return processors;
 	}

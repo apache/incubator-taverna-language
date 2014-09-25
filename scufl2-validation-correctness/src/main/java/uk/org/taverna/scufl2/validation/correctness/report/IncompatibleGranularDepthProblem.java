@@ -5,18 +5,16 @@ import uk.org.taverna.scufl2.validation.ValidationProblem;
 
 /**
  * @author alanrw
- *
  */
 public class IncompatibleGranularDepthProblem extends ValidationProblem {
-
 	private final Integer depth;
 	private final Integer granularDepth;
 
 	public IncompatibleGranularDepthProblem(AbstractGranularDepthPort bean,
 			Integer depth, Integer granularDepth) {
 		super(bean);
-				this.depth = depth;
-				this.granularDepth = granularDepth;
+		this.depth = depth;
+		this.granularDepth = granularDepth;
 	}
 
 	/**
@@ -32,9 +30,10 @@ public class IncompatibleGranularDepthProblem extends ValidationProblem {
 	public Integer getGranularDepth() {
 		return granularDepth;
 	}
-	
-	public String toString() {
-		return (getBean() + " has depth " + depth + " and granular depth " + granularDepth);
-	}
 
+	@Override
+	public String toString() {
+		return getBean() + " has depth " + depth + " and granular depth "
+				+ granularDepth;
+	}
 }

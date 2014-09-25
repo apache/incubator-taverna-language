@@ -4,21 +4,17 @@
 package uk.org.taverna.scufl2.validation.correctness;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.common.NamedSet;
-import uk.org.taverna.scufl2.api.container.WorkflowBundle;
-import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.profiles.Profile;
-import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.NullFieldProblem;
-import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.OutOfScopeValueProblem;
+import uk.org.taverna.scufl2.validation.correctness.report.NullFieldProblem;
+import uk.org.taverna.scufl2.validation.correctness.report.OutOfScopeValueProblem;
 
 /**
  * @author alanrw

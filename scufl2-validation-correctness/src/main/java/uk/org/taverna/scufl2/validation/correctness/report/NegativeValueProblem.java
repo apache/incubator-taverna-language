@@ -13,9 +13,8 @@ public class NegativeValueProblem extends ValidationProblem {
 	public NegativeValueProblem(WorkflowBean bean, String fieldName,
 			Integer fieldValue) {
 		super(bean);
-				this.fieldName = fieldName;
-				this.fieldValue = fieldValue;
-		
+		this.fieldName = fieldName;
+		this.fieldValue = fieldValue;
 	}
 
 	/**
@@ -31,8 +30,9 @@ public class NegativeValueProblem extends ValidationProblem {
 	public Integer getFieldValue() {
 		return fieldValue;
 	}
-	
+
+	@Override
 	public String toString() {
-		return (getBean() + " has " + fieldName + " of value " + fieldValue);
+		return getBean() + " has " + fieldName + " of value " + fieldValue;
 	}
 }

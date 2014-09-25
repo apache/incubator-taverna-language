@@ -9,6 +9,4 @@ import uk.org.taverna.scufl2.api.common.Child;
  */
 public interface ActivityPort extends DepthPort, Child<Activity> {
 
-	
-	
 }

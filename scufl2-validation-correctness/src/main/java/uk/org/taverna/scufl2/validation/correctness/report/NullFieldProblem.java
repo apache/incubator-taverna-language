@@ -11,7 +11,7 @@ public class NullFieldProblem extends ValidationProblem {
 
 	public NullFieldProblem(WorkflowBean bean, String fieldName) {
 		super(bean);
-		this.fieldName = fieldName;	
+		this.fieldName = fieldName;
 	}
 
 	/**
@@ -20,8 +20,9 @@ public class NullFieldProblem extends ValidationProblem {
 	public String getFieldName() {
 		return fieldName;
 	}
-	
+
+	@Override
 	public String toString() {
-		return (getBean() + " has a null " + fieldName);
+		return getBean() + " has a null " + fieldName;
 	}
 }

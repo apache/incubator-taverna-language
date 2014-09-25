@@ -16,8 +16,8 @@ import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
-import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.MismatchConfigurableTypeProblem;
-import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.NullFieldProblem;
+import uk.org.taverna.scufl2.validation.correctness.report.MismatchConfigurableTypeProblem;
+import uk.org.taverna.scufl2.validation.correctness.report.NullFieldProblem;
 
 
 /**

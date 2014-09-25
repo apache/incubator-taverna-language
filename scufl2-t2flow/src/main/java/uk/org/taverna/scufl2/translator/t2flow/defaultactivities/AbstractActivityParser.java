@@ -14,9 +14,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Element;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.common.URITools;
@@ -31,16 +28,15 @@ import uk.org.taverna.scufl2.translator.t2flow.T2Parser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityPortDefinitionBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ActivityPortDefinitionBean.MimeTypes;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
-//import static uk.org.taverna.scufl2.api.common.Scufl2Tools.Scufl2Tools.PORT_DEFINITION;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public abstract class AbstractActivityParser implements T2Parser {
-
 	public static URI MEDIATYPES_URI = URI.create("http://purl.org/NET/mediatypes/");
-
 	@Deprecated
 	public static URI PORT_DEFINITION = Scufl2Tools.PORT_DEFINITION;
 	
+	@SuppressWarnings("unused")
 	private ThreadLocal<ParserState> parserState;
 
 	public <ConfigType> ConfigType unmarshallConfig(T2FlowParser t2FlowParser,
@@ -48,76 +44,72 @@ public abstract class AbstractActivityParser implements T2Parser {
 			throws ReaderException {
 		Object config = configBean.getAny();
 		if (config instanceof JAXBElement) {
-			JAXBElement jaxbElement = (JAXBElement) config;
-			if (! configType.isInstance((jaxbElement.getValue()))) {
-				throw new ReaderException("Unexpected config type: " + 
-						jaxbElement.getValue().getClass() + ", expected " + configType);
-			}
+			JAXBElement<?> jaxbElement = (JAXBElement<?>) config;
+			if (!configType.isInstance((jaxbElement.getValue())))
+				throw new ReaderException("Unexpected config type: "
+						+ jaxbElement.getValue().getClass() + ", expected "
+						+ configType);
 			return configType.cast(jaxbElement.getValue());
 		}
-		if (!(config instanceof Element) || !configBean.getEncoding().equals(encoding)) {
+		if (!(config instanceof Element)
+				|| !configBean.getEncoding().equals(encoding))
 			throw new ReaderException("Unsupported config bean " + configBean);
-		}
 		return unmarshallElement(t2FlowParser, (Element) config, configType);
 	}
 
-	public <ConfigType> ConfigType unmarshallElement(T2FlowParser t2FlowParser, Element element,
-			Class<ConfigType> configType) throws ReaderException {
-
+	public <ConfigType> ConfigType unmarshallElement(T2FlowParser t2FlowParser,
+			Element element, Class<ConfigType> configType)
+			throws ReaderException {
 		Unmarshaller unmarshaller2 = t2FlowParser.getUnmarshaller();
 		unmarshaller2.setSchema(null);
-		JAXBElement<ConfigType> configElemElem;
 		try {
-			configElemElem = unmarshaller2.unmarshal(element, configType);
-		} catch (JAXBException e) {
+			JAXBElement<ConfigType> configElemElem = unmarshaller2.unmarshal(
+					element, configType);
+			return configElemElem.getValue();
+		} catch (JAXBException|ClassCastException e) {
 			throw new ReaderException("Can't parse element " + element, e);
 		}
-
-		return configElemElem.getValue();
 	}
 
-	public <ConfigType> ConfigType unmarshallXml(T2FlowParser t2FlowParser, String xml,
-			Class<ConfigType> configType) throws ReaderException {
-
+	public <ConfigType> ConfigType unmarshallXml(T2FlowParser t2FlowParser,
+			String xml, Class<ConfigType> configType) throws ReaderException {
 		Unmarshaller unmarshaller2 = t2FlowParser.getUnmarshaller();
 		unmarshaller2.setSchema(null);
-
-		JAXBElement<ConfigType> configElemElem;
 
 		Source source = new StreamSource(new StringReader(xml));
 		try {
-			configElemElem = unmarshaller2.unmarshal(source, configType);
-		} catch (JAXBException e) {
+			JAXBElement<ConfigType> configElemElem = unmarshaller2.unmarshal(
+					source, configType);
+			return configElemElem.getValue();
+		} catch (JAXBException|ClassCastException e) {
 			throw new ReaderException("Can't parse xml " + xml, e);
 		}
-
-		return configElemElem.getValue();
 	}
 
-	protected ObjectNode parseAndAddOutputPortDefinition(ActivityPortDefinitionBean portBean,
-			Configuration configuration, Activity activity) {
+	protected ObjectNode parseAndAddOutputPortDefinition(
+			ActivityPortDefinitionBean portBean, Configuration configuration,
+			Activity activity) {
 		ObjectNode configResource = (ObjectNode) configuration.getJson();
 		OutputActivityPort outputPort = new OutputActivityPort();
-		
+
 		outputPort.setName(getPortElement(portBean, "name", String.class));
 		outputPort.setParent(activity);
-		
 
 		BigInteger depth = getPortElement(portBean, "depth", BigInteger.class);
-		if (depth != null) {
+		if (depth != null)
 			outputPort.setDepth(depth.intValue());
-		}
 		
-		BigInteger granularDepth = getPortElement(portBean, "granularDepth", BigInteger.class);		
-		if (granularDepth != null) {
+		BigInteger granularDepth = getPortElement(portBean, "granularDepth",
+				BigInteger.class);
+		if (granularDepth != null)
 			outputPort.setGranularDepth(granularDepth.intValue());
-		}
 		
 		ObjectNode portConfig = configResource.objectNode();
 //		PropertyResource portConfig = configResource.addPropertyAsNewResource(
 //				Scufl2Tools.PORT_DEFINITION.resolve("#outputPortDefinition"),
 //				Scufl2Tools.PORT_DEFINITION.resolve("#OutputPortDefinition"));
 
+		@SuppressWarnings("unused")
 		URI portUri = new URITools().relativeUriForBean(outputPort, configuration);
 //		portConfig.addPropertyReference(Scufl2Tools.PORT_DEFINITION.resolve("#definesOutputPort"), portUri);
 
@@ -131,45 +123,41 @@ public abstract class AbstractActivityParser implements T2Parser {
 	}
 
 	/**
-	 * Deals with the not-so-helpful getHandledReferenceSchemesOrTranslatedElementTypeOrName method
+	 * Deals with the not-so-helpful
+	 * getHandledReferenceSchemesOrTranslatedElementTypeOrName method
 	 * 
 	 * @param portBean
 	 * @param elementName
 	 * @return
 	 */
-	
-	
 	private <T> T getPortElement(ActivityPortDefinitionBean portBean,
 			String elementName, Class<T> type) {
-		for (JAXBElement<?> elem : portBean.getHandledReferenceSchemesOrTranslatedElementTypeOrName()) {
-			if (elem.getName().getLocalPart().equals(elementName)) {
+		for (JAXBElement<?> elem : portBean
+				.getHandledReferenceSchemesOrTranslatedElementTypeOrName())
+			if (elem.getName().getLocalPart().equals(elementName))
 				return type.cast(elem.getValue());
-			}
-		}
 		return null;
 	}
 
-	protected ObjectNode parseAndAddInputPortDefinition(ActivityPortDefinitionBean portBean,
-			Configuration configuration, Activity activity) {
-	    ObjectNode configResource = (ObjectNode) configuration.getJson();
-	    ObjectNode portConfig = configResource.objectNode();
+	protected ObjectNode parseAndAddInputPortDefinition(
+			ActivityPortDefinitionBean portBean, Configuration configuration,
+			Activity activity) {
+		ObjectNode configResource = (ObjectNode) configuration.getJson();
+		ObjectNode portConfig = configResource.objectNode();
 
 		InputActivityPort inputPort = new InputActivityPort();
 		inputPort.setName(getPortElement(portBean, "name", String.class));
 		inputPort.setParent(activity);
-		
-		
-		BigInteger depth = getPortElement(portBean, "depth", BigInteger.class);
-		if (depth != null) {
-			inputPort.setDepth(depth.intValue());
-		}
 
-		
+		BigInteger depth = getPortElement(portBean, "depth", BigInteger.class);
+		if (depth != null)
+			inputPort.setDepth(depth.intValue());
 		
 //		PropertyResource portConfig = configResource.addPropertyAsNewResource(
 //				Scufl2Tools.PORT_DEFINITION.resolve("#inputPortDefinition"),
 //				Scufl2Tools.PORT_DEFINITION.resolve("#InputPortDefinition"));
 
+		@SuppressWarnings("unused")
 		URI portUri = new URITools().relativeUriForBean(inputPort, configuration);
 //		portConfig.addPropertyReference(Scufl2Tools.PORT_DEFINITION.resolve("#definesInputPort"), portUri);
 
@@ -187,42 +175,37 @@ public abstract class AbstractActivityParser implements T2Parser {
 		// T2-1681: Ignoring isAllowsLiteralValues and handledReferenceScheme
 
 		// Legacy duplication of port details for XMLSplitter activities
-        portConfig.put("name", inputPort.getName());
-        portConfig.put("depth", inputPort.getDepth());
-		
-		
-		return portConfig;
+		portConfig.put("name", inputPort.getName());
+		portConfig.put("depth", inputPort.getDepth());
 
+		return portConfig;
 	}
 
 	private void parseMimeTypes(ActivityPortDefinitionBean portBean,
 			ObjectNode portConfig) {
-		MimeTypes mimeTypes = getPortElement(portBean, "mimeTypes", MimeTypes.class);
-		if (mimeTypes == null) {
+		MimeTypes mimeTypes = getPortElement(portBean, "mimeTypes",
+				MimeTypes.class);
+		if (mimeTypes == null)
 			return;
-		}
 		// FIXME: Do as annotation as this is not configuration
 //		URI mimeType = Scufl2Tools.PORT_DEFINITION.resolve("#expectedMimeType");
 		List<String> strings = mimeTypes.getString();
-		if ((strings == null || strings.isEmpty()) && mimeTypes.getElement() != null) {
+		if ((strings == null || strings.isEmpty())
+				&& mimeTypes.getElement() != null)
 			strings = Arrays.asList(mimeTypes.getElement().getValue());
-		} 
-		if (strings != null) { 
+		if (strings != null)
 			for (String s : strings) {
-				if (s.contains("'")) {
+				if (s.contains("'"))
 					s = s.split("'")[1];
-				}
 //				portConfig.addPropertyReference(mimeType,
 //						MEDIATYPES_URI.resolve(s));
-                portConfig.put("mimeType", s);
-                return; // Just first mimeType survives
+				portConfig.put("mimeType", s);
+				return; // Just first mimeType survives
 			}
-		}
 	}
 	
 	@Override
 	public List<URI> getAdditionalSchemas() {
 		return null;
 	}
-
 }

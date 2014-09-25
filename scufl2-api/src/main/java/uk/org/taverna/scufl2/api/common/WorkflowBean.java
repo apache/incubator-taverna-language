@@ -5,18 +5,17 @@ package uk.org.taverna.scufl2.api.common;
  * 
  * @author Alan R Williams
  * @author Stian Soiland-Reyes
- * 
  */
 public interface WorkflowBean extends Cloneable {
-
 	/**
 	 * Accepts a {@link Visitor} to this <code>WorkflowBean</code>.
 	 * 
 	 * @param visitor
 	 *            the <code>Visitor</code> to accept
-	 * @return <code>true</code> if this <code>WorkflowBeans</code> children should be visited.
+	 * @return <code>true</code> if this <code>WorkflowBeans</code> children
+	 *         should be visited.
 	 */
-	public boolean accept(Visitor visitor);
+	boolean accept(Visitor visitor);
 
 	/**
 	 * Create a deep clone of this bean.
@@ -33,7 +32,6 @@ public interface WorkflowBean extends Cloneable {
 	 * 
 	 * @return A cloned workflow bean
 	 */
-	//@Override
-	public WorkflowBean clone();
-	
+	// @Override
+	WorkflowBean clone();
 }

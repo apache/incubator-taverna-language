@@ -14,7 +14,6 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
  * they can read.
  */
 public interface WorkflowBundleReader {
-
 	/**
 	 * Return the media types that this reader can read.
 	 * <p>
@@ -32,7 +31,7 @@ public interface WorkflowBundleReader {
 	 * @return the media types that this reader can read, or an empty set if
 	 *         this reader can't read any bundle formats.
 	 */
-	public Set<String> getMediaTypes();
+	Set<String> getMediaTypes();
 
 	/**
 	 * Read a file containing a workflow bundle in the specified media type and
@@ -48,7 +47,7 @@ public interface WorkflowBundleReader {
 	 * @throws IOException
 	 *             if there is an error reading the file
 	 */
-	public WorkflowBundle readBundle(File bundleFile, String mediaType)
+	WorkflowBundle readBundle(File bundleFile, String mediaType)
 			throws ReaderException, IOException;
 
 	/**
@@ -65,7 +64,7 @@ public interface WorkflowBundleReader {
 	 * @throws IOException
 	 *             if there is an error reading from the stream
 	 */
-	public WorkflowBundle readBundle(InputStream inputStream, String mediaType)
+	WorkflowBundle readBundle(InputStream inputStream, String mediaType)
 			throws ReaderException, IOException;
 
 	/**
@@ -86,6 +85,5 @@ public interface WorkflowBundleReader {
 	 * @return The recognised media type, or <code>null</code> if the bytes were
 	 *         ambiguous or unknown.
 	 */
-	public String guessMediaTypeForSignature(byte[] firstBytes);
-
+	String guessMediaTypeForSignature(byte[] firstBytes);
 }

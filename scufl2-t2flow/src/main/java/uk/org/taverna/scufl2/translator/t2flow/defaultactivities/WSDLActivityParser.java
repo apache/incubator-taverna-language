@@ -1,5 +1,7 @@
 package uk.org.taverna.scufl2.translator.t2flow.defaultactivities;
 
+import static uk.org.taverna.scufl2.translator.t2flow.T2FlowParser.ravenURI;
+
 import java.net.URI;
 
 import uk.org.taverna.scufl2.api.configurations.Configuration;
@@ -12,26 +14,21 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.WSDLConfig;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class WSDLActivityParser extends AbstractActivityParser {
-
-	private static URI wsdlActivityRavenURI = T2FlowParser.ravenURI
+	private static final URI wsdlActivityRavenURI = ravenURI
 			.resolve("net.sf.taverna.t2.activities/wsdl-activity/");
-
-	private static String wsdlActivityClassName = "net.sf.taverna.t2.activities.wsdl.WSDLActivity";
-
-	public static URI WSDL = URI
+	private static final String wsdlActivityClassName = "net.sf.taverna.t2.activities.wsdl.WSDLActivity";
+	public static final URI WSDL = URI
 			.create("http://ns.taverna.org.uk/2010/activity/wsdl");
-	public static URI SECURITY = WSDL.resolve("wsdl/security");
-	public static URI OPERATION = WSDL.resolve("wsdl/operation");
+	public static final URI SECURITY = WSDL.resolve("wsdl/security");
+	public static final URI OPERATION = WSDL.resolve("wsdl/operation");
 
 	@Override
 	public boolean canHandlePlugin(URI activityURI) {
 		String activityUriStr = activityURI.toASCIIString();
-		if (!activityUriStr.startsWith(wsdlActivityRavenURI.toASCIIString())) {
+		if (!activityUriStr.startsWith(wsdlActivityRavenURI.toASCIIString()))
 			return false;
-		}
-		if (activityUriStr.endsWith(wsdlActivityClassName)) {
+		if (activityUriStr.endsWith(wsdlActivityClassName))
 			return true;
-		}
 		return false;
 	}
 
@@ -42,22 +39,20 @@ public class WSDLActivityParser extends AbstractActivityParser {
 
 	@Override
 	public Configuration parseConfiguration(T2FlowParser t2FlowParser,
-			ConfigBean configBean, ParserState parserState) throws ReaderException {
-
+			ConfigBean configBean, ParserState parserState)
+			throws ReaderException {
 		WSDLConfig wsdlConfig = unmarshallConfig(t2FlowParser, configBean,
 				"xstream", WSDLConfig.class);
 
 		Configuration configuration = new Configuration();
-		configuration.setType(
-				WSDL.resolve("#Config"));
+		configuration.setType(WSDL.resolve("#Config"));
 
 		URI wsdl;
 		try {
 			wsdl = URI.create(wsdlConfig.getWsdl());
-			if (!wsdl.isAbsolute()) {
+			if (!wsdl.isAbsolute())
 				throw new ReaderException("WSDL URI is not absolute: "
 						+ wsdlConfig.getWsdl());
-			}
 		} catch (IllegalArgumentException ex) {
 			throw new ReaderException("WSDL not a valid URI: "
 					+ wsdlConfig.getWsdl());
@@ -65,25 +60,23 @@ public class WSDLActivityParser extends AbstractActivityParser {
 			throw new ReaderException("WSDL config has no wsdl set");
 		}
 		String operation = wsdlConfig.getOperation();
-		if (operation == null || operation.equals("")) {
+		if (operation == null || operation.equals(""))
 			throw new ReaderException("WSDL config has no operation set");
-		}
 
 		ObjectNode json = (ObjectNode) configuration.getJson();
-		
+
 		ObjectNode wsdlOperation = json.objectNode();
 		json.put("operation", wsdlOperation);
-		
+
 		wsdlOperation.put("wsdl", wsdl.toString());
 		wsdlOperation.put("name", operation);
 
 		if (wsdlConfig.getSecurityProfile() != null
 				&& !wsdlConfig.getSecurityProfile().isEmpty()) {
-			URI securityProfileURI = SECURITY.resolve("#" + wsdlConfig
-					.getSecurityProfile());
+			URI securityProfileURI = SECURITY.resolve("#"
+					+ wsdlConfig.getSecurityProfile());
 			json.put("securityProfile", securityProfileURI.toString());
 		}
 		return configuration;
 	}
-
 }

@@ -37,6 +37,7 @@ import org.junit.Test;
 
 import uk.org.taverna.scufl2.ucfpackage.UCFPackage.ResourceEntry;
 
+@SuppressWarnings("resource")
 public class TestUCFPackage {
 
 	private static final int MIME_OFFSET = 30;
@@ -833,7 +834,8 @@ public class TestUCFPackage {
         UCFPackage reloaded = new UCFPackage(tmpFile);
         reloaded.setRootFile("helloworld.txt");
         reloaded.save(tmpFile);
-        UCFPackage again = new UCFPackage(tmpFile);
+        @SuppressWarnings("unused")
+		UCFPackage again = new UCFPackage(tmpFile);
         assertNull(reloaded.getRootFileVersion("helloworld.txt"));
     }
 

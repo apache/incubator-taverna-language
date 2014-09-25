@@ -14,11 +14,8 @@ import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ObjectFactory;
 
 public class AbstractParser {
-
 	protected JAXBContext jaxbContext;
-
 	protected final ThreadLocal<ParserState> parserState;
-
 	protected Scufl2Tools scufl2Tools = new Scufl2Tools();
 	protected Unmarshaller unmarshaller;
 	protected URITools uriTools = new URITools();
@@ -57,9 +54,8 @@ public class AbstractParser {
 	}
 
 	protected void mapBean(String about, WorkflowBean bean) {
-		if (about == null) {
+		if (about == null)
 			return;
-		}
 		URI aboutUri = getParserState().getCurrentBase().resolve(about);
 		mapBean(aboutUri, bean);
 	}
@@ -75,25 +71,24 @@ public class AbstractParser {
 
 	protected <T extends WorkflowBean> T resolveBeanUri(String resource,
 			Class<T> beanType) throws ReaderException {
-				URI uri = resolve(resource);
-				WorkflowBean bean = resolveBeanUri(uri);
-				if (bean == null) {
-					throw new ReaderException("Can't find workflow bean for resource " + resource);
-				}
-				if (! beanType.isInstance(bean)) {
-					throw new ReaderException("Wrong type for workflow bean " + resource + ", expected " + beanType.getSimpleName() + " but was " + bean.getClass().getSimpleName());
-				}
-				return beanType.cast(bean);
-			}
+		URI uri = resolve(resource);
+		WorkflowBean bean = resolveBeanUri(uri);
+		if (bean == null)
+			throw new ReaderException("Can't find workflow bean for resource "
+					+ resource);
+		if (!beanType.isInstance(bean))
+			throw new ReaderException("Wrong type for workflow bean "
+					+ resource + ", expected " + beanType.getSimpleName()
+					+ " but was " + bean.getClass().getSimpleName());
+		return beanType.cast(bean);
+	}
 
 	protected WorkflowBean resolveBeanUri(URI uri) {
 		WorkflowBean workflowBean = getParserState().getUriToBean().get(uri);
-		if (workflowBean != null) {
+		if (workflowBean != null)
 			return workflowBean;
-		}
 		uri = getParserState().getCurrentBase().resolve(uri);
 		return uriTools.resolveUri(uri,
 				getParserState().getCurrent(WorkflowBundle.class));
 	}
-
 }

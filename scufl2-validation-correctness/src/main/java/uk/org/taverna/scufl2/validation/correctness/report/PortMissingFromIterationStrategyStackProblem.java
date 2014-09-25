@@ -6,16 +6,16 @@ import uk.org.taverna.scufl2.validation.ValidationProblem;
 
 /**
  * @author alanrw
- *
+ * 
  */
-public class PortMissingFromIterationStrategyStackProblem extends ValidationProblem {
-
+public class PortMissingFromIterationStrategyStackProblem extends
+		ValidationProblem {
 	private final Port port;
 
 	public PortMissingFromIterationStrategyStackProblem(Port port,
 			IterationStrategyStack iterationStrategyStack) {
 		super(iterationStrategyStack);
-				this.port = port;
+		this.port = port;
 	}
 
 	/**
@@ -25,9 +25,8 @@ public class PortMissingFromIterationStrategyStackProblem extends ValidationProb
 		return port;
 	}
 
-	
+	@Override
 	public String toString() {
-		return (getBean() + " does not include " + port);
+		return getBean() + " does not include " + port;
 	}
-
 }

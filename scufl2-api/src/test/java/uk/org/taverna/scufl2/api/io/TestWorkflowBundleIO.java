@@ -1,12 +1,6 @@
 package uk.org.taverna.scufl2.api.io;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static uk.org.taverna.scufl2.api.io.structure.StructureReader.TEXT_VND_TAVERNA_SCUFL2_STRUCTURE;
 
 import java.io.ByteArrayInputStream;
@@ -25,7 +19,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.ExampleWorkflow;
-import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.structure.StructureReader;
 import uk.org.taverna.scufl2.api.io.structure.StructureWriter;
@@ -188,6 +181,7 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 
 		File emptyFile = File.createTempFile("test", "txt");
 		try {
+			@SuppressWarnings("unused")
 			WorkflowBundle none = bundleIO.readBundle(emptyFile,null);
 			fail("Should throw IllegalArgumentException for unrecognized file");
 		} catch (IllegalArgumentException ex) {

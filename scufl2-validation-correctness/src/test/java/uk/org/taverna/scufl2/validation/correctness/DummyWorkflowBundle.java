@@ -48,6 +48,7 @@ public class DummyWorkflowBundle extends WorkflowBundle {
 	/**
 	 * @return the profiles
 	 */
+	@Override
 	public NamedSet<Profile> getProfiles() {
 		return profiles;
 	}
@@ -62,6 +63,7 @@ public class DummyWorkflowBundle extends WorkflowBundle {
 	/**
 	 * @return the workflows
 	 */
+	@Override
 	public NamedSet<Workflow> getWorkflows() {
 		return workflows;
 	}
@@ -76,6 +78,7 @@ public class DummyWorkflowBundle extends WorkflowBundle {
 	/**
 	 * @return the mainWorkflow
 	 */
+	@Override
 	public Workflow getMainWorkflow() {
 		return mainWorkflow;
 	}
@@ -83,6 +86,7 @@ public class DummyWorkflowBundle extends WorkflowBundle {
 	/**
 	 * @param mainWorkflow the mainWorkflow to set
 	 */
+	@Override
 	public void setMainWorkflow(Workflow mainWorkflow) {
 		this.mainWorkflow = mainWorkflow;
 	}
@@ -90,6 +94,7 @@ public class DummyWorkflowBundle extends WorkflowBundle {
 	/**
 	 * @return the mainProfile
 	 */
+	@Override
 	public Profile getMainProfile() {
 		return mainProfile;
 	}
@@ -97,6 +102,7 @@ public class DummyWorkflowBundle extends WorkflowBundle {
 	/**
 	 * @param mainProfile the mainProfile to set
 	 */
+	@Override
 	public void setMainProfile(Profile mainProfile) {
 		this.mainProfile = mainProfile;
 	}

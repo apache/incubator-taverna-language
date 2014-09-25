@@ -22,7 +22,7 @@ public class DataLinkCompareTest extends ExampleWorkflow {
 	}
 
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "unused" })
 	@Test
 	public void expectedOrder() throws Exception {
 
@@ -49,7 +49,7 @@ public class DataLinkCompareTest extends ExampleWorkflow {
 		assertEquals(Arrays.asList(a_x, a_z, b_x, b_z, c_x), links);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "unused" })
 	@Test
 	public void nullSupport() throws Exception {
 

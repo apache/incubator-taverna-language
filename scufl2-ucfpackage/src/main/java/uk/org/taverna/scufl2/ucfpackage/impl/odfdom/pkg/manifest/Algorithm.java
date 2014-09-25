@@ -22,32 +22,30 @@
 package uk.org.taverna.scufl2.ucfpackage.impl.odfdom.pkg.manifest;
 
 public class Algorithm {
-    private String _name;
-    private String _initializationVector;
+	private String name;
+	private String initializationVector;
 
+	public Algorithm() {
+	}
 
-    public Algorithm() {
-    }
+	public Algorithm(String name, String initializationVector) {
+		this.name = name;
+		this.initializationVector = initializationVector;
+	}
 
-    public Algorithm(String name, String initializationVector) {
-        _name=name;
-        _initializationVector=initializationVector;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setName(String name) {
-        _name=name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getName() {
-        return _name;
-    }
-    
-    public void setInitializationVector(String initializationVector) {
-        _initializationVector=initializationVector;
-    }
+	public void setInitializationVector(String initializationVector) {
+		this.initializationVector = initializationVector;
+	}
 
-    public String getInitializationVector() {
-        return _initializationVector;
-    }
-
+	public String getInitializationVector() {
+		return initializationVector;
+	}
 }

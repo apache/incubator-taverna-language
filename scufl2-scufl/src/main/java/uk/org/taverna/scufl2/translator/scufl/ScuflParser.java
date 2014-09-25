@@ -3,6 +3,8 @@
  */
 package uk.org.taverna.scufl2.translator.scufl;
 
+import static javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,18 +59,15 @@ import uk.org.taverna.scufl2.xml.scufl.jaxb.SourceType;
 import uk.org.taverna.scufl2.xml.scufl.jaxb.WorkflowDescriptionType;
 
 /**
+ * WARNING! Incomplete class.
  * @author alanrw
- *
  */
 public class ScuflParser {
-	
 	private static final Logger logger = Logger.getLogger(ScuflParser.class
 			.getCanonicalName());
-
 	private static final String SCUFL_XSD = "xsd/scufl.xsd";
+	@SuppressWarnings("unused")
 	private static final String LOCAL_XSD = "xsd/scufl-local.xsd";
-	
-	
 	private static final String SCUFL = "SCUFL";
 
 	protected Set<ScuflExtensionParser> scuflExtensionParsers = null;
@@ -86,7 +85,7 @@ public class ScuflParser {
 	private static Scufl2Tools scufl2Tools = new Scufl2Tools();
 	protected ServiceLoader<ScuflExtensionParser> discoveredScuflExtensionParsers;
 	protected final ThreadLocal<Unmarshaller> unmarshaller;
-	
+
 	public ScuflParser() throws JAXBException {
 		jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
 		unmarshaller = new ThreadLocal<Unmarshaller>() {
@@ -102,7 +101,6 @@ public class ScuflParser {
 		};
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	public WorkflowBundle parseScufl(File scuflFile) throws IOException,
 			ReaderException, JAXBException {
@@ -119,9 +117,8 @@ public class ScuflParser {
 		return parseScufl(root.getValue());
 	}
 
-	public WorkflowBundle parseScufl(
-			ScuflType wf)
-			throws ReaderException, JAXBException {
+	public WorkflowBundle parseScufl(ScuflType wf) throws ReaderException,
+			JAXBException {
 		try {
 			parserState.get().setCurrentParser(this);
 			WorkflowBundle wfBundle = new WorkflowBundle();
@@ -146,86 +143,71 @@ public class ScuflParser {
 		parserState.get().setCurrentWorkflow(workflow);
 		WorkflowDescriptionType description = wf.getWorkflowdescription();
 		workflow.setName(sanitiseName(description.getTitle()));
-		
+
 		parseWorkflowInputs(wf);
 		parseWorkflowOutputs(wf);
 		parseProcessors(wf);
 		parseLinks(wf);
 		parseCoordinations(wf);
 		parseAnnotations(wf);
-		
+
 		replaceDefaultsWithStringConstants(wf); // To be done
-		
+
 		parserState.get().setCurrentWorkflow(oldCurrentWorkflow);
 		return workflow;
 	}
 
-
-
-
 	private void parseAnnotations(ScuflType wf) {
 		// TODO Auto-generated method stub
-		
 	}
-
 
 	private void parseCoordinations(ScuflType wf) {
-		for (CoordinationType c : wf.getCoordination()) {
+		for (CoordinationType c : wf.getCoordination())
 			parseCoordination(c);
-		}
-		
 	}
-
 
 	private void parseCoordination(CoordinationType c) {
 		// TODO Auto-generated method stub
-		
 	}
-
 
 	private void parseLinks(ScuflType wf) {
-		for (LinkType dl : wf.getLink()) {
+		for (LinkType dl : wf.getLink())
 			parseLink(dl);
-		}
 	}
-
 
 	private void parseLink(LinkType dl) {
 		// TODO Auto-generated method stub
-		
 	}
-
 
 	private void parseWorkflowInputs(ScuflType wf) {
-		for (SourceType st : wf.getSource()) {
+		for (SourceType st : wf.getSource())
 			parseWorkflowInput(st);
-		}
 	}
-	
+
 	private void parseWorkflowInput(SourceType st) {
 		Workflow currentWorkflow = parserState.get().getCurrentWorkflow();
-		InputWorkflowPort iwp = new InputWorkflowPort(currentWorkflow, sanitiseName(st.getName()));
+		InputWorkflowPort iwp = new InputWorkflowPort(currentWorkflow,
+				sanitiseName(st.getName()));
 		parserState.get().addMapping(st, iwp);
 		// Cannot do anything about the depths
 	}
 
 	private void parseWorkflowOutputs(ScuflType wf) {
-		for (SinkType st : wf.getSink()) {
+		for (SinkType st : wf.getSink())
 			parseWorkflowOutput(st);
-		}
 	}
 
 	private void parseWorkflowOutput(SinkType st) {
 		Workflow currentWorkflow = parserState.get().getCurrentWorkflow();
-		OutputWorkflowPort owp = new OutputWorkflowPort(currentWorkflow, sanitiseName(st.getName()));
+		OutputWorkflowPort owp = new OutputWorkflowPort(currentWorkflow,
+				sanitiseName(st.getName()));
 		parserState.get().addMapping(st, owp);
 		// Cannot do anything about the depths
 	}
 
 	private void parseProcessors(ScuflType wf) {
-		for (ProcessorType pt : wf.getProcessor()) {
+		for (ProcessorType pt : wf.getProcessor())
 			parseProcessor(pt);
-		}
 	}
 
 	private void parseProcessor(ProcessorType pt) {
@@ -235,9 +217,8 @@ public class ScuflParser {
 		parseDispatchStack(pt);
 		parseProcessorElement(pt.getProcessorElement());
 		Activity activity = parserState.get().getCurrentActivity();
-		if (activity != null) {
+		if (activity != null)
 			createDefaultProcessorBinding();
-		}
 		parserState.get().setCurrentActivity(null);
 
 		parseAlternates(pt);
@@ -247,34 +228,32 @@ public class ScuflParser {
 		// Cannot do anything about the ports
 	}
 
-
-
-
 	private void createDefaultProcessorBinding() {
 		Processor p = parserState.get().getCurrentProcessor();
 		Activity a = parserState.get().getCurrentActivity();
-		
+
 		ProcessorBinding pb = new ProcessorBinding();
 		pb.setParent(parserState.get().getCurrentProfile());
 		pb.setActivityPosition(0);
 		pb.setBoundProcessor(p);
 		pb.setBoundActivity(a);
 		for (InputActivityPort iap : a.getInputPorts()) {
-			InputProcessorPort ipp = findOrCreateProcessorInputPort(p, iap.getName(), iap.getDepth());
+			InputProcessorPort ipp = findOrCreateProcessorInputPort(p,
+					iap.getName(), iap.getDepth());
 			ProcessorInputPortBinding portBinding = new ProcessorInputPortBinding();
 			portBinding.setParent(pb);
 			portBinding.setBoundActivityPort(iap);
 			portBinding.setBoundProcessorPort(ipp);
 		}
 		for (OutputActivityPort oap : a.getOutputPorts()) {
-			OutputProcessorPort opp = findOrCreateProcessorOutputPort(p, oap.getName(), oap.getDepth(), oap.getGranularDepth());
+			OutputProcessorPort opp = findOrCreateProcessorOutputPort(p,
+					oap.getName(), oap.getDepth(), oap.getGranularDepth());
 			ProcessorOutputPortBinding portBinding = new ProcessorOutputPortBinding();
 			portBinding.setParent(pb);
 			portBinding.setBoundActivityPort(oap);
 			portBinding.setBoundProcessorPort(opp);
 		}
 	}
-
 
 	private OutputProcessorPort findOrCreateProcessorOutputPort(Processor p,
 			String name, Integer depth, Integer granularDepth) {
@@ -289,7 +268,6 @@ public class ScuflParser {
 		return port;
 	}
 
-
 	private InputProcessorPort findOrCreateProcessorInputPort(Processor p,
 			String name, Integer depth) {
 		InputProcessorPort port = p.getInputPorts().getByName(name);
@@ -302,11 +280,9 @@ public class ScuflParser {
 		return port;
 	}
 
-
 	private void parseAlternates(ProcessorType pt) {
 		// TODO Auto-generated method stub
 	}
-
 
 	private void parseProcessorElement(JAXBElement<?> processorElement) {
 		Object processorElementValue = processorElement.getValue();
@@ -316,34 +292,32 @@ public class ScuflParser {
 	private void parseExtensionObject(Object o) {
 		findExtensionParser(o.getClass());
 		if (parserState.get().getCurrentExtensionParser() != null) {
-			parserState.get().getCurrentExtensionParser().setParserState(parserState.get());
+			parserState.get().getCurrentExtensionParser()
+					.setParserState(parserState.get());
 			parserState.get().getCurrentExtensionParser().parseScuflObject(o);
 			parserState.get().setCurrentExtensionParser(null);
-		}
-		else {
+		} else {
+			// FIXME write to log instead!
 			System.err.println("Unrecognized extension " + o.getClass());
-		}		
+		}
 	}
 
-	private void findExtensionParser(Class c) {
+	private void findExtensionParser(Class<?> c) {
 		parserState.get().setCurrentExtensionParser(null);
-		for (ScuflExtensionParser extensionParser : getScuflExtensionParsers()) {
+		for (ScuflExtensionParser extensionParser : getScuflExtensionParsers())
 			if (extensionParser.canHandle(c)) {
 				parserState.get().setCurrentExtensionParser(extensionParser);
 				break;
 			}
-		}
 	}
-	
+
 	private void parseDispatchStack(ProcessorType pt) {
 		// TODO
 	}
 
 	private void parseIterationStrategy(ProcessorType pt) {
 		// TODO
-		
 	}
-
 
 	/**
 	 * Crawls the scuflModel processors and checks their input ports for unbound
@@ -353,19 +327,17 @@ public class ScuflParser {
 	 * @param scuflModel
 	 * @throws WorkflowTranslationException
 	 */
+	@SuppressWarnings("unused")
 	private void replaceDefaultsWithStringConstants(ScuflType scuflModel) {
-		for (ProcessorType t1Processor : scuflModel
-				.getProcessor()) {
+		for (ProcessorType t1Processor : scuflModel.getProcessor()) {
 			DefaultsType defaults = t1Processor.getDefaults();
-			if (defaults != null) {
+			if (defaults != null)
 				for (DefaultType d : defaults.getDefault()) {
 					String portName = d.getName();
 					String constantValue = d.getValue();
-					// TOBEDONE
+					// TODO: To be done
 				}
-			}
 		}
-
 	}
 
 	public Unmarshaller getUnmarshaller() {
@@ -374,39 +346,29 @@ public class ScuflParser {
 		if (!isValidating() && u.getSchema() != null) {
 			u.setSchema(null);
 		} else if (isValidating() && u.getSchema() == null) {
-			
-					
 			// Load and set schema to validate against
 			Schema schema;
 			try {
 				SchemaFactory schemaFactory = SchemaFactory
-						.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
+						.newInstance(W3C_XML_SCHEMA_NS_URI);
 				List<URI> schemas = getAdditionalSchemas();
-				
-				URL scuflXSD = getClass().getResource(
-						SCUFL_XSD);
+
+				URL scuflXSD = getClass().getResource(SCUFL_XSD);
 				schemas.add(scuflXSD.toURI());
-				
-				List<Source> schemaSources = new ArrayList<Source>();
-				for (URI schemaUri : schemas) {
-					schemaSources.add(new StreamSource(schemaUri.toASCIIString()));
-				}						
-				Source[] sources = schemaSources.toArray(new Source[schemaSources.size()]);
+
+				List<Source> schemaSources = new ArrayList<>();
+				for (URI schemaUri : schemas)
+					schemaSources.add(new StreamSource(schemaUri
+							.toASCIIString()));
+				Source[] sources = schemaSources
+						.toArray(new Source[schemaSources.size()]);
 				schema = schemaFactory.newSchema(sources);
-				
 			} catch (SAXException e) {
-				throw new RuntimeException("Can't load schema "
-						+ SCUFL_XSD, e);
-			} catch (URISyntaxException e) {
-				throw new RuntimeException("Can't find schema "
-						+ SCUFL_XSD, e);
-			} catch (NullPointerException e) {
-				throw new RuntimeException("Can't find schema "
-						+ SCUFL_XSD, e);
+				throw new RuntimeException("Can't load schema " + SCUFL_XSD, e);
+			} catch (URISyntaxException | NullPointerException e) {
+				throw new RuntimeException("Can't find schema " + SCUFL_XSD, e);
 			}
 			u.setSchema(schema);
-
-
 		}
 		return u;
 	}
@@ -417,35 +379,33 @@ public class ScuflParser {
 		parserState.get().getCurrentWorkflowBundle().setMainProfile(profile);
 		parserState.get().setCurrentProfile(profile);
 	}
-	
+
 	protected List<URI> getAdditionalSchemas() {
-		List<URI> uris = new ArrayList<URI>();
+		List<URI> uris = new ArrayList<>();
 		for (ScuflExtensionParser parser : getScuflExtensionParsers()) {
 			List<URI> schemas = parser.getAdditionalSchemas();
-			if (schemas != null) {
+			if (schemas != null)
 				uris.addAll(schemas);
-			}
 		}
 		return uris;
 	}
 
 	public synchronized Set<ScuflExtensionParser> getScuflExtensionParsers() {
 		Set<ScuflExtensionParser> parsers = scuflExtensionParsers;
-		if (parsers != null) {
+		if (parsers != null)
 			return parsers;
-		}
-		parsers = new HashSet<ScuflExtensionParser>();
-		// TODO: Do we need to cache this, or is the cache in ServiceLoader
-		// fast enough?
-		if (discoveredScuflExtensionParsers == null) {
-			discoveredScuflExtensionParsers = ServiceLoader.load(ScuflExtensionParser.class);
-		}
-		for (ScuflExtensionParser parser : discoveredScuflExtensionParsers) {
+		parsers = new HashSet<>();
+		/*
+		 * TODO: Do we need to cache this, or is the cache in ServiceLoader fast
+		 * enough?
+		 */
+		if (discoveredScuflExtensionParsers == null)
+			discoveredScuflExtensionParsers = ServiceLoader
+					.load(ScuflExtensionParser.class);
+		for (ScuflExtensionParser parser : discoveredScuflExtensionParsers)
 			parsers.add(parser);
-		}
 		return parsers;
 	}
-
 
 	/**
 	 * @return the strict
@@ -454,14 +414,13 @@ public class ScuflParser {
 		return strict;
 	}
 
-
 	/**
-	 * @param strict the strict to set
+	 * @param strict
+	 *            the strict to set
 	 */
 	public void setStrict(boolean strict) {
 		this.strict = strict;
 	}
-
 
 	/**
 	 * @return the validating
@@ -470,9 +429,9 @@ public class ScuflParser {
 		return validating;
 	}
 
-
 	/**
-	 * @param validating the validating to set
+	 * @param validating
+	 *            the validating to set
 	 */
 	public void setValidating(boolean validating) {
 		this.validating = validating;
@@ -489,16 +448,12 @@ public class ScuflParser {
 	 * @return the sanitised name
 	 */
 	private static String sanitiseName(String name) {
-		String result = name;
-		if (Pattern.matches("\\w++", name) == false) {
-			result = "";
-			for (char c : name.toCharArray()) {
-				if (Character.isLetterOrDigit(c) || c == '_') {
-					result += c;
-				}
-			}
-		}
-		return result;
-	}	
-
+		if (Pattern.matches("\\w++", name))
+			return name;
+		StringBuilder result = new StringBuilder();
+		for (char c : name.toCharArray())
+			if (Character.isLetterOrDigit(c) || c == '_')
+				result.append(c);
+		return result.toString();
+	}
 }

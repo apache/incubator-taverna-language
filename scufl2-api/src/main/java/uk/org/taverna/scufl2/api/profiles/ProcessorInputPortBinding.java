@@ -23,7 +23,6 @@ import uk.org.taverna.scufl2.api.port.InputProcessorPort;
  */
 public class ProcessorInputPortBinding extends
 		ProcessorPortBinding<InputActivityPort, InputProcessorPort> {
-	
 	private ProcessorBinding parent;
 
 	/**
@@ -76,6 +75,7 @@ public class ProcessorInputPortBinding extends
 		return super.getBoundProcessorPort();
 	}
 
+	@Override
 	public ProcessorBinding getParent() {
 		return parent;
 	}
@@ -104,19 +104,17 @@ public class ProcessorInputPortBinding extends
 		super.setBoundProcessorPort(boundProcessorPort);
 	}
 
+	@Override
 	public void setParent(ProcessorBinding parent) {
-		if (this.parent != null && this.parent != parent) {
+		if (this.parent != null && this.parent != parent)
 			this.parent.getInputPortBindings().remove(this);
-		}
 		this.parent = parent;
-		if (parent != null) {
+		if (parent != null)
 			parent.getInputPortBindings().add(this);
-		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return getBoundProcessorPort() + "->" + getBoundActivityPort();
 	}
-
 }

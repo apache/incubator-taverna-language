@@ -24,7 +24,6 @@ import org.junit.runners.Parameterized.Parameters;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.translator.scufl.ScuflParser;
-import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.validation.correctness.CorrectnessValidator;
 import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener;
 import uk.org.taverna.scufl2.validation.structural.ReportStructuralValidationListener;
@@ -32,17 +31,17 @@ import uk.org.taverna.scufl2.validation.structural.StructuralValidator;
 
 /**
  * @author alanrw
- *
+ * 
  */
 @RunWith(value = Parameterized.class)
 public class Test172StarterPack {
-	
+
 	private final static String WORKFLOW_LIST = "/t172starterpacklist";
-	
+
 	private ScuflParser parser;
 
 	private final String url;
-	
+
 	public Test172StarterPack(String url) {
 		this.url = url;
 	}
@@ -52,72 +51,80 @@ public class Test172StarterPack {
 		parser = new ScuflParser();
 		parser.setValidating(false);
 		parser.setStrict(false);
-		
+
 	}
-	
+
 	@Parameters
 	public static List<Object[]> data() throws IOException {
 		List<Object[]> result = new ArrayList<Object[]>();
-		URL workflowListResource = Test172StarterPack.class.getResource(WORKFLOW_LIST);
+		URL workflowListResource = Test172StarterPack.class
+				.getResource(WORKFLOW_LIST);
 		BufferedReader in = null;
 		try {
 			in = new BufferedReader(new InputStreamReader(
-				workflowListResource.openStream()));
+					workflowListResource.openStream()));
 
-		String inputLine;
+			String inputLine;
 
-		while ((inputLine = in.readLine()) != null) {
-			if (!inputLine.startsWith("#") && !inputLine.isEmpty()) {
-				result.add(new Object[] {inputLine});
+			while ((inputLine = in.readLine()) != null) {
+				if (!inputLine.startsWith("#") && !inputLine.isEmpty()) {
+					result.add(new Object[] { inputLine });
+				}
 			}
-		 }
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			// TODO
-		}
-		finally {
+		} finally {
 			if (in != null) {
 				in.close();
 			}
 		}
 		return result;
 	}
-	
+
 	@Test
 	public void testWorkflow() throws IOException, JAXBException,
 			ReaderException {
 		URL workflowURL = new URL(url);
 		WorkflowBundle bundle = null;
-			bundle = parser.parseScufl(workflowURL.openStream());
+		bundle = parser.parseScufl(workflowURL.openStream());
 
-			CorrectnessValidator cv = new CorrectnessValidator();
-			ReportCorrectnessValidationListener rcvl = new ReportCorrectnessValidationListener();
-			
-			cv.checkCorrectness(bundle, true, rcvl);
-			assertEquals(Collections.EMPTY_SET, rcvl.getEmptyIterationStrategyTopNodeProblems());
-			assertEquals(Collections.EMPTY_SET, rcvl.getIncompatibleGranularDepthProblems());
-			assertEquals(Collections.EMPTY_SET, rcvl.getMismatchConfigurableTypeProblems());
-			assertEquals(Collections.EMPTY_SET, rcvl.getNegativeValueProblems());
-			assertEquals(Collections.EMPTY_SET, rcvl.getNonAbsoluteURIProblems());
-			assertEquals(Collections.EMPTY_SET, rcvl.getNullFieldProblems());
-			assertEquals(Collections.EMPTY_SET, rcvl.getOutOfScopeValueProblems());
-			assertEquals(Collections.EMPTY_SET, rcvl.getPortMentionedTwiceProblems());
-			assertEquals(Collections.EMPTY_SET, rcvl.getPortMissingFromIterationStrategyStackProblems());
-			assertEquals(Collections.EMPTY_SET, rcvl.getWrongParentProblems());
-			
-			StructuralValidator sv = new StructuralValidator();
-			ReportStructuralValidationListener rsvl = new ReportStructuralValidationListener();
-			sv.checkStructure(bundle, rsvl);
-			assertEquals(Collections.EMPTY_SET, rsvl.getDotProductIterationMismatches());
-			assertEquals(Collections.EMPTY_SET, rsvl.getEmptyCrossProducts());
-			assertEquals(Collections.EMPTY_SET, rsvl.getEmptyDotProducts());
-			assertEquals(Collections.EMPTY_SET, rsvl.getFailedProcessors());
-			assertEquals(Collections.EMPTY_SET, rsvl.getIncompleteWorkflows());
-			assertEquals(Collections.EMPTY_SET, rsvl.getMissingIterationStrategyStacks());
-			assertEquals(Collections.EMPTY_SET, rsvl.getMissingMainIncomingDataLinks());
-			assertEquals(Collections.EMPTY_SET, rsvl.getUnrecognizedIterationStrategyNodes());
-			assertEquals(Collections.EMPTY_SET, rsvl.getUnresolvedOutputs());
-			assertEquals(Collections.EMPTY_SET, rsvl.getUnresolvedProcessors());
+		CorrectnessValidator cv = new CorrectnessValidator();
+		ReportCorrectnessValidationListener rcvl = new ReportCorrectnessValidationListener();
+
+		cv.checkCorrectness(bundle, true, rcvl);
+		assertEquals(Collections.EMPTY_SET,
+				rcvl.getEmptyIterationStrategyTopNodeProblems());
+		assertEquals(Collections.EMPTY_SET,
+				rcvl.getIncompatibleGranularDepthProblems());
+		assertEquals(Collections.EMPTY_SET,
+				rcvl.getMismatchConfigurableTypeProblems());
+		assertEquals(Collections.EMPTY_SET, rcvl.getNegativeValueProblems());
+		assertEquals(Collections.EMPTY_SET, rcvl.getNonAbsoluteURIProblems());
+		assertEquals(Collections.EMPTY_SET, rcvl.getNullFieldProblems());
+		assertEquals(Collections.EMPTY_SET, rcvl.getOutOfScopeValueProblems());
+		assertEquals(Collections.EMPTY_SET,
+				rcvl.getPortMentionedTwiceProblems());
+		assertEquals(Collections.EMPTY_SET,
+				rcvl.getPortMissingFromIterationStrategyStackProblems());
+		assertEquals(Collections.EMPTY_SET, rcvl.getWrongParentProblems());
+
+		StructuralValidator sv = new StructuralValidator();
+		ReportStructuralValidationListener rsvl = new ReportStructuralValidationListener();
+		sv.checkStructure(bundle, rsvl);
+		assertEquals(Collections.EMPTY_SET,
+				rsvl.getDotProductIterationMismatches());
+		assertEquals(Collections.EMPTY_SET, rsvl.getEmptyCrossProducts());
+		assertEquals(Collections.EMPTY_SET, rsvl.getEmptyDotProducts());
+		assertEquals(Collections.EMPTY_SET, rsvl.getFailedProcessors());
+		assertEquals(Collections.EMPTY_SET, rsvl.getIncompleteWorkflows());
+		assertEquals(Collections.EMPTY_SET,
+				rsvl.getMissingIterationStrategyStacks());
+		assertEquals(Collections.EMPTY_SET,
+				rsvl.getMissingMainIncomingDataLinks());
+		assertEquals(Collections.EMPTY_SET,
+				rsvl.getUnrecognizedIterationStrategyNodes());
+		assertEquals(Collections.EMPTY_SET, rsvl.getUnresolvedOutputs());
+		assertEquals(Collections.EMPTY_SET, rsvl.getUnresolvedProcessors());
 
 	}
 

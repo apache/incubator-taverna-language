@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 class TempDirDeleter extends Thread {
-
     private static TempDirDeleter deleterThread = null;
     private ArrayList<File> dirList;
 
@@ -39,7 +38,7 @@ class TempDirDeleter extends Thread {
     }
 
     private TempDirDeleter() {
-        dirList = new ArrayList<File>();
+        dirList = new ArrayList<>();
     }
 
     synchronized boolean add(File dir) {
@@ -64,23 +63,17 @@ class TempDirDeleter extends Thread {
     }
 
     private void deleteDirectoryRecursive(File dir) {
-        if (dir == null) {
+        if (dir == null)
             return;
-        }
 
         File[] fileArray = dir.listFiles();
-
-        if (fileArray != null) {
-            for (int i = 0; i < fileArray.length; i++) {
-                if (fileArray[i].isDirectory()) {
+        if (fileArray != null)
+            for (int i = 0; i < fileArray.length; i++)
+                if (fileArray[i].isDirectory())
                     deleteDirectoryRecursive(fileArray[i]);
-                } else {
+                else
                     fileArray[i].delete();
-                }
-            }
-        }
         dir.delete();
-//        getInstance();   // what possible function does this have?
     }
 
     void deleteDirectory(File dir) {

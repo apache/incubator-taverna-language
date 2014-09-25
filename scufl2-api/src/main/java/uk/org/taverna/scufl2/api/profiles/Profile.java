@@ -16,24 +16,21 @@ import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 
 /**
- * A <code>Profile</code> specifies a set of compatible {@link ProcessorBinding}s.
+ * A <code>Profile</code> specifies a set of compatible {@link ProcessorBinding}
+ * s.
  * <p>
  * For example, one <code>Profile</code> could contain ways of enacting a set of
- * {@link uk.org.taverna.scufl2.api.core.Processor Processor}s on a grid whilst another contained
- * ways of enacting the <code>Processor</code>s on a laptop.
+ * {@link uk.org.taverna.scufl2.api.core.Processor Processor}s on a grid whilst
+ * another contained ways of enacting the <code>Processor</code>s on a laptop.
  * 
  * @author Alan R Williams
  */
-public class Profile extends AbstractRevisioned implements Child<WorkflowBundle>, Revisioned {
-
-	private final NamedSet<ProcessorBinding> processorBindings = new NamedSet<ProcessorBinding>();
-
-	private final NamedSet<Configuration> configurations = new NamedSet<Configuration>();
-
+public class Profile extends AbstractRevisioned implements
+		Child<WorkflowBundle>, Revisioned {
+	private final NamedSet<ProcessorBinding> processorBindings = new NamedSet<>();
+	private final NamedSet<Configuration> configurations = new NamedSet<>();
 	private Integer profilePosition;
-
-	private final NamedSet<Activity> activities = new NamedSet<Activity>();
-
+	private final NamedSet<Activity> activities = new NamedSet<>();
 	private WorkflowBundle parent;
 
 	/**
@@ -47,8 +44,8 @@ public class Profile extends AbstractRevisioned implements Child<WorkflowBundle>
 	 * Constructs a <code>Profile</code> with the specified name.
 	 * 
 	 * @param name
-	 *            the name of the <code>Profile</code>. <strong>Must not</strong> be <code>null</code>
-	 *            or an empty String.
+	 *            the name of the <code>Profile</code>. <strong>Must
+	 *            not</strong> be <code>null</code> or an empty String.
 	 */
 	public Profile(String name) {
 		super(name);
@@ -57,37 +54,38 @@ public class Profile extends AbstractRevisioned implements Child<WorkflowBundle>
 	@Override
 	public boolean accept(Visitor visitor) {
 		if (visitor.visitEnter(this)) {
-			List<Iterable<? extends WorkflowBean>> children = new ArrayList<Iterable<? extends WorkflowBean>>();
+			List<Iterable<? extends WorkflowBean>> children = new ArrayList<>();
 			children.add(getActivities());
 			children.add(getProcessorBindings());
 			children.add(getConfigurations());
-			outer: for (Iterable<? extends WorkflowBean> it : children) {
-				for (WorkflowBean bean : it) {
-					if (!bean.accept(visitor)) {
+			outer: for (Iterable<? extends WorkflowBean> it : children)
+				for (WorkflowBean bean : it)
+					if (!bean.accept(visitor))
 						break outer;
-					}
-				}
-			}
 		}
 		return visitor.visitLeave(this);
 	}
 
 	/**
-	 * Returns the <code>Activity</code>s that this <code>Profile</code> contains.
+	 * Returns the <code>Activity</code>s that this <code>Profile</code>
+	 * contains.
 	 * <p>
 	 * The <code>Activity</code>s may be bound to <code>Processor</code>s in the
 	 * <code>ProcessorBinding</code>s.
 	 * 
-	 * @return the <code>Activity</code>s that this <code>Profile</code> contains
+	 * @return the <code>Activity</code>s that this <code>Profile</code>
+	 *         contains
 	 */
 	public NamedSet<Activity> getActivities() {
 		return activities;
 	}
 
 	/**
-	 * Returns the <code>Configuration</code>s that this <code>Profile</code> contains.
+	 * Returns the <code>Configuration</code>s that this <code>Profile</code>
+	 * contains.
 	 * 
-	 * @return the <code>Configuration</code>s that this <code>Profile</code> contains
+	 * @return the <code>Configuration</code>s that this <code>Profile</code>
+	 *         contains
 	 */
 	public NamedSet<Configuration> getConfigurations() {
 		return configurations;
@@ -108,14 +106,16 @@ public class Profile extends AbstractRevisioned implements Child<WorkflowBundle>
 	}
 
 	/**
-	 * Return the suggested position of this profile within the {@link WorkflowBundle}.
+	 * Return the suggested position of this profile within the
+	 * {@link WorkflowBundle}.
 	 * <p>
-	 * If ordering profiles (for instance for displaying them to the user), they 
-	 * might be sorted by increasing profilePosition. If two profiles
-	 * have the same position, their internal order is undetermined. Profiles with 
-	 * profile position <code>null</code> should be sorted last in such a list. 
+	 * If ordering profiles (for instance for displaying them to the user), they
+	 * might be sorted by increasing profilePosition. If two profiles have the
+	 * same position, their internal order is undetermined. Profiles with
+	 * profile position <code>null</code> should be sorted last in such a list.
 	 * 
-	 * @return the position of this profile within the <code>WorkflowBundle</code>
+	 * @return the position of this profile within the
+	 *         <code>WorkflowBundle</code>
 	 */
 	public final Integer getProfilePosition() {
 		return profilePosition;
@@ -124,7 +124,9 @@ public class Profile extends AbstractRevisioned implements Child<WorkflowBundle>
 	/**
 	 * Sets the <code>Activity</code>s that this <code>Profile</code> contains.
 	 * 
-	 * @param activities the <code>Activity</code>s that this <code>Profile</code> contains
+	 * @param activities
+	 *            the <code>Activity</code>s that this <code>Profile</code>
+	 *            contains
 	 */
 	public void setActivities(Set<Activity> activities) {
 		this.activities.clear();
@@ -132,9 +134,12 @@ public class Profile extends AbstractRevisioned implements Child<WorkflowBundle>
 	}
 
 	/**
-	 * Sets the <code>Configuration</code>s that this <code>Profile</code> contains.
+	 * Sets the <code>Configuration</code>s that this <code>Profile</code>
+	 * contains.
 	 * 
-	 * @param configurations the <code>Configuration</code>s that this <code>Profile</code> contains
+	 * @param configurations
+	 *            the <code>Configuration</code>s that this <code>Profile</code>
+	 *            contains
 	 */
 	public void setConfigurations(Set<Configuration> configurations) {
 		this.configurations.clear();
@@ -143,20 +148,18 @@ public class Profile extends AbstractRevisioned implements Child<WorkflowBundle>
 
 	@Override
 	public void setParent(WorkflowBundle parent) {
-		if (this.parent != null && this.parent != parent) {
+		if (this.parent != null && this.parent != parent)
 			this.parent.getProfiles().remove(this);
-		}
 		this.parent = parent;
-		if (parent != null) {
+		if (parent != null)
 			parent.getProfiles().add(this);
-		}
-
 	}
 
 	/**
 	 * Sets the bindings for individual <code>Processor</code>s.
 	 * 
-	 * @param processorBindings the bindings for individual <code>Processor</code>s
+	 * @param processorBindings
+	 *            the bindings for individual <code>Processor</code>s
 	 */
 	public void setProcessorBindings(Set<ProcessorBinding> processorBindings) {
 		this.processorBindings.clear();
@@ -166,12 +169,14 @@ public class Profile extends AbstractRevisioned implements Child<WorkflowBundle>
 	/**
 	 * Sets the position of this profile within the {@link WorkflowBundle}.
 	 * <p>
-	 * When ordering profiles, they can be sorted by decreasing profilePosition. If two profiles
-	 * have the same position, their internal order is undetermined.
+	 * When ordering profiles, they can be sorted by decreasing profilePosition.
+	 * If two profiles have the same position, their internal order is
+	 * undetermined.
 	 * 
 	 * 
 	 * @param profilePosition
-	 *            the position of this profile within the <code>WorkflowBundle</code>
+	 *            the position of this profile within the
+	 *            <code>WorkflowBundle</code>
 	 */
 	public final void setProfilePosition(Integer profilePosition) {
 		this.profilePosition = profilePosition;
@@ -188,7 +193,7 @@ public class Profile extends AbstractRevisioned implements Child<WorkflowBundle>
 	@Override
 	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
 		super.cloneInto(clone, cloning);
-		Profile cloneProfile = (Profile)clone;
+		Profile cloneProfile = (Profile) clone;
 		cloneProfile.setProfilePosition(getProfilePosition());
 	}
 }

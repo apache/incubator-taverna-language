@@ -1,6 +1,6 @@
 package uk.org.taverna.scufl2.validation.structural;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 
@@ -9,7 +9,6 @@ import org.junit.Test;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.io.ReaderException;
-import uk.org.taverna.scufl2.validation.ValidationProblem;
 
 
 public class WorkflowTest {
@@ -22,6 +21,7 @@ public class WorkflowTest {
 		wb.setMainWorkflow(w);
 	    StructuralValidator sv = new StructuralValidator();
 			sv.checkStructure(wb, l);
+			@SuppressWarnings("unused")
 			ValidatorState vs = sv.getValidatorState();
 			assertEquals(1, l.getIncompleteWorkflows().size());
 			assert(l.getIncompleteWorkflows().contains(w));	    

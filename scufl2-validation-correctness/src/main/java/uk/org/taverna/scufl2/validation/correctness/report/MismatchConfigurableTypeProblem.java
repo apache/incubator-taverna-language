@@ -8,12 +8,12 @@ import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.validation.ValidationProblem;
 
 public class MismatchConfigurableTypeProblem extends ValidationProblem {
-	
 	private final Configurable configurable;
 
-	public MismatchConfigurableTypeProblem(Configuration configuration, Configurable configurable) {
+	public MismatchConfigurableTypeProblem(Configuration configuration,
+			Configurable configurable) {
 		super(configuration);
-		this.configurable = configurable;	
+		this.configurable = configurable;
 	}
 
 	/**
@@ -22,9 +22,10 @@ public class MismatchConfigurableTypeProblem extends ValidationProblem {
 	public Configurable getConfigurable() {
 		return configurable;
 	}
-	
+
+	@Override
 	public String toString() {
-		return ("The types of " + getBean() + " and " + configurable + " are mismatched");
+		return "The types of " + getBean() + " and " + configurable
+				+ " are mismatched";
 	}
-	
 }

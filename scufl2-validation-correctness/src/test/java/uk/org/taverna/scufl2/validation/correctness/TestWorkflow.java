@@ -4,8 +4,6 @@
 package uk.org.taverna.scufl2.validation.correctness;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -16,12 +14,11 @@ import java.util.TreeSet;
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.common.NamedSet;
-import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.core.ControlLink;
 import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
-import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.NonAbsoluteURIProblem;
-import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.NullFieldProblem;
+import uk.org.taverna.scufl2.validation.correctness.report.NonAbsoluteURIProblem;
+import uk.org.taverna.scufl2.validation.correctness.report.NullFieldProblem;
 
 /**
  * @author alanrw

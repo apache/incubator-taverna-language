@@ -15,16 +15,13 @@ import java.util.Comparator;
  * because it is used within a {@link Comparable#compareTo(Object)} or because
  * the two arguments are not of an agreeable subclass &lt<T&gt; of
  * {@link Comparable} (but still can be compared).
- * </p>
  * 
  * @author Stian Soiland-Reyes
- * 
  * @param <T>
  *            The common type of the objects to be compared.
  */
 public class NullSafeComparator<T extends Comparable<T>> implements
 		Comparator<T> {
-
 	/**
 	 * Compare two objects for <code>null</code>ity only.
 	 * <p>
@@ -45,15 +42,12 @@ public class NullSafeComparator<T extends Comparable<T>> implements
 	 *         <code>null</code>.
 	 */
 	public static Integer nullCompare(Object a, Object b) {
-		if (a == null && b == null) {
+		if (a == null && b == null)
 			return 0;
-		}
-		if (a == null && b != null) {
+		if (a == null && b != null)
 			return -1;
-		}
-		if (a != null && b == null) {
+		if (a != null && b == null)
 			return 1;
-		}
 		return null;
 	}
 
@@ -76,18 +70,16 @@ public class NullSafeComparator<T extends Comparable<T>> implements
 	 *             if the specified object's type prevents it from being
 	 *             compared to this object.
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings("unchecked")
 	public static int compareObjects(Object a, Object b) {
 		Integer diff = nullCompare(a, b);
-		if (diff != null) {
+		if (diff != null)
 			return diff;
-		}
-		return ((Comparable) a).compareTo(b);
+		return ((Comparable<Object>) a).compareTo(b);
 	}
 
 	@Override
 	public int compare(T a, T b) {
 		return compareObjects(a, b);
 	}
-
 }

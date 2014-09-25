@@ -1,5 +1,7 @@
 package uk.org.taverna.scufl2.translator.t2flow.defaultactivities;
 
+import static uk.org.taverna.scufl2.translator.t2flow.T2FlowParser.ravenURI;
+
 import java.math.BigInteger;
 import java.net.URI;
 
@@ -13,12 +15,11 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.SoaplabConfig;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class SoaplabActivityParser extends AbstractActivityParser {
-	private static URI activityRavenURI = T2FlowParser.ravenURI
+	private static final URI activityRavenURI = ravenURI
 			.resolve("net.sf.taverna.t2.activities/soaplab-activity/");
-
-	private static String activityClassName = "net.sf.taverna.t2.activities.soaplab.SoaplabActivity";
-
-	public static URI scufl2Uri = URI.create("http://ns.taverna.org.uk/2010/activity/soaplab");
+	private static final String activityClassName = "net.sf.taverna.t2.activities.soaplab.SoaplabActivity";
+	public static final URI scufl2Uri = URI
+			.create("http://ns.taverna.org.uk/2010/activity/soaplab");
 
 	@Override
 	public boolean canHandlePlugin(URI activityURI) {
@@ -33,10 +34,11 @@ public class SoaplabActivityParser extends AbstractActivityParser {
 	}
 
 	@Override
-	public Configuration parseConfiguration(T2FlowParser t2FlowParser, ConfigBean configBean, ParserState parserState)
+	public Configuration parseConfiguration(T2FlowParser t2FlowParser,
+			ConfigBean configBean, ParserState parserState)
 			throws ReaderException {
-		SoaplabConfig soaplabConfig = unmarshallConfig(t2FlowParser, configBean, "xstream",
-				SoaplabConfig.class);
+		SoaplabConfig soaplabConfig = unmarshallConfig(t2FlowParser,
+				configBean, "xstream", SoaplabConfig.class);
 
 		Configuration configuration = new Configuration();
 		configuration.setParent(parserState.getCurrentProfile());
@@ -45,25 +47,21 @@ public class SoaplabActivityParser extends AbstractActivityParser {
 		configuration.setType(scufl2Uri.resolve("#Config"));
 
 		String endpoint = soaplabConfig.getEndpoint();
-		if (endpoint == null || endpoint.equals("")) {
+		if (endpoint == null || endpoint.isEmpty())
 			throw new ReaderException("Soablab config has no endpoint set");
-		}
 		json.put("endpoint", endpoint);
 
 		double pollingBackoff = soaplabConfig.getPollingBackoff();
 		json.put("pollingBackoff", pollingBackoff);
 
 		BigInteger pollingInterval = soaplabConfig.getPollingInterval();
-		if (pollingInterval != null) {
+		if (pollingInterval != null)
             json.put("pollingInterval", pollingInterval.intValue());
-		}
 
 		BigInteger pollingIntervalMax = soaplabConfig.getPollingIntervalMax();
-		if (pollingIntervalMax != null) {
+		if (pollingIntervalMax != null)
             json.put("pollingIntervalMax", pollingIntervalMax.intValue());
-		}
 
 		return configuration;
 	}
-
 }

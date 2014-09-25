@@ -10,16 +10,16 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 /**
  * A writer for {@link WorkflowBundle}s.
  * 
- * Implementations specify workflow bundle formats (media types) that they can write.
+ * Implementations specify workflow bundle formats (media types) that they can
+ * write.
  */
 public interface WorkflowBundleWriter {
-
 	/**
 	 * Returns the media types that this writer can handle.
 	 * 
 	 * @return the media types that this writer can handle
 	 */
-	public Set<String> getMediaTypes();
+	Set<String> getMediaTypes();
 
 	/**
 	 * Writes a <code>WorkflowBundle</code> to a file with specified media type.
@@ -35,11 +35,12 @@ public interface WorkflowBundleWriter {
 	 * @throws IOException
 	 *             if there is an error writing the file
 	 */
-	public void writeBundle(WorkflowBundle wfBundle, File destination, String mediaType)
-	throws WriterException, IOException;
+	void writeBundle(WorkflowBundle wfBundle, File destination, String mediaType)
+			throws WriterException, IOException;
 
 	/**
-	 * Writes a <code>WorkflowBundle</code> to a stream with specified media type.
+	 * Writes a <code>WorkflowBundle</code> to a stream with specified media
+	 * type.
 	 * 
 	 * @param wfBundle
 	 *            the workflow bundle to write
@@ -52,7 +53,6 @@ public interface WorkflowBundleWriter {
 	 * @throws IOException
 	 *             if there is an error writing to the stream
 	 */
-	public void writeBundle(WorkflowBundle wfBundle, OutputStream output, String mediaType)
-	throws WriterException, IOException;
-
+	void writeBundle(WorkflowBundle wfBundle, OutputStream output,
+			String mediaType) throws WriterException, IOException;
 }

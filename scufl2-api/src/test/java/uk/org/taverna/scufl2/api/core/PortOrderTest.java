@@ -11,9 +11,9 @@ import uk.org.taverna.scufl2.api.common.Named;
 import uk.org.taverna.scufl2.api.port.InputWorkflowPort;
 import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
 import uk.org.taverna.scufl2.api.port.Port;
-
 import static org.junit.Assert.*;
 
+@SuppressWarnings("unchecked")
 public class PortOrderTest {
 	List<Port> ports = new ArrayList<Port>();
 	

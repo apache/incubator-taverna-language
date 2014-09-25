@@ -6,7 +6,7 @@ public interface GranularDepthPort extends DepthPort {
 	 * 
 	 * @return the granular depth of the <code>Port</code>
 	 */
-	public Integer getGranularDepth();
+	Integer getGranularDepth();
 
 	/**
 	 * Sets the granular depth of the <code>Port</code>.
@@ -14,5 +14,5 @@ public interface GranularDepthPort extends DepthPort {
 	 * @param granularDepth
 	 *            the granular depth of the <code>Port</code>
 	 */
-	public void setGranularDepth(Integer granularDepth);
+	void setGranularDepth(Integer granularDepth);
 }

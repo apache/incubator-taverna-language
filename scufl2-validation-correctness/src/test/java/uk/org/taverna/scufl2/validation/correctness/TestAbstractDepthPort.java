@@ -8,8 +8,8 @@ import java.util.Set;
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
-import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.NegativeValueProblem;
-import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.NullFieldProblem;
+import uk.org.taverna.scufl2.validation.correctness.report.NegativeValueProblem;
+import uk.org.taverna.scufl2.validation.correctness.report.NullFieldProblem;
 
 
 public class TestAbstractDepthPort {

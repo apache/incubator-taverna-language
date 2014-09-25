@@ -14,6 +14,7 @@ public class TestSetParent {
 	@Test
 	public void checkParents() throws Exception {
 		example.accept(new VisitorWithPath() {
+			@SuppressWarnings("rawtypes")
 			@Override
 			public boolean visit() {
 				WorkflowBean node = getCurrentNode();
