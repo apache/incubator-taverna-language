@@ -22,11 +22,13 @@ import uk.org.taverna.scufl2.api.port.InputProcessorPort;
 import uk.org.taverna.scufl2.api.port.InputWorkflowPort;
 import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
 import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
+import uk.org.taverna.scufl2.validation.Validator;
 
 /**
  * @author alanrw
  */
-public final class StructuralValidator {
+public final class StructuralValidator implements
+		Validator<StructuralValidationListener> {
 	private static enum ProcessorCheckStatus {
 		COULD_NOT_CHECK, PASSED, FAILED
 	};
@@ -60,16 +62,16 @@ public final class StructuralValidator {
 		validatorState.get().setWorkflow(workflow);
 		validateWorkflow();
 	}
-	
+
 	private void validateWorkflow() {
 		clearWorkflowData();
 		rememberDataLinkConnections();
 		inheritDataLinkDepthsFromWorkflowInputPorts();
-		checkProcessors();		
+		checkProcessors();
 		checkWorkflowOutputPorts();
 		checkCompleteness();
 	}
-	
+
 	private void clearWorkflowData() {
 		validatorState.get().clearWorkflowData();
 	}
@@ -154,7 +156,8 @@ public final class StructuralValidator {
 				return;
 			}
 
-			// int granularDepth = mainIncomingLink.getSource().getGranularDepth();
+			// int granularDepth =
+			// mainIncomingLink.getSource().getGranularDepth();
 			Integer portResolvedDepth = dataLinkResolvedDepth
 					+ (validatorState.get().isMergedPort(owp) ? 1 : 0);
 			validatorState.get().getEventListener()
@@ -376,5 +379,12 @@ public final class StructuralValidator {
 				validatorState.get().setDataLinkResolvedDepth(dl, iwpDepth);
 			}
 		}
+	}
+
+	@Override
+	public StructuralValidationListener validate(WorkflowBundle workflowBundle) {
+		StructuralValidationListener l = new ReportStructuralValidationListener();
+		this.checkStructure(workflowBundle, l);
+		return l;
 	}
 }

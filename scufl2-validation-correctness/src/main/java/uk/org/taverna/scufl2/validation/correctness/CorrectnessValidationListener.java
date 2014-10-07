@@ -15,11 +15,12 @@ import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyTopNode;
 import uk.org.taverna.scufl2.api.port.AbstractGranularDepthPort;
 import uk.org.taverna.scufl2.api.port.Port;
 import uk.org.taverna.scufl2.validation.ValidationException;
+import uk.org.taverna.scufl2.validation.ValidationReport;
 
 /**
  * @author alanrw
  */
-public interface CorrectnessValidationListener {
+public interface CorrectnessValidationListener extends ValidationReport {
 	void emptyIterationStrategyTopNode(IterationStrategyTopNode bean);
 
 	void mismatchConfigurableType(Configuration bean, Configurable configures);
@@ -42,8 +43,4 @@ public interface CorrectnessValidationListener {
 
 	void incompatibleGranularDepth(AbstractGranularDepthPort bean,
 			Integer depth, Integer granularDepth);
-
-	boolean detectedProblems();
-
-	ValidationException getException();
 }
