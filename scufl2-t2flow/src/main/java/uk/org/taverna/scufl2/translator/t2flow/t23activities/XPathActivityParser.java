@@ -14,6 +14,7 @@ import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.defaultactivities.AbstractActivityParser;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.XPathConfig;
+import uk.org.taverna.scufl2.xml.t2flow.jaxb.XPathNamespaceMap.Entry;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -84,8 +85,7 @@ public class XPathActivityParser extends AbstractActivityParser {
 			json.put("xpathNamespaceMap", namespaceMap);
 
 			// TODO look at why the schema translation here is so wrong
-			for (uk.org.taverna.scufl2.xml.t2flow.jaxb.XPathNamespaceMap.List list : xpathConfig
-					.getXpathNamespaceMap().getList()) {
+			for (Entry list : xpathConfig.getXpathNamespaceMap().getEntry()) {
 				String namespacePrefix = list.getContent().get(0).getValue();
 				String namespaceURI = list.getContent().get(1).getValue();
 
