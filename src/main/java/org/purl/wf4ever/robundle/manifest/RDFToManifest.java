@@ -331,7 +331,8 @@ public class RDFToManifest {
 		model.add(jsonLdAsJenaModel(manifestResourceAsStream,
 				manifestResourceBaseURI));
 
-		model.write(System.out, "TURTLE");
+//		model.write(System.out, "TURTLE");
+//		System.out.println();
 
 		URI root = manifestResourceBaseURI.resolve("/");
 		Individual ro = findRO(model, root);
