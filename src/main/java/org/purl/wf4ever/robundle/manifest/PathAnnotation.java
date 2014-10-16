@@ -85,8 +85,12 @@ public class PathAnnotation {
 	}
 
 	public void setContent(Path path) {
-		this.content = relativizePath(path);
-		
+		this.content = relativizePath(path);		
+	}
+	
+	@Override
+	public String toString() {
+		return "Annotation: " + getContent() + " about "  +getAbout();
 	}
 }
  
