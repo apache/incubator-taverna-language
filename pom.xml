@@ -436,4 +436,20 @@
 	    <url>http://repository.mygrid.org.uk/artifactory/aduna/</url>
         </pluginRepository>
     </pluginRepositories>
+    <licenses>
+      <license>
+      <name>MIT license</name>
+      <url>http://opensource.org/licenses/MIT</url>
+      <distribution>repo</distribution>
+    </license>    
+  </licenses>
+  <issueManagement>
+    <system>github</system>
+    <url>https://github.com/wf4ever/scufl2-wfdesc/issues</url>
+  </issueManagement>
+  <ciManagement>
+    <system>jenkins</system>
+    <url>http://build.mygrid.org.uk/ci/job/scufl2-wfdesc/</url>
+  </ciManagement>
+
 </project>
