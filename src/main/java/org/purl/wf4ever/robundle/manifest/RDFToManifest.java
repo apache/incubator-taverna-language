@@ -28,6 +28,7 @@ import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -170,7 +171,7 @@ public class RDFToManifest {
 
 	protected OntModel getOntModel() {
 		OntModel ontModel = ModelFactory
-				.createOntologyModel(OntModelSpec.OWL_MEM_RULE_INF);
+				.createOntologyModel(OntModelSpec.OWL_DL_MEM_RULE_INF);
 		ontModel.setNsPrefix("foaf", FOAF_0_1);
 		ontModel.setNsPrefix("prov", PROV);
 		ontModel.setNsPrefix("ore", ORE);
@@ -330,10 +331,13 @@ public class RDFToManifest {
 		model.add(jsonLdAsJenaModel(manifestResourceAsStream,
 				manifestResourceBaseURI));
 
-//		model.write(System.out, "TURTLE");
+		model.write(System.out, "TURTLE");
 
 		URI root = manifestResourceBaseURI.resolve("/");
 		Individual ro = findRO(model, root);
+		if (ro == null) {
+			throw new IOException("root ResearchObject not found - Not a valid RO Bundle manifest");
+		}
 
 		for (Individual manifestResource : listObjectProperties(ro,
 				isDescribedBy)) {
@@ -380,14 +384,25 @@ public class RDFToManifest {
 			PathMetadata meta = manifest.getAggregation(relativizeFromBase(
 					uriStr, root));
 
-			ResIterator proxies = model.listSubjectsWithProperty(proxyFor,
-					aggrResource);
-			if (proxies.hasNext()) {
-				Resource proxy = proxies.next();
+			
+			
+			
+			Set<Individual> proxies = listObjectProperties(aggrResource, hasProxy);
+			if (! proxies.isEmpty()) {
+				// We can only deal with the first one
+				Individual proxy = proxies.iterator().next();
+				
+				String proxyUri = null;
 				if (proxy.getURI() != null) {
-					meta.setProxy(relativizeFromBase(proxy.getURI(), root));
+					proxyUri = proxy.getURI();
+				} else if (proxy.getSameAs() != null) {
+					proxyUri = proxy.getSameAs().getURI();
+				}
+				if (proxyUri != null) {
+					meta.setProxy(relativizeFromBase(proxyUri, root));
 				}
 
+				
 			}
 
 			creators = getAgents(root, aggrResource, createdBy);
