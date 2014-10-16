@@ -42,6 +42,7 @@ public class PathAnnotation {
     	}
     }
     
+    // TODO: Rename to 'uri'
     public URI getAnnotation() {
         return annotation;
     }
