@@ -31,6 +31,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 public class RDFToManifest {
@@ -417,28 +418,35 @@ public class RDFToManifest {
 				// System.out.println("Found annotation " + ann);
 
 				// Normally just one body per annotation, but just in case we'll
-				// iterate
-				// and split them out
+				// iterate and split them out (as our PathAnnotation can
+				// only keep a single setContent() at a time)
 				for (Individual body : listObjectProperties(
 						model.getOntResource(ann), hasBody)) {
 					PathAnnotation pathAnn = new PathAnnotation();
-
-					if (ann.getURI() != null) {
-						pathAnn.setAnnotation(relativizeFromBase(ann.getURI(),
-								root));
-					}
-
-					Resource target = ann.getPropertyResourceValue(hasTarget);
-					if (target != null && target.getURI() != null) {
-						pathAnn.setAbout(relativizeFromBase(target.getURI(),
-								root));
-					}
 					if (body.getURI() != null) {
 						pathAnn.setContent(relativizeFromBase(body.getURI(),
 								root));
 					} else {
 						logger.warning("Can't find annotation body for anonymous "
 								+ body);
+					}
+					
+					if (ann.getURI() != null) {
+						pathAnn.setAnnotation(relativizeFromBase(ann.getURI(),
+								root));
+					}
+
+					// Handle multiple about/hasTarget					
+					for (RDFNode target : iterate(ann.as(Individual.class)
+							.listPropertyValues(hasTarget))) {
+						if (target != null && target.isResource()) {
+							Resource targetRes = target.as(Resource.class);
+							if (targetRes.getURI() != null) {
+								pathAnn.getAboutList().add(
+										relativizeFromBase(targetRes.getURI(),
+												root));
+							}
+						}
 					}
 					manifest.getAnnotations().add(pathAnn);
 				}
