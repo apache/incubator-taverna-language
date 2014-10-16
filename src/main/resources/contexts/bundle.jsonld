@@ -12,11 +12,18 @@
     "pav": "http://purl.org/pav/",
     "xsd": "http://www.w3.org/2001/XMLSchema#",
     "foaf": "http://xmlns.com/foaf/0.1/",
+    "owl": "http://www.w3.org/2002/07/owl#",
 
-    "id": "@id",
-    "file": "@id",
     "uri": "@id",
-    "annotation": "@id",
+    "id": {
+      "@id": "owl:sameAs",
+      "@type": "@id" },
+    "file": {
+      "@id": "owl:sameAs",
+      "@type": "@id" },
+    "annotation": {
+      "@id": "owl:sameAs",
+      "@type": "@id" },
 
     "manifest": {
         "@id": "ore:isDescribedBy",
@@ -28,6 +35,14 @@
         "@type": "xsd:dateTime"
     },
     "createdBy": {
+        "@id": "pav:createdBy",
+        "@type": "@id"
+    },
+    "aggregatedOn": {
+        "@id": "pav:createdOn",
+        "@type": "xsd:dateTime"
+    },
+    "aggregatedBy": {
         "@id": "pav:createdBy",
         "@type": "@id"
     },
@@ -55,6 +70,18 @@
         "@id": "pav:contributedBy",
         "@type": "@id"
     },
+    "retrievedOn": {
+        "@id": "pav:retrievedOn",
+        "@type": "xsd:dateTime"
+    },
+    "retrievedBy": {
+        "@id": "pav:retrievedBy",
+        "@type": "@id"
+    },
+    "retrievedFrom": {
+        "@id": "pav:retrievedFrom",
+        "@type": "@id"
+    },
     "name": {
         "@id": "foaf:name"
     },
@@ -62,6 +89,7 @@
         "@id": "roterms:orcid",
         "@type": "@id"
     },
+
     "history": {
         "@id": "prov:has_provenance",
         "@type": "@id"
@@ -77,15 +105,18 @@
       "@id": "bundle:inFolder",
       "@type": "@id"
     },
+    "filename": {
+        "@id": "ro:entryName"
+    },
     "proxy": {
-      "@reverse": "ore:proxyFor",
+      "@id": "bundle:hasProxy",
       "@type": "@id"
     },
-    "bundledAs": { 
-        "@id": "bundle:name",
+    "bundledAs": {
+        "@id": "bundle:bundledAs",
         "@type": "@id"
     },
-    "conformsTo": { 
+    "conformsTo": {
         "@id": "dct:conformsTo",
         "@type": "@id"
     },
@@ -99,12 +130,10 @@
     },
     "about": {
        "@id": "oa:hasTarget",
-       "@type": "@id" 
+       "@type": "@id"
     }
 
-
   },
-  "http://purl.org/pav/retrievedFrom": {
-    "@id": "https://w3id.org/bundle/context"
+  "http://purl.org/pav/retrievedFrom": { "@id": "https://raw.githubusercontent.com/wf4ever/ro/61b563e7e9941485ff6e7b338875d4015d734b6f/bundle/draft/context.json" } 
   }
 }

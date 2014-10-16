@@ -24,33 +24,39 @@ import com.hp.hpl.jena.ontology.Individual;
 import com.hp.hpl.jena.ontology.ObjectProperty;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.ResIterator;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 public class RDFToManifest {
-	
+
 	private static Logger logger = Logger.getLogger(RDFToManifest.class
 			.getCanonicalName());
 
 	static {
 		setCachedHttpClientInJsonLD();
 	}
-	
+
 	private static final String PROV = "http://www.w3.org/ns/prov#";
 	private static final String PROV_O = "http://www.w3.org/ns/prov-o#";
 	private static final String FOAF_0_1 = "http://xmlns.com/foaf/0.1/";
 	private static final String PAV = "http://purl.org/pav/";
 
 	private static final String DCT = "http://purl.org/dc/terms/";
-	// private static final String RO = "http://purl.org/wf4ever/ro#";
+	private static final String RO = "http://purl.org/wf4ever/ro#";
+	private static final String BUNDLE = "http://purl.org/wf4ever/bundle#";
 	private static final String ORE = "http://www.openarchives.org/ore/terms/";
 	private static final String OA = "http://www.w3.org/ns/oa#";
+	private static final String OA_RDF = "/ontologies/oa.rdf";
 	private static final String FOAF_RDF = "/ontologies/foaf.rdf";
+	private static final String BUNDLE_RDF = "/ontologies/bundle.owl";
 	private static final String PAV_RDF = "/ontologies/pav.rdf";
 	private static final String PROV_O_RDF = "/ontologies/prov-o.rdf";
 	private static final String PROV_AQ_RDF = "/ontologies/prov-aq.rdf";
@@ -82,6 +88,10 @@ public class RDFToManifest {
 
 	private ObjectProperty hasTarget;
 	private ObjectProperty isDescribedBy;
+	private OntModel bundle;
+	private ObjectProperty hasProxy;
+	private ObjectProperty inFolder;
+	private ObjectProperty hasAnnotation;
 
 	public RDFToManifest() {
 		loadOntologies();
@@ -95,6 +105,7 @@ public class RDFToManifest {
 		loadPAV();
 		loadPROVAQ();
 		loadOA();
+		loadBundle();
 	}
 
 	protected OntModel loadOntologyFromClasspath(String classPathUri, String uri) {
@@ -110,8 +121,6 @@ public class RDFToManifest {
 		return ontModel;
 	}
 
-	
-	
 	protected static Model jsonLdAsJenaModel(InputStream jsonIn, URI base)
 			throws IOException, RiotException {
 		JenaJSONLD.init();
@@ -126,27 +135,27 @@ public class RDFToManifest {
 		// Options(base.toASCIIString()));
 		// return model;
 	}
-	
+
 	/**
 	 * Use a JarCacheStorage so that our JSON-LD @context can be loaded from our
 	 * classpath and not require network connectivity
 	 * 
 	 */
 	protected static void setCachedHttpClientInJsonLD() {
-//		JarCacheStorage cacheStorage = new JarCacheStorage(
-//				RDFToManifest.class.getClassLoader());
-//		synchronized (DocumentLoader.class) {
-//			HttpClient oldHttpClient = DocumentLoader.getHttpClient();
-//			CachingHttpClient wrappedHttpClient = new CachingHttpClient(
-//					oldHttpClient, cacheStorage, cacheStorage.getCacheConfig());
-//			DocumentLoader.setHttpClient(wrappedHttpClient);
-//		}
-//		synchronized (JSONUtils.class) {
-//			HttpClient oldHttpClient = JSONUtilsSub.getHttpClient();
-//			CachingHttpClient wrappedHttpClient = new CachingHttpClient(
-//					oldHttpClient, cacheStorage, cacheStorage.getCacheConfig());
-//			JSONUtilsSub.setHttpClient(wrappedHttpClient);
-//		}
+		// JarCacheStorage cacheStorage = new JarCacheStorage(
+		// RDFToManifest.class.getClassLoader());
+		// synchronized (DocumentLoader.class) {
+		// HttpClient oldHttpClient = DocumentLoader.getHttpClient();
+		// CachingHttpClient wrappedHttpClient = new CachingHttpClient(
+		// oldHttpClient, cacheStorage, cacheStorage.getCacheConfig());
+		// DocumentLoader.setHttpClient(wrappedHttpClient);
+		// }
+		// synchronized (JSONUtils.class) {
+		// HttpClient oldHttpClient = JSONUtilsSub.getHttpClient();
+		// CachingHttpClient wrappedHttpClient = new CachingHttpClient(
+		// oldHttpClient, cacheStorage, cacheStorage.getCacheConfig());
+		// JSONUtilsSub.setHttpClient(wrappedHttpClient);
+		// }
 	}
 
 	private void checkNotNull(Object... possiblyNulls) {
@@ -161,7 +170,8 @@ public class RDFToManifest {
 	}
 
 	protected OntModel getOntModel() {
-		OntModel ontModel = ModelFactory.createOntologyModel();
+		OntModel ontModel = ModelFactory
+				.createOntologyModel(OntModelSpec.OWL_DL_MEM_RULE_INF);
 		ontModel.setNsPrefix("foaf", FOAF_0_1);
 		ontModel.setNsPrefix("prov", PROV);
 		ontModel.setNsPrefix("ore", ORE);
@@ -253,11 +263,23 @@ public class RDFToManifest {
 		if (oa != null) {
 			return;
 		}
-		OntModel ontModel = loadOntologyFromClasspath("/ontologies/oa.rdf", OA);
+		OntModel ontModel = loadOntologyFromClasspath(OA_RDF, OA);
 		hasTarget = ontModel.getObjectProperty(OA + "hasTarget");
 		hasBody = ontModel.getObjectProperty(OA + "hasBody");
 		checkNotNull(hasTarget, hasBody);
 		oa = ontModel;
+	}
+
+	protected synchronized void loadBundle() {
+		if (bundle != null) {
+			return;
+		}
+		OntModel ontModel = loadOntologyFromClasspath(BUNDLE_RDF, BUNDLE);
+		hasProxy = ontModel.getObjectProperty(BUNDLE + "hasProxy");
+		hasAnnotation = ontModel.getObjectProperty(BUNDLE + "hasAnnotation");
+		inFolder = ontModel.getObjectProperty(BUNDLE + "inFolder");
+		checkNotNull(hasProxy, hasAnnotation, inFolder);
+		bundle = ontModel;
 	}
 
 	protected synchronized void loadORE() {
@@ -272,7 +294,7 @@ public class RDFToManifest {
 		proxyFor = ontModel.getObjectProperty(ORE + "proxyFor");
 		proxyIn = ontModel.getObjectProperty(ORE + "proxyIn");
 		isDescribedBy = ontModel.getObjectProperty(ORE + "isDescribedBy");
-		
+
 		checkNotNull(aggregation, aggregates, proxyFor, proxyIn, isDescribedBy);
 
 		ore = ontModel;
@@ -302,37 +324,45 @@ public class RDFToManifest {
 		}
 	}
 
-	public void readTo(InputStream manifestResourceAsStream, Manifest manifest, URI manifestResourceBaseURI)
-			throws IOException, RiotException {
-		
-		
+	public void readTo(InputStream manifestResourceAsStream, Manifest manifest,
+			URI manifestResourceBaseURI) throws IOException, RiotException {
+
 		OntModel model = new RDFToManifest().getOntModel();
-		model.add(jsonLdAsJenaModel(manifestResourceAsStream, manifestResourceBaseURI));
+		model.add(jsonLdAsJenaModel(manifestResourceAsStream,
+				manifestResourceBaseURI));
+
+//		model.write(System.out, "TURTLE");
+//		System.out.println();
 
 		URI root = manifestResourceBaseURI.resolve("/");
 		Individual ro = findRO(model, root);
+		if (ro == null) {
+			throw new IOException("root ResearchObject not found - Not a valid RO Bundle manifest");
+		}
 
-		for (Individual manifestResource : listObjectProperties(ro, isDescribedBy)) {
+		for (Individual manifestResource : listObjectProperties(ro,
+				isDescribedBy)) {
 			String uriStr = manifestResource.getURI();
 			if (uriStr == null) {
 				logger.warning("Skipping manifest without URI: "
 						+ manifestResource);
 				continue;
-			}			
-			//URI relative = relativizeFromBase(uriStr, root);
-			Path path = manifest.getBundle().getFileSystem().provider().getPath(URI.create(uriStr));
-			manifest.getManifest().add(path);			
+			}
+			// URI relative = relativizeFromBase(uriStr, root);
+			Path path = manifest.getBundle().getFileSystem().provider()
+					.getPath(URI.create(uriStr));
+			manifest.getManifest().add(path);
 		}
-		
+
 		List<Agent> creators = getAgents(root, ro, createdBy);
 		if (!creators.isEmpty()) {
 			manifest.setCreatedBy(creators.get(0));
 			if (creators.size() > 1) {
 				logger.warning("Ignoring additional createdBy agents");
 			}
-			
+
 		}
-		
+
 		RDFNode created = ro.getPropertyValue(createdOn);
 		manifest.setCreatedOn(literalAsFileTime(created));
 
@@ -355,20 +385,33 @@ public class RDFToManifest {
 			PathMetadata meta = manifest.getAggregation(relativizeFromBase(
 					uriStr, root));
 
-			ResIterator proxies = model.listSubjectsWithProperty(proxyFor, aggrResource);
-			if (proxies.hasNext()) {
-				Resource proxy = proxies.next();
-				if (proxy.getURI() != null) {
-					meta.setProxy(relativizeFromBase(proxy.getURI(), root));
-				}
-			}
 			
+			
+			
+			Set<Individual> proxies = listObjectProperties(aggrResource, hasProxy);
+			if (! proxies.isEmpty()) {
+				// We can only deal with the first one
+				Individual proxy = proxies.iterator().next();
+				
+				String proxyUri = null;
+				if (proxy.getURI() != null) {
+					proxyUri = proxy.getURI();
+				} else if (proxy.getSameAs() != null) {
+					proxyUri = proxy.getSameAs().getURI();
+				}
+				if (proxyUri != null) {
+					meta.setProxy(relativizeFromBase(proxyUri, root));
+				}
+
+				
+			}
 
 			creators = getAgents(root, aggrResource, createdBy);
 			if (!creators.isEmpty()) {
 				meta.setCreatedBy(creators.get(0));
 				if (creators.size() > 1) {
-					logger.warning("Ignoring additional createdBy agents for " + meta);
+					logger.warning("Ignoring additional createdBy agents for "
+							+ meta);
 				}
 
 			}
@@ -390,45 +433,40 @@ public class RDFToManifest {
 
 		}
 
-		try (ClosableIterable<Resource> annotations = iterate(model
-				.listResourcesWithProperty(hasTarget))) {
-			for (Resource ann : annotations) {
-				// System.out.println("Found annotation " + ann);
-
-				// Normally just one body per annotation, but just in case we'll
-				// iterate
-				// and split them out
-				for (Individual body : listObjectProperties(
-						model.getOntResource(ann), hasBody)) {
-					PathAnnotation pathAnn = new PathAnnotation();
-
-					if (ann.getURI() != null) {
-						pathAnn.setAnnotation(relativizeFromBase(ann.getURI(),
-								root));
-					}
-
-					Resource target = ann.getPropertyResourceValue(hasTarget);
-					if (target != null && target.getURI() != null) {
-						pathAnn.setAbout(relativizeFromBase(target.getURI(),
-								root));
-					}
-					if (body.getURI() != null) {
-						pathAnn.setContent(relativizeFromBase(body.getURI(),
-								root));
-					} else {
-						logger.warning("Can't find annotation body for anonymous "
-								+ body);
-					}
-					manifest.getAnnotations().add(pathAnn);
+		for (Individual ann : listObjectProperties(ro, hasAnnotation)) {
+			// Normally just one body per annotation, but just in case we'll
+			// iterate and split them out (as our PathAnnotation can
+			// only keep a single setContent() at a time)
+			for (Individual body : listObjectProperties(
+					model.getOntResource(ann), hasBody)) {
+				PathAnnotation pathAnn = new PathAnnotation();
+				if (body.getURI() != null) {
+					pathAnn.setContent(relativizeFromBase(body.getURI(), root));
+				} else {
+					logger.warning("Can't find annotation body for anonymous "
+							+ body);
 				}
+
+				if (ann.getURI() != null) {
+					pathAnn.setUri(relativizeFromBase(ann.getURI(), root));
+				} else if (ann.getSameAs() != null
+						&& ann.getSameAs().getURI() != null) {
+					pathAnn.setUri(relativizeFromBase(ann.getSameAs()
+							.getURI(), root));
+				}
+
+				// Handle multiple about/hasTarget
+				for (Individual target : listObjectProperties(ann, hasTarget)) {
+					if (target.getURI() != null) {
+						pathAnn.getAboutList().add(
+								relativizeFromBase(target.getURI(), root));
+					}
+				}
+				manifest.getAnnotations().add(pathAnn);
 			}
 		}
 
-		// model.write(System.out, "TURTLE");
-
 	}
-
-	
 
 	private List<Agent> getAgents(URI base, Individual in,
 			ObjectProperty property) {

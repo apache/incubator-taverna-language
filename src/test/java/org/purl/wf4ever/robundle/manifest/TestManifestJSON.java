@@ -72,7 +72,7 @@ public class TestManifestJSON {
 			readmeMeta.setCreatedOn(createdOn);
 
 			PathMetadata comments = bundle.getManifest().getAggregation(URI.create("http://example.com/comments.txt"));
-			comments.getOrCreateBundledAs().setProxy(URI.create("urn:uuid:a0cf8616-bee4-4a71-b21e-c60e6499a644"));
+			comments.getOrCreateBundledAs().setURI(URI.create("urn:uuid:a0cf8616-bee4-4a71-b21e-c60e6499a644"));
 			comments.getOrCreateBundledAs().setFolder(bundle.getPath("/folder/"));
 			comments.getOrCreateBundledAs().setFilename("external.txt");
 			
@@ -83,12 +83,12 @@ public class TestManifestJSON {
             		"<http://example.com/menu/tomato-soup> .");
             jpegAnn.setContent(soupProps);
 //            jpegAnn.setContent(URI.create("annotations/soup-properties.ttl"));
-            jpegAnn.setAnnotation(URI.create("urn:uuid:d67466b4-3aeb-4855-8203-90febe71abdf"));
+            jpegAnn.setUri(URI.create("urn:uuid:d67466b4-3aeb-4855-8203-90febe71abdf"));
             manifest.getAnnotations().add(jpegAnn);
 			
 			
             PathAnnotation proxyAnn = new PathAnnotation();
-            proxyAnn.setAbout(comments.getBundledAs().getProxy());
+            proxyAnn.setAbout(comments.getBundledAs().getURI());
 			proxyAnn.setContent(URI.create("http://example.com/blog/they-aggregated-our-file"));
             manifest.getAnnotations().add(proxyAnn);
             
@@ -159,7 +159,7 @@ public class TestManifestJSON {
 		if (soup.isValueNode()) { 
 			assertEquals("/folder/soup.jpeg", soup.asText());
 		} else {
-			assertEquals("/folder/soup.jpeg", soup.get("file").asText());
+			assertEquals("/folder/soup.jpeg", soup.get("uri").asText());
 		}
 		
 		JsonNode blog = aggregates.get(1);
@@ -170,7 +170,7 @@ public class TestManifestJSON {
 		}
 		
 		JsonNode readme = aggregates.get(2);
-		assertEquals("/README.txt", readme.get("file").asText());
+		assertEquals("/README.txt", readme.get("uri").asText());
 		assertEquals("text/plain", readme.get("mediatype").asText());
 		assertEquals("2013-02-12T19:37:32.939Z", readme.get("createdOn").asText());
 		JsonNode readmeCreatedBy = readme.get("createdBy");
@@ -180,7 +180,7 @@ public class TestManifestJSON {
 		JsonNode comments = aggregates.get(3);
 		assertEquals("http://example.com/comments.txt", comments.get("uri").asText());
 		JsonNode bundledAs = comments.get("bundledAs");
-		assertEquals("urn:uuid:a0cf8616-bee4-4a71-b21e-c60e6499a644", bundledAs.get("proxy").asText());
+		assertEquals("urn:uuid:a0cf8616-bee4-4a71-b21e-c60e6499a644", bundledAs.get("uri").asText());
 		assertEquals("/folder/", bundledAs.get("folder").asText());
 		assertEquals("external.txt", bundledAs.get("filename").asText());
 		
@@ -188,7 +188,7 @@ public class TestManifestJSON {
 		assertTrue("annotations MUST be a list", annotations.isArray());
 		
 		JsonNode ann0 = annotations.get(0);
-		assertEquals("urn:uuid:d67466b4-3aeb-4855-8203-90febe71abdf", ann0.get("annotation").asText());
+		assertEquals("urn:uuid:d67466b4-3aeb-4855-8203-90febe71abdf", ann0.get("uri").asText());
 		assertEquals("/folder/soup.jpeg", ann0.get("about").asText());
 		assertEquals("annotations/soup-properties.ttl", ann0.get("content").asText());
 		

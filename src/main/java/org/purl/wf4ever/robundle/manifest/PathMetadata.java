@@ -5,15 +5,17 @@ import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder(value = { "file", "uri", "mediatype", "createdOn",
+@JsonPropertyOrder(value = { "uri", "mediatype", "createdOn",
         "createdBy", "authoredOn", "authoredBy", "conformsTo", "bundledAs" })
 public class PathMetadata {
+	
+	private static URI ROOT = URI.create("/");
+	
 	private Path file;
 	private URI uri;
 	private String mediatype;
@@ -48,6 +50,7 @@ public class PathMetadata {
         return createdOn;
     }
 
+    @JsonIgnore
     public Path getFile() {
         return file;
     }
@@ -55,7 +58,9 @@ public class PathMetadata {
     @JsonIgnore
     @Deprecated
     public Path getFolder() {
-        return getOrCreateBundledAs().getFolder();
+    	Proxy bundledAs = getBundledAs();
+		if (bundledAs == null) { return null; }    	
+        return bundledAs.getFolder();
     }
 
     public String getMediatype() {
@@ -65,7 +70,9 @@ public class PathMetadata {
     @JsonIgnore
     @Deprecated
     public URI getProxy() {
-        return getOrCreateBundledAs().getProxy();
+    	Proxy bundledAs = getBundledAs();
+		if (bundledAs == null) { return null; }    	
+        return bundledAs.getURI();
     }
 
     public URI getUri() {
@@ -86,6 +93,9 @@ public class PathMetadata {
 
     public void setFile(Path file) {
         this.file = file;
+        Path root = this.file.resolve("/");
+        URI uri = ROOT.resolve(root.toUri().relativize(file.toUri()));
+		setUri(uri);
     }
 
     @Deprecated
@@ -97,13 +107,14 @@ public class PathMetadata {
         this.mediatype = mediatype;
     }
 
+    @Deprecated
     public void setProxy() {
-        setProxy(URI.create("urn:uuid:" + UUID.randomUUID()));
+        getOrCreateBundledAs().setURI();
     }
 
     @Deprecated
     public void setProxy(URI proxy) {
-    	getOrCreateBundledAs().setProxy(proxy);
+    	getOrCreateBundledAs().setURI(proxy);
     }
 
     public void setUri(URI uri) {
@@ -152,6 +163,7 @@ public class PathMetadata {
 	public Proxy getOrCreateBundledAs() {
 		if (bundledAs == null) {
 			bundledAs = new Proxy();
+			setProxy();
 		}
 		return bundledAs;
 	}

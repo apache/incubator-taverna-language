@@ -3,14 +3,15 @@ package org.purl.wf4ever.robundle.manifest;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder(value = { "proxy", "folder", "filename", "aggregatedBy", "aggregatedOn" })
+@JsonPropertyOrder(value = { "uri", "folder", "filename", "aggregatedBy", "aggregatedOn" })
 
 public class Proxy {
 	
-	private URI proxy;
+	private URI uri;
 	private Path folder;
 	private String filename;
 	private Agent aggregatedBy;
@@ -28,8 +29,8 @@ public class Proxy {
 	public Path getFolder() {
 		return folder;
 	}
-	public URI getProxy() {
-		return proxy;
+	public URI getURI() {
+		return uri;
 	}
 	public void setAggregatedBy(Agent aggregatedBy) {
 		this.aggregatedBy = aggregatedBy;
@@ -43,8 +44,10 @@ public class Proxy {
 	public void setFolder(Path folder) {
 		this.folder = folder;
 	}
-	public void setProxy(URI proxy) {
-		this.proxy = proxy;
+	public void setURI(URI uri) {
+		this.uri = uri;
+	}	
+	public void setURI() {
+		setURI(URI.create("urn:uuid:" + UUID.randomUUID()));
 	}
-	
 }

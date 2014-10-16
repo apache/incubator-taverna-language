@@ -494,7 +494,7 @@ public class CombineManifest {
 //			subjects.add(pathMetadata.getProxy());
 		}
 		for (PathAnnotation a : manifest.getAnnotations()) {
-			subjects.add(a.getAnnotation());
+			subjects.add(a.getUri());
 		}
 		subjects.remove(null);
 		return subjects;

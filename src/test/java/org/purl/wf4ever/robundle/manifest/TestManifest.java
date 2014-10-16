@@ -151,7 +151,7 @@ public class TestManifest {
                     + "SELECT ?file ?proxy "
                     + "WHERE {"
                     + "    ?ro ore:aggregates ?file ."
-                    + "    OPTIONAL { ?proxy ore:proxyFor ?file . } " + "}";
+                    + "    OPTIONAL { ?file bundle:bundledAs ?proxy . } " + "}";
             Query query = QueryFactory.create(queryStr);
             QueryExecution qexec = QueryExecutionFactory.create(query, model);
 
@@ -162,10 +162,13 @@ public class TestManifest {
                     QuerySolution soln = results.nextSolution();
                     Resource fileRes = soln.getResource("file");
                     Resource proxy = soln.getResource("proxy");
+                    System.out.println("File: " + fileRes);
+                    System.out.println(asURI(fileRes));
+                    
                     Path file = Paths.get(asURI(fileRes));
                     assertTrue(Files.exists(file));
                     PathMetadata meta = manifest.getAggregation(file);
-                    assertEquals(asURI(proxy), meta.getProxy());
+                    assertEquals(meta.getProxy(), asURI(proxy));
                 }
                 assertEquals("Could not find all aggregations from manifest: "
                         + manifest.getAggregates(), manifest.getAggregates()
@@ -185,6 +188,8 @@ public class TestManifest {
                 getClass().getResourceAsStream("/manifest.json"), manifest, 
                 manifest.getBaseURI().resolve("does/not/exist"));
 
+        
+        
         Path r = bundle.getRoot();
         assertNotNull(manifest.getAggregation(r.resolve("/README.txt")));
         PathMetadata readme = manifest.getAggregation(r.resolve("/README.txt"));
@@ -197,13 +202,17 @@ public class TestManifest {
                 manifest.getAggregation(r.resolve("/README.txt"))
                         .getMediatype());
 
-        assertNull(manifest.getAggregation(r.resolve("/README.txt")).getProxy());
+        assertNull(manifest.getAggregation(r.resolve("/README.txt")).getBundledAs());
         
 
         // Disabled: RO Bundle in flux on how to put external URIs in folders
         //        assertNotNull(manifest.getAggregation(
         //                 URI.create("http://example.com/comments.txt")).getProxy());
 
+        System.out.println( manifest.getAnnotations());
+        
+        
+        
         assertEquals(3, manifest.getAnnotations().size());
 
     }

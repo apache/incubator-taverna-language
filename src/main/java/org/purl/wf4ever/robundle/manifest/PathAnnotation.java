@@ -10,10 +10,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder(value = { "annotation", "about", "content" })
+@JsonPropertyOrder(value = { "uri", "about", "content" })
 public class PathAnnotation {
     private List<URI> about = new ArrayList<>();
-    private URI annotation;
+    private URI uri;
     private URI content;
 
     @JsonIgnore
@@ -42,8 +42,13 @@ public class PathAnnotation {
     	}
     }
     
-    public URI getAnnotation() {
-        return annotation;
+    @Deprecated
+    public URI getAnnotion() {
+    	return getUri();
+    }
+        
+    public URI getUri() {
+        return uri;
     }
 
     public URI getContent() {
@@ -64,8 +69,13 @@ public class PathAnnotation {
     	this.about = about;
     }
     
+    public void setUri(URI uri) {
+        this.uri = uri;
+    }
+    
+    @Deprecated
     public void setAnnotation(URI annotation) {
-        this.annotation = annotation;
+    	setUri(annotation);
     }
 
     public void setContent(URI content) {
@@ -73,7 +83,7 @@ public class PathAnnotation {
     }
 
     public void generateAnnotationId() {
-        setAnnotation(URI.create("urn:uuid:" + UUID.randomUUID()));
+        setUri(URI.create("urn:uuid:" + UUID.randomUUID()));
     }
 
 	public void setAbout(Path path) {
@@ -85,8 +95,12 @@ public class PathAnnotation {
 	}
 
 	public void setContent(Path path) {
-		this.content = relativizePath(path);
-		
+		this.content = relativizePath(path);		
+	}
+	
+	@Override
+	public String toString() {
+		return "Annotation: " + getContent() + " about "  +getAbout();
 	}
 }
  
