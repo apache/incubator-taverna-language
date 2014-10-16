@@ -35,14 +35,14 @@ import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 public class RDFToManifest {
-	
+
 	private static Logger logger = Logger.getLogger(RDFToManifest.class
 			.getCanonicalName());
 
 	static {
 		setCachedHttpClientInJsonLD();
 	}
-	
+
 	private static final String PROV = "http://www.w3.org/ns/prov#";
 	private static final String PROV_O = "http://www.w3.org/ns/prov-o#";
 	private static final String FOAF_0_1 = "http://xmlns.com/foaf/0.1/";
@@ -55,7 +55,7 @@ public class RDFToManifest {
 	private static final String OA = "http://www.w3.org/ns/oa#";
 	private static final String OA_RDF = "/ontologies/oa.rdf";
 	private static final String FOAF_RDF = "/ontologies/foaf.rdf";
-	private static final String BUNDLE_RDF = "/ontologies/bundle.owl";	
+	private static final String BUNDLE_RDF = "/ontologies/bundle.owl";
 	private static final String PAV_RDF = "/ontologies/pav.rdf";
 	private static final String PROV_O_RDF = "/ontologies/prov-o.rdf";
 	private static final String PROV_AQ_RDF = "/ontologies/prov-aq.rdf";
@@ -120,8 +120,6 @@ public class RDFToManifest {
 		return ontModel;
 	}
 
-	
-	
 	protected static Model jsonLdAsJenaModel(InputStream jsonIn, URI base)
 			throws IOException, RiotException {
 		JenaJSONLD.init();
@@ -136,27 +134,27 @@ public class RDFToManifest {
 		// Options(base.toASCIIString()));
 		// return model;
 	}
-	
+
 	/**
 	 * Use a JarCacheStorage so that our JSON-LD @context can be loaded from our
 	 * classpath and not require network connectivity
 	 * 
 	 */
 	protected static void setCachedHttpClientInJsonLD() {
-//		JarCacheStorage cacheStorage = new JarCacheStorage(
-//				RDFToManifest.class.getClassLoader());
-//		synchronized (DocumentLoader.class) {
-//			HttpClient oldHttpClient = DocumentLoader.getHttpClient();
-//			CachingHttpClient wrappedHttpClient = new CachingHttpClient(
-//					oldHttpClient, cacheStorage, cacheStorage.getCacheConfig());
-//			DocumentLoader.setHttpClient(wrappedHttpClient);
-//		}
-//		synchronized (JSONUtils.class) {
-//			HttpClient oldHttpClient = JSONUtilsSub.getHttpClient();
-//			CachingHttpClient wrappedHttpClient = new CachingHttpClient(
-//					oldHttpClient, cacheStorage, cacheStorage.getCacheConfig());
-//			JSONUtilsSub.setHttpClient(wrappedHttpClient);
-//		}
+		// JarCacheStorage cacheStorage = new JarCacheStorage(
+		// RDFToManifest.class.getClassLoader());
+		// synchronized (DocumentLoader.class) {
+		// HttpClient oldHttpClient = DocumentLoader.getHttpClient();
+		// CachingHttpClient wrappedHttpClient = new CachingHttpClient(
+		// oldHttpClient, cacheStorage, cacheStorage.getCacheConfig());
+		// DocumentLoader.setHttpClient(wrappedHttpClient);
+		// }
+		// synchronized (JSONUtils.class) {
+		// HttpClient oldHttpClient = JSONUtilsSub.getHttpClient();
+		// CachingHttpClient wrappedHttpClient = new CachingHttpClient(
+		// oldHttpClient, cacheStorage, cacheStorage.getCacheConfig());
+		// JSONUtilsSub.setHttpClient(wrappedHttpClient);
+		// }
 	}
 
 	private void checkNotNull(Object... possiblyNulls) {
@@ -171,7 +169,8 @@ public class RDFToManifest {
 	}
 
 	protected OntModel getOntModel() {
-		OntModel ontModel = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM_RULE_INF);
+		OntModel ontModel = ModelFactory
+				.createOntologyModel(OntModelSpec.OWL_MEM_RULE_INF);
 		ontModel.setNsPrefix("foaf", FOAF_0_1);
 		ontModel.setNsPrefix("prov", PROV);
 		ontModel.setNsPrefix("ore", ORE);
@@ -282,7 +281,6 @@ public class RDFToManifest {
 		bundle = ontModel;
 	}
 
-	
 	protected synchronized void loadORE() {
 		if (ore != null) {
 			return;
@@ -295,7 +293,7 @@ public class RDFToManifest {
 		proxyFor = ontModel.getObjectProperty(ORE + "proxyFor");
 		proxyIn = ontModel.getObjectProperty(ORE + "proxyIn");
 		isDescribedBy = ontModel.getObjectProperty(ORE + "isDescribedBy");
-		
+
 		checkNotNull(aggregation, aggregates, proxyFor, proxyIn, isDescribedBy);
 
 		ore = ontModel;
@@ -325,39 +323,41 @@ public class RDFToManifest {
 		}
 	}
 
-	public void readTo(InputStream manifestResourceAsStream, Manifest manifest, URI manifestResourceBaseURI)
-			throws IOException, RiotException {
-		
-		
+	public void readTo(InputStream manifestResourceAsStream, Manifest manifest,
+			URI manifestResourceBaseURI) throws IOException, RiotException {
+
 		OntModel model = new RDFToManifest().getOntModel();
-		model.add(jsonLdAsJenaModel(manifestResourceAsStream, manifestResourceBaseURI));
-		
+		model.add(jsonLdAsJenaModel(manifestResourceAsStream,
+				manifestResourceBaseURI));
+
 		model.write(System.out, "TURTLE");
-		
+
 		URI root = manifestResourceBaseURI.resolve("/");
 		Individual ro = findRO(model, root);
 
-		for (Individual manifestResource : listObjectProperties(ro, isDescribedBy)) {
+		for (Individual manifestResource : listObjectProperties(ro,
+				isDescribedBy)) {
 			String uriStr = manifestResource.getURI();
 			if (uriStr == null) {
 				logger.warning("Skipping manifest without URI: "
 						+ manifestResource);
 				continue;
-			}			
-			//URI relative = relativizeFromBase(uriStr, root);
-			Path path = manifest.getBundle().getFileSystem().provider().getPath(URI.create(uriStr));
-			manifest.getManifest().add(path);			
+			}
+			// URI relative = relativizeFromBase(uriStr, root);
+			Path path = manifest.getBundle().getFileSystem().provider()
+					.getPath(URI.create(uriStr));
+			manifest.getManifest().add(path);
 		}
-		
+
 		List<Agent> creators = getAgents(root, ro, createdBy);
 		if (!creators.isEmpty()) {
 			manifest.setCreatedBy(creators.get(0));
 			if (creators.size() > 1) {
 				logger.warning("Ignoring additional createdBy agents");
 			}
-			
+
 		}
-		
+
 		RDFNode created = ro.getPropertyValue(createdOn);
 		manifest.setCreatedOn(literalAsFileTime(created));
 
@@ -380,21 +380,22 @@ public class RDFToManifest {
 			PathMetadata meta = manifest.getAggregation(relativizeFromBase(
 					uriStr, root));
 
-			ResIterator proxies = model.listSubjectsWithProperty(proxyFor, aggrResource);
+			ResIterator proxies = model.listSubjectsWithProperty(proxyFor,
+					aggrResource);
 			if (proxies.hasNext()) {
 				Resource proxy = proxies.next();
 				if (proxy.getURI() != null) {
 					meta.setProxy(relativizeFromBase(proxy.getURI(), root));
 				}
-			
+
 			}
-			
 
 			creators = getAgents(root, aggrResource, createdBy);
 			if (!creators.isEmpty()) {
 				meta.setCreatedBy(creators.get(0));
 				if (creators.size() > 1) {
-					logger.warning("Ignoring additional createdBy agents for " + meta);
+					logger.warning("Ignoring additional createdBy agents for "
+							+ meta);
 				}
 
 			}
@@ -415,47 +416,41 @@ public class RDFToManifest {
 			}
 
 		}
-		
+
 		for (Individual ann : listObjectProperties(ro, hasAnnotation)) {
-				// Normally just one body per annotation, but just in case we'll
-				// iterate and split them out (as our PathAnnotation can
-				// only keep a single setContent() at a time)
-				for (Individual body : listObjectProperties(
-						model.getOntResource(ann), hasBody)) {
-					PathAnnotation pathAnn = new PathAnnotation();
-					if (body.getURI() != null) {
-						pathAnn.setContent(relativizeFromBase(body.getURI(),
-								root));
-					} else {
-						logger.warning("Can't find annotation body for anonymous "
-								+ body);
-					}
-					
-					if (ann.getURI() != null) {
-						pathAnn.setAnnotation(relativizeFromBase(ann.getURI(),
-								root));
-					} else if (ann.getSameAs() != null && ann.getSameAs().getURI() != null) {
-						pathAnn.setAnnotation(relativizeFromBase(ann.getSameAs().getURI(),
-								root));
-					}
-
-					// Handle multiple about/hasTarget		
-					for (Individual target : listObjectProperties(ann, hasTarget)) {
-							if (target.getURI() != null) {
-								pathAnn.getAboutList().add(
-										relativizeFromBase(target.getURI(),
-												root));
-							}
-					}
-					manifest.getAnnotations().add(pathAnn);
+			// Normally just one body per annotation, but just in case we'll
+			// iterate and split them out (as our PathAnnotation can
+			// only keep a single setContent() at a time)
+			for (Individual body : listObjectProperties(
+					model.getOntResource(ann), hasBody)) {
+				PathAnnotation pathAnn = new PathAnnotation();
+				if (body.getURI() != null) {
+					pathAnn.setContent(relativizeFromBase(body.getURI(), root));
+				} else {
+					logger.warning("Can't find annotation body for anonymous "
+							+ body);
 				}
-			}
 
-		
+				if (ann.getURI() != null) {
+					pathAnn.setAnnotation(relativizeFromBase(ann.getURI(), root));
+				} else if (ann.getSameAs() != null
+						&& ann.getSameAs().getURI() != null) {
+					pathAnn.setAnnotation(relativizeFromBase(ann.getSameAs()
+							.getURI(), root));
+				}
+
+				// Handle multiple about/hasTarget
+				for (Individual target : listObjectProperties(ann, hasTarget)) {
+					if (target.getURI() != null) {
+						pathAnn.getAboutList().add(
+								relativizeFromBase(target.getURI(), root));
+					}
+				}
+				manifest.getAnnotations().add(pathAnn);
+			}
+		}
 
 	}
-
-	
 
 	private List<Agent> getAgents(URI base, Individual in,
 			ObjectProperty property) {
