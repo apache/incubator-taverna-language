@@ -27,7 +27,7 @@
        }
     ],
     "annotations": [
-      { "annotation": "urn:uuid:d67466b4-3aeb-4855-8203-90febe71abdf",
+      { "uri": "urn:uuid:d67466b4-3aeb-4855-8203-90febe71abdf",
         "about":      "/folder/soup.jpeg",
         "content":    "annotations/soup-properties.ttl" },
 
