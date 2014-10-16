@@ -90,6 +90,7 @@ public class RDFToManifest {
 	private OntModel bundle;
 	private ObjectProperty hasProxy;
 	private ObjectProperty inFolder;
+	private ObjectProperty hasAnnotation;
 
 	public RDFToManifest() {
 		loadOntologies();
@@ -275,8 +276,9 @@ public class RDFToManifest {
 		}
 		OntModel ontModel = loadOntologyFromClasspath(BUNDLE_RDF, BUNDLE);
 		hasProxy = ontModel.getObjectProperty(BUNDLE + "hasProxy");
+		hasAnnotation = ontModel.getObjectProperty(BUNDLE + "hasAnnotation");
 		inFolder = ontModel.getObjectProperty(BUNDLE + "inFolder");
-		checkNotNull(hasProxy, inFolder);
+		checkNotNull(hasProxy, hasAnnotation, inFolder);
 		bundle = ontModel;
 	}
 
@@ -329,7 +331,9 @@ public class RDFToManifest {
 		
 		OntModel model = new RDFToManifest().getOntModel();
 		model.add(jsonLdAsJenaModel(manifestResourceAsStream, manifestResourceBaseURI));
-
+		
+		model.write(System.out, "TURTLE");
+		
 		URI root = manifestResourceBaseURI.resolve("/");
 		Individual ro = findRO(model, root);
 
@@ -411,12 +415,8 @@ public class RDFToManifest {
 			}
 
 		}
-
-		try (ClosableIterable<Resource> annotations = iterate(model
-				.listResourcesWithProperty(hasTarget))) {
-			for (Resource ann : annotations) {
-				// System.out.println("Found annotation " + ann);
-
+		
+		for (Individual ann : listObjectProperties(ro, hasAnnotation)) {
 				// Normally just one body per annotation, but just in case we'll
 				// iterate and split them out (as our PathAnnotation can
 				// only keep a single setContent() at a time)
@@ -436,24 +436,19 @@ public class RDFToManifest {
 								root));
 					}
 
-					// Handle multiple about/hasTarget					
-					for (RDFNode target : iterate(ann.as(Individual.class)
-							.listPropertyValues(hasTarget))) {
-						if (target != null && target.isResource()) {
-							Resource targetRes = target.as(Resource.class);
-							if (targetRes.getURI() != null) {
+					// Handle multiple about/hasTarget		
+					for (Individual target : listObjectProperties(ann, hasTarget)) {
+							if (target.getURI() != null) {
 								pathAnn.getAboutList().add(
-										relativizeFromBase(targetRes.getURI(),
+										relativizeFromBase(target.getURI(),
 												root));
 							}
-						}
 					}
 					manifest.getAnnotations().add(pathAnn);
 				}
 			}
-		}
 
-		// model.write(System.out, "TURTLE");
+		
 
 	}
 
