@@ -95,7 +95,6 @@ public class PathMetadata {
         this.file = file;
         Path root = this.file.resolve("/");
         URI uri = ROOT.resolve(root.toUri().relativize(file.toUri()));
-        System.out.println(uri);
 		setUri(uri);
     }
 
