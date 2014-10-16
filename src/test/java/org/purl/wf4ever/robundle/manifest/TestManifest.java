@@ -204,6 +204,10 @@ public class TestManifest {
         //        assertNotNull(manifest.getAggregation(
         //                 URI.create("http://example.com/comments.txt")).getProxy());
 
+        System.out.println( manifest.getAnnotations());
+        
+        
+        
         assertEquals(3, manifest.getAnnotations().size());
 
     }
