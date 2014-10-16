@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder(value = { "file", "uri", "mediatype", "createdOn",
+@JsonPropertyOrder(value = { "uri", "mediatype", "createdOn",
         "createdBy", "authoredOn", "authoredBy", "conformsTo", "bundledAs" })
 public class PathMetadata {
 	private Path file;
@@ -47,6 +47,7 @@ public class PathMetadata {
         return createdOn;
     }
 
+    @JsonIgnore
     public Path getFile() {
         return file;
     }
@@ -89,6 +90,7 @@ public class PathMetadata {
 
     public void setFile(Path file) {
         this.file = file;
+        setUri(file.toUri());
     }
 
     @Deprecated

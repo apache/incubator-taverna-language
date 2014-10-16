@@ -151,7 +151,7 @@ public class TestManifest {
                     + "SELECT ?file ?proxy "
                     + "WHERE {"
                     + "    ?ro ore:aggregates ?file ."
-                    + "    OPTIONAL { ?proxy ore:proxyFor ?file . } " + "}";
+                    + "    OPTIONAL { ?file bundle:bundledAs ?proxy . } " + "}";
             Query query = QueryFactory.create(queryStr);
             QueryExecution qexec = QueryExecutionFactory.create(query, model);
 
@@ -162,6 +162,9 @@ public class TestManifest {
                     QuerySolution soln = results.nextSolution();
                     Resource fileRes = soln.getResource("file");
                     Resource proxy = soln.getResource("proxy");
+                    System.out.println("File: " + fileRes);
+                    System.out.println(asURI(fileRes));
+                    
                     Path file = Paths.get(asURI(fileRes));
                     assertTrue(Files.exists(file));
                     PathMetadata meta = manifest.getAggregation(file);
