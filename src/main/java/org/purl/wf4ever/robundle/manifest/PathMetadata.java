@@ -13,6 +13,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder(value = { "uri", "mediatype", "createdOn",
         "createdBy", "authoredOn", "authoredBy", "conformsTo", "bundledAs" })
 public class PathMetadata {
+	
+	private static URI ROOT = URI.create("/");
+	
 	private Path file;
 	private URI uri;
 	private String mediatype;
@@ -90,7 +93,10 @@ public class PathMetadata {
 
     public void setFile(Path file) {
         this.file = file;
-        setUri(file.toUri());
+        Path root = this.file.resolve("/");
+        URI uri = ROOT.resolve(root.toUri().relativize(file.toUri()));
+        System.out.println(uri);
+		setUri(uri);
     }
 
     @Deprecated
