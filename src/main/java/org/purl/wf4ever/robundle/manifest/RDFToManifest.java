@@ -330,7 +330,7 @@ public class RDFToManifest {
 		model.add(jsonLdAsJenaModel(manifestResourceAsStream,
 				manifestResourceBaseURI));
 
-		model.write(System.out, "TURTLE");
+//		model.write(System.out, "TURTLE");
 
 		URI root = manifestResourceBaseURI.resolve("/");
 		Individual ro = findRO(model, root);
@@ -432,10 +432,10 @@ public class RDFToManifest {
 				}
 
 				if (ann.getURI() != null) {
-					pathAnn.setAnnotation(relativizeFromBase(ann.getURI(), root));
+					pathAnn.setUri(relativizeFromBase(ann.getURI(), root));
 				} else if (ann.getSameAs() != null
 						&& ann.getSameAs().getURI() != null) {
-					pathAnn.setAnnotation(relativizeFromBase(ann.getSameAs()
+					pathAnn.setUri(relativizeFromBase(ann.getSameAs()
 							.getURI(), root));
 				}
 

@@ -188,6 +188,8 @@ public class TestManifest {
                 getClass().getResourceAsStream("/manifest.json"), manifest, 
                 manifest.getBaseURI().resolve("does/not/exist"));
 
+        
+        
         Path r = bundle.getRoot();
         assertNotNull(manifest.getAggregation(r.resolve("/README.txt")));
         PathMetadata readme = manifest.getAggregation(r.resolve("/README.txt"));
