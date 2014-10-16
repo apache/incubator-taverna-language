@@ -434,6 +434,9 @@ public class RDFToManifest {
 					if (ann.getURI() != null) {
 						pathAnn.setAnnotation(relativizeFromBase(ann.getURI(),
 								root));
+					} else if (ann.getSameAs() != null && ann.getSameAs().getURI() != null) {
+						pathAnn.setAnnotation(relativizeFromBase(ann.getSameAs().getURI(),
+								root));
 					}
 
 					// Handle multiple about/hasTarget		
