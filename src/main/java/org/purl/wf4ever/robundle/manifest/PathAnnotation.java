@@ -12,95 +12,95 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder(value = { "uri", "about", "content" })
 public class PathAnnotation {
-    private List<URI> about = new ArrayList<>();
-    private URI uri;
-    private URI content;
+	private List<URI> about = new ArrayList<>();
+	private URI uri;
+	private URI content;
 
-    @JsonIgnore
-    public URI getAbout() {
-        if (about.isEmpty()) {
-        	return null;        
-        } else { 
-        	return about.get(0);
-        }
-    }
+	@JsonIgnore
+	public URI getAbout() {
+		if (about.isEmpty()) {
+			return null;
+		} else {
+			return about.get(0);
+		}
+	}
 
-    @JsonIgnore
-    public List<URI> getAboutList() {
-    	return about;
-    }
-    
-    @JsonProperty("about")
-    public Object getAboutObject() {
-    	if (about.isEmpty()) { 
-    		return null;
-    	}
-    	if (about.size() == 1) { 
-    		return about.get(0);
-    	} else {
-    		return about;
-    	}
-    }
-    
-    @Deprecated
-    public URI getAnnotion() {
-    	return getUri();
-    }
-        
-    public URI getUri() {
-        return uri;
-    }
+	@JsonIgnore
+	public List<URI> getAboutList() {
+		return about;
+	}
 
-    public URI getContent() {
-        return content;
-    }
+	@JsonProperty("about")
+	public Object getAboutObject() {
+		if (about.isEmpty()) {
+			return null;
+		}
+		if (about.size() == 1) {
+			return about.get(0);
+		} else {
+			return about;
+		}
+	}
 
-    public void setAbout(URI about) {
-    	this.about.clear();
-    	if (about != null) { 
-    		this.about.add(about);
-    	}
-    }
+	@Deprecated
+	public URI getAnnotion() {
+		return getUri();
+	}
 
-    public void setAbout(List<URI> about) {
-    	if (about == null) {
-    		throw new NullPointerException("about list can't be null");
-    	}
-    	this.about = about;
-    }
-    
-    public void setUri(URI uri) {
-        this.uri = uri;
-    }
-    
-    @Deprecated
-    public void setAnnotation(URI annotation) {
-    	setUri(annotation);
-    }
+	public URI getUri() {
+		return uri;
+	}
 
-    public void setContent(URI content) {
-        this.content = content;
-    }
+	public URI getContent() {
+		return content;
+	}
 
-    public void generateAnnotationId() {
-        setUri(URI.create("urn:uuid:" + UUID.randomUUID()));
-    }
+	public void setAbout(URI about) {
+		this.about.clear();
+		if (about != null) {
+			this.about.add(about);
+		}
+	}
+
+	public void setAbout(List<URI> about) {
+		if (about == null) {
+			throw new NullPointerException("about list can't be null");
+		}
+		this.about = about;
+	}
+
+	public void setUri(URI uri) {
+		this.uri = uri;
+	}
+
+	@Deprecated
+	public void setAnnotation(URI annotation) {
+		setUri(annotation);
+	}
+
+	public void setContent(URI content) {
+		this.content = content;
+	}
+
+	public void generateAnnotationId() {
+		setUri(URI.create("urn:uuid:" + UUID.randomUUID()));
+	}
 
 	public void setAbout(Path path) {
 		setAbout(relativizePath(path));
 	}
 
-	private URI relativizePath(Path path) {		
-		return URI.create("/.ro/").relativize(URI.create(path.toUri().getRawPath()));
+	private URI relativizePath(Path path) {
+		return URI.create("/.ro/").relativize(
+				URI.create(path.toUri().getRawPath()));
 	}
 
 	public void setContent(Path path) {
-		this.content = relativizePath(path);		
+		this.content = relativizePath(path);
 	}
-	
+
 	@Override
 	public String toString() {
-		return "Annotation: " + getContent() + " about "  +getAbout();
+		return "Annotation: " + getContent() + " about " + getAbout();
 	}
 }
- 

@@ -10,135 +10,139 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder(value = { "uri", "mediatype", "createdOn",
-        "createdBy", "authoredOn", "authoredBy", "conformsTo", "bundledAs" })
+@JsonPropertyOrder(value = { "uri", "mediatype", "createdOn", "createdBy",
+		"authoredOn", "authoredBy", "conformsTo", "bundledAs" })
 public class PathMetadata {
-	
+
 	private static URI ROOT = URI.create("/");
-	
+
 	private Path file;
 	private URI uri;
 	private String mediatype;
 
 	private FileTime createdOn;
 	private Agent createdBy;
-    
-    private FileTime authoredOn;    
-    private List<Agent> authoredBy = new ArrayList<>();
-    
-    private URI conformsTo;
 
-    private Proxy bundledAs;
+	private FileTime authoredOn;
+	private List<Agent> authoredBy = new ArrayList<>();
 
-    protected PathMetadata() {
-    }
+	private URI conformsTo;
 
-    @JsonCreator
-    public PathMetadata(String uriStr) {
-        setUri(URI.create(uriStr));
-    }
-    
-    public URI getConformsTo() {
-        return conformsTo;
-    }
-    
-    public Agent getCreatedBy() {
-        return createdBy;
-    }
+	private Proxy bundledAs;
 
-    public FileTime getCreatedOn() {
-        return createdOn;
-    }
+	protected PathMetadata() {
+	}
 
-    @JsonIgnore
-    public Path getFile() {
-        return file;
-    }
+	@JsonCreator
+	public PathMetadata(String uriStr) {
+		setUri(URI.create(uriStr));
+	}
 
-    @JsonIgnore
-    @Deprecated
-    public Path getFolder() {
-    	Proxy bundledAs = getBundledAs();
-		if (bundledAs == null) { return null; }    	
-        return bundledAs.getFolder();
-    }
+	public URI getConformsTo() {
+		return conformsTo;
+	}
 
-    public String getMediatype() {
-        return mediatype;
-    }
+	public Agent getCreatedBy() {
+		return createdBy;
+	}
 
-    @JsonIgnore
-    @Deprecated
-    public URI getProxy() {
-    	Proxy bundledAs = getBundledAs();
-		if (bundledAs == null) { return null; }    	
-        return bundledAs.getURI();
-    }
+	public FileTime getCreatedOn() {
+		return createdOn;
+	}
 
-    public URI getUri() {
-        return uri;
-    }
-    
-    public void setConformsTo(URI conformsTo) {
-        this.conformsTo = conformsTo;
-    }    
+	@JsonIgnore
+	public Path getFile() {
+		return file;
+	}
 
-    public void setCreatedBy(Agent createdBy) {
-        this.createdBy = createdBy;
-    }
+	@JsonIgnore
+	@Deprecated
+	public Path getFolder() {
+		Proxy bundledAs = getBundledAs();
+		if (bundledAs == null) {
+			return null;
+		}
+		return bundledAs.getFolder();
+	}
 
-    public void setCreatedOn(FileTime createdOn) {
-        this.createdOn = createdOn;
-    }
+	public String getMediatype() {
+		return mediatype;
+	}
 
-    public void setFile(Path file) {
-        this.file = file;
-        Path root = this.file.resolve("/");
-        URI uri = ROOT.resolve(root.toUri().relativize(file.toUri()));
+	@JsonIgnore
+	@Deprecated
+	public URI getProxy() {
+		Proxy bundledAs = getBundledAs();
+		if (bundledAs == null) {
+			return null;
+		}
+		return bundledAs.getURI();
+	}
+
+	public URI getUri() {
+		return uri;
+	}
+
+	public void setConformsTo(URI conformsTo) {
+		this.conformsTo = conformsTo;
+	}
+
+	public void setCreatedBy(Agent createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public void setCreatedOn(FileTime createdOn) {
+		this.createdOn = createdOn;
+	}
+
+	public void setFile(Path file) {
+		this.file = file;
+		Path root = this.file.resolve("/");
+		URI uri = ROOT.resolve(root.toUri().relativize(file.toUri()));
 		setUri(uri);
-    }
+	}
 
-    @Deprecated
-    public void setFolder(Path folder) {
-    	getOrCreateBundledAs().setFolder(folder);
-    }
+	@Deprecated
+	public void setFolder(Path folder) {
+		getOrCreateBundledAs().setFolder(folder);
+	}
 
-    public void setMediatype(String mediatype) {
-        this.mediatype = mediatype;
-    }
+	public void setMediatype(String mediatype) {
+		this.mediatype = mediatype;
+	}
 
-    @Deprecated
-    public void setProxy() {
-        getOrCreateBundledAs().setURI();
-    }
+	@Deprecated
+	public void setProxy() {
+		getOrCreateBundledAs().setURI();
+	}
 
-    @Deprecated
-    public void setProxy(URI proxy) {
-    	getOrCreateBundledAs().setURI(proxy);
-    }
+	@Deprecated
+	public void setProxy(URI proxy) {
+		getOrCreateBundledAs().setURI(proxy);
+	}
 
-    public void setUri(URI uri) {
-        this.uri = uri;
-        if (! uri.isAbsolute()) {
-            // TODO: How to create a Path without knowing the root?
-//            file = uri;
-//            this.uri = null;
-        }
-    }
-    
-    @Override
-    public String toString() {
-        if (getUri() != null) { 
-            return getUri().toString();
-        }
-        if (getFile() != null) {
-            return getFile().toString();
-        }
-        if (getProxy() != null) { 
-            return getProxy().toString();
-        }
-        return "PathMetadata <null>";
-    }
+	public void setUri(URI uri) {
+		this.uri = uri;
+		if (!uri.isAbsolute()) {
+			// TODO: How to create a Path without knowing the root?
+			// file = uri;
+			// this.uri = null;
+		}
+	}
+
+	@Override
+	public String toString() {
+		if (getUri() != null) {
+			return getUri().toString();
+		}
+		if (getFile() != null) {
+			return getFile().toString();
+		}
+		if (getProxy() != null) {
+			return getProxy().toString();
+		}
+		return "PathMetadata <null>";
+	}
 
 	public List<Agent> getAuthoredBy() {
 		return authoredBy;
@@ -167,20 +171,17 @@ public class PathMetadata {
 		}
 		return bundledAs;
 	}
-	
-	
+
 	public Proxy getBundledAs() {
 		return bundledAs;
 	}
 
 	public void setBundledAs(Proxy bundledAs) {
-		if (bundledAs == null) { 
-			throw new NullPointerException("bundledAs can't be empty (try a new Proxy instance)");
+		if (bundledAs == null) {
+			throw new NullPointerException(
+					"bundledAs can't be empty (try a new Proxy instance)");
 		}
 		this.bundledAs = bundledAs;
 	}
-
-
-    
 
 }

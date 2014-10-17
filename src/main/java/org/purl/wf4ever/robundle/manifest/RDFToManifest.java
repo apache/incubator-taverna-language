@@ -118,7 +118,7 @@ public class RDFToManifest {
 	}
 
 	protected static Model jsonLdAsJenaModel(InputStream jsonIn, URI base)
-			throws IOException, RiotException {	
+			throws IOException, RiotException {
 		Model model = ModelFactory.createDefaultModel();
 		RDFDataMgr.read(model, jsonIn, base.toASCIIString(), Lang.JSONLD);
 		return model;
@@ -326,13 +326,14 @@ public class RDFToManifest {
 		model.add(jsonLdAsJenaModel(manifestResourceAsStream,
 				manifestResourceBaseURI));
 
-//		model.write(System.out, "TURTLE");
-//		System.out.println();
+		// model.write(System.out, "TURTLE");
+		// System.out.println();
 
 		URI root = manifestResourceBaseURI.resolve("/");
 		Individual ro = findRO(model, root);
 		if (ro == null) {
-			throw new IOException("root ResearchObject not found - Not a valid RO Bundle manifest");
+			throw new IOException(
+					"root ResearchObject not found - Not a valid RO Bundle manifest");
 		}
 
 		for (Individual manifestResource : listObjectProperties(ro,
@@ -380,14 +381,12 @@ public class RDFToManifest {
 			PathMetadata meta = manifest.getAggregation(relativizeFromBase(
 					uriStr, root));
 
-			
-			
-			
-			Set<Individual> proxies = listObjectProperties(aggrResource, hasProxy);
-			if (! proxies.isEmpty()) {
+			Set<Individual> proxies = listObjectProperties(aggrResource,
+					hasProxy);
+			if (!proxies.isEmpty()) {
 				// We can only deal with the first one
 				Individual proxy = proxies.iterator().next();
-				
+
 				String proxyUri = null;
 				if (proxy.getURI() != null) {
 					proxyUri = proxy.getURI();
@@ -398,7 +397,6 @@ public class RDFToManifest {
 					meta.setProxy(relativizeFromBase(proxyUri, root));
 				}
 
-				
 			}
 
 			creators = getAgents(root, aggrResource, createdBy);
@@ -446,8 +444,8 @@ public class RDFToManifest {
 					pathAnn.setUri(relativizeFromBase(ann.getURI(), root));
 				} else if (ann.getSameAs() != null
 						&& ann.getSameAs().getURI() != null) {
-					pathAnn.setUri(relativizeFromBase(ann.getSameAs()
-							.getURI(), root));
+					pathAnn.setUri(relativizeFromBase(ann.getSameAs().getURI(),
+							root));
 				}
 
 				// Handle multiple about/hasTarget

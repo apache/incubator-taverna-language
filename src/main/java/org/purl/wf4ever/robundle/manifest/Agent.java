@@ -6,38 +6,38 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder(value = { "uri", "orcid", "name" })
 public class Agent {
-    private String name;
-    private URI orcid;
-    private URI uri;
+	private String name;
+	private URI orcid;
+	private URI uri;
 
-    public Agent() {
-    }
-    
-    public Agent(String name) {
-        setName(name);
-    }
+	public Agent() {
+	}
 
-    public String getName() {
-        return name;
-    }
+	public Agent(String name) {
+		setName(name);
+	}
 
-    public URI getOrcid() {
-        return orcid;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public URI getUri() {
-        return uri;
-    }
+	public URI getOrcid() {
+		return orcid;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public URI getUri() {
+		return uri;
+	}
 
-    public void setOrcid(URI orcid) {
-        this.orcid = orcid;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setUri(URI uri) {
-        this.uri = uri;
-    }
+	public void setOrcid(URI orcid) {
+		this.orcid = orcid;
+	}
+
+	public void setUri(URI uri) {
+		this.uri = uri;
+	}
 }

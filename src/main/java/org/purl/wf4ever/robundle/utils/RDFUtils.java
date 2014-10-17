@@ -27,13 +27,14 @@ public class RDFUtils {
 		XSDDateTime dateTime;
 		if (value instanceof XSDDateTime) {
 			dateTime = (XSDDateTime) value;
-		} else { 
-			logger.info("Literal not an XSDDateTime, but: "
-					+ value.getClass() + " " + value);
-			
+		} else {
+			logger.info("Literal not an XSDDateTime, but: " + value.getClass()
+					+ " " + value);
+
 			// Try to parse it anyway
-			try { 
-				dateTime = (XSDDateTime) XSDDatatype.XSDdateTime.parse(literal.getLexicalForm());			
+			try {
+				dateTime = (XSDDateTime) XSDDatatype.XSDdateTime.parse(literal
+						.getLexicalForm());
 			} catch (DatatypeFormatException e) {
 				logger.warning("Invalid datetime: " + literal);
 				return null;
