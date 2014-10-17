@@ -16,8 +16,8 @@ import org.purl.wf4ever.robundle.manifest.odf.ODFManifest;
 public class Bundle implements Closeable {
 
 	private boolean deleteOnClose;
-	private final Path root;
 	private Manifest manifest;
+	private final Path root;
 
 	public Bundle(Path root, boolean deleteOnClose) {
 		this.root = root;

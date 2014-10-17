@@ -11,11 +11,11 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 		"aggregatedOn" })
 public class Proxy {
 
-	private URI uri;
-	private Path folder;
-	private String filename;
 	private Agent aggregatedBy;
 	private FileTime aggregatedOn;
+	private String filename;
+	private Path folder;
+	private URI uri;
 
 	public Agent getAggregatedBy() {
 		return aggregatedBy;

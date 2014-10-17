@@ -16,19 +16,19 @@ public class PathMetadata {
 
 	private static URI ROOT = URI.create("/");
 
-	private Path file;
-	private URI uri;
-	private String mediatype;
-
-	private FileTime createdOn;
-	private Agent createdBy;
-
-	private FileTime authoredOn;
 	private List<Agent> authoredBy = new ArrayList<>();
+	private FileTime authoredOn;
+	private Proxy bundledAs;
 
 	private URI conformsTo;
+	private Agent createdBy;
 
-	private Proxy bundledAs;
+	private FileTime createdOn;
+	private Path file;
+
+	private String mediatype;
+
+	private URI uri;
 
 	protected PathMetadata() {
 	}

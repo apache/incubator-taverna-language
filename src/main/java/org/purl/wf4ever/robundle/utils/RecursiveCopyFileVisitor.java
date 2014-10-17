@@ -64,9 +64,9 @@ public class RecursiveCopyFileVisitor extends SimpleFileVisitor<Path> {
 	private final CopyOption[] copyOptions;
 	private final Set<CopyOption> copyOptionsSet;
 	private final Path destination;
+	private boolean ignoreErrors;
 	private final LinkOption[] linkOptions;
 	private final Path source;
-	private boolean ignoreErrors;
 
 	RecursiveCopyFileVisitor(Path destination, Set<CopyOption> copyOptionsSet,
 			Path source) {

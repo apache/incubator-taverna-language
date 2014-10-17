@@ -41,16 +41,16 @@ import org.purl.wf4ever.robundle.utils.TemporaryFiles;
  */
 public class Bundles {
 
-	private static final String MANIFEST_JSON = "manifest.json";
 	private static final String ANNOTATIONS = "annotations";
+	private static final Charset ASCII = Charset.forName("ASCII");
 	private static final String DOT_RO = ".ro";
 
 	protected static final String DOT_URL = ".url";
 
-	private static final Charset ASCII = Charset.forName("ASCII");
 	private static final String INI_INTERNET_SHORTCUT = "InternetShortcut";
 	private static final String INI_URL = "URL";
 	private static final Charset LATIN1 = Charset.forName("Latin1");
+	private static final String MANIFEST_JSON = "manifest.json";
 	private static final Charset UTF8 = Charset.forName("UTF-8");
 
 	public static void closeAndSaveBundle(Bundle bundle, Path destination)

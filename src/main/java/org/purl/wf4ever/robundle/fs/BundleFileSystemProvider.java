@@ -151,9 +151,11 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 		private static final BundleFileSystemProvider INSTANCE = new BundleFileSystemProvider();
 	}
 
-	public static final String MIMETYPE_FILE = "mimetype";
+	private static final String APP = "app";
 
 	public static final String APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP = "application/vnd.wf4ever.robundle+zip";
+	public static final String MIMETYPE_FILE = "mimetype";
+
 	/**
 	 * The list of open file systems. This is static so that it is shared across
 	 * eventual multiple instances of this provider (such as when running in an
@@ -163,8 +165,6 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 	protected static Map<URI, WeakReference<BundleFileSystem>> openFilesystems = new HashMap<>();
 
 	private static final Charset UTF8 = Charset.forName("UTF-8");
-
-	private static final String APP = "app";
 
 	protected static void addMimeTypeToZip(ZipOutputStream out, String mimetype)
 			throws IOException {

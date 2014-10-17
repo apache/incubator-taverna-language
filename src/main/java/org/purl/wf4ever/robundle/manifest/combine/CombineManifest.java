@@ -76,30 +76,26 @@ public class CombineManifest {
 
 	}
 
-	private static final URI OMEX_METADATA = URI
-			.create("http://identifiers.org/combine.specifications/omex-metadata");
-
-	private static final String MANIFEST_XML = "manifest.xml";
+	private static JAXBContext jaxbContext;
 
 	private static Logger logger = Logger.getLogger(CombineManifest.class
 			.getCanonicalName());
 
-	public static boolean containsManifest(Bundle bundle) {
-		return Files.isRegularFile(manifestXmlPath(bundle));
-	}
-	private org.purl.wf4ever.robundle.manifest.Manifest manifest;
-	private Bundle bundle;
-
-	private static boolean warnedPrefixMapper;
+	private static final String MANIFEST_XML = "manifest.xml";
 
 	private static ObjectFactory objectFactory = new ObjectFactory();
-
-	private static JAXBContext jaxbContext;
-
+	private static final URI OMEX_METADATA = URI
+			.create("http://identifiers.org/combine.specifications/omex-metadata");
 	private static final String sparqlPrefixes = "PREFIX foaf:  <http://xmlns.com/foaf/0.1/> \n"
 			+ "PREFIX vcard: <http://www.w3.org/2006/vcard/ns#> \n"
 			+ "PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> \n"
 			+ "PREFIX dct:   <http://purl.org/dc/terms/> \n";
+
+	private static boolean warnedPrefixMapper;
+
+	public static boolean containsManifest(Bundle bundle) {
+		return Files.isRegularFile(manifestXmlPath(bundle));
+	}
 
 	protected static synchronized Marshaller createMarshaller()
 			throws JAXBException {
@@ -251,6 +247,10 @@ public class CombineManifest {
 			warnedPrefixMapper = true;
 		}
 	}
+
+	private Bundle bundle;
+
+	private org.purl.wf4ever.robundle.manifest.Manifest manifest;
 
 	public CombineManifest(org.purl.wf4ever.robundle.manifest.Manifest manifest) {
 		this.manifest = manifest;

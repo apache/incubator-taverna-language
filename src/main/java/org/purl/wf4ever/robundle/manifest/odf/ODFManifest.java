@@ -47,14 +47,15 @@ public class ODFManifest {
 
 	}
 
-	private static final String ODF_MANIFEST_VERSION = "1.2";
 	public static final String CONTAINER_XML = "META-INF/container.xml";
-	public static final String MANIFEST_XML = "META-INF/manifest.xml";
-
+	private static JAXBContext jaxbContext;
 	private static Logger logger = Logger.getLogger(ODFManifest.class
 			.getCanonicalName());
 
-	private static JAXBContext jaxbContext;
+	public static final String MANIFEST_XML = "META-INF/manifest.xml";
+
+	private static final String ODF_MANIFEST_VERSION = "1.2";
+	private static boolean warnedPrefixMapper;
 	public static boolean containsManifest(Bundle bundle) {
 		return Files.isRegularFile(manifestXmlPath(bundle));
 	}
@@ -69,6 +70,7 @@ public class ODFManifest {
 		Unmarshaller unmarshaller = getJaxbContext().createUnmarshaller();
 		return unmarshaller;
 	}
+
 	protected static synchronized JAXBContext getJaxbContext()
 			throws JAXBException {
 		if (jaxbContext == null) {
@@ -111,8 +113,6 @@ public class ODFManifest {
 			warnedPrefixMapper = true;
 		}
 	}
-
-	private org.purl.wf4ever.robundle.manifest.Manifest manifest;
 
 	private Bundle bundle;
 
@@ -198,9 +198,9 @@ public class ODFManifest {
 	//
 	// }
 
-	private ObjectFactory manifestFactory = new oasis.names.tc.opendocument.xmlns.manifest._1.ObjectFactory();
+	private org.purl.wf4ever.robundle.manifest.Manifest manifest;
 
-	private static boolean warnedPrefixMapper;
+	private ObjectFactory manifestFactory = new oasis.names.tc.opendocument.xmlns.manifest._1.ObjectFactory();
 
 	public ODFManifest(org.purl.wf4ever.robundle.manifest.Manifest manifest) {
 		this.manifest = manifest;

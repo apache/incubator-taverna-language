@@ -13,8 +13,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder(value = { "uri", "about", "content" })
 public class PathAnnotation {
 	private List<URI> about = new ArrayList<>();
-	private URI uri;
 	private URI content;
+	private URI uri;
 
 	public void generateAnnotationId() {
 		setUri(URI.create("urn:uuid:" + UUID.randomUUID()));

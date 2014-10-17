@@ -50,16 +50,16 @@ public class Manifest {
 		public abstract String toString();
 	}
 
-	private static final String MANIFEST_JSON = "manifest.json";
-
 	private static Logger logger = Logger.getLogger(Manifest.class
 			.getCanonicalName());
 
-	private static URI ROOT = URI.create("/");
+	private static final String MANIFEST_JSON = "manifest.json";
 
 	private static final String META_INF = "/META-INF";
+
 	private static final String MIMETYPE = "/mimetype";
 	private static final String RO = "/.ro";
+	private static URI ROOT = URI.create("/");
 
 	public static FileTime now() {
 		return FileTime.fromMillis(new GregorianCalendar().getTimeInMillis());

@@ -53,28 +53,28 @@ public class RDFToManifest {
 		}
 	}
 
+	private static final String BUNDLE = "http://purl.org/wf4ever/bundle#";
+
+	private static final String BUNDLE_RDF = "/ontologies/bundle.owl";
+	private static final String DCT = "http://purl.org/dc/terms/";
+	private static final String FOAF_0_1 = "http://xmlns.com/foaf/0.1/";
+	private static final String FOAF_RDF = "/ontologies/foaf.rdf";
+
 	private static Logger logger = Logger.getLogger(RDFToManifest.class
 			.getCanonicalName());
-
+	private static final String OA = "http://www.w3.org/ns/oa#";
+	private static final String OA_RDF = "/ontologies/oa.rdf";
+	private static final String ORE = "http://www.openarchives.org/ore/terms/";
+	private static final String PAV = "http://purl.org/pav/";
+	private static final String PAV_RDF = "/ontologies/pav.rdf";
+	private static final String PROV = "http://www.w3.org/ns/prov#";
+	private static final String PROV_AQ_RDF = "/ontologies/prov-aq.rdf";
+	private static final String PROV_O = "http://www.w3.org/ns/prov-o#";
+	private static final String PROV_O_RDF = "/ontologies/prov-o.rdf";
+	private static final String RO = "http://purl.org/wf4ever/ro#";
 	static {
 		setCachedHttpClientInJsonLD();
 	}
-	private static final String PROV = "http://www.w3.org/ns/prov#";
-	private static final String PROV_O = "http://www.w3.org/ns/prov-o#";
-	private static final String FOAF_0_1 = "http://xmlns.com/foaf/0.1/";
-
-	private static final String PAV = "http://purl.org/pav/";
-	private static final String DCT = "http://purl.org/dc/terms/";
-	private static final String RO = "http://purl.org/wf4ever/ro#";
-	private static final String BUNDLE = "http://purl.org/wf4ever/bundle#";
-	private static final String ORE = "http://www.openarchives.org/ore/terms/";
-	private static final String OA = "http://www.w3.org/ns/oa#";
-	private static final String OA_RDF = "/ontologies/oa.rdf";
-	private static final String FOAF_RDF = "/ontologies/foaf.rdf";
-	private static final String BUNDLE_RDF = "/ontologies/bundle.owl";
-	private static final String PAV_RDF = "/ontologies/pav.rdf";
-	private static final String PROV_O_RDF = "/ontologies/prov-o.rdf";
-	private static final String PROV_AQ_RDF = "/ontologies/prov-aq.rdf";
 	public static <T> ClosableIterable<T> iterate(ExtendedIterator<T> iterator) {
 		return new ClosableIterable<T>(iterator);
 	}
@@ -116,42 +116,42 @@ public class RDFToManifest {
 		// JSONUtilsSub.setHttpClient(wrappedHttpClient);
 		// }
 	}
-	private OntModel ore;
 	private ObjectProperty aggregates;
-	private ObjectProperty proxyFor;
-	private ObjectProperty proxyIn;
 	private OntClass aggregation;
+	private ObjectProperty authoredBy;
+	private DatatypeProperty authoredOn;
+	private OntModel bundle;
+	private ObjectProperty conformsTo;
+	private ObjectProperty createdBy;
+	private DatatypeProperty createdOn;
+	private OntModel dct;
 	private OntModel foaf;
 	private DatatypeProperty foafName;
-	private OntModel pav;
-	private ObjectProperty createdBy;
-	private OntModel prov;
-	private OntModel provaq;
-	private ObjectProperty hasProvenance;
-	private OntModel dct;
-
-	private ObjectProperty conformsTo;
-
-	private OntClass standard;
-
-	private ObjectProperty authoredBy;
-
-	private DatatypeProperty createdOn;
-	private DatatypeProperty authoredOn;
 	private DatatypeProperty format;
-	private OntModel oa;
+	private ObjectProperty hasAnnotation;
+
 	private ObjectProperty hasBody;
-	private ObjectProperty hasTarget;
 
-	private ObjectProperty isDescribedBy;
-
-	private OntModel bundle;
+	private ObjectProperty hasProvenance;
 
 	private ObjectProperty hasProxy;
 
+	private ObjectProperty hasTarget;
 	private ObjectProperty inFolder;
+	private ObjectProperty isDescribedBy;
+	private OntModel oa;
+	private OntModel ore;
+	private OntModel pav;
 
-	private ObjectProperty hasAnnotation;
+	private OntModel prov;
+
+	private OntModel provaq;
+
+	private ObjectProperty proxyFor;
+
+	private ObjectProperty proxyIn;
+
+	private OntClass standard;
 
 	public RDFToManifest() {
 		loadOntologies();
