@@ -3,9 +3,7 @@
  */
 package uk.org.taverna.scufl2.validation.correctness;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.Collections;
 import java.util.Set;
@@ -16,11 +14,10 @@ import uk.org.taverna.scufl2.api.core.Processor;
 import uk.org.taverna.scufl2.api.iterationstrategy.CrossProduct;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
 import uk.org.taverna.scufl2.api.iterationstrategy.PortNode;
-import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
-import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.NegativeValueProblem;
-import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.NullFieldProblem;
-import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.OutOfScopeValueProblem;
+import uk.org.taverna.scufl2.validation.correctness.report.NegativeValueProblem;
+import uk.org.taverna.scufl2.validation.correctness.report.NullFieldProblem;
+import uk.org.taverna.scufl2.validation.correctness.report.OutOfScopeValueProblem;
 
 /**
  * @author alanrw

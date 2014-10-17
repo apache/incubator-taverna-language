@@ -3,23 +3,19 @@
  */
 package uk.org.taverna.scufl2.translator.scufl.processorelement;
 
-import java.net.URI;
-import java.util.List;
-
 import uk.org.taverna.scufl2.translator.scufl.ParserState;
 import uk.org.taverna.scufl2.translator.scufl.ScuflExtensionParser;
 
 /**
  * @author alanrw
- *
  */
 public abstract class AbstractExtensionParser implements ScuflExtensionParser {
-	
 	private ParserState parserState;
 
 	/**
 	 * @return the parserState
 	 */
+	@Override
 	public ParserState getParserState() {
 		return parserState;
 	}
@@ -27,8 +23,8 @@ public abstract class AbstractExtensionParser implements ScuflExtensionParser {
 	/**
 	 * @param parserState the parserState to set
 	 */
+	@Override
 	public void setParserState(ParserState parserState) {
 		this.parserState = parserState;
 	}
-
 }

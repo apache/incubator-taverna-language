@@ -179,6 +179,7 @@ public class TestScufl2Tools extends ExampleWorkflow {
 		assertEquals(p, binding.getBoundProcessor());	
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Test
 	public void updatePortBindingByMatchingPorts() throws Exception {
 		Processor p = new Processor();
@@ -215,6 +216,7 @@ public class TestScufl2Tools extends ExampleWorkflow {
 	}
 	
 	
+	@SuppressWarnings("rawtypes")
 	private Set<String> procPortNames(
 			Set<? extends ProcessorPortBinding> portBindings) {
 		Set<String> names = new HashSet<String>();

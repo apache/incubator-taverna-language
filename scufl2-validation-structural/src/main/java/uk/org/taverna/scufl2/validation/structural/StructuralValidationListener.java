@@ -9,10 +9,9 @@ import uk.org.taverna.scufl2.api.iterationstrategy.DotProduct;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyNode;
 import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
 import uk.org.taverna.scufl2.api.port.ReceiverPort;
-import uk.org.taverna.scufl2.validation.ValidationException;
+import uk.org.taverna.scufl2.validation.ValidationReport;
 
-public interface StructuralValidationListener {
-
+public interface StructuralValidationListener extends ValidationReport {
 	void passedProcessor(Processor p);
 
 	void failedProcessorAdded(Processor p);
@@ -41,8 +40,4 @@ public interface StructuralValidationListener {
 			IterationStrategyNode iterationStrategyNode);
 
 	void incompleteWorkflow(Workflow w);
-
-	boolean detectedProblems();
-	
-	ValidationException getException();
 }

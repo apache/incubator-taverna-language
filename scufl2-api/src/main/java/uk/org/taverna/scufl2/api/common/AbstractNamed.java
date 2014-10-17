@@ -3,7 +3,6 @@ package uk.org.taverna.scufl2.api.common;
 import java.net.URI;
 import java.util.UUID;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Abstract implementation of a {@link Named} {@link WorkflowBean}.
@@ -12,7 +11,6 @@ import java.util.regex.Pattern;
  * @author Stian Soiland-Reyes
  */
 public abstract class AbstractNamed extends AbstractCloneable implements Named  {
-
 	private String name;
 
 	/**
@@ -35,14 +33,12 @@ public abstract class AbstractNamed extends AbstractCloneable implements Named  
 
 	@Override
 	public int compareTo(Object o) {
-		if (!(o instanceof AbstractNamed)) {
+		if (!(o instanceof AbstractNamed))
 			// Other comparables go first
 			return 1;
-		}
 		AbstractNamed other = (AbstractNamed) o;
-		if (other == this) {
+		if (other == this)
 			return 0;
-		}
 		/**
 		 * Disabled as this means the order changes depending on setParents being called or not;
 		 * could cause a DataLink to appear twice in workflow.getDataLinks(). 
@@ -71,10 +67,9 @@ public abstract class AbstractNamed extends AbstractCloneable implements Named  
 		if (getClass() != other.getClass()) {
 			int classCompare = getClass().getCanonicalName().compareTo(
 					other.getClass().getCanonicalName());
-			if (classCompare != 0) {
+			if (classCompare != 0)
 				// Allow having say InputPorts and OutputPorts in the same sorted list
 				return classCompare;
-			}
 		}
 		// We're the same class, let's compare the names
 		return getName().compareTo(other.getName());
@@ -82,47 +77,35 @@ public abstract class AbstractNamed extends AbstractCloneable implements Named  
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (obj == null) {
+		if (obj == null)
 			return false;
-		}
-		if (getClass() != obj.getClass()) {
+		if (getClass() != obj.getClass())
 			return false;
-		}
 		AbstractNamed other = (AbstractNamed) obj;
-		if (!getName().equals(other.getName())) {
+		if (!getName().equals(other.getName()))
 			return false;
-		}
 		if (this instanceof Child) {
 			WorkflowBean parent = ((Child<?>) this).getParent();
 			WorkflowBean otherParent = ((Child<?>) other).getParent();
-			if (parent != null) {
+			if (parent != null)
 				return parent.equals(otherParent);
-			}
-			if (parent == null && otherParent != null) {
+			if (parent == null && otherParent != null)
 				return false;
-			}
 		}
 		if (this instanceof Typed) {
 			URI myId = ((Typed) this).getType();
 			URI otherId = ((Typed) obj).getType();
-			if (myId != null) {
+			if (myId != null)
 				return myId.equals(otherId);
-			}
-			if (myId == null && otherId != null) {
+			if (myId == null && otherId != null)
 				return false;
-			}
 		}
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)AbstractNamed
-	 * 
-	 * @see uk.org.taverna.scufl2.api.common.Named#getName()
-	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -136,31 +119,23 @@ public abstract class AbstractNamed extends AbstractCloneable implements Named  
 
 		if (this instanceof Child) {
 			WorkflowBean parent = ((Child) this).getParent();
-			if (parent != null) {
+			if (parent != null)
 				result = prime * result + parent.hashCode();
-			}
 		}
 		return result;
 	}
 
-
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see uk.org.taverna.scufl2.api.common.Named#setName(java.lang.String)
-	 */
+	@Override
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void setName(String name) {
-		if (name == null) {
+		if (name == null)
 			throw new NullPointerException("Name can't be null");
-		}
 		Matcher invalidMatcher = INVALID_NAME.matcher(name);
-		if (invalidMatcher.find()) {
+		if (invalidMatcher.find())
 		    // http://dev.mygrid.org.uk/issues/browse/SCUFL2-87
 		    // TODO: Any other characters that must be disallowed?
-		    throw new IllegalArgumentException("Name invalid in position " + invalidMatcher.start() + ": '" + name + "'");
-		}
+			throw new IllegalArgumentException("Name invalid in position "
+					+ invalidMatcher.start() + ": '" + name + "'");
 
 		if (this instanceof Child) {
 			Child child = (Child) this;
@@ -185,5 +160,4 @@ public abstract class AbstractNamed extends AbstractCloneable implements Named  
 		AbstractNamed namedClone = (AbstractNamed)clone;
 		namedClone.setName(getName());
 	}
-
 }

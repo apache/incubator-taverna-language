@@ -2,37 +2,32 @@ package uk.org.taverna.scufl2.rdfxml.impl;
 
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 
-@SuppressWarnings("restriction")
 public class NamespacePrefixMapperJAXB_RI extends NamespacePrefixMapper {
-
+	@Override
 	public String getPreferredPrefix(String namespaceUri, String suggestion,
 			boolean requirePrefix) {
-		if (namespaceUri.equals("http://www.w3.org/2001/XMLSchema-instance")) {
+		switch (namespaceUri) {
+		case "http://www.w3.org/2001/XMLSchema-instance":
 			return "xsi";
-		}
-		if (namespaceUri.equals("http://ns.taverna.org.uk/2010/scufl2#")) {
+		case "http://ns.taverna.org.uk/2010/scufl2#":
 			return ""; // default
-		}
-		if (namespaceUri.equals("http://www.w3.org/1999/02/22-rdf-syntax-ns#")) {
+		case "http://www.w3.org/1999/02/22-rdf-syntax-ns#":
 			return "rdf";
-		}
-		if (namespaceUri.equals("http://www.w3.org/2000/01/rdf-schema#")) {
+		case "http://www.w3.org/2000/01/rdf-schema#":
 			return "rdfs";
-		}
-		if (namespaceUri.equals("http://purl.org/dc/elements/1.1/")) {
+		case "http://purl.org/dc/elements/1.1/":
 			return "dc";
-		}
-		if (namespaceUri.equals("http://purl.org/dc/terms/")) {
+		case "http://purl.org/dc/terms/":
 			return "dcterms";
-		}
-		if (namespaceUri.equals("http://www.w3.org/2002/07/owl#")) {
+		case "http://www.w3.org/2002/07/owl#":
 			return "owl";
+		default:
+			return suggestion;
 		}
-		return suggestion;
 	}
 
+	@Override
 	public String[] getPreDeclaredNamespaceUris() {
-		return new String[] {  };
+		return new String[] {};
 	}
-
 }

@@ -8,12 +8,9 @@ import uk.org.taverna.scufl2.validation.ValidationProblem;
 
 /**
  * @author alanrw
- *
  */
 public class FailedProcessorProblem extends ValidationProblem {
-
 	public FailedProcessorProblem(WorkflowBean bean) {
 		super(bean);
 	}
-
 }

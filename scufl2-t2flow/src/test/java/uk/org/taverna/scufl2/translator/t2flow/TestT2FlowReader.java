@@ -37,7 +37,10 @@ public class TestT2FlowReader {
 		String report = IOUtils.toString(getClass().getResourceAsStream("/as.txt"));
 		ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 		io.writeBundle(wfBundle, byteStream, StructureReader.TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
-		assertEquals(report, byteStream.toString("utf-8"));		
+                String byteStreamTtoString = byteStream.toString("utf-8");
+                report = report.replaceAll("\r", "").replaceAll("\n", "");
+                byteStreamTtoString = byteStreamTtoString.replaceAll("\r", "").replaceAll("\n", "");
+		assertEquals(report, byteStreamTtoString);
 	}
 	
 

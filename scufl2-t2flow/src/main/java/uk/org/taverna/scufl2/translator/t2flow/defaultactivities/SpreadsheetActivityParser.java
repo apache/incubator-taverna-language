@@ -1,5 +1,7 @@
 package uk.org.taverna.scufl2.translator.t2flow.defaultactivities;
 
+import static uk.org.taverna.scufl2.translator.t2flow.T2FlowParser.ravenURI;
+
 import java.net.URI;
 
 import uk.org.taverna.scufl2.api.configurations.Configuration;
@@ -15,19 +17,14 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class SpreadsheetActivityParser extends AbstractActivityParser {
-
-	private static URI activityRavenURI = T2FlowParser.ravenURI
+	private static final URI activityRavenURI = ravenURI
 			.resolve("net.sf.taverna.t2.activities/spreadsheet-import-activity/");
-
-	private static String activityClassName = "net.sf.taverna.t2.activities.spreadsheet.SpreadsheetImportActivity";
-
-	public static URI ACTIVITY_URI = URI
+	private static final String activityClassName = "net.sf.taverna.t2.activities.spreadsheet.SpreadsheetImportActivity";
+	public static final URI ACTIVITY_URI = URI
 			.create("http://ns.taverna.org.uk/2010/activity/spreadsheet-import");
-
-	public static URI RANGE_URI = URI
+	public static final URI RANGE_URI = URI
 			.create("http://ns.taverna.org.uk/2010/activity/spreadsheet-import/Range");
-
-	public static URI MAPPING_URI = URI
+	public static final URI MAPPING_URI = URI
 			.create("http://ns.taverna.org.uk/2010/activity/spreadsheet-import/Mapping");
 
 	@Override
@@ -62,9 +59,8 @@ public class SpreadsheetActivityParser extends AbstractActivityParser {
         json.put("rowRange", rowRange);
         makeRange(config.getRowRange(), rowRange);
 
-		if (config.getEmptyCellValue() != null) {
+		if (config.getEmptyCellValue() != null)
 		    json.put("emptyCellValue", config.getEmptyCellValue());
-		}
 		
 		ArrayNode columnNames = json.arrayNode();
         if (config.getColumnNames() != null && config.getColumnNames().getEntry() != null) {
@@ -74,23 +70,19 @@ public class SpreadsheetActivityParser extends AbstractActivityParser {
                 mapping.put("column", entry.getString().get(0));
                 mapping.put("port", entry.getString().get(1));
     		}
-    		if (columnNames.size() > 0) {
+    		if (columnNames.size() > 0)
     		    json.put("columnNames", columnNames);
-    		}
         }
 		
-        json.put("allRows", config.isAllRows());
-        json.put("excludeFirstRow", config.isExcludeFirstRow());
-        json.put("ignoreBlankRows", config.isIgnoreBlankRows());
-        if (config.getEmptyCellPolicy() != null) {
-            json.put("emptyCellPolicy", config.getEmptyCellPolicy().value());
-        }
-		if(config.getOutputFormat() != null) {
-            json.put("outputFormat", config.getOutputFormat().value());
-        }
-        if(config.getCsvDelimiter() != null) {
-            json.put("csvDelimiter", config.getCsvDelimiter());
-        }
+		json.put("allRows", config.isAllRows());
+		json.put("excludeFirstRow", config.isExcludeFirstRow());
+		json.put("ignoreBlankRows", config.isIgnoreBlankRows());
+		if (config.getEmptyCellPolicy() != null)
+			json.put("emptyCellPolicy", config.getEmptyCellPolicy().value());
+		if (config.getOutputFormat() != null)
+			json.put("outputFormat", config.getOutputFormat().value());
+		if (config.getCsvDelimiter() != null)
+			json.put("csvDelimiter", config.getCsvDelimiter());
 
 		return configuration;
 	}
@@ -105,8 +97,7 @@ public class SpreadsheetActivityParser extends AbstractActivityParser {
 			makeRange(excludesRange, exclude);
 		    excludes.add(exclude);
 		}
-		if (excludes.size() > 0) {
+		if (excludes.size() > 0)
 		    rangeJson.put("excludes", excludes);
-		}
 	}
 }

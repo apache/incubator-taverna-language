@@ -7,10 +7,8 @@ import uk.org.taverna.scufl2.api.common.WorkflowBean;
 
 /**
  * @author alanrw
- *
  */
 public abstract class ValidationProblem {
-	
 	private final WorkflowBean bean;
 
 	public ValidationProblem(WorkflowBean bean) {
@@ -23,5 +21,4 @@ public abstract class ValidationProblem {
 	public WorkflowBean getBean() {
 		return bean;
 	}
-
 }

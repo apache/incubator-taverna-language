@@ -65,14 +65,15 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
+                        <version>${commons.io.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.jdom</groupId>
-			<artifactId>jdom</artifactId>
+                        <groupId>org.jdom</groupId>
+                        <artifactId>com.springsource.org.jdom</artifactId>
+                        <version>${jdom.version}</version>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.openrdf.sesame</groupId>
 			<artifactId>sesame-repository-sail</artifactId>
@@ -88,11 +89,13 @@
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-impl</artifactId>
+                        <version>${jaxb.version}</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>jaxen</groupId>
-			<artifactId>jaxen</artifactId>
+			<groupId>org.jaxen</groupId>
+			<artifactId>com.springsource.org.jaxen</artifactId>
+                        <version>${jaxen.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

@@ -25,7 +25,8 @@ public class CloningIT {
         assertNotEquals(stack, root);
         System.out.println(stack);
         System.out.println(root);
-        AbstractCloneable clone = wf.clone();
+        @SuppressWarnings("unused")
+		AbstractCloneable clone = wf.clone();
         
         
     }

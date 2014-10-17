@@ -45,36 +45,27 @@ import uk.org.taverna.scufl2.api.core.Workflow;
  * of a {@link Workflow} (which itself would have a separate Revision chain) -
  * in this case {@link #getHadOriginalSources()} can indicate the workflow
  * bundle that nested workflow and its configurations came from.
- * </p>
  * <p>
  * Revisions might be given a custom {@link #getChangeSpecificationType()} to
  * indicate a particular kind of edit, for instance insertion of a nested
  * workflow.
- * </p>
- * 
  * 
  * @author Stian Soiland-Reyes
- * 
  */
 public class Revision extends AbstractCloneable implements WorkflowBean {
-
-	private Set<URI> additionOf = new LinkedHashSet<URI>();
+	private Set<URI> additionOf = new LinkedHashSet<>();
 	private URI changeSpecificationType;
 	private Calendar generatedAtTime;
-	private Set<Revision> hadOriginalSources = new LinkedHashSet<Revision>();
+	private Set<Revision> hadOriginalSources = new LinkedHashSet<>();
 	private URI identifier;
-
-	private Set<URI> modificationsOf = new LinkedHashSet<URI>();
-
+	private Set<URI> modificationsOf = new LinkedHashSet<>();
 	private Revision previousRevision;
-
-	private Set<URI> removalOf = new LinkedHashSet<URI>();
-
-	private Set<URI> wasAttributedTo = new LinkedHashSet<URI>();
+	private Set<URI> removalOf = new LinkedHashSet<>();
+	private Set<URI> wasAttributedTo = new LinkedHashSet<>();
 
 	public Revision() {
 	}
-	
+
 	public Revision(URI identifier, Revision previousRevision) {
 		this.identifier = identifier;
 		this.previousRevision = previousRevision;
@@ -130,7 +121,7 @@ public class Revision extends AbstractCloneable implements WorkflowBean {
 	}
 
 	public void setHadOriginalSources(Set<Revision> hadOriginalSources) {
-		this.hadOriginalSources.clear();	
+		this.hadOriginalSources.clear();
 		this.hadOriginalSources.addAll(hadOriginalSources);
 	}
 
@@ -163,58 +154,62 @@ public class Revision extends AbstractCloneable implements WorkflowBean {
 	}
 
 	protected boolean accept(Visitor visitor, HashSet<Revision> visited) {
-		if (!visited.add(this)) {
+		if (!visited.add(this))
 			// Ignore this Revision, visitor has already seen it
 			return true;
-		}
 		boolean recurse = visitor.visitEnter(this);
 		if (recurse) {
-			if (getPreviousRevision() != null) {
+			if (getPreviousRevision() != null)
 				recurse = getPreviousRevision().accept(visitor, visited);
-			}
 			for (Revision rev : getHadOriginalSources()) {
-				if (! recurse) {
+				if (!recurse)
 					break;
-				}
-				recurse = rev.accept(visitor, visited);						
+				recurse = rev.accept(visitor, visited);
 			}
 		}
-		return visitor.visitLeave(this);	
+		return visitor.visitLeave(this);
 	}
-	
+
 	@Override
 	public String toString() {
 		return getClass().getSimpleName() + " " + getIdentifier();
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
-		if (! (obj instanceof Revision)) {
+		if (!(obj instanceof Revision))
 			return false;
-		}
 		Revision other = (Revision) obj;
-		if (getIdentifier() == null) {
+		if (getIdentifier() == null)
 			return obj == this;
-		}
-		return getIdentifier().equals(other.getIdentifier());		
+		return getIdentifier().equals(other.getIdentifier());
+	}
+
+	@Override
+	public int hashCode() {
+		if (getIdentifier() == null)
+			return 0x01234567;
+		return 0x01234567 ^ getIdentifier().hashCode();
 	}
 
 	@Override
 	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
-		Revision cloneRevision = (Revision)clone;
+		Revision cloneRevision = (Revision) clone;
 		cloneRevision.setAdditionOf(new LinkedHashSet<URI>(getAdditionOf()));
 		cloneRevision.setChangeSpecificationType(getChangeSpecificationType());
-		if (getGeneratedAtTime() != null) {
-			cloneRevision.setGeneratedAtTime((Calendar) getGeneratedAtTime().clone());
-		}
-		for (Revision source : getHadOriginalSources()) {
-			cloneRevision.getHadOriginalSources().add(cloning.cloneIfNotInCache(source));
-		}
+		if (getGeneratedAtTime() != null)
+			cloneRevision.setGeneratedAtTime((Calendar) getGeneratedAtTime()
+					.clone());
+		for (Revision source : getHadOriginalSources())
+			cloneRevision.getHadOriginalSources().add(
+					cloning.cloneIfNotInCache(source));
 		cloneRevision.setIdentifier(getIdentifier());
-		cloneRevision.setModificationsOf(new LinkedHashSet<URI>(getModificationsOf()));
-		cloneRevision.setPreviousRevision(cloning.cloneIfNotInCache(getPreviousRevision()));		
+		cloneRevision.setModificationsOf(new LinkedHashSet<URI>(
+				getModificationsOf()));
+		cloneRevision.setPreviousRevision(cloning
+				.cloneIfNotInCache(getPreviousRevision()));
 		cloneRevision.setRemovalOf(new LinkedHashSet<URI>(getRemovalOf()));
-		cloneRevision.setWasAttributedTo(new LinkedHashSet<URI>(getWasAttributedTo()));				
+		cloneRevision.setWasAttributedTo(new LinkedHashSet<URI>(
+				getWasAttributedTo()));
 	}
-	
 }

@@ -1,8 +1,6 @@
 package uk.org.taverna.scufl2.validation.correctness;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
 import java.util.Set;
@@ -15,8 +13,8 @@ import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
 import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
-import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.NullFieldProblem;
-import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.OutOfScopeValueProblem;
+import uk.org.taverna.scufl2.validation.correctness.report.NullFieldProblem;
+import uk.org.taverna.scufl2.validation.correctness.report.OutOfScopeValueProblem;
 
 public class TestProcessorOutputPortBinding {
 	

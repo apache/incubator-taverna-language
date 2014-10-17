@@ -3,13 +3,10 @@ package uk.org.taverna.scufl2.api.core;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import uk.org.taverna.scufl2.api.annotation.Revision;
 import uk.org.taverna.scufl2.api.annotation.Revisioned;
 import uk.org.taverna.scufl2.api.common.AbstractRevisioned;
 import uk.org.taverna.scufl2.api.common.Child;
@@ -31,17 +28,14 @@ import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
  */
 public class Workflow extends AbstractRevisioned implements
 		Child<WorkflowBundle>, Ported, Revisioned {
-
 	public static final URI WORKFLOW_ROOT = URI
 			.create("http://ns.taverna.org.uk/2010/workflow/");
 
-	private final TreeSet<DataLink> dataLinks = new TreeSet<DataLink>();
-
-	private final TreeSet<ControlLink> controlLinks = new TreeSet<ControlLink>();
-
-	private final NamedSet<InputWorkflowPort> inputPorts = new NamedSet<InputWorkflowPort>();
-	private final NamedSet<OutputWorkflowPort> outputPorts = new NamedSet<OutputWorkflowPort>();
-	private final NamedSet<Processor> processors = new NamedSet<Processor>();
+	private final TreeSet<DataLink> dataLinks = new TreeSet<>();
+	private final TreeSet<ControlLink> controlLinks = new TreeSet<>();
+	private final NamedSet<InputWorkflowPort> inputPorts = new NamedSet<>();
+	private final NamedSet<OutputWorkflowPort> outputPorts = new NamedSet<>();
+	private final NamedSet<Processor> processors = new NamedSet<>();
 	private WorkflowBundle parent;
 
 	/**
@@ -50,7 +44,7 @@ public class Workflow extends AbstractRevisioned implements
 	public Workflow() {	
 	}
 
-	       /**
+	/**
      * Constructs a <code>Workflow</code> with the specified name.
      * 
      * @param name
@@ -64,18 +58,16 @@ public class Workflow extends AbstractRevisioned implements
 	@Override
 	public boolean accept(Visitor visitor) {
 		if (visitor.visitEnter(this)) {
-			List<WorkflowBean> children = new ArrayList<WorkflowBean>();
+			List<WorkflowBean> children = new ArrayList<>();
 			children.addAll(getInputPorts());
 			children.addAll(getOutputPorts());
 			children.addAll(getProcessors());
 			children.addAll(getDataLinks());
 			children.addAll(getControlLinks());
-			children.addAll(Collections.singleton(getCurrentRevision()));			
-			for (WorkflowBean bean : children) {
-				if (!bean.accept(visitor)) {
+			children.add(getCurrentRevision());
+			for (WorkflowBean bean : children)
+				if (!bean.accept(visitor))
 					break;
-				}
-			}
 		}
 		return visitor.visitLeave(this);
 	}
@@ -186,9 +178,8 @@ public class Workflow extends AbstractRevisioned implements
 	 */
 	public void setInputPorts(Set<InputWorkflowPort> inputPorts) {
 		this.inputPorts.clear();
-		for (InputWorkflowPort inputPort : inputPorts) {
+		for (InputWorkflowPort inputPort : inputPorts)
 			inputPort.setParent(this);
-		}
 	}
 
 	/**
@@ -204,21 +195,17 @@ public class Workflow extends AbstractRevisioned implements
 	 */
 	public void setOutputPorts(Set<OutputWorkflowPort> outputPorts) {
 		this.outputPorts.clear();
-		for (OutputWorkflowPort outputPort : outputPorts) {
+		for (OutputWorkflowPort outputPort : outputPorts)
 			outputPort.setParent(this);
-		}
 	}
 
 	@Override
 	public void setParent(WorkflowBundle parent) {
-		if (this.parent != null && this.parent != parent) {
+		if (this.parent != null && this.parent != parent)
 			this.parent.getWorkflows().remove(this);
-		}
 		this.parent = parent;
-		if (parent != null) {
+		if (parent != null)
 			parent.getWorkflows().add(this);
-		}
-
 	}
 
 	/**
@@ -232,9 +219,8 @@ public class Workflow extends AbstractRevisioned implements
 	 */
 	public void setProcessors(Set<Processor> processors) {
 		this.processors.clear();
-		for (Processor processor : processors) {
+		for (Processor processor : processors)
 			processor.setParent(this);
-		}
 	}
 
 	/**
@@ -248,19 +234,18 @@ public class Workflow extends AbstractRevisioned implements
 		newRevision();
 	}
 
+	@SuppressWarnings("unused")
 	private String toString(Collection<?> collection, int maxLen) {
-		StringBuilder builder = new StringBuilder();
-		builder.append("[");
+		StringBuilder builder = new StringBuilder("[");
+		String sep = "";
 		int i = 0;
-		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext()
-				&& i < maxLen; i++) {
-			if (i > 0) {
-				builder.append(", ");
-			}
-			builder.append(iterator.next());
+		for (Object o : collection) {
+			builder.append(sep).append(o);
+			sep = ", ";
+			if (++i >= maxLen)
+				break;
 		}
-		builder.append("]");
-		return builder.toString();
+		return builder.append("]").toString();
 	}
 
 	@Override
@@ -274,5 +259,4 @@ public class Workflow extends AbstractRevisioned implements
 		Workflow cloneWorkflow = (Workflow)clone;
 		cloneWorkflow.setCurrentRevision(cloning.cloneIfNotInCache(getCurrentRevision()));		
 	}
-	
 }

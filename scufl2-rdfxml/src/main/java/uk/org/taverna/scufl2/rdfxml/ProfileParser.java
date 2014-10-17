@@ -33,7 +33,6 @@ import uk.org.taverna.scufl2.rdfxml.jaxb.Profile;
 import uk.org.taverna.scufl2.rdfxml.jaxb.ProfileDocument;
 
 public class ProfileParser extends AbstractParser {
-
     private static Logger logger = Logger.getLogger(ProfileParser.class
             .getCanonicalName());
     
@@ -45,12 +44,11 @@ public class ProfileParser extends AbstractParser {
 		super(parserState);
 	}
 
+	@SuppressWarnings("unused")
 	private Element getChildElement(Element element) {
-		for (Node node : nodeIterable(element.getChildNodes())) {
-			if (node instanceof Element) {
+		for (Node node : nodeIterable(element.getChildNodes()))
+			if (node instanceof Element)
 				return (Element) node;
-			}
-		}
 		return null;
 	}
 
@@ -87,30 +85,23 @@ public class ProfileParser extends AbstractParser {
 
 		getParserState().push(activity);
 		try {
-
 			mapBean(original.getAbout(), activity);
-			if (original.getName() != null) {
+			if (original.getName() != null)
 				activity.setName(original.getName());
-			}
 			activity.setParent(getParserState().getCurrent(
 					uk.org.taverna.scufl2.api.profiles.Profile.class));
-			if (original.getType() != null) {
-				activity.setType(resolve(original.getType()
-						.getResource()));
-			}
+			if (original.getType() != null)
+				activity.setType(resolve(original.getType().getResource()));
 			for (uk.org.taverna.scufl2.rdfxml.jaxb.Activity.InputActivityPort inputActivityPort : original
-					.getInputActivityPort()) {
+					.getInputActivityPort())
 				parseInputActivityPort(inputActivityPort.getInputActivityPort());
-			}
 			for (uk.org.taverna.scufl2.rdfxml.jaxb.Activity.OutputActivityPort outputActivityPort : original
-					.getOutputActivityPort()) {
+					.getOutputActivityPort())
 				parseOutputActivityPort(outputActivityPort
 						.getOutputActivityPort());
-			}
 		} finally {
 			getParserState().pop();
 		}
-
 	}
 
    private static final URI INTERNAL_DISPATCH_PREFIX = URI.create("http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/");
@@ -131,28 +122,25 @@ public class ProfileParser extends AbstractParser {
             config.setType(type);
 		}
 
-        if (original.getName() != null) {
-            config.setName(original.getName());
-        }
-        
-        if (! ignoreConfig) {
-            mapBean(original.getAbout(), config);    		
-    		
-    		if (original.getConfigure() != null) {
-    			Configurable configurable = resolveBeanUri(original.getConfigure()
-    					.getResource(), Configurable.class);
-    			config.setConfigures(configurable);
-    		}
-            config.setParent(getParserState().getCurrent(
-                    uk.org.taverna.scufl2.api.profiles.Profile.class));
-        }
+		if (original.getName() != null)
+			config.setName(original.getName());
 
-        getParserState().push(config);
+		if (!ignoreConfig) {
+			mapBean(original.getAbout(), config);
 
-		
+			if (original.getConfigure() != null) {
+				Configurable configurable = resolveBeanUri(original
+						.getConfigure().getResource(), Configurable.class);
+				config.setConfigures(configurable);
+			}
+			config.setParent(getParserState().getCurrent(
+					uk.org.taverna.scufl2.api.profiles.Profile.class));
+		}
+
+		getParserState().push(config);
+
 		if (original.getSeeAlso() != null) {
-		    
-    		String about = original.getSeeAlso().getResource();
+			String about = original.getSeeAlso().getResource();
     		if (about != null) {
     		    URI resource = resolve(about);
     		    URI bundleBase = parserState .get().getLocation();
@@ -162,7 +150,6 @@ public class ProfileParser extends AbstractParser {
     		        parserState.get().getUcfPackage().removeResource(path.getRawPath());
     		    } else {
         		    try {
-        //    		    System.out.println(path);
         		        // TODO: Should the path in the UCF Package be %-escaped or not?
         		        // See TestRDFXMLWriter.awkwardFilenames
                         config.setJson(parserState.get().getUcfPackage().getResourceAsString(path.getRawPath()));
@@ -180,12 +167,9 @@ public class ProfileParser extends AbstractParser {
 		    // Just ignoring it for now :(
 		    // 
 		    // TODO: Parse and represent as JSON-LD?
-//		    System.out.println(original);
 		    logger.warning("Ignoring unsupported PropertyResource (from wfbundle 0.2.0 or older) for " + config + " " + o);
 		}
 		
-		
-//		getParserState().pop();
 		getParserState().pop();
 	}
 
@@ -196,9 +180,8 @@ public class ProfileParser extends AbstractParser {
 		port.setParent(getParserState().getCurrent(Activity.class));
 
 		port.setName(original.getName());
-		if (original.getPortDepth() != null) {
+		if (original.getPortDepth() != null)
 			port.setDepth(original.getPortDepth().getValue());
-		}
 	}
 
 	protected void parseInputPortBinding(
@@ -211,10 +194,9 @@ public class ProfileParser extends AbstractParser {
 				.getBindInputActivityPort().getResource(),
 				InputActivityPort.class));
 		binding.setBoundProcessorPort(resolveBeanUri(original
-				.getBindInputProcessorPort().getResource(), 
+				.getBindInputProcessorPort().getResource(),
 				InputProcessorPort.class));
 		binding.setParent(getParserState().getCurrent(ProcessorBinding.class));
-
 	}
 
 	protected void parseOutputActivityPort(
@@ -224,12 +206,10 @@ public class ProfileParser extends AbstractParser {
 		port.setParent(getParserState().getCurrent(Activity.class));
 
 		port.setName(original.getName());
-		if (original.getPortDepth() != null) {
+		if (original.getPortDepth() != null)
 			port.setDepth(original.getPortDepth().getValue());
-		}
-		if (original.getGranularPortDepth() != null) {
+		if (original.getGranularPortDepth() != null)
 			port.setGranularDepth(original.getGranularPortDepth().getValue());
-		}
 	}
 
 	protected void parseOutputPortBinding(
@@ -245,7 +225,6 @@ public class ProfileParser extends AbstractParser {
 				.getBindOutputProcessorPort().getResource(),
 				OutputProcessorPort.class));
 		binding.setParent(getParserState().getCurrent(ProcessorBinding.class));
-
 	}
 
 	protected void parseProcessorBinding(
@@ -257,13 +236,11 @@ public class ProfileParser extends AbstractParser {
 		mapBean(original.getAbout(), binding);
 		getParserState().push(binding);
 
-		if (original.getName() != null) {
+		if (original.getName() != null)
 			binding.setName(original.getName());
-		}
-		if (original.getActivityPosition() != null) {
+		if (original.getActivityPosition() != null)
 			binding.setActivityPosition(original.getActivityPosition()
 					.getValue());
-		}
 
 		URI processorUri = resolve(original.getBindProcessor().getResource());
 		URI activityUri = resolve(original.getBindActivity().getResource());
@@ -271,16 +248,13 @@ public class ProfileParser extends AbstractParser {
 		binding.setBoundProcessor((Processor) resolveBeanUri(processorUri));
 		binding.setBoundActivity((Activity) resolveBeanUri(activityUri));
 
-		for (InputPortBinding inputPortBinding : original.getInputPortBinding()) {
+		for (InputPortBinding inputPortBinding : original.getInputPortBinding())
 			parseInputPortBinding(inputPortBinding.getInputPortBinding());
-		}
 		for (OutputPortBinding outputPortBinding : original
-				.getOutputPortBinding()) {
+				.getOutputPortBinding())
 			parseOutputPortBinding(outputPortBinding.getOutputPortBinding());
-		}
 
 		getParserState().pop();
-
 	}
 
 	protected void parseProfile(Profile original, URI profileUri) {
@@ -293,37 +267,32 @@ public class ProfileParser extends AbstractParser {
 			URI about = getParserState().getCurrentBase().resolve(
 					original.getAbout());
 			mapBean(about, p);
-		} else {
+		} else
 			mapBean(profileUri, p);
-		}
 
-		if (original.getName() != null) {
+		if (original.getName() != null)
 			p.setName(original.getName());
-		}
 		// Note - we'll pop() in profileSecond() instead
-
 	}
 
 	protected void parseProfileSecond(Profile profileElem) {
 		// TODO: Parse activates config etc.
 		getParserState().pop();
-
 	}
 
 	protected void readProfile(URI profileUri, URI source)
 			throws ReaderException, IOException {
-		if (source.isAbsolute()) {
+		if (source.isAbsolute())
 			throw new ReaderException("Can't read external profile source "
 					+ source);
-		}
 		InputStream bundleStream = getParserState().getUcfPackage()
 				.getResourceAsInputStream(source.getRawPath());
-		if (bundleStream == null) {
+		if (bundleStream == null)
 		    throw new ReaderException("Can't find profile " + source.getPath());
-		}
 		readProfile(profileUri, source, bundleStream);
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void readProfile(URI profileUri, URI source,
 			InputStream bundleStream) throws ReaderException, IOException {
 		JAXBElement<ProfileDocument> elem;
@@ -336,40 +305,31 @@ public class ProfileParser extends AbstractParser {
 		}
 
 		URI base = getParserState().getLocation().resolve(source);
-		if (elem.getValue().getBase() != null) {
+		if (elem.getValue().getBase() != null)
 			base = base.resolve(elem.getValue().getBase());
-		}
 
 		getParserState().setCurrentBase(base);
 
 		uk.org.taverna.scufl2.rdfxml.jaxb.Profile profileElem = null;
-		for (Object any : elem.getValue().getAny()) {
+		for (Object any : elem.getValue().getAny())
 			if (any instanceof uk.org.taverna.scufl2.rdfxml.jaxb.Profile) {
-				if (profileElem != null) {
+				if (profileElem != null)
 					throw new ReaderException("More than one <Profile> found");
-				}
 				profileElem = (uk.org.taverna.scufl2.rdfxml.jaxb.Profile) any;
 				parseProfile(profileElem, profileUri);
 			} else if (any instanceof uk.org.taverna.scufl2.rdfxml.jaxb.Activity) {
-				if (profileElem == null) {
+				if (profileElem == null)
 					throw new ReaderException("No <Profile> found");
-				}
 				parseActivity((uk.org.taverna.scufl2.rdfxml.jaxb.Activity) any);
-
 			} else if (any instanceof uk.org.taverna.scufl2.rdfxml.jaxb.ProcessorBinding) {
-				if (profileElem == null) {
+				if (profileElem == null)
 					throw new ReaderException("No <Profile> found");
-				}
-
 				parseProcessorBinding((uk.org.taverna.scufl2.rdfxml.jaxb.ProcessorBinding) any);
 			} else if (any instanceof uk.org.taverna.scufl2.rdfxml.jaxb.Configuration) {
-				if (profileElem == null) {
+				if (profileElem == null)
 					throw new ReaderException("No <Profile> found");
-				}
 				parseConfiguration((uk.org.taverna.scufl2.rdfxml.jaxb.Configuration) any);
 			}
-		}
 		parseProfileSecond(profileElem);
 	}
-
 }

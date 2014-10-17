@@ -643,10 +643,21 @@
 				maxOccurs="unbounded" minOccurs="0"></element>
 		</sequence>
 	</complexType>
+	
+	<complexType name="LastPredictedDepthPort">
+			<complexContent>
+			<extension base="tav:Port">
+				<sequence>
+					<element name="lastPredictedDepth" type="integer" minOccurs="0">
+					</element>
+				</sequence>
+			</extension>
+		</complexContent>
+	</complexType>
 
 	<complexType name="AnnotatedPort">
 		<complexContent>
-			<extension base="tav:Port">
+			<extension base="tav:LastPredictedDepthPort">
 				<sequence>
 					<element name="annotations" type="tav:Annotations"
 						maxOccurs="1" minOccurs="0">

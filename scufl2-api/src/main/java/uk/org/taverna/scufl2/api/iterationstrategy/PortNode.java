@@ -48,9 +48,6 @@ public class PortNode extends AbstractCloneable implements IterationStrategyNode
 		this.inputProcessorPort = inputProcessorPort;
 	}
 
-	/* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -64,70 +61,58 @@ public class PortNode extends AbstractCloneable implements IterationStrategyNode
         return result;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
+        if (this == obj)
             return true;
-        }
-        if (obj == null) {
+        if (obj == null)
             return false;
-        }
-        if (!(obj instanceof PortNode)) {
+        if (!(obj instanceof PortNode))
             return false;
-        }
         PortNode other = (PortNode) obj;
         if (desiredDepth == null) {
-            if (other.desiredDepth != null) {
+            if (other.desiredDepth != null)
                 return false;
-            }
-        } else if (!desiredDepth.equals(other.desiredDepth)) {
+        } else if (!desiredDepth.equals(other.desiredDepth))
             return false;
-        }
         if (inputProcessorPort == null) {
-            if (other.inputProcessorPort != null) {
+            if (other.inputProcessorPort != null)
                 return false;
-            }
-        } else if (!inputProcessorPort.equals(other.inputProcessorPort)) {
+        } else if (!inputProcessorPort.equals(other.inputProcessorPort))
             return false;
-        }
         return true;
     }
 
+	private static boolean saneParent(IterationStrategyParent node) {
+		return (node == null) || (node instanceof DotProduct)
+				|| (node instanceof CrossProduct);
+	}
+
     @Override
 	public void setParent(IterationStrategyParent newParent) {
-		if (parent == newParent) {
+		if (parent == newParent)
 			return;
-		}
+		if (!saneParent(newParent))
+			throw new IllegalArgumentException(
+					"PortNode parent must be a DotProduct or CrossProduct: "
+							+ parent);
 
 		if (parent != null) {
 			// Remove from old parent
-			if (!(parent instanceof DotProduct)
-					&& !(parent instanceof CrossProduct)) {
+			if (!saneParent(parent))
 				throw new IllegalArgumentException(
 						"Old PortNode parent must be a DotProduct or CrossProduct: "
-						+ parent);
-			}
+								+ parent);
 			@SuppressWarnings("unchecked")
 			List<IterationStrategyNode> parentList = (List<IterationStrategyNode>) parent;
 			parentList.remove(this);
 		}
 
 		parent = newParent;
-
-		if (!(parent instanceof DotProduct)
-				&& !(parent instanceof CrossProduct)) {
-			throw new IllegalArgumentException(
-					"PortNode parent must be a DotProduct or CrossProduct: "
-					+ parent);
-		}
 		@SuppressWarnings("unchecked")
 		List<IterationStrategyNode> parentList = (List<IterationStrategyNode>) parent;
-		if (!parentList.contains(this)) {
+		if (!parentList.contains(this))
 			parentList.add(this);
-		}
 	}
 	
 	@Override

@@ -26,7 +26,6 @@ import uk.org.taverna.scufl2.api.profiles.ProcessorPortBinding;
  * Utility methods for dealing with URIs.
  */
 public class URITools {
-
 	private static final String MERGE_POSITION = "mergePosition";
 	private static final String TO = "to";
 	private static final String FROM = "from";
@@ -34,18 +33,15 @@ public class URITools {
 	private static final URI DOT = URI.create(".");
 
 	public URI relativePath(URI base, URI uri) {
-
 		URI root = base.resolve("/");
-		if (!root.equals(uri.resolve("/"))) {
+		if (!root.equals(uri.resolve("/")))
 			// Different protocol/host/auth
 			return uri;
-		}
 		base = base.normalize();
 		uri = uri.normalize();
-		if (base.resolve("#").equals(uri.resolve("#"))) {
+		if (base.resolve("#").equals(uri.resolve("#")))
 			// Same path, easy
 			return base.relativize(uri);
-		}
 
 		if (base.isAbsolute()) {
 			// Ignore hostname and protocol
@@ -67,7 +63,6 @@ public class URITools {
 		// Add the ../.. again
 		URI resolved = relation.resolve(candidate);
 		return resolved;
-
 	}
 
 	public URI relativeUriForBean(WorkflowBean bean, WorkflowBean relativeToBean) {
@@ -77,21 +72,19 @@ public class URITools {
 	}
 
 	public WorkflowBean resolveUri(URI uri, WorkflowBundle wfBundle) {
-
 		// Check if it's a workflow URI
-		for (Workflow wf : wfBundle.getWorkflows()) {
-			if (wf.getIdentifier().equals(uri)) {
+		for (Workflow wf : wfBundle.getWorkflows())
+			if (wf.getIdentifier().equals(uri))
 				return wf;
-			}
-		}
 		String rel = Workflow.WORKFLOW_ROOT.relativize(uri).toASCIIString();
-		if (rel.matches("[0-9a-f-]+/")) {
+		if (rel.matches("[0-9a-f-]+/"))
 			return null;
-		}
 
-		// Naive, super-inefficient reverse-lookup - we could have even returned
-		// early!
-		final Map<URI, WorkflowBean> uriToBean = new HashMap<URI, WorkflowBean>();
+		/*
+		 * Naive, super-inefficient reverse-lookup - we could have even returned
+		 * early!
+		 */
+		final Map<URI, WorkflowBean> uriToBean = new HashMap<>();
 		wfBundle.accept(new VisitorWithPath() {
 			@Override
 			public boolean visit() {
@@ -103,15 +96,16 @@ public class URITools {
 					return false;
 				}
                 WorkflowBean existing = uriToBean.put(uri, node);
-				if (existing != null) {
-				    // Check if we should keep the existing object instead, 
-				    // because the inserted object is "lesser worth"
-				    // (for instance we try to insert a Revision when a 
-				    // WorkflowBundle already exists, 
-    				if (node instanceof Revision && ! (existing instanceof Revision)) {
-    				    uriToBean.put(uri, existing);
-    				}
-				}
+				if (existing != null)
+					/*
+					 * Check if we should keep the existing object instead,
+					 * because the inserted object is "lesser worth" (for
+					 * instance we try to insert a Revision when a
+					 * WorkflowBundle already exists,
+					 */
+					if (node instanceof Revision
+							&& !(existing instanceof Revision))
+						uriToBean.put(uri, existing);
 				return true;
 			}
 		});
@@ -124,18 +118,16 @@ public class URITools {
 	}
 
 	public URI uriForBean(WorkflowBean bean) {
-		if (bean == null) {
+		if (bean == null)
 			throw new NullPointerException("Bean can't be null");
-		}
+
 		if (bean instanceof Root) {
 			Root root = (Root) bean;
 			if (root.getGlobalBaseURI() == null) {
-				if (root instanceof WorkflowBundle) {
-					((WorkflowBundle) root).newRevision();
-				} else {
+				if (!(root instanceof WorkflowBundle))
 					throw new IllegalArgumentException(
 							"sameBaseAs is null for bean " + bean);
-				}
+				((WorkflowBundle) root).newRevision();
 			}
 			return root.getGlobalBaseURI();
 		}
@@ -143,27 +135,23 @@ public class URITools {
 			@SuppressWarnings("rawtypes")
 			Child child = (Child) bean;
 			WorkflowBean parent = child.getParent();
-			if (parent == null) {
+			if (parent == null)
 				throw new IllegalStateException("Bean does not have a parent: "
 						+ child);
-			}
 			URI parentUri = uriForBean(parent);
 
-			if (!parentUri.getPath().endsWith("/")) {
+			if (!parentUri.getPath().endsWith("/"))
 				parentUri = parentUri.resolve(parentUri.getPath() + "/");
-			}
 			String relation;
-			if (child instanceof InputPort) {
+			if (child instanceof InputPort)
 				relation = "in/";
-			} else if (child instanceof OutputPort) {
+			else if (child instanceof OutputPort)
 				relation = "out/";
-			} else if (child instanceof IterationStrategyStack) {
+			else if (child instanceof IterationStrategyStack)
 				relation = "iterationstrategy/";
-			} else {
+			else
 				// TODO: Get relation by container annotations
-				relation = child.getClass().getSimpleName() + "/";
-				// Stupid fallback
-			}
+				relation = child.getClass().getSimpleName() + "/"; // Stupid fallback
 
 			URI relationURI = parentUri.resolve(relation.toLowerCase());
 			if (parent instanceof List) {
@@ -174,12 +162,10 @@ public class URITools {
 			if (bean instanceof Named) {
 				Named named = (Named) bean;
 				String name = validFilename(named.getName());
-				if (!(bean instanceof Port || bean instanceof Annotation)) {
+				if (!(bean instanceof Port || bean instanceof Annotation))
 					name = name + "/";
-				}
 				return relationURI.resolve(name);
 			} else if (bean instanceof DataLink) {
-
 				DataLink dataLink = (DataLink) bean;
 				Workflow wf = dataLink.getParent();
 				URI wfUri = uriForBean(wf);
@@ -190,10 +176,9 @@ public class URITools {
 				String dataLinkUri = MessageFormat.format(
 						"{0}?{1}={2}&{3}={4}", DATALINK, FROM, receivesFrom,
 						TO, sendsTo);
-				if (dataLink.getMergePosition() != null) {
+				if (dataLink.getMergePosition() != null)
 					dataLinkUri += MessageFormat.format("&{0}={1}",
 							MERGE_POSITION, dataLink.getMergePosition());
-				}
 				return wfUri.resolve(dataLinkUri);
 			} else if (bean instanceof BlockingControlLink) {
 				BlockingControlLink runAfterCondition = (BlockingControlLink) bean;
@@ -222,19 +207,16 @@ public class URITools {
 				ProcessorPortBinding<?, ?> processorPortBinding = (ProcessorPortBinding<?, ?>) bean;
 				ProcessorPort procPort = processorPortBinding
 						.getBoundProcessorPort();
-				if (procPort == null) {
+				if (procPort == null)
 					throw new IllegalStateException(
 							"ProcessorPortBinding has no bound processor port: "
 									+ bean);
-				}
 				URI procPortUri = relativeUriForBean(procPort,
 						processorPortBinding.getParent().getBoundProcessor());
 				return parentUri.resolve(procPortUri);
-			} else {
+			} else
 				throw new IllegalStateException(
 						"Can't create URIs for child of unrecogized type " + bean.getClass());
-			}
-
 		}
 		if (bean instanceof Revision) {
 			Revision revision = (Revision) bean;
@@ -245,9 +227,8 @@ public class URITools {
 	}
 
 	public String validFilename(String name) {
-		if (name == null) {
+		if (name == null)
 			throw new NullPointerException();
-		}
 		// Make a relative URI
 		URI uri;
 		try {
@@ -263,5 +244,4 @@ public class URITools {
 		escaped = escaped.replace("=", "%3d");
 		return escaped;
 	}
-
 }

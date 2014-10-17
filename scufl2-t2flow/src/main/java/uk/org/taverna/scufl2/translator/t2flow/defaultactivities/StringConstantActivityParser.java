@@ -1,5 +1,7 @@
 package uk.org.taverna.scufl2.translator.t2flow.defaultactivities;
 
+import static uk.org.taverna.scufl2.translator.t2flow.T2FlowParser.ravenURI;
+
 import java.net.URI;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
@@ -14,15 +16,11 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.StringConstantConfig;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class StringConstantActivityParser extends AbstractActivityParser {
-
 	private static final String VALUE = "value";
-
-	private static URI activityRavenURI =
-			T2FlowParser.ravenURI.resolve("net.sf.taverna.t2.activities/stringconstant-activity/");
-
-	private static String activityClassName = "net.sf.taverna.t2.activities.stringconstant.StringConstantActivity";
-
-	public static URI CONSTANT = URI
+	private static final URI activityRavenURI = ravenURI
+			.resolve("net.sf.taverna.t2.activities/stringconstant-activity/");
+	private static final String activityClassName = "net.sf.taverna.t2.activities.stringconstant.StringConstantActivity";
+	public static final URI CONSTANT = URI
 			.create("http://ns.taverna.org.uk/2010/activity/constant");
 
 	@Override
@@ -43,13 +41,11 @@ public class StringConstantActivityParser extends AbstractActivityParser {
 		StringConstantConfig strConfig = unmarshallConfig(t2FlowParser,
 				configBean, "xstream", StringConstantConfig.class);
 		String value = strConfig.getValue();
-		if (value == null) {
+		if (value == null)
 			throw new ReaderException("String constant configuration has no value set");
-		}
 		Configuration configuration = new Configuration();
 		ObjectNode json = (ObjectNode) configuration.getJson();
-        configuration.setType(
-				CONSTANT.resolve("#Config"));
+		configuration.setType(CONSTANT.resolve("#Config"));
 		json.put("string", value);
 		
 		Activity activity = parserState.getCurrentActivity();
@@ -58,6 +54,4 @@ public class StringConstantActivityParser extends AbstractActivityParser {
 		valuePort.setGranularDepth(0);
 		return configuration;
 	}
-
-
 }

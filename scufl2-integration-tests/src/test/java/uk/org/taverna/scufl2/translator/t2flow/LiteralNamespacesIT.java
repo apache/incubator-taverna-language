@@ -1,7 +1,6 @@
 package uk.org.taverna.scufl2.translator.t2flow;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.net.URL;
@@ -30,6 +29,7 @@ public class LiteralNamespacesIT {
 		WorkflowBundle wfBundle = workflowBundleIO.readBundle(wfResource, null);		
 		workflowBundleIO.writeBundle(wfBundle, bundleFile, "application/vnd.taverna.scufl2.workflow-bundle");
 		wfBundle = workflowBundleIO.readBundle(bundleFile, null);
+		@SuppressWarnings("unused")
 		String profile = wfBundle.getResources().getResourceAsString("profile/taverna-2.3.0.rdf");		
 	}
 	

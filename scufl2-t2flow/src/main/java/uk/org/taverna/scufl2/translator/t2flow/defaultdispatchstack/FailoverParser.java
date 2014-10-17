@@ -1,5 +1,7 @@
 package uk.org.taverna.scufl2.translator.t2flow.defaultdispatchstack;
 
+import static uk.org.taverna.scufl2.translator.t2flow.T2FlowParser.ravenURI;
+
 import java.net.URI;
 
 import uk.org.taverna.scufl2.api.configurations.Configuration;
@@ -10,19 +12,16 @@ import uk.org.taverna.scufl2.translator.t2flow.defaultactivities.AbstractActivit
 import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 
 public class FailoverParser extends AbstractActivityParser {
-
-	private static URI ravenURI =
-		T2FlowParser.ravenURI.resolve("net.sf.taverna.t2.core/workflowmodel-impl/");
-
-	private static String className = "net.sf.taverna.t2.workflowmodel.processor.dispatch.layers.Failover";
-
-	public static URI scufl2Uri = URI
+	private static final URI modelRavenURI = ravenURI
+			.resolve("net.sf.taverna.t2.core/workflowmodel-impl/");
+	private static final String className = "net.sf.taverna.t2.workflowmodel.processor.dispatch.layers.Failover";
+	public static final URI scufl2Uri = URI
 			.create("http://ns.taverna.org.uk/2010/scufl2/taverna/dispatchlayer/Failover");
 
 	@Override
 	public boolean canHandlePlugin(URI pluginURI) {
 		String uriStr = pluginURI.toASCIIString();
-		return uriStr.startsWith(ravenURI.toASCIIString())
+		return uriStr.startsWith(modelRavenURI.toASCIIString())
 				&& uriStr.endsWith(className);
 	}
 
@@ -36,5 +35,4 @@ public class FailoverParser extends AbstractActivityParser {
 			ConfigBean configBean, ParserState parserState) throws ReaderException {
 		return null; // no config!
 	}
-
 }

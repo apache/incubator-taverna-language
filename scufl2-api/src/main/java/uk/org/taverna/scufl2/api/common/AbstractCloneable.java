@@ -4,7 +4,6 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 
 public abstract class AbstractCloneable implements WorkflowBean {
-	
 	protected static class CopyVisitor implements Visitor {
 		private Cloning cloning;
 
@@ -31,25 +30,28 @@ public abstract class AbstractCloneable implements WorkflowBean {
 
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		public void cloneNode(WorkflowBean node) {
-			WorkflowBean clone = cloning.cloneIfNotInCache((WorkflowBean)node);
+			WorkflowBean clone = cloning.cloneIfNotInCache((WorkflowBean) node);
 			if (node instanceof Child && clone instanceof Child) {
 				Child child = (Child) node;
-				Child childClone = (Child)clone;
+				Child childClone = (Child) clone;
 				WorkflowBean oldParent = child.getParent();
 				// NOTE: oldParent==null is OK, as cloned is HashMap
 
-				// NOTE: We don't clone the parent! If it's not already cloned,
-				// then it might be above our current visit tree and should not be
-				// cloned (this is the case for the top level node). The clone will then have the parent as null.
+				/*
+				 * NOTE: We don't clone the parent! If it's not already cloned,
+				 * then it might be above our current visit tree and should not
+				 * be cloned (this is the case for the top level node). The
+				 * clone will then have the parent as null.
+				 */
 				WorkflowBean newParent = cloning.getCloned(oldParent);
 				childClone.setParent(newParent);
 			}
 		}
 	}
-	
+
 	@Override
 	public AbstractCloneable clone() {
-		return cloneWorkflowBean(this);		
+		return cloneWorkflowBean(this);
 	}
 
 	public static <T extends WorkflowBean> T cloneWorkflowBean(T obj) {
@@ -58,16 +60,16 @@ public abstract class AbstractCloneable implements WorkflowBean {
 		obj.accept(copyVisitor);
 		return cloning.getCloned(obj);
 	}
-	
-	public static class Cloning {
-	    // Use identify map so we always make new copies of objects that just
-	    // may look alike, but are different, like empty lists
-		private Map<WorkflowBean, WorkflowBean> cloned = new IdentityHashMap<WorkflowBean, WorkflowBean>();
 
-		
+	public static class Cloning {
+		/**
+		 * Use identify map so we always make new copies of objects that just
+		 * may look alike, but are different, like empty lists
+		 */
+		private final Map<WorkflowBean, WorkflowBean> cloned = new IdentityHashMap<>();
+
 		/**
 		 * Construct a Cloning helper.
-		 * <p>
 		 * 
 		 * @param ancestor
 		 *            The highest WorkflowBean in the hierarchy to clone. Any
@@ -76,61 +78,51 @@ public abstract class AbstractCloneable implements WorkflowBean {
 		public Cloning(WorkflowBean ancestor) {
 			this.ancestor = ancestor;
 		}
-		
+
 		final WorkflowBean ancestor;
-	
+
 		@SuppressWarnings("unchecked")
 		public <T extends WorkflowBean> T cloneOrOriginal(T original) {
-			if (cloned.containsKey(original)) {
+			if (cloned.containsKey(original))
 				return (T) cloned.get(original);
-			}
 			return original;
 		}
 
 		@SuppressWarnings("unchecked")
 		public <T extends WorkflowBean> T cloneIfNotInCache(T original) {
-			if (original == null) {
+			if (original == null)
 				return null;
-			}
-			if (cloned.containsKey(original)) {
+			if (cloned.containsKey(original))
 				return (T) cloned.get(original);
-			}		
 			T clone;
 			try {
 				clone = (T) original.getClass().newInstance();
 			} catch (InstantiationException e) {
-//				System.err.println("Can't do this one.. " + original);
+				// System.err.println("Can't do this one.. " + original);
 				return null;
 			} catch (IllegalAccessException e) {
 				throw new RuntimeException(e);
 			}
 			cloned.put(original, clone);
-			
+
 			if (original instanceof AbstractCloneable) {
 				AbstractCloneable cloneable = (AbstractCloneable) original;
 				cloneable.cloneInto(clone, this);
 			}
-			
-//			System.out.println("Cloned " + clone);
-			return clone;	
+
+			// System.out.println("Cloned " + clone);
+			return clone;
 		}
-		
 
 		@SuppressWarnings("unchecked")
 		public <T extends WorkflowBean> T getCloned(T originalBean) {
 			return (T) cloned.get(originalBean);
 		}
-		
+
 		public <T extends WorkflowBean> void knownClone(T original, T clone) {
 			cloned.put(original, clone);
 		}
-		
-		
 	}
 
-	protected abstract void cloneInto(WorkflowBean clone,
-			Cloning cloning);
-	
-	
-
+	protected abstract void cloneInto(WorkflowBean clone, Cloning cloning);
 }

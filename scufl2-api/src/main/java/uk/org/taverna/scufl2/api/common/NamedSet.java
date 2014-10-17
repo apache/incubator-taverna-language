@@ -27,14 +27,13 @@ import java.util.TreeMap;
  *            subclass of {@link Named} to keep in this set.
  */
 public class NamedSet<T extends Named> extends AbstractSet<T> implements SortedSet<T> {
-
 	protected transient SortedMap<String, T> namedMap;
 
 	/**
 	 * Constructs an empty <code>NamedSet</code>.
 	 */
 	public NamedSet() {
-		namedMap = new TreeMap<String, T>();
+		namedMap = new TreeMap<>();
 	}
 
 	/**
@@ -47,7 +46,7 @@ public class NamedSet<T extends Named> extends AbstractSet<T> implements SortedS
 	 *            the collection whose elements are to be added to the set
 	 */
 	public NamedSet(Collection<? extends T> collection) {
-		namedMap = new TreeMap<String, T>();
+		namedMap = new TreeMap<>();
 		addAll(collection);
 	}
 
@@ -98,17 +97,15 @@ public class NamedSet<T extends Named> extends AbstractSet<T> implements SortedS
 	public String addWithUniqueName(T element) {
 		String name = element.getName();
 		T existing = getByName(name);
-		if (element == existing) {
+		if (element == existing)
 			return name;
-		}
 
 		// Remove any existing number suffix
 		String nameTemplate = name.replaceAll("_\\d+$", "_");
 
 		long i = 1;
-		while (getNames().contains(name)) {
+		while (getNames().contains(name))
 			name = nameTemplate + i++;
-		}
 
 		element.setName(name);
 		add(element);
@@ -129,9 +126,8 @@ public class NamedSet<T extends Named> extends AbstractSet<T> implements SortedS
 		} catch (CloneNotSupportedException e) {
 			throw new IllegalStateException(e);
 		}
-		if (!(this.namedMap instanceof TreeMap)) {
+		if (!(this.namedMap instanceof TreeMap))
 			throw new IllegalStateException("Can't clone submap");
-		}
 		copy.namedMap = (SortedMap<String, T>) ((TreeMap) this.namedMap).clone();
 		return copy;
 	}
@@ -154,9 +150,8 @@ public class NamedSet<T extends Named> extends AbstractSet<T> implements SortedS
 	 */
 	@Override
 	public boolean contains(Object o) {
-		if (!(o instanceof Named)) {
+		if (!(o instanceof Named))
 			return false;
-		}
 		Named named = (Named) o;
 		return named.equals(namedMap.get(named.getName()));
 	}
@@ -203,7 +198,7 @@ public class NamedSet<T extends Named> extends AbstractSet<T> implements SortedS
 	@Override
 	public SortedSet<T> headSet(T toElement) {
 		// FIXME: Return a view instead of a copy
-		NamedSet<T> headSet = new NamedSet<T>();
+		NamedSet<T> headSet = new NamedSet<>();
 		headSet.namedMap = namedMap.headMap(toElement.getName());
 		return headSet;
 	}
@@ -229,15 +224,13 @@ public class NamedSet<T extends Named> extends AbstractSet<T> implements SortedS
 
 	@Override
 	public boolean remove(Object o) {
-		if (!(o instanceof Named)) {
+		if (!(o instanceof Named))
 			return false;
-		}
 		Named named = (Named) o;
 		String name = named.getName();
 		T exists = namedMap.get(name);
-		if (named.equals(exists)) {
+		if (named.equals(exists))
 			return namedMap.remove(named.getName()) != null;
-		}
 		return false;
 	}
 
@@ -263,16 +256,15 @@ public class NamedSet<T extends Named> extends AbstractSet<T> implements SortedS
 
 	@Override
 	public SortedSet<T> subSet(T fromElement, T toElement) {
-		NamedSet<T> headSet = new NamedSet<T>();
+		NamedSet<T> headSet = new NamedSet<>();
 		headSet.namedMap = namedMap.subMap(fromElement.getName(), toElement.getName());
 		return headSet;
 	}
 
 	@Override
 	public SortedSet<T> tailSet(T fromElement) {
-		NamedSet<T> headSet = new NamedSet<T>();
+		NamedSet<T> headSet = new NamedSet<>();
 		headSet.namedMap = namedMap.tailMap(fromElement.getName());
 		return headSet;
 	}
-
 }

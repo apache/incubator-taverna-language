@@ -10,15 +10,10 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import uk.org.taverna.scufl2.api.common.Child;
-import uk.org.taverna.scufl2.api.common.Visitor;
-import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Workflow;
-import uk.org.taverna.scufl2.api.port.InputActivityPort;
-import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.NegativeValueProblem;
-import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.NullFieldProblem;
-import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.WrongParentProblem;
+import uk.org.taverna.scufl2.validation.correctness.report.NullFieldProblem;
+import uk.org.taverna.scufl2.validation.correctness.report.WrongParentProblem;
 
 /**
  * @author alanrw

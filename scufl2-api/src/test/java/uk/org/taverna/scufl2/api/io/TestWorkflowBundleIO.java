@@ -1,12 +1,6 @@
 package uk.org.taverna.scufl2.api.io;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static uk.org.taverna.scufl2.api.io.structure.StructureReader.TEXT_VND_TAVERNA_SCUFL2_STRUCTURE;
 
 import java.io.ByteArrayInputStream;
@@ -25,7 +19,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.ExampleWorkflow;
-import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.structure.StructureReader;
 import uk.org.taverna.scufl2.api.io.structure.StructureWriter;
@@ -188,6 +181,7 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 
 		File emptyFile = File.createTempFile("test", "txt");
 		try {
+			@SuppressWarnings("unused")
 			WorkflowBundle none = bundleIO.readBundle(emptyFile,null);
 			fail("Should throw IllegalArgumentException for unrecognized file");
 		} catch (IllegalArgumentException ex) {
@@ -226,7 +220,10 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		bundleIO.writeBundle(readBundle, output, TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
 		String bundleTxt = new String(output.toByteArray(), UTF_8);
-		assertEquals(getStructureFormatWorkflowBundle(), bundleTxt);		
+                String getStructureFormatWorkflowBundle = getStructureFormatWorkflowBundle();
+                bundleTxt = bundleTxt.replaceAll("\r", "").replaceAll("\n", "");
+                getStructureFormatWorkflowBundle = getStructureFormatWorkflowBundle.replaceAll("\r", "").replaceAll("\n", "");
+		assertEquals(getStructureFormatWorkflowBundle, bundleTxt);
 	}
 
 	@Test
@@ -305,7 +302,10 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 		bundleIO.writeBundle(wfBundle, bundleFile,
 				TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
 		String bundleTxt = FileUtils.readFileToString(bundleFile, UTF_8);
-		assertEquals(getStructureFormatWorkflowBundle(), bundleTxt);
+                String getStructureFormatWorkflowBundle = getStructureFormatWorkflowBundle();
+                bundleTxt = bundleTxt.replaceAll("\r", "").replaceAll("\n", "");
+                getStructureFormatWorkflowBundle = getStructureFormatWorkflowBundle.replaceAll("\r", "").replaceAll("\n", "");
+		assertEquals(getStructureFormatWorkflowBundle, bundleTxt);
 	}
 
 	@Ignore
@@ -335,7 +335,10 @@ public class TestWorkflowBundleIO extends ExampleWorkflow {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		bundleIO.writeBundle(wfBundle, output, TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
 		String bundleTxt = new String(output.toByteArray(), UTF_8);
-		assertEquals(getStructureFormatWorkflowBundle(), bundleTxt);
+                String getStructureFormatWorkflowBundle = getStructureFormatWorkflowBundle();
+                bundleTxt = bundleTxt.replaceAll("\r", "").replaceAll("\n", "");
+                getStructureFormatWorkflowBundle = getStructureFormatWorkflowBundle.replaceAll("\r", "").replaceAll("\n", "");
+		assertEquals(getStructureFormatWorkflowBundle, bundleTxt);
 	}
 
 	@Test(expected = IllegalArgumentException.class)

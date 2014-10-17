@@ -1,5 +1,7 @@
 package uk.org.taverna.scufl2.translator.t2flow.defaultactivities;
 
+import static uk.org.taverna.scufl2.translator.t2flow.T2FlowParser.ravenURI;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +24,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class RshellActivityParser extends AbstractActivityParser {
-
 	/*
 	 * A lovely artifact of xstream 'efficiency' - Xpath backpointers to
 	 * previous elements. luckily we are here restricted within this specific
@@ -37,12 +38,10 @@ public class RshellActivityParser extends AbstractActivityParser {
 	Pattern strangeXpath = Pattern
 			.compile("[./]+/(inputSymanticTypes)?.*TypeBean(\\[(\\d+)\\])?/symanticType$");
 
-	private static URI activityRavenURI = T2FlowParser.ravenURI
+	private static final URI activityRavenURI = ravenURI
 			.resolve("net.sf.taverna.t2.activities/rshell-activity/");
-
-	private static String activityClassName = "net.sf.taverna.t2.activities.rshell.RshellActivity";
-
-	public static URI ACTIVITY_URI = URI
+	private static final String activityClassName = "net.sf.taverna.t2.activities.rshell.RshellActivity";
+	public static final URI ACTIVITY_URI = URI
 			.create("http://ns.taverna.org.uk/2010/activity/rshell");
 
 	@Override
@@ -100,26 +99,18 @@ public class RshellActivityParser extends AbstractActivityParser {
 		activity.getInputPorts().clear();
 		activity.getOutputPorts().clear();
 		
-		
 		for (ActivityPortDefinitionBean portBean : rshellConfig
 				.getInputs()
-				.getNetSfTavernaT2WorkflowmodelProcessorActivityConfigActivityInputPortDefinitionBean()) {
-			parseAndAddInputPortDefinition(portBean,
-					configuration, activity);
-		}
+				.getNetSfTavernaT2WorkflowmodelProcessorActivityConfigActivityInputPortDefinitionBean())
+			parseAndAddInputPortDefinition(portBean, configuration, activity);
 		for (ActivityPortDefinitionBean portBean : rshellConfig
 				.getOutputs()
-				.getNetSfTavernaT2WorkflowmodelProcessorActivityConfigActivityOutputPortDefinitionBean()) {
-			parseAndAddOutputPortDefinition(
-					portBean, configuration, activity);
-		}
-
-
-
+				.getNetSfTavernaT2WorkflowmodelProcessorActivityConfigActivityOutputPortDefinitionBean())
+			parseAndAddOutputPortDefinition(portBean, configuration, activity);
 		
 		RShellSymanticType inputSymanticTypes = rshellConfig
 				.getInputSymanticTypes();
-		List<String> foundInputTypes = new ArrayList<String>();
+		List<String> foundInputTypes = new ArrayList<>();
 
 		ArrayNode inputPorts = json.arrayNode();
 		json.put("inputTypes", inputPorts);
@@ -130,31 +121,29 @@ public class RshellActivityParser extends AbstractActivityParser {
 			String dataType = symanticType.getSymanticType().getValue(); 
 			String reference = symanticType.getSymanticType().getReference();
 			if (reference != null) {
-
 				Matcher matcher = strangeXpath.matcher(reference);
-				if (matcher == null || !matcher.matches()) {
+				if (matcher == null || !matcher.matches())
 					throw new ReaderException(
 							"Unhandled xstream xpath expression: " + reference);
-				}
 				String position = matcher.group(3);
-				if (position == null) {
+				if (position == null)
 					position = "1";
-				}
-				dataType = foundInputTypes
-						.get(Integer.parseInt(position) - 1);
+				dataType = foundInputTypes.get(Integer.parseInt(position) - 1);
 			}
 			
-			foundInputTypes.add(dataType); // Even if it's null - so the
-												// index is correct
-			if (dataType != null) {
+			foundInputTypes.add(dataType);
+			// Even if it's null - so the index is correct
+
+			if (dataType != null)
 			    port.put("dataType", dataType);
-			}
 		}
-		// FIXME: Avoid this repetition. Would require a fair bit of parser
-		// state..
+		/*
+		 * FIXME: Avoid this repetition. Would require a fair bit of parser
+		 * state...
+		 */
 		RShellSymanticType outputSymanticTypes = rshellConfig
 				.getOutputSymanticTypes();
-		List<String> foundOutputTypes = new ArrayList<String>();
+		List<String> foundOutputTypes = new ArrayList<>();
         ArrayNode outputPorts = json.arrayNode();
         json.put("outputTypes", outputPorts);
 
@@ -166,44 +155,39 @@ public class RshellActivityParser extends AbstractActivityParser {
 			String dataType = symanticType.getSymanticType().getValue();
 			String reference = symanticType.getSymanticType().getReference();
 			if (reference != null) {
-				// A lovely artifact of xstream 'efficiency' - Xpath
-				// backpointers to previous elements.
-				// luckily we are here restricted within this specific config
-				// bean
-				//
-				// Example:
-				// ../../net.sf.taverna.t2.activities.rshell.RShellPortSymanticTypeBean[3]/symanticType
-				// ../../../inputSymanticTypes/net.sf.taverna.t2.activities.rshell.RShellPortSymanticTypeBean[2]/symanticType
+				/*
+				 * A lovely artifact of xstream 'efficiency' - Xpath
+				 * backpointers to previous elements. luckily we are here
+				 * restricted within this specific config bean.
+				 *
+				 * Example:
+				 * ../../net.sf.taverna.t2.activities.rshell.RShellPortSymanticTypeBean[3]/symanticType
+				 * ../../../inputSymanticTypes/net.sf.taverna.t2.activities.rshell.RShellPortSymanticTypeBean[2]/symanticType
+				 */
 
 				Matcher matcher = strangeXpath.matcher(reference);
-				if (matcher == null || !matcher.matches()) {
+				if (matcher == null || !matcher.matches())
 					throw new ReaderException(
 							"Unhandled xstream xpath expression: " + reference);
-				}
 
 				boolean isInputSymantic = matcher.group(1) != null;
 				String position = matcher.group(3);
-				if (position == null) {
+				if (position == null)
 					position = "1";
-				}
-				if (isInputSymantic) {
-					dataType = foundInputTypes.get(Integer
-							.parseInt(position) - 1);
-				} else {
-					dataType = foundOutputTypes.get(Integer
-							.parseInt(position) - 1);
-				}
+				if (isInputSymantic)
+					dataType = foundInputTypes
+							.get(Integer.parseInt(position) - 1);
+				else
+					dataType = foundOutputTypes
+							.get(Integer.parseInt(position) - 1);
 			}
 
-			foundOutputTypes.add(dataType); // Even if it's null - so the
-													// index is correct
-			if (dataType != null) {
+			foundOutputTypes.add(dataType);
+			// Even if it's null - so the index is correct
+
+			if (dataType != null)
                 port.put("dataType", dataType);
-			}
 		}
-
 		return configuration;
-
 	}
-
 }

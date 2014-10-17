@@ -3,8 +3,9 @@
  */
 package uk.org.taverna.scufl2.validation.structural;
 
+import static java.util.Collections.emptyList;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,18 +25,16 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
 
 /**
  * @author alanrw
- *
  */
 public class ValidatorState {
-
 	private WorkflowBundle workflowBundle;
 	private Workflow workflow;
 	private Profile profile;
 	private Processor processor;
-	private Map<DataLink, Integer> dataLinkResolvedDepthMap = new HashMap<DataLink, Integer> ();
-	private Map<SenderPort, List<DataLink>> senderDataLinkMap = new HashMap<SenderPort, List<DataLink>>();
-	private Map<ReceiverPort, List<DataLink>> receiverDataLinkMap = new HashMap<ReceiverPort, List<DataLink>>();
-	private Map<Port, Integer> portResolvedDepthMap = new HashMap<Port, Integer> ();
+	private Map<DataLink, Integer> dataLinkResolvedDepthMap = new HashMap<>();
+	private Map<SenderPort, List<DataLink>> senderDataLinkMap = new HashMap<>();
+	private Map<ReceiverPort, List<DataLink>> receiverDataLinkMap = new HashMap<>();
+	private Map<Port, Integer> portResolvedDepthMap = new HashMap<>();
 	private StructuralValidationListener eventListener = new DefaultStructuralValidationListener();
 
 	public void setWorkflowBundle(WorkflowBundle workflowBundle) {
@@ -61,7 +60,7 @@ public class ValidatorState {
 	public void setDataLinkResolvedDepth(DataLink dl, Integer i) {
 		dataLinkResolvedDepthMap.put(dl, i);
 	}
-	
+
 	public Integer getDataLinkResolvedDepth(DataLink dl) {
 		return dataLinkResolvedDepthMap.get(dl);
 	}
@@ -69,9 +68,8 @@ public class ValidatorState {
 	public void rememberDataLinkSender(DataLink dl) {
 		SenderPort sender = dl.getReceivesFrom();
 		if (sender != null) {
-			if (!senderDataLinkMap.containsKey(sender)) {
+			if (!senderDataLinkMap.containsKey(sender))
 				senderDataLinkMap.put(sender, new ArrayList<DataLink>());
-			}
 			senderDataLinkMap.get(sender).add(dl);
 		}
 	}
@@ -79,53 +77,46 @@ public class ValidatorState {
 	public void rememberDataLinkReceiver(DataLink dl) {
 		ReceiverPort receiver = dl.getSendsTo();
 		if (receiver != null) {
-			if (!receiverDataLinkMap.containsKey(receiver)) {
+			if (!receiverDataLinkMap.containsKey(receiver))
 				receiverDataLinkMap.put(receiver, new ArrayList<DataLink>());
-			}
 			receiverDataLinkMap.get(receiver).add(dl);
 		}
 	}
 
 	public List<DataLink> getOutgoingDataLinks(SenderPort iwp) {
 		List<DataLink> result = senderDataLinkMap.get(iwp);
-		if (result == null) {
-			result = Collections.emptyList();
-		}
+		if (result == null)
+			result = emptyList();
 		return result;
 	}
-	
+
 	public List<DataLink> getIncomingDataLinks(ReceiverPort rp) {
 		List<DataLink> result = receiverDataLinkMap.get(rp);
-		if (result == null) {
-			result = Collections.emptyList();
-		}
-		return result;		
+		if (result == null)
+			result = emptyList();
+		return result;
 	}
-	
+
 	public DataLink getMainIncomingDataLink(ReceiverPort rp) {
 		List<DataLink> incomingLinks = getIncomingDataLinks(rp);
-		if (incomingLinks.isEmpty()) {
+		if (incomingLinks.isEmpty())
 			return null;
-		}
-		if (incomingLinks.size() == 1) {
+		if (incomingLinks.size() == 1)
 			return incomingLinks.get(0);
-		}
-		for (DataLink dl : incomingLinks) {
-			if (dl.getMergePosition() == 0) {
+		for (DataLink dl : incomingLinks)
+			if (dl.getMergePosition() == 0)
 				return dl;
-			}
-		}
 		return null;
 	}
-	
+
 	public boolean isMergedPort(ReceiverPort rp) {
-		return (getIncomingDataLinks(rp).size() > 1);
+		return getIncomingDataLinks(rp).size() > 1;
 	}
 
 	public void setPortResolvedDepth(Port owp, Integer i) {
 		portResolvedDepthMap.put(owp, i);
 	}
-	
+
 	public Integer getPortResolvedDepth(Port p) {
 		return portResolvedDepthMap.get(p);
 	}
@@ -147,9 +138,8 @@ public class ValidatorState {
 	}
 
 	public void clearWorkflowData() {
-		for (DataLink dl : workflow.getDataLinks()) {
+		for (DataLink dl : workflow.getDataLinks())
 			dataLinkResolvedDepthMap.remove(dl);
-		}
 		for (InputWorkflowPort iwp : workflow.getInputPorts()) {
 			senderDataLinkMap.remove(iwp);
 			portResolvedDepthMap.remove(iwp);
@@ -167,8 +157,6 @@ public class ValidatorState {
 		for (OutputWorkflowPort owp : workflow.getOutputPorts()) {
 			portResolvedDepthMap.remove(owp);
 			receiverDataLinkMap.remove(owp);
-			
 		}
 	}
-
 }

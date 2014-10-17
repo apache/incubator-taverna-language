@@ -4,8 +4,6 @@
 package uk.org.taverna.scufl2.validation.correctness;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
 import java.util.Set;
@@ -15,7 +13,7 @@ import org.junit.Test;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.port.InputWorkflowPort;
 import uk.org.taverna.scufl2.api.port.OutputWorkflowPort;
-import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener.NullFieldProblem;
+import uk.org.taverna.scufl2.validation.correctness.report.NullFieldProblem;
 
 /**
  * @author alanrw

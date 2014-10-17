@@ -7,8 +7,8 @@ import java.util.UUID;
 import uk.org.taverna.scufl2.api.annotation.Revision;
 import uk.org.taverna.scufl2.api.annotation.Revisioned;
 
-public abstract class AbstractRevisioned extends AbstractNamed implements Revisioned {
-
+public abstract class AbstractRevisioned extends AbstractNamed implements
+		Revisioned {
 	private Revision currentRevision;
 
 	protected URI generateNewIdentifier() {
@@ -18,10 +18,10 @@ public abstract class AbstractRevisioned extends AbstractNamed implements Revisi
 	protected abstract URI getIdentifierRoot();
 
 	public AbstractRevisioned() {
-	    newRevision();
-	    String id = getIdentifierRoot().relativize(getIdentifier())
-                .toASCIIString().replace("/", "");
-        setName(id);
+		newRevision();
+		String id = getIdentifierRoot().relativize(getIdentifier())
+				.toASCIIString().replace("/", "");
+		setName(id);
 	}
 
 	public AbstractRevisioned(String name) {
@@ -32,9 +32,8 @@ public abstract class AbstractRevisioned extends AbstractNamed implements Revisi
 	@Override
 	public void setCurrentRevision(Revision currentRevision) {
 		this.currentRevision = currentRevision;
-		if (currentRevision == null) {
-			newRevision();		
-		}
+		if (currentRevision == null)
+			newRevision();
 	}
 
 	@Override
@@ -64,17 +63,16 @@ public abstract class AbstractRevisioned extends AbstractNamed implements Revisi
 	/**
 	 * Returns the identifier.
 	 * <p>
-	 * The the default identifier is based on #getIdentifierRoot() plus a random UUID.
+	 * The the default identifier is based on #getIdentifierRoot() plus a random
+	 * UUID.
 	 * 
 	 * @see {@link #setIdentifier(URI)}
-	 * 
 	 * @return the identifier
 	 */
 	@Override
 	public URI getIdentifier() {
-		if (getCurrentRevision() == null) {
+		if (getCurrentRevision() == null)
 			return null;
-		}
 		return getCurrentRevision().getIdentifier();
 	}
 
@@ -85,7 +83,6 @@ public abstract class AbstractRevisioned extends AbstractNamed implements Revisi
 	 * 
 	 * @see #getIdentifier()
 	 * @see #getCurrentRevision()
-	 * 
 	 * @param identifier
 	 *            the identifier
 	 */
@@ -93,5 +90,4 @@ public abstract class AbstractRevisioned extends AbstractNamed implements Revisi
 	public void setIdentifier(URI identifier) {
 		setCurrentRevision(new Revision(identifier, null));
 	}
-
 }

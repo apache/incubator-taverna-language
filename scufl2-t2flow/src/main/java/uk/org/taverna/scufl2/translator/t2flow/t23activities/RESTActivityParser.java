@@ -1,5 +1,7 @@
 package uk.org.taverna.scufl2.translator.t2flow.t23activities;
 
+import static uk.org.taverna.scufl2.translator.t2flow.T2FlowParser.ravenURI;
+
 import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
@@ -18,30 +20,22 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class RESTActivityParser extends AbstractActivityParser {
-
 	private static final String ACTIVITY_XSD = "/uk/org/taverna/scufl2/translator/t2flow/xsd/restactivity.xsd";
-
-	private static URI ravenURI = T2FlowParser.ravenURI
+	private static final URI restRavenURI = ravenURI
 			.resolve("net.sf.taverna.t2.activities/rest-activity/");
-
-	private static URI ravenUIURI = T2FlowParser.ravenURI
+	private static final URI ravenUIURI = ravenURI
 			.resolve("net.sf.taverna.t2.ui-activities/rest-activity/");
-
-
-	private static String className = "net.sf.taverna.t2.activities.rest.RESTActivity";
-
-	public static URI ACTIVITY_URI = URI
+	private static final String className = "net.sf.taverna.t2.activities.rest.RESTActivity";
+	public static final URI ACTIVITY_URI = URI
 			.create("http://ns.taverna.org.uk/2010/activity/rest");
-
-	public static URI HTTP_URI = URI.create("http://www.w3.org/2011/http#");
-	public static URI HTTP_HEADERS_URI = URI.create("http://www.w3.org/2011/http-headers#");
-	public static URI HTTP_METHODS_URI = URI.create("http://www.w3.org/2011/http-methods#");
-
+	public static final URI HTTP_URI = URI.create("http://www.w3.org/2011/http#");
+	public static final URI HTTP_HEADERS_URI = URI.create("http://www.w3.org/2011/http-headers#");
+	public static final URI HTTP_METHODS_URI = URI.create("http://www.w3.org/2011/http-methods#");
 
 	@Override
 	public boolean canHandlePlugin(URI activityURI) {
 		String activityUriStr = activityURI.toASCIIString();
-		return ( activityUriStr.startsWith(ravenURI.toASCIIString()) ||
+		return ( activityUriStr.startsWith(restRavenURI.toASCIIString()) ||
 				 activityUriStr.startsWith(ravenUIURI.toASCIIString()) )
 				&& activityUriStr.endsWith(className);
 	}
@@ -64,17 +58,15 @@ public class RESTActivityParser extends AbstractActivityParser {
 
 	@Override
 	public Configuration parseConfiguration(T2FlowParser t2FlowParser,
-			ConfigBean configBean, ParserState parserState) throws ReaderException {
-
-
+			ConfigBean configBean, ParserState parserState)
+			throws ReaderException {
 		RESTConfig restConfig = unmarshallConfig(t2FlowParser, configBean,
-					"xstream", RESTConfig.class);
+				"xstream", RESTConfig.class);
 
 		Configuration configuration = new Configuration();
 		configuration.setParent(parserState.getCurrentProfile());
 		parserState.setCurrentConfiguration(configuration);
 		try {
-		    
 		    ObjectNode json = (ObjectNode)configuration.getJson();
 		    
 		    configuration.setType(ACTIVITY_URI.resolve("#Config"));
@@ -109,33 +101,33 @@ public class RESTActivityParser extends AbstractActivityParser {
                     accept.put("value", "100-Continue");
 				}
 			}
-			if (restConfig.getOtherHTTPHeaders() != null && restConfig.getOtherHTTPHeaders().getList() != null) {
-				for (HTTPHeaders.List list : restConfig.getOtherHTTPHeaders().getList()) {
+			if (restConfig.getOtherHTTPHeaders() != null
+					&& restConfig.getOtherHTTPHeaders().getList() != null)
+				for (HTTPHeaders.List list : restConfig.getOtherHTTPHeaders()
+						.getList()) {
 					String fieldName = list.getContent().get(0).getValue();
 					String fieldValue = list.getContent().get(1).getValue();
 
-                    ObjectNode accept = json.objectNode();
-                    headers.add(accept);
-                    accept.put("header", fieldName);
-                    accept.put("value", fieldValue);
+					ObjectNode accept = json.objectNode();
+					headers.add(accept);
+					accept.put("header", fieldName);
+					accept.put("value", fieldValue);
 				}
-			}
-			if (restConfig.getShowActualUrlPort() != null) {
-			    json.put("showActualURLPort", restConfig.getShowActualUrlPort().booleanValue());
-			}
-            if (restConfig.getShowResponseHeadersPort() != null) {
-                json.put("showResponseHeadersPort", restConfig.getShowResponseHeadersPort().booleanValue());
-            }
+			if (restConfig.getShowActualUrlPort() != null)
+				json.put("showActualURLPort", restConfig.getShowActualUrlPort()
+						.booleanValue());
+			if (restConfig.getShowResponseHeadersPort() != null)
+				json.put("showResponseHeadersPort", restConfig
+						.getShowResponseHeadersPort().booleanValue());
 
-			if (restConfig.isShowRedirectionOutputPort()) {
-			    json.put("showRedirectionOutputPort", true);
-			}
-			if (restConfig.getEscapeParameters() != null && ! restConfig.getEscapeParameters()) {
-	             json.put("escapeParameters", false);
-			}
-			if (restConfig.getOutgoingDataFormat() != null) {
-			    json.put("outgoingDataFormat", restConfig.getOutgoingDataFormat());
-			}
+			if (restConfig.isShowRedirectionOutputPort())
+				json.put("showRedirectionOutputPort", true);
+			if (restConfig.getEscapeParameters() != null
+					&& !restConfig.getEscapeParameters())
+				json.put("escapeParameters", false);
+			if (restConfig.getOutgoingDataFormat() != null)
+				json.put("outgoingDataFormat",
+						restConfig.getOutgoingDataFormat());
 			return configuration;
 		} finally {
 			parserState.setCurrentConfiguration(null);
@@ -143,12 +135,9 @@ public class RESTActivityParser extends AbstractActivityParser {
 	}
 
 	private boolean hasContent(String methodName) {
-		if (Arrays.asList("GET", "HEAD", "DELETE", "CONNECT").contains(methodName)) {
+		if (Arrays.asList("GET", "HEAD", "DELETE", "CONNECT").contains(methodName))
 			return false;
-		}
 		// Most probably does have or could have content
 		return true;
 	}
-
-
 }

@@ -1,5 +1,7 @@
 package uk.org.taverna.scufl2.translator.t2flow.defaultactivities;
 
+import static uk.org.taverna.scufl2.translator.t2flow.T2FlowParser.ravenURI;
+
 import java.net.URI;
 
 import org.w3c.dom.Element;
@@ -13,13 +15,10 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.ConfigBean;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class BiomartActivityParser extends AbstractActivityParser {
-
-	private static URI activityRavenURI =
-			T2FlowParser.ravenURI.resolve("net.sf.taverna.t2.activities/biomart-activity/");
-
-	private static String activityClassName = "net.sf.taverna.t2.activities.biomart.BiomartActivity";
-
-	public static URI ACTIVITY_URI = URI
+	private static final URI activityRavenURI = ravenURI
+			.resolve("net.sf.taverna.t2.activities/biomart-activity/");
+	private static final String activityClassName = "net.sf.taverna.t2.activities.biomart.BiomartActivity";
+	public static final URI ACTIVITY_URI = URI
 			.create("http://ns.taverna.org.uk/2010/activity/biomart");
 
 	@Override
@@ -36,16 +35,17 @@ public class BiomartActivityParser extends AbstractActivityParser {
 
 	@Override
 	public Configuration parseConfiguration(T2FlowParser t2FlowParser,
-			ConfigBean configBean, ParserState parserState) throws ReaderException {
+			ConfigBean configBean, ParserState parserState)
+			throws ReaderException {
 		Configuration configuration = new Configuration();
 		configuration.setParent(parserState.getCurrentProfile());
 
-		ObjectNode json = (ObjectNode)configuration.getJson();
+		ObjectNode json = (ObjectNode) configuration.getJson();
 		configuration.setType(ACTIVITY_URI.resolve("#Config"));
 
-		json.put("martQuery", T2FlowParser.elementToXML((Element)configBean.getAny()));
+		json.put("martQuery",
+				T2FlowParser.elementToXML((Element) configBean.getAny()));
 
 		return configuration;
 	}
-
 }

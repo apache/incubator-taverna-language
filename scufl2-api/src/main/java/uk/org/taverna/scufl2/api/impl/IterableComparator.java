@@ -38,73 +38,59 @@ import java.util.List;
  * will be recursively compared with the same instance of
  * {@link IterableComparator}. However, if such {@link Iterable}s are compared
  * with other {@link Comparable}s a {@link ClassCastException} would be thrown.
- * </p>
  * <p>
  * If an item in a Iterable is not {@link Comparable} <code>null</code> and
  * could not be recursively compared, a {@link ClassCastException} will be
  * thrown, as according to {@link Comparator#compare(Object, Object)}
- * </p>
  * 
  * @author Stian Soiland-Reyes
  */
-public class IterableComparator implements Comparator<Iterable> {
-
-	@SuppressWarnings("rawtypes")
+public class IterableComparator implements Comparator<Iterable<?>> {
 	@Override
-	public int compare(Iterable a, Iterable b) {
+	public int compare(Iterable<?> a, Iterable<?> b) {
 		Integer nullCompare = compareNulls(a, b);
-		if (nullCompare != null) {
+		if (nullCompare != null)
 			return nullCompare;
-		}
 		
-		Iterator aIt = a.iterator();
-		Iterator bIt = b.iterator();
+		Iterator<?> aIt = a.iterator();
+		Iterator<?> bIt = b.iterator();
 		
 		while (aIt.hasNext() && bIt.hasNext()) {
 			int itemCompare = compareItems(aIt.next(), bIt.next());
-			if (itemCompare != 0) {
+			if (itemCompare != 0)
 				return itemCompare;
-			}
 		}
 		// Puh, compared all corresponding items
 		
-		if (aIt.hasNext()) {
+		if (aIt.hasNext())
 			return 1; // a is bigger
-		}
-		if (bIt.hasNext()) {
+		if (bIt.hasNext())
 			return -1; // a is smaller
-		}
 		// Both finished? Then we are equal!
 		return 0;		
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings("unchecked")
 	protected int compareItems(Object a, Object b) {
 		Integer nullCompare = compareNulls(a, b);
-		if (nullCompare != null) {
+		if (nullCompare != null)
 			return nullCompare;
-		}
-		if (a instanceof Comparable && b instanceof Comparable) {
-			return ((Comparable)a).compareTo((Comparable)b);
-		}
-		if (a instanceof Iterable && b instanceof Iterable) {
+		if (a instanceof Comparable && b instanceof Comparable)
+			return ((Comparable<Object>) a).compareTo((Comparable<Object>) b);
+		if (a instanceof Iterable && b instanceof Iterable)
 			// Recurse
-			return compare((Iterable)a, (Iterable)b);
-		}
-		throw new ClassCastException("Compared items must be null, or both be Comparable or Iterables");
-	}
-	
-	protected Integer compareNulls(Object a, Object b) {
-		if (a == null && b == null) {
-			return 0;
-		}
-		if (a == null && b != null) {
-			return -1;
-		}
-		if (a != null && b == null) {
-			return 1;
-		}
-		return null;
+			return compare((Iterable<?>) a, (Iterable<?>) b);
+		throw new ClassCastException(
+				"Compared items must be null, or both be Comparable or Iterables");
 	}
 
+	protected Integer compareNulls(Object a, Object b) {
+		if (a == null && b == null)
+			return 0;
+		if (a == null && b != null)
+			return -1;
+		if (a != null && b == null)
+			return 1;
+		return null;
+	}
 }

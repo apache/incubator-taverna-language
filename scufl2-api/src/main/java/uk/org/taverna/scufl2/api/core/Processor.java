@@ -114,40 +114,44 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
  * <p>
  * FIXME: This conditionActivity currently has to be regenerated when the other
  * parameters have changed. This now happens within the Taverna 3 workbench user
- * interface when configuring looping. The ideal SCUFL2 behaviour would be to EITHER
- * provide a custom conditionActivity OR the parameters.
+ * interface when configuring looping. The ideal SCUFL2 behaviour would be to
+ * EITHER provide a custom conditionActivity OR the parameters.
  * 
  * @author Alan R Williams
  * @author Stian Soiland-Reyes
  */
-public class Processor extends AbstractNamed implements Child<Workflow>, Ported, Configurable {
+public class Processor extends AbstractNamed implements Child<Workflow>,
+		Ported, Configurable {
+	public static final URI PROCESSOR_TYPE = URI
+			.create("http://ns.taverna.org.uk/2010/scufl2#Processor");
+	public static final URI CONFIG_TYPE = URI
+			.create("http://ns.taverna.org.uk/2010/scufl2#ProcessorConfig");
 
-	public static final URI PROCESSOR_TYPE = URI.create("http://ns.taverna.org.uk/2010/scufl2#Processor");
-	public static final URI CONFIG_TYPE = URI.create("http://ns.taverna.org.uk/2010/scufl2#ProcessorConfig");
-
-    private final NamedSet<OutputProcessorPort> outputPorts = new NamedSet<OutputProcessorPort>();
-	private final NamedSet<InputProcessorPort> inputPorts = new NamedSet<InputProcessorPort>();
-	private IterationStrategyStack iterationStrategyStack = new IterationStrategyStack(this);
+	private final NamedSet<OutputProcessorPort> outputPorts = new NamedSet<>();
+	private final NamedSet<InputProcessorPort> inputPorts = new NamedSet<>();
+	private IterationStrategyStack iterationStrategyStack = new IterationStrategyStack(
+			this);
 	private Workflow parent;
-    private URI type = PROCESSOR_TYPE;
+	private URI type = PROCESSOR_TYPE;
 
 	/**
-	 * Constructs a <code>Processor</code> with a random UUID as the name and no parent
-	 * {@link Workflow}.
+	 * Constructs a <code>Processor</code> with a random UUID as the name and no
+	 * parent {@link Workflow}.
 	 */
 	public Processor() {
 		super();
 	}
 
 	/**
-	 * Constructs a <code>Processor</code> with the specified parent {@link Workflow} and name.
+	 * Constructs a <code>Processor</code> with the specified parent
+	 * {@link Workflow} and name.
 	 * 
 	 * @param parent
-	 *            the <code>Workflow</code> to set as the <code>Processor</code>'s parent. Can be
-	 *            <code>null</code>.
+	 *            the <code>Workflow</code> to set as the <code>Processor</code>
+	 *            's parent. Can be <code>null</code>.
 	 * @param name
-	 *            the name of the <code>Processor</code>. <strong>Must not</strong> be
-	 *            <code>null</code> or an empty String.
+	 *            the name of the <code>Processor</code>. <strong>Must
+	 *            not</strong> be <code>null</code> or an empty String.
 	 */
 	public Processor(Workflow parent, String name) {
 		super(name);
@@ -157,23 +161,18 @@ public class Processor extends AbstractNamed implements Child<Workflow>, Ported,
 	@Override
 	public boolean accept(Visitor visitor) {
 		if (visitor.visitEnter(this)) {
-			List<Iterable<? extends WorkflowBean>> children = new ArrayList<Iterable<? extends WorkflowBean>>();
+			List<Iterable<? extends WorkflowBean>> children = new ArrayList<>();
 			children.add(getInputPorts());
 			children.add(getOutputPorts());
-			outer: for (Iterable<? extends WorkflowBean> it : children) {
-				for (WorkflowBean bean : it) {
-					if (!bean.accept(visitor)) {
+			outer: for (Iterable<? extends WorkflowBean> it : children)
+				for (WorkflowBean bean : it)
+					if (!bean.accept(visitor))
 						break outer;
-					}
-				}
-			}
-			if (getIterationStrategyStack() != null) {
+			if (getIterationStrategyStack() != null)
 				getIterationStrategyStack().accept(visitor);
-			}
 		}
 		return visitor.visitLeave(this);
 	}
-
 
 	/**
 	 * Returns the <code>NamedSet</code> of input ports.
@@ -188,11 +187,11 @@ public class Processor extends AbstractNamed implements Child<Workflow>, Ported,
 	}
 
 	/**
-	 * Returns the <code>IterationStrategyStack</code> or <code>null</code> if there is no
-	 * <code>IterationStrategyStack</code>.
+	 * Returns the <code>IterationStrategyStack</code> or <code>null</code> if
+	 * there is no <code>IterationStrategyStack</code>.
 	 * 
-	 * @return the <code>IterationStrategyStack</code> or <code>null</code> if there is no
-	 *         <code>IterationStrategyStack</code>
+	 * @return the <code>IterationStrategyStack</code> or <code>null</code> if
+	 *         there is no <code>IterationStrategyStack</code>
 	 */
 	public IterationStrategyStack getIterationStrategyStack() {
 		return iterationStrategyStack;
@@ -211,9 +210,11 @@ public class Processor extends AbstractNamed implements Child<Workflow>, Ported,
 	}
 
 	/**
-	 * Returns the parent <code>Workflow</code> of null if this <code>Processor</code> is an orphan.
+	 * Returns the parent <code>Workflow</code> of null if this
+	 * <code>Processor</code> is an orphan.
 	 * 
-	 * @return the parent <code>Workflow</code> of null if this <code>Processor</code> is an orphan
+	 * @return the parent <code>Workflow</code> of null if this
+	 *         <code>Processor</code> is an orphan
 	 */
 	@Override
 	public Workflow getParent() {
@@ -233,13 +234,15 @@ public class Processor extends AbstractNamed implements Child<Workflow>, Ported,
 	/**
 	 * Sets the <code>IterationStrategyStack</code>.
 	 * 
-	 * @param iterationStrategyStack the <code>IterationStrategyStack</code>. Can be <code>null</code>
+	 * @param iterationStrategyStack
+	 *            the <code>IterationStrategyStack</code>. Can be
+	 *            <code>null</code>
 	 */
-	public void setIterationStrategyStack(IterationStrategyStack iterationStrategyStack) {
+	public void setIterationStrategyStack(
+			IterationStrategyStack iterationStrategyStack) {
 		this.iterationStrategyStack = iterationStrategyStack;
-		if (iterationStrategyStack != null) {
+		if (iterationStrategyStack != null)
 			iterationStrategyStack.setParent(this);
-		}
 	}
 
 	/**
@@ -254,23 +257,20 @@ public class Processor extends AbstractNamed implements Child<Workflow>, Ported,
 
 	@Override
 	public void setParent(Workflow parent) {
-		if (this.parent != null && this.parent != parent) {
+		if (this.parent != null && this.parent != parent)
 			this.parent.getProcessors().remove(this);
-		}
 		this.parent = parent;
-		if (parent != null) {
+		if (parent != null)
 			parent.getProcessors().add(this);
-		}
 	}
 
-    @Override
-    public URI getType() {
-        return type;
-    }
+	@Override
+	public URI getType() {
+		return type;
+	}
 
-    @Override
-    public void setType(URI type) {
-        this.type = type;
-    }
-
+	@Override
+	public void setType(URI type) {
+		this.type = type;
+	}
 }

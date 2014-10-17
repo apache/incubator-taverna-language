@@ -1,7 +1,9 @@
 package uk.org.taverna.scufl2.translator.t2flow.defaultactivities;
 
+import static uk.org.taverna.scufl2.api.core.Workflow.WORKFLOW_ROOT;
+import static uk.org.taverna.scufl2.translator.t2flow.T2FlowParser.ravenURI;
+
 import java.net.URI;
-import java.util.logging.Logger;
 
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
@@ -15,16 +17,10 @@ import uk.org.taverna.scufl2.xml.t2flow.jaxb.DataflowConfig;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class DataflowActivityParser extends AbstractActivityParser {
-
-    private static Logger logger = Logger.getLogger(DataflowActivityParser.class.getCanonicalName());
-    
 	private URITools uriTools = new URITools();
-	
-	private static URI activityRavenURI = T2FlowParser.ravenURI
+	private static URI activityRavenURI = ravenURI
 			.resolve("net.sf.taverna.t2.activities/dataflow-activity/");
-
 	private static String activityClassName = "net.sf.taverna.t2.activities.dataflow.DataflowActivity";
-
 	public static URI nestedUri = URI
 			.create("http://ns.taverna.org.uk/2010/activity/nested-workflow");
 
@@ -49,11 +45,10 @@ public class DataflowActivityParser extends AbstractActivityParser {
 		configuration.setType(nestedUri.resolve("#Config"));		
 
 		String wfId = dataflowConfig.getRef();
-		URI wfUri = Workflow.WORKFLOW_ROOT.resolve(wfId + "/");
+		URI wfUri = WORKFLOW_ROOT.resolve(wfId + "/");
 		Workflow wf = (Workflow) getUriTools().resolveUri(wfUri, parserState.getCurrentWorkflowBundle());		
-		if (wf == null) { 
+		if (wf == null)
 	        throw new ReaderException("Can't find nested workflow with id " + wfId);
-		}
 		ObjectNode json = configuration.getJsonAsObjectNode();
 		json.put("nestedWorkflow", wf.getName());
 		return configuration;
@@ -66,5 +61,4 @@ public class DataflowActivityParser extends AbstractActivityParser {
 	public URITools getUriTools() {
 		return uriTools;
 	}
-
 }

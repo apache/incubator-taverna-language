@@ -8,13 +8,12 @@ import uk.org.taverna.scufl2.validation.ValidationProblem;
  *
  */
 public class EmptyIterationStrategyTopNodeProblem extends ValidationProblem {
-	
 	public EmptyIterationStrategyTopNodeProblem(IterationStrategyTopNode bean) {
 		super(bean);
 	}
 
+	@Override
 	public String toString() {
-		return (getBean() + " is empty");
+		return getBean() + " is empty";
 	}
-
 }

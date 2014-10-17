@@ -40,10 +40,8 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
  * format.
  */
 public class StructureWriter implements WorkflowBundleWriter {
-
-	private StringBuffer sb;
+	private StringBuilder sb;
 	private URITools uriTools = new URITools();
-
 
 	private void append(Named named) {
 		append(" '");
@@ -74,9 +72,14 @@ public class StructureWriter implements WorkflowBundleWriter {
 		}
 	}
 
+	/**
+	 * Create a string representation of a workflow bundle. Note that this
+	 * method is not thread-safe; call only via the public methods which have
+	 * the right locking.
+	 */
 	@SuppressWarnings("unchecked")
 	protected String bundleString(WorkflowBundle wb) {
-		sb = new StringBuffer();
+		sb = new StringBuilder();
 		append("WorkflowBundle");
 		append(wb);
 
@@ -99,10 +102,9 @@ public class StructureWriter implements WorkflowBundleWriter {
 
 			// LINKS
 			// We'll need to sort them afterwards
-			List<String> links = new ArrayList<String>();
-			for (DataLink dl : wf.getDataLinks()) {
+			List<String> links = new ArrayList<>();
+			for (DataLink dl : wf.getDataLinks())
 				links.add(datalink(dl.getReceivesFrom()) + " -> " + datalink(dl.getSendsTo()));
-			}
 			Collections.sort(links);
 			if (!links.isEmpty()) {
 				newLine(2);
@@ -113,17 +115,15 @@ public class StructureWriter implements WorkflowBundleWriter {
 				append(link);
 			}
 
-			List<ControlLink> controlLinks = new ArrayList<ControlLink>(wf.getControlLinks());
-			if (!controlLinks.isEmpty()) {
+			if (!wf.getControlLinks().isEmpty()) {
 				newLine(2);
 				append("Controls");
+				List<ControlLink> controlLinks = new ArrayList<>(wf.getControlLinks());
 				Collections.sort(controlLinks);
-				String link = "block {1} until {2} finish";
 				for (ControlLink controlLink : controlLinks) {
-					if (!(controlLink instanceof BlockingControlLink)) {
+					if (!(controlLink instanceof BlockingControlLink))
 						// TODO
 						continue;
-					}
 					BlockingControlLink blockingControlLink = (BlockingControlLink) controlLink;
 					newLine(3);
 					append("block");
@@ -133,7 +133,6 @@ public class StructureWriter implements WorkflowBundleWriter {
 					append(" finish");
 				}
 			}
-
 		}
 
 		if (wb.getMainProfile() != null) {
@@ -169,10 +168,9 @@ public class StructureWriter implements WorkflowBundleWriter {
 				append(name);
 
 				List<String> links = new ArrayList<String>();
-				for (ProcessorInputPortBinding ip : pb.getInputPortBindings()) {
+				for (ProcessorInputPortBinding ip : pb.getInputPortBindings())
 					links.add("'" + escapeName(ip.getBoundProcessorPort().getName()) + "' -> '"
 							+ escapeName(ip.getBoundActivityPort().getName()) + "'");
-				}
 				Collections.sort(links);
 				if (!links.isEmpty()) {
 					newLine(3);
@@ -184,11 +182,10 @@ public class StructureWriter implements WorkflowBundleWriter {
 				}
 
 				links.clear();
-				for (ProcessorOutputPortBinding ip : pb.getOutputPortBindings()) {
+				for (ProcessorOutputPortBinding ip : pb.getOutputPortBindings())
 					// Note: opposite direction as for ProcessorInputPortBinding
 					links.add("'" + escapeName(ip.getBoundActivityPort().getName()) + "' -> '"
 							+ escapeName(ip.getBoundProcessorPort().getName()) + "'");
-				}
 				Collections.sort(links);
 				if (!links.isEmpty()) {
 					newLine(3);
@@ -233,7 +230,7 @@ public class StructureWriter implements WorkflowBundleWriter {
 	}
 
 	private String datalink(Port port) {
-		StringBuffer s = new StringBuffer();
+		StringBuilder s = new StringBuilder();
 		s.append("'");
 		if (port instanceof ProcessorPort) {
 			ProcessorPort processorPort = (ProcessorPort) port;
@@ -246,8 +243,8 @@ public class StructureWriter implements WorkflowBundleWriter {
 	}
 
 	private String escapeName(String name) {
-		return name.replace("\\", "\\\\").replace("'", "\\'").replace(":", "\\:")
-		.replace("/", "\\/");
+		return name.replace("\\", "\\\\").replace("'", "\\'")
+				.replace(":", "\\:").replace("/", "\\/");
 	}
 
 	@Override
@@ -257,13 +254,12 @@ public class StructureWriter implements WorkflowBundleWriter {
 
 	private void newLine(int indentLevel) {
 		sb.append("\n");
-		for (int i = 0; i < indentLevel; i++) {
+		for (int i = 0; i < indentLevel; i++)
 			sb.append("  ");
-		}
 	}
 
 	private <T extends Named> List<T> sorted(NamedSet<T> namedSet) {
-		List<T> sorted = new ArrayList<T>();
+		List<T> sorted = new ArrayList<>();
 		sorted.addAll(namedSet);
 		Collections.sort(sorted, new Comparator<T>() {
 			@Override
@@ -275,23 +271,23 @@ public class StructureWriter implements WorkflowBundleWriter {
 	}
 
 	@Override
-	public synchronized void writeBundle(WorkflowBundle wb, File destination, String mediaType)
-	throws IOException {
+	public synchronized void writeBundle(WorkflowBundle wb, File destination,
+			String mediaType) throws IOException {
 		destination.createNewFile();
-
-		BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(
-				destination));
-		writeBundle(wb, outputStream, mediaType);
-		outputStream.close();
-
+		try (BufferedOutputStream outputStream = new BufferedOutputStream(
+				new FileOutputStream(destination))) {
+			writeBundle(wb, outputStream, mediaType);
+		}
 	}
 
 	@Override
-	public void writeBundle(WorkflowBundle wfBundle, OutputStream output, String mediaType)
-	throws IOException {
+	public void writeBundle(WorkflowBundle wfBundle, OutputStream output,
+			String mediaType) throws IOException {
 		OutputStreamWriter writer = new OutputStreamWriter(output, "utf-8");
-		writer.write(bundleString(wfBundle));
-		writer.close();
+		try {
+			writer.write(bundleString(wfBundle));
+		} finally {
+			writer.close();
+		}
 	}
-
 }

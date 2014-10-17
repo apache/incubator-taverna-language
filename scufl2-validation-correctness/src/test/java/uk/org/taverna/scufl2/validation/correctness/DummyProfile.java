@@ -25,6 +25,7 @@ class DummyProfile extends Profile {
 	/**
 	 * @return the processorBindings
 	 */
+	@Override
 	public NamedSet<ProcessorBinding> getProcessorBindings() {
 		return processorBindings;
 	}
@@ -39,6 +40,7 @@ class DummyProfile extends Profile {
 	/**
 	 * @return the configurations
 	 */
+	@Override
 	public NamedSet<Configuration> getConfigurations() {
 		return configurations;
 	}
@@ -53,6 +55,7 @@ class DummyProfile extends Profile {
 	/**
 	 * @return the activities
 	 */
+	@Override
 	public NamedSet<Activity> getActivities() {
 		return activities;
 	}

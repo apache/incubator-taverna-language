@@ -11,8 +11,8 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
  * @see WorkflowBundleReader#readBundle(java.io.File, String)
  * @see WorkflowBundleReader#readBundle(java.io.InputStream, String)
  */
+@SuppressWarnings("serial")
 public class ReaderException extends Exception {
-
 	/**
 	 * Constructs an exception with no message or cause.
 	 */
@@ -42,8 +42,8 @@ public class ReaderException extends Exception {
 	}
 
 	/**
-	 * Constructs an exception with the specified cause and and the same message as the cause (if
-	 * the cause is not null).
+	 * Constructs an exception with the specified cause and and the same message
+	 * as the cause (if the cause is not null).
 	 * 
 	 * @param cause
 	 *            the cause of the exception. Can be <code>null</code>
@@ -51,5 +51,4 @@ public class ReaderException extends Exception {
 	public ReaderException(Throwable cause) {
 		super(cause);
 	}
-
 }

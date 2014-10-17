@@ -1,7 +1,6 @@
 package uk.org.taverna.scufl2.api.impl;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +10,7 @@ import java.util.List;
 import org.junit.Test;
 
 public class TestIterableComparator {
+	@SuppressWarnings("serial")
 	public class ReverseComparableList extends ArrayList<String> implements Comparable<ReverseComparableList> {
 		public boolean called = false;
 		public ReverseComparableList(String... items) {
@@ -25,7 +25,6 @@ public class TestIterableComparator {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void listCompare() throws Exception {
 		List<List<String>> values = Arrays.asList(Arrays.asList("x", "y"),
@@ -46,7 +45,6 @@ public class TestIterableComparator {
 		assertEquals(sortedValues, values);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void nestedListCompare() throws Exception {
 		List<List<List<String>>> values = Arrays.asList(
@@ -73,9 +71,4 @@ public class TestIterableComparator {
 		List values = Arrays.asList(intList, strList);
 		Collections.sort(values, new IterableComparator());
 	}
-
-
-	
-
-
 }

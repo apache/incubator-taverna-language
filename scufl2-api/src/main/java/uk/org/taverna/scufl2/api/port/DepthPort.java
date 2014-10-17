@@ -6,7 +6,7 @@ public interface DepthPort extends Port {
 	 * 
 	 * @return the depth of the <code>Port</code>
 	 */
-	public Integer getDepth() ;
+	Integer getDepth();
 
 	/**
 	 * Sets the depth of the <code>Port</code>.
@@ -14,5 +14,5 @@ public interface DepthPort extends Port {
 	 * @param depth
 	 *            the depth of the <code>Port</code>
 	 */
-	public void setDepth(Integer depth);
+	void setDepth(Integer depth);
 }

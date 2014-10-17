@@ -21,44 +21,41 @@
  ************************************************************************/
 package uk.org.taverna.scufl2.ucfpackage.impl.odfdom.pkg.manifest;
 
-
 public class KeyDerivation {
+	private String name;
+	private String salt;
+	private int iterationCount = 0;
 
-    private String _name;
-    private String _salt;
-    int _iterationCount=0;
+	public KeyDerivation() {
+	}
 
-    public KeyDerivation() {
-    }
+	public KeyDerivation(String name, String salt, int iterationCount) {
+		this.name = name;
+		this.salt = salt;
+		this.iterationCount = iterationCount;
+	}
 
-    public KeyDerivation(String name, String salt, int iterationCount) {
-        _name=name;
-        _salt=salt;
-        _iterationCount=iterationCount;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setName(String name) {
-        _name=name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getName() {
-        return _name;
-    }
+	public void setSalt(String salt) {
+		this.salt = salt;
+	}
 
-    public void setSalt(String salt) {
-        _salt=salt;
-    }
+	public String getSalt() {
+		return salt;
+	}
 
-    public String getSalt() {
-        return _salt;
-    }
+	public void setIterationCount(int iterationCount) {
+		this.iterationCount = iterationCount;
+	}
 
-    public void setIterationCount(int iterationCount) {
-        _iterationCount=iterationCount;
-    }
-    
-    public int getIterationCount() {
-        return _iterationCount;
-    }
-
+	public int getIterationCount() {
+		return iterationCount;
+	}
 }

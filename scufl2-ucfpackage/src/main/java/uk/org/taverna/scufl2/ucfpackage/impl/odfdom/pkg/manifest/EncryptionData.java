@@ -22,54 +22,51 @@
 package uk.org.taverna.scufl2.ucfpackage.impl.odfdom.pkg.manifest;
 
 public class EncryptionData {
+	private String checksumType;
+	private String checksum;
+	Algorithm algorithm;
+	KeyDerivation keyDerivation;
 
-    private String _checksumType;
-    private String _checksum;
-    Algorithm _algorithm;
-    KeyDerivation _keyDerivation;
+	public EncryptionData() {
+	}
 
-    public EncryptionData() {
-    }
+	public EncryptionData(String checksumType, String checksum,
+			Algorithm algorithm, KeyDerivation keyDerivation) {
+		this.checksumType = checksumType;
+		this.checksum = checksum;
+		this.algorithm = algorithm;
+		this.keyDerivation = keyDerivation;
+	}
 
-    public EncryptionData(String checksumType, String checksum,
-                          Algorithm algorithm, KeyDerivation keyDerivation) {
+	public void setChecksumType(String checksumType) {
+		this.checksumType = checksumType;
+	}
 
-        _checksumType=checksumType;
-        _checksum=checksum;
-        _algorithm=algorithm;
-        _keyDerivation=keyDerivation;
-    }
+	public String getChecksumType() {
+		return checksumType;
+	}
 
-    public void setChecksumType(String checksumType) {
-        _checksumType=checksumType;
-    }
+	public void setChecksum(String checksum) {
+		this.checksum = checksum;
+	}
 
-    public String getChecksumType() {
-        return _checksumType;
-    }
+	public String getChecksum() {
+		return checksum;
+	}
 
-    public void setChecksum(String checksum) {
-        _checksum=checksum;
-    }
+	public void setAlgorithm(Algorithm algorithm) {
+		this.algorithm = algorithm;
+	}
 
-    public String getChecksum() {
-        return _checksum;
-    }
+	public Algorithm getAlgorithm() {
+		return algorithm;
+	}
 
-    public void setAlgorithm(Algorithm algorithm) {
-        _algorithm=algorithm;
-    }
+	public void setKeyDerivation(KeyDerivation keyDerivation) {
+		this.keyDerivation = keyDerivation;
+	}
 
-    public Algorithm getAlgorithm() {
-        return _algorithm;
-    }
-
-    public void setKeyDerivation(KeyDerivation keyDerivation) {
-        _keyDerivation=keyDerivation;
-    }
-
-    public KeyDerivation getKeyDerivation() {
-        return _keyDerivation;
-    }
-
+	public KeyDerivation getKeyDerivation() {
+		return keyDerivation;
+	}
 }

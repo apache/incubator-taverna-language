@@ -19,53 +19,39 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * @author alanrw
- *
  */
 public class StringConstantExtensionParser extends AbstractExtensionParser {
-
 	private static final String STRINGCONSTANT_XSD = "/uk/org/taverna/scufl2/translator/scufl/xsd/scufl-stringconstant.xsd";
 
 	private static final String VALUE = "value";
-	
+
 	public static URI CONSTANT = URI
-	.create("http://ns.taverna.org.uk/2010/activity/constant");
+			.create("http://ns.taverna.org.uk/2010/activity/constant");
 
-
-	/* (non-Javadoc)
-	 * @see uk.org.taverna.scufl2.translator.scufl.ScuflExtensionParser#canHandle(java.lang.Class)
-	 */
 	@Override
-	public boolean canHandle(Class c) {
+	public boolean canHandle(Class<?> c) {
 		return c.equals(uk.org.taverna.scufl2.xml.scufl.jaxb.StringconstantType.class);
 	}
 
-	/* (non-Javadoc)
-	 * @see uk.org.taverna.scufl2.translator.scufl.ScuflExtensionParser#getAdditionalSchemas()
-	 */
 	@Override
 	public List<URI> getAdditionalSchemas() {
 		URL stringConstantXsd = getClass().getResource(STRINGCONSTANT_XSD);
 		try {
 			return Arrays.asList(stringConstantXsd.toURI());
 		} catch (URISyntaxException e) {
-			throw new IllegalStateException("Can't find String Constant schema "
-					+ stringConstantXsd);
+			throw new IllegalStateException(
+					"Can't find String Constant schema " + stringConstantXsd);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see uk.org.taverna.scufl2.translator.scufl.ScuflExtensionParser#parseScuflObject(java.lang.Object)
-	 */
 	@Override
 	public void parseScuflObject(Object o) {
-		
 		StringconstantType sc = (StringconstantType) o;
 		Configuration configuration = new Configuration();
 		configuration.setParent(getParserState().getCurrentProfile());
-		configuration.setType(
-				CONSTANT.resolve("#Config"));
-		((ObjectNode)configuration.getJson()).put("string", sc.getValue());
-		
+		configuration.setType(CONSTANT.resolve("#Config"));
+		((ObjectNode) configuration.getJson()).put("string", sc.getValue());
+
 		Activity activity = new Activity();
 		getParserState().setCurrentActivity(activity);
 		activity.setParent(getParserState().getCurrentProfile());
@@ -74,13 +60,10 @@ public class StringConstantExtensionParser extends AbstractExtensionParser {
 		valuePort.setDepth(0);
 		valuePort.setGranularDepth(0);
 		configuration.setConfigures(activity);
-		
+
 		ProcessorBinding pb = new ProcessorBinding();
 		pb.setParent(getParserState().getCurrentProfile());
 		pb.setBoundProcessor(getParserState().getCurrentProcessor());
 		pb.setBoundActivity(activity);
-		
-		
 	}
-
 }

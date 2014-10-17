@@ -11,10 +11,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
@@ -43,7 +39,10 @@ public class TestStructureReader {
 		bundleIO.writeBundle(readBundle, output, TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
 		assertEquals(1, readBundle.getMainProfile().getConfigurations().size());
 		String bundleTxt = new String(output.toByteArray(), UTF_8);
-		assertEquals(getStructureFormatWorkflowBundle(), bundleTxt);
+                String getStructureFormatWorkflowBundle = getStructureFormatWorkflowBundle();
+                bundleTxt = bundleTxt.replaceAll("\r", "").replaceAll("\n", "");
+                getStructureFormatWorkflowBundle = getStructureFormatWorkflowBundle.replaceAll("\r", "").replaceAll("\n", "");
+		assertEquals(getStructureFormatWorkflowBundle, bundleTxt);
 		
 	}
 	
