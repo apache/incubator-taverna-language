@@ -15,10 +15,10 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RiotException;
 
-import com.github.jsonldjava.jena.JenaJSONLD;
 import com.hp.hpl.jena.ontology.DatatypeProperty;
 import com.hp.hpl.jena.ontology.Individual;
 import com.hp.hpl.jena.ontology.ObjectProperty;
@@ -28,11 +28,7 @@ import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.ontology.OntResource;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.NodeIterator;
 import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.ResIterator;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 public class RDFToManifest {
@@ -122,10 +118,9 @@ public class RDFToManifest {
 	}
 
 	protected static Model jsonLdAsJenaModel(InputStream jsonIn, URI base)
-			throws IOException, RiotException {
-		JenaJSONLD.init();
+			throws IOException, RiotException {	
 		Model model = ModelFactory.createDefaultModel();
-		RDFDataMgr.read(model, jsonIn, base.toASCIIString(), JenaJSONLD.JSONLD);
+		RDFDataMgr.read(model, jsonIn, base.toASCIIString(), Lang.JSONLD);
 		return model;
 
 		//
