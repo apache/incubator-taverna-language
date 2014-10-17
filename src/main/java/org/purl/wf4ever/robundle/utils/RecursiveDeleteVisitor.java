@@ -8,6 +8,14 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
 public class RecursiveDeleteVisitor extends SimpleFileVisitor<Path> {
+	public static void deleteRecursively(Path p) throws IOException {
+		if (Files.isDirectory(p)) {
+			Files.walkFileTree(p, new RecursiveDeleteVisitor());
+		} else {
+			Files.delete(p);
+		}
+	}
+
 	@Override
 	public FileVisitResult postVisitDirectory(Path dir, IOException exc)
 			throws IOException {
@@ -21,13 +29,5 @@ public class RecursiveDeleteVisitor extends SimpleFileVisitor<Path> {
 			throws IOException {
 		Files.delete(file);
 		return FileVisitResult.CONTINUE;
-	}
-
-	public static void deleteRecursively(Path p) throws IOException {
-		if (Files.isDirectory(p)) {
-			Files.walkFileTree(p, new RecursiveDeleteVisitor());
-		} else {
-			Files.delete(p);
-		}
 	}
 }

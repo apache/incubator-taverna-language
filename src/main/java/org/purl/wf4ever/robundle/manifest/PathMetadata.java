@@ -38,6 +38,18 @@ public class PathMetadata {
 		setUri(URI.create(uriStr));
 	}
 
+	public List<Agent> getAuthoredBy() {
+		return authoredBy;
+	}
+
+	public FileTime getAuthoredOn() {
+		return authoredOn;
+	}
+
+	public Proxy getBundledAs() {
+		return bundledAs;
+	}
+
 	public URI getConformsTo() {
 		return conformsTo;
 	}
@@ -70,6 +82,15 @@ public class PathMetadata {
 	}
 
 	@JsonIgnore
+	public Proxy getOrCreateBundledAs() {
+		if (bundledAs == null) {
+			bundledAs = new Proxy();
+			setProxy();
+		}
+		return bundledAs;
+	}
+
+	@JsonIgnore
 	@Deprecated
 	public URI getProxy() {
 		Proxy bundledAs = getBundledAs();
@@ -81,6 +102,25 @@ public class PathMetadata {
 
 	public URI getUri() {
 		return uri;
+	}
+
+	public void setAuthoredBy(List<Agent> authoredBy) {
+		if (authoredBy == null) {
+			throw new NullPointerException("authoredBy list can't be empty");
+		}
+		this.authoredBy = authoredBy;
+	}
+
+	public void setAuthoredOn(FileTime authoredOn) {
+		this.authoredOn = authoredOn;
+	}
+
+	public void setBundledAs(Proxy bundledAs) {
+		if (bundledAs == null) {
+			throw new NullPointerException(
+					"bundledAs can't be empty (try a new Proxy instance)");
+		}
+		this.bundledAs = bundledAs;
 	}
 
 	public void setConformsTo(URI conformsTo) {
@@ -142,46 +182,6 @@ public class PathMetadata {
 			return getProxy().toString();
 		}
 		return "PathMetadata <null>";
-	}
-
-	public List<Agent> getAuthoredBy() {
-		return authoredBy;
-	}
-
-	public void setAuthoredBy(List<Agent> authoredBy) {
-		if (authoredBy == null) {
-			throw new NullPointerException("authoredBy list can't be empty");
-		}
-		this.authoredBy = authoredBy;
-	}
-
-	public FileTime getAuthoredOn() {
-		return authoredOn;
-	}
-
-	public void setAuthoredOn(FileTime authoredOn) {
-		this.authoredOn = authoredOn;
-	}
-
-	@JsonIgnore
-	public Proxy getOrCreateBundledAs() {
-		if (bundledAs == null) {
-			bundledAs = new Proxy();
-			setProxy();
-		}
-		return bundledAs;
-	}
-
-	public Proxy getBundledAs() {
-		return bundledAs;
-	}
-
-	public void setBundledAs(Proxy bundledAs) {
-		if (bundledAs == null) {
-			throw new NullPointerException(
-					"bundledAs can't be empty (try a new Proxy instance)");
-		}
-		this.bundledAs = bundledAs;
 	}
 
 }

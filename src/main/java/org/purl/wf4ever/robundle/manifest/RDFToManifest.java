@@ -33,18 +33,37 @@ import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 
 public class RDFToManifest {
 
+	public static class ClosableIterable<T> implements AutoCloseable,
+			Iterable<T> {
+
+		private ExtendedIterator<T> iterator;
+
+		public ClosableIterable(ExtendedIterator<T> iterator) {
+			this.iterator = iterator;
+		}
+
+		@Override
+		public void close() {
+			iterator.close();
+		}
+
+		@Override
+		public ExtendedIterator<T> iterator() {
+			return iterator;
+		}
+	}
+
 	private static Logger logger = Logger.getLogger(RDFToManifest.class
 			.getCanonicalName());
 
 	static {
 		setCachedHttpClientInJsonLD();
 	}
-
 	private static final String PROV = "http://www.w3.org/ns/prov#";
 	private static final String PROV_O = "http://www.w3.org/ns/prov-o#";
 	private static final String FOAF_0_1 = "http://xmlns.com/foaf/0.1/";
-	private static final String PAV = "http://purl.org/pav/";
 
+	private static final String PAV = "http://purl.org/pav/";
 	private static final String DCT = "http://purl.org/dc/terms/";
 	private static final String RO = "http://purl.org/wf4ever/ro#";
 	private static final String BUNDLE = "http://purl.org/wf4ever/bundle#";
@@ -56,11 +75,51 @@ public class RDFToManifest {
 	private static final String PAV_RDF = "/ontologies/pav.rdf";
 	private static final String PROV_O_RDF = "/ontologies/prov-o.rdf";
 	private static final String PROV_AQ_RDF = "/ontologies/prov-aq.rdf";
+	public static <T> ClosableIterable<T> iterate(ExtendedIterator<T> iterator) {
+		return new ClosableIterable<T>(iterator);
+	}
+	protected static Model jsonLdAsJenaModel(InputStream jsonIn, URI base)
+			throws IOException, RiotException {
+		Model model = ModelFactory.createDefaultModel();
+		RDFDataMgr.read(model, jsonIn, base.toASCIIString(), Lang.JSONLD);
+		return model;
+
+		//
+		// Object input = JSONUtils.fromInputStream(jsonIn);
+		// JSONLDTripleCallback callback = new JenaTripleCallback();
+		// Model model = (Model)JSONLD.toRDF(input, callback, new
+		// Options(base.toASCIIString()));
+		// return model;
+	}
+	protected static URI makeBaseURI() throws URISyntaxException {
+		return new URI("app", UUID.randomUUID().toString(), "/", (String) null);
+	}
+
+	/**
+	 * Use a JarCacheStorage so that our JSON-LD @context can be loaded from our
+	 * classpath and not require network connectivity
+	 * 
+	 */
+	protected static void setCachedHttpClientInJsonLD() {
+		// JarCacheStorage cacheStorage = new JarCacheStorage(
+		// RDFToManifest.class.getClassLoader());
+		// synchronized (DocumentLoader.class) {
+		// HttpClient oldHttpClient = DocumentLoader.getHttpClient();
+		// CachingHttpClient wrappedHttpClient = new CachingHttpClient(
+		// oldHttpClient, cacheStorage, cacheStorage.getCacheConfig());
+		// DocumentLoader.setHttpClient(wrappedHttpClient);
+		// }
+		// synchronized (JSONUtils.class) {
+		// HttpClient oldHttpClient = JSONUtilsSub.getHttpClient();
+		// CachingHttpClient wrappedHttpClient = new CachingHttpClient(
+		// oldHttpClient, cacheStorage, cacheStorage.getCacheConfig());
+		// JSONUtilsSub.setHttpClient(wrappedHttpClient);
+		// }
+	}
 	private OntModel ore;
 	private ObjectProperty aggregates;
 	private ObjectProperty proxyFor;
 	private ObjectProperty proxyIn;
-
 	private OntClass aggregation;
 	private OntModel foaf;
 	private DatatypeProperty foafName;
@@ -70,27 +129,162 @@ public class RDFToManifest {
 	private OntModel provaq;
 	private ObjectProperty hasProvenance;
 	private OntModel dct;
+
 	private ObjectProperty conformsTo;
+
 	private OntClass standard;
+
 	private ObjectProperty authoredBy;
+
 	private DatatypeProperty createdOn;
 	private DatatypeProperty authoredOn;
-
 	private DatatypeProperty format;
-
 	private OntModel oa;
-
 	private ObjectProperty hasBody;
-
 	private ObjectProperty hasTarget;
+
 	private ObjectProperty isDescribedBy;
+
 	private OntModel bundle;
+
 	private ObjectProperty hasProxy;
+
 	private ObjectProperty inFolder;
+
 	private ObjectProperty hasAnnotation;
 
 	public RDFToManifest() {
 		loadOntologies();
+	}
+
+	private void checkNotNull(Object... possiblyNulls) {
+		int i = 0;
+		for (Object check : possiblyNulls) {
+			if (check == null) {
+				throw new IllegalStateException("Could not load item #" + i);
+			}
+			i++;
+		}
+
+	}
+
+	private Individual findRO(OntModel model, URI base) {
+		try (ClosableIterable<? extends OntResource> instances = iterate(aggregation
+				.listInstances())) {
+			for (OntResource o : instances) {
+				// System.out.println("Woo " + o);
+				return o.asIndividual();
+			}
+		}
+		// Fallback - resolve as "/"
+		// TODO: Ensure it's an Aggregation?
+		return model.getIndividual(base.toString());
+	}
+
+	private List<Agent> getAgents(URI base, Individual in,
+			ObjectProperty property) {
+		List<Agent> creators = new ArrayList<>();
+		for (Individual agent : listObjectProperties(in, property)) {
+			Agent a = new Agent();
+			if (agent.getURI() != null) {
+				a.setUri(relativizeFromBase(agent.getURI(), base));
+			}
+
+			RDFNode name = agent.getPropertyValue(foafName);
+			if (name != null && name.isLiteral()) {
+				a.setName(name.asLiteral().getLexicalForm());
+			}
+			creators.add(a);
+		}
+		return creators;
+	}
+
+	protected OntModel getOntModel() {
+		OntModel ontModel = ModelFactory
+				.createOntologyModel(OntModelSpec.OWL_DL_MEM_RULE_INF);
+		ontModel.setNsPrefix("foaf", FOAF_0_1);
+		ontModel.setNsPrefix("prov", PROV);
+		ontModel.setNsPrefix("ore", ORE);
+		ontModel.setNsPrefix("pav", PAV);
+		ontModel.setNsPrefix("dct", DCT);
+		// ontModel.getDocumentManager().loadImports(foaf.getOntModel());
+		return ontModel;
+	}
+
+	private Set<Individual> listObjectProperties(OntResource ontResource,
+			ObjectProperty prop) {
+		LinkedHashSet<Individual> results = new LinkedHashSet<>();
+		try (ClosableIterable<RDFNode> props = iterate(ontResource
+				.listPropertyValues(prop))) {
+			for (RDFNode node : props) {
+				if (!node.isResource() || !node.canAs(Individual.class)) {
+					continue;
+				}
+				results.add(node.as(Individual.class));
+			}
+		}
+		return results;
+	}
+
+	protected synchronized void loadBundle() {
+		if (bundle != null) {
+			return;
+		}
+		OntModel ontModel = loadOntologyFromClasspath(BUNDLE_RDF, BUNDLE);
+		hasProxy = ontModel.getObjectProperty(BUNDLE + "hasProxy");
+		hasAnnotation = ontModel.getObjectProperty(BUNDLE + "hasAnnotation");
+		inFolder = ontModel.getObjectProperty(BUNDLE + "inFolder");
+		checkNotNull(hasProxy, hasAnnotation, inFolder);
+		bundle = ontModel;
+	}
+
+	protected synchronized void loadDCT() {
+		if (dct != null) {
+			return;
+		}
+
+		OntModel ontModel = loadOntologyFromClasspath(
+				"/ontologies/dcterms_od.owl",
+				"http://purl.org/wf4ever/dcterms_od");
+
+		// properties from dct
+		standard = ontModel.getOntClass(DCT + "Standard");
+		conformsTo = ontModel.getObjectProperty(DCT + "conformsTo");
+
+		// We'll cheat dc:format in
+		format = ontModel
+				.createDatatypeProperty("http://purl.org/dc/elements/1.1/"
+						+ "format");
+		checkNotNull(standard, conformsTo, format);
+
+		dct = ontModel;
+
+	}
+
+	//
+	protected synchronized void loadFOAF() {
+		if (foaf != null) {
+			return;
+		}
+
+		OntModel ontModel = loadOntologyFromClasspath(FOAF_RDF, FOAF_0_1);
+
+		// properties from foaf
+		foafName = ontModel.getDatatypeProperty(FOAF_0_1 + "name");
+		checkNotNull(foafName);
+
+		foaf = ontModel;
+	}
+
+	protected synchronized void loadOA() {
+		if (oa != null) {
+			return;
+		}
+		OntModel ontModel = loadOntologyFromClasspath(OA_RDF, OA);
+		hasTarget = ontModel.getObjectProperty(OA + "hasTarget");
+		hasBody = ontModel.getObjectProperty(OA + "hasBody");
+		checkNotNull(hasTarget, hasBody);
+		oa = ontModel;
 	}
 
 	protected void loadOntologies() {
@@ -117,166 +311,6 @@ public class RDFToManifest {
 		return ontModel;
 	}
 
-	protected static Model jsonLdAsJenaModel(InputStream jsonIn, URI base)
-			throws IOException, RiotException {
-		Model model = ModelFactory.createDefaultModel();
-		RDFDataMgr.read(model, jsonIn, base.toASCIIString(), Lang.JSONLD);
-		return model;
-
-		//
-		// Object input = JSONUtils.fromInputStream(jsonIn);
-		// JSONLDTripleCallback callback = new JenaTripleCallback();
-		// Model model = (Model)JSONLD.toRDF(input, callback, new
-		// Options(base.toASCIIString()));
-		// return model;
-	}
-
-	/**
-	 * Use a JarCacheStorage so that our JSON-LD @context can be loaded from our
-	 * classpath and not require network connectivity
-	 * 
-	 */
-	protected static void setCachedHttpClientInJsonLD() {
-		// JarCacheStorage cacheStorage = new JarCacheStorage(
-		// RDFToManifest.class.getClassLoader());
-		// synchronized (DocumentLoader.class) {
-		// HttpClient oldHttpClient = DocumentLoader.getHttpClient();
-		// CachingHttpClient wrappedHttpClient = new CachingHttpClient(
-		// oldHttpClient, cacheStorage, cacheStorage.getCacheConfig());
-		// DocumentLoader.setHttpClient(wrappedHttpClient);
-		// }
-		// synchronized (JSONUtils.class) {
-		// HttpClient oldHttpClient = JSONUtilsSub.getHttpClient();
-		// CachingHttpClient wrappedHttpClient = new CachingHttpClient(
-		// oldHttpClient, cacheStorage, cacheStorage.getCacheConfig());
-		// JSONUtilsSub.setHttpClient(wrappedHttpClient);
-		// }
-	}
-
-	private void checkNotNull(Object... possiblyNulls) {
-		int i = 0;
-		for (Object check : possiblyNulls) {
-			if (check == null) {
-				throw new IllegalStateException("Could not load item #" + i);
-			}
-			i++;
-		}
-
-	}
-
-	protected OntModel getOntModel() {
-		OntModel ontModel = ModelFactory
-				.createOntologyModel(OntModelSpec.OWL_DL_MEM_RULE_INF);
-		ontModel.setNsPrefix("foaf", FOAF_0_1);
-		ontModel.setNsPrefix("prov", PROV);
-		ontModel.setNsPrefix("ore", ORE);
-		ontModel.setNsPrefix("pav", PAV);
-		ontModel.setNsPrefix("dct", DCT);
-		// ontModel.getDocumentManager().loadImports(foaf.getOntModel());
-		return ontModel;
-	}
-
-	//
-	protected synchronized void loadFOAF() {
-		if (foaf != null) {
-			return;
-		}
-
-		OntModel ontModel = loadOntologyFromClasspath(FOAF_RDF, FOAF_0_1);
-
-		// properties from foaf
-		foafName = ontModel.getDatatypeProperty(FOAF_0_1 + "name");
-		checkNotNull(foafName);
-
-		foaf = ontModel;
-	}
-
-	protected synchronized void loadPAV() {
-		if (pav != null) {
-			return;
-		}
-
-		OntModel ontModel = loadOntologyFromClasspath(PAV_RDF, PAV);
-		// properties from foaf
-		createdBy = ontModel.getObjectProperty(PAV + "createdBy");
-		createdOn = ontModel.getDatatypeProperty(PAV + "createdOn");
-		authoredBy = ontModel.getObjectProperty(PAV + "authoredBy");
-		authoredOn = ontModel.getDatatypeProperty(PAV + "authoredOn");
-		checkNotNull(createdBy, createdOn, authoredBy, authoredOn);
-
-		pav = ontModel;
-	}
-
-	protected synchronized void loadPROVO() {
-		if (prov != null) {
-			return;
-		}
-		OntModel ontModel = loadOntologyFromClasspath(PROV_O_RDF, PROV_O);
-
-		checkNotNull(ontModel);
-
-		prov = ontModel;
-	}
-
-	protected synchronized void loadPROVAQ() {
-		if (provaq != null) {
-			return;
-		}
-		OntModel ontModel = loadOntologyFromClasspath(PROV_AQ_RDF, PAV);
-
-		// properties from foaf
-		hasProvenance = ontModel.getObjectProperty(PROV + "has_provenance");
-		checkNotNull(hasProvenance);
-
-		provaq = ontModel;
-	}
-
-	protected synchronized void loadDCT() {
-		if (dct != null) {
-			return;
-		}
-
-		OntModel ontModel = loadOntologyFromClasspath(
-				"/ontologies/dcterms_od.owl",
-				"http://purl.org/wf4ever/dcterms_od");
-
-		// properties from dct
-		standard = ontModel.getOntClass(DCT + "Standard");
-		conformsTo = ontModel.getObjectProperty(DCT + "conformsTo");
-
-		// We'll cheat dc:format in
-		format = ontModel
-				.createDatatypeProperty("http://purl.org/dc/elements/1.1/"
-						+ "format");
-		checkNotNull(standard, conformsTo, format);
-
-		dct = ontModel;
-
-	}
-
-	protected synchronized void loadOA() {
-		if (oa != null) {
-			return;
-		}
-		OntModel ontModel = loadOntologyFromClasspath(OA_RDF, OA);
-		hasTarget = ontModel.getObjectProperty(OA + "hasTarget");
-		hasBody = ontModel.getObjectProperty(OA + "hasBody");
-		checkNotNull(hasTarget, hasBody);
-		oa = ontModel;
-	}
-
-	protected synchronized void loadBundle() {
-		if (bundle != null) {
-			return;
-		}
-		OntModel ontModel = loadOntologyFromClasspath(BUNDLE_RDF, BUNDLE);
-		hasProxy = ontModel.getObjectProperty(BUNDLE + "hasProxy");
-		hasAnnotation = ontModel.getObjectProperty(BUNDLE + "hasAnnotation");
-		inFolder = ontModel.getObjectProperty(BUNDLE + "inFolder");
-		checkNotNull(hasProxy, hasAnnotation, inFolder);
-		bundle = ontModel;
-	}
-
 	protected synchronized void loadORE() {
 		if (ore != null) {
 			return;
@@ -295,28 +329,44 @@ public class RDFToManifest {
 		ore = ontModel;
 	}
 
-	public static <T> ClosableIterable<T> iterate(ExtendedIterator<T> iterator) {
-		return new ClosableIterable<T>(iterator);
+	protected synchronized void loadPAV() {
+		if (pav != null) {
+			return;
+		}
+
+		OntModel ontModel = loadOntologyFromClasspath(PAV_RDF, PAV);
+		// properties from foaf
+		createdBy = ontModel.getObjectProperty(PAV + "createdBy");
+		createdOn = ontModel.getDatatypeProperty(PAV + "createdOn");
+		authoredBy = ontModel.getObjectProperty(PAV + "authoredBy");
+		authoredOn = ontModel.getDatatypeProperty(PAV + "authoredOn");
+		checkNotNull(createdBy, createdOn, authoredBy, authoredOn);
+
+		pav = ontModel;
 	}
 
-	public static class ClosableIterable<T> implements AutoCloseable,
-			Iterable<T> {
-
-		private ExtendedIterator<T> iterator;
-
-		public ClosableIterable(ExtendedIterator<T> iterator) {
-			this.iterator = iterator;
+	protected synchronized void loadPROVAQ() {
+		if (provaq != null) {
+			return;
 		}
+		OntModel ontModel = loadOntologyFromClasspath(PROV_AQ_RDF, PAV);
 
-		@Override
-		public void close() {
-			iterator.close();
-		}
+		// properties from foaf
+		hasProvenance = ontModel.getObjectProperty(PROV + "has_provenance");
+		checkNotNull(hasProvenance);
 
-		@Override
-		public ExtendedIterator<T> iterator() {
-			return iterator;
+		provaq = ontModel;
+	}
+
+	protected synchronized void loadPROVO() {
+		if (prov != null) {
+			return;
 		}
+		OntModel ontModel = loadOntologyFromClasspath(PROV_O_RDF, PROV_O);
+
+		checkNotNull(ontModel);
+
+		prov = ontModel;
 	}
 
 	public void readTo(InputStream manifestResourceAsStream, Manifest manifest,
@@ -459,56 +509,6 @@ public class RDFToManifest {
 			}
 		}
 
-	}
-
-	private List<Agent> getAgents(URI base, Individual in,
-			ObjectProperty property) {
-		List<Agent> creators = new ArrayList<>();
-		for (Individual agent : listObjectProperties(in, property)) {
-			Agent a = new Agent();
-			if (agent.getURI() != null) {
-				a.setUri(relativizeFromBase(agent.getURI(), base));
-			}
-
-			RDFNode name = agent.getPropertyValue(foafName);
-			if (name != null && name.isLiteral()) {
-				a.setName(name.asLiteral().getLexicalForm());
-			}
-			creators.add(a);
-		}
-		return creators;
-	}
-
-	protected static URI makeBaseURI() throws URISyntaxException {
-		return new URI("app", UUID.randomUUID().toString(), "/", (String) null);
-	}
-
-	private Set<Individual> listObjectProperties(OntResource ontResource,
-			ObjectProperty prop) {
-		LinkedHashSet<Individual> results = new LinkedHashSet<>();
-		try (ClosableIterable<RDFNode> props = iterate(ontResource
-				.listPropertyValues(prop))) {
-			for (RDFNode node : props) {
-				if (!node.isResource() || !node.canAs(Individual.class)) {
-					continue;
-				}
-				results.add(node.as(Individual.class));
-			}
-		}
-		return results;
-	}
-
-	private Individual findRO(OntModel model, URI base) {
-		try (ClosableIterable<? extends OntResource> instances = iterate(aggregation
-				.listInstances())) {
-			for (OntResource o : instances) {
-				// System.out.println("Woo " + o);
-				return o.asIndividual();
-			}
-		}
-		// Fallback - resolve as "/"
-		// TODO: Ensure it's an Aggregation?
-		return model.getIndividual(base.toString());
 	}
 
 }

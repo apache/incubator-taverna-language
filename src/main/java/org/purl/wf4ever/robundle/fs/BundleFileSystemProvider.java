@@ -49,8 +49,6 @@ import java.util.zip.ZipOutputStream;
 import org.purl.wf4ever.robundle.utils.TemporaryFiles;
 
 public class BundleFileSystemProvider extends FileSystemProvider {
-	public static final String MIMETYPE_FILE = "mimetype";
-
 	public class BundleFileChannel extends FileChannel {
 
 		@SuppressWarnings("unused")
@@ -152,6 +150,8 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 		// Fallback for OSGi environments
 		private static final BundleFileSystemProvider INSTANCE = new BundleFileSystemProvider();
 	}
+
+	public static final String MIMETYPE_FILE = "mimetype";
 
 	public static final String APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP = "application/vnd.wf4ever.robundle+zip";
 	/**
@@ -262,6 +262,8 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 		return fs;
 	}
 
+	private Boolean jarDoubleEscaping;
+
 	/**
 	 * Public constructor provided for FileSystemProvider.installedProviders().
 	 * Use #getInstance() instead.
@@ -272,56 +274,14 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 	public BundleFileSystemProvider() {
 	}
 
-	private Boolean jarDoubleEscaping;
-
-	protected boolean getJarDoubleEscaping() {
-		if (jarDoubleEscaping != null) {
-			return jarDoubleEscaping;
+	private boolean asBoolean(Object object, boolean defaultValue) {
+		if (object instanceof Boolean) {
+			return (Boolean) object;
 		}
-		// https://bugs.openjdk.java.net/browse/JDK-8001178 introduced an
-		// inconsistent
-		// URI syntax. Before 7u40, jar: URIs to ZipFileSystemProvided had to
-		// have
-		// double-escaped the URI for the ZIP file, after 7u40 it is only
-		// escaped once.
-		// E.g.
-		// to open before 7u40 you needed
-		// jar:file:///file%2520with%2520spaces.zip, now you need
-		// jar:file:///file%20with%20spaces.zip
-		//
-		// The new format is now consistent with URL.openStream() and
-		// URLClassLoader's traditional jar: syntax, but somehow
-		// zippath.toUri() still returns the double-escaped one, which
-		// should only affects BundleFileSystem.findSource(). To help
-		// findSource()
-		// if this new bug is later fixed, we here detect which escaping style
-		// is used.
-
-		String name = "jar test";
-		try {
-			Path tmp = Files.createTempFile(name, ".zip");
-			if (!tmp.toUri().toASCIIString().contains("jar%20test")) {
-				// Hmm.. spaces not allowed in tmp? As we don't know, we'll
-				// assume Java 7 behaviour
-				jarDoubleEscaping = false;
-				return jarDoubleEscaping;
-			}
-			createBundleAsZip(tmp, null);
-			try (FileSystem fs = FileSystems.newFileSystem(tmp, null)) {
-				URI root = fs.getRootDirectories().iterator().next().toUri();
-				if (root.toASCIIString().contains("jar%2520test")) {
-					jarDoubleEscaping = true;
-				} else {
-					jarDoubleEscaping = false;
-				}
-			}
-			Files.delete(tmp);
-		} catch (IOException e) {
-			// Unknown error.. we'll assume Java 7 behaviour
-			jarDoubleEscaping = true;
+		if (object instanceof String) {
+			return Boolean.valueOf((String) object);
 		}
-		return jarDoubleEscaping;
-
+		return defaultValue;
 	}
 
 	protected URI baseURIFor(URI uri) {
@@ -424,6 +384,56 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 			}
 			return fs;
 		}
+	}
+
+	protected boolean getJarDoubleEscaping() {
+		if (jarDoubleEscaping != null) {
+			return jarDoubleEscaping;
+		}
+		// https://bugs.openjdk.java.net/browse/JDK-8001178 introduced an
+		// inconsistent
+		// URI syntax. Before 7u40, jar: URIs to ZipFileSystemProvided had to
+		// have
+		// double-escaped the URI for the ZIP file, after 7u40 it is only
+		// escaped once.
+		// E.g.
+		// to open before 7u40 you needed
+		// jar:file:///file%2520with%2520spaces.zip, now you need
+		// jar:file:///file%20with%20spaces.zip
+		//
+		// The new format is now consistent with URL.openStream() and
+		// URLClassLoader's traditional jar: syntax, but somehow
+		// zippath.toUri() still returns the double-escaped one, which
+		// should only affects BundleFileSystem.findSource(). To help
+		// findSource()
+		// if this new bug is later fixed, we here detect which escaping style
+		// is used.
+
+		String name = "jar test";
+		try {
+			Path tmp = Files.createTempFile(name, ".zip");
+			if (!tmp.toUri().toASCIIString().contains("jar%20test")) {
+				// Hmm.. spaces not allowed in tmp? As we don't know, we'll
+				// assume Java 7 behaviour
+				jarDoubleEscaping = false;
+				return jarDoubleEscaping;
+			}
+			createBundleAsZip(tmp, null);
+			try (FileSystem fs = FileSystems.newFileSystem(tmp, null)) {
+				URI root = fs.getRootDirectories().iterator().next().toUri();
+				if (root.toASCIIString().contains("jar%2520test")) {
+					jarDoubleEscaping = true;
+				} else {
+					jarDoubleEscaping = false;
+				}
+			}
+			Files.delete(tmp);
+		} catch (IOException e) {
+			// Unknown error.. we'll assume Java 7 behaviour
+			jarDoubleEscaping = true;
+		}
+		return jarDoubleEscaping;
+
 	}
 
 	@Override
@@ -595,16 +605,6 @@ public class BundleFileSystemProvider extends FileSystemProvider {
 					new WeakReference<BundleFileSystem>(fs));
 		}
 		return fs;
-	}
-
-	private boolean asBoolean(Object object, boolean defaultValue) {
-		if (object instanceof Boolean) {
-			return (Boolean) object;
-		}
-		if (object instanceof String) {
-			return Boolean.valueOf((String) object);
-		}
-		return defaultValue;
 	}
 
 	@Override

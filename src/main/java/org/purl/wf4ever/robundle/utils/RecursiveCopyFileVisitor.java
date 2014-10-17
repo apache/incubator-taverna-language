@@ -22,6 +22,15 @@ import java.util.Set;
 
 public class RecursiveCopyFileVisitor extends SimpleFileVisitor<Path> {
 
+	public enum RecursiveCopyOption implements CopyOption {
+		/**
+		 * Ignore any errors, copy as much as possible. The default is to stop
+		 * on the first IOException.
+		 * 
+		 */
+		IGNORE_ERRORS,
+	}
+
 	public static void copyRecursively(final Path source,
 			final Path destination, final CopyOption... copyOptions)
 			throws IOException {
@@ -50,15 +59,6 @@ public class RecursiveCopyFileVisitor extends SimpleFileVisitor<Path> {
 			walkOptions = EnumSet.of(FileVisitOption.FOLLOW_LINKS);
 		}
 		Files.walkFileTree(source, walkOptions, Integer.MAX_VALUE, visitor);
-	}
-
-	public enum RecursiveCopyOption implements CopyOption {
-		/**
-		 * Ignore any errors, copy as much as possible. The default is to stop
-		 * on the first IOException.
-		 * 
-		 */
-		IGNORE_ERRORS,
 	}
 
 	private final CopyOption[] copyOptions;
@@ -92,6 +92,36 @@ public class RecursiveCopyFileVisitor extends SimpleFileVisitor<Path> {
 		copyOptionsSet.removeAll(EnumSet.allOf(RecursiveCopyOption.class));
 		copyOptions = copyOptionsSet.toArray(new CopyOption[(copyOptionsSet
 				.size())]);
+	}
+
+	private URI pathOnly(URI uri) {
+		if (!uri.isAbsolute()) {
+			return uri;
+		}
+		String path = uri.getRawPath();
+		// if (! uri.isOpaque()) {
+		// path = uri.getPath();
+		// }
+		if (uri.getScheme().equals("jar")) {
+			String part = uri.getSchemeSpecificPart();
+			int slashPos = part.indexOf("!/");
+			path = part.substring(slashPos + 1, part.length());
+		}
+		if (path == null) {
+			throw new IllegalArgumentException("Can't extract path from URI "
+					+ uri);
+		}
+
+		if (!path.startsWith("/")) {
+			path = "/" + path;
+		}
+		try {
+			return new URI(null, null, path, null);
+		} catch (URISyntaxException e) {
+			throw new IllegalArgumentException("Can't extract path from URI "
+					+ uri, e);
+		}
+
 	}
 
 	@Override
@@ -153,36 +183,6 @@ public class RecursiveCopyFileVisitor extends SimpleFileVisitor<Path> {
 		}
 		URI dest = uriWithSlash(destination).resolve(rel);
 		return destination.getFileSystem().provider().getPath(dest);
-	}
-
-	private URI pathOnly(URI uri) {
-		if (!uri.isAbsolute()) {
-			return uri;
-		}
-		String path = uri.getRawPath();
-		// if (! uri.isOpaque()) {
-		// path = uri.getPath();
-		// }
-		if (uri.getScheme().equals("jar")) {
-			String part = uri.getSchemeSpecificPart();
-			int slashPos = part.indexOf("!/");
-			path = part.substring(slashPos + 1, part.length());
-		}
-		if (path == null) {
-			throw new IllegalArgumentException("Can't extract path from URI "
-					+ uri);
-		}
-
-		if (!path.startsWith("/")) {
-			path = "/" + path;
-		}
-		try {
-			return new URI(null, null, path, null);
-		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException("Can't extract path from URI "
-					+ uri, e);
-		}
-
 	}
 
 	private URI uriWithSlash(Path dir) {

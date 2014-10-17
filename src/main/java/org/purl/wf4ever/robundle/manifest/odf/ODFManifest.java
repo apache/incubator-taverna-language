@@ -30,6 +30,12 @@ public class ODFManifest {
 	public static class ManifestNamespacePrefixMapperJAXB_RI extends
 			NamespacePrefixMapper {
 		@Override
+		public String[] getPreDeclaredNamespaceUris() {
+			// TODO Auto-generated method stub
+			return super.getPreDeclaredNamespaceUris();
+		}
+
+		@Override
 		public String getPreferredPrefix(String namespaceUri,
 				String suggestion, boolean requirePrefix) {
 			if (namespaceUri
@@ -37,12 +43,6 @@ public class ODFManifest {
 				return "manifest";
 			}
 			return suggestion;
-		}
-
-		@Override
-		public String[] getPreDeclaredNamespaceUris() {
-			// TODO Auto-generated method stub
-			return super.getPreDeclaredNamespaceUris();
 		}
 
 	}
@@ -55,9 +55,151 @@ public class ODFManifest {
 			.getCanonicalName());
 
 	private static JAXBContext jaxbContext;
+	public static boolean containsManifest(Bundle bundle) {
+		return Files.isRegularFile(manifestXmlPath(bundle));
+	}
+	protected static synchronized Marshaller createMarshaller()
+			throws JAXBException {
+		Marshaller marshaller = getJaxbContext().createMarshaller();
+		setPrefixMapper(marshaller);
+		return marshaller;
+	}
+	protected static synchronized Unmarshaller createUnMarshaller()
+			throws JAXBException {
+		Unmarshaller unmarshaller = getJaxbContext().createUnmarshaller();
+		return unmarshaller;
+	}
+	protected static synchronized JAXBContext getJaxbContext()
+			throws JAXBException {
+		if (jaxbContext == null) {
+			jaxbContext = JAXBContext
+					.newInstance(oasis.names.tc.opendocument.xmlns.manifest._1.ObjectFactory.class
+					// ,
+					// org.oasis_open.names.tc.opendocument.xmlns.container.ObjectFactory.class,
+					// org.w3._2000._09.xmldsig_.ObjectFactory.class,
+					// org.w3._2001._04.xmlenc_.ObjectFactory.class
+					);
+		}
+		return jaxbContext;
+	}
+
+	private static Path manifestXmlPath(Bundle bundle) {
+		return bundle.getRoot().resolve(MANIFEST_XML);
+	}
+
+	protected static void setPrefixMapper(Marshaller marshaller) {
+		boolean setPrefixMapper = false;
+
+		try {
+			// This only works with JAXB RI, in which case we can set the
+			// namespace prefix mapper
+			Class.forName("com.sun.xml.bind.marshaller.NamespacePrefixMapper");
+			marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper",
+					new ManifestNamespacePrefixMapperJAXB_RI());
+			// Note: A similar mapper for the built-in java
+			// (com.sun.xml.bind.internal.namespacePrefixMapper)
+			// is no longer included here, as it will not (easily) compile with
+			// Maven.
+			setPrefixMapper = true;
+		} catch (Exception e) {
+			logger.log(Level.FINE, "Can't find NamespacePrefixMapper", e);
+		}
+
+		if (!setPrefixMapper && !warnedPrefixMapper) {
+			logger.info("Could not set prefix mapper (missing or incompatible JAXB) "
+					+ "- will use prefixes ns0, ns1, ..");
+			warnedPrefixMapper = true;
+		}
+	}
+
 	private org.purl.wf4ever.robundle.manifest.Manifest manifest;
+
 	private Bundle bundle;
+
+	// protected void prepareContainerXML() throws IOException {
+	//
+	//
+	// /* Check if we should prune <rootFiles> */
+	// Iterator<Object> iterator = containerXml.getValue().getRootFilesOrAny()
+	// .iterator();
+	// boolean foundAlready = false;
+	// while (iterator.hasNext()) {
+	// Object anyOrRoot = iterator.next();
+	// if (!(anyOrRoot instanceof JAXBElement)) {
+	// continue;
+	// }
+	// @SuppressWarnings("rawtypes")
+	// JAXBElement elem = (JAXBElement) anyOrRoot;
+	// if (!elem.getDeclaredType().equals(RootFiles.class)) {
+	// continue;
+	// }
+	// RootFiles rootFiles = (RootFiles) elem.getValue();
+	// if (foundAlready
+	// || (rootFiles.getOtherAttributes().isEmpty() && rootFiles
+	// .getAnyOrRootFile().isEmpty())) {
+	// // Delete it!
+	// System.err.println("Deleting unneccessary <rootFiles>");
+	// iterator.remove();
+	// }
+	// foundAlready = true;
+	// }
+	//
+	// Marshaller marshaller;
+	// OutputStream outStream = null;
+	// try {
+	// marshaller = createMarshaller();
+	// // XMLStreamWriter xmlStreamWriter = XMLOutputFactory
+	// // .newInstance().createXMLStreamWriter(outStream);
+	// // xmlStreamWriter.setDefaultNamespace(containerElem.getName()
+	// // .getNamespaceURI());
+	// //
+	// // xmlStreamWriter.setPrefix("dsig",
+	// // "http://www.w3.org/2000/09/xmldsig#");
+	// // xmlStreamWriter.setPrefix("xmlenc",
+	// // "http://www.w3.org/2001/04/xmlenc#");
+	// outStream = odfPackage.insertOutputStream(CONTAINER_XML);
+	//
+	// // FIXME: Set namespace prefixes and default namespace
+	//
+	// marshaller.setProperty("jaxb.formatted.output", true);
+	//
+	// // TODO: Ensure using default namespace
+	// marshaller.marshal(containerXml, outStream);
+	//
+	// } catch (IOException e) {
+	// throw e;
+	// } catch (Exception e) {
+	// throw new IOException("Could not parse " + CONTAINER_XML, e);
+	// } finally {
+	// if (outStream != null) {
+	// outStream.close();
+	// }
+	// }
+	// }
+	//
+	// @SuppressWarnings("unchecked")
+	// protected void parseContainerXML() throws IOException {
+	// createdContainerXml = false;
+	// InputStream containerStream = getResourceAsInputStream(CONTAINER_XML);
+	// if (containerStream == null) {
+	// // Make an empty containerXml
+	// Container container = containerFactory.createContainer();
+	// containerXml = containerFactory.createContainer(container);
+	// createdContainerXml = true;
+	// return;
+	// }
+	// try {
+	// Unmarshaller unMarshaller = createUnMarshaller();
+	// containerXml = (JAXBElement<Container>) unMarshaller
+	// .unmarshal(containerStream);
+	// } catch (JAXBException e) {
+	// throw new IOException("Could not parse " + CONTAINER_XML, e);
+	// }
+	//
+	// }
+
 	private ObjectFactory manifestFactory = new oasis.names.tc.opendocument.xmlns.manifest._1.ObjectFactory();
+
 	private static boolean warnedPrefixMapper;
 
 	public ODFManifest(org.purl.wf4ever.robundle.manifest.Manifest manifest) {
@@ -156,148 +298,6 @@ public class ODFManifest {
 				}
 			}
 		}
-	}
-
-	private static Path manifestXmlPath(Bundle bundle) {
-		return bundle.getRoot().resolve(MANIFEST_XML);
-	}
-
-	// protected void prepareContainerXML() throws IOException {
-	//
-	//
-	// /* Check if we should prune <rootFiles> */
-	// Iterator<Object> iterator = containerXml.getValue().getRootFilesOrAny()
-	// .iterator();
-	// boolean foundAlready = false;
-	// while (iterator.hasNext()) {
-	// Object anyOrRoot = iterator.next();
-	// if (!(anyOrRoot instanceof JAXBElement)) {
-	// continue;
-	// }
-	// @SuppressWarnings("rawtypes")
-	// JAXBElement elem = (JAXBElement) anyOrRoot;
-	// if (!elem.getDeclaredType().equals(RootFiles.class)) {
-	// continue;
-	// }
-	// RootFiles rootFiles = (RootFiles) elem.getValue();
-	// if (foundAlready
-	// || (rootFiles.getOtherAttributes().isEmpty() && rootFiles
-	// .getAnyOrRootFile().isEmpty())) {
-	// // Delete it!
-	// System.err.println("Deleting unneccessary <rootFiles>");
-	// iterator.remove();
-	// }
-	// foundAlready = true;
-	// }
-	//
-	// Marshaller marshaller;
-	// OutputStream outStream = null;
-	// try {
-	// marshaller = createMarshaller();
-	// // XMLStreamWriter xmlStreamWriter = XMLOutputFactory
-	// // .newInstance().createXMLStreamWriter(outStream);
-	// // xmlStreamWriter.setDefaultNamespace(containerElem.getName()
-	// // .getNamespaceURI());
-	// //
-	// // xmlStreamWriter.setPrefix("dsig",
-	// // "http://www.w3.org/2000/09/xmldsig#");
-	// // xmlStreamWriter.setPrefix("xmlenc",
-	// // "http://www.w3.org/2001/04/xmlenc#");
-	// outStream = odfPackage.insertOutputStream(CONTAINER_XML);
-	//
-	// // FIXME: Set namespace prefixes and default namespace
-	//
-	// marshaller.setProperty("jaxb.formatted.output", true);
-	//
-	// // TODO: Ensure using default namespace
-	// marshaller.marshal(containerXml, outStream);
-	//
-	// } catch (IOException e) {
-	// throw e;
-	// } catch (Exception e) {
-	// throw new IOException("Could not parse " + CONTAINER_XML, e);
-	// } finally {
-	// if (outStream != null) {
-	// outStream.close();
-	// }
-	// }
-	// }
-	//
-	// @SuppressWarnings("unchecked")
-	// protected void parseContainerXML() throws IOException {
-	// createdContainerXml = false;
-	// InputStream containerStream = getResourceAsInputStream(CONTAINER_XML);
-	// if (containerStream == null) {
-	// // Make an empty containerXml
-	// Container container = containerFactory.createContainer();
-	// containerXml = containerFactory.createContainer(container);
-	// createdContainerXml = true;
-	// return;
-	// }
-	// try {
-	// Unmarshaller unMarshaller = createUnMarshaller();
-	// containerXml = (JAXBElement<Container>) unMarshaller
-	// .unmarshal(containerStream);
-	// } catch (JAXBException e) {
-	// throw new IOException("Could not parse " + CONTAINER_XML, e);
-	// }
-	//
-	// }
-
-	protected static void setPrefixMapper(Marshaller marshaller) {
-		boolean setPrefixMapper = false;
-
-		try {
-			// This only works with JAXB RI, in which case we can set the
-			// namespace prefix mapper
-			Class.forName("com.sun.xml.bind.marshaller.NamespacePrefixMapper");
-			marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper",
-					new ManifestNamespacePrefixMapperJAXB_RI());
-			// Note: A similar mapper for the built-in java
-			// (com.sun.xml.bind.internal.namespacePrefixMapper)
-			// is no longer included here, as it will not (easily) compile with
-			// Maven.
-			setPrefixMapper = true;
-		} catch (Exception e) {
-			logger.log(Level.FINE, "Can't find NamespacePrefixMapper", e);
-		}
-
-		if (!setPrefixMapper && !warnedPrefixMapper) {
-			logger.info("Could not set prefix mapper (missing or incompatible JAXB) "
-					+ "- will use prefixes ns0, ns1, ..");
-			warnedPrefixMapper = true;
-		}
-	}
-
-	protected static synchronized Marshaller createMarshaller()
-			throws JAXBException {
-		Marshaller marshaller = getJaxbContext().createMarshaller();
-		setPrefixMapper(marshaller);
-		return marshaller;
-	}
-
-	protected static synchronized Unmarshaller createUnMarshaller()
-			throws JAXBException {
-		Unmarshaller unmarshaller = getJaxbContext().createUnmarshaller();
-		return unmarshaller;
-	}
-
-	protected static synchronized JAXBContext getJaxbContext()
-			throws JAXBException {
-		if (jaxbContext == null) {
-			jaxbContext = JAXBContext
-					.newInstance(oasis.names.tc.opendocument.xmlns.manifest._1.ObjectFactory.class
-					// ,
-					// org.oasis_open.names.tc.opendocument.xmlns.container.ObjectFactory.class,
-					// org.w3._2000._09.xmldsig_.ObjectFactory.class,
-					// org.w3._2001._04.xmlenc_.ObjectFactory.class
-					);
-		}
-		return jaxbContext;
-	}
-
-	public static boolean containsManifest(Bundle bundle) {
-		return Files.isRegularFile(manifestXmlPath(bundle));
 	}
 
 }

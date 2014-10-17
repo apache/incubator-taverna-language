@@ -59,6 +59,17 @@ public class Bundle implements Closeable {
 		return getRoot().getFileSystem();
 	}
 
+	public Manifest getManifest() throws IOException {
+		if (manifest == null) {
+			synchronized (this) {
+				if (manifest == null) {
+					manifest = readOrPopulateManifest();
+				}
+			}
+		}
+		return manifest;
+	}
+
 	public Path getPath(String path) {
 		return getRoot().resolve(path);
 	}
@@ -74,21 +85,6 @@ public class Bundle implements Closeable {
 
 	public boolean isDeleteOnClose() {
 		return deleteOnClose;
-	}
-
-	public void setDeleteOnClose(boolean deleteOnClose) {
-		this.deleteOnClose = deleteOnClose;
-	}
-
-	public Manifest getManifest() throws IOException {
-		if (manifest == null) {
-			synchronized (this) {
-				if (manifest == null) {
-					manifest = readOrPopulateManifest();
-				}
-			}
-		}
-		return manifest;
 	}
 
 	protected Manifest readOrPopulateManifest() throws IOException {
@@ -111,6 +107,10 @@ public class Bundle implements Closeable {
 			newManifest.populateFromBundle();
 		}
 		return newManifest;
+	}
+
+	public void setDeleteOnClose(boolean deleteOnClose) {
+		this.deleteOnClose = deleteOnClose;
 	}
 
 }

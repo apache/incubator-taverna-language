@@ -16,6 +16,10 @@ public class PathAnnotation {
 	private URI uri;
 	private URI content;
 
+	public void generateAnnotationId() {
+		setUri(URI.create("urn:uuid:" + UUID.randomUUID()));
+	}
+
 	@JsonIgnore
 	public URI getAbout() {
 		if (about.isEmpty()) {
@@ -47,19 +51,17 @@ public class PathAnnotation {
 		return getUri();
 	}
 
-	public URI getUri() {
-		return uri;
-	}
-
 	public URI getContent() {
 		return content;
 	}
 
-	public void setAbout(URI about) {
-		this.about.clear();
-		if (about != null) {
-			this.about.add(about);
-		}
+	public URI getUri() {
+		return uri;
+	}
+
+	private URI relativizePath(Path path) {
+		return URI.create("/.ro/").relativize(
+				URI.create(path.toUri().getRawPath()));
 	}
 
 	public void setAbout(List<URI> about) {
@@ -69,8 +71,15 @@ public class PathAnnotation {
 		this.about = about;
 	}
 
-	public void setUri(URI uri) {
-		this.uri = uri;
+	public void setAbout(Path path) {
+		setAbout(relativizePath(path));
+	}
+
+	public void setAbout(URI about) {
+		this.about.clear();
+		if (about != null) {
+			this.about.add(about);
+		}
 	}
 
 	@Deprecated
@@ -78,25 +87,16 @@ public class PathAnnotation {
 		setUri(annotation);
 	}
 
+	public void setContent(Path path) {
+		this.content = relativizePath(path);
+	}
+
 	public void setContent(URI content) {
 		this.content = content;
 	}
 
-	public void generateAnnotationId() {
-		setUri(URI.create("urn:uuid:" + UUID.randomUUID()));
-	}
-
-	public void setAbout(Path path) {
-		setAbout(relativizePath(path));
-	}
-
-	private URI relativizePath(Path path) {
-		return URI.create("/.ro/").relativize(
-				URI.create(path.toUri().getRawPath()));
-	}
-
-	public void setContent(Path path) {
-		this.content = relativizePath(path);
+	public void setUri(URI uri) {
+		this.uri = uri;
 	}
 
 	@Override

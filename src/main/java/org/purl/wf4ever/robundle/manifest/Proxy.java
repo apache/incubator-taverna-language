@@ -53,11 +53,11 @@ public class Proxy {
 		this.folder = folder;
 	}
 
-	public void setURI(URI uri) {
-		this.uri = uri;
-	}
-
 	public void setURI() {
 		setURI(URI.create("urn:uuid:" + UUID.randomUUID()));
+	}
+
+	public void setURI(URI uri) {
+		this.uri = uri;
 	}
 }

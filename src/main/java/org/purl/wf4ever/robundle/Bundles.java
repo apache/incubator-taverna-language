@@ -102,6 +102,26 @@ public class Bundles {
 		return fileName.substring(0, lastDot);
 	}
 
+	public static Path getAnnotations(Bundle bundle) throws IOException {
+		Path dir = bundle.getFileSystem().getPath(DOT_RO, ANNOTATIONS);
+		Files.createDirectories(dir);
+		return dir;
+	}
+
+	public static Path getManifestPath(Bundle bundle) {
+		return bundle.getRoot().resolve(DOT_RO).resolve(MANIFEST_JSON);
+	}
+
+	public static String getMimeType(Bundle bundle) throws IOException {
+		Path mimetypePath = bundle.getRoot().resolve(
+				BundleFileSystemProvider.MIMETYPE_FILE);
+		String mimetype = getStringValue(mimetypePath);
+		if (mimetype == null || mimetype.isEmpty()) {
+			return BundleFileSystemProvider.APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP;
+		}
+		return mimetype.trim();
+	}
+
 	public static URI getReference(Path path) throws IOException {
 		if (path == null || isMissing(path)) {
 			return null;
@@ -151,20 +171,6 @@ public class Bundles {
 		return !isReference(path) && Files.isRegularFile(path);
 	}
 
-	public static Bundle openBundle(URL url) throws IOException {
-		if ("file.".equals(url.getProtocol())) {
-			try {
-				return openBundle(Paths.get(url.toURI()));
-			} catch (URISyntaxException e) {
-				throw new IllegalArgumentException("Invalid URL " + url, e);
-			}
-		} else {
-			try (InputStream in = url.openStream()) {
-				return openBundle(in);
-			}
-		}
-	}
-
 	public static Bundle openBundle(InputStream in) throws IOException {
 		Path path = TemporaryFiles.temporaryBundle();
 		Files.copy(in, path);
@@ -177,6 +183,20 @@ public class Bundles {
 		BundleFileSystem fs = BundleFileSystemProvider
 				.newFileSystemFromExisting(zip);
 		return new Bundle(fs.getRootDirectory(), false);
+	}
+
+	public static Bundle openBundle(URL url) throws IOException {
+		if ("file.".equals(url.getProtocol())) {
+			try {
+				return openBundle(Paths.get(url.toURI()));
+			} catch (URISyntaxException e) {
+				throw new IllegalArgumentException("Invalid URL " + url, e);
+			}
+		} else {
+			try (InputStream in = url.openStream()) {
+				return openBundle(in);
+			}
+		}
 	}
 
 	public static Bundle openBundleReadOnly(Path zip) throws IOException {
@@ -271,6 +291,33 @@ public class Bundles {
 		}
 	}
 
+	public static void setMimeType(Bundle bundle, String mimetype)
+			throws IOException {
+		if (!ASCII.newEncoder().canEncode(mimetype)) {
+			throw new IllegalArgumentException("mimetype must be ASCII, not "
+					+ mimetype);
+		}
+		if (mimetype.contains("\n") || mimetype.contains("\r")) {
+			throw new IllegalArgumentException(
+					"mimetype can't contain newlines");
+		}
+		if (!mimetype.contains("/")) {
+			throw new IllegalArgumentException("Invalid mimetype: " + mimetype);
+		}
+		Path root = bundle.getRoot();
+
+		Path mimetypePath = bundle.getRoot().resolve(
+				BundleFileSystemProvider.MIMETYPE_FILE);
+		if (!Files.isRegularFile(mimetypePath)) {
+			// It would require low-level zip-modification to properly add
+			// 'mimetype' now
+			throw new IOException("Special file '"
+					+ BundleFileSystemProvider.MIMETYPE_FILE
+					+ "' missing from bundle, can't set mimetype");
+		}
+		setStringValue(mimetypePath, mimetype);
+	}
+
 	public static Path setReference(Path path, URI ref) throws IOException {
 		path = withExtension(path, DOT_URL);
 
@@ -317,6 +364,15 @@ public class Bundles {
 				StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
 	}
 
+	public static Path uriToBundlePath(Bundle bundle, URI uri) {
+		URI rootUri = bundle.getRoot().toUri();
+		uri = relativizeFromBase(uri, rootUri);
+		if (uri.isAbsolute() || uri.getFragment() != null) {
+			return null;
+		}
+		return bundle.getFileSystem().provider().getPath(rootUri.resolve(uri));
+	}
+
 	protected static Path withExtension(Path path, String extension) {
 		if (!extension.isEmpty() && !extension.startsWith(".")) {
 			throw new IllegalArgumentException(
@@ -330,62 +386,6 @@ public class Bundles {
 		// Everything after the last . - or just the end
 		String newP = p.replaceFirst("(\\.[^.]*)?$", extension);
 		return path.resolveSibling(newP);
-	}
-
-	public static Path getAnnotations(Bundle bundle) throws IOException {
-		Path dir = bundle.getFileSystem().getPath(DOT_RO, ANNOTATIONS);
-		Files.createDirectories(dir);
-		return dir;
-	}
-
-	public static Path getManifestPath(Bundle bundle) {
-		return bundle.getRoot().resolve(DOT_RO).resolve(MANIFEST_JSON);
-	}
-
-	public static String getMimeType(Bundle bundle) throws IOException {
-		Path mimetypePath = bundle.getRoot().resolve(
-				BundleFileSystemProvider.MIMETYPE_FILE);
-		String mimetype = getStringValue(mimetypePath);
-		if (mimetype == null || mimetype.isEmpty()) {
-			return BundleFileSystemProvider.APPLICATION_VND_WF4EVER_ROBUNDLE_ZIP;
-		}
-		return mimetype.trim();
-	}
-
-	public static void setMimeType(Bundle bundle, String mimetype)
-			throws IOException {
-		if (!ASCII.newEncoder().canEncode(mimetype)) {
-			throw new IllegalArgumentException("mimetype must be ASCII, not "
-					+ mimetype);
-		}
-		if (mimetype.contains("\n") || mimetype.contains("\r")) {
-			throw new IllegalArgumentException(
-					"mimetype can't contain newlines");
-		}
-		if (!mimetype.contains("/")) {
-			throw new IllegalArgumentException("Invalid mimetype: " + mimetype);
-		}
-		Path root = bundle.getRoot();
-
-		Path mimetypePath = bundle.getRoot().resolve(
-				BundleFileSystemProvider.MIMETYPE_FILE);
-		if (!Files.isRegularFile(mimetypePath)) {
-			// It would require low-level zip-modification to properly add
-			// 'mimetype' now
-			throw new IOException("Special file '"
-					+ BundleFileSystemProvider.MIMETYPE_FILE
-					+ "' missing from bundle, can't set mimetype");
-		}
-		setStringValue(mimetypePath, mimetype);
-	}
-
-	public static Path uriToBundlePath(Bundle bundle, URI uri) {
-		URI rootUri = bundle.getRoot().toUri();
-		uri = relativizeFromBase(uri, rootUri);
-		if (uri.isAbsolute() || uri.getFragment() != null) {
-			return null;
-		}
-		return bundle.getFileSystem().provider().getPath(rootUri.resolve(uri));
 	}
 
 }

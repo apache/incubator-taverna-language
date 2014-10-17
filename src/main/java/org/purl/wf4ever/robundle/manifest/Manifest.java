@@ -40,22 +40,22 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 		"aggregates", "annotations", "@graph" })
 public class Manifest {
 
-	private static final String MANIFEST_JSON = "manifest.json";
-
-	private static Logger logger = Logger.getLogger(Manifest.class
-			.getCanonicalName());
-
-	private static URI ROOT = URI.create("/");
+	public abstract class FileTimeMixin {
+		@JsonValue
+		public abstract String toString();
+	}
 
 	public abstract class PathMixin {
 		@JsonValue
 		public abstract String toString();
 	}
 
-	public abstract class FileTimeMixin {
-		@JsonValue
-		public abstract String toString();
-	}
+	private static final String MANIFEST_JSON = "manifest.json";
+
+	private static Logger logger = Logger.getLogger(Manifest.class
+			.getCanonicalName());
+
+	private static URI ROOT = URI.create("/");
 
 	private static final String META_INF = "/META-INF";
 	private static final String MIMETYPE = "/mimetype";
@@ -103,6 +103,28 @@ public class Manifest {
 		return new ArrayList<>(aggregates.values());
 	}
 
+	public PathMetadata getAggregation(Path file) {
+		URI fileUri = file.toUri();
+		return getAggregation(fileUri);
+	}
+
+	public PathMetadata getAggregation(URI uri) {
+		uri = relativeToBundleRoot(uri);
+		PathMetadata metadata = aggregates.get(uri);
+		if (metadata == null) {
+			metadata = new PathMetadata();
+			if (!uri.isAbsolute() && uri.getFragment() == null) {
+				Path path = Bundles.uriToBundlePath(bundle, uri);
+				metadata.setFile(path);
+				metadata.setMediatype(guessMediaType(path));
+			} else {
+				metadata.setUri(uri);
+			}
+			aggregates.put(uri, metadata);
+		}
+		return metadata;
+	}
+
 	public List<PathAnnotation> getAnnotations() {
 		return annotations;
 	}
@@ -113,6 +135,11 @@ public class Manifest {
 
 	public FileTime getAuthoredOn() {
 		return authoredOn;
+	}
+
+	@JsonIgnore
+	public URI getBaseURI() {
+		return getBundle().getRoot().toUri();
 	}
 
 	@JsonIgnore
@@ -128,11 +155,6 @@ public class Manifest {
 		// context.add(map);
 		context.add(URI.create("https://w3id.org/bundle/context"));
 		return context;
-	}
-
-	@JsonIgnore
-	public URI getBaseURI() {
-		return getBundle().getRoot().toUri();
 	}
 
 	public Agent getCreatedBy() {
@@ -292,6 +314,11 @@ public class Manifest {
 		}
 	}
 
+	public URI relativeToBundleRoot(URI uri) {
+		uri = ROOT.resolve(bundle.getRoot().toUri().relativize(uri));
+		return uri;
+	}
+
 	public void setAggregates(List<PathMetadata> aggregates) {
 		this.aggregates.clear();
 
@@ -359,6 +386,10 @@ public class Manifest {
 		this.manifest = manifest;
 	}
 
+	public void writeAsCombineManifest() throws IOException {
+		new CombineManifest(this).createManifestXML();
+	}
+
 	/**
 	 * Write as an RO Bundle JSON-LD manifest
 	 * 
@@ -402,36 +433,5 @@ public class Manifest {
 	 */
 	public Path writeAsODFManifest() throws IOException {
 		return new ODFManifest(this).createManifestXML();
-	}
-
-	public PathMetadata getAggregation(Path file) {
-		URI fileUri = file.toUri();
-		return getAggregation(fileUri);
-	}
-
-	public PathMetadata getAggregation(URI uri) {
-		uri = relativeToBundleRoot(uri);
-		PathMetadata metadata = aggregates.get(uri);
-		if (metadata == null) {
-			metadata = new PathMetadata();
-			if (!uri.isAbsolute() && uri.getFragment() == null) {
-				Path path = Bundles.uriToBundlePath(bundle, uri);
-				metadata.setFile(path);
-				metadata.setMediatype(guessMediaType(path));
-			} else {
-				metadata.setUri(uri);
-			}
-			aggregates.put(uri, metadata);
-		}
-		return metadata;
-	}
-
-	public URI relativeToBundleRoot(URI uri) {
-		uri = ROOT.resolve(bundle.getRoot().toUri().relativize(uri));
-		return uri;
-	}
-
-	public void writeAsCombineManifest() throws IOException {
-		new CombineManifest(this).createManifestXML();
 	}
 }
