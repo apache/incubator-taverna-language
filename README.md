@@ -3,7 +3,7 @@ Data bundles API
 
 API for Taverna Data Bundles
 
-Work in progress.
+[![Build Status](https://travis-ci.org/taverna/taverna-databundle.svg?branch=master)](https://travis-ci.org/taverna/taverna-databundle)
 
 See [Data bundle requirements](http://dev.mygrid.org.uk/wiki/display/TAVOSGI/2013-02+Data+bundle+requirements)
 and [TestDataBundles.java](src/test/java/uk/org/taverna/databundle/TestDataBundles.java)
