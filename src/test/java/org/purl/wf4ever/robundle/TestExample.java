@@ -71,10 +71,10 @@ public class TestExample {
 		try (Bundle bundle2 = Bundles.openBundle(zip)) {
 			assertEquals(zip, bundle2.getSource());
 		}
-		
-        //if (Desktop.isDesktopSupported()) {
-        //    // Open ZIP file for browsing
-        //    Desktop.getDesktop().open(zip.toFile());
-        //}
+
+		// if (Desktop.isDesktopSupported()) {
+		// // Open ZIP file for browsing
+		// Desktop.getDesktop().open(zip.toFile());
+		// }
 	}
 }

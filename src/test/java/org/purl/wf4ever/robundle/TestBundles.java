@@ -34,9 +34,9 @@ import org.purl.wf4ever.robundle.manifest.PathMetadata;
 import org.purl.wf4ever.robundle.utils.TemporaryFiles;
 
 public class TestBundles {
-	
+
 	private static final int MIME_OFFSET = 30;
-	
+
 	protected void checkSignature(Path zip) throws IOException {
 		String MEDIATYPE = "application/vnd.wf4ever.robundle+zip";
 		// Check position 30++ according to RO Bundle specification
@@ -57,24 +57,24 @@ public class TestBundles {
 		Bundle bundle = Bundles.createBundle();
 		assertTrue(Files.exists(bundle.getSource()));
 		assertTrue(bundle.getFileSystem().isOpen());
-        assertTrue(bundle.isDeleteOnClose());
+		assertTrue(bundle.isDeleteOnClose());
 		bundle.close();
 		assertFalse(Files.exists(bundle.getSource()));
 		assertFalse(bundle.getFileSystem().isOpen());
 	}
-	
-    @Test
-    public void closeNotDelete() throws Exception {        
-        Path path = Files.createTempFile("bundle", ".zip");
-        Bundle bundle = Bundles.createBundle(path);
-        assertFalse(bundle.isDeleteOnClose());
-        assertTrue(Files.exists(bundle.getSource()));
-        assertTrue(bundle.getFileSystem().isOpen());
-        
-        bundle.close();
-        assertTrue(Files.exists(bundle.getSource()));
-        assertFalse(bundle.getFileSystem().isOpen());
-    }
+
+	@Test
+	public void closeNotDelete() throws Exception {
+		Path path = Files.createTempFile("bundle", ".zip");
+		Bundle bundle = Bundles.createBundle(path);
+		assertFalse(bundle.isDeleteOnClose());
+		assertTrue(Files.exists(bundle.getSource()));
+		assertTrue(bundle.getFileSystem().isOpen());
+
+		bundle.close();
+		assertTrue(Files.exists(bundle.getSource()));
+		assertFalse(bundle.getFileSystem().isOpen());
+	}
 
 	@Test
 	public void closeAndOpenBundle() throws Exception {
@@ -91,8 +91,8 @@ public class TestBundles {
 		Path zip = Bundles.closeBundle(bundle);
 
 		try (Bundle newBundle = Bundles.openBundle(zip)) {
-    		Path newHello = newBundle.getRoot().resolve("hello.txt");		
-    		assertEquals("Hello", Bundles.getStringValue(newHello));
+			Path newHello = newBundle.getRoot().resolve("hello.txt");
+			assertEquals("Hello", Bundles.getStringValue(newHello));
 		}
 	}
 
@@ -107,19 +107,19 @@ public class TestBundles {
 		assertTrue(Files.exists(destination));
 		assertFalse(Files.exists(bundle.getSource()));
 	}
-	
+
 	@Test
-    public void closeAndSaveBundleNotDelete() throws Exception {
-        Path path = Files.createTempFile("bundle", ".zip");
-        Bundle bundle = Bundles.createBundle(path);
-        Path destination = Files.createTempFile("test", ".zip");
-        destination.toFile().deleteOnExit();
-        Files.delete(destination);
-        assertFalse(Files.exists(destination));
-        Bundles.closeAndSaveBundle(bundle, destination);
-        assertTrue(Files.exists(destination));
-        assertTrue(Files.exists(bundle.getSource()));
-    }
+	public void closeAndSaveBundleNotDelete() throws Exception {
+		Path path = Files.createTempFile("bundle", ".zip");
+		Bundle bundle = Bundles.createBundle(path);
+		Path destination = Files.createTempFile("test", ".zip");
+		destination.toFile().deleteOnExit();
+		Files.delete(destination);
+		assertFalse(Files.exists(destination));
+		Bundles.closeAndSaveBundle(bundle, destination);
+		assertTrue(Files.exists(destination));
+		assertTrue(Files.exists(bundle.getSource()));
+	}
 
 	@Test
 	public void closeBundle() throws Exception {
@@ -129,7 +129,6 @@ public class TestBundles {
 		assertEquals(zip, bundle.getSource());
 		checkSignature(zip);
 	}
-	
 
 	@Test
 	public void mimeTypePosition() throws Exception {
@@ -138,7 +137,7 @@ public class TestBundles {
 		Bundles.setMimeType(bundle, mimetype);
 		assertEquals(mimetype, Bundles.getMimeType(bundle));
 		Path zip = Bundles.closeBundle(bundle);
-		
+
 		assertTrue(Files.exists(zip));
 		ZipFile zipFile = new ZipFile(zip.toFile());
 		// Must be first entry
@@ -155,11 +154,10 @@ public class TestBundles {
 
 		// Check position 30++ according to
 		// http://livedocs.adobe.com/navigator/9/Navigator_SDK9_HTMLHelp/wwhelp/wwhimpl/common/html/wwhelp.htm?context=Navigator_SDK9_HTMLHelp&file=Appx_Packaging.6.1.html#1522568
-		byte[] expected = ("mimetype" + mimetype + "PK")
-				.getBytes("ASCII");
+		byte[] expected = ("mimetype" + mimetype + "PK").getBytes("ASCII");
 		FileInputStream in = new FileInputStream(zip.toFile());
 		byte[] actual = new byte[expected.length];
-		
+
 		try {
 			assertEquals(MIME_OFFSET, in.skip(MIME_OFFSET));
 			assertEquals(expected.length, in.read(actual));
@@ -171,152 +169,161 @@ public class TestBundles {
 
 	@Test
 	public void createBundle() throws Exception {
-	    Path source = null;
-		try (Bundle bundle = Bundles.createBundle()) {	
-		    assertTrue(Files.isDirectory(bundle.getRoot()));
-		    source = bundle.getSource();
-		    assertTrue(Files.exists(source));
+		Path source = null;
+		try (Bundle bundle = Bundles.createBundle()) {
+			assertTrue(Files.isDirectory(bundle.getRoot()));
+			source = bundle.getSource();
+			assertTrue(Files.exists(source));
 		}
 		// As it was temporary file it should be deleted on close
 		assertFalse(Files.exists(source));
 	}
 
+	@Test
+	public void createBundlePath() throws Exception {
+		Path source = Files.createTempFile("test", ".zip");
+		source.toFile().deleteOnExit();
+		Files.delete(source);
+		try (Bundle bundle = Bundles.createBundle(source)) {
+			assertTrue(Files.isDirectory(bundle.getRoot()));
+			assertEquals(source, bundle.getSource());
+			assertTrue(Files.exists(source));
+		}
+		// As it was a specific path, it should NOT be deleted on close
+		assertTrue(Files.exists(source));
+	}
 
+	@Test
+	public void createBundlePathExists() throws Exception {
+		Path source = Files.createTempFile("test", ".zip");
+		source.toFile().deleteOnExit();
 
-    @Test
-    public void createBundlePath() throws Exception {
-        Path source = Files.createTempFile("test", ".zip");
-        source.toFile().deleteOnExit();
-        Files.delete(source);
-        try (Bundle bundle = Bundles.createBundle(source)) {  
-            assertTrue(Files.isDirectory(bundle.getRoot()));
-            assertEquals(source, bundle.getSource());
-            assertTrue(Files.exists(source));
-        }
-        // As it was a specific path, it should NOT be deleted on close
-        assertTrue(Files.exists(source));
-    }
+		assertTrue(Files.exists(source)); // will be overwritten
+		try (Bundle bundle = Bundles.createBundle(source)) {
+		}
+		// As it was a specific path, it should NOT be deleted on close
+		assertTrue(Files.exists(source));
+	}
 
-    @Test
-    public void createBundlePathExists() throws Exception {
-        Path source = Files.createTempFile("test", ".zip");
-        source.toFile().deleteOnExit();
-        
-        assertTrue(Files.exists(source)); // will be overwritten
-        try (Bundle bundle = Bundles.createBundle(source)) {  
-        }
-        // As it was a specific path, it should NOT be deleted on close
-        assertTrue(Files.exists(source));
-    }
+	@Test(expected = IOException.class)
+	public void createBundleExistsAsDirFails() throws Exception {
+		Path source = Files.createTempDirectory("test");
+		source.toFile().deleteOnExit();
+		try (Bundle bundle = Bundles.createBundle(source)) {
+		}
+	}
 
-    @Test(expected=IOException.class)
-    public void createBundleExistsAsDirFails() throws Exception {
-        Path source = Files.createTempDirectory("test");
-        source.toFile().deleteOnExit();
-        try (Bundle bundle = Bundles.createBundle(source)) {  
-        }
-    }
+	@Test
+	public void getMimeType() throws Exception {
+		Path bundlePath = TemporaryFiles.temporaryBundle();
+		try (BundleFileSystem bundleFs = BundleFileSystemProvider
+				.newFileSystemFromNew(bundlePath, "application/x-test")) {
+			Bundle bundle = new Bundle(bundleFs.getPath("/"), false);
+			assertEquals("application/x-test", Bundles.getMimeType(bundle));
+		}
+	}
 
-    @Test
-    public void getMimeType() throws Exception {
-        Path bundlePath = TemporaryFiles.temporaryBundle();
-        try (BundleFileSystem bundleFs = BundleFileSystemProvider.newFileSystemFromNew(bundlePath, "application/x-test")) {
-            Bundle bundle = new Bundle(bundleFs.getPath("/"), false);
-            assertEquals("application/x-test", Bundles.getMimeType(bundle));
-        }
-    }
-    
-    @Test
-    public void setMimeType() throws Exception {
-        try (Bundle bundle = Bundles.createBundle()) {
-            Path mimetypePath = bundle.getRoot().resolve("mimetype");
-            assertEquals("application/vnd.wf4ever.robundle+zip", Bundles.getStringValue(mimetypePath));
-    
-            Bundles.setMimeType(bundle, "application/x-test");
-            assertEquals("application/x-test", Bundles.getStringValue(mimetypePath)); 
-        }
-    }
-    
-    @Test(expected=IllegalArgumentException.class)
-    public void setMimeTypeNoNewlines() throws Exception {
-        try (Bundle bundle = Bundles.createBundle()) {
-            Bundles.setMimeType(bundle, "application/x-test\nNo newlines allowed");
-        }
-    }
-    
-    @Test(expected=IllegalArgumentException.class)
-    public void setMimeTypeNoSlash() throws Exception {
-        try (Bundle bundle = Bundles.createBundle()) {
-            Bundles.setMimeType(bundle, "test");
-        }
-    }
+	@Test
+	public void setMimeType() throws Exception {
+		try (Bundle bundle = Bundles.createBundle()) {
+			Path mimetypePath = bundle.getRoot().resolve("mimetype");
+			assertEquals("application/vnd.wf4ever.robundle+zip",
+					Bundles.getStringValue(mimetypePath));
 
-    @Test(expected=IllegalArgumentException.class)
-    public void setMimeTypeEmpty() throws Exception {
-        try (Bundle bundle = Bundles.createBundle()) {
-            Bundles.setMimeType(bundle, "");
-        }
-    }
-    
+			Bundles.setMimeType(bundle, "application/x-test");
+			assertEquals("application/x-test",
+					Bundles.getStringValue(mimetypePath));
+		}
+	}
 
-    @Test(expected=IllegalArgumentException.class)
-    public void setMimeTypeNonAscii() throws Exception {
-        try (Bundle bundle = Bundles.createBundle()) {
-            Bundles.setMimeType(bundle, "application/x-test-\u00E9"); // Include the e accent from latin1
-        }
-    }
-    
-    @Test
-    public void getMimeTypeMissing() throws Exception {
-        try (Bundle bundle = Bundles.createBundle()) {
-            Path mimetypePath = bundle.getRoot().resolve("mimetype");
-            Files.delete(mimetypePath);
-            // Fall back according to our spec
-            assertEquals("application/vnd.wf4ever.robundle+zip", Bundles.getMimeType(bundle));
-        }
-    }
-    
-    @Test(expected=IOException.class)
-    public void setMimeTypeMissing() throws Exception {
-        try (Bundle bundle = Bundles.createBundle()) {
-            Path mimetypePath = bundle.getRoot().resolve("mimetype");
-            Files.delete(mimetypePath);
-            // sadly now we can't set it (the mimetype file must be uncompressed and at beginning of file, 
-            // which we don't have the possibility to do now that file system is open)
-            Bundles.setMimeType(bundle, "application/x-test");
-        }
-    }
-    
+	@Test(expected = IllegalArgumentException.class)
+	public void setMimeTypeNoNewlines() throws Exception {
+		try (Bundle bundle = Bundles.createBundle()) {
+			Bundles.setMimeType(bundle,
+					"application/x-test\nNo newlines allowed");
+		}
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void setMimeTypeNoSlash() throws Exception {
+		try (Bundle bundle = Bundles.createBundle()) {
+			Bundles.setMimeType(bundle, "test");
+		}
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void setMimeTypeEmpty() throws Exception {
+		try (Bundle bundle = Bundles.createBundle()) {
+			Bundles.setMimeType(bundle, "");
+		}
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void setMimeTypeNonAscii() throws Exception {
+		try (Bundle bundle = Bundles.createBundle()) {
+			Bundles.setMimeType(bundle, "application/x-test-\u00E9"); // Include
+																		// the e
+																		// accent
+																		// from
+																		// latin1
+		}
+	}
+
+	@Test
+	public void getMimeTypeMissing() throws Exception {
+		try (Bundle bundle = Bundles.createBundle()) {
+			Path mimetypePath = bundle.getRoot().resolve("mimetype");
+			Files.delete(mimetypePath);
+			// Fall back according to our spec
+			assertEquals("application/vnd.wf4ever.robundle+zip",
+					Bundles.getMimeType(bundle));
+		}
+	}
+
+	@Test(expected = IOException.class)
+	public void setMimeTypeMissing() throws Exception {
+		try (Bundle bundle = Bundles.createBundle()) {
+			Path mimetypePath = bundle.getRoot().resolve("mimetype");
+			Files.delete(mimetypePath);
+			// sadly now we can't set it (the mimetype file must be uncompressed
+			// and at beginning of file,
+			// which we don't have the possibility to do now that file system is
+			// open)
+			Bundles.setMimeType(bundle, "application/x-test");
+		}
+	}
+
 	@Test
 	public void getReference() throws Exception {
 		try (Bundle bundle = Bundles.createBundle()) {
-    		Path hello = bundle.getRoot().resolve("hello");
-    		Bundles.setReference(hello, URI.create("http://example.org/test"));
-    		URI uri = Bundles.getReference(hello);
-    		assertEquals("http://example.org/test", uri.toASCIIString());
+			Path hello = bundle.getRoot().resolve("hello");
+			Bundles.setReference(hello, URI.create("http://example.org/test"));
+			URI uri = Bundles.getReference(hello);
+			assertEquals("http://example.org/test", uri.toASCIIString());
 		}
 	}
 
 	@Test
 	public void getReferenceFromWin8() throws Exception {
 		try (Bundle bundle = Bundles.createBundle()) {
-    		Path win8 = bundle.getRoot().resolve("win8");
-    		Path win8Url = bundle.getRoot().resolve("win8.url");
-    		Files.copy(getClass().getResourceAsStream("/win8.url"), win8Url);
-    				
-    		URI uri = Bundles.getReference(win8);
-    		assertEquals("http://example.com/made-in-windows-8", uri.toASCIIString());
+			Path win8 = bundle.getRoot().resolve("win8");
+			Path win8Url = bundle.getRoot().resolve("win8.url");
+			Files.copy(getClass().getResourceAsStream("/win8.url"), win8Url);
+
+			URI uri = Bundles.getReference(win8);
+			assertEquals("http://example.com/made-in-windows-8",
+					uri.toASCIIString());
 		}
 	}
 
 	@Test
 	public void getStringValue() throws Exception {
 		try (Bundle bundle = Bundles.createBundle()) {
-		Path hello = bundle.getRoot().resolve("hello");
-		String string = "A string";
-		Bundles.setStringValue(hello, string);
-		assertEquals(string, Bundles.getStringValue(hello));	
-		assertEquals(null, Bundles.getStringValue(null));
+			Path hello = bundle.getRoot().resolve("hello");
+			String string = "A string";
+			Bundles.setStringValue(hello, string);
+			assertEquals(string, Bundles.getStringValue(hello));
+			assertEquals(null, Bundles.getStringValue(null));
 		}
 	}
 
@@ -326,41 +333,38 @@ public class TestBundles {
 		}
 	}
 
-
 	@Test
 	public void isMissing() throws Exception {
 		try (Bundle bundle = Bundles.createBundle()) {
-		Path missing = bundle.getRoot().resolve("missing");		
-		assertFalse(Bundles.isValue(missing));
-		assertTrue(Bundles.isMissing(missing));
-		assertFalse(Bundles.isReference(missing));
+			Path missing = bundle.getRoot().resolve("missing");
+			assertFalse(Bundles.isValue(missing));
+			assertTrue(Bundles.isMissing(missing));
+			assertFalse(Bundles.isReference(missing));
 		}
 	}
-	
+
 	@Test
 	public void isReference() throws Exception {
 		try (Bundle bundle = Bundles.createBundle()) {
-		Path ref = bundle.getRoot().resolve("ref");		
-		Bundles.setReference(ref, URI.create("http://example.org/test"));
-		assertTrue(Bundles.isReference(ref));
-		assertFalse(Bundles.isMissing(ref));
-		assertFalse(Bundles.isValue(ref));
+			Path ref = bundle.getRoot().resolve("ref");
+			Bundles.setReference(ref, URI.create("http://example.org/test"));
+			assertTrue(Bundles.isReference(ref));
+			assertFalse(Bundles.isMissing(ref));
+			assertFalse(Bundles.isValue(ref));
 		}
 	}
-	
+
 	@Test
 	public void isValue() throws Exception {
 		try (Bundle bundle = Bundles.createBundle()) {
-		    
-		Path hello = bundle.getRoot().resolve("hello");		
-		Bundles.setStringValue(hello, "Hello");
-		assertTrue(Bundles.isValue(hello));
-		assertFalse(Bundles.isReference(hello));
-	}
+
+			Path hello = bundle.getRoot().resolve("hello");
+			Bundles.setStringValue(hello, "Hello");
+			assertTrue(Bundles.isValue(hello));
+			assertFalse(Bundles.isReference(hello));
+		}
 	}
 
-
-	
 	protected List<String> ls(Path path) throws IOException {
 		List<String> paths = new ArrayList<>();
 		try (DirectoryStream<Path> ds = Files.newDirectoryStream(path)) {
@@ -371,7 +375,7 @@ public class TestBundles {
 		Collections.sort(paths);
 		return paths;
 	}
-	
+
 	@Test
 	public void safeMove() throws Exception {
 		Path tmp = Files.createTempDirectory("test");
@@ -382,15 +386,14 @@ public class TestBundles {
 		assertFalse(isEmpty(tmp));
 
 		try (Bundle db = Bundles.createBundle()) {
-    		Path f2 = db.getRoot().resolve("f2");
-    		Bundles.safeMove(f1, f2);
-    		assertFalse(Files.exists(f1));
-    		assertTrue(isEmpty(tmp));
-    		assertEquals(Arrays.asList("f2", "mimetype"), ls(db.getRoot()));
+			Path f2 = db.getRoot().resolve("f2");
+			Bundles.safeMove(f1, f2);
+			assertFalse(Files.exists(f1));
+			assertTrue(isEmpty(tmp));
+			assertEquals(Arrays.asList("f2", "mimetype"), ls(db.getRoot()));
 		}
 
 	}
-	
 
 	private void checkWorkflowrunBundle(Bundle b) throws IOException {
 		Path path = b.getRoot().resolve("workflowrun.prov.ttl");
@@ -399,21 +402,23 @@ public class TestBundles {
 		Manifest manifest = b.getManifest();
 		PathMetadata aggregation = manifest.getAggregation(path);
 		URI proxy = aggregation.getProxy();
-		assertEquals(URI.create("urn:uuid:ac1c89cc-3ba2-462d-bd82-ab5b8297f98e"), 
+		assertEquals(
+				URI.create("urn:uuid:ac1c89cc-3ba2-462d-bd82-ab5b8297f98e"),
 				proxy);
 	}
-	
+
 	@Test
 	public void openBundleInputStream() throws Exception {
-		try (InputStream stream = getClass().getResourceAsStream("/workflowrun.bundle.zip")) {
+		try (InputStream stream = getClass().getResourceAsStream(
+				"/workflowrun.bundle.zip")) {
 			assertNotNull(stream);
 			try (Bundle b = Bundles.openBundle(stream)) {
 				checkWorkflowrunBundle(b);
 			}
 		}
-		
+
 	}
-	
+
 	@Test
 	public void openBundleURL() throws Exception {
 		URL url = getClass().getResource("/workflowrun.bundle.zip");
@@ -422,12 +427,12 @@ public class TestBundles {
 			checkWorkflowrunBundle(b);
 		}
 	}
-	
+
 	@Test
 	public void openBundleURLNonFile() throws Exception {
 		final URL url = getClass().getResource("/workflowrun.bundle.zip");
 		assertNotNull(url);
-		URLStreamHandler handler = new URLStreamHandler() {			
+		URLStreamHandler handler = new URLStreamHandler() {
 			@Override
 			protected URLConnection openConnection(URL u) throws IOException {
 				return url.openConnection();
@@ -438,79 +443,77 @@ public class TestBundles {
 			checkWorkflowrunBundle(b);
 		}
 	}
-	
-	
+
 	@Test
-    public void openBundleReadOnly() throws Exception {
-	    Path untouched = Files.createTempFile("test-openBundleReadOnly", ".zip");
-	    try (Bundle bundle = Bundles.createBundle(untouched)) {
-	        Bundles.setStringValue(bundle.getRoot().resolve("file.txt"), "Untouched");
-	    }	    
-	    try (Bundle readOnly = Bundles.openBundleReadOnly(untouched)) {
-	        Path file = readOnly.getRoot().resolve("file.txt");
-	        // You can change the open file system
-            Bundles.setStringValue(file, "Modified");
-	        assertEquals("Modified", Bundles.getStringValue(file));
-	        // and even make new resources
-	        Path newFile = readOnly.getRoot().resolve("newfile.txt");
-            Files.createFile(newFile);	        
-	        assertTrue(Files.exists(newFile));
-	        
-	    }
-	    try (Bundle readOnly = Bundles.openBundleReadOnly(untouched)) {
-	        // But that is not persisted in the zip
-	        Path file = readOnly.getRoot().resolve("file.txt");
-            assertEquals("Untouched", Bundles.getStringValue(file));
-	        Path newfile = readOnly.getRoot().resolve("newfile.txt");
-            assertFalse(Files.exists(newfile));
-        }
-    }
-	
-	   
-    @Test
-    public void safeCopy() throws Exception {
-        Path tmp = Files.createTempDirectory("test");
-        tmp.toFile().deleteOnExit();
-        Path f1 = tmp.resolve("f1");
-        f1.toFile().deleteOnExit();
-        Files.createFile(f1);
-        assertFalse(isEmpty(tmp));
+	public void openBundleReadOnly() throws Exception {
+		Path untouched = Files
+				.createTempFile("test-openBundleReadOnly", ".zip");
+		try (Bundle bundle = Bundles.createBundle(untouched)) {
+			Bundles.setStringValue(bundle.getRoot().resolve("file.txt"),
+					"Untouched");
+		}
+		try (Bundle readOnly = Bundles.openBundleReadOnly(untouched)) {
+			Path file = readOnly.getRoot().resolve("file.txt");
+			// You can change the open file system
+			Bundles.setStringValue(file, "Modified");
+			assertEquals("Modified", Bundles.getStringValue(file));
+			// and even make new resources
+			Path newFile = readOnly.getRoot().resolve("newfile.txt");
+			Files.createFile(newFile);
+			assertTrue(Files.exists(newFile));
 
-        try (Bundle db = Bundles.createBundle()) {
-            Path f2 = db.getRoot().resolve("f2");
-            Bundles.safeCopy(f1, f2);
-            assertTrue(Files.exists(f1));
-            assertTrue(Files.exists(f2));           
-            assertEquals(Arrays.asList("f2", "mimetype"), ls(db.getRoot()));
-        }
+		}
+		try (Bundle readOnly = Bundles.openBundleReadOnly(untouched)) {
+			// But that is not persisted in the zip
+			Path file = readOnly.getRoot().resolve("file.txt");
+			assertEquals("Untouched", Bundles.getStringValue(file));
+			Path newfile = readOnly.getRoot().resolve("newfile.txt");
+			assertFalse(Files.exists(newfile));
+		}
+	}
 
-    }
-    
+	@Test
+	public void safeCopy() throws Exception {
+		Path tmp = Files.createTempDirectory("test");
+		tmp.toFile().deleteOnExit();
+		Path f1 = tmp.resolve("f1");
+		f1.toFile().deleteOnExit();
+		Files.createFile(f1);
+		assertFalse(isEmpty(tmp));
 
-    @Test(expected = DirectoryNotEmptyException.class)
-    public void safeCopyFails() throws Exception {
-        Path tmp = Files.createTempDirectory("test");
-        tmp.toFile().deleteOnExit();
-        Path f1 = tmp.resolve("f1");
-        f1.toFile().deleteOnExit();
-        Path d1 = tmp.resolve("d1");
-        d1.toFile().deleteOnExit();
-        Files.createFile(f1);
+		try (Bundle db = Bundles.createBundle()) {
+			Path f2 = db.getRoot().resolve("f2");
+			Bundles.safeCopy(f1, f2);
+			assertTrue(Files.exists(f1));
+			assertTrue(Files.exists(f2));
+			assertEquals(Arrays.asList("f2", "mimetype"), ls(db.getRoot()));
+		}
 
-        // Make d1 difficult to overwrite
-        Files.createDirectory(d1);
-        Files.createFile(d1.resolve("child"));
+	}
 
-        try {
-//            Files.copy(f1, d1, StandardCopyOption.REPLACE_EXISTING);
-            Bundles.safeCopy(f1, d1);
-        } finally {
-            assertEquals(Arrays.asList("d1", "f1"), ls(tmp));
-            assertTrue(Files.exists(f1));
-            assertTrue(Files.isDirectory(d1));
-        }
-    }
-	
+	@Test(expected = DirectoryNotEmptyException.class)
+	public void safeCopyFails() throws Exception {
+		Path tmp = Files.createTempDirectory("test");
+		tmp.toFile().deleteOnExit();
+		Path f1 = tmp.resolve("f1");
+		f1.toFile().deleteOnExit();
+		Path d1 = tmp.resolve("d1");
+		d1.toFile().deleteOnExit();
+		Files.createFile(f1);
+
+		// Make d1 difficult to overwrite
+		Files.createDirectory(d1);
+		Files.createFile(d1.resolve("child"));
+
+		try {
+			// Files.copy(f1, d1, StandardCopyOption.REPLACE_EXISTING);
+			Bundles.safeCopy(f1, d1);
+		} finally {
+			assertEquals(Arrays.asList("d1", "f1"), ls(tmp));
+			assertTrue(Files.exists(f1));
+			assertTrue(Files.isDirectory(d1));
+		}
+	}
 
 	@Test(expected = IOException.class)
 	public void safeMoveFails() throws Exception {
@@ -524,7 +527,7 @@ public class TestBundles {
 
 		// Make d1 difficult to overwrite
 		Files.createDirectory(d1);
-        Files.createFile(d1.resolve("child"));
+		Files.createFile(d1.resolve("child"));
 
 		try {
 			Bundles.safeMove(f1, d1);
@@ -533,79 +536,83 @@ public class TestBundles {
 			assertEquals(Arrays.asList("d1", "f1"), ls(tmp));
 		}
 	}
-	
+
 	@Test
 	public void setReference() throws Exception {
 		try (Bundle bundle = Bundles.createBundle()) {
-		
-		Path ref = bundle.getRoot().resolve("ref");		
-		Bundles.setReference(ref, URI.create("http://example.org/test"));
-		
-		URI uri = URI.create("http://example.org/test");		
-		Path f = Bundles.setReference(ref, uri);
-		assertEquals("ref.url", f.getFileName().toString());
-		assertEquals(bundle.getRoot(), f.getParent());
-		assertFalse(Files.exists(ref));		
-		
-		List<String> uriLines = Files.readAllLines(f, Charset.forName("ASCII"));
-		assertEquals(3, uriLines.size());
-		assertEquals("[InternetShortcut]", uriLines.get(0));
-		assertEquals("URL=http://example.org/test", uriLines.get(1));
-		assertEquals("", uriLines.get(2));				
-		}		
+
+			Path ref = bundle.getRoot().resolve("ref");
+			Bundles.setReference(ref, URI.create("http://example.org/test"));
+
+			URI uri = URI.create("http://example.org/test");
+			Path f = Bundles.setReference(ref, uri);
+			assertEquals("ref.url", f.getFileName().toString());
+			assertEquals(bundle.getRoot(), f.getParent());
+			assertFalse(Files.exists(ref));
+
+			List<String> uriLines = Files.readAllLines(f,
+					Charset.forName("ASCII"));
+			assertEquals(3, uriLines.size());
+			assertEquals("[InternetShortcut]", uriLines.get(0));
+			assertEquals("URL=http://example.org/test", uriLines.get(1));
+			assertEquals("", uriLines.get(2));
+		}
 	}
-	
+
 	@Test
 	public void setReferenceIri() throws Exception {
 		try (Bundle bundle = Bundles.createBundle()) {
-		Path ref = bundle.getRoot().resolve("ref");		
-		URI uri = new URI("http", "xn--bcher-kva.example.com", "/s\u00F8iland/\u2603snowman", "\u2605star");
-		Path f = Bundles.setReference(ref, uri);
-		List<String> uriLines = Files.readAllLines(f, Charset.forName("ASCII"));
-		// TODO: Double-check that this is actually correct escaping :)
-		assertEquals("URL=http://xn--bcher-kva.example.com/s%C3%B8iland/%E2%98%83snowman#%E2%98%85star", 
-				uriLines.get(1));
+			Path ref = bundle.getRoot().resolve("ref");
+			URI uri = new URI("http", "xn--bcher-kva.example.com",
+					"/s\u00F8iland/\u2603snowman", "\u2605star");
+			Path f = Bundles.setReference(ref, uri);
+			List<String> uriLines = Files.readAllLines(f,
+					Charset.forName("ASCII"));
+			// TODO: Double-check that this is actually correct escaping :)
+			assertEquals(
+					"URL=http://xn--bcher-kva.example.com/s%C3%B8iland/%E2%98%83snowman#%E2%98%85star",
+					uriLines.get(1));
 		}
 	}
 
 	@Test
 	public void setStringValue() throws Exception {
 		try (Bundle bundle = Bundles.createBundle()) {
-		Path file = bundle.getRoot().resolve("file");		
-		String string = "A string";
-		Bundles.setStringValue(file, string);
-		assertEquals(string, Files.readAllLines(file, Charset.forName("UTF-8")).get(0));
+			Path file = bundle.getRoot().resolve("file");
+			String string = "A string";
+			Bundles.setStringValue(file, string);
+			assertEquals(string,
+					Files.readAllLines(file, Charset.forName("UTF-8")).get(0));
 		}
 	}
-	
+
 	@Test
 	public void withExtension() throws Exception {
 		Path testDir = Files.createTempDirectory("test");
 		testDir.toFile().deleteOnExit();
 		Path fileTxt = testDir.resolve("file.txt");
 		fileTxt.toFile().deleteOnExit();
-		assertEquals("file.txt", fileTxt.getFileName().toString()); // better be!
-		
+		assertEquals("file.txt", fileTxt.getFileName().toString()); // better
+																	// be!
+
 		Path fileHtml = Bundles.withExtension(fileTxt, ".html");
 		assertEquals(fileTxt.getParent(), fileHtml.getParent());
-		assertEquals("file.html", fileHtml.getFileName().toString()); 
-		
+		assertEquals("file.html", fileHtml.getFileName().toString());
+
 		Path fileDot = Bundles.withExtension(fileTxt, ".");
-		assertEquals("file.", fileDot.getFileName().toString()); 
-		
+		assertEquals("file.", fileDot.getFileName().toString());
+
 		Path fileEmpty = Bundles.withExtension(fileTxt, "");
-		assertEquals("file", fileEmpty.getFileName().toString()); 
-		
-		
+		assertEquals("file", fileEmpty.getFileName().toString());
+
 		Path fileDoc = Bundles.withExtension(fileEmpty, ".doc");
 		assertEquals("file.doc", fileDoc.getFileName().toString());
-		
+
 		Path fileManyPdf = Bundles.withExtension(fileTxt, ".test.many.pdf");
-		assertEquals("file.test.many.pdf", fileManyPdf.getFileName().toString()); 
-		
+		assertEquals("file.test.many.pdf", fileManyPdf.getFileName().toString());
+
 		Path fileManyTxt = Bundles.withExtension(fileManyPdf, ".txt");
 		assertEquals("file.test.many.txt", fileManyTxt.getFileName().toString());
 	}
 
 }
-

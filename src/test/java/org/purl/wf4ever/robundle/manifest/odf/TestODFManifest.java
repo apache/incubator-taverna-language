@@ -28,7 +28,7 @@ public class TestODFManifest {
 					.getManifest().getAggregation(t2flow).getMediatype());
 			Path manifestRdf = bundle.getPath("META-INF/manifest.xml");
 			assertTrue(Files.exists(manifestRdf));
-			assertTrue(bundle.getManifest().getManifest().contains(manifestRdf));			
+			assertTrue(bundle.getManifest().getManifest().contains(manifestRdf));
 		}
 	}
 

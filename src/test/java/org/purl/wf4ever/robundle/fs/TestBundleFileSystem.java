@@ -21,192 +21,196 @@ import org.purl.wf4ever.robundle.Bundles;
 
 public class TestBundleFileSystem extends Helper {
 
-    @Test
-    public void writeToNewFile() throws Exception {
-        Path file = fs.getPath("test.txt");
-        Files.newBufferedWriter(file, Charset.defaultCharset()).close();
-    }
+	@Test
+	public void writeToNewFile() throws Exception {
+		Path file = fs.getPath("test.txt");
+		Files.newBufferedWriter(file, Charset.defaultCharset()).close();
+	}
 
-    @Test
-    public void reopenNew() throws Exception {
-        Path x = Files.createTempFile("temp", ".zip");
-        Bundle bundle = Bundles.createBundle(x);
-        Path newFile = Files.createTempFile("temp", ".zip");
-        Bundles.closeAndSaveBundle(bundle, newFile);
-        Bundles.openBundle(newFile);
-    }
-    
+	@Test
+	public void reopenNew() throws Exception {
+		Path x = Files.createTempFile("temp", ".zip");
+		Bundle bundle = Bundles.createBundle(x);
+		Path newFile = Files.createTempFile("temp", ".zip");
+		Bundles.closeAndSaveBundle(bundle, newFile);
+		Bundles.openBundle(newFile);
+	}
 
-    @Test
-    public void closeAndSaveToPreserveOriginal() throws Exception {
-        Path x = Files.createTempFile("temp", ".zip");
-        Bundle bundle = Bundles.createBundle(x);
-        Path newFile = Files.createTempFile("temp", ".zip");
-        Bundles.closeAndSaveBundle(bundle, newFile);
-        Bundles.openBundle(x);
-    }
-    
-    
-    
-    /**
-     * Test that BundleFileSystem does not allow a ZIP file to also become a
-     * directory. See http://stackoverflow.com/questions/16588321/ as Java 7'z
-     * ZIPFS normally allows this (!)
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void fileAndDirectory() throws Exception {
-        Path folder = fs.getPath("folder");
+	@Test
+	public void closeAndSaveToPreserveOriginal() throws Exception {
+		Path x = Files.createTempFile("temp", ".zip");
+		Bundle bundle = Bundles.createBundle(x);
+		Path newFile = Files.createTempFile("temp", ".zip");
+		Bundles.closeAndSaveBundle(bundle, newFile);
+		Bundles.openBundle(x);
+	}
 
-        // To test on local file system, uncomment next 2 lines:
-//        Path test = Files.createTempDirectory("test");
-//        folder = test.resolve("folder");
-        
-        
-        assertFalse(Files.exists(folder));
-        Files.createFile(folder);
-        assertTrue(Files.exists(folder));
-        assertTrue(Files.isRegularFile(folder));
-        assertFalse(Files.isDirectory(folder));
+	/**
+	 * Test that BundleFileSystem does not allow a ZIP file to also become a
+	 * directory. See http://stackoverflow.com/questions/16588321/ as Java 7'z
+	 * ZIPFS normally allows this (!)
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void fileAndDirectory() throws Exception {
+		Path folder = fs.getPath("folder");
 
-        try {
-            Files.createDirectory(folder);
-            fail("Should have thrown FileAlreadyExistsException");
-        } catch (FileAlreadyExistsException ex) {
-        }
-        assertFalse(Files.isDirectory(folder));
+		// To test on local file system, uncomment next 2 lines:
+		// Path test = Files.createTempDirectory("test");
+		// folder = test.resolve("folder");
 
-        try {
-            Files.createDirectories(folder);
-            fail("Should have thrown FileAlreadyExistsException");
-        } catch (FileAlreadyExistsException ex) {
-        }
-        assertFalse(Files.isDirectory(folder));
+		assertFalse(Files.exists(folder));
+		Files.createFile(folder);
+		assertTrue(Files.exists(folder));
+		assertTrue(Files.isRegularFile(folder));
+		assertFalse(Files.isDirectory(folder));
 
-        Path child = folder.resolve("child");
+		try {
+			Files.createDirectory(folder);
+			fail("Should have thrown FileAlreadyExistsException");
+		} catch (FileAlreadyExistsException ex) {
+		}
+		assertFalse(Files.isDirectory(folder));
 
-        try {
-            Files.createFile(child);
-            fail("Should have thrown NoSuchFileException");
-        } catch (NoSuchFileException ex) {
-        }
-        assertFalse(Files.exists(child));
+		try {
+			Files.createDirectories(folder);
+			fail("Should have thrown FileAlreadyExistsException");
+		} catch (FileAlreadyExistsException ex) {
+		}
+		assertFalse(Files.isDirectory(folder));
 
-        assertTrue(Files.isRegularFile(folder));
-        assertFalse(Files.isDirectory(folder));
-        assertFalse(Files.isDirectory(child.getParent()));
-        assertFalse(Files.isDirectory(fs.getPath("folder/")));
-    }
+		Path child = folder.resolve("child");
 
-    /**
-     * Test that BundleFileSystem does not allow a ZIP directory to also become
-     * a file. See http://stackoverflow.com/questions/16588321/ as Java 7'z
-     * ZIPFS normally allows this (!)
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void directoryAndFile() throws Exception {
-        Path folderSlash = fs.getPath("folder/");
-        Path folder = fs.getPath("folder");
+		try {
+			Files.createFile(child);
+			fail("Should have thrown NoSuchFileException");
+		} catch (NoSuchFileException ex) {
+		}
+		assertFalse(Files.exists(child));
 
-        
-        // Uncomment next 3 lines to test on local FS
-//        Path test = Files.createTempDirectory("test");
-//        folderSlash = test.resolve("folder/");
-//        folder = test.resolve("folder");
-        
-        assertFalse(Files.exists(folderSlash));
+		assertTrue(Files.isRegularFile(folder));
+		assertFalse(Files.isDirectory(folder));
+		assertFalse(Files.isDirectory(child.getParent()));
+		assertFalse(Files.isDirectory(fs.getPath("folder/")));
+	}
 
-        Files.createDirectory(folderSlash);
-        assertTrue(Files.exists(folderSlash));
-        assertFalse(Files.isRegularFile(folderSlash));
-        assertTrue(Files.isDirectory(folderSlash));
+	/**
+	 * Test that BundleFileSystem does not allow a ZIP directory to also become
+	 * a file. See http://stackoverflow.com/questions/16588321/ as Java 7'z
+	 * ZIPFS normally allows this (!)
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void directoryAndFile() throws Exception {
+		Path folderSlash = fs.getPath("folder/");
+		Path folder = fs.getPath("folder");
 
-        try {
-            Files.createDirectory(folderSlash);
-            fail("Should have thrown FileAlreadyExistsException");
-        } catch (FileAlreadyExistsException ex) {
-        }
+		// Uncomment next 3 lines to test on local FS
+		// Path test = Files.createTempDirectory("test");
+		// folderSlash = test.resolve("folder/");
+		// folder = test.resolve("folder");
 
-        try {
-            Files.createFile(folderSlash);
-            fail("Should have thrown IOException");
-        } catch (IOException ex) {
-        }
+		assertFalse(Files.exists(folderSlash));
 
-        try {
-            Files.createFile(folder);
-            fail("Should have thrown IOException");
-        } catch (IOException ex) {
-        }
-                
-        Path child = folderSlash.resolve("child");
-        Files.createFile(child);
+		Files.createDirectory(folderSlash);
+		assertTrue(Files.exists(folderSlash));
+		assertFalse(Files.isRegularFile(folderSlash));
+		assertTrue(Files.isDirectory(folderSlash));
 
-        assertTrue(Files.exists(folder));
-        assertTrue(Files.exists(folderSlash));        
-        
-        assertFalse(Files.isRegularFile(folder));
-        assertFalse(Files.isRegularFile(folderSlash));
+		try {
+			Files.createDirectory(folderSlash);
+			fail("Should have thrown FileAlreadyExistsException");
+		} catch (FileAlreadyExistsException ex) {
+		}
 
-        assertTrue(Files.isDirectory(folder));
-        assertTrue(Files.isDirectory(folderSlash));
+		try {
+			Files.createFile(folderSlash);
+			fail("Should have thrown IOException");
+		} catch (IOException ex) {
+		}
 
-        
-    }
-    
-    @Test
-    public void setLastModifiedTime() throws Exception {
-        Path root = fs.getRootDirectories().iterator().next();
-        
-        Path folder = root.resolve("folder");
-        Files.createDirectory(folder);
-        
-        Path file = root.resolve("file");
-        Files.createFile(file);
-        
-        
-        int manyDays = 365*12;
-        FileTime someTimeAgo = FileTime.from(manyDays, TimeUnit.DAYS);
-        Files.setLastModifiedTime(folder, someTimeAgo);
-        Files.setLastModifiedTime(file, someTimeAgo);
-        Files.setLastModifiedTime(root, someTimeAgo);
+		try {
+			Files.createFile(folder);
+			fail("Should have thrown IOException");
+		} catch (IOException ex) {
+		}
 
-        // Should be equal, +/- 2 seconds (allowing precision loss)
-        assertEquals((double)someTimeAgo.toMillis(), Files.getLastModifiedTime(folder).toMillis(), 2001);
-        assertEquals((double)someTimeAgo.toMillis(), Files.getLastModifiedTime(file).toMillis(), 2001);
+		Path child = folderSlash.resolve("child");
+		Files.createFile(child);
 
-        // Fails as we'll get back -1 instead
-//        assertEquals((double)someTimeAgo.toMillis(), Files.getLastModifiedTime(root).toMillis(), 2001);
-    }
+		assertTrue(Files.exists(folder));
+		assertTrue(Files.exists(folderSlash));
 
-    
-    @Test
-    public void creationTime() throws Exception {
-        Path root = fs.getRootDirectories().iterator().next();
-        
-        Path folder = root.resolve("folder");
-        Files.createDirectory(folder);
-        
-        Path file = root.resolve("file");
-        Files.createFile(file);
-        
-        
-        int manyDays = 365*12;
-        FileTime someTimeAgo = FileTime.from(manyDays, TimeUnit.DAYS);
-                
-        Files.getFileAttributeView(folder, BasicFileAttributeView.class).setTimes(null, null, someTimeAgo);
-        Files.getFileAttributeView(file, BasicFileAttributeView.class).setTimes(null, null, someTimeAgo);
-        Files.getFileAttributeView(root, BasicFileAttributeView.class).setTimes(null, null, someTimeAgo);
+		assertFalse(Files.isRegularFile(folder));
+		assertFalse(Files.isRegularFile(folderSlash));
 
-        // Should be equal, +/- 2 seconds
-        assertEquals((double)someTimeAgo.toMillis(), (double) ((FileTime)Files.getAttribute(file, "creationTime")).toMillis(), 2001);
-        assertEquals((double)someTimeAgo.toMillis(), (double) ((FileTime)Files.getAttribute(folder, "creationTime")).toMillis(), 2001);
+		assertTrue(Files.isDirectory(folder));
+		assertTrue(Files.isDirectory(folderSlash));
 
-        // FIXME: FAils with NullPointerException! :(
-//        assertEquals((double)someTimeAgo.toMillis(), (double) ((FileTime)Files.getAttribute(root, "creationTime")).toMillis(), 2001);
+	}
 
-    }
+	@Test
+	public void setLastModifiedTime() throws Exception {
+		Path root = fs.getRootDirectories().iterator().next();
+
+		Path folder = root.resolve("folder");
+		Files.createDirectory(folder);
+
+		Path file = root.resolve("file");
+		Files.createFile(file);
+
+		int manyDays = 365 * 12;
+		FileTime someTimeAgo = FileTime.from(manyDays, TimeUnit.DAYS);
+		Files.setLastModifiedTime(folder, someTimeAgo);
+		Files.setLastModifiedTime(file, someTimeAgo);
+		Files.setLastModifiedTime(root, someTimeAgo);
+
+		// Should be equal, +/- 2 seconds (allowing precision loss)
+		assertEquals((double) someTimeAgo.toMillis(), Files
+				.getLastModifiedTime(folder).toMillis(), 2001);
+		assertEquals((double) someTimeAgo.toMillis(), Files
+				.getLastModifiedTime(file).toMillis(), 2001);
+
+		// Fails as we'll get back -1 instead
+		// assertEquals((double)someTimeAgo.toMillis(),
+		// Files.getLastModifiedTime(root).toMillis(), 2001);
+	}
+
+	@Test
+	public void creationTime() throws Exception {
+		Path root = fs.getRootDirectories().iterator().next();
+
+		Path folder = root.resolve("folder");
+		Files.createDirectory(folder);
+
+		Path file = root.resolve("file");
+		Files.createFile(file);
+
+		int manyDays = 365 * 12;
+		FileTime someTimeAgo = FileTime.from(manyDays, TimeUnit.DAYS);
+
+		Files.getFileAttributeView(folder, BasicFileAttributeView.class)
+				.setTimes(null, null, someTimeAgo);
+		Files.getFileAttributeView(file, BasicFileAttributeView.class)
+				.setTimes(null, null, someTimeAgo);
+		Files.getFileAttributeView(root, BasicFileAttributeView.class)
+				.setTimes(null, null, someTimeAgo);
+
+		// Should be equal, +/- 2 seconds
+		assertEquals((double) someTimeAgo.toMillis(),
+				(double) ((FileTime) Files.getAttribute(file, "creationTime"))
+						.toMillis(), 2001);
+		assertEquals(
+				(double) someTimeAgo.toMillis(),
+				(double) ((FileTime) Files.getAttribute(folder, "creationTime"))
+						.toMillis(), 2001);
+
+		// FIXME: FAils with NullPointerException! :(
+		// assertEquals((double)someTimeAgo.toMillis(), (double)
+		// ((FileTime)Files.getAttribute(root, "creationTime")).toMillis(),
+		// 2001);
+
+	}
 }

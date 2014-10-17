@@ -9,20 +9,20 @@ import org.junit.Before;
 import org.purl.wf4ever.robundle.Bundles;
 
 public class Helper {
-    protected BundleFileSystem fs;
+	protected BundleFileSystem fs;
 
-    @Before
-    public void makeFS() throws IOException {
-        fs = BundleFileSystemProvider.newFileSystemFromTemporary();
-    }
+	@Before
+	public void makeFS() throws IOException {
+		fs = BundleFileSystemProvider.newFileSystemFromTemporary();
+	}
 
-    @After
-    public void closeAndDeleteFS() throws IOException {
-        fs.close();
-        Path source = fs.getSource();
-        Files.deleteIfExists(source);
-        if (source.getParent().getFileName().toString().startsWith("robundle")) {
-            Bundles.deleteRecursively(source.getParent());
-        }
-    }
+	@After
+	public void closeAndDeleteFS() throws IOException {
+		fs.close();
+		Path source = fs.getSource();
+		Files.deleteIfExists(source);
+		if (source.getParent().getFileName().toString().startsWith("robundle")) {
+			Bundles.deleteRecursively(source.getParent());
+		}
+	}
 }

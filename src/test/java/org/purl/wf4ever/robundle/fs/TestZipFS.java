@@ -30,162 +30,164 @@ import org.junit.Test;
 
 public class TestZipFS {
 
-    private static Path zip;
-    private FileSystem fs;
+	private static Path zip;
+	private FileSystem fs;
 
-    @Test
-    public void fileChannelCreateNew() throws Exception {
-        Path test = fs.getPath("test.txt");
-        EnumSet<StandardOpenOption> options =
-                EnumSet.<StandardOpenOption>of(StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
-        fs.provider().newFileChannel(test, options);
-    }
+	@Test
+	public void fileChannelCreateNew() throws Exception {
+		Path test = fs.getPath("test.txt");
+		EnumSet<StandardOpenOption> options = EnumSet.<StandardOpenOption> of(
+				StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
+		fs.provider().newFileChannel(test, options);
+	}
 
-    @Test
-    public void fileChannelCreate() throws Exception {
-        try {
-            Path test = fs.getPath("test.txt");
-            FileChannel.open(test, StandardOpenOption.WRITE, StandardOpenOption.CREATE).close();
-        } catch (NoSuchFileException ex) {
-            System.err.println("Unexpected exception");
-            ex.printStackTrace();
-            // Bug in JDK
-        }
-    }
+	@Test
+	public void fileChannelCreate() throws Exception {
+		try {
+			Path test = fs.getPath("test.txt");
+			FileChannel.open(test, StandardOpenOption.WRITE,
+					StandardOpenOption.CREATE).close();
+		} catch (NoSuchFileException ex) {
+			System.err.println("Unexpected exception");
+			ex.printStackTrace();
+			// Bug in JDK
+		}
+	}
 
-    @Test(expected=FileAlreadyExistsException.class)
-    public void fileChannelCreateFails() throws Exception {
-            Path test = fs.getPath("test.txt");
-            Files.createFile(test);
-            FileChannel.open(test, StandardOpenOption.WRITE, StandardOpenOption.CREATE_NEW).close();
-    }
+	@Test(expected = FileAlreadyExistsException.class)
+	public void fileChannelCreateFails() throws Exception {
+		Path test = fs.getPath("test.txt");
+		Files.createFile(test);
+		FileChannel.open(test, StandardOpenOption.WRITE,
+				StandardOpenOption.CREATE_NEW).close();
+	}
 
-    @Test
-    public void fileChannelTruncate() throws Exception {
-            Path test = fs.getPath("test.txt");
-            Files.write(test, new byte[1024]);
-            assertEquals(1024, Files.size(test));
-            FileChannel.open(test, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING).close();
-            assertEquals(0, Files.size(test));
-    }
+	@Test
+	public void fileChannelTruncate() throws Exception {
+		Path test = fs.getPath("test.txt");
+		Files.write(test, new byte[1024]);
+		assertEquals(1024, Files.size(test));
+		FileChannel.open(test, StandardOpenOption.WRITE,
+				StandardOpenOption.TRUNCATE_EXISTING).close();
+		assertEquals(0, Files.size(test));
+	}
 
-    
-    /**
-     * Verifies http://stackoverflow.com/questions/16588321/ as both ZIP format
-     * and Java 7 ZIPFS allows a folder and file to have the same name.
-     * 
-     */
-    @Test
-    public void directoryOrFile() throws Exception {
-            Path folder = fs.getPath("folder");
-            assertFalse(Files.exists(folder));
-            Files.createFile(folder);
-            assertTrue(Files.exists(folder));
-            assertTrue(Files.isRegularFile(folder));
-            assertFalse(Files.isDirectory(folder));
+	/**
+	 * Verifies http://stackoverflow.com/questions/16588321/ as both ZIP format
+	 * and Java 7 ZIPFS allows a folder and file to have the same name.
+	 * 
+	 */
+	@Test
+	public void directoryOrFile() throws Exception {
+		Path folder = fs.getPath("folder");
+		assertFalse(Files.exists(folder));
+		Files.createFile(folder);
+		assertTrue(Files.exists(folder));
+		assertTrue(Files.isRegularFile(folder));
+		assertFalse(Files.isDirectory(folder));
 
-            try {
-                Path folderCreated = Files.createDirectory(folder);
-                assertEquals(folder, folderCreated);
-                folder = folderCreated;
-                System.out.println(folder + " " + folderCreated);
- 
-                // Disable for now, just to see where this leads
-                // fail("Should have thrown FileAlreadyExistsException");
-            } catch (FileAlreadyExistsException ex) {
-            }
+		try {
+			Path folderCreated = Files.createDirectory(folder);
+			assertEquals(folder, folderCreated);
+			folder = folderCreated;
+			System.out.println(folder + " " + folderCreated);
 
-            // For some reason the second createDirectory() fails correctly
-            try {
-                Files.createDirectory(folder);
-                fail("Should have thrown FileAlreadyExistsException");
-            } catch (FileAlreadyExistsException ex) {
-            }
+			// Disable for now, just to see where this leads
+			// fail("Should have thrown FileAlreadyExistsException");
+		} catch (FileAlreadyExistsException ex) {
+		}
 
-            Path child = folder.resolve("child");
-            Files.createFile(child);
+		// For some reason the second createDirectory() fails correctly
+		try {
+			Files.createDirectory(folder);
+			fail("Should have thrown FileAlreadyExistsException");
+		} catch (FileAlreadyExistsException ex) {
+		}
 
-            // Look, it's both a file and folder!
-            // Can this be asserted?
-            assertTrue(Files.isRegularFile(folder));
-            // Yes, if you include the final /
-            assertTrue(Files.isDirectory(fs.getPath("folder/")));
-            // But not the parent
-            // assertTrue(Files.isDirectory(child.getParent()));
-            // Or the original Path
-            // assertTrue(Files.isDirectory(folder));
-        
-            fs.close();
-        // What if we open it again.. can we find both?
-        try (FileSystem fs2 = FileSystems.newFileSystem(zip, null)) {
-            assertTrue(Files.isRegularFile(fs2.getPath("folder")));
-            assertTrue(Files.isRegularFile(fs2.getPath("folder/child")));
-            assertTrue(Files.isDirectory(fs2.getPath("folder/")));
+		Path child = folder.resolve("child");
+		Files.createFile(child);
 
-            // We can even list the folder
-            try (DirectoryStream<Path> s = Files.newDirectoryStream(fs2
-                    .getPath("folder/"))) {
-                boolean found = false;
-                for (Path p : s) {
-                    found = p.endsWith("child");
-                }
-                assertTrue("Did not find 'child'", found);
-            }
-            // But if we list the root, do we find "folder" or "folder/"?
-            Path root = fs2.getRootDirectories().iterator().next();
-            try (DirectoryStream<Path> s = Files.newDirectoryStream(root)) {
-                List<String> paths = new ArrayList<>();
-                for (Path p : s) {
-                    paths.add(p.toString());
-                }
-                // We find both!
-                assertEquals(2, paths.size());
-                assertTrue(paths.contains("/folder"));
-                assertTrue(paths.contains("/folder/"));
-            }
-            // SO does that mean this is a feature, and not a bug?
-            // See http://stackoverflow.com/questions/16588321/ for more
-        }
+		// Look, it's both a file and folder!
+		// Can this be asserted?
+		assertTrue(Files.isRegularFile(folder));
+		// Yes, if you include the final /
+		assertTrue(Files.isDirectory(fs.getPath("folder/")));
+		// But not the parent
+		// assertTrue(Files.isDirectory(child.getParent()));
+		// Or the original Path
+		// assertTrue(Files.isDirectory(folder));
 
-    }
+		fs.close();
+		// What if we open it again.. can we find both?
+		try (FileSystem fs2 = FileSystems.newFileSystem(zip, null)) {
+			assertTrue(Files.isRegularFile(fs2.getPath("folder")));
+			assertTrue(Files.isRegularFile(fs2.getPath("folder/child")));
+			assertTrue(Files.isDirectory(fs2.getPath("folder/")));
 
-    @Test
-    public void setLastModifiedTime() throws Exception {
-        Path root = fs.getRootDirectories().iterator().next();
-        
-        Path folder = root.resolve("folder");
-        Files.createDirectory(folder);
-        
-        Path file = root.resolve("file");
-        Files.createFile(file);
-        
-        
-        FileTime someTimeAgo = FileTime.from(365*12, TimeUnit.DAYS);
-        Files.setLastModifiedTime(folder, someTimeAgo);
-        Files.setLastModifiedTime(file, someTimeAgo);
-        try {
-            Files.setLastModifiedTime(root, someTimeAgo);
-        } catch (NoSuchFileException ex) {
-            System.err.println("Unexpected failure of setLastModifiedTime on root");
-            ex.printStackTrace();
-        }
-    }
-    
-    @Before
-    public void tempZipFS() throws Exception {
-        zip = Files.createTempFile("test", ".zip");
-        Files.delete(zip);
-        System.out.println(zip);
-        URI jar = new URI("jar", zip.toUri().toString(), null);
-        Map<String, Object> env = new HashMap<>();
-        env.put("create", "true");
-        fs = FileSystems.newFileSystem(jar, env);
-    }
+			// We can even list the folder
+			try (DirectoryStream<Path> s = Files.newDirectoryStream(fs2
+					.getPath("folder/"))) {
+				boolean found = false;
+				for (Path p : s) {
+					found = p.endsWith("child");
+				}
+				assertTrue("Did not find 'child'", found);
+			}
+			// But if we list the root, do we find "folder" or "folder/"?
+			Path root = fs2.getRootDirectories().iterator().next();
+			try (DirectoryStream<Path> s = Files.newDirectoryStream(root)) {
+				List<String> paths = new ArrayList<>();
+				for (Path p : s) {
+					paths.add(p.toString());
+				}
+				// We find both!
+				assertEquals(2, paths.size());
+				assertTrue(paths.contains("/folder"));
+				assertTrue(paths.contains("/folder/"));
+			}
+			// SO does that mean this is a feature, and not a bug?
+			// See http://stackoverflow.com/questions/16588321/ for more
+		}
 
-    @After
-    public void deleteTempFS() throws IOException {
-        fs.close();
-        Files.deleteIfExists(zip);
-    }
+	}
+
+	@Test
+	public void setLastModifiedTime() throws Exception {
+		Path root = fs.getRootDirectories().iterator().next();
+
+		Path folder = root.resolve("folder");
+		Files.createDirectory(folder);
+
+		Path file = root.resolve("file");
+		Files.createFile(file);
+
+		FileTime someTimeAgo = FileTime.from(365 * 12, TimeUnit.DAYS);
+		Files.setLastModifiedTime(folder, someTimeAgo);
+		Files.setLastModifiedTime(file, someTimeAgo);
+		try {
+			Files.setLastModifiedTime(root, someTimeAgo);
+		} catch (NoSuchFileException ex) {
+			System.err
+					.println("Unexpected failure of setLastModifiedTime on root");
+			ex.printStackTrace();
+		}
+	}
+
+	@Before
+	public void tempZipFS() throws Exception {
+		zip = Files.createTempFile("test", ".zip");
+		Files.delete(zip);
+		System.out.println(zip);
+		URI jar = new URI("jar", zip.toUri().toString(), null);
+		Map<String, Object> env = new HashMap<>();
+		env.put("create", "true");
+		fs = FileSystems.newFileSystem(jar, env);
+	}
+
+	@After
+	public void deleteTempFS() throws IOException {
+		fs.close();
+		Files.deleteIfExists(zip);
+	}
 
 }

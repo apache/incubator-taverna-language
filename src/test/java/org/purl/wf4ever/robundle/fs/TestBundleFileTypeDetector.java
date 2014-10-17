@@ -15,15 +15,14 @@ import org.junit.Test;
 import org.purl.wf4ever.robundle.Bundle;
 import org.purl.wf4ever.robundle.Bundles;
 
-
 public class TestBundleFileTypeDetector {
 	@Test
 	public void detectRoBundle() throws Exception {
 		BundleFileTypeDetector detector = new BundleFileTypeDetector();
 		try (Bundle bundle = Bundles.createBundle()) {
-            assertEquals("application/vnd.wf4ever.robundle+zip",
-                    detector.probeContentType(bundle.getSource()));
-        }
+			assertEquals("application/vnd.wf4ever.robundle+zip",
+					detector.probeContentType(bundle.getSource()));
+		}
 	}
 
 	@Test
@@ -51,7 +50,7 @@ public class TestBundleFileTypeDetector {
 		Files.write(file, Arrays.asList("This is just some text",
 				"added here to make the file", "larger than 38 bytes"), Charset
 				.forName("UTF8"));
-		assertTrue(Files.size(file)> 38);
+		assertTrue(Files.size(file) > 38);
 		assertNull(detector.probeContentType(file));
 	}
 
@@ -64,14 +63,14 @@ public class TestBundleFileTypeDetector {
 		assertEquals(0, Files.size(file));
 		assertNull(detector.probeContentType(file));
 	}
-	
+
 	@Test
 	public void detectorSPI() throws Exception {
-		try (Bundle bundle = Bundles.createBundle()) {		
-    		assertEquals("application/vnd.wf4ever.robundle+zip",
-    				Files.probeContentType(bundle.getSource()));
+		try (Bundle bundle = Bundles.createBundle()) {
+			assertEquals("application/vnd.wf4ever.robundle+zip",
+					Files.probeContentType(bundle.getSource()));
 		}
-		
+
 	}
-	
+
 }

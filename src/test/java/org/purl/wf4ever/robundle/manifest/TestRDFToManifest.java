@@ -16,12 +16,16 @@ public class TestRDFToManifest {
 
 	@Test
 	public void contextLoadedFromJarCache() throws Exception {
-		//RDFToManifest.makeBaseURI(); // trigger static{} block
-		Map<String, Object> context = (Map<String, Object>) new DocumentLoader().fromURL(new URL(CONTEXT));
-		// FIXME: jsonld-java 0.3 and later uses DocumentLoader instead of JSONUtils
-//		Map<String, Object> context = (Map<String, Object>) JSONUtils.fromURL(new URL(CONTEXT));
+		// RDFToManifest.makeBaseURI(); // trigger static{} block
+		Map<String, Object> context = (Map<String, Object>) new DocumentLoader()
+				.fromURL(new URL(CONTEXT));
+		// FIXME: jsonld-java 0.3 and later uses DocumentLoader instead of
+		// JSONUtils
+		// Map<String, Object> context = (Map<String, Object>)
+		// JSONUtils.fromURL(new URL(CONTEXT));
 		Object retrievedFrom = context.get("http://purl.org/pav/retrievedFrom");
-		assertNotNull("Did not load context from cache: " + CONTEXT, retrievedFrom);
-				
+		assertNotNull("Did not load context from cache: " + CONTEXT,
+				retrievedFrom);
+
 	}
 }

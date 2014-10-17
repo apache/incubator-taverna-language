@@ -22,33 +22,33 @@ import org.junit.Test;
 
 public class TestFileSystemProvider {
 
-    @Test
-    public void getInstance() throws Exception {
-        assertSame(BundleFileSystemProvider.getInstance(), BundleFileSystemProvider.getInstance());
-    }
+	@Test
+	public void getInstance() throws Exception {
+		assertSame(BundleFileSystemProvider.getInstance(),
+				BundleFileSystemProvider.getInstance());
+	}
 
+	@SuppressWarnings("deprecation")
+	@Test
+	public void getInstanceEquals() throws Exception {
+		assertEquals(BundleFileSystemProvider.getInstance(),
+				new BundleFileSystemProvider());
+	}
 
-    @SuppressWarnings("deprecation")
-    @Test
-    public void getInstanceEquals() throws Exception {
-        assertEquals(BundleFileSystemProvider.getInstance(),
-                new BundleFileSystemProvider());
-    }
+	@SuppressWarnings("deprecation")
+	@Test
+	public void getInstanceHashCode() throws Exception {
+		assertEquals(BundleFileSystemProvider.getInstance().hashCode(),
+				new BundleFileSystemProvider().hashCode());
+	}
 
-    @SuppressWarnings("deprecation")
-    @Test
-    public void getInstanceHashCode() throws Exception {
-        assertEquals(BundleFileSystemProvider.getInstance().hashCode(),
-                new BundleFileSystemProvider().hashCode());
-    }
-    
-    @SuppressWarnings({ "deprecation", "static-access" })
-    @Test
-    public void sameOpen() throws Exception {
-        assertSame(BundleFileSystemProvider.getInstance().openFilesystems,
-                new BundleFileSystemProvider().openFilesystems);
-    }
-    
+	@SuppressWarnings({ "deprecation", "static-access" })
+	@Test
+	public void sameOpen() throws Exception {
+		assertSame(BundleFileSystemProvider.getInstance().openFilesystems,
+				new BundleFileSystemProvider().openFilesystems);
+	}
+
 	@Test
 	public void installedProviders() throws Exception {
 		for (FileSystemProvider provider : FileSystemProvider
@@ -73,77 +73,80 @@ public class TestFileSystemProvider {
 		URI w = new URI("app", path.toUri().toASCIIString(), null);
 		try (FileSystem fs = FileSystems.newFileSystem(w,
 				Collections.<String, Object> emptyMap())) {
-		    assertTrue(fs instanceof BundleFileSystem);
+			assertTrue(fs instanceof BundleFileSystem);
 		}
 	}
 
-    @Test
-    public void bundleWithSpaces() throws Exception {
-        Path path = Files.createTempFile("with several spaces", ".zip");
-        path.toFile().deleteOnExit();
-        Files.delete(path);
-        
-        URI app = new URI("app", path.toUri().toString(), null);
-        assertTrue(app.toASCIIString().contains("with%2520several%2520spaces"));
-        
-        Map<String, Object> env = new HashMap<>();
-        env.put("create", "true");
- 
-        try (FileSystem fs = FileSystems.newFileSystem(app, env)) {
-        } 
-        assertTrue(Files.exists(path));
-        // Reopen from now-existing Path to check that the URI is
-        // escaped in the same way
-        try (FileSystem fs = BundleFileSystemProvider.newFileSystemFromExisting(path)) {
-        }        
-    }
-    
-    @Test
-    public void bundleWithSpacesSource() throws Exception {
-        Path path = Files.createTempFile("with several spaces", ".zip");
-        path.toFile().deleteOnExit();
-        Files.delete(path);
-        
-        try (BundleFileSystem fs = BundleFileSystemProvider.newFileSystemFromNew(path)) {
-            assertTrue(Files.exists(fs.getSource()));
-            assertEquals(path.toAbsolutePath(), fs.getSource());
-        } 
-        assertTrue(Files.exists(path));
-    }
-    
-    
-    @Test
-    public void bundleWithUnicode() throws Exception {
-        Path path;
-        try {
-            path = Files.createTempFile("with\u2301unicode\u263bhere", ".zip");
-        } catch (InvalidPathException ex) {
-            Assume.assumeNoException("Can't test unicode filename, as -Dfile.encoding=" + System.getProperty("file.encoding"), 
-                    ex);
-            return;
-        }
-        path.toFile().deleteOnExit();
-        Files.delete(path);
-        //System.out.println(path); // Should contain a electrical symbol and smiley
-        URI app = new URI("app", path.toUri().toString(), null);
-        // FIXME: The below passes on Windows 8 but not in Linux!?
-        //System.out.println(app);
-        //assertTrue(app.toString().contains("\u2301"));
-        //assertTrue(app.toString().contains("\u263b"));        
-        
-        Map<String, Object> env = new HashMap<>();
-        env.put("create", "true");
- 
-        try (FileSystem fs = FileSystems.newFileSystem(app, env)) {     
-        }
-        assertTrue(Files.exists(path));
-        // Reopen from now-existing Path to check that the URI is
-        // escaped in the same way
-        try (FileSystem fs = BundleFileSystemProvider.newFileSystemFromExisting(path)) {
-        }
-    }
+	@Test
+	public void bundleWithSpaces() throws Exception {
+		Path path = Files.createTempFile("with several spaces", ".zip");
+		path.toFile().deleteOnExit();
+		Files.delete(path);
 
-	
+		URI app = new URI("app", path.toUri().toString(), null);
+		assertTrue(app.toASCIIString().contains("with%2520several%2520spaces"));
+
+		Map<String, Object> env = new HashMap<>();
+		env.put("create", "true");
+
+		try (FileSystem fs = FileSystems.newFileSystem(app, env)) {
+		}
+		assertTrue(Files.exists(path));
+		// Reopen from now-existing Path to check that the URI is
+		// escaped in the same way
+		try (FileSystem fs = BundleFileSystemProvider
+				.newFileSystemFromExisting(path)) {
+		}
+	}
+
+	@Test
+	public void bundleWithSpacesSource() throws Exception {
+		Path path = Files.createTempFile("with several spaces", ".zip");
+		path.toFile().deleteOnExit();
+		Files.delete(path);
+
+		try (BundleFileSystem fs = BundleFileSystemProvider
+				.newFileSystemFromNew(path)) {
+			assertTrue(Files.exists(fs.getSource()));
+			assertEquals(path.toAbsolutePath(), fs.getSource());
+		}
+		assertTrue(Files.exists(path));
+	}
+
+	@Test
+	public void bundleWithUnicode() throws Exception {
+		Path path;
+		try {
+			path = Files.createTempFile("with\u2301unicode\u263bhere", ".zip");
+		} catch (InvalidPathException ex) {
+			Assume.assumeNoException(
+					"Can't test unicode filename, as -Dfile.encoding="
+							+ System.getProperty("file.encoding"), ex);
+			return;
+		}
+		path.toFile().deleteOnExit();
+		Files.delete(path);
+		// System.out.println(path); // Should contain a electrical symbol and
+		// smiley
+		URI app = new URI("app", path.toUri().toString(), null);
+		// FIXME: The below passes on Windows 8 but not in Linux!?
+		// System.out.println(app);
+		// assertTrue(app.toString().contains("\u2301"));
+		// assertTrue(app.toString().contains("\u263b"));
+
+		Map<String, Object> env = new HashMap<>();
+		env.put("create", "true");
+
+		try (FileSystem fs = FileSystems.newFileSystem(app, env)) {
+		}
+		assertTrue(Files.exists(path));
+		// Reopen from now-existing Path to check that the URI is
+		// escaped in the same way
+		try (FileSystem fs = BundleFileSystemProvider
+				.newFileSystemFromExisting(path)) {
+		}
+	}
+
 	@Test
 	public void newFileSystemFromExisting() throws Exception {
 		Path path = Files.createTempFile("test", null);
@@ -152,93 +155,102 @@ public class TestFileSystemProvider {
 		// Make the Bundle first
 		BundleFileSystemProvider.createBundleAsZip(path, "application/x-test");
 		assertTrue(Files.exists(path));
-		
-		
-		try (BundleFileSystem f = BundleFileSystemProvider.newFileSystemFromExisting(path)) {
-    		assertEquals(path, f.getSource());
-    		assertEquals("application/x-test", Files.readAllLines(
-    				f.getRootDirectory().resolve("mimetype"), 
-    				Charset.forName("ASCII")).get(0));
+
+		try (BundleFileSystem f = BundleFileSystemProvider
+				.newFileSystemFromExisting(path)) {
+			assertEquals(path, f.getSource());
+			assertEquals(
+					"application/x-test",
+					Files.readAllLines(
+							f.getRootDirectory().resolve("mimetype"),
+							Charset.forName("ASCII")).get(0));
 		}
 	}
 
-    @Test
-    public void newFileSystemFromExistingPath() throws Exception {
-        Path path = Files.createTempFile("test", null);
-        path.toFile().deleteOnExit();
-        Files.delete(path);
-        // Make the Bundle first as we can't pass inn create=true :/
-        BundleFileSystemProvider.createBundleAsZip(path, "application/x-test");
-        assertTrue(Files.exists(path));
+	@Test
+	public void newFileSystemFromExistingPath() throws Exception {
+		Path path = Files.createTempFile("test", null);
+		path.toFile().deleteOnExit();
+		Files.delete(path);
+		// Make the Bundle first as we can't pass inn create=true :/
+		BundleFileSystemProvider.createBundleAsZip(path, "application/x-test");
+		assertTrue(Files.exists(path));
 
-        try (FileSystem fs = FileSystems.newFileSystem(path, getClass()
-                .getClassLoader())) {
-            assertEquals(
-                    "application/x-test",
-                    Files.readAllLines(fs.getPath("mimetype"),
-                            Charset.forName("ASCII")).get(0));
-        }
-    }
-	
+		try (FileSystem fs = FileSystems.newFileSystem(path, getClass()
+				.getClassLoader())) {
+			assertEquals(
+					"application/x-test",
+					Files.readAllLines(fs.getPath("mimetype"),
+							Charset.forName("ASCII")).get(0));
+		}
+	}
+
 	@Test
 	public void newFileSystemFromNewDefaultMime() throws Exception {
 		Path path = Files.createTempFile("test", null);
 		path.toFile().deleteOnExit();
 		Files.delete(path);
-		BundleFileSystem f = BundleFileSystemProvider.newFileSystemFromNew(path);
+		BundleFileSystem f = BundleFileSystemProvider
+				.newFileSystemFromNew(path);
 		assertTrue(Files.exists(path));
 		assertEquals(path, f.getSource());
-		assertEquals("application/vnd.wf4ever.robundle+zip", Files.readAllLines(
-				f.getRootDirectory().resolve("mimetype"), 
-				Charset.forName("ASCII")).get(0));
+		assertEquals(
+				"application/vnd.wf4ever.robundle+zip",
+				Files.readAllLines(f.getRootDirectory().resolve("mimetype"),
+						Charset.forName("ASCII")).get(0));
 	}
 
-    @Test
-    public void newFileSystemURI() throws Exception {
-        Path path = Files.createTempFile("test", null);
-        path.toFile().deleteOnExit();
-        Files.delete(path);
-        
-        URI uri = new URI("app", path.toUri().toASCIIString(), (String)null);
+	@Test
+	public void newFileSystemURI() throws Exception {
+		Path path = Files.createTempFile("test", null);
+		path.toFile().deleteOnExit();
+		Files.delete(path);
 
-        
-        Map<String, String> env = new HashMap<>();
-        env.put("create", "true");
-        // And the optional mimetype
-        env.put("mimetype", "application/x-test2");
-        FileSystem f = FileSystems.newFileSystem(uri, env, getClass().getClassLoader());
-        assertTrue(Files.exists(path));
-        assertEquals("application/x-test2", Files.readAllLines(
-                f.getPath("mimetype"), 
-                Charset.forName("ASCII")).get(0));
-    }
-	
+		URI uri = new URI("app", path.toUri().toASCIIString(), (String) null);
+
+		Map<String, String> env = new HashMap<>();
+		env.put("create", "true");
+		// And the optional mimetype
+		env.put("mimetype", "application/x-test2");
+		FileSystem f = FileSystems.newFileSystem(uri, env, getClass()
+				.getClassLoader());
+		assertTrue(Files.exists(path));
+		assertEquals(
+				"application/x-test2",
+				Files.readAllLines(f.getPath("mimetype"),
+						Charset.forName("ASCII")).get(0));
+	}
+
 	@Test
 	public void newFileSystemFromNew() throws Exception {
 		Path path = Files.createTempFile("test", null);
 		path.toFile().deleteOnExit();
 		Files.delete(path);
 		path.toUri();
-		BundleFileSystem f = BundleFileSystemProvider.newFileSystemFromNew(path, "application/x-test2");
+		BundleFileSystem f = BundleFileSystemProvider.newFileSystemFromNew(
+				path, "application/x-test2");
 		assertTrue(Files.exists(path));
 		assertEquals(path, f.getSource());
-		assertEquals("application/x-test2", Files.readAllLines(
-				f.getRootDirectory().resolve("mimetype"), 
-				Charset.forName("ASCII")).get(0));
+		assertEquals(
+				"application/x-test2",
+				Files.readAllLines(f.getRootDirectory().resolve("mimetype"),
+						Charset.forName("ASCII")).get(0));
 	}
-	
+
 	@Test
 	public void newFileSystemFromTemporary() throws Exception {
-	    Path source;
-		try (BundleFileSystem f = BundleFileSystemProvider.newFileSystemFromTemporary()) {		
-    		source = f.getSource();
-            assertTrue(Files.exists(source));
-    		assertEquals("application/vnd.wf4ever.robundle+zip", Files.readAllLines(
-    				f.getRootDirectory().resolve("mimetype"), 
-    				Charset.forName("ASCII")).get(0));
+		Path source;
+		try (BundleFileSystem f = BundleFileSystemProvider
+				.newFileSystemFromTemporary()) {
+			source = f.getSource();
+			assertTrue(Files.exists(source));
+			assertEquals(
+					"application/vnd.wf4ever.robundle+zip",
+					Files.readAllLines(
+							f.getRootDirectory().resolve("mimetype"),
+							Charset.forName("ASCII")).get(0));
 		}
 		Files.delete(source);
 	}
-	
 
 }
