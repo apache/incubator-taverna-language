@@ -5,12 +5,19 @@ Examples of using the [SCUFL2 API](http://dev.mygrid.org.uk/wiki/display/develop
 
 [![Build Status](https://travis-ci.org/myGrid/scufl2-examples.svg?branch=master)](https://travis-ci.org/myGrid/scufl2-examples)
 
+As this code is meant only as examples that you can extend and modify, the
+groupId and package name are `com.example`, which should be changed
+in your application.
+
+
+
 Download
 --------
-Download the scufl2-examples-0.x.x-standalone.jar from the
-[latest build](http://build.mygrid.org.uk/ci/job/scufl2-examples/lastSuccessfulBuild/com.example$scufl2-examples/), e.g. [scufl2-examples-0.2.0-SNAPSHOT-standalone.jar](http://build.mygrid.org.uk/ci/job/scufl2-examples/lastSuccessfulBuild/com.example$scufl2-examples/artifact/com.example/scufl2-examples/0.2.0-SNAPSHOT/scufl2-examples-0.2.0-SNAPSHOT-standalone.jar)
+Download the `scufl2-examples-0.x.x-standalone.jar` from the
+[latest build](http://build.mygrid.org.uk/ci/job/scufl2-examples/lastSuccessfulBuild/com.example$scufl2-examples/), or browse the [Maven snapshot repository](http://repository.mygrid.org.uk/artifactory/libs-snapshot-local/com/example/scufl2-examples/).
 
-This is a standalone executable JAR (see below).
+This is a standalone executable JAR (see below). 
+
 
 
 Build
@@ -140,9 +147,8 @@ for how this is implemented.
 t2flowtowfbundle
 ----------------
 
-This tool shows how to convert a t2flow file to a 
-
-[SCUFL2 wfbundle](http://dev.mygrid.org.uk/wiki/display/developer/Taverna+Workflow+Bundle).
+This tool shows how to convert a *.t2flow* file to a 
+[SCUFL2 .wfbundle](http://dev.mygrid.org.uk/wiki/display/developer/Taverna+Workflow+Bundle).
 
     C:\Users\stain\workspace\scufl2-examples> rm helloworld.wfbundle
     
