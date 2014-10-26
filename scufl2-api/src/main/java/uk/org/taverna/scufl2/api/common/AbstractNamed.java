@@ -1,8 +1,11 @@
 package uk.org.taverna.scufl2.api.common;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.UUID;
 import java.util.regex.Matcher;
+
+import uk.org.taverna.scufl2.api.annotation.Annotation;
 
 /**
  * Abstract implementation of a {@link Named} {@link WorkflowBean}.
@@ -159,5 +162,41 @@ public abstract class AbstractNamed extends AbstractCloneable implements Named  
 	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
 		AbstractNamed namedClone = (AbstractNamed)clone;
 		namedClone.setName(getName());
+	}
+
+	// Derived operations
+
+	/**
+	 * Get all the annotations that pertain to this workflow element.
+	 * 
+	 * @return The collection of annotations.
+	 * @see Scufl2Tools#annotationsFor(Child)
+	 */
+	public Collection<Annotation> getAnnotations() {
+		if (this instanceof Child)
+			return getTools().annotationsFor((Child<?>) this);
+		throw new UnsupportedOperationException(
+				"operation needs to be overridden for root elements");
+	}
+
+	/**
+	 * Get the URI of this workflow element.
+	 * 
+	 * @return The absolute URI.
+	 * @see URITools#uriForBean(WorkflowBean)
+	 */
+	public URI getURI() {
+		return getUriTools().uriForBean(this);
+	}
+
+	/**
+	 * Get the URI of this workflow element relative to another workflow
+	 * element.
+	 * 
+	 * @return The relative URI.
+	 * @see URITools#relativeUriForBean(WorkflowBean,WorflowBean)
+	 */
+	public URI getRelativeURI(WorkflowBean relativeTo) {
+		return getUriTools().relativeUriForBean(this, relativeTo);
 	}
 }

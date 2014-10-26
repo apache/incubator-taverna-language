@@ -125,4 +125,29 @@ public abstract class AbstractCloneable implements WorkflowBean {
 	}
 
 	protected abstract void cloneInto(WorkflowBean clone, Cloning cloning);
+
+	private transient Scufl2Tools tools;
+	private transient URITools uriTools;
+
+	public Scufl2Tools getTools() {
+		if (tools == null && this instanceof Child) {
+			WorkflowBean parent = ((Child<?>) this).getParent();
+			if (parent instanceof AbstractCloneable)
+				tools = ((AbstractCloneable) parent).getTools();
+		}
+		if (tools == null)
+			tools = new Scufl2Tools();
+		return tools;
+	}
+
+	public URITools getUriTools() {
+		if (uriTools == null && this instanceof Child) {
+			WorkflowBean parent = ((Child<?>) this).getParent();
+			if (parent instanceof AbstractCloneable)
+				uriTools = ((AbstractCloneable) parent).getUriTools();
+		}
+		if (uriTools == null)
+			uriTools = new URITools();
+		return uriTools;
+	}
 }

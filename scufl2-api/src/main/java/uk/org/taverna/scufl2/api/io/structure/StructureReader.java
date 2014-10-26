@@ -1,5 +1,8 @@
 package uk.org.taverna.scufl2.api.io.structure;
 
+import static java.lang.System.arraycopy;
+import static java.util.Collections.singleton;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,7 +11,6 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.net.URI;
 import java.nio.charset.Charset;
-import java.util.Collections;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -45,7 +47,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * Scufl2 Structure format.
  */
 public class StructureReader implements WorkflowBundleReader {
-
 	public enum Level {
 		WorkflowBundle, Workflow, Processor, Activity, Links, Profile, Configuration, ProcessorBinding, OutputPortBindings, InputPortBindings, JSON, Controls
 	}
@@ -71,7 +72,7 @@ public class StructureReader implements WorkflowBundleReader {
 
 	@Override
 	public Set<String> getMediaTypes() {
-		return Collections.singleton(TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
+		return singleton(TEXT_VND_TAVERNA_SCUFL2_STRUCTURE);
 	}
 
 	// synchronized because we share wb/scanner fields across the instance
@@ -276,7 +277,7 @@ public class StructureReader implements WorkflowBundleReader {
 						int length = Math.min(len, line.length - pos);
 						if (length <= 0)
 							return 0;
-						System.arraycopy(line, pos, cbuf, off, length);
+						arraycopy(line, pos, cbuf, off, length);
 						pos += length;
 						return length;
 					}

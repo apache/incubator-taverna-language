@@ -16,6 +16,7 @@ import uk.org.taverna.scufl2.api.common.AbstractRevisioned;
 import uk.org.taverna.scufl2.api.common.Named;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.Root;
+import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.core.Workflow;
@@ -201,6 +202,10 @@ public class WorkflowBundle extends AbstractRevisioned implements WorkflowBean,
 		return System.identityHashCode(this);
 	}
 
+	/**
+	 * Get all the 
+	 */
+	@Override
 	public NamedSet<Annotation> getAnnotations() {
 		return annotations;
 	}
@@ -223,5 +228,29 @@ public class WorkflowBundle extends AbstractRevisioned implements WorkflowBean,
 	@Override
 	protected URI getIdentifierRoot() {
 		return WORKFLOW_BUNDLE_ROOT;
+	}
+
+	// Derived operations
+
+	private transient URITools uriTools;
+
+	@Override
+	public URITools getUriTools() {
+		if (uriTools == null)
+			uriTools = new URITools();
+		return uriTools;
+	}
+
+	/**
+	 * Resolve a URI to a particular part of this workflow bundle.
+	 * 
+	 * @param uri
+	 *            The identifier to resolve.
+	 * @return The part of this workflow bundle that this resolves to (e.g.,
+	 *         processor, activity, port).
+	 * @see URITools#resolveUri(URI,WorkflowBundle)
+	 */
+	public WorkflowBean resolveURI(URI uri) {
+		return getUriTools().resolveUri(uri, this);
 	}
 }

@@ -11,12 +11,14 @@ import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Configurable;
 import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.Ported;
+import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
 import uk.org.taverna.scufl2.api.port.OutputProcessorPort;
+import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 
 /**
@@ -272,5 +274,148 @@ public class Processor extends AbstractNamed implements Child<Workflow>,
 	@Override
 	public void setType(URI type) {
 		this.type = type;
+	}
+
+	// Derived operations, implemented via Scufl2Tools
+
+	/**
+	 * Find all configurations of this processor in a profile.
+	 * 
+	 * @param profile
+	 *            The profile to search within.
+	 * @return The configurations that were found.
+	 * @see Scufl2Tools#configurationsFor(Configurable,Profile)
+	 */
+	public List<Configuration> getConfigurations(Profile profile) {
+		return getTools().configurationsFor(this, profile);
+	}
+
+	/**
+	 * Find the configuration of this processor in a profile.
+	 * 
+	 * @param profile
+	 *            The profile to search within.
+	 * @return The configuration.
+	 * @throws IllegalStateException
+	 *             If there are more than one configuration for the processor.
+	 * @throws IndexOutOfBoundsException
+	 *             If there aren't any configurations for the processor.
+	 * @see Scufl2Tools#configurationFor(Configurable,Profile)
+	 */
+	public Configuration getConfiguration(Profile profile) {
+		return getTools().configurationFor(this, profile);
+	}
+
+	/**
+	 * Create a configuration for a processor.
+	 * 
+	 * @param profile
+	 *            The profile to create the configuration within.
+	 * @return The created configuration.
+	 * @see Scufl2Tools#createConfigurationFor(Configurable,Profile)
+	 */
+	public Configuration createConfiguration(Profile profile) {
+		return getTools().createConfigurationFor(this, profile);
+	}
+
+	/**
+	 * Get the configuration of the activity bound to this processor in the
+	 * given profile.
+	 * 
+	 * @param profile
+	 *            The profile that provides the binding and the configuration.
+	 * @return The <i>activity</i> configuration.
+	 * @see Scufl2Tools#configurationForActivityBoundToProcessor(Processor,Profile)
+	 */
+	public Configuration getActivityConfiguration(Profile profile) {
+		return getTools().configurationForActivityBoundToProcessor(this,
+				profile);
+	}
+
+	/**
+	 * Create an untyped activity for the processor.
+	 * 
+	 * @param profile
+	 *            The profile to create the activity within.
+	 * @return The created activity.
+	 * @see Scufl2Tools#createActivityFromProcessor(Processor,Profile)
+	 */
+	public Activity createActivity(Profile profile) {
+		return getTools().createActivityFromProcessor(this, profile);
+	}
+
+	/**
+	 * Get the workflow nested within this processor.
+	 * 
+	 * @param profile
+	 *            The profile that bound the nested workflow to this processor.
+	 * @return The nested workflow, or <tt>null</tt> if it does not exist (e.g.,
+	 *         if this processor is holding a different type of activity).
+	 * @see Scufl2Tools#nestedWorkflowForProcessor(Processor,Profile)
+	 */
+	public Workflow getNestedWorkflow(Profile profile) {
+		return getTools().nestedWorkflowForProcessor(this, profile);
+	}
+
+	/**
+	 * Get the control links that prevent this processor from running. Does not
+	 * judge whether they are <i>currently</i> blocking the processor.
+	 * 
+	 * @return The list of control links blocking this processor.
+	 * @see Scufl2Tools#controlLinksBlocking(Processor)
+	 */
+	public List<BlockingControlLink> controlLinksBlocking() {
+		return getTools().controlLinksBlocking(this);
+	}
+
+	/**
+	 * Get the control links that this processor will notify once it completes
+	 * running.
+	 * 
+	 * @return The list of control links waiting for this processor.
+	 * @see Scufl2Tools#controlLinksWaitingFor(Processor)
+	 */
+	public List<BlockingControlLink> controlLinksWaitingFor() {
+		return getTools().controlLinksWaitingFor(this);
+	}
+
+	/**
+	 * Get the binding for this processor in the given profile.
+	 * 
+	 * @param profile
+	 *            The profile to search within.
+	 * @return The processor binding.
+	 * @throws IllegalStateException
+	 *             If there are more than one binding for the processor.
+	 * @throws IndexOutOfBoundsException
+	 *             If there aren't any bindings for the processor.
+	 * @see Scufl2Tools#processorBindingForProcessor(Processor,Profile)
+	 */
+	public ProcessorBinding getBinding(Profile profile) {
+		return getTools().processorBindingForProcessor(this, profile);
+	}
+
+	/**
+	 * Get the collection of processors that can be downstream of this
+	 * processor.
+	 * 
+	 * @return A set of processors that it is legal to have a datalink or
+	 *         control link from this processor to.
+	 * @see Scufl2Tools#possibleDownStreamProcessors(Workflow,Processor)
+	 */
+	public Set<Processor> getPossibleDownStreamProcessors() {
+		return getTools().possibleDownStreamProcessors(getParent(), this);
+	}
+
+	/**
+	 * Get the collection of processors that can be upstream of this
+	 * processor.
+	 * 
+	 * @return A set of processors that it is legal to have a datalink or
+	 *         control link to this processor from.
+	 * @see Scufl2Tools#possibleUpStreamProcessors(Workflow,Processor)
+	 */
+	public Set<Processor> getPossibleUpStreamProcessors() {
+		return getTools().possibleUpStreamProcessors(getParent(), this);
 	}
 }

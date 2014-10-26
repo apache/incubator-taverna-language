@@ -59,8 +59,8 @@ public class Scufl2Tools {
 	/**
 	 * Compare {@link ProcessorBinding}s by their
 	 * {@link ProcessorBinding#getActivityPosition()}.
-	 * 
-	 * Note: this comparator imposes orderings that are inconsistent with
+	 * <p>
+	 * <b>Note:</b> this comparator imposes orderings that are inconsistent with
 	 * equals.
 	 * 
 	 * @author Stian Soiland-Reyes
@@ -119,9 +119,7 @@ public class Scufl2Tools {
 			Processor processor, Profile profile) {
 		ProcessorBinding binding = processorBindingForProcessor(processor,
 				profile);
-		Configuration config = configurationFor(binding.getBoundActivity(),
-				profile);
-		return config;
+		return configurationFor(binding.getBoundActivity(), profile);
 	}
 
 	/**
@@ -176,9 +174,9 @@ public class Scufl2Tools {
 		return controlLinks;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings("unchecked")
 	public List<DataLink> datalinksFrom(SenderPort senderPort) {
-		Workflow wf = findParent(Workflow.class, (Child) senderPort);
+		Workflow wf = findParent(Workflow.class, (Child<Workflow>) senderPort);
 		List<DataLink> links = new ArrayList<>();
 		for (DataLink link : wf.getDataLinks())
 			if (link.getReceivesFrom().equals(senderPort))
@@ -187,9 +185,9 @@ public class Scufl2Tools {
 		return links;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings("unchecked")
 	public List<DataLink> datalinksTo(ReceiverPort receiverPort) {
-		Workflow wf = findParent(Workflow.class, (Child) receiverPort);
+		Workflow wf = findParent(Workflow.class, (Child<Workflow>) receiverPort);
 		List<DataLink> links = new ArrayList<>();
 		for (DataLink link : wf.getDataLinks())
 			if (link.getSendsTo().equals(receiverPort))
@@ -273,8 +271,7 @@ public class Scufl2Tools {
 				outputPort, profile);
 	}
 
-	@SuppressWarnings("rawtypes")
-	protected ProcessorPortBinding processorPortBindingForPortInternal(
+	protected ProcessorPortBinding<?, ?> processorPortBindingForPortInternal(
 			Port port, Profile profile) {
 		List<ProcessorBinding> processorBindings;
 		if (port instanceof ProcessorPort) {
@@ -289,7 +286,7 @@ public class Scufl2Tools {
 			throw new IllegalArgumentException(
 					"Port must be a ProcessorPort or ActivityPort");
 		for (ProcessorBinding procBinding : processorBindings) {
-			ProcessorPortBinding portBinding = processorPortBindingInternalInBinding(
+			ProcessorPortBinding<?, ?> portBinding = processorPortBindingInternalInBinding(
 					port, procBinding);
 			if (portBinding != null)
 				return portBinding;
@@ -297,16 +294,15 @@ public class Scufl2Tools {
 		return null;
 	}
 
-	@SuppressWarnings("rawtypes")
-	protected ProcessorPortBinding processorPortBindingInternalInBinding(
+	protected ProcessorPortBinding<?, ?> processorPortBindingInternalInBinding(
 			Port port, ProcessorBinding procBinding) {
-		Set<? extends ProcessorPortBinding> portBindings;
+		Set<? extends ProcessorPortBinding<?, ?>> portBindings;
 		if (port instanceof InputPort)
 			portBindings = procBinding.getInputPortBindings();
 		else
 			portBindings = procBinding.getOutputPortBindings();
 
-		for (ProcessorPortBinding portBinding : portBindings) {
+		for (ProcessorPortBinding<?, ?> portBinding : portBindings) {
 			if (port instanceof ProcessorPort
 					&& portBinding.getBoundProcessorPort().equals(port))
 				return portBinding;
@@ -319,12 +315,12 @@ public class Scufl2Tools {
 
 	public void setParents(WorkflowBundle bundle) {
 		bundle.accept(new VisitorWithPath() {
-			@SuppressWarnings({ "unchecked", "rawtypes" })
 			@Override
 			public boolean visit() {
 				WorkflowBean node = getCurrentNode();
 				if (node instanceof Child) {
-					Child child = (Child) node;
+					@SuppressWarnings("unchecked")
+					Child<WorkflowBean> child = (Child<WorkflowBean>) node;
 					WorkflowBean parent = getCurrentPath().peek();
 					if (child.getParent() != parent)
 						child.setParent(parent);
@@ -411,7 +407,7 @@ public class Scufl2Tools {
 					queue.add(upstreamProc);
 				}
 			}
-			for (InputProcessorPort inputPort : processor.getInputPorts()) {
+			for (InputProcessorPort inputPort : processor.getInputPorts())
 				for (DataLink incomingLink : datalinksTo(inputPort)) {
 					SenderPort source = incomingLink.getReceivesFrom();
 					if (!(source instanceof OutputProcessorPort))
@@ -423,7 +419,6 @@ public class Scufl2Tools {
 						queue.add(upstreamProc);
 					}
 				}
-			}
 		}
 		// Our split
 		queue.add(splitPoint);
@@ -439,7 +434,7 @@ public class Scufl2Tools {
 					queue.add(downstreamProc);
 				}
 			}
-			for (OutputProcessorPort outputPort : processor.getOutputPorts()) {
+			for (OutputProcessorPort outputPort : processor.getOutputPorts())
 				for (DataLink datalink : datalinksFrom(outputPort)) {
 					ReceiverPort sink = datalink.getSendsTo();
 					if (!(sink instanceof InputProcessorPort))
@@ -451,7 +446,6 @@ public class Scufl2Tools {
 						queue.add(downstreamProcc);
 					}
 				}
-			}
 		}
 		Set<Processor> undecided = new HashSet<>(processors);
 		undecided.remove(splitPoint);
@@ -763,7 +757,6 @@ public class Scufl2Tools {
 				continue;
 			}
 		}
-
 	}
 
 	public void updateBindingByMatchingPorts(ProcessorBinding binding) {

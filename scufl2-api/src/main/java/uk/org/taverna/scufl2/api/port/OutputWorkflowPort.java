@@ -1,7 +1,11 @@
 package uk.org.taverna.scufl2.api.port;
 
+import java.util.List;
+
 import uk.org.taverna.scufl2.api.common.AbstractNamed;
+import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.common.Visitor;
+import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Workflow;
 
 /**
@@ -58,5 +62,17 @@ public class OutputWorkflowPort extends AbstractNamed implements ReceiverPort,
 		this.parent = parent;
 		if (parent != null)
 			parent.getOutputPorts().add(this);
+	}
+
+	// Derived operations, implemented via Scufl2Tools
+
+	/**
+	 * Get the datalinks leading to this port.
+	 * 
+	 * @return the collection of links.
+	 * @see Scufl2Tools#datalinksFrom(ReceiverPort)
+	 */
+	public List<DataLink> getDatalinksTo() {
+		return getTools().datalinksTo(this);
 	}
 }

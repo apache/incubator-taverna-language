@@ -1,6 +1,13 @@
 package uk.org.taverna.scufl2.api.core;
 
+import java.net.URI;
+import java.util.Collection;
+
+import uk.org.taverna.scufl2.api.annotation.Annotation;
 import uk.org.taverna.scufl2.api.common.AbstractCloneable;
+import uk.org.taverna.scufl2.api.common.Child;
+import uk.org.taverna.scufl2.api.common.Scufl2Tools;
+import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.impl.NullSafeComparator;
@@ -178,5 +185,37 @@ public class BlockingControlLink extends AbstractCloneable implements
 		BlockingControlLink cloneLink = (BlockingControlLink) clone;
 		cloneLink.setBlock(cloning.cloneOrOriginal(getBlock()));
 		cloneLink.setUntilFinished(cloning.cloneOrOriginal(getUntilFinished()));
+	}
+
+	// Derived operations
+
+	/**
+	 * Get all the annotations that pertain to this control link.
+	 * 
+	 * @return The collection of annotations.
+	 * @see Scufl2Tools#annotationsFor(Child)
+	 */
+	public Collection<Annotation> getAnnotations() {
+		return getTools().annotationsFor(this);
+	}
+
+	/**
+	 * Get the URI of this control link.
+	 * 
+	 * @return The absolute URI.
+	 * @see URITools#uriForBean(WorkflowBean)
+	 */
+	public URI getURI() {
+		return getUriTools().uriForBean(this);
+	}
+
+	/**
+	 * Get the URI of this control link relative to another workflow element.
+	 * 
+	 * @return The relative URI.
+	 * @see URITools#relativeUriForBean(WorkflowBean,WorflowBean)
+	 */
+	public URI getRelativeURI(WorkflowBean relativeTo) {
+		return getUriTools().relativeUriForBean(this, relativeTo);
 	}
 }
