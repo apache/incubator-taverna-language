@@ -396,6 +396,23 @@ public class Processor extends AbstractNamed implements Child<Workflow>,
 	}
 
 	/**
+	 * Get the activity bound to this processor in the given profile.
+	 * 
+	 * @param profile
+	 *            The profile to search within.
+	 * @return The activity.
+	 * @throws IllegalStateException
+	 *             If there are more than one activity for the processor.
+	 * @throws IndexOutOfBoundsException
+	 *             If there aren't any activities for the processor.
+	 * @see #getBinding(Profile)
+	 * @see Scufl2Tools#processorBindingForProcessor(Processor,Profile)
+	 */
+	public Activity getActivity(Profile profile) {
+		return getBinding(profile).getBoundActivity();
+	}
+
+	/**
 	 * Get the collection of processors that can be downstream of this
 	 * processor.
 	 * 
