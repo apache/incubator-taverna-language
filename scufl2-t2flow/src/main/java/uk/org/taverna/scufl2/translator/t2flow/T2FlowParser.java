@@ -151,12 +151,17 @@ public class T2FlowParser {
 		return null;
 	}
 
-	protected ThreadLocal<ParserState> parserState = new ThreadLocal<ParserState>() {
+	protected ThreadLocal<ParserState> parserState = new ThreadLocalParserState();
+
+	/**
+	 * A static class for the thread-local parser state.
+	 */
+	private static class ThreadLocalParserState extends ThreadLocal<ParserState> {
 		@Override
 		protected ParserState initialValue() {
 			return new ParserState();
 		};
-	};
+	}
 
 	private static Scufl2Tools scufl2Tools = new Scufl2Tools();
 	private static URITools uriTools = new URITools();
@@ -181,15 +186,27 @@ public class T2FlowParser {
 
 	public T2FlowParser() throws JAXBException {
 		jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
-		unmarshaller = new ThreadLocal<Unmarshaller>() {
-			@Override
-			protected Unmarshaller initialValue() {
-				try {
-					return jaxbContext.createUnmarshaller();
-				} catch (JAXBException e) {
-					logger.log(SEVERE, "Could not create unmarshaller", e);
-					return null;
-				}
+		unmarshaller = new ThreadLocalUnmarshaller(jaxbContext);
+	}
+
+	/**
+	 * A static class for the thread-local unmarshaller.
+	 */
+	private static class ThreadLocalUnmarshaller extends
+			ThreadLocal<Unmarshaller> {
+		private final JAXBContext jaxbContext;
+
+		ThreadLocalUnmarshaller(JAXBContext jaxbContext) {
+			this.jaxbContext = jaxbContext;
+		}
+
+		@Override
+		protected Unmarshaller initialValue() {
+			try {
+				return jaxbContext.createUnmarshaller();
+			} catch (JAXBException e) {
+				logger.log(SEVERE, "Could not create unmarshaller", e);
+				return null;
 			}
 		};
 	}
