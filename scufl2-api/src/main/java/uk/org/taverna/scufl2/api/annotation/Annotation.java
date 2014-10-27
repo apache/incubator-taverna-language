@@ -1,5 +1,6 @@
 package uk.org.taverna.scufl2.api.annotation;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -119,5 +120,29 @@ public class Annotation extends AbstractNamed implements Named,
 					.clone());
 		cloneAnnotation.setSerializedBy(getSerializedBy());
 		cloneAnnotation.setTarget(cloning.cloneOrOriginal(getTarget()));
+	}
+
+	/**
+	 * Gets the standard path for the resource in the bundle associated with
+	 * this annotation. The resource will be expected to contain a TTL-encoded
+	 * RDF model.
+	 * 
+	 * @return a resource path.
+	 */
+	public String getResourcePath() {
+		return "annotation/" + getName() + ".ttl";
+	}
+
+	/**
+	 * Gets the content of this annotation. Note that this method does not cache
+	 * the value it reads.
+	 * 
+	 * @return a TTL-encoded RDF model.
+	 * @throws IOException
+	 *             If anything goes wrong reading the resource
+	 */
+	public String getRDFContent() throws IOException {
+		return getParent().getResources()
+				.getResourceAsString(getResourcePath());
 	}
 }
