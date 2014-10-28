@@ -6,7 +6,6 @@ import java.net.URI;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
-import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.DataLink;
@@ -15,6 +14,8 @@ import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.io.ReaderException;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
 import uk.org.taverna.scufl2.api.io.WriterException;
+import uk.org.taverna.scufl2.api.iterationstrategy.DotProduct;
+import uk.org.taverna.scufl2.api.iterationstrategy.PortNode;
 import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
 import uk.org.taverna.scufl2.api.port.InputWorkflowPort;
@@ -138,6 +139,7 @@ public class WorkflowMaker {
 		pIn.setDepth(0);
 		pOut = new OutputProcessorPort(p, "pOut");
 		pOut.setDepth(0);
+		pOut.setGranularDepth(0);
 		/**
 		 * .. any additional ports must have a unique name within the input or
 		 * output ports of that processor.
@@ -191,16 +193,16 @@ public class WorkflowMaker {
 		 * retryConfig.setConfigures(dispatchStackLayer);
 		 * // ..
 		 * </pre>
-		 * 
+		 */ 
+		
+		/*
 		 * Iteration strategies:
-		 * 
-		 * <pre>
-		 * DotProduct dot = new DotProduct();
-		 * dot.add(pIn);
-		 * dot.add(pIn2);
-		 * p.getIterationStrategyStack().add(dot);
-		 * </pre>
 		 */
+		 DotProduct dot = new DotProduct();
+		 PortNode e = new PortNode(dot, pIn);
+		 e.setDesiredDepth(0); 
+		 p.getIterationStrategyStack().add(dot);
+
 	}
 
 
@@ -293,6 +295,7 @@ public class WorkflowMaker {
 		myBeanshell.getInputPorts().add(aIn1);
 		OutputActivityPort aOut1 = new OutputActivityPort(myBeanshell, "out1");
 		aOut1.setDepth(0);
+		aOut1.setGranularDepth(0);
 		myBeanshell.getOutputPorts().add(aOut1);
 
 
