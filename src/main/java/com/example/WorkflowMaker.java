@@ -90,6 +90,7 @@ public class WorkflowMaker {
 		/** Creating and adding a workflow port */
 		InputWorkflowPort in1 = new InputWorkflowPort();
 		in1.setName("in1");
+		in1.setDepth(0);
 		/** where does this input port belong? */
 		in1.setParent(workflow);
 		/**
@@ -134,7 +135,9 @@ public class WorkflowMaker {
 		 * within the workflow
 		 */
 		pIn = new InputProcessorPort(p, "pIn");
+		pIn.setDepth(0);
 		pOut = new OutputProcessorPort(p, "pOut");
+		pOut.setDepth(0);
 		/**
 		 * .. any additional ports must have a unique name within the input or
 		 * output ports of that processor.
@@ -286,8 +289,10 @@ public class WorkflowMaker {
 		 * one-to-one with the bound processor's port names and depth.
 		 */
 		InputActivityPort aIn1 = new InputActivityPort(myBeanshell, "in1");
+		aIn1.setDepth(0);
 		myBeanshell.getInputPorts().add(aIn1);
 		OutputActivityPort aOut1 = new OutputActivityPort(myBeanshell, "out1");
+		aOut1.setDepth(0);
 		myBeanshell.getOutputPorts().add(aOut1);
 
 
