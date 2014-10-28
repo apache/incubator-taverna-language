@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.annotation.processing.Processor;
 
 import uk.org.taverna.scufl2.api.common.AbstractCloneable;
+import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
@@ -211,5 +212,27 @@ public class Revision extends AbstractCloneable implements WorkflowBean {
 		cloneRevision.setRemovalOf(new LinkedHashSet<URI>(getRemovalOf()));
 		cloneRevision.setWasAttributedTo(new LinkedHashSet<URI>(
 				getWasAttributedTo()));
+	}
+
+	// Derived operations
+
+	/**
+	 * Get the URI of this revision.
+	 * 
+	 * @return The absolute URI.
+	 * @see URITools#uriForBean(WorkflowBean)
+	 */
+	public URI getURI() {
+		return getUriTools().uriForBean(this);
+	}
+
+	/**
+	 * Get the URI of this revision relative to another workflow element.
+	 * 
+	 * @return The relative URI.
+	 * @see URITools#relativeUriForBean(WorkflowBean,WorflowBean)
+	 */
+	public URI getRelativeURI(WorkflowBean relativeTo) {
+		return getUriTools().relativeUriForBean(this, relativeTo);
 	}
 }

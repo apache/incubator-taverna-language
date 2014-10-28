@@ -1,7 +1,13 @@
 package uk.org.taverna.scufl2.api.core;
 
+import java.net.URI;
+import java.util.Collection;
+
+import uk.org.taverna.scufl2.api.annotation.Annotation;
 import uk.org.taverna.scufl2.api.common.AbstractCloneable;
 import uk.org.taverna.scufl2.api.common.Child;
+import uk.org.taverna.scufl2.api.common.Scufl2Tools;
+import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.impl.NullSafeComparator;
@@ -269,5 +275,37 @@ public class DataLink extends AbstractCloneable implements Child<Workflow>,
 		cloneLink.setMergePosition(getMergePosition());
 		cloneLink.setReceivesFrom(cloning.cloneIfNotInCache(getReceivesFrom()));
 		cloneLink.setSendsTo(cloning.cloneIfNotInCache(getSendsTo()));
+	}
+
+	// Derived operations
+
+	/**
+	 * Get all the annotations that pertain to this datalink.
+	 * 
+	 * @return The collection of annotations.
+	 * @see Scufl2Tools#annotationsFor(Child)
+	 */
+	public Collection<Annotation> getAnnotations() {
+		return getTools().annotationsFor(this);
+	}
+
+	/**
+	 * Get the URI of this datalink.
+	 * 
+	 * @return The absolute URI.
+	 * @see URITools#uriForBean(WorkflowBean)
+	 */
+	public URI getURI() {
+		return getUriTools().uriForBean(this);
+	}
+
+	/**
+	 * Get the URI of this datalink relative to another workflow element.
+	 * 
+	 * @return The relative URI.
+	 * @see URITools#relativeUriForBean(WorkflowBean,WorflowBean)
+	 */
+	public URI getRelativeURI(WorkflowBean relativeTo) {
+		return getUriTools().relativeUriForBean(this, relativeTo);
 	}
 }

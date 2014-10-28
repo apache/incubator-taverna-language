@@ -1,5 +1,9 @@
 package uk.org.taverna.scufl2.api.port;
 
+import java.util.List;
+
+import uk.org.taverna.scufl2.api.common.Scufl2Tools;
+import uk.org.taverna.scufl2.api.core.DataLink;
 import uk.org.taverna.scufl2.api.core.Processor;
 
 /**
@@ -49,5 +53,17 @@ public class OutputProcessorPort extends AbstractGranularDepthPort implements
 		this.parent = parent;
 		if (parent != null)
 			parent.getOutputPorts().add(this);
+	}
+
+	// Derived operations, implemented via Scufl2Tools
+
+	/**
+	 * Get the datalinks leading from this port.
+	 * 
+	 * @return the collection of links.
+	 * @see Scufl2Tools#datalinksFrom(SenderPort)
+	 */
+	public List<DataLink> getDatalinksFrom() {
+		return getTools().datalinksFrom(this);
 	}
 }

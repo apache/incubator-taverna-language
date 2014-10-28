@@ -20,14 +20,18 @@ public class AbstractParser {
 	protected Unmarshaller unmarshaller;
 	protected URITools uriTools = new URITools();
 
-	public AbstractParser() {
-		parserState = new ThreadLocal<ParserState>() {
-			@Override
-			protected ParserState initialValue() {
-				return new ParserState();
-			};
+	/**
+	 * A static class for the thread-local parser state.
+	 */
+	private static class ThreadLocalParserState extends ThreadLocal<ParserState> {
+		@Override
+		protected ParserState initialValue() {
+			return new ParserState();
 		};
-		createMarshaller();
+	}
+
+	public AbstractParser() {
+		this(new ThreadLocalParserState());
 	}
 
 	public AbstractParser(ThreadLocal<ParserState> parserState) {

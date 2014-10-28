@@ -3,6 +3,7 @@
  */
 package uk.org.taverna.scufl2.translator.scufl;
 
+import static java.util.logging.Level.SEVERE;
 import static javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI;
 
 import java.io.File;
@@ -16,7 +17,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -75,12 +75,17 @@ public class ScuflParser {
 	private boolean strict = false;
 	private boolean validating = false;
 
-	protected ThreadLocal<ParserState> parserState = new ThreadLocal<ParserState>() {
+	protected ThreadLocal<ParserState> parserState = new ThreadLocalParserState();
+
+	/**
+	 * A static class for the thread-local parser state.
+	 */
+	private static class ThreadLocalParserState extends ThreadLocal<ParserState> {
 		@Override
 		protected ParserState initialValue() {
 			return new ParserState();
 		};
-	};
+	}
 
 	private static Scufl2Tools scufl2Tools = new Scufl2Tools();
 	protected ServiceLoader<ScuflExtensionParser> discoveredScuflExtensionParsers;
@@ -88,15 +93,27 @@ public class ScuflParser {
 
 	public ScuflParser() throws JAXBException {
 		jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
-		unmarshaller = new ThreadLocal<Unmarshaller>() {
-			@Override
-			protected Unmarshaller initialValue() {
-				try {
-					return jaxbContext.createUnmarshaller();
-				} catch (JAXBException e) {
-					logger.log(Level.SEVERE, "Could not create unmarshaller", e);
-					return null;
-				}
+		unmarshaller = new ThreadLocalUnmarshaller(jaxbContext);
+	}
+
+	/**
+	 * A static class for the thread-local unmarshaller.
+	 */
+	private static class ThreadLocalUnmarshaller extends
+			ThreadLocal<Unmarshaller> {
+		private final JAXBContext jaxbContext;
+
+		ThreadLocalUnmarshaller(JAXBContext jaxbContext) {
+			this.jaxbContext = jaxbContext;
+		}
+
+		@Override
+		protected Unmarshaller initialValue() {
+			try {
+				return jaxbContext.createUnmarshaller();
+			} catch (JAXBException e) {
+				logger.log(SEVERE, "Could not create unmarshaller", e);
+				return null;
 			}
 		};
 	}

@@ -1,8 +1,14 @@
 package uk.org.taverna.scufl2.api.iterationstrategy;
 
+import java.net.URI;
+import java.util.Collection;
 import java.util.List;
 
+import uk.org.taverna.scufl2.api.annotation.Annotation;
 import uk.org.taverna.scufl2.api.common.AbstractCloneable;
+import uk.org.taverna.scufl2.api.common.Child;
+import uk.org.taverna.scufl2.api.common.Scufl2Tools;
+import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.common.Visitor;
 import uk.org.taverna.scufl2.api.common.WorkflowBean;
 import uk.org.taverna.scufl2.api.port.InputProcessorPort;
@@ -125,5 +131,37 @@ public class PortNode extends AbstractCloneable implements IterationStrategyNode
 		PortNode cloneNode = (PortNode)clone;
 		cloneNode.setDesiredDepth(getDesiredDepth());
 		cloneNode.setInputProcessorPort(cloning.cloneOrOriginal(getInputProcessorPort()));		
+	}
+
+	// Derived operations
+
+	/**
+	 * Get all the annotations that pertain to this port node.
+	 * 
+	 * @return The collection of annotations.
+	 * @see Scufl2Tools#annotationsFor(Child)
+	 */
+	public Collection<Annotation> getAnnotations() {
+		return getTools().annotationsFor(this);
+	}
+
+	/**
+	 * Get the URI of this port node.
+	 * 
+	 * @return The absolute URI.
+	 * @see URITools#uriForBean(WorkflowBean)
+	 */
+	public URI getURI() {
+		return getUriTools().uriForBean(this);
+	}
+
+	/**
+	 * Get the URI of this port node relative to another workflow element.
+	 * 
+	 * @return The relative URI.
+	 * @see URITools#relativeUriForBean(WorkflowBean,WorflowBean)
+	 */
+	public URI getRelativeURI(WorkflowBean relativeTo) {
+		return getUriTools().relativeUriForBean(this, relativeTo);
 	}
 }
