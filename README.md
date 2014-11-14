@@ -3,7 +3,8 @@ RO bundle API
 
 
 [![Build Status](https://travis-ci.org/wf4ever/robundle.svg)](https://travis-ci.org/wf4ever/robundle)
-[![doi:10.5281/zenodo.10440](https://zenodo.org/badge/doi/10.5281/zenodo.10440.png)](http://dx.doi.org/10.5281/zenodo.10440)
+[![DOI](https://zenodo.org/badge/doi/10.5072/zenodo.12703.png)](http://dx.doi.org/10.5072/zenodo.12703)
+
 
  
 
