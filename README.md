@@ -10,7 +10,7 @@ RO bundle API
 
 API for building researchobject.org RO bundles. 
 
-Complies with [RO bundle specification](https://w3id.org/bundle) version [2014-11-05](https://w3id.org/bundle/2014-11-05/).
+Complies with [RO bundle specification](https://w3id.org/bundle) version [1.0](https://w3id.org/bundle/2014-11-05/).
 
 This API is built on the Java 7 NIO Files and uses the 
 [Java 7 ZIP file provider](http://docs.oracle.com/javase/7/docs/technotes/guides/io/fsp/zipfilesystemprovider.html) to generate the RO Bundle.
