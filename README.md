@@ -8,9 +8,9 @@ RO bundle API
  
 
 
-API for building Wf4Ever RO bundles. 
+API for building researchobject.org RO bundles. 
 
-See [RO bundle specification](http://purl.org/wf4ever/ro-bundle).
+Complies with [RO bundle specification](https://w3id.org/bundle) version [2014-11-05](https://w3id.org/bundle/2014-11-05/).
 
 This API is built on the Java 7 NIO Files and uses the 
 [Java 7 ZIP file provider](http://docs.oracle.com/javase/7/docs/technotes/guides/io/fsp/zipfilesystemprovider.html) to generate the RO Bundle.
@@ -58,7 +58,8 @@ If you use [Maven 3](http://maven.apache.org/), then add to your `pom.xml`:
 ```
 
 To find the latest `<version>` (in case the above has not been updated), see the
-list of [robundle releases](https://github.com/wf4ever/robundle/releases).
+list of [robundle releases](https://github.com/wf4ever/robundle/releases). To download a precompiled
+binary JAR, see the [myGrid's Maven repository](http://www.mygrid.org.uk/maven/repository/org/purl/wf4ever/robundle/robundle/).
 
 Building
 --------
@@ -71,7 +72,7 @@ should normally work, given a recent version of [Maven 3](http://maven.apache.or
 
 [myGrid's Jenkins installation](http://build.mygrid.org.uk/ci/) has automated builds of
 [robundle](http://build.mygrid.org.uk/ci/job/robundle/), which are deployed 
-to [myGrid's snapshot Maven repository](http://build.mygrid.org.uk/maven/snapshot-repository/org/purl/wf4ever/robundle/robundle/).
+to [myGrid's snapshot Maven repository](http://www.mygrid.org.uk/maven/snapshot-repository/org/purl/wf4ever/robundle/robundle/).
 
 To use a snapshot build, add this repository to `pom.xml`:
 
