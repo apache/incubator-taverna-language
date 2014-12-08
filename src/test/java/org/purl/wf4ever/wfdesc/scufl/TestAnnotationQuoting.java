@@ -57,7 +57,7 @@ public class TestAnnotationQuoting {
 		myRepository.initialize();
 		RepositoryConnection con = myRepository.getConnection();
 		String root = "app://600aac93-0ea8-4e9d-9593-081149e31d5a/";
-		//System.out.write(output.toByteArray());
+		System.out.write(output.toByteArray());
 		con.add(new ByteArrayInputStream(output.toByteArray()), root, RDFFormat.TURTLE);
 		
 		TupleQueryResult results = con.prepareTupleQuery(QueryLanguage.SPARQL, 
@@ -66,15 +66,17 @@ public class TestAnnotationQuoting {
 				"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>  " +
 				"PREFIX roterms: <http://purl.org/wf4ever/roterms#>  " +
 				"PREFIX dc: <http://purl.org/dc/elements/1.1/>  " +
+				"PREFIX dcterms: <http://purl.org/dc/terms/>  " + 				
 				"PREFIX biocat: <http://biocatalogue.org/attribute/>  " +
-				"SELECT ?author ?title ?desc ?portDesc ?example " +
+				"SELECT ?author ?title ?desc ?portDesc ?example  " +
 				"WHERE {  " +
 				"?wf a wfdesc:Workflow ; " +
-				"  dc:title ?title ; " +
-				"  dc:description ?desc ; " +
+				"  dc:creator ?author ; " +				
+				"  dcterms:title ?title ; " +
+				"  dcterms:description ?desc ; " +
 				"  wfdesc:hasInput ?in . " +
 				"?in a wfdesc:Input ; " +
-				"  dc:description ?portDesc ; " +
+				"  dcterms:description ?portDesc ; " +
 				"  biocat:exampleData ?example . " +				
 			    "}").evaluate();
 
@@ -86,8 +88,8 @@ public class TestAnnotationQuoting {
 		assertEquals("T3-1226 test with 'single quote'", bind.getValue("title").stringValue());
 		// Note: The quotes below are only escaped in this Java source code
 		assertEquals("This comment contains \"\"\"triple quotes\"\"\" inside.", bind.getValue("desc").stringValue());
-		assertEquals("\"quote at the start", "portDesc");
-		assertEquals("quote at the end\"", "example");
+		assertEquals("\"quote at the start", bind.getValue("portDesc").stringValue());
+		assertEquals("quote at the end\"", bind.getValue("example").stringValue());
 		
 	}
 	

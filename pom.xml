@@ -8,7 +8,7 @@
     <name>SCUFL2 to wfdesc</name>
     <description>Convert Scufl2 workflow to wfdesc structure (from Wf4Ever RO ontology)</description>
     <properties>
-        <scufl2.version>0.14.0</scufl2.version>
+        <scufl2.version>0.14.1-SNAPSHOT</scufl2.version>
         <elmo.version>1.5</elmo.version>
         <sesame.version>2.2.4</sesame.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
