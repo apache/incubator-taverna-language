@@ -30,6 +30,7 @@ import uk.org.taverna.scufl2.api.port.InputActivityPort;
 import uk.org.taverna.scufl2.api.port.OutputActivityPort;
 import uk.org.taverna.scufl2.api.profiles.Profile;
 
+@SuppressWarnings("unused")
 public class TestActivityParsingRshell {
 
 	private static final String WF_RSHELL_2_2 = "/rshell-2-2.t2flow";

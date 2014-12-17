@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
-import static uk.org.taverna.scufl2.translator.t2flow.t23activities.XPathActivityParser.ACTIVITY_URI;
 
 import java.net.URL;
 

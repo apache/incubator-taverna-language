@@ -6,7 +6,6 @@ import java.net.URL;
 
 import org.junit.Test;
 
-import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.profiles.Profile;
@@ -18,8 +17,6 @@ public class TestFastaWorkflow {
     private static final String WF_SIMPLE_FASTA = "/simple_fasta.t2flow";
 
     
-    private static Scufl2Tools scufl2Tools = new Scufl2Tools();
-
     @Test
     public void fastaPscan() throws Exception {
         URL wfResource = getClass().getResource(WF_FASTA_AND_PSCAN);

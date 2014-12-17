@@ -39,7 +39,7 @@
 			</plugin>
 		</plugins>
 	</build>
- 	<dependencies>
+	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>scufl2-api</artifactId>
@@ -48,27 +48,22 @@
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-impl</artifactId>
-                        <version>${jaxb.version}</version>
-			<type>jar</type>
 			<optional>true</optional>
 		</dependency>
+
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-                        <version>${commons.io.version}</version>
-			<type>jar</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-                        <groupId>org.jdom</groupId>
-                        <artifactId>com.springsource.org.jdom</artifactId>
-                        <version>${jdom.version}</version>
+			<groupId>org.jdom</groupId>
+			<artifactId>com.springsource.org.jdom</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jaxen</groupId>
 			<artifactId>com.springsource.org.jaxen</artifactId>
-                        <version>${jaxen.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies> 

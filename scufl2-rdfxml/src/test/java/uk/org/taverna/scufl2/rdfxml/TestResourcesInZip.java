@@ -1,7 +1,6 @@
 package uk.org.taverna.scufl2.rdfxml;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static uk.org.taverna.scufl2.rdfxml.TestRDFXMLWriter.APPLICATION_VND_TAVERNA_SCUFL2_WORKFLOW_BUNDLE;
 
 import java.io.File;
@@ -18,6 +17,7 @@ import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
 import uk.org.taverna.scufl2.ucfpackage.UCFPackage;
 
+@SuppressWarnings("resource")
 public class TestResourcesInZip {
 
 	protected WorkflowBundleIO bundleIO = new WorkflowBundleIO();

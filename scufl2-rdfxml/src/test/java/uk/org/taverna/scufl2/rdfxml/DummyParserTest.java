@@ -24,13 +24,12 @@ public class DummyParserTest {
 	private JAXBContext jaxbContext;
 	private Unmarshaller unmarshaller;
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "unused", "rawtypes" })
 	@Test
 	public void parse() throws Exception {
 		URL resource = getClass().getResource("example/workflowBundle.rdf");
 		URI baseUri = resource.toURI();
 
-		@SuppressWarnings("rawtypes")
 		JAXBElement<WorkflowBundleDocument> workflowBundle = (JAXBElement<WorkflowBundleDocument>) unmarshaller
 				.unmarshal(resource);
 		WorkflowBundleDocument bundleDoc = workflowBundle.getValue();

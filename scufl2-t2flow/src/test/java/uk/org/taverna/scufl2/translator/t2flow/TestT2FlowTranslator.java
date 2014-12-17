@@ -36,6 +36,7 @@ public class TestT2FlowTranslator {
 		assertNotNull("Could not find workflow " + AS_T2FLOW, wfResource);
 		T2FlowParser parser = new T2FlowParser();
 		parser.setStrict(true);
+		@SuppressWarnings("unused")
 		WorkflowBundle bundle = parser.parseT2Flow(wfResource.openStream());
 	}
 	

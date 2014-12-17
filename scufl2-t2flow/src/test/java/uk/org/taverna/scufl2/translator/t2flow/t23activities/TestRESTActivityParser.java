@@ -1,10 +1,6 @@
 package uk.org.taverna.scufl2.translator.t2flow.t23activities;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 import static uk.org.taverna.scufl2.translator.t2flow.t23activities.RESTActivityParser.ACTIVITY_URI;
 import static uk.org.taverna.scufl2.translator.t2flow.t23activities.RESTActivityParser.HTTP_METHODS_URI;
 import static uk.org.taverna.scufl2.translator.t2flow.t23activities.RESTActivityParser.HTTP_URI;
@@ -37,6 +33,7 @@ import uk.org.taverna.scufl2.api.profiles.Profile;
 import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
 import uk.org.taverna.scufl2.translator.t2flow.T2Parser;
 
+@SuppressWarnings("unused")
 public class TestRESTActivityParser {
 
 	private static Scufl2Tools scufl2Tools = new Scufl2Tools();

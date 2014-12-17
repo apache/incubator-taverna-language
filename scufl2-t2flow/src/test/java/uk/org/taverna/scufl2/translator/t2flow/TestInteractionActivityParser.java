@@ -4,8 +4,6 @@ import static org.junit.Assert.*;
 
 import java.net.URL;
 
-import javax.xml.bind.JAXBException;
-
 import static uk.org.taverna.scufl2.translator.t2flow.defaultactivities.InteractionActivityParser.ACTIVITY_URI;
 
 import org.junit.Test;

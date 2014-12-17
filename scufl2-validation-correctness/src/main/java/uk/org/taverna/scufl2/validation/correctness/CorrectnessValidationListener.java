@@ -14,7 +14,6 @@ import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
 import uk.org.taverna.scufl2.api.iterationstrategy.IterationStrategyTopNode;
 import uk.org.taverna.scufl2.api.port.AbstractGranularDepthPort;
 import uk.org.taverna.scufl2.api.port.Port;
-import uk.org.taverna.scufl2.validation.ValidationException;
 import uk.org.taverna.scufl2.validation.ValidationReport;
 
 /**

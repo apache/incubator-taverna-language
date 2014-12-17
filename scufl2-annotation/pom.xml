@@ -10,17 +10,23 @@
 	</parent>
   	<artifactId>scufl2-annotation</artifactId>
 	<name>Taverna Scufl 2 annotations</name>		
+	<description>Convenience methods for working with SCUFL2 annotations</description>
 	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-                        <version>${junit.version}</version>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>uk.org.taverna.scufl2</groupId>
 			<artifactId>scufl2-api</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.jsonld-java</groupId>
+			<artifactId>jsonld-java-jena</artifactId>
+			<version>0.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>uk.org.taverna.scufl2</groupId>
@@ -28,11 +34,5 @@
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>com.github.jsonld-java</groupId>
-			<artifactId>jsonld-java-jena</artifactId>
-			<version>0.4</version>
-		</dependency>
 	</dependencies>
-	<description>Convenience methods for working with SCUFL2 annotations</description>
 </project>

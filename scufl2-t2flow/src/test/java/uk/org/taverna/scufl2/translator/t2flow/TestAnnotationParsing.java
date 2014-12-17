@@ -13,7 +13,6 @@ import org.junit.Test;
 
 import uk.org.taverna.scufl2.api.annotation.Annotation;
 import uk.org.taverna.scufl2.api.annotation.Revision;
-import uk.org.taverna.scufl2.api.common.Scufl2Tools;
 import uk.org.taverna.scufl2.api.common.URITools;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 import uk.org.taverna.scufl2.api.core.Workflow;
@@ -27,8 +26,6 @@ public class TestAnnotationParsing {
 	private static final String SEMANTIC_ANNOTATIONS = "/semantic_annotations__eclipse.t2flow";
 	
 	
-	private static Scufl2Tools scufl2Tools = new Scufl2Tools();
-
 	private static URITools uriTools = new URITools();
 
 	@Test

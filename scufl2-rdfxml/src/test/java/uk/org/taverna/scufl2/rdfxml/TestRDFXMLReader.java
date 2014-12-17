@@ -204,6 +204,7 @@ public class TestRDFXMLReader {
 		new RDFXMLSerializer(workflowBundle).workflowDoc(output,
 				workflowBundle.getMainWorkflow(),
 				URI.create("workflows/HelloWorld.rdf"));
+		@SuppressWarnings("unused")
 		String bundleTxt = new String(output.toByteArray(), "UTF-8");
 //		System.out.println(bundleTxt);
 

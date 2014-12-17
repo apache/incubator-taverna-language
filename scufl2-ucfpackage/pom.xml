@@ -9,26 +9,25 @@
 	<packaging>bundle</packaging>
 	<name>Taverna Scufl 2 UCF Package</name>
 	<description>Adobe UCF compatible Package API, making a structured ZIP file with manifest</description>
+
 	<dependencies>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-                        <version>${commons.io.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-                        <groupId>org.jdom</groupId>
-                        <artifactId>com.springsource.org.jdom</artifactId>
-                        <version>${jdom.version}</version>
+			<groupId>org.jdom</groupId>
+			<artifactId>com.springsource.org.jdom</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jaxen</groupId>
 			<artifactId>com.springsource.org.jaxen</artifactId>
-                        <version>${jaxen.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
 	<licenses>
 		<license>
 			<name>GNU Lesser General Public License</name>
@@ -58,14 +57,9 @@
 						<goals>
 							<goal>xjc</goal>
 						</goals>
-						<configuration>                           
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 		</plugins>
 	</build>
-
-
-	<!-- -->
 </project>

@@ -6,14 +6,17 @@ import java.net.URL;
 
 import org.junit.Test;
 
+import uk.org.taverna.scufl2.api.common.NamedSet;
 import uk.org.taverna.scufl2.api.common.Scufl2Tools;
+import uk.org.taverna.scufl2.api.configurations.Configuration;
 import uk.org.taverna.scufl2.api.container.WorkflowBundle;
 
+@SuppressWarnings("unused")
 public class TestActivityParsing {
 
     private static final String WF_ALL_ACTIVITIES = "/defaultActivitiesTaverna2.2.t2flow";
-    private static final String WF_AS = "/as.t2flow";
-    private static Scufl2Tools scufl2Tools = new Scufl2Tools();
+	private static final String WF_AS = "/as.t2flow";
+	private static Scufl2Tools scufl2Tools = new Scufl2Tools();
 
     @Test
     public void readSimpleWorkflow() throws Exception {
@@ -25,8 +28,9 @@ public class TestActivityParsing {
         // parser.setStrict(true);
         WorkflowBundle wfBundle = parser
                 .parseT2Flow(wfResource.openStream());
-        // System.out.println(researchObj.getProfiles().iterator().next()
-        // .getConfigurations());
+		NamedSet<Configuration> cfgs = wfBundle.getProfiles().iterator().next()
+				.getConfigurations();
+        // System.out.println(cfgs);
 
     }
     

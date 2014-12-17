@@ -20,6 +20,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<sesame.version>2.7.0</sesame.version>
+		<elmo.version>1.5</elmo.version>
 	</properties>
 	<dependencies>
 		<!-- Common dependencies - keep these to a minimum as we want to reduce 
@@ -27,13 +29,11 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-                        <version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
-		    
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
@@ -203,8 +203,8 @@
 		<!-- Disabled until unit tests work <module>scufl2-validation-integration</module> -->
 		
 		<module>scufl2-integration-tests</module>
-    <module>scufl2-annotation</module>
-  </modules>
+		<module>scufl2-annotation</module>
+	</modules>
 	<licenses>
 		<license>
 			<name>GNU Lesser General Public License 2.1</name>

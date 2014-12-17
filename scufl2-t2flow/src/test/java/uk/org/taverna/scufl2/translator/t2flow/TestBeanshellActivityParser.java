@@ -168,7 +168,10 @@ public class TestBeanshellActivityParser {
 		Processor a_c_workflow = wfBundle.getMainWorkflow().getProcessors()
 				.getByName("A_C_workflow");
 		Configuration a_c_config = scufl2Tools
-				.configurationForActivityBoundToProcessor(a_c_workflow, profile);		
+				.configurationForActivityBoundToProcessor(a_c_workflow, profile);
+		assertNotNull(a_c_config);
+		Configuration c2 = a_c_workflow.getActivityConfiguration(profile);
+		assertEquals(a_c_config,c2);
 /* TODO: Update tests
 		PropertyResource a_c_configResource = a_c_config.getJson();
 		
