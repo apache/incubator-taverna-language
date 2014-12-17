@@ -1,11 +1,6 @@
 package uk.org.taverna.databundle;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,9 +23,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.purl.wf4ever.robundle.Bundle;
 
-import com.fasterxml.jackson.core.JsonFactory;
+//import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+//import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -42,8 +37,10 @@ public class TestDataBundles {
 
     protected void checkSignature(Path zip) throws IOException {
 		String MEDIATYPE = "application/vnd.wf4ever.robundle+zip";
-		// Check position 30++ according to RO Bundle specification
-		// http://purl.org/wf4ever/ro-bundle#ucf
+		/*
+		 * Check position 30++ according to RO Bundle specification
+		 * http://purl.org/wf4ever/ro-bundle#ucf
+		 */
 		byte[] expected = ("mimetype" + MEDIATYPE + "PK").getBytes("ASCII");
 
 		try (InputStream in = Files.newInputStream(zip)) {
