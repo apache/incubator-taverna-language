@@ -4,7 +4,9 @@
 package uk.org.taverna.scufl2.validation.correctness;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import uk.org.taverna.scufl2.api.common.Child;
 import uk.org.taverna.scufl2.api.common.Configurable;
@@ -196,5 +198,58 @@ public class ReportCorrectnessValidationListener implements
 		if (!detectedProblems())
 			return null;
 		return new ValidationException(this.toString());
+	}
+
+	@Override
+	public String toString() {
+		final int maxLen = 10;
+		StringBuilder builder = new StringBuilder();
+		builder.append("ReportCorrectnessValidationListener [getNegativeValueProblems()=");
+		builder.append(getNegativeValueProblems() != null ? toString(
+				getNegativeValueProblems(), maxLen) : null);
+		builder.append(", getEmptyIterationStrategyTopNodeProblems()=");
+		builder.append(getEmptyIterationStrategyTopNodeProblems() != null ? toString(
+				getEmptyIterationStrategyTopNodeProblems(), maxLen) : null);
+		builder.append(", getMismatchConfigurableTypeProblems()=");
+		builder.append(getMismatchConfigurableTypeProblems() != null ? toString(
+				getMismatchConfigurableTypeProblems(), maxLen) : null);
+		builder.append(", getNonAbsoluteURIProblems()=");
+		builder.append(getNonAbsoluteURIProblems() != null ? toString(
+				getNonAbsoluteURIProblems(), maxLen) : null);
+		builder.append(", getNullFieldProblems()=");
+		builder.append(getNullFieldProblems() != null ? toString(
+				getNullFieldProblems(), maxLen) : null);
+		builder.append(", getOutOfScopeValueProblems()=");
+		builder.append(getOutOfScopeValueProblems() != null ? toString(
+				getOutOfScopeValueProblems(), maxLen) : null);
+		builder.append(", getPortMentionedTwiceProblems()=");
+		builder.append(getPortMentionedTwiceProblems() != null ? toString(
+				getPortMentionedTwiceProblems(), maxLen) : null);
+		builder.append(", getPortMissingFromIterationStrategyStackProblems()=");
+		builder.append(getPortMissingFromIterationStrategyStackProblems() != null ? toString(
+				getPortMissingFromIterationStrategyStackProblems(), maxLen)
+				: null);
+		builder.append(", getWrongParentProblems()=");
+		builder.append(getWrongParentProblems() != null ? toString(
+				getWrongParentProblems(), maxLen) : null);
+		builder.append(", getIncompatibleGranularDepthProblems()=");
+		builder.append(getIncompatibleGranularDepthProblems() != null ? toString(
+				getIncompatibleGranularDepthProblems(), maxLen) : null);
+		builder.append("]");
+		return builder.toString();
+	}
+
+	private String toString(Collection<?> collection, int maxLen) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("[");
+		int i = 0;
+		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext()
+				&& i < maxLen; i++) {
+			if (i > 0)
+				builder.append(", ");
+			builder.append(iterator.next());
+		}
+		builder.append("]");
+		return builder.toString();
 	}
 }

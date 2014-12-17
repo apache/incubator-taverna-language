@@ -7,6 +7,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.Test;
@@ -19,6 +20,10 @@ import uk.org.taverna.scufl2.api.core.Workflow;
 import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
 
 public class TestAnnotationParsing {
+
+	private static final String WF_T3_1226 = "/T3-1226-annotations-with-quotes.t2flow";
+
+	private static final String WF_ANNOTATION_WITH_BACKSLASH_T2FLOW = "/annotation_with_backslash.t2flow";
 
 	private static final String WF_RANDOM = "/random.t2flow";
 	
@@ -57,8 +62,8 @@ public class TestAnnotationParsing {
 
 	@Test
 	public void readWorkflowWithEscapes() throws Exception {
-		URL wfResource = getClass().getResource("/annotation_with_backslash.t2flow");
-		assertNotNull("Could not find workflow " + WF_ANNOTATED, wfResource);
+		URL wfResource = getClass().getResource(WF_ANNOTATION_WITH_BACKSLASH_T2FLOW);
+		assertNotNull("Could not find workflow " + WF_ANNOTATION_WITH_BACKSLASH_T2FLOW, wfResource);
 		T2FlowParser parser = new T2FlowParser();
 		parser.setValidating(true);
 		parser.setStrict(true);
@@ -70,7 +75,47 @@ public class TestAnnotationParsing {
 		assertTrue(annStr.contains("\"\"\"c:\\\\Program Files\\\\\"\"\""));
 	}
 	
-	
+	@Test
+	public void readWorkflowWithQuotesInAnnotations() throws Exception {
+		URL wfResource = getClass().getResource(WF_T3_1226);
+		assertNotNull("Could not find workflow " + WF_T3_1226, wfResource);
+		T2FlowParser parser = new T2FlowParser();
+		parser.setValidating(true);
+		parser.setStrict(true);
+		WorkflowBundle wfBundle = parser.parseT2Flow(wfResource.openStream());
+		Workflow wf = wfBundle.getMainWorkflow();
+		Collection<Annotation> wfAnnotations = wf.getAnnotations();
+		assertEquals(3, wfAnnotations.size());
+		for (Annotation ann : wfAnnotations) {
+			String content = ann.getRDFContent();
+			System.out.println(content);
+			if (content.contains("dc/terms/title")) {
+				assertTrue("Single 'quote' should not be escaped", content.contains("with 'single quote'"));
+			} else if (content.contains("dc/terms/description")) {
+				assertTrue("Triple quotes inside should be escaped", content.contains("contains \\\"\\\"\\\"triple quotes\\\"\\\"\\\" inside"));
+			} else if (content.contains("elements/1.1/creator")) {
+				assertTrue("Unexpected escaping", content.contains("\"\"\"Stian Soiland-Reyes\"\"\""));
+			} else {
+				fail("Unexpected annotation content: " + content);
+			}
+		}
+		
+		
+		Collection<Annotation> portAnnotations = wf.getInputPorts().getByName("a").getAnnotations();
+		assertEquals(2, portAnnotations.size());
+		for (Annotation ann : portAnnotations) {
+			String content = ann.getRDFContent();
+			System.out.println(content);
+			if (content.contains("dc/terms/description")) {
+				assertTrue("Quote at start was not escaped", content.contains("description> \"\"\"\\\"quote at the start"));
+			} else if (content.contains("attribute/exampleData")) {
+				assertTrue("Quote at end was not escaped", content.contains("quote at the end\\\"\"\"\" ."));
+			} else {
+				fail("Unexpected annotation content: " + content);
+			}
+		}
+		
+	}
 	
 
 	@Test
