@@ -92,7 +92,7 @@ public class TestMusicClassification {
         
         Agent taverna = new Agent();
         taverna.setName("Taverna Workbench 2.4.0");
-        manifest.getAggregation(workflowRunProvenance).setCreatedBy(Arrays.asList(taverna));
+        manifest.getAggregation(workflowRunProvenance).setCreatedBy(taverna);
         
         // Add annotations
         
