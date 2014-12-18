@@ -3,6 +3,8 @@ package uk.org.taverna.scufl2.annotation;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
@@ -26,12 +28,20 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.sparql.core.Quad;
 
 public class AnnotationTools {
+	private static final String EXAMPLE_DATA_PREDICATE = "http://biocatalogue.org/attribute/exampleData";
+	public static final URI EXAMPLE_DATA = URI.create(EXAMPLE_DATA_PREDICATE);
+	private static final String TITLE_PREDICATE = "http://purl.org/dc/terms/title";
+	public static final URI TITLE = URI.create(TITLE_PREDICATE);
+	private static final String DESCRIPTION_PREDICATE = "http://purl.org/dc/terms/description";
+	public static final URI DESCRIPTION = URI.create(DESCRIPTION_PREDICATE);
+	private static final String CREATOR_PREDICATE = "http://purl.org/dc/elements/1.1/creator";
+	public static final URI CREATOR = URI.create(CREATOR_PREDICATE);
 
 	private static Logger logger = Logger.getLogger(AnnotationTools.class
 			.getCanonicalName());
 
-	Scufl2Tools scufl2Tools = new Scufl2Tools();
-	URITools uritools = new URITools();
+	private Scufl2Tools scufl2Tools = new Scufl2Tools();
+	private URITools uritools = new URITools();
 
 	public Dataset annotationDatasetFor(Child<?> workflowBean) {
 		Dataset dataset = DatasetFactory.createMem();
@@ -80,7 +90,7 @@ public class AnnotationTools {
 	}
 
 	public String getTitle(Child<?> workflowBean) {
-		return getLiteral(workflowBean, "http://purl.org/dc/terms/title");
+		return getLiteral(workflowBean, TITLE_PREDICATE);
 	}
 
 	private String getLiteral(Child<?> workflowBean, String propertyUri) {
@@ -98,18 +108,80 @@ public class AnnotationTools {
 	}
 
 	public String getCreator(Child<?> workflowBean) {
-		return getLiteral(workflowBean,
-				"http://purl.org/dc/elements/1.1/creator");
+		return getLiteral(workflowBean, CREATOR_PREDICATE);
 	}
 
 	public String getExampleValue(Child<?> workflowBean) {
-		return getLiteral(workflowBean,
-				"http://biocatalogue.org/attribute/exampleData");
+		return getLiteral(workflowBean, EXAMPLE_DATA_PREDICATE);
 	}
 
 	public String getDescription(Child<?> workflowBean) {
-		return getLiteral(workflowBean, "http://purl.org/dc/terms/description");
+		return getLiteral(workflowBean, DESCRIPTION_PREDICATE);
 	}
-	
-	
+
+	/**
+	 * Create a new annotation attached to the given 
+	 * @param workflowBundle
+	 * @param subject
+	 * @param predicate
+	 * @param value
+	 * @return
+	 * @throws IOException
+	 */
+	public Annotation createNewAnnotation(WorkflowBundle workflowBundle,
+			Child<?> subject, URI predicate, String value) throws IOException {
+		Object parent = subject.getParent();
+		while (parent instanceof Child)
+			parent = ((Child<?>) parent).getParent();
+		if (parent != workflowBundle)
+			throw new IllegalStateException(
+					"annotations can only be added to bundles that their subjects are already a member of");
+		if (predicate == null)
+			throw new IllegalArgumentException(
+					"annotation predicate must be non-null");
+		if (value == null)
+			throw new IllegalArgumentException(
+					"annotation value must be non-null");
+		
+		// Add the annotation
+		Annotation annotation = new Annotation();
+		Calendar now = new GregorianCalendar();
+		annotation.setParent(workflowBundle);
+
+		String path = "annotation/" + annotation.getName() + ".ttl";
+		URI bodyURI = URI.create(path);
+
+		annotation.setTarget(subject);
+		annotation.setAnnotatedAt(now);
+		// annotation.setAnnotator();//FIXME
+		annotation.setSerializedAt(now);
+		URI annotatedSubject = uritools.relativeUriForBean(subject, annotation);
+		StringBuilder turtle = new StringBuilder();
+		turtle.append("<");
+		turtle.append(annotatedSubject.toASCIIString());
+		turtle.append("> ");
+
+		turtle.append("<");
+		turtle.append(predicate.toASCIIString());
+		turtle.append("> ");
+
+		// A potentially multi-line string
+		turtle.append("\"\"\"");
+		// Escape existing \ to \\
+		String escaped = value.replace("\\", "\\\\");
+		// Escape existing " to \" (beware Java's escaping of \ and " below)
+		escaped = escaped.replace("\"", "\\\"");
+		turtle.append(escaped);
+		turtle.append("\"\"\"");
+		turtle.append(" .");
+		try {
+			workflowBundle.getResources().addResource(turtle.toString(), path,
+					"text/turtle");
+		} catch (IOException e) {
+			workflowBundle.getAnnotations().remove(annotation);
+			throw e;
+		}
+        annotation.setBody(bodyURI);
+        return annotation;
+	}
 }
