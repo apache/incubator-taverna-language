@@ -1,0 +1,202 @@
+
+<!-- Processed by Id: cwm.py,v 1.197 2007/12/13 15:38:39 syosi Exp -->
+<!--     using base file:///home/stain/stuff/src/wf4ever/ro/ro.owl-->
+
+
+<rdf:RDF xmlns="http://www.w3.org/2002/07/owl#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+
+    <Ontology rdf:about="http://purl.org/wf4ever/ro">
+        <rdfs:comment xml:lang="en">This ontology shows how AO and ORE ontologies can be used together to define a ResearchObject. This ontology is further customized by the wf4ever ontology.</rdfs:comment>
+        <rdfs:seeAlso rdf:resource="http://www.wf4ever-project.org/wiki/display/docs/Research+Object+Vocabulary+Specification"/>
+        <imports rdf:resource="http://purl.org/NET/dc_owl2dl/terms_od"/>
+        <imports rdf:resource="http://purl.org/ao/core/"/>
+        <imports rdf:resource="http://purl.org/wf4ever/ore-owl"/>
+        <imports rdf:resource="http://xmlns.com/foaf/0.1/"/>
+        <versionIRI rdf:resource="https://raw.github.com/wf4ever/ro/0.1/ro.owl"/>
+    </Ontology>
+
+    <Class rdf:about="http://purl.org/wf4ever/ro#AggregatedAnnotation">
+        <rdfs:comment xml:lang="en">An annotation aggregated within an ro:ResearchObject.  
+
+Instances of this class are used to annotated resources aggregated within the aggregating research object, proxies of these resources, or the research object itself. In other words, if :ro is the ro:ResearchObject this annotation has been ore:isAggregatedBy, then the annotation should have at least one ao:annotatesResource which is an ore:AggregatedResource which is ore:isAggregatedBy :ro, or the annotated resource is an ore:Proxy which ore:proxyIn :ro, or the annotated resource is :ro.
+
+It is possible for the annotation to also annotate non-aggregated resources, but as above, at least one of them needs to be part of the RO or the RO itself.
+
+As a subclass of ro:SemanticAnnotation the ao:body must point to an rdfg:Graph which contains the actual annotation. </rdfs:comment>
+        <rdfs:subClassOf rdf:resource="http://purl.org/wf4ever/ro#SemanticAnnotation"/>
+        <rdfs:subClassOf rdf:resource="http://www.openarchives.org/ore/terms/AggregatedResource"/>
+        <rdfs:subClassOf rdf:parseType="Resource">
+            <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+            <onProperty rdf:resource="http://www.openarchives.org/ore/terms/isAggregatedBy"/>
+            <someValuesFrom rdf:resource="http://purl.org/wf4ever/ro#ResearchObject"/>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf rdf:parseType="Resource">
+            <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+            <onProperty rdf:resource="http://purl.org/ao/annotatesResource"/>
+            <someValuesFrom rdf:parseType="Resource">
+                <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+                <unionOf rdf:parseType="Resource">
+                    <rdf:first rdf:resource="http://purl.org/wf4ever/ro#ResearchObject"/>
+                    <rdf:rest rdf:parseType="Resource">
+                        <rdf:first rdf:resource="http://www.openarchives.org/ore/terms/AggregatedResource"/>
+                        <rdf:rest rdf:parseType="Resource">
+                            <rdf:first rdf:resource="http://www.openarchives.org/ore/terms/Proxy"/>
+                            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                        </rdf:rest>
+                    </rdf:rest>
+                </unionOf>
+            </someValuesFrom>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf rdf:parseType="Resource">
+            <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+            <onProperty rdf:resource="http://purl.org/dc/terms/created"/>
+            <someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf rdf:parseType="Resource">
+            <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+            <onProperty rdf:resource="http://purl.org/dc/terms/creator"/>
+            <someValuesFrom rdf:resource="http://xmlns.com/foaf/0.1/Agent"/>
+        </rdfs:subClassOf>
+    </Class>
+
+    <Class rdf:about="http://purl.org/wf4ever/ro#Folder">
+        <rdfs:comment xml:lang="en">An ro:Folder is a special kind of ore:Aggregation where every ro:AggregatedResource must have a ro:FolderEntry proxy with a unique ro:entryName within that folder.
+
+Note that all resources which are aggregated within an (potentially nested) ro:Folder SHOULD also be aggregated by the same ro:ResearchObject this ro:Folder is aggregated within.
+
+Such folders can be nested and (optionally) used to organize the resources of the research object into a file-like structure. All such resources should also be aggregated by the ro:ResearchObject
+          </rdfs:comment>
+        <rdfs:subClassOf rdf:resource="http://purl.org/wf4ever/ro#Resource"/>
+        <rdfs:subClassOf rdf:resource="http://www.openarchives.org/ore/terms/Aggregation"/>
+    </Class>
+
+    <Class rdf:about="http://purl.org/wf4ever/ro#FolderEntry">
+        <rdfs:comment xml:lang="en">An ro:FolderEntry is any ore:Proxy instance that associates a resources aggregated within an ro:Folder with a ro:entryName. This name is (case-sensitive) unique within a given folder.</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="http://www.openarchives.org/ore/terms/Proxy"/>
+        <equivalentClass rdf:parseType="Resource">
+            <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+            <onProperty rdf:resource="http://purl.org/wf4ever/ro#entryName"/>
+            <someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        </equivalentClass>
+        <equivalentClass rdf:parseType="Resource">
+            <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+            <onProperty rdf:resource="http://www.openarchives.org/ore/terms/proxyIn"/>
+            <someValuesFrom rdf:resource="http://purl.org/wf4ever/ro#Folder"/>
+        </equivalentClass>
+        <hasKey rdf:parseType="Resource">
+            <rdf:first rdf:resource="http://www.openarchives.org/ore/terms/proxyIn"/>
+            <rdf:rest rdf:parseType="Resource">
+                <rdf:first rdf:resource="http://purl.org/wf4ever/ro#entryName"/>
+                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+            </rdf:rest>
+        </hasKey>
+    </Class>
+
+    <Class rdf:about="http://purl.org/wf4ever/ro#Manifest">
+        <rdfs:comment xml:lang="en">The ro:Manifest is used to describe an ro:ResearchObject. This identifies the resource for the manifest which lists all the aggregations of the research object, typically called ".ro/manifest.rdf" relative to the research object this manifest ore:describes.</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="http://www.openarchives.org/ore/terms/ResourceMap"/>
+        <equivalentClass rdf:parseType="Resource">
+            <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+            <onProperty rdf:resource="http://www.openarchives.org/ore/terms/describes"/>
+            <someValuesFrom rdf:resource="http://purl.org/wf4ever/ro#ResearchObject"/>
+        </equivalentClass>
+    </Class>
+
+    <Class rdf:about="http://purl.org/wf4ever/ro#ResearchObject">
+        <rdfs:comment xml:lang="en">A research object aggregates a number of resources. A resource can be a workflow, web service, document, data item, data set, workflow run, software or a research object.</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="http://www.openarchives.org/ore/terms/Aggregation"/>
+        <rdfs:subClassOf rdf:parseType="Resource">
+            <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+            <onProperty rdf:resource="http://purl.org/dc/terms/created"/>
+            <someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf rdf:parseType="Resource">
+            <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+            <onProperty rdf:resource="http://purl.org/dc/terms/creator"/>
+            <someValuesFrom rdf:resource="http://xmlns.com/foaf/0.1/Agent"/>
+        </rdfs:subClassOf>
+        <equivalentClass rdf:parseType="Resource">
+            <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+            <onProperty rdf:resource="http://www.openarchives.org/ore/terms/isDescribedBy"/>
+            <someValuesFrom rdf:resource="http://purl.org/wf4ever/ro#Manifest"/>
+        </equivalentClass>
+    </Class>
+
+    <Class rdf:about="http://purl.org/wf4ever/ro#Resource">
+        <rdfs:comment xml:lang="en">An ro:Resource is an ore:AggregatedResource which ore:isAggregatedBy an ro:ResearchObject. 
+
+This specialisation requires that there exists an ore:Proxy which is ore:proxyFor this resource, and which is ore:proxyIn the same ro:ResearchObject the resource ore:isAggregatedBy. Any annotations on such a proxy will descrive the ro:Resource within that particular ro:ResearchObject, in particular dct:creator and dct:created on the proxy will specify who added the resource to the aggregation at what time.
+
+Note that annotations (ro:AggregatedAnnotation) can be added to both the ro:Resource and the ore:Proxy - depending on if the annotation is seen to be globally true (such as the provenance of how the resource was created) or locally true within the Research Object (such as the the resource playing the role of a wf4ever:Dataset).
+
+Not all resources aggregated by an ro:ResearchObject are ro:Resource instances, in particular ro:AggregatedAnnotations will also be aggregated, but will not be "true" RO resources (and thus don't need their own ore:Proxy).  
+
+Aggregated resources MAY also be organised in (potentially nested) ro:Folders to reflect a file-system like structure. Note that any such resources SHOULD also be aggregated in the "mother" ro:ResearchObject.
+</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="http://www.openarchives.org/ore/terms/AggregatedResource"/>
+        <rdfs:subClassOf rdf:parseType="Resource">
+            <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+            <onProperty rdf:resource="http://www.openarchives.org/ore/terms/isAggregatedBy"/>
+            <someValuesFrom rdf:resource="http://purl.org/wf4ever/ro#ResearchObject"/>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf rdf:parseType="Resource">
+            <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+            <onProperty rdf:parseType="Resource">
+                <inverseOf rdf:resource="http://www.openarchives.org/ore/terms/proxyFor"/>
+            </onProperty>
+            <someValuesFrom rdf:parseType="Resource">
+                <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+                <onProperty rdf:resource="http://www.openarchives.org/ore/terms/proxyIn"/>
+                <someValuesFrom rdf:resource="http://purl.org/wf4ever/ro#ResearchObject"/>
+            </someValuesFrom>
+        </rdfs:subClassOf>
+    </Class>
+
+    <Class rdf:about="http://purl.org/wf4ever/ro#SemanticAnnotation">
+        <rdfs:comment xml:lang="en">An ro:SemanticAnnotation is a specialisation of ao:Annotation which requires that ao:body points to an RDF Graph.
+
+This might be a Named Graph or a resource which can be resolved separately from the URI given by ao:body.
+
+This graph SHOULD mention the resources identified by ao:annotatesResource from this annotation, preferably by using their URIs as subject or object of statements.
+
+Note that this use of ao:body is distinct from ao:hasTopic, which also allows the association of a an RDF Graph with an ao:Annotation, but which also implies that this graph is the "topic" (subproperty of bookmark:hasTopic) of the annotated resource. This class does not require this interpretation, it is merely enough that the annotation body mentions the annotated resource, for instance to give it a dc:title or to relate two annotated resources.  Also note that the next version of the AO ontology (v2) might change this definition of ao:hasTopic, removing the need for this class.</rdfs:comment>
+        <rdfs:seeAlso rdf:resource="http://code.google.com/p/annotation-ontology/wiki/GraphsAnnotations"/>
+        <rdfs:seeAlso rdf:resource="http://purl.org/ao/body"/>
+        <rdfs:seeAlso rdf:resource="http://purl.org/ao/hasTopic"/>
+        <rdfs:seeAlso rdf:resource="http://www.w3.org/2001/Annotea/User/BookmarkSchema"/>
+        <rdfs:seeAlso rdf:resource="http://www.w3.org/2002/01/bookmark#hasTopic"/>
+        <rdfs:subClassOf rdf:resource="http://purl.org/ao/Annotation"/>
+        <rdfs:subClassOf rdf:parseType="Resource">
+            <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Restriction"/>
+            <allValuesFrom rdf:resource="http://www.w3.org/2004/03/trix/rdfg-1/Graph"/>
+            <onProperty rdf:resource="http://purl.org/ao/body"/>
+        </rdfs:subClassOf>
+    </Class>
+
+    <ObjectProperty rdf:about="http://purl.org/wf4ever/ro#annotatesAggregatedResource">
+        <rdfs:comment xml:lang="en">ro:annotatesAggregatedResource specifies that an ao:Annotation annotates an aggregated ro:Resource. 
+                               
+When used on an ro:AggregatedAnnotation, both the domain and range of this property must ore:isAggregatedBy the same ro:ResearchObject.  
+
+TODO: Should also ro:ResearchObject and ore:Proxy be in the range of this property, or is this subproperty even needed?
+</rdfs:comment>
+        <rdfs:domain rdf:resource="http://purl.org/ao/Annotation"/>
+        <rdfs:range rdf:resource="http://purl.org/wf4ever/ro#Resource"/>
+        <rdfs:subPropertyOf rdf:resource="http://purl.org/ao/annotatesResource"/>
+    </ObjectProperty>
+
+    <DatatypeProperty rdf:about="http://purl.org/wf4ever/ro#entryName">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:comment xml:lang="en">This functional property specifies the name of a ro:FolderEntry within an ro:Folder. 
+
+This name must be case-sensitively unique within the ro:Folder, similar to a filename in a directory.
+
+TODO: Need a functional property to specify the top level folder structure of an {{ro:ResearchObject}}?
+</rdfs:comment>
+        <rdfs:domain rdf:resource="http://purl.org/wf4ever/ro#FolderEntry"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </DatatypeProperty>
+</rdf:RDF>
