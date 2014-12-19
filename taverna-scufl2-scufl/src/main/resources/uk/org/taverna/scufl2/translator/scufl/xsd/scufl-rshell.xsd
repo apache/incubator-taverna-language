@@ -1,0 +1,64 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://org.embl.ebi.escience/xscufl/0.1alpha"
+            targetNamespace="http://org.embl.ebi.escience/xscufl/0.1alpha"
+            xmlns:scufl="http://org.embl.ebi.escience/xscufl/0.1alpha"
+            xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+            jaxb:version="1.0">
+
+<xsd:include schemaLocation="scufl.xsd" />
+
+<xsd:complexType name="rshellInputPortType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+      <xsd:attribute name="syntacticType" type="xsd:string" form="qualified"/>
+      <xsd:attribute name="symanticType" type="xsd:string" form="qualified"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+<xsd:complexType name="rshellInputPortListType">
+  <xsd:sequence>
+    <xsd:element ref="rshellInputPort" maxOccurs="unbounded"/>
+  </xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType name="rshellOutputPortType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+      <xsd:attribute name="syntacticType" type="xsd:string" form="qualified"/>
+       <xsd:attribute name="symanticType" type="xsd:string" form="qualified"/>
+     </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+<xsd:complexType name="rshellOutputPortListType">
+  <xsd:sequence>
+    <xsd:element ref="rshellOutputPort" maxOccurs="unbounded"/>
+  </xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType name="rshellType" mixed="true">
+  <xsd:sequence>
+    <xsd:element ref="rshellInputPortList"/>
+    <xsd:element ref="rshellOutputPortList"/>
+  </xsd:sequence>
+  <xsd:attribute name="hostname" type="xsd:string" form="qualified"/>
+  <xsd:attribute name="port" type="xsd:nonNegativeInteger" form="qualified"/>
+  <xsd:attribute name="username" type="xsd:string" form="qualified"/>
+  <xsd:attribute name="password" type="xsd:string" form="qualified"/>
+  <xsd:attribute name="keepSessionAlive" type="xsd:boolean" form="qualified"/>
+</xsd:complexType>
+
+
+<xsd:element name="rshellInputPort" type="scufl:rshellInputPortType"/>
+
+<xsd:element name="rshellInputPortList" type="scufl:rshellInputPortListType"/>
+
+
+<xsd:element name="rshellOutputPort" type="scufl:rshellOutputPortType"/>
+
+<xsd:element name="rshellOutputPortList" type="scufl:rshellOutputPortListType"/>
+
+<xsd:element name="rshell" type="scufl:rshellType" substitutionGroup="processorElement"/>
+
+</xsd:schema>

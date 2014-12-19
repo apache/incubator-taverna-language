@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://ns.taverna.org.uk/2010/scufl2#"
+	xmlns:beanshell="http://ns.taverna.org.uk/2010/activity/beanshell#"
+	xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:owl="http://www.w3.org/2002/07/owl#"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://ns.taverna.org.uk/2010/scufl2# http://ns.taverna.org.uk/2010/scufl2/scufl2.xsd 
+						http://www.w3.org/1999/02/22-rdf-syntax-ns# http://ns.taverna.org.uk/2010/scufl2/rdf.xsd"
+	xsi:type="ProfileDocument" xml:base="tavernaServer/">
+
+	<Profile rdf:about="">
+		<name>tavernaServer</name>
+		<processorBinding rdf:resource="processorbinding/Hello/" />
+		<activateConfiguration rdf:resource="configuration/Hello/" />
+	</Profile>
+
+	<Activity rdf:about="activity/HelloScript/">
+		<rdf:type
+			rdf:resource="http://ns.taverna.org.uk/2010/activity/beanshell" />
+		<name>HelloScript</name>
+		<inputActivityPort>
+			<InputActivityPort rdf:about="activity/HelloScript/in/personName">
+				<name>personName</name>
+				<portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+			</InputActivityPort>
+		</inputActivityPort>
+
+		<outputActivityPort>
+			<OutputActivityPort rdf:about="activity/HelloScript/out/hello">
+				<name>hello</name>
+				<portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+				<granularPortDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</granularPortDepth>
+			</OutputActivityPort>
+		</outputActivityPort>
+	</Activity>
+
+	<ProcessorBinding rdf:about="processorbinding/Hello/">
+		<name>Hello</name>
+		<bindActivity rdf:resource="activity/HelloScript/" />
+		<bindProcessor rdf:resource="../../workflow/HelloWorld/processor/Hello/" />
+		<inputPortBinding>
+			<InputPortBinding rdf:about="processorbinding/Hello/in/name">
+				<bindInputActivityPort rdf:resource="activity/HelloScript/in/personName" />
+				<bindInputProcessorPort
+					rdf:resource="../../workflow/HelloWorld/processor/Hello/in/name" />
+			</InputPortBinding>
+		</inputPortBinding>
+		<outputPortBinding>
+			<OutputPortBinding rdf:about="processorbinding/Hello/out/greeting">
+				<bindOutputActivityPort rdf:resource="activity/HelloScript/out/hello" />
+				<bindOutputProcessorPort
+					rdf:resource="../../workflow/HelloWorld/processor/Hello/out/greeting" />
+			</OutputPortBinding>
+		</outputPortBinding>
+	</ProcessorBinding>
+
+	<Configuration rdf:about="configuration/Hello/">
+		<rdf:type
+			rdf:resource="http://ns.taverna.org.uk/2010/activity/beanshell#Config" />
+		<name>Hello</name>
+		<configure rdf:resource="activity/HelloScript/" />
+		<beanshell:script>hello = "Hello, " + personName;
+System.out.println("Server says: " + hello);</beanshell:script>
+	</Configuration>
+
+</rdf:RDF>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://taverna.sf.net/2008/xml/t2layers"
+	xmlns:layers="http://taverna.sf.net/2008/xml/t2layers" xmlns:tav="http://taverna.sf.net/2008/xml/t2flow"
+	elementFormDefault="unqualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<xsd:complexType name="RetryConfig">
+		<xsd:annotation>
+			<xsd:documentation>Defines parameters of retries for when an
+				activity fails.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="backoffFactor" type="xsd:double">
+				<xsd:annotation>
+					<xsd:documentation>A multiplication factor applied to the previous
+						delay on concurrent delays. Typically this number is quite close
+						to 1.0. A value of 1.0 means to always use the same delay, while a
+						factor of 2.0 means a doubling of delay for each retry. The delay
+						will however never be larger than the specified maxDelay.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="initialDelay" type="xsd:long">
+				<xsd:annotation>
+					<xsd:documentation>
+						Initial delay in milliseconds before the first
+						retry will be performed.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="maxDelay" type="xsd:long">
+				<xsd:annotation>
+					<xsd:documentation>Maximum delay in milliseconds after
+						applying the backoffFactor.</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="maxRetries" type="xsd:nonNegativeInteger">
+				<xsd:annotation>
+					<xsd:documentation>
+						Maximum number of retries. A number of 0 means
+						no retries will be performed.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="ParallelizeConfig">
+		<xsd:annotation>
+			<xsd:documentation>Defines maximum number of jobs to run
+				concurrently.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="maxJobs" type="xsd:nonNegativeInteger"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="LoopConfig">
+		<xsd:annotation>
+			<xsd:documentation>Configuration of the loop layer,
+				which can call an activity again on a given condition. The outputs
+				of the activity in the processor that has this layer in it's
+				dispatch stack will be passed to a special conditional activity,
+				described by conditionXML. This conditional activity will determine
+				if the main activity is to be called again, by returning "true" or
+				"false" on it's "loop" output port. If this is the case, the
+				original job will be sent down again in the dispatch stack, possibly
+				with any modified input parameters (if other output ports from the
+				conditional activity matches the original input port names).			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="conditionXML" type="xsd:string">
+				<xsd:annotation>
+					<xsd:documentation>
+						Activity to invoke to do the conditional
+						checking as escaped XML of the format
+						tav:Activity, typically a Beanshell script. Must
+						have an output port of depth 0 called "loop" -
+						which string value will be checked as a boolean
+						- if it is equal to "true" then the main
+						activity will be invoked again.
+
+						Additional input ports can be defined - if they
+						match any processor input ports then they will
+						receive the processor inputs. If they match any
+						processor output ports they will receive outputs
+						from last invoking the activity.
+
+						Similarly, if output ports are defined, and they
+						match the processor input port, the output from
+						the conditional will replace the original
+						processor input on the next invocation of the
+						real activity. If they match the processor
+						output they will replace the output from the
+						activity.
+        			</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="runFirst" type="xsd:boolean">
+				<xsd:annotation>
+					<xsd:documentation>If true, then the conditional activity will be
+						invoked before calling the "real" activity for the first time,
+						otherwise the real activity will always be called at least once.
+						It is generally not recommended to use runFirst=true unless the
+						conditional activity is able to produce values for all the
+						processor output ports. Also in this case one must be careful with
+						conditional activity input ports that are to be received from
+						calling the activity - they will be null on the first call.					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="properties" type="layers:Properties">
+				<xsd:annotation>
+					<xsd:documentation>Properties saved by the UI for any
+						auto-generated conditonalXML. Note that these properties are
+						ignored when running the workflow and are only saved for the UI to
+						remember the properties used to generate the conditional activity.
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+
+
+    <xsd:complexType name="Properties">
+    	<xsd:sequence>
+    		<xsd:element name="property" type="layers:Property"
+    			maxOccurs="unbounded" minOccurs="0">
+    		</xsd:element>
+    	</xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="Property">
+    	<xsd:attribute name="name" type="xsd:string" use="required"></xsd:attribute>
+    	<xsd:attribute name="value" type="xsd:string" use="required"></xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

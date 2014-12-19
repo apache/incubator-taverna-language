@@ -1,0 +1,18 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://org.embl.ebi.escience/xscufl/0.1alpha"
+            targetNamespace="http://org.embl.ebi.escience/xscufl/0.1alpha"
+            xmlns:scufl="http://org.embl.ebi.escience/xscufl/0.1alpha">
+            
+<xsd:include schemaLocation="scufl.xsd" />
+
+<xsd:complexType name="stringconstantType">
+ <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+    
+<xsd:element name="stringconstant" type="scufl:stringconstantType" substitutionGroup="processorElement">
+</xsd:element>
+
+</xsd:schema>

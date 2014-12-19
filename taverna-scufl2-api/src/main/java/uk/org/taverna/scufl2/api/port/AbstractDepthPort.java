@@ -1,0 +1,71 @@
+package uk.org.taverna.scufl2.api.port;
+
+import uk.org.taverna.scufl2.api.common.AbstractNamed;
+import uk.org.taverna.scufl2.api.common.Visitor;
+import uk.org.taverna.scufl2.api.common.WorkflowBean;
+
+/**
+ * Abstract implementation of a <code>Port</code> that has a depth property.
+ * <p>
+ * The depth of a <code>Port </code> specifies whether the data is a list and
+ * how deep lists are nested. A depth of 0 is a single element, depth 1 is a
+ * list, depth 2 is a list of lists and so on.
+ * 
+ * @author Alan R Williams
+ */
+public abstract class AbstractDepthPort extends AbstractNamed implements
+		DepthPort {
+	private Integer depth;
+
+	/**
+	 * Constructs an <code>AbstractDepthPort</code> with a random UUID as the
+	 * name.
+	 */
+	public AbstractDepthPort() {
+		super();
+	}
+
+	/**
+	 * Constructs an <code>AbstractDepthPort</code> with the specified name.
+	 * 
+	 * @param name
+	 *            the name of the <code>Port</code>. <strong>Must not</strong>
+	 *            be <code>null</code> or an empty String.
+	 */
+	public AbstractDepthPort(String name) {
+		super(name);
+	}
+
+	@Override
+	public boolean accept(Visitor visitor) {
+		return visitor.visit(this);
+	}
+
+	/**
+	 * Returns the depth of the <code>Port</code>.
+	 * 
+	 * @return the depth of the <code>Port</code>
+	 */
+	@Override
+	public Integer getDepth() {
+		return depth;
+	}
+
+	/**
+	 * Sets the depth of the <code>Port</code>.
+	 * 
+	 * @param depth
+	 *            the depth of the <code>Port</code>
+	 */
+	@Override
+	public void setDepth(Integer depth) {
+		this.depth = depth;
+	}
+
+	@Override
+	protected void cloneInto(WorkflowBean clone, Cloning cloning) {
+		super.cloneInto(clone, cloning);
+		AbstractDepthPort clonePort = (AbstractDepthPort) clone;
+		clonePort.setDepth(getDepth());
+	}
+}

@@ -1,0 +1,47 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://org.embl.ebi.escience/xscufl/0.1alpha"
+            targetNamespace="http://org.embl.ebi.escience/xscufl/0.1alpha"
+            xmlns:scufl="http://org.embl.ebi.escience/xscufl/0.1alpha"
+            xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+            jaxb:version="1.0">
+
+<xsd:include schemaLocation="scufl.xsd" />
+
+<xsd:complexType name="hostType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+<xsd:complexType name="portType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:nonNegativeInteger">
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+<xsd:complexType name="serviceType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+<xsd:complexType name="infernoType">
+  <xsd:sequence>
+    <xsd:element ref="host"/>
+    <xsd:element ref="port"/>
+    <xsd:element ref="service"/>
+  </xsd:sequence>
+</xsd:complexType>
+
+<xsd:element name="host" type="scufl:hostType"/>
+
+<xsd:element name="port" type="scufl:portType"/>
+
+<xsd:element name="service" type="scufl:serviceType"/>
+
+<xsd:element name="inferno" type="scufl:infernoType" substitutionGroup="processorElement"/>
+
+</xsd:schema>

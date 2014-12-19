@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema elementFormDefault="unqualified"
+
+	xmlns:tool="http://taverna.sf.net/2011/xml/activity/rest" xmlns:tav="http://taverna.sf.net/2008/xml/t2flow"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+	jxb:version="1.0">
+
+	<xsd:annotation>
+		<xsd:appinfo>
+			<!-- See http://docs.rakeshv.org/java/jaxb/users-guide/jaxb-custom.html -->
+
+<!--
+			<jxb:schemaBindings>
+				<jxb:package name="uk.org.taverna.scufl2.xml.t2flow.rest.jaxb" />
+			</jxb:schemaBindings>
+			-->
+		</xsd:appinfo>
+	</xsd:annotation>
+
+	<xsd:import namespace="http://taverna.sf.net/2008/xml/t2flow"
+		schemaLocation="t2flow.xsd" />
+
+	<xsd:element
+		name="net.sf.taverna.t2.activities.rest.RESTActivityConfigurationBean"
+		type="RESTConfig" substitutionGroup="tav:abstractConfigBean" />
+
+
+	<xsd:complexType name="RESTConfig">
+		<xsd:complexContent>
+			<xsd:extension base="tav:AbstractConfigBean">
+				<xsd:sequence>
+					<xsd:element name="httpMethod" type="xsd:string" />
+					<xsd:element name="urlSignature" type="xsd:string" />
+					<xsd:element name="acceptsHeaderValue" type="xsd:string" />
+					<xsd:element name="contentTypeForUpdates" type="xsd:string" />
+					<xsd:element name="outgoingDataFormat" type="xsd:string" />
+					<xsd:element name="sendHTTPExpectRequestHeader" type="xsd:boolean" />
+					<xsd:element name="showRedirectionOutputPort" type="xsd:boolean" />
+                    <xsd:element name="showActualUrlPort" type="xsd:boolean" minOccurs="0" />
+                    <xsd:element name="showResponseHeadersPort" type="xsd:boolean" minOccurs="0" />
+                    
+					<xsd:element name="escapeParameters" type="xsd:boolean" minOccurs="0" />
+					<xsd:element name="otherHTTPHeaders" type="HTTPHeaders" minOccurs="0" />
+					<xsd:element name="activityInputs" type="ActivityInputs" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="ActivityInputs">
+		<xsd:sequence>
+			<xsd:element name="entry" minOccurs="0" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="string" type="xsd:string" />
+						<xsd:element name="java-class" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	
+	<xsd:complexType name="HTTPHeaders">
+		<xsd:sequence>
+			<xsd:element name="list" minOccurs="0" maxOccurs="unbounded">
+				<xsd:complexType>
+					<xsd:sequence>
+						<xsd:element name="string" type="xsd:string" />
+						<xsd:element name="string" type="xsd:string" />
+					</xsd:sequence>
+				</xsd:complexType>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+</xsd:schema>
