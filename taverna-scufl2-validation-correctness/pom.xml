@@ -1,13 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>uk.org.taverna.scufl2</groupId>
-        <artifactId>scufl2</artifactId>
-        <version>0.14.1-SNAPSHOT</version>
+        <groupId>org.apache.taverna.language</groupId>
+        <artifactId>taverna-language</artifactId>
+        <version>0.15.0-incubating-SNAPSHOT</version>
     </parent>
-    <artifactId>scufl2-validation-correctness</artifactId>
+    <artifactId>taverna-scufl2-validation-correctness</artifactId>
     <packaging>bundle</packaging>
-    <name>Taverna Scufl 2 validation correctness</name>
+    <name>Apache Taverna Scufl 2 validation correctness</name>
     <build>
         <plugins>
             <plugin>
@@ -24,12 +24,12 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>scufl2-api</artifactId>
+            <artifactId>taverna-scufl2-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>scufl2-validation</artifactId>
+            <artifactId>taverna-scufl2-validation</artifactId>
             <version>${project.version}</version>
         </dependency>
 

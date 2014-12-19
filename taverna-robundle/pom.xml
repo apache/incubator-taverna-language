@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<prerequisites>
-		<maven>2.2.1</maven>
-	</prerequisites>
-	<groupId>org.purl.wf4ever.robundle</groupId>
-	<artifactId>robundle</artifactId>
-	<version>0.5.1-SNAPSHOT</version>
-	<name>RO Bundle API</name>
+	<packaging>bundle</packaging>
+	<parent>
+		<groupId>org.apache.taverna.language</groupId>
+		<artifactId>taverna-language</artifactId>
+		<version>0.15.0-incubating-SNAPSHOT</version>
+	</parent>
+	<artifactId>taverna-robundle</artifactId>
+	<name>Apache Taverna RO Bundle API</name>
 	<description>API for dealing with RO Bundles</description>
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<jsonld.version>0.5.0</jsonld.version>
-		<!-- Raven: Jena and Jackson versions must match dependencies from jsonld 
+		<jsonld.version>0.5.1-SNAPSHOT</jsonld.version>
+		<!-- Raven: Jena and Jackson versions must match dependencies from jsonld
 			*and* scufl2 -->
 		<jackson.version>2.3.3</jackson.version>
-		<jena.version>2.12.1</jena.version>
+		<jena.version>2.12.2-SNAPSHOT</jena.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -46,7 +45,7 @@
 			<artifactId>jsonld-java</artifactId>
 			<version>${jsonld.version}</version>
 			<scope>test</scope>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>commons-configuration</groupId>
 			<artifactId>commons-configuration</artifactId>
@@ -68,56 +67,29 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
+<!--
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
 			<artifactId>jaxb-impl</artifactId>
 			<version>2.2.7</version>
-			<!--
-			<optional>true</optional>
-			-->
 		</dependency>
-		
-		<!-- for UUIDv5 SHA named <dependency> <groupId>com.fasterxml.uuid</groupId> 
-			<artifactId>java-uuid-generator</artifactId> <version>3.1.3</version> <type>bundle</type> 
+-->
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-osgi</artifactId>
+      <version>${jaxb.version}</version>
+    </dependency>
+
+
+		<!-- for UUIDv5 SHA named <dependency> <groupId>com.fasterxml.uuid</groupId>
+			<artifactId>java-uuid-generator</artifactId> <version>3.1.3</version> <type>bundle</type>
 			</dependency> -->
 
 	</dependencies>
 
-	<scm>
-		<connection>scm:git:git://github.com/wf4ever/robundle.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com/wf4ever/robundle.git</developerConnection>
-		<url>https://github.com/wf4ever/robundle/</url>
-		<tag>HEAD</tag>
-	</scm>
-	<licenses>
-		<license>
-			<name>MIT license</name>
-			<url>http://opensource.org/licenses/MIT</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
-	<issueManagement>
-		<system>github</system>
-		<url>https://github.com/wf4ever/robundle/issues</url>
-	</issueManagement>
-	<ciManagement>
-		<system>jenkins</system>
-		<url>http://build.mygrid.org.uk/ci/job/robundle/</url>
-	</ciManagement>
-
-
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-				</configuration>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
@@ -129,59 +101,6 @@
 					</instructions>
 				</configuration>
 			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>2.1.2</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>jar</goal>
-							<goal>test-jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3.1</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>test-jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.7.1</version>
-				<configuration>
-					<skip>false</skip>
-					<systemProperties>
-						<property>
-							<name>java.awt.headless</name>
-							<value>true</value>
-						</property>
-					</systemProperties>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.14.1</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>integration-test</goal>
-							<goal>verify</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>		
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jaxb2-maven-plugin</artifactId>
@@ -200,37 +119,5 @@
 				</executions>
 			</plugin>
 		</plugins>
-		
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.felix</groupId>
-					<artifactId>maven-bundle-plugin</artifactId>
-					<version>2.3.7</version>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
-	<repositories>
-		<repository>
-			<releases />
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<id>mygrid-repository</id>
-			<name>myGrid repository</name>
-			<url>http://www.mygrid.org.uk/maven/repository</url>
-		</repository>
-		<repository>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots />
-			<id>mygrid-snapshot-repository</id>
-			<name>myGrid Snapshot Repository</name>
-			<url>http://www.mygrid.org.uk/maven/snapshot-repository</url>
-		</repository>
-	</repositories>
-
-	<packaging>bundle</packaging>
 </project>

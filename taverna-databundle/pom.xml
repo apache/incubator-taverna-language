@@ -2,53 +2,46 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-	<groupId>net.sf.taverna</groupId>
-	<artifactId>taverna-parent</artifactId>
-	<version>2.5.0</version>
+      	<groupId>org.apache.taverna.language</groupId>
+      	<artifactId>taverna-language</artifactId>
+      	<version>0.15.0-incubating-SNAPSHOT</version>
     </parent>
-    <prerequisites>
-        <maven>2.2.1</maven>
-    </prerequisites>
-    <groupId>uk.org.taverna.databundle</groupId>
-    <artifactId>databundle</artifactId>
-    <version>0.3.4-SNAPSHOT</version>
-    <name>Databundle API</name>
+    <packaging>bundle</packaging>
+    <artifactId>taverna-databundle</artifactId>
+    <name>Apache Taverna Databundle API</name>
     <description>API for dealing with Data Bundles</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <scufl2.version>0.14.0</scufl2.version>
-        <scufl2.wfdesc.version>0.3.8</scufl2.wfdesc.version>
         <jena.version>2.12.1</jena.version>
-        <robundle.version>0.5.0</robundle.version>
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.apache.jena</groupId>
             <artifactId>jena-arq</artifactId>
-	    <version>${jena.version}</version>
+            <version>${jena.version}</version>
         </dependency>
         <dependency>
-            <groupId>uk.org.taverna.scufl2</groupId>
-            <artifactId>scufl2-rdfxml</artifactId>
-            <version>${scufl2.version}</version>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>taverna-scufl2-rdfxml</artifactId>
+          <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>uk.org.taverna.scufl2</groupId>
-            <artifactId>scufl2-t2flow</artifactId>
-            <version>${scufl2.version}</version>
-            <scope>test</scope>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>taverna-scufl2-t2flow</artifactId>
+          <version>${project.version}</version>
+          <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.purl.wf4ever</groupId>
-            <artifactId>scufl2-wfdesc</artifactId>
-            <version>${scufl2.wfdesc.version}</version>
-            <optional>true</optional>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>taverna-scufl2-wfdesc</artifactId>
+          <version>${project.version}</version>
+          <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.purl.wf4ever.robundle</groupId>
-            <artifactId>robundle</artifactId>
-	    <version>${robundle.version}</version>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>taverna-robundle</artifactId>
+          <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -99,40 +92,4 @@
         </pluginManagement>
     </build>
 
-    <scm>
-		<connection>scm:git:git://github.com/myGrid/databundle.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com/myGrid/databundle.git</developerConnection>
-		<url>https://github.com/myGrid/databundle/</url>
-      <tag>HEAD</tag>
-  </scm>
-    <licenses>
-        <license>
-            <name>GNU Lesser General Public License 2.1</name>
-            <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-    <repositories>
-        <repository>
-            <id>mygrid-repository</id>
-            <name>myGrid Repository</name>
-            <url>http://www.mygrid.org.uk/maven/repository</url>
-            <releases />
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots />
-            <id>mygrid-snapshot-repository</id>
-            <name>myGrid Snapshot Repository</name>
-            <url>http://www.mygrid.org.uk/maven/snapshot-repository</url>
-        </repository>
-
-    </repositories>
-
-    <packaging>bundle</packaging>
 </project>

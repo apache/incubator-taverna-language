@@ -1,26 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.purl.wf4ever</groupId>
-    <artifactId>scufl2-wfdesc</artifactId>
-    <version>0.3.9-SNAPSHOT</version>
-    <packaging>bundle</packaging>    
-    <name>SCUFL2 to wfdesc</name>
+    <parent>
+      	<groupId>org.apache.taverna.language</groupId>
+      	<artifactId>taverna-language</artifactId>
+      	<version>0.15.0-incubating-SNAPSHOT</version>
+    </parent>
+    <artifactId>taverna-scufl2-wfdesc</artifactId>
+    <packaging>bundle</packaging>
+    <name>Apache Taverna Scufl2 wfdesc export</name>
     <description>Convert Scufl2 workflow to wfdesc structure (from Wf4Ever RO ontology)</description>
     <properties>
-        <scufl2.version>0.14.1-SNAPSHOT</scufl2.version>
         <elmo.version>1.5</elmo.version>
         <sesame.version>2.2.4</sesame.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
-    <url>https://github.com/wf4ever/scufl2-wfdesc/</url>
-	<scm>
-		<connection>scm:git:git://github.com/wf4ever/scufl2-wfdesc.git</connection>
-		<developerConnection>scm:git:ssh://git@github.com/wf4ever/scufl2-wfdesc.git</developerConnection>
-		<url>https://github.com/wf4ever/scufl2-wfdesc/</url>
-    <tag>HEAD</tag>
-  </scm>    
     <build>
         <plugins>
             <plugin>
@@ -28,7 +21,7 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <version>2.3.7</version>
                 <extensions>true</extensions>
-                <!-- NO - this adds them to this JAR which breaks everywhere else! 
+                <!-- NO - this adds them to this JAR which breaks everywhere else!
                 <configuration>
                     <instructions>
                         <Export-Package>uk.org.taverna.scufl2.api.io;provide:=true</Export-Package>
@@ -78,7 +71,7 @@
                     <skip>false</skip>
                     <systemProperties>
                         <property>
-                            <name>java.awt.headless</name>
+                            <name>Apache Taverna java.awt.headless</name>
                             <value>true</value>
                         </property>
                     </systemProperties>
@@ -116,8 +109,8 @@
                                     <arg value="org.purl.wf4ever.roterms=http://purl.org/wf4ever/roterms#" />
                                     <arg value="-b" />
                                     <arg value="org.w3.rdfs=http://www.w3.org/2000/01/rdf-schema#" />
-                                    
-                                        
+
+
 
                                     <!-- <arg value="-p" /> <arg value="wfdesc" /> -->
                                     <arg value="-j" />
@@ -132,7 +125,7 @@
                                     <arg value="src/main/resources/com/xmlns/foaf/foaf.rdf" />
                                     <arg value="src/main/resources/org/w3/prov-o.ttl" />
 
-                                        <!-- 
+                                        <!--
                                          -->
                                     <arg value="src/main/resources/org/purl/wf4ever/wfdesc/roterms.ttl" />
 
@@ -212,7 +205,7 @@
                     <programs>
                         <program>
                             <mainClass>org.purl.wf4ever.wfdesc.scufl2.ConvertToWfdesc</mainClass>
-                            <name>scufl2-to-wfdesc</name>
+                            <name>Apache Taverna scufl2-to-wfdesc</name>
                         </program>
                     </programs>
                 </configuration>
@@ -247,7 +240,7 @@
         </plugins>
         <pluginManagement>
             <plugins>
-                <!--This plugin's configuration is used to store Eclipse 
+                <!--This plugin's configuration is used to store Eclipse
                     m2e settings only. It has no influence on the Maven build itself. -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
@@ -281,26 +274,26 @@
     <dependencies>
 
         <dependency>
-            <groupId>uk.org.taverna.scufl2</groupId>
-            <artifactId>scufl2-api</artifactId>
-            <version>${scufl2.version}</version>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>taverna-scufl2-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>uk.org.taverna.scufl2</groupId>
-            <artifactId>scufl2-t2flow</artifactId>
-            <version>${scufl2.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>uk.org.taverna.scufl2</groupId>
-            <artifactId>scufl2-scufl</artifactId>
-            <version>${scufl2.version}</version>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>taverna-scufl2-t2flow</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>uk.org.taverna.scufl2</groupId>
-            <artifactId>scufl2-api</artifactId>
-            <version>${scufl2.version}</version>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>taverna-scufl2-scufl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>taverna-scufl2-api</artifactId>
+            <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
@@ -388,40 +381,9 @@
                 <enabled>false</enabled>
             </snapshots>
             <id>aduna-opensource.releases</id>
-            <name>Half-a-mirror of http://repo.aduna-software.org/maven2/releases/</name>
+            <name>Apache Taverna Half-a-mirror of http://repo.aduna-software.org/maven2/releases/</name>
             <url>http://repository.mygrid.org.uk/artifactory/aduna/</url>
         </repository>
-        <repository>
-            <releases />
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>mygrid-repository</id>
-            <name>myGrid Repository</name>
-            <url>http://www.mygrid.org.uk/maven/repository/</url>
-        </repository>
-        <repository>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots />
-            <id>mygrid-snapshot-repository</id>
-            <name>myGrid Snapshot Repository</name>
-            <url>http://www.mygrid.org.uk/maven/snapshot-repository/</url>
-        </repository>
-<!--
-	<repository>
-		<id>central</id>
-		<url>http://www.mygrid.org.uk/artifactory/repo/</url>
-		<name>myGrid artifactory</name>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-	</repository>	
--->
     </repositories>
     <pluginRepositories>
         <pluginRepository>
@@ -432,24 +394,10 @@
                 <enabled>false</enabled>
             </snapshots>
             <id>aduna-opensource.releases</id>
-            <name>Half-a-mirror of http://repo.aduna-software.org/maven2/releases/</name>
+            <name>Apache Taverna Half-a-mirror of http://repo.aduna-software.org/maven2/releases/</name>
 	    <url>http://repository.mygrid.org.uk/artifactory/aduna/</url>
         </pluginRepository>
     </pluginRepositories>
-    <licenses>
-      <license>
-      <name>MIT license</name>
-      <url>http://opensource.org/licenses/MIT</url>
-      <distribution>repo</distribution>
-    </license>    
-  </licenses>
-  <issueManagement>
-    <system>github</system>
-    <url>https://github.com/wf4ever/scufl2-wfdesc/issues</url>
-  </issueManagement>
-  <ciManagement>
-    <system>jenkins</system>
-    <url>http://build.mygrid.org.uk/ci/job/scufl2-wfdesc/</url>
-  </ciManagement>
-
+    <!--
+    -->
 </project>

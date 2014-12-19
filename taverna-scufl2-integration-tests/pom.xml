@@ -1,13 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<artifactId>scufl2</artifactId>
-		<groupId>uk.org.taverna.scufl2</groupId>
-		<version>0.14.1-SNAPSHOT</version>
-		<relativePath>..</relativePath>
+		<groupId>org.apache.taverna.language</groupId>
+		<artifactId>taverna-language</artifactId>
+		<version>0.15.0-incubating-SNAPSHOT</version>
 	</parent>
-	<artifactId>scufl2-integration-tests</artifactId>
-	<name>Taverna Scufl 2 integration tests</name>
+	<artifactId>taverna-scufl2-integration-tests</artifactId>
+	<name>Apache Taverna Scufl 2 integration tests</name>
 	<description>Integration tests depending on multiple modules</description>
 	<build>
 		<plugins>
@@ -28,26 +27,29 @@
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>scufl2-rdfxml</artifactId>
+			<artifactId>taverna-scufl2-rdfxml</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>scufl2-t2flow</artifactId>
+			<artifactId>taverna-scufl2-t2flow</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>scufl2-scufl</artifactId>
+			<artifactId>taverna-scufl2-scufl</artifactId>
 			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
+                        <version>${commons.io.version}</version>
+			<type>jar</type>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
 </project>

@@ -2,20 +2,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>uk.org.taverna.scufl2</groupId>
-		<artifactId>scufl2</artifactId>
-		<version>0.14.1-SNAPSHOT</version>
+		<groupId>org.apache.taverna.language</groupId>
+		<artifactId>taverna-language</artifactId>
+		<version>0.15.0-incubating-SNAPSHOT</version>
 	</parent>
-	<artifactId>scufl2-rdfxml</artifactId>
+	<artifactId>taverna-scufl2-rdfxml</artifactId>
 	<packaging>bundle</packaging>
-	<name>Taverna Scufl 2 RDF/XML</name>
+	<name>Apache Taverna Scufl 2 RDF/XML</name>
 	<description>XSD based XML serialisation which is RDF/XML compatible</description>
+	<properties>
+		<sesame.version>2.7.0</sesame.version>
+	</properties>
 	<build>
 		<plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <!-- NO!  
+                <!-- NO!
                 <configuration>
                     <instructions>
                         <Export-Package>uk.org.taverna.scufl2.api.io;provide:=true</Export-Package>
@@ -23,6 +26,22 @@
                 </configuration>
                  -->
             </plugin>
+      <plugin>
+          <groupId>org.jvnet.jaxb2.maven2</groupId>
+          <artifactId>maven-jaxb2-plugin</artifactId>
+          <executions>
+            <execution>
+              <goals>
+                <goal>generate</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <schemaDirectory>src/main/resources/uk/org/taverna/scufl2/rdfxml/xsd/</schemaDirectory>
+          </configuration>
+      </plugin>
+      
+<!--
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>jaxb2-maven-plugin</artifactId>
@@ -34,44 +53,41 @@
 					</execution>
 				</executions>
 				<configuration>
-					<!-- <packageName>uk.org.taverna.scufl2.rdfxml.jaxb</packageName> -->
 					<schemaDirectory>src/main/resources/uk/org/taverna/scufl2/rdfxml/xsd/</schemaDirectory>
 				</configuration>
 			</plugin>
+-->
 		</plugins>
 	</build>
 	<dependencies>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>scufl2-api</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>scufl2-ucfpackage</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-impl</artifactId>
-			<optional>true</optional>
-		</dependency>
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>scufl2-api</artifactId>
+			<artifactId>taverna-scufl2-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>taverna-scufl2-api</artifactId>
 			<version>${project.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>taverna-scufl2-ucfpackage</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
+                        <version>${commons.io.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.jdom</groupId>
-			<artifactId>com.springsource.org.jdom</artifactId>
+                        <groupId>org.jdom</groupId>
+                        <artifactId>com.springsource.org.jdom</artifactId>
+                        <version>${jdom.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -86,9 +102,24 @@
 			<version>${sesame.version}</version>
 			<scope>test</scope>
 		</dependency>
+    <!--
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+                        <version>${jaxb.version}</version>
+			<optional>true</optional>
+		</dependency>
+    -->
+		<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-osgi</artifactId>
+      <version>${jaxb.version}</version>
+			<optional>true</optional>
+		</dependency>
 		<dependency>
 			<groupId>org.jaxen</groupId>
 			<artifactId>com.springsource.org.jaxen</artifactId>
+                        <version>${jaxen.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

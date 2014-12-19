@@ -2,15 +2,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>net.sf.taverna</groupId>
-		<artifactId>taverna-parent</artifactId>
-		<version>3.0.1-SNAPSHOT</version>
+		<groupId>org.apache.taverna.language</groupId>
+		<artifactId>taverna-language</artifactId>
+		<version>0.15.0-incubating-SNAPSHOT</version>
 	</parent>
-	<groupId>net.sf.taverna.t2</groupId>
-	<artifactId>baclava</artifactId>
-	<version>0.1.1-SNAPSHOT</version>
+	<artifactId>taverna-databundle-baclava</artifactId>
 	<packaging>bundle</packaging>
-	<name>Baclava format/files handling utilities</name>
+	<name>Apache Taverna Baclava format</name>
 	<description>Utilities for handling Baclava format used for saving input data and results of workflow runs</description>
 	<dependencies>
 		<dependency>
@@ -31,24 +29,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<repositories>
-		<repository>
-			<releases />
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<id>mygrid-repository</id>
-			<name>myGrid Repository</name>
-			<url>http://www.mygrid.org.uk/maven/repository</url>
-		</repository>
-		<repository>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots />
-			<id>mygrid-snapshot-repository</id>
-			<name>myGrid Snapshot Repository</name>
-			<url>http://www.mygrid.org.uk/maven/snapshot-repository</url>
-		</repository>
-	</repositories>
 </project>

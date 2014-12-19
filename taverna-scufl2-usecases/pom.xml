@@ -1,28 +1,28 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>uk.org.taverna.scufl2</groupId>
-		<artifactId>scufl2</artifactId>
-		<version>0.14.1-SNAPSHOT</version>
+		<groupId>org.apache.taverna.language</groupId>
+		<artifactId>taverna-language</artifactId>
+		<version>0.15.0-incubating-SNAPSHOT</version>
 	</parent>
-	<artifactId>scufl2-usecases</artifactId>
-	<name>Taverna Scufl 2 use cases</name>
+	<artifactId>taverna-scufl2-usecases</artifactId>
+	<name>Apache Taverna Scufl 2 use cases</name>
 	<description>Use cases for exercising the SCUFL2 APIs and formats</description>
 	<url>http://www.mygrid.org.uk/dev/wiki/display/developer/SCUFL2+use+cases</url>
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>scufl2-api</artifactId>
+			<artifactId>taverna-scufl2-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>scufl2-rdfxml</artifactId>
+			<artifactId>taverna-scufl2-rdfxml</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>scufl2-t2flow</artifactId>
+			<artifactId>taverna-scufl2-t2flow</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -30,22 +30,16 @@
 			<artifactId>commons-io</artifactId>
 			<scope>compile</scope>
 		</dependency>
-				<dependency>
-			<groupId>uk.org.taverna.scufl2</groupId>
-			<artifactId>scufl2-api</artifactId>
-			<version>${project.version}</version>			
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>taverna-scufl2-api</artifactId>
+			<version>${project.version}</version>
 			<type>test-jar</type>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-impl</artifactId>
+			<artifactId>jaxb-osgi</artifactId>
 			<optional>true</optional>
 		</dependency>
 	</dependencies>
-    <licenses>
-        <license>
-            <name>The BSD 2-Clause License</name>
-            <url>http://www.opensource.org/licenses/bsd-license</url>
-        </license>
-    </licenses>
 </project>
