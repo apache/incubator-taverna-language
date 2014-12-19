@@ -1,0 +1,139 @@
+{
+  "@context": {
+    "ao": "http://purl.org/ao/",
+    "oa": "http://www.w3.org/ns/oa#",
+    "dc": "http://purl.org/dc/elements/1.1/",
+    "dct": "http://purl.org/dc/terms/",
+    "ore": "http://www.openarchives.org/ore/terms/",
+    "ro": "http://purl.org/wf4ever/ro#",
+    "roterms": "http://purl.org/wf4ever/roterms#",
+    "bundle": "http://purl.org/wf4ever/bundle#",
+    "prov": "http://www.w3.org/ns/prov#",
+    "pav": "http://purl.org/pav/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "foaf": "http://xmlns.com/foaf/0.1/",
+    "owl": "http://www.w3.org/2002/07/owl#",
+
+    "uri": "@id",
+    "id": {
+      "@id": "owl:sameAs",
+      "@type": "@id" },
+    "file": {
+      "@id": "owl:sameAs",
+      "@type": "@id" },
+    "annotation": {
+      "@id": "owl:sameAs",
+      "@type": "@id" },
+
+    "manifest": {
+        "@id": "ore:isDescribedBy",
+        "@type": "@id"
+    },
+
+    "createdOn": {
+        "@id": "pav:createdOn",
+        "@type": "xsd:dateTime"
+    },
+    "createdBy": {
+        "@id": "pav:createdBy",
+        "@type": "@id"
+    },
+    "aggregatedOn": {
+        "@id": "pav:createdOn",
+        "@type": "xsd:dateTime"
+    },
+    "aggregatedBy": {
+        "@id": "pav:createdBy",
+        "@type": "@id"
+    },
+    "authoredOn": {
+        "@id": "pav:authoredOn",
+        "@type": "xsd:dateTime"
+    },
+    "authoredBy": {
+        "@id": "pav:authoredBy",
+        "@type": "@id"
+    },
+    "curatedOn": {
+        "@id": "pav:curatedOn",
+        "@type": "xsd:dateTime"
+    },
+    "curatedBy": {
+        "@id": "pav:curatedBy",
+        "@type": "@id"
+    },
+    "contributedOn": {
+        "@id": "pav:contributedOn",
+        "@type": "xsd:dateTime"
+    },
+    "contributedBy": {
+        "@id": "pav:contributedBy",
+        "@type": "@id"
+    },
+    "retrievedOn": {
+        "@id": "pav:retrievedOn",
+        "@type": "xsd:dateTime"
+    },
+    "retrievedBy": {
+        "@id": "pav:retrievedBy",
+        "@type": "@id"
+    },
+    "retrievedFrom": {
+        "@id": "pav:retrievedFrom",
+        "@type": "@id"
+    },
+    "name": {
+        "@id": "foaf:name"
+    },
+    "orcid": {
+        "@id": "roterms:orcid",
+        "@type": "@id"
+    },
+
+    "history": {
+        "@id": "prov:has_provenance",
+        "@type": "@id"
+    },
+    "aggregates": {
+      "@id": "ore:aggregates",
+      "@type": "@id"
+    },
+    "mediatype": {
+        "@id": "dc:format"
+    },
+    "folder": {
+      "@id": "bundle:inFolder",
+      "@type": "@id"
+    },
+    "filename": {
+        "@id": "ro:entryName"
+    },
+    "proxy": {
+      "@id": "bundle:hasProxy",
+      "@type": "@id"
+    },
+    "bundledAs": {
+        "@id": "bundle:bundledAs",
+        "@type": "@id"
+    },
+    "conformsTo": {
+        "@id": "dct:conformsTo",
+        "@type": "@id"
+    },
+    "annotations": {
+      "@id": "bundle:hasAnnotation",
+      "@type": "@id"
+    },
+    "content": {
+       "@id": "oa:hasBody",
+       "@type": "@id"
+    },
+    "about": {
+       "@id": "oa:hasTarget",
+       "@type": "@id"
+    }
+
+  },
+  "http://purl.org/pav/retrievedFrom": { "@id": "https://raw.githubusercontent.com/wf4ever/ro/61b563e7e9941485ff6e7b338875d4015d734b6f/bundle/draft/context.json" } 
+  }
+}
