@@ -18,7 +18,7 @@ import org.purl.wf4ever.roevo.jaxb.ChangeSpecification;
 import org.purl.wf4ever.roevo.jaxb.ChangeSpecification.HasChange;
 import org.purl.wf4ever.roevo.jaxb.RoEvoDocument;
 import org.purl.wf4ever.roevo.jaxb.VersionableResource;
-import org.w3._1999._02._22_rdf_syntax_ns.Resource;
+import org.w3._1999._02._22_rdf_syntax_ns_.Resource;
 
 import uk.org.taverna.scufl2.api.annotation.Revision;
 import uk.org.taverna.scufl2.api.io.ReaderException;
@@ -31,8 +31,8 @@ public class RevisionParser {
 			Class<?>[] packages = {
 					org.purl.wf4ever.roevo.jaxb.ObjectFactory.class,
 					org.w3.prov.jaxb.ObjectFactory.class,
-					org.w3._1999._02._22_rdf_syntax_ns.ObjectFactory.class,
-					org.w3._2000._01.rdf_schema.ObjectFactory.class };
+					org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory.class,
+					org.w3._2000._01.rdf_schema_.ObjectFactory.class };
 			jaxbContext = JAXBContext.newInstance(packages);
 		}
 		return jaxbContext;

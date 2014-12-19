@@ -22,10 +22,10 @@ import javax.xml.bind.Marshaller;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-import org.w3._1999._02._22_rdf_syntax_ns.RDF;
-import org.w3._1999._02._22_rdf_syntax_ns.Resource;
-import org.w3._1999._02._22_rdf_syntax_ns.Type;
-import org.w3._2000._01.rdf_schema.SeeAlso;
+import org.w3._1999._02._22_rdf_syntax_ns_.RDF;
+import org.w3._1999._02._22_rdf_syntax_ns_.Resource;
+import org.w3._1999._02._22_rdf_syntax_ns_.Type;
+import org.w3._2000._01.rdf_schema_.SeeAlso;
 import org.xml.sax.SAXException;
 
 import uk.org.taverna.scufl2.api.activity.Activity;
@@ -518,8 +518,8 @@ public class RDFXMLSerializer {
 			throws JAXBException {
 		if (jaxbContextStatic == null) {
 			Class<?>[] packages = { ObjectFactory.class,
-					org.w3._1999._02._22_rdf_syntax_ns.ObjectFactory.class,
-					org.w3._2000._01.rdf_schema.ObjectFactory.class };
+					org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory.class,
+					org.w3._2000._01.rdf_schema_.ObjectFactory.class };
 			jaxbContextStatic = JAXBContext.newInstance(packages);
 		}
 		return jaxbContextStatic;
@@ -591,8 +591,8 @@ public class RDFXMLSerializer {
 
 	private ObjectFactory objectFactory = new ObjectFactory();
 
-	private org.w3._2000._01.rdf_schema.ObjectFactory rdfsObjectFactory = new org.w3._2000._01.rdf_schema.ObjectFactory();
-	private org.w3._1999._02._22_rdf_syntax_ns.ObjectFactory rdfObjectFactory = new org.w3._1999._02._22_rdf_syntax_ns.ObjectFactory();
+	private org.w3._2000._01.rdf_schema_.ObjectFactory rdfsObjectFactory = new org.w3._2000._01.rdf_schema_.ObjectFactory();
+	private org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory rdfObjectFactory = new org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory();
 	private URITools uriTools = new URITools();
 	private boolean usingSchema = false;
 

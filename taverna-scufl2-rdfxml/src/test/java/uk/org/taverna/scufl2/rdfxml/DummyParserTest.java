@@ -24,12 +24,13 @@ public class DummyParserTest {
 	private JAXBContext jaxbContext;
 	private Unmarshaller unmarshaller;
 
-	@SuppressWarnings({ "unchecked", "unused", "rawtypes" })
+	@SuppressWarnings("unchecked")
 	@Test
 	public void parse() throws Exception {
 		URL resource = getClass().getResource("example/workflowBundle.rdf");
 		URI baseUri = resource.toURI();
 
+		@SuppressWarnings("rawtypes")
 		JAXBElement<WorkflowBundleDocument> workflowBundle = (JAXBElement<WorkflowBundleDocument>) unmarshaller
 				.unmarshal(resource);
 		WorkflowBundleDocument bundleDoc = workflowBundle.getValue();
@@ -69,8 +70,8 @@ public class DummyParserTest {
 	public void makeUnmarshaller() throws JAXBException {
 		
 		Class<?>[] packages = { ObjectFactory.class,
-				org.w3._1999._02._22_rdf_syntax_ns.ObjectFactory.class,
-				org.w3._2000._01.rdf_schema.ObjectFactory.class };
+				org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory.class,
+				org.w3._2000._01.rdf_schema_.ObjectFactory.class };
 		jaxbContext = JAXBContext.newInstance(packages);	
 		unmarshaller = jaxbContext.createUnmarshaller();
 	}
