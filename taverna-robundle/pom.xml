@@ -10,13 +10,6 @@
 	<artifactId>taverna-robundle</artifactId>
 	<name>Apache Taverna RO Bundle API</name>
 	<description>API for dealing with RO Bundles</description>
-	<properties>
-		<jsonld.version>0.5.1</jsonld.version>
-		<!-- Raven: Jena and Jackson versions must match dependencies from jsonld
-			*and* scufl2 -->
-		<jackson.version>2.3.3</jackson.version>
-		<jena.version>2.12.2-SNAPSHOT</jena.version>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
