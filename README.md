@@ -1,9 +1,10 @@
-SCUFL2
-======
+# Apache Taverna Language
 
-[![Build Status](https://travis-ci.org/taverna/taverna-scufl2.svg?branch=master)](https://travis-ci.org/taverna/taverna-scufl2)
+[![Build Status](https://travis-ci.org/taverna-incubator/incubator-taverna-language.svg)](https://travis-ci.org/taverna-incubator/incubator-taverna-language)
 [![doi:10.5281/zenodo.10651](https://zenodo.org/badge/doi/10.5281/zenodo.10651.png)](http://dx.doi.org/10.5281/zenodo.10651)
 
+
+## SCUFL2
 
 
 See also the [SCUFL2 wiki][1]
