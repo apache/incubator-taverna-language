@@ -10,10 +10,6 @@
     <packaging>bundle</packaging>
     <name>Apache Taverna Scufl2 wfdesc export</name>
     <description>Convert Scufl2 workflow to wfdesc structure (from Wf4Ever RO ontology)</description>
-    <properties>
-        <elmo.version>1.5</elmo.version>
-        <sesame.version>2.2.4</sesame.version>
-    </properties>
     <build>
         <plugins>
             <plugin>

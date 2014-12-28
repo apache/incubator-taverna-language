@@ -10,11 +10,6 @@
     <artifactId>taverna-databundle</artifactId>
     <name>Apache Taverna Databundle API</name>
     <description>API for dealing with Data Bundles</description>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <jena.version>2.12.1</jena.version>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>org.apache.jena</groupId>

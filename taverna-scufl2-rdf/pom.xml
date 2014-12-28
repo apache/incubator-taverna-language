@@ -9,9 +9,8 @@
 	<artifactId>taverna-scufl2-rdf</artifactId>
 	<packaging>bundle</packaging>
 	<name>Apache Taverna Scufl 2 RDF serialisation</name>
-	<properties>
+<properties>
 		<elmo.version>1.5</elmo.version>
-		<sesame.version>2.3.2</sesame.version>
 	</properties>
 	<build>
 		<plugins>

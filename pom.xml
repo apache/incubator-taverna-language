@@ -16,11 +16,6 @@
 		and workflow inputs/outputs/run (DataBundle).
 	</description>
 
-  <properties>
-		<!-- TODO: Move to taverna-parent -->
-		<jackson-databind.version>2.3.3</jackson-databind.version>
-		<jaxb.version>2.2.11</jaxb.version>
-  </properties>
 	<build>
 		<pluginManagement>
 			<plugins>
