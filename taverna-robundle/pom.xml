@@ -11,7 +11,7 @@
 	<name>Apache Taverna RO Bundle API</name>
 	<description>API for dealing with RO Bundles</description>
 	<properties>
-		<jsonld.version>0.5.1-SNAPSHOT</jsonld.version>
+		<jsonld.version>0.5.1</jsonld.version>
 		<!-- Raven: Jena and Jackson versions must match dependencies from jsonld
 			*and* scufl2 -->
 		<jackson.version>2.3.3</jackson.version>
