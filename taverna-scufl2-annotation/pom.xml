@@ -30,9 +30,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.github.jsonld-java</groupId>
-			<artifactId>jsonld-java-jena</artifactId>
-      <version>${jsonld.version}</version>
+			<groupId>org.apache.jena</groupId>
+			<artifactId>jena-arq</artifactId>
+      <version>${jena.version}</version>
 		</dependency>
 	</dependencies>
 </project>
