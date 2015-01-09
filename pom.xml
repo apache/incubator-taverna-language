@@ -8,7 +8,7 @@
 	</parent>
 	<groupId>org.apache.taverna.language</groupId>
 	<artifactId>taverna-language</artifactId>
-	<version>0.15.0-incubating-SNAPSHOT</version>
+	<version>0.15.0-incubating</version>
 	<packaging>pom</packaging>
 
 	<name>Apache Taverna Language APIs (Scufl2, Databundle)</name>
@@ -75,7 +75,7 @@
     <connection>scm:git:https://github.com/taverna-incubator/incubator-taverna-language.git</connection>
     <developerConnection>scm:git:git@github.com:taverna-incubator/incubator-taverna-language.git</developerConnection>
     <url>https://github.com/taverna-incubator/incubator-taverna-language</url>
-    <tag>HEAD</tag>
+    <tag>taverna-language-0.15.0-incubating</tag>
 </scm>
 
 
@@ -87,7 +87,7 @@
 			<id>com.springsource.repository.bundles.release</id>
 			<name>SpringSource Enterprise Bundle Repository - SpringSource Bundle Releases</name>
 			<url>http://repository.springsource.com/maven/bundles/release</url>
-			<releases/>
+			<releases />
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
@@ -96,7 +96,7 @@
 			<id>com.springsource.repository.bundles.external</id>
 			<name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
 			<url>http://repository.springsource.com/maven/bundles/external</url>
-			<releases/>
+			<releases />
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>

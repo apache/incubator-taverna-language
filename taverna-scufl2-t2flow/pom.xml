@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.apache.taverna.language</groupId>
 		<artifactId>taverna-language</artifactId>
-		<version>0.15.0-incubating-SNAPSHOT</version>
+		<version>0.15.0-incubating</version>
 	</parent>
 	<artifactId>taverna-scufl2-t2flow</artifactId>
 	<packaging>bundle</packaging>
@@ -102,7 +102,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<execute/>
+										<execute />
 									</action>
 								</pluginExecution>
 							</pluginExecutions>

@@ -4,7 +4,7 @@
     <parent>
       	<groupId>org.apache.taverna.language</groupId>
       	<artifactId>taverna-language</artifactId>
-      	<version>0.15.0-incubating-SNAPSHOT</version>
+      	<version>0.15.0-incubating</version>
     </parent>
     <packaging>bundle</packaging>
     <artifactId>taverna-databundle</artifactId>
