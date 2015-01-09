@@ -8,7 +8,7 @@
 	</parent>
 	<groupId>org.apache.taverna.language</groupId>
 	<artifactId>taverna-language</artifactId>
-	<version>0.15.0-incubating</version>
+	<version>0.15.1-incubating-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>Apache Taverna Language APIs (Scufl2, Databundle)</name>
@@ -75,7 +75,7 @@
     <connection>scm:git:https://github.com/taverna-incubator/incubator-taverna-language.git</connection>
     <developerConnection>scm:git:git@github.com:taverna-incubator/incubator-taverna-language.git</developerConnection>
     <url>https://github.com/taverna-incubator/incubator-taverna-language</url>
-    <tag>taverna-language-0.15.0-incubating</tag>
+    <tag>HEAD</tag>
 </scm>
 
 
