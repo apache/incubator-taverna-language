@@ -127,6 +127,16 @@
 					</execution>
 				</executions>
 			</plugin>
+      <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <!-- FOAF and W3C ontologies -->
+            <exclude>**/ontologies/*</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
 		</plugins>
 	</build>
 </project>
