@@ -134,6 +134,8 @@
           <excludes>
             <!-- FOAF and W3C ontologies -->
             <exclude>**/ontologies/*</exclude>
+            <!-- XML schemas from W3C and OASIS -->
+            <exclude>**/xsd/*</exclude>
           </excludes>
         </configuration>
       </plugin>
