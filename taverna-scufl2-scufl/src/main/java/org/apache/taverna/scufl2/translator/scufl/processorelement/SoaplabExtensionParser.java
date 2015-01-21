@@ -17,7 +17,7 @@ public class SoaplabExtensionParser extends AbstractExtensionParser {
 
 	@Override
 	public boolean canHandle(Class<?> c) {
-		return c.equals(uk.org.taverna.scufl2.xml.scufl.jaxb.SoaplabwsdlType.class);
+		return c.equals(org.apache.taverna.scufl2.xml.scufl.jaxb.SoaplabwsdlType.class);
 	}
 
 	@Override

@@ -17,7 +17,7 @@ public class ApiConsumerExtensionParser extends AbstractExtensionParser {
 
 	@Override
 	public boolean canHandle(Class<?> c) {
-		return c.equals(uk.org.taverna.scufl2.xml.scufl.jaxb.ApiconsumerType.class);
+		return c.equals(org.apache.taverna.scufl2.xml.scufl.jaxb.ApiconsumerType.class);
 	}
 
 	@Override

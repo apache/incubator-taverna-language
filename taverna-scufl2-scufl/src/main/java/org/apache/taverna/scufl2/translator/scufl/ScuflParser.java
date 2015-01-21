@@ -47,16 +47,16 @@ import org.apache.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import org.apache.taverna.scufl2.api.profiles.Profile;
 import org.xml.sax.SAXException;
 
-import uk.org.taverna.scufl2.xml.scufl.jaxb.CoordinationType;
-import uk.org.taverna.scufl2.xml.scufl.jaxb.DefaultType;
-import uk.org.taverna.scufl2.xml.scufl.jaxb.DefaultsType;
-import uk.org.taverna.scufl2.xml.scufl.jaxb.LinkType;
-import uk.org.taverna.scufl2.xml.scufl.jaxb.ObjectFactory;
-import uk.org.taverna.scufl2.xml.scufl.jaxb.ProcessorType;
-import uk.org.taverna.scufl2.xml.scufl.jaxb.ScuflType;
-import uk.org.taverna.scufl2.xml.scufl.jaxb.SinkType;
-import uk.org.taverna.scufl2.xml.scufl.jaxb.SourceType;
-import uk.org.taverna.scufl2.xml.scufl.jaxb.WorkflowDescriptionType;
+import org.apache.taverna.scufl2.xml.scufl.jaxb.CoordinationType;
+import org.apache.taverna.scufl2.xml.scufl.jaxb.DefaultType;
+import org.apache.taverna.scufl2.xml.scufl.jaxb.DefaultsType;
+import org.apache.taverna.scufl2.xml.scufl.jaxb.LinkType;
+import org.apache.taverna.scufl2.xml.scufl.jaxb.ObjectFactory;
+import org.apache.taverna.scufl2.xml.scufl.jaxb.ProcessorType;
+import org.apache.taverna.scufl2.xml.scufl.jaxb.ScuflType;
+import org.apache.taverna.scufl2.xml.scufl.jaxb.SinkType;
+import org.apache.taverna.scufl2.xml.scufl.jaxb.SourceType;
+import org.apache.taverna.scufl2.xml.scufl.jaxb.WorkflowDescriptionType;
 
 /**
  * WARNING! Incomplete class.

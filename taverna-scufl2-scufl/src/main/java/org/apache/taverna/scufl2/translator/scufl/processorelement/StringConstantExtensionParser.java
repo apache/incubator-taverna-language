@@ -14,7 +14,7 @@ import org.apache.taverna.scufl2.api.configurations.Configuration;
 import org.apache.taverna.scufl2.api.port.OutputActivityPort;
 import org.apache.taverna.scufl2.api.profiles.ProcessorBinding;
 
-import uk.org.taverna.scufl2.xml.scufl.jaxb.StringconstantType;
+import org.apache.taverna.scufl2.xml.scufl.jaxb.StringconstantType;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -31,7 +31,7 @@ public class StringConstantExtensionParser extends AbstractExtensionParser {
 
 	@Override
 	public boolean canHandle(Class<?> c) {
-		return c.equals(uk.org.taverna.scufl2.xml.scufl.jaxb.StringconstantType.class);
+		return c.equals(org.apache.taverna.scufl2.xml.scufl.jaxb.StringconstantType.class);
 	}
 
 	@Override

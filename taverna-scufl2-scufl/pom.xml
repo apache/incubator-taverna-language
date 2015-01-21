@@ -50,8 +50,8 @@
 					</execution>
 				</executions>
 				<configuration>
-					<packageName>uk.org.taverna.scufl2.xml.scufl.jaxb</packageName>
-					<schemaDirectory>src/main/resources/uk/org/taverna/scufl2/translator/scufl/xsd/</schemaDirectory>
+					<packageName>org.apache.taverna.scufl2.xml.scufl.jaxb</packageName>
+					<schemaDirectory>src/main/resources/org/apache/taverna/scufl2/translator/scufl/xsd/</schemaDirectory>
 				</configuration>
 			</plugin>
 

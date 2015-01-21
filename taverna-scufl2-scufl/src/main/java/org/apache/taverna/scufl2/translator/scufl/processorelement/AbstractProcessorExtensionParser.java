@@ -13,7 +13,7 @@ import java.util.List;
 public class AbstractProcessorExtensionParser extends AbstractExtensionParser {
 	@Override
 	public boolean canHandle(Class<?> c) {
-		return c.equals(uk.org.taverna.scufl2.xml.scufl.jaxb.AbstractprocessorType.class);
+		return c.equals(org.apache.taverna.scufl2.xml.scufl.jaxb.AbstractprocessorType.class);
 	}
 
 	@Override
