@@ -33,6 +33,16 @@
 	</description>
 
 	<build>
+		<plugins>
+			            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+		</plugins>
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -77,10 +87,11 @@
                   <schemaDirectory>src/main/xsd</schemaDirectory>
                 </configuration>
             </plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
 
+
+            </plugins>
+            </pluginManagement>
+            </build>
 <!-- TODO: Update -->
   <scm>
     <!-- TODO: Replace with git.apache.org details :
