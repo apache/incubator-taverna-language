@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 
+import org.apache.taverna.scufl2.api.common.URITools;
 import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.turtle.TurtleUtil;
 import org.openrdf.rio.turtle.TurtleWriter;
 import org.openrdf.sail.memory.model.MemURI;
 
-import uk.org.taverna.scufl2.api.common.URITools;
 
 public class TurtleWriterWithBase extends TurtleWriter {
 	private URITools uriTools = new URITools();

@@ -8,6 +8,10 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.taverna.scufl2.api.container.WorkflowBundle;
+import org.apache.taverna.scufl2.api.io.ReaderException;
+import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
+import org.apache.taverna.scufl2.translator.t2flow.T2FlowReader;
 import org.junit.Before;
 import org.junit.Test;
 import org.openrdf.repository.Repository;
@@ -16,10 +20,6 @@ import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.sail.memory.MemoryStore;
 
-import uk.org.taverna.scufl2.api.container.WorkflowBundle;
-import uk.org.taverna.scufl2.api.io.ReaderException;
-import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
-import uk.org.taverna.scufl2.translator.t2flow.T2FlowReader;
 
 public class TestSemanticAnnotations {
 	private static final String IMAGEMAGICKCONVERT_T2FLOW = "/valid_component_imagemagickconvert.t2flow";

@@ -12,7 +12,7 @@ This API is built on the Java 7 NIO Files and the [RO Bundle API](https://github
 uses the [Java 7 ZIP file provider](http://docs.oracle.com/javase/7/docs/technotes/guides/io/fsp/zipfilesystemprovider.html) to generate the Data Bundle.
 
 
-The class [uk.org.taverna.databundle.DataBundles](src/main/java/uk/org/taverna/databundle/DataBundles.java) 
+The class [org.apache.taverna.databundle.DataBundles](src/main/java/uk/org/taverna/databundle/DataBundles.java) 
 complements the Java 7 [java.nio.Files](http://docs.oracle.com/javase/7/docs/api/java/nio/file/Files.html)
 API with more specific helper methods to work with Data Bundles.
 
@@ -37,7 +37,7 @@ but in some cases you might have to build robundle locally before building this 
 Example of use
 --------------
 
-Example in full is at [uk.org.taverna.databundle.TestExample](src/test/java/uk/org/taverna/databundle/TestExample.java)
+Example in full is at [org.apache.taverna.databundle.TestExample](src/test/java/uk/org/taverna/databundle/TestExample.java)
 
 
 Create a new (temporary) data bundle:

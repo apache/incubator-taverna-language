@@ -25,17 +25,17 @@ under the License.
 	xsi:schemaLocation="http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<list id="readers" interface="uk.org.taverna.scufl2.api.io.WorkflowBundleReader" cardinality="0..N" />
-	<list id="writers" interface="uk.org.taverna.scufl2.api.io.WorkflowBundleWriter" cardinality="0..N" />
+	<list id="readers" interface="org.apache.taverna.scufl2.api.io.WorkflowBundleReader" cardinality="0..N" />
+	<list id="writers" interface="org.apache.taverna.scufl2.api.io.WorkflowBundleWriter" cardinality="0..N" />
 
 	<reference id="transformerFactory" interface="javax.xml.transform.TransformerFactory" cardinality="0..1"/>
 
 	<reference id="documentBuilderFactory" interface="javax.xml.parsers.DocumentBuilderFactory"  cardinality="0..1" filter="(parser.namespaceAware=true)"/>
 
-	<service ref="workflowBundleIO" interface="uk.org.taverna.scufl2.api.io.WorkflowBundleIO" />
+	<service ref="workflowBundleIO" interface="org.apache.taverna.scufl2.api.io.WorkflowBundleIO" />
 
-	<service ref="structureReader" interface="uk.org.taverna.scufl2.api.io.WorkflowBundleReader" />
+	<service ref="structureReader" interface="org.apache.taverna.scufl2.api.io.WorkflowBundleReader" />
 
-	<service ref="structureWriter" interface="uk.org.taverna.scufl2.api.io.WorkflowBundleWriter" />
+	<service ref="structureWriter" interface="org.apache.taverna.scufl2.api.io.WorkflowBundleWriter" />
 
 </beans:beans>

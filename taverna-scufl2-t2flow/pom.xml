@@ -20,7 +20,7 @@
 	<parent>
 		<groupId>org.apache.taverna.language</groupId>
 		<artifactId>taverna-language</artifactId>
-		<version>0.15.1-incubating-SNAPSHOT</version>
+		<version>0.16.1-incubating-SNAPSHOT</version>
 	</parent>
 	<artifactId>taverna-scufl2-t2flow</artifactId>
 	<packaging>bundle</packaging>
@@ -34,7 +34,7 @@
                 <!--
                 <configuration>
                     <instructions>
-                        <Export-Package>uk.org.taverna.scufl2.api.io;provide:=true</Export-Package>
+                        <Export-Package>org.apache.taverna.scufl2.api.io;provide:=true</Export-Package>
                     </instructions>
                 </configuration>
                  -->
@@ -50,8 +50,8 @@
 					</execution>
 				</executions>
 				<configuration>
-					<packageName>uk.org.taverna.scufl2.xml.t2flow.jaxb</packageName>
-					<schemaDirectory>src/main/resources/uk/org/taverna/scufl2/translator/t2flow/xsd/</schemaDirectory>
+					<packageName>org.apache.taverna.scufl2.xml.t2flow.jaxb</packageName>
+					<schemaDirectory>src/main/resources/org/apache/taverna/scufl2/translator/t2flow/xsd/</schemaDirectory>
 				</configuration>
 			</plugin>
 			<plugin>

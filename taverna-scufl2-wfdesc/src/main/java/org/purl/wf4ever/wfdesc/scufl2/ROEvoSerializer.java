@@ -2,6 +2,9 @@ package org.purl.wf4ever.wfdesc.scufl2;
 
 import java.io.OutputStream;
 
+import org.apache.taverna.scufl2.api.annotation.Revision;
+import org.apache.taverna.scufl2.api.core.Workflow;
+import org.apache.taverna.scufl2.api.io.WriterException;
 import org.openrdf.OpenRDFException;
 import org.openrdf.model.URI;
 import org.openrdf.model.ValueFactory;
@@ -13,9 +16,6 @@ import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.rio.helpers.OrganizedRDFWriter;
 import org.openrdf.sail.memory.MemoryStore;
 
-import uk.org.taverna.scufl2.api.annotation.Revision;
-import uk.org.taverna.scufl2.api.core.Workflow;
-import uk.org.taverna.scufl2.api.io.WriterException;
 
 public class ROEvoSerializer {
 	//private URITools uriTools = new URITools();

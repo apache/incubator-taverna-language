@@ -20,7 +20,7 @@
     <parent>
         <groupId>org.apache.taverna.language</groupId>
         <artifactId>taverna-language</artifactId>
-        <version>0.15.1-incubating-SNAPSHOT</version>
+        <version>0.16.1-incubating-SNAPSHOT</version>
     </parent>
     <artifactId>taverna-scufl2-validation-correctness</artifactId>
     <packaging>bundle</packaging>
@@ -32,7 +32,7 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
-                        <Export-Package>uk.org.taverna.scufl2.validation.correctness.*;provide:=true</Export-Package>
+                        <Export-Package>org.apache.taverna.scufl2.validation.correctness.*;provide:=true</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>

@@ -9,11 +9,11 @@ import javax.xml.bind.JAXBException;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.Level;
+import org.apache.taverna.scufl2.api.container.WorkflowBundle;
+import org.apache.taverna.scufl2.api.io.ReaderException;
+import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
+import org.apache.taverna.scufl2.api.io.WriterException;
 
-import uk.org.taverna.scufl2.api.container.WorkflowBundle;
-import uk.org.taverna.scufl2.api.io.ReaderException;
-import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
-import uk.org.taverna.scufl2.api.io.WriterException;
 
 public class ConvertToWfdesc {
 	

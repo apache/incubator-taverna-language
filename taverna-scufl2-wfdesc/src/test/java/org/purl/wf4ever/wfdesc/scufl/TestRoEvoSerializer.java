@@ -5,13 +5,13 @@ import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.taverna.scufl2.api.container.WorkflowBundle;
+import org.apache.taverna.scufl2.api.io.ReaderException;
+import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 import org.junit.Before;
 import org.junit.Test;
 import org.purl.wf4ever.wfdesc.scufl2.ROEvoSerializer;
 
-import uk.org.taverna.scufl2.api.container.WorkflowBundle;
-import uk.org.taverna.scufl2.api.io.ReaderException;
-import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
 
 public class TestRoEvoSerializer {
 	private static final String HELLOWORLD_T2FLOW = "helloanyone.t2flow";

@@ -600,12 +600,12 @@ Transport.send(message);
   <apiConsumerName>No name</apiConsumerName>
   <apiConsumerDescription>No description</apiConsumerDescription>
   <description />
-  <className>uk.org.taverna.scufl2.api.container.TavernaResearchObject</className>
+  <className>org.apache.taverna.scufl2.api.container.TavernaResearchObject</className>
   <methodName>TavernaResearchObject</methodName>
   <parameterNames />
   <parameterDimensions />
   <parameterTypes />
-  <returnType>uk.org.taverna.scufl2.api.container.TavernaResearchObject</returnType>
+  <returnType>org.apache.taverna.scufl2.api.container.TavernaResearchObject</returnType>
   <returnDimension>0</returnDimension>
   <isMethodStatic>false</isMethodStatic>
   <isMethodConstructor>true</isMethodConstructor>
@@ -625,7 +625,7 @@ Transport.send(message);
   <apiConsumerName>No name</apiConsumerName>
   <apiConsumerDescription>No description</apiConsumerDescription>
   <description />
-  <className>uk.org.taverna.scufl2.api.container.TavernaResearchObject</className>
+  <className>org.apache.taverna.scufl2.api.container.TavernaResearchObject</className>
   <methodName>setWorkflows</methodName>
   <parameterNames>
     <string>workflows</string>

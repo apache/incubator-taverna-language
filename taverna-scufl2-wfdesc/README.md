@@ -211,10 +211,10 @@ to your POM:
 
 Example:
 
-    import uk.org.taverna.scufl2.api.container.WorkflowBundle;
-    import uk.org.taverna.scufl2.api.io.ReaderException;
-    import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
-    import uk.org.taverna.scufl2.api.io.WriterException;
+    import org.apache.taverna.scufl2.api.container.WorkflowBundle;
+    import org.apache.taverna.scufl2.api.io.ReaderException;
+    import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
+    import org.apache.taverna.scufl2.api.io.WriterException;
 
     ..
     File original = new File("helloworld.t2flow");

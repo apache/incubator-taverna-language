@@ -7,9 +7,10 @@ import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Set;
 
-import uk.org.taverna.scufl2.api.container.WorkflowBundle;
-import uk.org.taverna.scufl2.api.io.ReaderException;
-import uk.org.taverna.scufl2.api.io.WorkflowBundleReader;
+import org.apache.taverna.scufl2.api.container.WorkflowBundle;
+import org.apache.taverna.scufl2.api.io.ReaderException;
+import org.apache.taverna.scufl2.api.io.WorkflowBundleReader;
+
 
 public class WfdescReader implements WorkflowBundleReader {
 

@@ -1,6 +1,6 @@
 package org.purl.wf4ever.wfdesc.scufl2;
 
-import static uk.org.taverna.scufl2.api.common.Scufl2Tools.NESTED_WORKFLOW;
+import static org.apache.taverna.scufl2.api.common.Scufl2Tools.NESTED_WORKFLOW;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +12,26 @@ import java.util.logging.Logger;
 
 import javax.xml.namespace.QName;
 
+import org.apache.taverna.scufl2.api.activity.Activity;
+import org.apache.taverna.scufl2.api.annotation.Annotation;
+import org.apache.taverna.scufl2.api.common.Child;
+import org.apache.taverna.scufl2.api.common.Named;
+import org.apache.taverna.scufl2.api.common.Scufl2Tools;
+import org.apache.taverna.scufl2.api.common.URITools;
+import org.apache.taverna.scufl2.api.common.WorkflowBean;
+import org.apache.taverna.scufl2.api.common.Visitor.VisitorWithPath;
+import org.apache.taverna.scufl2.api.configurations.Configuration;
+import org.apache.taverna.scufl2.api.container.WorkflowBundle;
+import org.apache.taverna.scufl2.api.core.DataLink;
+import org.apache.taverna.scufl2.api.core.Processor;
+import org.apache.taverna.scufl2.api.core.Workflow;
+import org.apache.taverna.scufl2.api.io.WriterException;
+import org.apache.taverna.scufl2.api.port.InputPort;
+import org.apache.taverna.scufl2.api.port.OutputPort;
+import org.apache.taverna.scufl2.api.port.WorkflowPort;
+import org.apache.taverna.scufl2.api.profiles.ProcessorBinding;
+import org.apache.taverna.scufl2.api.profiles.ProcessorPortBinding;
+import org.apache.taverna.scufl2.api.profiles.Profile;
 import org.openrdf.OpenRDFException;
 import org.openrdf.concepts.rdfs.Resource;
 import org.openrdf.elmo.ElmoModule;
@@ -34,26 +54,6 @@ import org.purl.wf4ever.wfdesc.Output;
 import org.purl.wf4ever.wfdesc.Process;
 import org.w3.prov.Entity;
 
-import uk.org.taverna.scufl2.api.activity.Activity;
-import uk.org.taverna.scufl2.api.annotation.Annotation;
-import uk.org.taverna.scufl2.api.common.Child;
-import uk.org.taverna.scufl2.api.common.Named;
-import uk.org.taverna.scufl2.api.common.Scufl2Tools;
-import uk.org.taverna.scufl2.api.common.URITools;
-import uk.org.taverna.scufl2.api.common.Visitor.VisitorWithPath;
-import uk.org.taverna.scufl2.api.common.WorkflowBean;
-import uk.org.taverna.scufl2.api.configurations.Configuration;
-import uk.org.taverna.scufl2.api.container.WorkflowBundle;
-import uk.org.taverna.scufl2.api.core.DataLink;
-import uk.org.taverna.scufl2.api.core.Processor;
-import uk.org.taverna.scufl2.api.core.Workflow;
-import uk.org.taverna.scufl2.api.io.WriterException;
-import uk.org.taverna.scufl2.api.port.InputPort;
-import uk.org.taverna.scufl2.api.port.OutputPort;
-import uk.org.taverna.scufl2.api.port.WorkflowPort;
-import uk.org.taverna.scufl2.api.profiles.ProcessorBinding;
-import uk.org.taverna.scufl2.api.profiles.ProcessorPortBinding;
-import uk.org.taverna.scufl2.api.profiles.Profile;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -124,7 +124,7 @@ public class WfdescSerialiser {
                 }
 //				@SuppressWarnings("rawtypes")
 								
-                if (node instanceof uk.org.taverna.scufl2.api.core.Workflow) {
+                if (node instanceof org.apache.taverna.scufl2.api.core.Workflow) {
 				    entityForBean(node, org.purl.wf4ever.wfdesc.Workflow.class);					
 				} else if (node instanceof Processor) {
 				    Processor processor = (Processor)node;
@@ -303,7 +303,7 @@ public class WfdescSerialiser {
 //			@Override
 //			public boolean visitEnter(WorkflowBean node) {
 //                if (node instanceof Processor
-//                        || node instanceof uk.org.taverna.scufl2.api.core.Workflow
+//                        || node instanceof org.apache.taverna.scufl2.api.core.Workflow
 //                        || node instanceof Port || node instanceof DataLink) {
 //					visit(node);
 //					return true;

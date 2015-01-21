@@ -8,6 +8,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.taverna.scufl2.api.container.WorkflowBundle;
+import org.apache.taverna.scufl2.api.io.ReaderException;
+import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
+import org.apache.taverna.scufl2.api.io.WriterException;
 import org.junit.Before;
 import org.junit.Test;
 import org.openrdf.query.MalformedQueryException;
@@ -22,10 +26,6 @@ import org.openrdf.rio.RDFParseException;
 import org.openrdf.sail.memory.MemoryStore;
 import org.purl.wf4ever.wfdesc.scufl2.ROEvoSerializer;
 
-import uk.org.taverna.scufl2.api.container.WorkflowBundle;
-import uk.org.taverna.scufl2.api.io.ReaderException;
-import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
-import uk.org.taverna.scufl2.api.io.WriterException;
 
 public class TestLocalDependency {
 	private static final String LOCALDEPENDENCY = "localdependency.t2flow";

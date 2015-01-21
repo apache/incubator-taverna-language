@@ -3,8 +3,8 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
         http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean id="rdfXMLReader" class="uk.org.taverna.scufl2.rdfxml.RDFXMLReader" />
+	<bean id="rdfXMLReader" class="org.apache.taverna.scufl2.rdfxml.RDFXMLReader" />
 
-	<bean id="rdfXMLWriter" class="uk.org.taverna.scufl2.rdfxml.RDFXMLWriter" />
+	<bean id="rdfXMLWriter" class="org.apache.taverna.scufl2.rdfxml.RDFXMLWriter" />
 
 </beans>

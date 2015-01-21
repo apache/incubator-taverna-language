@@ -7,6 +7,9 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.taverna.scufl2.api.container.WorkflowBundle;
+import org.apache.taverna.scufl2.api.io.TestWorkflowBundleIO;
+import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 import org.junit.Before;
 import org.junit.Test;
 import org.openrdf.query.QueryLanguage;
@@ -16,9 +19,6 @@ import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.sail.memory.MemoryStore;
 
-import uk.org.taverna.scufl2.api.container.WorkflowBundle;
-import uk.org.taverna.scufl2.api.io.TestWorkflowBundleIO;
-import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
 
 public class TestWfdescWriter {
 	protected WorkflowBundle workflowBundle;

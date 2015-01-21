@@ -11,9 +11,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import uk.org.taverna.scufl2.api.container.WorkflowBundle;
-import uk.org.taverna.scufl2.api.io.WorkflowBundleWriter;
-import uk.org.taverna.scufl2.api.io.WriterException;
+import org.apache.taverna.scufl2.api.container.WorkflowBundle;
+import org.apache.taverna.scufl2.api.io.WorkflowBundleWriter;
+import org.apache.taverna.scufl2.api.io.WriterException;
+
 
 public class WfdescWriter implements WorkflowBundleWriter {
 

@@ -7,9 +7,9 @@ import static org.junit.Assert.assertNull;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 import org.junit.Test;
 
-import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
 
 public class TestWfdescReader {
 

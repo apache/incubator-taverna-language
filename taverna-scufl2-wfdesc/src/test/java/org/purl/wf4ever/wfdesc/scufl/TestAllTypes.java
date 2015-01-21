@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 
+import org.apache.taverna.scufl2.api.container.WorkflowBundle;
+import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
@@ -22,8 +24,6 @@ import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.sail.memory.MemoryStore;
 
-import uk.org.taverna.scufl2.api.container.WorkflowBundle;
-import uk.org.taverna.scufl2.api.io.WorkflowBundleIO;
 
 public class TestAllTypes {
 

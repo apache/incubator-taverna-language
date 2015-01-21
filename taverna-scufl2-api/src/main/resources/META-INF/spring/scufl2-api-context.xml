@@ -23,11 +23,11 @@ under the License.
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean id="structureReader" class="uk.org.taverna.scufl2.api.io.structure.StructureReader" />
+	<bean id="structureReader" class="org.apache.taverna.scufl2.api.io.structure.StructureReader" />
 
-	<bean id="structureWriter" class="uk.org.taverna.scufl2.api.io.structure.StructureWriter" />
+	<bean id="structureWriter" class="org.apache.taverna.scufl2.api.io.structure.StructureWriter" />
 
-	<bean id="workflowBundleIO" class="uk.org.taverna.scufl2.api.io.WorkflowBundleIO">
+	<bean id="workflowBundleIO" class="org.apache.taverna.scufl2.api.io.WorkflowBundleIO">
 		<property name="readers" ref="readers" />
 		<property name="writers" ref="writers" />
 	</bean>
