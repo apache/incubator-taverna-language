@@ -161,7 +161,7 @@
                     <assembleDirectory>${project.build.directory}/${project.artifactId}</assembleDirectory>
                     <programs>
                         <program>
-                            <mainClass>org.purl.wf4ever.wfdesc.scufl2.ConvertToWfdesc</mainClass>
+                            <mainClass>org.apache.taverna.scufl2.wfdesc.ConvertToWfdesc</mainClass>
                             <name>Apache Taverna scufl2-to-wfdesc</name>
                         </program>
                     </programs>
@@ -183,7 +183,7 @@
                             <shadedClassifierName>standalone</shadedClassifierName>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>org.purl.wf4ever.wfdesc.scufl2.ConvertToWfdesc</mainClass>
+                                    <mainClass>org.apache.taverna.scufl2.wfdesc.ConvertToWfdesc</mainClass>
                                 </transformer>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.XmlAppendingTransformer">

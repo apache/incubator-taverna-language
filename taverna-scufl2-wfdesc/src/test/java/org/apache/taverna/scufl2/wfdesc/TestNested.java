@@ -1,4 +1,4 @@
-package org.purl.wf4ever.wfdesc.scufl;
+package org.apache.taverna.scufl2.wfdesc;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;

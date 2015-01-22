@@ -1,7 +1,7 @@
-package org.purl.wf4ever.wfdesc.scufl;
+package org.apache.taverna.scufl2.wfdesc;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -12,6 +12,7 @@ import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 import org.apache.taverna.scufl2.api.io.WriterException;
+import org.apache.taverna.scufl2.wfdesc.ROEvoSerializer;
 import org.junit.Before;
 import org.junit.Test;
 import org.openrdf.query.MalformedQueryException;
@@ -24,11 +25,10 @@ import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFParseException;
 import org.openrdf.sail.memory.MemoryStore;
-import org.purl.wf4ever.wfdesc.scufl2.ROEvoSerializer;
 
 
-public class TestLocalDependency {
-	private static final String LOCALDEPENDENCY = "localdependency.t2flow";
+public class TestInvalidURITemplate {
+	private static final String ENM_v21 = "enm-v21.t2flow";
 	
 	ROEvoSerializer roEvo = new ROEvoSerializer();
 	WorkflowBundleIO io = new WorkflowBundleIO();
@@ -38,8 +38,8 @@ public class TestLocalDependency {
 	private ByteArrayOutputStream output = new ByteArrayOutputStream();
 	
 	@Before
-	public void loadDepdenency() throws ReaderException, IOException, WriterException, RDFParseException, RepositoryException, QueryEvaluationException, MalformedQueryException {
-		InputStream localStream = getClass().getResourceAsStream("/" + LOCALDEPENDENCY);
+	public void loadENM() throws ReaderException, IOException, WriterException, RDFParseException, RepositoryException, QueryEvaluationException, MalformedQueryException {
+		InputStream localStream = getClass().getResourceAsStream("/" + ENM_v21);
 		assertNotNull(localStream);
 		localDependency = io.readBundle(localStream, "application/vnd.taverna.t2flow+xml");
 		assertNotNull(localDependency);
@@ -53,23 +53,19 @@ public class TestLocalDependency {
 		Repository myRepository = new SailRepository(new MemoryStore());
 		myRepository.initialize();
 		RepositoryConnection con = myRepository.getConnection();
-		String root = "app://f0b5fb9c-b180-45b3-afb4-8d70bbb27190/";
+		String root = "app:///";
 		//System.out.write(output.toByteArray());
 		con.add(new ByteArrayInputStream(output.toByteArray()), root, RDFFormat.TURTLE);
 		
-		assertTrue(con.prepareBooleanQuery(QueryLanguage.SPARQL, 
+		assertFalse(con.prepareBooleanQuery(QueryLanguage.SPARQL, 
 				"PREFIX wfdesc: <http://purl.org/wf4ever/wfdesc#>  " +
 				"PREFIX wf4ever: <http://purl.org/wf4ever/wf4ever#>  " +
 				"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>  " +
 				"PREFIX roterms: <http://purl.org/wf4ever/roterms#>  " +
 				"ASK { " +
-				"?wf a wfdesc:Workflow ;" +
-				"  wfdesc:hasSubProcess ?beanshell . " +
-				"?beanshell a wfdesc:Process, wf4ever:BeanshellScript ;" +
-				"  wf4ever:script ?script ; " +
-				"  roterms:requiresSoftware ?sw . " +
-				"?sw rdfs:label \"hello.jar\" ; " +
-                "    rdfs:comment \"JAR dependency\" ." +
+				"?ws a wfdesc:Process, wf4ever:RESTService ;" +
+				"  rdfs:label \"raster_upload_service\" ; " + 
+				"  wf4ever:rootURI ?rootURI . " +
 			    "}").evaluate());
 		
 	}

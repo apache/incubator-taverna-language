@@ -3,8 +3,8 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
         http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean id="wfdescReader" class="org.purl.wf4ever.wfdesc.scufl2.WfdescReader" />
+	<bean id="wfdescReader" class="org.apache.taverna.scufl2.wfdesc.WfdescReader" />
 
-	<bean id="wfdescWriter" class="org.purl.wf4ever.wfdesc.scufl2.WfdescWriter" />
+	<bean id="wfdescWriter" class="org.apache.taverna.scufl2.wfdesc.WfdescWriter" />
 
 </beans>

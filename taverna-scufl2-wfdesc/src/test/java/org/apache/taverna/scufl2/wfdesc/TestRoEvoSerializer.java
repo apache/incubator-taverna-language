@@ -1,4 +1,4 @@
-package org.purl.wf4ever.wfdesc.scufl;
+package org.apache.taverna.scufl2.wfdesc;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -8,9 +8,9 @@ import java.io.InputStream;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
+import org.apache.taverna.scufl2.wfdesc.ROEvoSerializer;
 import org.junit.Before;
 import org.junit.Test;
-import org.purl.wf4ever.wfdesc.scufl2.ROEvoSerializer;
 
 
 public class TestRoEvoSerializer {

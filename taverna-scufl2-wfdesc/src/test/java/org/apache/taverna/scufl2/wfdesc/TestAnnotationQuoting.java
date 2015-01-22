@@ -1,4 +1,4 @@
-package org.purl.wf4ever.wfdesc.scufl;
+package org.apache.taverna.scufl2.wfdesc;
 
 import static org.junit.Assert.*;
 
@@ -11,6 +11,7 @@ import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 import org.apache.taverna.scufl2.api.io.WriterException;
+import org.apache.taverna.scufl2.wfdesc.ROEvoSerializer;
 import org.junit.Before;
 import org.junit.Test;
 import org.openrdf.query.Binding;
@@ -27,7 +28,6 @@ import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFParseException;
 import org.openrdf.sail.memory.MemoryStore;
-import org.purl.wf4ever.wfdesc.scufl2.ROEvoSerializer;
 
 
 public class TestAnnotationQuoting {

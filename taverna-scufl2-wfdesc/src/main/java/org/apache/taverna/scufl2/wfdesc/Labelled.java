@@ -1,4 +1,4 @@
-package org.purl.wf4ever.wfdesc.scufl2;
+package org.apache.taverna.scufl2.wfdesc;
 
 import java.util.Set;
 
