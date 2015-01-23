@@ -40,14 +40,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
-			Manually adapted by Stian Soiland-Reyes from Relax-NG schema for
-			Adobe UCF definition for META-INF/container.xml - retrieved from:
-			http://livedocs.adobe.com/navigator/9/Navigator_SDK9_HTMLHelp/wwhelp/wwhimpl/common/html/wwhelp.htm?context=Navigator_SDK9_HTMLHelp&amp;file=Appx_Packaging.6.31.html
-
-			See
-			http://livedocs.adobe.com/navigator/9/Navigator_SDK9_HTMLHelp/wwhelp/wwhimpl/common/html/wwhelp.htm?context=Navigator_SDK9_HTMLHelp&amp;file=Appx_Packaging.6.31.html
-
-			OTE: urn:oasis:names:tc:opendocument:xmlns:container is *not* an
+			NOTE: urn:oasis:names:tc:opendocument:xmlns:container is *not* an
 			official namespace by OASIS, but the Adobe UCF specification defines
 			that a conforming META-INF/container.xml *must* use the *default*
 			namespace, eg:
