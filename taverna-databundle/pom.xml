@@ -22,7 +22,6 @@
       	<artifactId>taverna-language</artifactId>
       	<version>0.16.1-incubating-SNAPSHOT</version>
     </parent>
-    <packaging>bundle</packaging>
     <artifactId>taverna-databundle</artifactId>
     <name>Apache Taverna Databundle API</name>
     <description>API for dealing with Data Bundles</description>
@@ -91,6 +90,38 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <extensions>true</extensions>
             </plugin>
+                        <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>rat-checks</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <useDefaultExcludes>true</useDefaultExcludes>
+          <excludes>
+            <!--
+            Text and Markdown files are typically used only for documentation purposes
+            and license declarations are usually spurious in these files since often they
+            will refer to the LICENSE/NOTICE for users to find the actual licenses
+            -->
+            <exclude>**/*.md</exclude>
+            <!--
+            META-INF services files can include comments but a license header would be
+            unecessarily clutter so we exclude these
+            -->
+            <exclude>**/META-INF/services/*</exclude>
+            <!-- resources are excluded -->
+            <exclude>**/resources/**</exclude>
+          </excludes>
+          <addLicenseHeaders>forced</addLicenseHeaders>
+        </configuration>
+    </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
