@@ -68,8 +68,6 @@
             unecessarily clutter so we exclude these
             -->
             <exclude>**/META-INF/services/*</exclude>
-            <!-- resources are excluded -->
-            <exclude>**/resources/</exclude>
           </excludes>
           <addLicenseHeaders>forced</addLicenseHeaders>
           <numUnapprovedLicenses>100</numUnapprovedLicenses>
@@ -289,5 +287,6 @@
 		<module>taverna-scufl2-wfdesc</module>
     <module>taverna-robundle</module>
     <module>taverna-databundle</module>
+    <module>taverna-baclava-language</module>
   </modules>
 </project>
