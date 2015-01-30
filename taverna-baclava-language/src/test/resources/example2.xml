@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<b:dataThingMap xmlns:b="http://org.embl.ebi.escience/baclava/0.1alpha">
+  <b:dataThing key="strings">
+    <b:myGridDataDocument lsid="" syntactictype="l(l('text/plain'))">
+      <s:metadata xmlns:s="http://org.embl.ebi.escience/xscufl/0.1alpha">
+        <s:mimeTypes>
+          <s:mimeType>text/plain</s:mimeType>
+        </s:mimeTypes>
+      </s:metadata>
+      <b:partialOrder lsid="" type="list">
+        <b:relationList>
+          <b:relation parent="0" child="1" />
+        </b:relationList>
+        <b:itemList>
+          <b:partialOrder lsid="" type="list" index="0">
+            <b:relationList>
+              <b:relation parent="0" child="1" />
+              <b:relation parent="1" child="2" />
+              <b:relation parent="2" child="3" />
+              <b:relation parent="3" child="4" />
+              <b:relation parent="4" child="5" />
+              <b:relation parent="5" child="6" />
+              <b:relation parent="6" child="7" />
+              <b:relation parent="7" child="8" />
+              <b:relation parent="8" child="9" />
+              <b:relation parent="9" child="10" />
+              <b:relation parent="10" child="11" />
+              <b:relation parent="11" child="12" />
+              <b:relation parent="12" child="13" />
+              <b:relation parent="13" child="14" />
+              <b:relation parent="14" child="15" />
+              <b:relation parent="15" child="16" />
+              <b:relation parent="16" child="17" />
+              <b:relation parent="17" child="18" />
+              <b:relation parent="18" child="19" />
+              <b:relation parent="19" child="20" />
+              <b:relation parent="20" child="21" />
+              <b:relation parent="21" child="22" />
+              <b:relation parent="22" child="23" />
+              <b:relation parent="23" child="24" />
+              <b:relation parent="24" child="25" />
+              <b:relation parent="25" child="26" />
+              <b:relation parent="26" child="27" />
+              <b:relation parent="27" child="28" />
+              <b:relation parent="28" child="29" />
+              <b:relation parent="29" child="30" />
+              <b:relation parent="30" child="31" />
+              <b:relation parent="31" child="32" />
+              <b:relation parent="32" child="33" />
+              <b:relation parent="33" child="34" />
+              <b:relation parent="34" child="35" />
+              <b:relation parent="35" child="36" />
+              <b:relation parent="36" child="37" />
+              <b:relation parent="37" child="38" />
+              <b:relation parent="38" child="39" />
+            </b:relationList>
+            <b:itemList>
+              <b:dataElement lsid="" index="0">
+                <b:dataElementData>U3RyaW5nMA==</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="1">
+                <b:dataElementData>U3RyaW5nMQ==</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="2">
+                <b:dataElementData>U3RyaW5nMg==</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="3">
+                <b:dataElementData>U3RyaW5nMw==</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="4">
+                <b:dataElementData>U3RyaW5nNA==</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="5">
+                <b:dataElementData>U3RyaW5nNQ==</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="6">
+                <b:dataElementData>U3RyaW5nNg==</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="7">
+                <b:dataElementData>U3RyaW5nNw==</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="8">
+                <b:dataElementData>U3RyaW5nOA==</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="9">
+                <b:dataElementData>U3RyaW5nOQ==</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="10">
+                <b:dataElementData>U3RyaW5nMTA=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="11">
+                <b:dataElementData>U3RyaW5nMTE=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="12">
+                <b:dataElementData>U3RyaW5nMTI=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="13">
+                <b:dataElementData>U3RyaW5nMTM=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="14">
+                <b:dataElementData>U3RyaW5nMTQ=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="15">
+                <b:dataElementData>U3RyaW5nMTU=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="16">
+                <b:dataElementData>U3RyaW5nMTY=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="17">
+                <b:dataElementData>U3RyaW5nMTc=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="18">
+                <b:dataElementData>U3RyaW5nMTg=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="19">
+                <b:dataElementData>U3RyaW5nMTk=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="20">
+                <b:dataElementData>U3RyaW5nMjA=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="21">
+                <b:dataElementData>U3RyaW5nMjE=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="22">
+                <b:dataElementData>U3RyaW5nMjI=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="23">
+                <b:dataElementData>U3RyaW5nMjM=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="24">
+                <b:dataElementData>U3RyaW5nMjQ=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="25">
+                <b:dataElementData>U3RyaW5nMjU=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="26">
+                <b:dataElementData>U3RyaW5nMjY=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="27">
+                <b:dataElementData>U3RyaW5nMjc=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="28">
+                <b:dataElementData>U3RyaW5nMjg=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="29">
+                <b:dataElementData>U3RyaW5nMjk=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="30">
+                <b:dataElementData>U3RyaW5nMzA=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="31">
+                <b:dataElementData>U3RyaW5nMzE=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="32">
+                <b:dataElementData>U3RyaW5nMzI=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="33">
+                <b:dataElementData>U3RyaW5nMzM=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="34">
+                <b:dataElementData>U3RyaW5nMzQ=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="35">
+                <b:dataElementData>U3RyaW5nMzU=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="36">
+                <b:dataElementData>U3RyaW5nMzY=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="37">
+                <b:dataElementData>U3RyaW5nMzc=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="38">
+                <b:dataElementData>U3RyaW5nMzg=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="39">
+                <b:dataElementData>U3RyaW5nMzk=</b:dataElementData>
+              </b:dataElement>
+            </b:itemList>
+          </b:partialOrder>
+          <b:partialOrder lsid="" type="list" index="1">
+            <b:relationList>
+              <b:relation parent="0" child="1" />
+              <b:relation parent="1" child="2" />
+              <b:relation parent="2" child="3" />
+              <b:relation parent="3" child="4" />
+              <b:relation parent="4" child="5" />
+              <b:relation parent="5" child="6" />
+              <b:relation parent="6" child="7" />
+              <b:relation parent="7" child="8" />
+              <b:relation parent="8" child="9" />
+              <b:relation parent="9" child="10" />
+              <b:relation parent="10" child="11" />
+              <b:relation parent="11" child="12" />
+              <b:relation parent="12" child="13" />
+              <b:relation parent="13" child="14" />
+              <b:relation parent="14" child="15" />
+              <b:relation parent="15" child="16" />
+              <b:relation parent="16" child="17" />
+              <b:relation parent="17" child="18" />
+              <b:relation parent="18" child="19" />
+              <b:relation parent="19" child="20" />
+              <b:relation parent="20" child="21" />
+              <b:relation parent="21" child="22" />
+              <b:relation parent="22" child="23" />
+              <b:relation parent="23" child="24" />
+              <b:relation parent="24" child="25" />
+              <b:relation parent="25" child="26" />
+              <b:relation parent="26" child="27" />
+              <b:relation parent="27" child="28" />
+              <b:relation parent="28" child="29" />
+              <b:relation parent="29" child="30" />
+              <b:relation parent="30" child="31" />
+              <b:relation parent="31" child="32" />
+              <b:relation parent="32" child="33" />
+              <b:relation parent="33" child="34" />
+              <b:relation parent="34" child="35" />
+              <b:relation parent="35" child="36" />
+              <b:relation parent="36" child="37" />
+              <b:relation parent="37" child="38" />
+              <b:relation parent="38" child="39" />
+            </b:relationList>
+            <b:itemList>
+              <b:dataElement lsid="" index="0">
+                <b:dataElementData>U3RyaW5nMA==</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="1">
+                <b:dataElementData>U3RyaW5nMQ==</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="2">
+                <b:dataElementData>U3RyaW5nMg==</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="3">
+                <b:dataElementData>U3RyaW5nMw==</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="4">
+                <b:dataElementData>U3RyaW5nNA==</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="5">
+                <b:dataElementData>U3RyaW5nNQ==</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="6">
+                <b:dataElementData>U3RyaW5nNg==</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="7">
+                <b:dataElementData>U3RyaW5nNw==</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="8">
+                <b:dataElementData>U3RyaW5nOA==</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="9">
+                <b:dataElementData>U3RyaW5nOQ==</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="10">
+                <b:dataElementData>U3RyaW5nMTA=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="11">
+                <b:dataElementData>U3RyaW5nMTE=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="12">
+                <b:dataElementData>U3RyaW5nMTI=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="13">
+                <b:dataElementData>U3RyaW5nMTM=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="14">
+                <b:dataElementData>U3RyaW5nMTQ=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="15">
+                <b:dataElementData>U3RyaW5nMTU=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="16">
+                <b:dataElementData>U3RyaW5nMTY=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="17">
+                <b:dataElementData>U3RyaW5nMTc=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="18">
+                <b:dataElementData>U3RyaW5nMTg=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="19">
+                <b:dataElementData>U3RyaW5nMTk=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="20">
+                <b:dataElementData>U3RyaW5nMjA=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="21">
+                <b:dataElementData>U3RyaW5nMjE=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="22">
+                <b:dataElementData>U3RyaW5nMjI=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="23">
+                <b:dataElementData>U3RyaW5nMjM=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="24">
+                <b:dataElementData>U3RyaW5nMjQ=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="25">
+                <b:dataElementData>U3RyaW5nMjU=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="26">
+                <b:dataElementData>U3RyaW5nMjY=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="27">
+                <b:dataElementData>U3RyaW5nMjc=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="28">
+                <b:dataElementData>U3RyaW5nMjg=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="29">
+                <b:dataElementData>U3RyaW5nMjk=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="30">
+                <b:dataElementData>U3RyaW5nMzA=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="31">
+                <b:dataElementData>U3RyaW5nMzE=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="32">
+                <b:dataElementData>U3RyaW5nMzI=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="33">
+                <b:dataElementData>U3RyaW5nMzM=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="34">
+                <b:dataElementData>U3RyaW5nMzQ=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="35">
+                <b:dataElementData>U3RyaW5nMzU=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="36">
+                <b:dataElementData>U3RyaW5nMzY=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="37">
+                <b:dataElementData>U3RyaW5nMzc=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="38">
+                <b:dataElementData>U3RyaW5nMzg=</b:dataElementData>
+              </b:dataElement>
+              <b:dataElement lsid="" index="39">
+                <b:dataElementData>U3RyaW5nMzk=</b:dataElementData>
+              </b:dataElement>
+            </b:itemList>
+          </b:partialOrder>
+        </b:itemList>
+      </b:partialOrder>
+    </b:myGridDataDocument>
+  </b:dataThing>
+</b:dataThingMap>
+

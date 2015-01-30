@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://org.embl.ebi.escience/xscufl/0.1alpha" xmlns:s="http://org.embl.ebi.escience/xscufl/0.1alpha" elementFormDefault="qualified">
+
+   <complexType name="MimeTypesType">
+    	<sequence>
+    		<element ref="s:mimeType" minOccurs="0" maxOccurs="unbounded"></element>
+    	</sequence>
+    </complexType>
+    
+    <element name="metadata" type="s:MetadataType"></element>
+    
+    <complexType name="MetadataType">
+    	<sequence>
+    		<element ref="s:mimeTypes" minOccurs="1" maxOccurs="1"></element>
+    	</sequence>
+    </complexType>
+
+    <element name="mimeTypes" type="s:MimeTypesType"></element>
+
+
+    <element name="mimeType" type="string"></element>
+    
+</schema>
