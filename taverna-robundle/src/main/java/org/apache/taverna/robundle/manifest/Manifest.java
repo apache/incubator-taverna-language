@@ -19,16 +19,30 @@ package org.apache.taverna.robundle.manifest;
  * under the License.
  */
 
+import static com.fasterxml.jackson.databind.SerializationFeature.FAIL_ON_EMPTY_BEANS;
+import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
+import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_EMPTY_JSON_ARRAYS;
+import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_NULL_MAP_VALUES;
+import static java.nio.file.FileVisitResult.CONTINUE;
+import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
+import static java.nio.file.Files.createDirectories;
+import static java.nio.file.Files.getLastModifiedTime;
+import static java.nio.file.Files.isDirectory;
+import static java.nio.file.Files.newBufferedWriter;
+import static java.nio.file.Files.walkFileTree;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.nio.file.StandardOpenOption.WRITE;
+import static java.nio.file.attribute.FileTime.fromMillis;
+import static org.apache.taverna.robundle.Bundles.uriToBundlePath;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
-import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
@@ -43,7 +57,6 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.apache.taverna.robundle.Bundle;
-import org.apache.taverna.robundle.Bundles;
 import org.apache.taverna.robundle.manifest.combine.CombineManifest;
 import org.apache.taverna.robundle.manifest.odf.ODFManifest;
 
@@ -53,19 +66,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 @JsonPropertyOrder(value = { "@context", "id", "manifest", "createdOn",
 		"createdBy", "createdOn", "authoredOn", "authoredBy", "history",
 		"aggregates", "annotations", "@graph" })
 public class Manifest {
-
 	public abstract class FileTimeMixin {
+		@Override
 		@JsonValue
 		public abstract String toString();
 	}
 
 	public abstract class PathMixin {
+		@Override
 		@JsonValue
 		public abstract String toString();
 	}
@@ -82,22 +95,19 @@ public class Manifest {
 	private static URI ROOT = URI.create("/");
 
 	public static FileTime now() {
-		return FileTime.fromMillis(new GregorianCalendar().getTimeInMillis());
+		return fromMillis(new GregorianCalendar().getTimeInMillis());
 	}
 
 	protected static Path withSlash(Path dir) {
-		if (dir == null) {
+		if (dir == null)
 			return null;
-		}
-		if (Files.isDirectory(dir)) {
+		if (isDirectory(dir)) {
 			Path fname = dir.getFileName();
-			if (fname == null) {
+			if (fname == null)
 				return dir;
-			}
 			String fnameStr = fname.toString();
-			if (fnameStr.endsWith("/")) {
+			if (fnameStr.endsWith("/"))
 				return dir;
-			}
 			return dir.resolveSibling(fnameStr + "/");
 		}
 		return dir;
@@ -134,7 +144,7 @@ public class Manifest {
 		if (metadata == null) {
 			metadata = new PathMetadata();
 			if (!uri.isAbsolute() && uri.getFragment() == null) {
-				Path path = Bundles.uriToBundlePath(bundle, uri);
+				Path path = uriToBundlePath(bundle, uri);
 				metadata.setFile(path);
 				metadata.setMediatype(guessMediaType(path));
 			} else {
@@ -212,44 +222,33 @@ public class Manifest {
 	 *         <code>text/plain; charset="utf-8"</code>
 	 */
 	public String guessMediaType(Path file) {
-		if (file.getFileName() == null) {
+		if (file.getFileName() == null)
 			return null;
-		}
 		String filename = file.getFileName().toString()
 				.toLowerCase(Locale.ENGLISH);
-		if (filename.endsWith(".txt")) {
+		if (filename.endsWith(".txt"))
 			return "text/plain; charset=\"utf-8\"";
-		}
-		if (filename.endsWith(".ttl")) {
+		if (filename.endsWith(".ttl"))
 			return "text/turtle; charset=\"utf-8\"";
-		}
-		if (filename.endsWith(".rdf") || filename.endsWith(".owl")) {
+		if (filename.endsWith(".rdf") || filename.endsWith(".owl"))
 			return "application/rdf+xml";
-		}
-		if (filename.endsWith(".json")) {
+		if (filename.endsWith(".json"))
 			return "application/json";
-		}
-		if (filename.endsWith(".jsonld")) {
+		if (filename.endsWith(".jsonld"))
 			return "application/ld+json";
-		}
-		if (filename.endsWith(".xml")) {
+		if (filename.endsWith(".xml"))
 			return "application/xml";
-		}
 
 		// A few extra, common ones
 
-		if (filename.endsWith(".png")) {
+		if (filename.endsWith(".png"))
 			return "image/png";
-		}
-		if (filename.endsWith(".svg")) {
+		if (filename.endsWith(".svg"))
 			return "image/svg+xml";
-		}
-		if (filename.endsWith(".jpg") || filename.endsWith(".jpeg")) {
+		if (filename.endsWith(".jpg") || filename.endsWith(".jpeg"))
 			return "image/jpeg";
-		}
-		if (filename.endsWith(".pdf")) {
+		if (filename.endsWith(".pdf"))
 			return "application/pdf";
-		}
 		return "application/octet-stream";
 	}
 
@@ -259,7 +258,8 @@ public class Manifest {
 		final Set<URI> existingAggregationsToPrune = new HashSet<>(
 				aggregates.keySet());
 
-		Files.walkFileTree(bundle.getRoot(), new SimpleFileVisitor<Path>() {
+		walkFileTree(bundle.getRoot(), new SimpleFileVisitor<Path>() {
+			@SuppressWarnings("deprecation")
 			@Override
 			public FileVisitResult postVisitDirectory(Path dir, IOException exc)
 					throws IOException {
@@ -275,35 +275,34 @@ public class Manifest {
 					metadata.setFile(withSlash(dir));
 					metadata.setFolder(withSlash(dir.getParent()));
 					metadata.setProxy();
-					metadata.setCreatedOn(Files.getLastModifiedTime(dir));
+					metadata.setCreatedOn(getLastModifiedTime(dir));
 					potentiallyEmptyFolders.remove(withSlash(dir.getParent()));
-					return FileVisitResult.CONTINUE;
+					return CONTINUE;
 				}
-				return FileVisitResult.CONTINUE;
+				return CONTINUE;
 			}
 
 			@Override
 			public FileVisitResult preVisitDirectory(Path dir,
 					BasicFileAttributes attrs) throws IOException {
-				if (dir.startsWith(RO) || dir.startsWith(META_INF)) {
-					return FileVisitResult.SKIP_SUBTREE;
-				}
+				if (dir.startsWith(RO) || dir.startsWith(META_INF))
+					return SKIP_SUBTREE;
 				potentiallyEmptyFolders.add(withSlash(dir));
 				potentiallyEmptyFolders.remove(withSlash(dir.getParent()));
-				return FileVisitResult.CONTINUE;
+				return CONTINUE;
 			}
 
+			@SuppressWarnings("deprecation")
 			@Override
 			public FileVisitResult visitFile(Path file,
 					BasicFileAttributes attrs) throws IOException {
 				potentiallyEmptyFolders.remove(withSlash(file.getParent()));
-				if (file.startsWith(MIMETYPE)) {
-					return FileVisitResult.CONTINUE;
-				}
-				if (manifest.contains(file)) {
+				if (file.startsWith(MIMETYPE))
+					return CONTINUE;
+				if (manifest.contains(file))
 					// Don't aggregate the manifests
-					return FileVisitResult.CONTINUE;
-				}
+					return CONTINUE;
+
 				// super.visitFile(file, attrs);
 				URI uri = relativeToBundleRoot(file.toUri());
 				existingAggregationsToPrune.remove(uri);
@@ -313,24 +312,24 @@ public class Manifest {
 					aggregates.put(uri, metadata);
 				}
 				metadata.setFile(file);
-				if (metadata.getMediatype() == null) {
+				if (metadata.getMediatype() == null)
 					// Don't override if already set
 					metadata.setMediatype(guessMediaType(file));
-				}
 				metadata.setFolder(withSlash(file.getParent()));
 				metadata.setProxy();
-				metadata.setCreatedOn(Files.getLastModifiedTime(file));
+				metadata.setCreatedOn(getLastModifiedTime(file));
 				potentiallyEmptyFolders.remove(file.getParent());
-				return FileVisitResult.CONTINUE;
+				return CONTINUE;
 			}
 		});
 		for (URI preExisting : existingAggregationsToPrune) {
 			PathMetadata meta = aggregates.get(preExisting);
-			if (meta.getFile() != null) {
-				// Don't remove 'virtual' resources, only aggregations
-				// that went to files
+			if (meta.getFile() != null)
+				/*
+				 * Don't remove 'virtual' resources, only aggregations that went
+				 * to files
+				 */
 				aggregates.remove(preExisting);
-			}
 		}
 	}
 
@@ -339,6 +338,7 @@ public class Manifest {
 		return uri;
 	}
 
+	@SuppressWarnings("deprecation")
 	public void setAggregates(List<PathMetadata> aggregates) {
 		this.aggregates.clear();
 
@@ -357,7 +357,6 @@ public class Manifest {
 			}
 			this.aggregates.put(uri, meta);
 		}
-
 	}
 
 	public void setAnnotations(List<PathAnnotation> annotations) {
@@ -365,9 +364,8 @@ public class Manifest {
 	}
 
 	public void setAuthoredBy(List<Agent> authoredBy) {
-		if (authoredBy == null) {
+		if (authoredBy == null)
 			throw new NullPointerException("authoredBy can't be null");
-		}
 		this.authoredBy = authoredBy;
 	}
 
@@ -392,9 +390,8 @@ public class Manifest {
 	}
 
 	public void setHistory(List<Path> history) {
-		if (history == null) {
+		if (history == null)
 			throw new NullPointerException("history can't be null");
-		}
 		this.history = history;
 	}
 
@@ -418,25 +415,21 @@ public class Manifest {
 	 */
 	public Path writeAsJsonLD() throws IOException {
 		Path jsonld = bundle.getFileSystem().getPath(RO, MANIFEST_JSON);
-		Files.createDirectories(jsonld.getParent());
+		createDirectories(jsonld.getParent());
 		// Files.createFile(jsonld);
-		if (!getManifest().contains(jsonld)) {
+		if (!getManifest().contains(jsonld))
 			getManifest().add(0, jsonld);
-		}
 		ObjectMapper om = new ObjectMapper();
 		om.addMixInAnnotations(Path.class, PathMixin.class);
 		om.addMixInAnnotations(FileTime.class, FileTimeMixin.class);
-		om.enable(SerializationFeature.INDENT_OUTPUT);
-		om.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
-		om.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-		om.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+		om.enable(INDENT_OUTPUT);
+		om.disable(WRITE_EMPTY_JSON_ARRAYS);
+		om.disable(FAIL_ON_EMPTY_BEANS);
+		om.disable(WRITE_NULL_MAP_VALUES);
 
 		om.setSerializationInclusion(Include.NON_NULL);
-		try (Writer w = Files
-				.newBufferedWriter(jsonld, Charset.forName("UTF-8"),
-						StandardOpenOption.WRITE,
-						StandardOpenOption.TRUNCATE_EXISTING,
-						StandardOpenOption.CREATE)) {
+		try (Writer w = newBufferedWriter(jsonld, Charset.forName("UTF-8"),
+				WRITE, TRUNCATE_EXISTING, CREATE)) {
 			om.writeValue(w, this);
 		}
 		return jsonld;

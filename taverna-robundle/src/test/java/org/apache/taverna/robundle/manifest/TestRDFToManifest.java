@@ -37,6 +37,7 @@ public class TestRDFToManifest {
 	@Test
 	public void contextLoadedFromJarCache() throws Exception {
 		// RDFToManifest.makeBaseURI(); // trigger static{} block
+		@SuppressWarnings("unchecked")
 		Map<String, Object> context = (Map<String, Object>) new DocumentLoader()
 				.fromURL(new URL(CONTEXT));
 		// FIXME: jsonld-java 0.3 and later uses DocumentLoader instead of

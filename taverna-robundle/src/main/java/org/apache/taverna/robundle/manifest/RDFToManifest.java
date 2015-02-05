@@ -91,13 +91,16 @@ public class RDFToManifest {
 	private static final String PROV_AQ_RDF = "/ontologies/prov-aq.rdf";
 	private static final String PROV_O = "http://www.w3.org/ns/prov-o#";
 	private static final String PROV_O_RDF = "/ontologies/prov-o.rdf";
+	@SuppressWarnings("unused")
 	private static final String RO = "http://purl.org/wf4ever/ro#";
 	static {
 		setCachedHttpClientInJsonLD();
 	}
+
 	public static <T> ClosableIterable<T> iterate(ExtendedIterator<T> iterator) {
 		return new ClosableIterable<T>(iterator);
 	}
+
 	protected static Model jsonLdAsJenaModel(InputStream jsonIn, URI base)
 			throws IOException, RiotException {
 		Model model = ModelFactory.createDefaultModel();
@@ -111,6 +114,7 @@ public class RDFToManifest {
 		// Options(base.toASCIIString()));
 		// return model;
 	}
+
 	protected static URI makeBaseURI() throws URISyntaxException {
 		return new URI("app", UUID.randomUUID().toString(), "/", (String) null);
 	}
@@ -180,21 +184,18 @@ public class RDFToManifest {
 	private void checkNotNull(Object... possiblyNulls) {
 		int i = 0;
 		for (Object check : possiblyNulls) {
-			if (check == null) {
+			if (check == null)
 				throw new IllegalStateException("Could not load item #" + i);
-			}
 			i++;
 		}
-
 	}
 
 	private Individual findRO(OntModel model, URI base) {
 		try (ClosableIterable<? extends OntResource> instances = iterate(aggregation
 				.listInstances())) {
-			for (OntResource o : instances) {
+			for (OntResource o : instances)
 				// System.out.println("Woo " + o);
 				return o.asIndividual();
-			}
 		}
 		// Fallback - resolve as "/"
 		// TODO: Ensure it's an Aggregation?
@@ -206,14 +207,12 @@ public class RDFToManifest {
 		List<Agent> creators = new ArrayList<>();
 		for (Individual agent : listObjectProperties(in, property)) {
 			Agent a = new Agent();
-			if (agent.getURI() != null) {
+			if (agent.getURI() != null)
 				a.setUri(relativizeFromBase(agent.getURI(), base));
-			}
 
 			RDFNode name = agent.getPropertyValue(foafName);
-			if (name != null && name.isLiteral()) {
+			if (name != null && name.isLiteral())
 				a.setName(name.asLiteral().getLexicalForm());
-			}
 			creators.add(a);
 		}
 		return creators;
@@ -237,9 +236,8 @@ public class RDFToManifest {
 		try (ClosableIterable<RDFNode> props = iterate(ontResource
 				.listPropertyValues(prop))) {
 			for (RDFNode node : props) {
-				if (!node.isResource() || !node.canAs(Individual.class)) {
+				if (!node.isResource() || !node.canAs(Individual.class))
 					continue;
-				}
 				results.add(node.as(Individual.class));
 			}
 		}
@@ -247,9 +245,8 @@ public class RDFToManifest {
 	}
 
 	protected synchronized void loadBundle() {
-		if (bundle != null) {
+		if (bundle != null)
 			return;
-		}
 		OntModel ontModel = loadOntologyFromClasspath(BUNDLE_RDF, BUNDLE);
 		hasProxy = ontModel.getObjectProperty(BUNDLE + "hasProxy");
 		hasAnnotation = ontModel.getObjectProperty(BUNDLE + "hasAnnotation");
@@ -259,9 +256,8 @@ public class RDFToManifest {
 	}
 
 	protected synchronized void loadDCT() {
-		if (dct != null) {
+		if (dct != null)
 			return;
-		}
 
 		OntModel ontModel = loadOntologyFromClasspath(
 				"/ontologies/dcterms_od.owl",
@@ -278,14 +274,12 @@ public class RDFToManifest {
 		checkNotNull(standard, conformsTo, format);
 
 		dct = ontModel;
-
 	}
 
 	//
 	protected synchronized void loadFOAF() {
-		if (foaf != null) {
+		if (foaf != null)
 			return;
-		}
 
 		OntModel ontModel = loadOntologyFromClasspath(FOAF_RDF, FOAF_0_1);
 
@@ -297,9 +291,8 @@ public class RDFToManifest {
 	}
 
 	protected synchronized void loadOA() {
-		if (oa != null) {
+		if (oa != null)
 			return;
-		}
 		OntModel ontModel = loadOntologyFromClasspath(OA_RDF, OA);
 		hasTarget = ontModel.getObjectProperty(OA + "hasTarget");
 		hasBody = ontModel.getObjectProperty(OA + "hasBody");
@@ -323,18 +316,21 @@ public class RDFToManifest {
 
 		// Load from classpath
 		InputStream inStream = getClass().getResourceAsStream(classPathUri);
-		if (inStream == null) {
+		if (inStream == null)
 			throw new IllegalArgumentException("Can't load " + classPathUri);
-		}
 		// Ontology ontology = ontModel.createOntology(uri);
 		ontModel.read(inStream, uri);
+		try {
+			inStream.close();
+		} catch (IOException e) {
+			// Shouldn't happen
+		}
 		return ontModel;
 	}
 
 	protected synchronized void loadORE() {
-		if (ore != null) {
+		if (ore != null)
 			return;
-		}
 		OntModel ontModel = loadOntologyFromClasspath(
 				"/ontologies/ore-owl.owl", "http://purl.org/wf4ever/ore-owl");
 		aggregation = ontModel.getOntClass(ORE + "Aggregation");
@@ -350,9 +346,8 @@ public class RDFToManifest {
 	}
 
 	protected synchronized void loadPAV() {
-		if (pav != null) {
+		if (pav != null)
 			return;
-		}
 
 		OntModel ontModel = loadOntologyFromClasspath(PAV_RDF, PAV);
 		// properties from foaf
@@ -366,9 +361,8 @@ public class RDFToManifest {
 	}
 
 	protected synchronized void loadPROVAQ() {
-		if (provaq != null) {
+		if (provaq != null)
 			return;
-		}
 		OntModel ontModel = loadOntologyFromClasspath(PROV_AQ_RDF, PAV);
 
 		// properties from foaf
@@ -379,9 +373,8 @@ public class RDFToManifest {
 	}
 
 	protected synchronized void loadPROVO() {
-		if (prov != null) {
+		if (prov != null)
 			return;
-		}
 		OntModel ontModel = loadOntologyFromClasspath(PROV_O_RDF, PROV_O);
 
 		checkNotNull(ontModel);
@@ -389,9 +382,13 @@ public class RDFToManifest {
 		prov = ontModel;
 	}
 
+	@SuppressWarnings("deprecation")
+	private static void setPathProxy(PathMetadata meta, URI proxy) {
+		meta.setProxy(proxy);
+	}
+
 	public void readTo(InputStream manifestResourceAsStream, Manifest manifest,
 			URI manifestResourceBaseURI) throws IOException, RiotException {
-
 		OntModel model = new RDFToManifest().getOntModel();
 		model.add(jsonLdAsJenaModel(manifestResourceAsStream,
 				manifestResourceBaseURI));
@@ -401,10 +398,9 @@ public class RDFToManifest {
 
 		URI root = manifestResourceBaseURI.resolve("/");
 		Individual ro = findRO(model, root);
-		if (ro == null) {
-			throw new IOException(
-					"root ResearchObject not found - Not a valid RO Bundle manifest");
-		}
+		if (ro == null)
+			throw new IOException("root ResearchObject not found - "
+					+ "Not a valid RO Bundle manifest");
 
 		for (Individual manifestResource : listObjectProperties(ro,
 				isDescribedBy)) {
@@ -423,19 +419,16 @@ public class RDFToManifest {
 		List<Agent> creators = getAgents(root, ro, createdBy);
 		if (!creators.isEmpty()) {
 			manifest.setCreatedBy(creators.get(0));
-			if (creators.size() > 1) {
+			if (creators.size() > 1)
 				logger.warning("Ignoring additional createdBy agents");
-			}
-
 		}
 
 		RDFNode created = ro.getPropertyValue(createdOn);
 		manifest.setCreatedOn(literalAsFileTime(created));
 
 		List<Agent> authors = getAgents(root, ro, authoredBy);
-		if (!authors.isEmpty()) {
+		if (!authors.isEmpty())
 			manifest.setAuthoredBy(authors);
-		}
 		RDFNode authored = ro.getPropertyValue(authoredOn);
 		manifest.setAuthoredOn(literalAsFileTime(authored));
 
@@ -458,77 +451,65 @@ public class RDFToManifest {
 				Individual proxy = proxies.iterator().next();
 
 				String proxyUri = null;
-				if (proxy.getURI() != null) {
+				if (proxy.getURI() != null)
 					proxyUri = proxy.getURI();
-				} else if (proxy.getSameAs() != null) {
+				else if (proxy.getSameAs() != null)
 					proxyUri = proxy.getSameAs().getURI();
-				}
-				if (proxyUri != null) {
-					meta.setProxy(relativizeFromBase(proxyUri, root));
-				}
-
+				if (proxyUri != null)
+					setPathProxy(meta, relativizeFromBase(proxyUri, root));
 			}
 
 			creators = getAgents(root, aggrResource, createdBy);
 			if (!creators.isEmpty()) {
 				meta.setCreatedBy(creators.get(0));
-				if (creators.size() > 1) {
+				if (creators.size() > 1)
 					logger.warning("Ignoring additional createdBy agents for "
 							+ meta);
-				}
-
 			}
 			meta.setCreatedOn(literalAsFileTime(aggrResource
 					.getPropertyValue(createdOn)));
 
 			for (Individual standard : listObjectProperties(aggrResource,
-					conformsTo)) {
-				if (standard.getURI() != null) {
+					conformsTo))
+				if (standard.getURI() != null)
 					meta.setConformsTo(relativizeFromBase(standard.getURI(),
 							root));
-				}
-			}
 
 			RDFNode mediaType = aggrResource.getPropertyValue(format);
-			if (mediaType != null && mediaType.isLiteral()) {
+			if (mediaType != null && mediaType.isLiteral())
 				meta.setMediatype(mediaType.asLiteral().getLexicalForm());
-			}
-
 		}
 
 		for (Individual ann : listObjectProperties(ro, hasAnnotation)) {
-			// Normally just one body per annotation, but just in case we'll
-			// iterate and split them out (as our PathAnnotation can
-			// only keep a single setContent() at a time)
+			/*
+			 * Normally just one body per annotation, but just in case we'll
+			 * iterate and split them out (as our PathAnnotation can only keep a
+			 * single setContent() at a time)
+			 */
 			for (Individual body : listObjectProperties(
 					model.getOntResource(ann), hasBody)) {
-				PathAnnotation pathAnn = new PathAnnotation();
-				if (body.getURI() != null) {
-					pathAnn.setContent(relativizeFromBase(body.getURI(), root));
-				} else {
+				if (body.getURI() == null) {
 					logger.warning("Can't find annotation body for anonymous "
 							+ body);
+					continue;
 				}
+				PathAnnotation pathAnn = new PathAnnotation();
+				pathAnn.setContent(relativizeFromBase(body.getURI(), root));
 
-				if (ann.getURI() != null) {
+				if (ann.getURI() != null)
 					pathAnn.setUri(relativizeFromBase(ann.getURI(), root));
-				} else if (ann.getSameAs() != null
-						&& ann.getSameAs().getURI() != null) {
+				else if (ann.getSameAs() != null
+						&& ann.getSameAs().getURI() != null)
 					pathAnn.setUri(relativizeFromBase(ann.getSameAs().getURI(),
 							root));
-				}
 
 				// Handle multiple about/hasTarget
-				for (Individual target : listObjectProperties(ann, hasTarget)) {
-					if (target.getURI() != null) {
+				for (Individual target : listObjectProperties(ann, hasTarget))
+					if (target.getURI() != null)
 						pathAnn.getAboutList().add(
 								relativizeFromBase(target.getURI(), root));
-					}
-				}
 				manifest.getAnnotations().add(pathAnn);
 			}
 		}
-
 	}
-
 }

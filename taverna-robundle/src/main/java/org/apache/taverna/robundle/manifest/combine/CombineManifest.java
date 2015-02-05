@@ -20,12 +20,24 @@ package org.apache.taverna.robundle.manifest.combine;
  */
 
 
+import static com.hp.hpl.jena.rdf.model.ModelFactory.createDefaultModel;
+import static java.nio.file.Files.createDirectories;
+import static java.nio.file.Files.exists;
+import static java.nio.file.Files.isRegularFile;
+import static java.nio.file.Files.newInputStream;
+import static java.nio.file.Files.newOutputStream;
+import static java.nio.file.Files.setLastModifiedTime;
+import static java.util.logging.Level.FINE;
+import static java.util.logging.Level.WARNING;
+import static org.apache.jena.riot.RDFDataMgr.read;
+import static org.apache.jena.riot.RDFLanguages.RDFXML;
+import static org.apache.taverna.robundle.utils.RDFUtils.literalAsFileTime;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
@@ -33,7 +45,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBContext;
@@ -43,14 +54,11 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.Source;
 import javax.xml.transform.sax.SAXSource;
 
-import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.riot.RDFLanguages;
 import org.apache.jena.riot.RiotException;
 import org.apache.taverna.robundle.Bundle;
 import org.apache.taverna.robundle.manifest.Agent;
 import org.apache.taverna.robundle.manifest.PathAnnotation;
 import org.apache.taverna.robundle.manifest.PathMetadata;
-import org.apache.taverna.robundle.utils.RDFUtils;
 import org.identifiers.combine_specifications.omex_manifest.Content;
 import org.identifiers.combine_specifications.omex_manifest.ObjectFactory;
 import org.identifiers.combine_specifications.omex_manifest.OmexManifest;
@@ -62,7 +70,6 @@ import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolutionMap;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
@@ -72,12 +79,9 @@ import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 /**
  * Parse and generate COMBINE Archive OMEX manifest
  * 
- * 
  * @author Stian Soiland-Reyes
- *
  */
 public class CombineManifest {
-
 	public static class ManifestNamespacePrefixMapperJAXB_RI extends
 			NamespacePrefixMapper {
 		@Override
@@ -88,33 +92,29 @@ public class CombineManifest {
 		@Override
 		public String getPreferredPrefix(String namespaceUri,
 				String suggestion, boolean requirePrefix) {
-			if (namespaceUri.equals(OMEX_METADATA.toString())) {
+			if (namespaceUri.equals(OMEX_METADATA.toString()))
 				return "";
-			}
 			return suggestion;
 		}
-
 	}
 
-	private static JAXBContext jaxbContext;
-
-	private static Logger logger = Logger.getLogger(CombineManifest.class
+	private static final Logger logger = Logger.getLogger(CombineManifest.class
 			.getCanonicalName());
-
 	private static final String MANIFEST_XML = "manifest.xml";
-
-	private static ObjectFactory objectFactory = new ObjectFactory();
-	private static final URI OMEX_METADATA = URI
+	private static final String OMEX_MANIFEST = "http://identifiers.org/combine.specifications/omex-manifest";
+		private static final URI OMEX_METADATA = URI
 			.create("http://identifiers.org/combine.specifications/omex-metadata");
 	private static final String sparqlPrefixes = "PREFIX foaf:  <http://xmlns.com/foaf/0.1/> \n"
 			+ "PREFIX vcard: <http://www.w3.org/2006/vcard/ns#> \n"
 			+ "PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#> \n"
 			+ "PREFIX dct:   <http://purl.org/dc/terms/> \n";
 
+	private static JAXBContext jaxbContext;
+	private static ObjectFactory objectFactory = new ObjectFactory();
 	private static boolean warnedPrefixMapper;
 
 	public static boolean containsManifest(Bundle bundle) {
-		return Files.isRegularFile(manifestXmlPath(bundle));
+		return isRegularFile(manifestXmlPath(bundle));
 	}
 
 	protected static synchronized Marshaller createMarshaller()
@@ -156,10 +156,8 @@ public class CombineManifest {
 
 	protected static synchronized JAXBContext getJaxbContext()
 			throws JAXBException {
-		if (jaxbContext == null) {
-			jaxbContext = JAXBContext
-					.newInstance(org.identifiers.combine_specifications.omex_manifest.ObjectFactory.class);
-		}
+		if (jaxbContext == null)
+			jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
 		return jaxbContext;
 	}
 
@@ -235,10 +233,9 @@ public class CombineManifest {
 	}
 
 	private static Model parseRDF(Path metadata) throws IOException {
-		Model model = ModelFactory.createDefaultModel();
-		try (InputStream in = Files.newInputStream(metadata)) {
-			RDFDataMgr.read(model, in, metadata.toUri().toASCIIString(),
-					RDFLanguages.RDFXML);
+		Model model = createDefaultModel();
+		try (InputStream in = newInputStream(metadata)) {
+			read(model, in, metadata.toUri().toASCIIString(), RDFXML);
 		}
 		return model;
 	}
@@ -247,18 +244,21 @@ public class CombineManifest {
 		boolean setPrefixMapper = false;
 
 		try {
-			// This only works with JAXB RI, in which case we can set the
-			// namespace prefix mapper
+			/*
+			 * This only works with JAXB RI, in which case we can set the
+			 * namespace prefix mapper
+			 */
 			Class.forName("com.sun.xml.bind.marshaller.NamespacePrefixMapper");
 			marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper",
 					new ManifestNamespacePrefixMapperJAXB_RI());
-			// Note: A similar mapper for the built-in java
-			// (com.sun.xml.bind.internal.namespacePrefixMapper)
-			// is no longer included here, as it will not (easily) compile with
-			// Maven.
+			/*
+			 * Note: A similar mapper for the built-in java
+			 * (com.sun.xml.bind.internal.namespacePrefixMapper) is no longer
+			 * included here, as it will not (easily) compile with Maven.
+			 */
 			setPrefixMapper = true;
 		} catch (Exception e) {
-			logger.log(Level.FINE, "Can't find NamespacePrefixMapper", e);
+			logger.log(FINE, "Can't find NamespacePrefixMapper", e);
 		}
 
 		if (!setPrefixMapper && !warnedPrefixMapper) {
@@ -277,22 +277,20 @@ public class CombineManifest {
 		this.bundle = manifest.getBundle();
 	}
 
+	@SuppressWarnings("deprecation")
 	private Collection<URI> bundleSubjects() throws IOException {
 		Set<URI> subjects = new HashSet<>();
 		subjects.add(bundle.getRoot().toUri());
 		for (PathMetadata pathMetadata : manifest.getAggregates()) {
 			subjects.add(pathMetadata.getUri());
-			if (pathMetadata.getFile() != null) {
+			if (pathMetadata.getFile() != null)
 				subjects.add(pathMetadata.getFile().toUri());
-			}
-			if (pathMetadata.getFolder() != null) {
+			if (pathMetadata.getFolder() != null)
 				subjects.add(pathMetadata.getFolder().toUri());
-			}
 			// subjects.add(pathMetadata.getProxy());
 		}
-		for (PathAnnotation a : manifest.getAnnotations()) {
+		for (PathAnnotation a : manifest.getAnnotations())
 			subjects.add(a.getUri());
-		}
 		subjects.remove(null);
 		return subjects;
 	}
@@ -301,8 +299,8 @@ public class CombineManifest {
 		OmexManifest omexManifest = makeOmexManifest();
 
 		Path manifestXml = manifestXmlPath(bundle);
-		Files.createDirectories(manifestXml.getParent());
-		try (OutputStream outStream = Files.newOutputStream(manifestXml)) {
+		createDirectories(manifestXml.getParent());
+		try (OutputStream outStream = newOutputStream(manifestXml)) {
 			try {
 				createMarshaller().marshal(omexManifest, outStream);
 			} catch (JAXBException e) {
@@ -315,37 +313,33 @@ public class CombineManifest {
 
 	private void findAnnotations() throws IOException {
 		Path metadataRdf = null;
-		for (PathMetadata agg : manifest.getAggregates()) {
+		for (PathMetadata agg : manifest.getAggregates())
 			if (OMEX_METADATA.equals(agg.getConformsTo())) {
 				metadataRdf = agg.getFile();
 				break; // TODO: Support not just the first one
 				// TODO: support external metadata with agg.getUri() ?
 			}
-		}
-		if (metadataRdf == null) {
+		if (metadataRdf == null)
 			// fallback to hard-coded filename
 			metadataRdf = bundle.getRoot().resolve("metadata.rdf");
-		}
-		if (!Files.exists(metadataRdf)) {
+		if (!exists(metadataRdf))
 			return;
-		}
 
 		Model metadata;
 		try {
 			metadata = parseRDF(metadataRdf);
 		} catch (IOException e) {
-			logger.log(Level.WARNING, "Can't read " + metadataRdf, e);
+			logger.log(WARNING, "Can't read " + metadataRdf, e);
 			return;
 		} catch (RiotException e) {
-			logger.log(Level.WARNING, "Can't parse " + metadataRdf, e);
+			logger.log(WARNING, "Can't parse " + metadataRdf, e);
 			return;
 		}
 
 		for (URI about : bundleSubjects()) {
 			Resource resource = metadata.getResource(about.toString());
-			if (!metadata.containsResource(resource)) {
+			if (!metadata.containsResource(resource))
 				continue;
-			}
 
 			PathAnnotation ann = new PathAnnotation();
 			ann.setAbout(manifest.relativeToBundleRoot(about));
@@ -361,30 +355,24 @@ public class CombineManifest {
 			Property dcModified = metadata
 					.getProperty("http://purl.org/dc/terms/modified");
 			Statement createdSt = resource.getProperty(dcModified);
-			if (createdSt == null) {
+			if (createdSt == null)
 				createdSt = resource.getProperty(dcCreated);
-			}
 			if (createdSt != null) {
-				FileTime fileTime = RDFUtils.literalAsFileTime(createdSt
-						.getObject());
+				FileTime fileTime = literalAsFileTime(createdSt.getObject());
 				if (fileTime == null && createdSt.getResource().isResource()) {
 					// perhaps one of those strange mixups of XML and RDF...
 					Property dcW3CDTF = metadata
 							.getProperty("http://purl.org/dc/terms/W3CDTF");
 					Statement w3cSt = createdSt.getResource().getProperty(
 							dcW3CDTF);
-					if (w3cSt != null) {
-						fileTime = RDFUtils
-								.literalAsFileTime(w3cSt.getObject());
-					}
-
+					if (w3cSt != null)
+						fileTime = literalAsFileTime(w3cSt.getObject());
 				}
 				if (fileTime != null) {
 					pathMetadata.setCreatedOn(fileTime);
-					if (pathMetadata.getFile() != null) {
-						Files.setLastModifiedTime(pathMetadata.getFile(),
+					if (pathMetadata.getFile() != null)
+						setLastModifiedTime(pathMetadata.getFile(),
 								fileTime);
-					}
 				}
 			}
 
@@ -397,26 +385,23 @@ public class CombineManifest {
 				if (s.isLiteral()) {
 					pathMetadata.setCreatedBy(new Agent(s.asLiteral()
 							.getLexicalForm()));
-				} else {
-					Resource agentResource = s.asResource();
-					Agent agent = new Agent();
-					if (agentResource.isURIResource()) {
-						URI agentUri = URI.create(agentResource.getURI());
-						if (agentResource.getURI().startsWith(
-								"http://orcid.org/")) {
-							agent.setOrcid(agentUri);
-						} else {
-							agent.setUri(agentUri);
-						}
-					} else {
-						Resource mbox = mboxForAgent(agentResource);
-						if (mbox != null && mbox.isURIResource()) {
-							agent.setUri(URI.create(mbox.getURI()));
-						}
-					}
-					agent.setName(nameForAgent(agentResource));
-					pathMetadata.setCreatedBy(agent);
+					continue;
 				}
+				Resource agentResource = s.asResource();
+				Agent agent = new Agent();
+				if (agentResource.isURIResource()) {
+					URI agentUri = URI.create(agentResource.getURI());
+					if (agentResource.getURI().startsWith("http://orcid.org/"))
+						agent.setOrcid(agentUri);
+					else
+						agent.setUri(agentUri);
+				} else {
+					Resource mbox = mboxForAgent(agentResource);
+					if (mbox != null && mbox.isURIResource())
+						agent.setUri(URI.create(mbox.getURI()));
+				}
+				agent.setName(nameForAgent(agentResource));
+				pathMetadata.setCreatedBy(agent);
 			}
 			if (pathMetadata.getFile().equals(bundle.getRoot())
 					|| pathMetadata.getFile().equals(metadataRdf)) {
@@ -424,7 +409,6 @@ public class CombineManifest {
 				manifest.setCreatedOn(pathMetadata.getCreatedOn());
 				manifest.setCreatedBy(pathMetadata.getCreatedBy());
 			}
-
 		}
 	}
 
@@ -435,8 +419,7 @@ public class CombineManifest {
 		PathMetadata aggr = manifest.getAggregation(manifestXml);
 		if (aggr.getConformsTo() == null) {
 			// Add the manifest itself
-			aggr.setConformsTo(URI
-					.create("http://identifiers.org/combine.specifications/omex-manifest"));
+			aggr.setConformsTo(URI.create(OMEX_MANIFEST));
 		}
 
 		for (PathMetadata metadata : manifest.getAggregates()) {
@@ -462,7 +445,6 @@ public class CombineManifest {
 			// TODO: Handle 'master' attribute
 
 			omexManifest.getContent().add(content);
-
 		}
 		// TODO: Should we add .ro/manifest.json and .ro/* ?
 		return omexManifest;
@@ -477,45 +459,41 @@ public class CombineManifest {
 	public void readManifestXML() throws IOException {
 		Path manifestXml = manifestXmlPath(bundle);
 		OmexManifest omexManifest;
-		try (InputStream inStream = Files.newInputStream(manifestXml)) {
+		try (InputStream inStream = newInputStream(manifestXml)) {
 			InputSource src = new InputSource(inStream);
 			Source source = new SAXSource(src);
 			omexManifest = createUnMarshaller().unmarshal(source,
 					OmexManifest.class).getValue();
-			// omexManifest = (OmexManifest)
-			// createUnMarshaller().unmarshal(inStream);
+			// omexManifest = (OmexManifest) createUnMarshaller().unmarshal(inStream);
 		} catch (JAXBException | ClassCastException e) {
 			// logger.warning("Could not parse " + manifestXml);
 			throw new IOException("Could not parse " + manifestXml, e);
 		}
-		if (!manifest.getManifest().contains(manifestXml)) {
+		if (!manifest.getManifest().contains(manifestXml))
 			manifest.getManifest().add(manifestXml);
-		}
 		for (Content c : omexManifest.getContent()) {
 			PathMetadata metadata;
 			if (c.getLocation().contains(":")) {
 				try {
 					URI uri = new URI(c.getLocation());
-					if (uri.isAbsolute()) {
-						metadata = manifest.getAggregation(uri);
-					} else {
+					if (!uri.isAbsolute()) {
 						logger.warning("Not an absolute URI, but contains :"
 								+ c.getLocation());
 						continue;
 					}
+					metadata = manifest.getAggregation(uri);
 				} catch (URISyntaxException e) {
 					logger.warning("Invalid URI " + c.getLocation());
 					continue;
 				}
 			} else {
 				Path path = bundle.getRoot().resolve(c.getLocation());
-				if (Files.exists(path)) {
-					metadata = manifest.getAggregation(path);
-				} else {
+				if (!exists(path)) {
 					logger.warning(MANIFEST_XML + " listed relative path "
 							+ path + ", but it does not exist in bundle");
 					continue;
 				}
+				metadata = manifest.getAggregation(path);
 			}
 
 			// Format - is it an URI or media type?

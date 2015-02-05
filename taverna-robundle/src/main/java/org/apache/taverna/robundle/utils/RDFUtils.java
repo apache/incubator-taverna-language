@@ -20,24 +20,24 @@ package org.apache.taverna.robundle.utils;
  */
 
 
+import static com.hp.hpl.jena.datatypes.xsd.XSDDatatype.XSDdateTime;
+import static java.nio.file.attribute.FileTime.fromMillis;
+
 import java.nio.file.attribute.FileTime;
 import java.util.logging.Logger;
 
 import com.hp.hpl.jena.datatypes.DatatypeFormatException;
-import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
 import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
 public class RDFUtils {
-
-	private static Logger logger = Logger.getLogger(RDFUtils.class
+	private static final Logger logger = Logger.getLogger(RDFUtils.class
 			.getCanonicalName());
 
 	public static FileTime literalAsFileTime(RDFNode rdfNode) {
-		if (rdfNode == null) {
+		if (rdfNode == null)
 			return null;
-		}
 		if (!rdfNode.isLiteral()) {
 			logger.warning("Expected literal. not " + rdfNode);
 			return null;
@@ -53,14 +53,13 @@ public class RDFUtils {
 
 			// Try to parse it anyway
 			try {
-				dateTime = (XSDDateTime) XSDDatatype.XSDdateTime.parse(literal
+				dateTime = (XSDDateTime) XSDdateTime.parse(literal
 						.getLexicalForm());
 			} catch (DatatypeFormatException e) {
 				logger.warning("Invalid datetime: " + literal);
 				return null;
 			}
 		}
-		long millis = dateTime.asCalendar().getTimeInMillis();
-		return FileTime.fromMillis(millis);
+		return fromMillis(dateTime.asCalendar().getTimeInMillis());
 	}
 }

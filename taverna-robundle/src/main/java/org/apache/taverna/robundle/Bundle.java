@@ -20,11 +20,15 @@ package org.apache.taverna.robundle;
  */
 
 
+import static java.nio.file.Files.deleteIfExists;
+import static java.nio.file.Files.exists;
+import static java.nio.file.Files.newInputStream;
+import static org.apache.taverna.robundle.Bundles.getManifestPath;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileSystem;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.apache.taverna.robundle.fs.BundleFileSystem;
@@ -34,7 +38,6 @@ import org.apache.taverna.robundle.manifest.combine.CombineManifest;
 import org.apache.taverna.robundle.manifest.odf.ODFManifest;
 
 public class Bundle implements Closeable {
-
 	private boolean deleteOnClose;
 	private Manifest manifest;
 	private final Path root;
@@ -50,29 +53,27 @@ public class Bundle implements Closeable {
 	}
 
 	protected void close(boolean deleteOnClose) throws IOException {
-		if (!getFileSystem().isOpen()) {
+		if (!getFileSystem().isOpen())
 			return;
-		}
 
 		if (!deleteOnClose) {
 			// update manifest
 			getManifest().populateFromBundle();
 			getManifest().writeAsJsonLD();
-			if (ODFManifest.containsManifest(this)) {
+			if (ODFManifest.containsManifest(this))
 				getManifest().writeAsODFManifest();
-			}
-			if (CombineManifest.containsManifest(this)) {
+			if (CombineManifest.containsManifest(this))
 				getManifest().writeAsCombineManifest();
-			}
 		} else {
-			// FIXME: Enable this if closing temporary bundles is
-			// slow doing closing (as those files are being compressed):
-			// RecursiveDeleteVisitor.deleteRecursively(getRoot());
+			/*
+			 * FIXME: Enable this if closing temporary bundles is slow doing
+			 * closing (as those files are being compressed):
+			 * RecursiveDeleteVisitor.deleteRecursively(getRoot());
+			 */
 		}
 		getFileSystem().close();
-		if (deleteOnClose) {
-			Files.deleteIfExists(getSource());
-		}
+		if (deleteOnClose)
+			deleteIfExists(getSource());
 	}
 
 	public FileSystem getFileSystem() {
@@ -80,13 +81,11 @@ public class Bundle implements Closeable {
 	}
 
 	public Manifest getManifest() throws IOException {
-		if (manifest == null) {
+		if (manifest == null)
 			synchronized (this) {
-				if (manifest == null) {
+				if (manifest == null)
 					manifest = readOrPopulateManifest();
-				}
 			}
-		}
 		return manifest;
 	}
 
@@ -109,10 +108,9 @@ public class Bundle implements Closeable {
 
 	protected Manifest readOrPopulateManifest() throws IOException {
 		Manifest newManifest = new Manifest(this);
-		Path manifestPath = Bundles.getManifestPath(this);
-		if (Files.exists(manifestPath)) {
-			try (InputStream manifestStream = Files
-					.newInputStream(manifestPath)) {
+		Path manifestPath = getManifestPath(this);
+		if (exists(manifestPath)) {
+			try (InputStream manifestStream = newInputStream(manifestPath)) {
 				new RDFToManifest().readTo(manifestStream, newManifest,
 						manifestPath.toUri());
 			}
@@ -132,5 +130,4 @@ public class Bundle implements Closeable {
 	public void setDeleteOnClose(boolean deleteOnClose) {
 		this.deleteOnClose = deleteOnClose;
 	}
-
 }

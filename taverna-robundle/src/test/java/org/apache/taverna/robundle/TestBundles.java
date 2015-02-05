@@ -163,18 +163,19 @@ public class TestBundles {
 		Path zip = Bundles.closeBundle(bundle);
 
 		assertTrue(Files.exists(zip));
-		ZipFile zipFile = new ZipFile(zip.toFile());
-		// Must be first entry
-		ZipEntry mimeEntry = zipFile.entries().nextElement();
-		assertEquals("First zip entry is not 'mimetype'", "mimetype",
-				mimeEntry.getName());
-		assertEquals(
-				"mimetype should be uncompressed, but compressed size mismatch",
-				mimeEntry.getCompressedSize(), mimeEntry.getSize());
-		assertEquals("mimetype should have STORED method", ZipEntry.STORED,
-				mimeEntry.getMethod());
-		assertEquals("Wrong mimetype", mimetype,
-				IOUtils.toString(zipFile.getInputStream(mimeEntry), "ASCII"));
+		try (ZipFile zipFile = new ZipFile(zip.toFile())) {
+			// Must be first entry
+			ZipEntry mimeEntry = zipFile.entries().nextElement();
+			assertEquals("First zip entry is not 'mimetype'", "mimetype",
+					mimeEntry.getName());
+			assertEquals(
+					"mimetype should be uncompressed, but compressed size mismatch",
+					mimeEntry.getCompressedSize(), mimeEntry.getSize());
+			assertEquals("mimetype should have STORED method", ZipEntry.STORED,
+					mimeEntry.getMethod());
+			assertEquals("Wrong mimetype", mimetype, IOUtils.toString(
+					zipFile.getInputStream(mimeEntry), "ASCII"));
+		}
 
 		// Check position 30++ according to
 		// http://livedocs.adobe.com/navigator/9/Navigator_SDK9_HTMLHelp/wwhelp/wwhimpl/common/html/wwhelp.htm?context=Navigator_SDK9_HTMLHelp&file=Appx_Packaging.6.1.html#1522568
@@ -286,11 +287,8 @@ public class TestBundles {
 	@Test(expected = IllegalArgumentException.class)
 	public void setMimeTypeNonAscii() throws Exception {
 		try (Bundle bundle = Bundles.createBundle()) {
-			Bundles.setMimeType(bundle, "application/x-test-\u00E9"); // Include
-																		// the e
-																		// accent
-																		// from
-																		// latin1
+			Bundles.setMimeType(bundle, "application/x-test-\u00E9");
+			// Include the e-acute-accent from latin1
 		}
 	}
 
@@ -426,6 +424,7 @@ public class TestBundles {
 		// Ensure manifest was read
 		Manifest manifest = b.getManifest();
 		PathMetadata aggregation = manifest.getAggregation(path);
+		@SuppressWarnings("deprecation")
 		URI proxy = aggregation.getProxy();
 		assertEquals(
 				URI.create("urn:uuid:ac1c89cc-3ba2-462d-bd82-ab5b8297f98e"),
