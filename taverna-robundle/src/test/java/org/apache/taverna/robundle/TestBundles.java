@@ -54,6 +54,7 @@ import org.apache.taverna.robundle.manifest.Manifest;
 import org.apache.taverna.robundle.manifest.PathMetadata;
 import org.apache.taverna.robundle.utils.TemporaryFiles;
 import org.junit.Test;
+import org.junit.Ignore;
 
 public class TestBundles {
 
