@@ -68,9 +68,23 @@
             unecessarily clutter so we exclude these
             -->
             <exclude>**/META-INF/services/*</exclude>
+            <exclude>**/*.xsd</exclude>
+            <exclude>**/*.rdf</exclude>
+            <exclude>**/*.owl</exclude>
+            <exclude>**/src/main/resources/jarcache.json</exclude>
+			<!--
+			Various files used for testing and test support only. 
+			-->
+            <exclude>**/*.t2flow</exclude>
+            <exclude>**/*.ttl</exclude>
+            <exclude>**/mimetype</exclude>
+            <exclude>**/src/test/resources/*starterpacklist</exclude>
+            <exclude>**/src/test/resources/**/HelloWorld.txt</exclude>
+            <exclude>**/src/test/resources/**/workflow*.xml</exclude>
+            <exclude>**/src/test/resources/**/*.json</exclude>
+            <exclude>**/resources/sample-output/outputs/**</exclude>
+            <exclude>**/src/test/resources/win8.url</exclude>
           </excludes>
-          <addLicenseHeaders>forced</addLicenseHeaders>
-          <numUnapprovedLicenses>100</numUnapprovedLicenses>
         </configuration>
     </plugin>
 		

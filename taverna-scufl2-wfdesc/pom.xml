@@ -202,30 +202,11 @@
                     <target>1.7</target>
                 </configuration>
             </plugin>
-                 <plugin>
-        <groupId>org.apache.rat</groupId>
-        <artifactId>apache-rat-plugin</artifactId>
-        <configuration>
-          <useDefaultExcludes>true</useDefaultExcludes>
-          <excludes>
-            <!--
-            Text and Markdown files are typically used only for documentation purposes
-            and license declarations are usually spurious in these files since often they
-            will refer to the LICENSE/NOTICE for users to find the actual licenses
-            -->
-            <exclude>**/*.md</exclude>
-            <!--
-            META-INF services files can include comments but a license header would be
-            unecessarily clutter so we exclude these
-            -->
-            <exclude>**/META-INF/services/*</exclude>
-            <!-- resources are excluded -->
-            <exclude>**/resources/</exclude>
-          </excludes>
-           <addLicenseHeaders>forced</addLicenseHeaders>
-        </configuration>
-      </plugin>
-             </plugins>
+			<plugin>
+				<groupId>org.apache.rat</groupId>
+				<artifactId>apache-rat-plugin</artifactId>
+			</plugin>
+		</plugins>
         <pluginManagement>
             <plugins>
                 <!--This plugin's configuration is used to store Eclipse
