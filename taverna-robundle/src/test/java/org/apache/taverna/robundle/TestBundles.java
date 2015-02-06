@@ -152,6 +152,7 @@ public class TestBundles {
 		checkSignature(zip);
 	}
 
+  @Ignore("Broken in OpenJDK8 zipfs")
 	@Test
 	public void mimeTypePosition() throws Exception {
 		Bundle bundle = Bundles.createBundle();
@@ -181,6 +182,7 @@ public class TestBundles {
 		byte[] actual = new byte[expected.length];
 
 		try {
+      
 			assertEquals(MIME_OFFSET, in.skip(MIME_OFFSET));
 			assertEquals(expected.length, in.read(actual));
 		} finally {
