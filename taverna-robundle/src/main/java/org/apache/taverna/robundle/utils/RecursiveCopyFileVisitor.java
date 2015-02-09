@@ -54,7 +54,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class RecursiveCopyFileVisitor extends SimpleFileVisitor<Path> {
-	public enum RecursiveCopyOption implements CopyOption {
+	public enum RecursiveCopyOption implements java.nio.file.CopyOption {
 		/**
 		 * Ignore any errors, copy as much as possible. The default is to stop
 		 * on the first IOException.

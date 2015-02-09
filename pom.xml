@@ -18,9 +18,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-			<groupId>org.apache.taverna</groupId>
-			<artifactId>taverna-parent</artifactId>
-      <version>1-incubating-SNAPSHOT</version>
+		<groupId>org.apache.taverna</groupId>
+		<artifactId>taverna-parent</artifactId>
+		<version>1-incubating-SNAPSHOT</version>
 	</parent>
 	<groupId>org.apache.taverna.language</groupId>
 	<artifactId>taverna-language</artifactId>
@@ -34,155 +34,150 @@
 
 	<build>
 		<plugins>
-			            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
-            </plugin>
-            <plugin>
-        <groupId>org.apache.rat</groupId>
-        <artifactId>apache-rat-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>rat-checks</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <useDefaultExcludes>true</useDefaultExcludes>
-          <excludes>
-            <!--
-            Text and Markdown files are typically used only for documentation purposes
-            and license declarations are usually spurious in these files since often they
-            will refer to the LICENSE/NOTICE for users to find the actual licenses
-            -->
-            <exclude>**/*.md</exclude>
-            <!--
-            META-INF services files can include comments but a license header would be
-            unecessarily clutter so we exclude these
-            -->
-            <exclude>**/META-INF/services/*</exclude>
-            <exclude>**/*.xsd</exclude>
-            <exclude>**/*.rdf</exclude>
-            <exclude>**/*.owl</exclude>
-            <exclude>**/src/main/resources/jarcache.json</exclude>
-			<!--
-			Various files used for testing and test support only. 
-			-->
-            <exclude>**/*.t2flow</exclude>
-            <exclude>**/*.ttl</exclude>
-            <exclude>**/mimetype</exclude>
-            <exclude>**/src/test/resources/*starterpacklist</exclude>
-            <exclude>**/src/test/resources/**/HelloWorld.txt</exclude>
-            <exclude>**/src/test/resources/**/workflow*.xml</exclude>
-            <exclude>**/src/test/resources/**/*.json</exclude>
-            <exclude>**/resources/sample-output/outputs/**</exclude>
-            <exclude>**/src/test/resources/win8.url</exclude>
-          </excludes>
-        </configuration>
-    </plugin>
+			<plugin>
+				<groupId>org.apache.rat</groupId>
+				<artifactId>apache-rat-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>rat-checks</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<useDefaultExcludes>true</useDefaultExcludes>
+					<excludes>
+						<!-- Text and Markdown files are typically used only for documentation 
+							purposes and license declarations are usually spurious in these files since 
+							often they will refer to the LICENSE/NOTICE for users to find the actual 
+							licenses -->
+						<exclude>**/*.md</exclude>
+						<!-- META-INF services files can include comments but a license header 
+							would be unecessarily clutter so we exclude these -->
+						<exclude>**/META-INF/services/*</exclude>
+						<exclude>**/*.xsd</exclude>
+						<exclude>**/*.rdf</exclude>
+						<exclude>**/*.owl</exclude>
+						<exclude>**/src/main/resources/jarcache.json</exclude>
+						<!-- Various files used for testing and test support only. -->
+						<exclude>**/*.t2flow</exclude>
+						<exclude>**/*.ttl</exclude>
+						<exclude>**/mimetype</exclude>
+						<exclude>**/src/test/resources/*starterpacklist</exclude>
+						<exclude>**/src/test/resources/**/HelloWorld.txt</exclude>
+						<exclude>**/src/test/resources/**/workflow*.xml</exclude>
+						<exclude>**/src/test/resources/**/*.json</exclude>
+						<exclude>**/resources/sample-output/outputs/**</exclude>
+						<exclude>**/src/test/resources/win8.url</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
 		
-<!-- 		            <plugin>
-              <groupId>org.codehaus.mojo</groupId>
-              <artifactId>license-maven-plugin</artifactId>
-              <version>1.7</version>
-              <executions>
-                <execution>
-                  <id>add-licenses</id>
-                  <phase>generate-sources</phase>
-                  <goals>
-                    <goal>aggregate-add-third-party</goal>
-                  </goals>
-                  <configuration>
-                    <excludedGroups>.*(mygrid|taverna).*</excludedGroups>
-                    <useMissingFile>true</useMissingFile>
-                    <missingFile>src/license/THIRD-PARTY.properties</missingFile>
-                    <licenseMerges>
-                      <licenseMerge>The Apache Software License, Version 2.0|Apache 2|Apache License|Apache License, Version 2.0|Apache Public License 2.0|Apache License Version 2.0|Apache Software License 2.0|Apache Software License - Version 2.0</licenseMerge>
-                      <licenseMerge>The BSD License|BSD|BSD License|BSD-style license|BSD style|Aduna BSD license|Aduna BSD-style license</licenseMerge>
-                      <licenseMerge>MIT License|The MIT License|MIT license</licenseMerge>
-                      <licenseMerge>GNU Lesser General Public License|GNU LESSER GENERAL PUBLIC LICENSE|GNU Library or Lesser General Public License|LGPL</licenseMerge>
-                      <licenseMerge>Common Development and Distribution License (CDDL) v1.0|CDDL 1.1|COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0</licenseMerge>
-                      <licenseMerge>Eclipse Public License, Version 1.0|Eclipse Public License</licenseMerge>
-                    </licenseMerges>
-                  </configuration>
-                </execution>
-              </executions>
-            </plugin> -->
+			<!--
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>add-licenses</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>aggregate-add-third-party</goal>
+						</goals>
+						<configuration>
+							<excludedGroups>.*(mygrid|taverna).*</excludedGroups>
+							<useMissingFile>true</useMissingFile>
+							<missingFile>src/license/THIRD-PARTY.properties</missingFile>
+							<licenseMerges>
+								<licenseMerge>The Apache Software License, Version 2.0|Apache 2|Apache License|Apache License, Version 2.0|Apache Public License 2.0|Apache License Version 2.0|Apache Software License 2.0|Apache Software License - Version 2.0</licenseMerge>
+								<licenseMerge>The BSD License|BSD|BSD License|BSD-style license|BSD style|Aduna BSD license|Aduna BSD-style license</licenseMerge>
+								<licenseMerge>MIT License|The MIT License|MIT license</licenseMerge>
+								<licenseMerge>GNU Lesser General Public License|GNU LESSER GENERAL PUBLIC LICENSE|GNU Library or Lesser General Public License|LGPL</licenseMerge>
+								<licenseMerge>Common Development and Distribution License (CDDL) v1.0|CDDL 1.1|COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0</licenseMerge>
+								<licenseMerge>Eclipse Public License, Version 1.0|Eclipse Public License</licenseMerge>
+							</licenseMerges>
+						</configuration>
+	                </execution>
+				</executions>
+			</plugin>
+			-->
 		</plugins>
 		<pluginManagement>
 			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<configuration>
+						<source>${maven.compiler.source}</source>
+						<target>${maven.compiler.target}</target>
+					</configuration>
+				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>jaxb2-maven-plugin</artifactId>
 					<version>1.6</version>
 					<configuration>
 						<target>2.2</target>
-            <enableIntrospection>true</enableIntrospection>
-						<!-- Needed for consistency across Java 6 and Java 7 on optional Booleans.
-							http://www.olivergierke.de/wordpress/2011/03/a-jaxb-or-rather-xjc-odyssey/
-							http://www.mojavelinux.com/blog/archives/2006/09/the_great_jaxb_api_blunder/
-							http://java.net/jira/browse/JAXB-131 -->
-              <!--
-            <arguments>-disableXmlSecurity</arguments>
-            -->
-            <!-- Needed to read schemas from file: (!!)
-                https://github.com/stianh/gradle-jaxb-plugin/issues/20 -->
+						<enableIntrospection>true</enableIntrospection>
+						<!--
+						Needed for consistency across Java 6 and Java 7 on optional Booleans.
+						http://www.olivergierke.de/wordpress/2011/03/a-jaxb-or-rather-xjc-odyssey/
+						http://www.mojavelinux.com/blog/archives/2006/09/the_great_jaxb_api_blunder/
+						http://java.net/jira/browse/JAXB-131
+						-->
+						<!--
+						<arguments>-disableXmlSecurity</arguments>
+						-->
+						<!--
+						Needed to read schemas from file: (!!)
+						https://github.com/stianh/gradle-jaxb-plugin/issues/20
+						-->
 					</configuration>
 					<dependencies>
-            <!--
+						<!--
 						<dependency>
 							<groupId>com.sun.xml.bind</groupId>
 							<artifactId>jaxb-xjc</artifactId>
 							<version>${jaxb.version}</version>
 						</dependency>
-            <dependency> 
-              <groupId>com.sun.xml.bind</groupId>
-              <artifactId>jaxb-impl</artifactId>
-              <version>${jaxb.version}</version> 
-            </dependency>
-            -->
+						<dependency>
+							<groupId>com.sun.xml.bind</groupId>
+							<artifactId>jaxb-impl</artifactId>
+							<version>${jaxb.version}</version> 
+						</dependency>
+						-->
 					</dependencies>
 				</plugin>
-           <plugin>
-                <groupId>org.jvnet.jaxb2.maven2</groupId>
-                <artifactId>maven-jaxb2-plugin</artifactId>
-                <version>0.11.0</version>
-                <configuration>
-                  <enableIntrospection>true</enableIntrospection>
-                  <specVersion>2.2</specVersion>
-                  <schemaDirectory>src/main/xsd</schemaDirectory>
-                </configuration>
-            </plugin>
-
-
-    
-            </plugins>
-            </pluginManagement>
-            </build>
+				<plugin>
+					<groupId>org.jvnet.jaxb2.maven2</groupId>
+					<artifactId>maven-jaxb2-plugin</artifactId>
+					<version>0.11.0</version>
+					<configuration>
+						<enableIntrospection>true</enableIntrospection>
+						<specVersion>2.2</specVersion>
+						<schemaDirectory>src/main/xsd</schemaDirectory>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 <!-- TODO: Update -->
-  <scm>
-    <!-- TODO: Replace with git.apache.org details :
-      <connection>scm:git:https://git-wip-us.apache.org/repos/asf/incubator-taverna-language.git</connection>
-      <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/incubator-taverna-language.git</developerConnection>
-      <url>https://git-wip-us.apache.org/repos/asf/incubator-taverna-language.git</url>
-    -->
-    <connection>scm:git:https://github.com/taverna-incubator/incubator-taverna-language.git</connection>
-    <developerConnection>scm:git:git@github.com:taverna-incubator/incubator-taverna-language.git</developerConnection>
-    <url>https://github.com/taverna-incubator/incubator-taverna-language</url>
-    <tag>HEAD</tag>
-</scm>
-
-
+	<scm>
+		<!-- TODO: Replace with git.apache.org details :
+		<connection>scm:git:https://git-wip-us.apache.org/repos/asf/incubator-taverna-language.git</connection>
+		<developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/incubator-taverna-language.git</developerConnection>
+		<url>https://git-wip-us.apache.org/repos/asf/incubator-taverna-language.git</url>
+		-->
+		<connection>scm:git:https://github.com/taverna-incubator/incubator-taverna-language.git</connection>
+		<developerConnection>scm:git:git@github.com:taverna-incubator/incubator-taverna-language.git</developerConnection>
+		<url>https://github.com/taverna-incubator/incubator-taverna-language</url>
+		<tag>HEAD</tag>
+	</scm>
 
 	<repositories>
-
 		<!--
 		<repository>
 			<id>com.springsource.repository.bundles.release</id>
@@ -202,48 +197,46 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
-	-->
+		-->
 
-    <!-- TODO: Remove myGrid repositories -->
-    <repository>
-      <id>taverna-incubating</id>
-      <name>Apache Taverna incubating Repository</name>
-        <url>http://repository.mygrid.org.uk/artifactory/incubator-snapshot-local/</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots />
-    </repository>
-    <repository>
-      <!-- TODO: Use Apache snapshot repo instead -->
-      <id>taverna-incubating-release</id>
-      <name>Taverna incubating test release</name>
-      <url>http://repository.mygrid.org.uk/artifactory/incubator-release-test/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-
-
-
+<!-- TODO: Remove myGrid repositories -->
+		<repository>
+			<id>taverna-incubating</id>
+			<name>Apache Taverna incubating Repository</name>
+			<url>http://repository.mygrid.org.uk/artifactory/incubator-snapshot-local/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots />
+		</repository>
+		<repository>
+<!-- TODO: Use Apache snapshot repo instead -->
+			<id>taverna-incubating-release</id>
+			<name>Taverna incubating test release</name>
+			<url>http://repository.mygrid.org.uk/artifactory/incubator-release-test/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
 	</repositories>
+
 	<dependencyManagement>
 		<dependencies>
-      <dependency>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-core</artifactId>
-          <version>${jackson.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-databind</artifactId>
-          <version>${jackson.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>com.fasterxml.jackson.module</groupId>
-          <artifactId>jackson-module-jsonSchema</artifactId>
-          <version>${jackson.version}</version>
-      </dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-core</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.module</groupId>
+				<artifactId>jackson-module-jsonSchema</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
@@ -271,7 +264,7 @@
 			<dependency>
 				<groupId>org.jaxen</groupId>
 				<artifactId>com.springsource.org.jaxen</artifactId>
-                <!-- Was 1.1.4. as "1.1.3 has missing dependencies" but 1.1.1 appears to work fine -->
+				<!-- Was 1.1.4. as "1.1.3 has missing dependencies" but 1.1.1 appears to work fine -->
 				<version>${jaxen.version}</version>
 				<type>jar</type>
 			</dependency>
@@ -285,22 +278,22 @@
 	<modules>
 		<module>taverna-scufl2-ucfpackage</module>
 		<module>taverna-scufl2-api</module>
-    <!--
+		<!--
 		<module>taverna-scufl2-rdf</module>
-    -->
+		-->
 		<module>taverna-scufl2-rdfxml</module>
 		<module>taverna-scufl2-t2flow</module>
 		<module>taverna-scufl2-scufl</module>
 		<module>taverna-scufl2-validation</module>
 		<module>taverna-scufl2-validation-structural</module>
 		<module>taverna-scufl2-validation-correctness</module>
-    <!-- FIXME:
+		<!-- FIXME:
 		<module>taverna-scufl2-validation-integration</module>
-    -->
-    <module>taverna-scufl2-annotation</module>
+		-->
+		<module>taverna-scufl2-annotation</module>
 		<module>taverna-scufl2-wfdesc</module>
-    <module>taverna-robundle</module>
-    <module>taverna-databundle</module>
-    <module>taverna-baclava-language</module>
-  </modules>
+		<module>taverna-robundle</module>
+		<module>taverna-databundle</module>
+		<module>taverna-baclava-language</module>
+	</modules>
 </project>
