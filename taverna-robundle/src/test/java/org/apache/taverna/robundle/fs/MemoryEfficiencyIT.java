@@ -41,11 +41,8 @@ import org.junit.Assume;
 import org.junit.Test;
 
 public class MemoryEfficiencyIT extends Helper {
-
 	private static final int MANY_FOLDERS = 100;
-
 	private static final int MANY_FILS = 10000;
-
 	private Runtime rt = Runtime.getRuntime();
 
 	// delays to allow garbage collection to run
@@ -56,7 +53,6 @@ public class MemoryEfficiencyIT extends Helper {
 	private static final long GiB = 1024l * 1024l * 1024l;
 
 	Random rand = new Random();
-
 	int MAX_WORKERS = 10;
 
 	@Test
@@ -85,6 +81,7 @@ public class MemoryEfficiencyIT extends Helper {
 				Path dir = folder.resolve("dir" + folderNo);
 				final Path file = dir.resolve("file" + i);
 				pool.submit(new Runnable() {
+					@Override
 					public void run() {
 						try (OutputStream newOutputStream = Files
 								.newOutputStream(file)) {

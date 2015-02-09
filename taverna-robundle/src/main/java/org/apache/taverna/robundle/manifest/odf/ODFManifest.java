@@ -20,15 +20,22 @@ package org.apache.taverna.robundle.manifest.odf;
  */
 
 
+import static java.nio.file.Files.createDirectories;
+import static java.nio.file.Files.exists;
+import static java.nio.file.Files.isRegularFile;
+import static java.nio.file.Files.newInputStream;
+import static java.nio.file.Files.newOutputStream;
+import static java.nio.file.Files.size;
+import static java.util.logging.Level.FINE;
+import static java.util.logging.Level.WARNING;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBContext;
@@ -46,7 +53,6 @@ import org.apache.taverna.robundle.manifest.PathMetadata;
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 
 public class ODFManifest {
-
 	public static class ManifestNamespacePrefixMapperJAXB_RI extends
 			NamespacePrefixMapper {
 		@Override
@@ -59,12 +65,10 @@ public class ODFManifest {
 		public String getPreferredPrefix(String namespaceUri,
 				String suggestion, boolean requirePrefix) {
 			if (namespaceUri
-					.equals("urn:oasis:names:tc:opendocument:xmlns:manifest:1.0")) {
+					.equals("urn:oasis:names:tc:opendocument:xmlns:manifest:1.0"))
 				return "manifest";
-			}
 			return suggestion;
 		}
-
 	}
 
 	public static final String CONTAINER_XML = "META-INF/container.xml";
@@ -76,9 +80,11 @@ public class ODFManifest {
 
 	private static final String ODF_MANIFEST_VERSION = "1.2";
 	private static boolean warnedPrefixMapper;
+
 	public static boolean containsManifest(Bundle bundle) {
-		return Files.isRegularFile(manifestXmlPath(bundle));
+		return isRegularFile(manifestXmlPath(bundle));
 	}
+
 	protected static synchronized Marshaller createMarshaller()
 			throws JAXBException {
 		Marshaller marshaller = getJaxbContext().createMarshaller();
@@ -87,15 +93,13 @@ public class ODFManifest {
 	}
 	protected static synchronized Unmarshaller createUnMarshaller()
 			throws JAXBException {
-		Unmarshaller unmarshaller = getJaxbContext().createUnmarshaller();
-		return unmarshaller;
+		return getJaxbContext().createUnmarshaller();
 	}
 
 	protected static synchronized JAXBContext getJaxbContext()
 			throws JAXBException {
 		if (jaxbContext == null) {
-			jaxbContext = JAXBContext
-					.newInstance(oasis.names.tc.opendocument.xmlns.manifest._1.ObjectFactory.class
+			jaxbContext = JAXBContext.newInstance(ObjectFactory.class
 					// ,
 					// org.oasis_open.names.tc.opendocument.xmlns.container.ObjectFactory.class,
 					// org.w3._2000._09.xmldsig_.ObjectFactory.class,
@@ -113,18 +117,21 @@ public class ODFManifest {
 		boolean setPrefixMapper = false;
 
 		try {
-			// This only works with JAXB RI, in which case we can set the
-			// namespace prefix mapper
+			/*
+			 * This only works with JAXB RI, in which case we can set the
+			 * namespace prefix mapper
+			 */
 			Class.forName("com.sun.xml.bind.marshaller.NamespacePrefixMapper");
 			marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper",
 					new ManifestNamespacePrefixMapperJAXB_RI());
-			// Note: A similar mapper for the built-in java
-			// (com.sun.xml.bind.internal.namespacePrefixMapper)
-			// is no longer included here, as it will not (easily) compile with
-			// Maven.
+			/*
+			 * Note: A similar mapper for the built-in java
+			 * (com.sun.xml.bind.internal.namespacePrefixMapper) is no longer
+			 * included here, as it will not (easily) compile with Maven.
+			 */
 			setPrefixMapper = true;
 		} catch (Exception e) {
-			logger.log(Level.FINE, "Can't find NamespacePrefixMapper", e);
+			logger.log(FINE, "Can't find NamespacePrefixMapper", e);
 		}
 
 		if (!setPrefixMapper && !warnedPrefixMapper) {
@@ -220,7 +227,7 @@ public class ODFManifest {
 
 	private org.apache.taverna.robundle.manifest.Manifest manifest;
 
-	private ObjectFactory manifestFactory = new oasis.names.tc.opendocument.xmlns.manifest._1.ObjectFactory();
+	private ObjectFactory manifestFactory = new ObjectFactory();
 
 	public ODFManifest(org.apache.taverna.robundle.manifest.Manifest manifest) {
 		this.manifest = manifest;
@@ -232,35 +239,32 @@ public class ODFManifest {
 		odfManifest.setVersion(ODF_MANIFEST_VERSION);
 		for (PathMetadata pathMetadata : manifest.getAggregates()) {
 			Path path = pathMetadata.getFile();
-			if (path == null) {
+			if (path == null)
 				logger.finest("Skipping non-path entry "
 						+ pathMetadata.getUri());
-			}
 			// if (! Files.isRegularFile(path)) {
 			// logger.fine("Not adding " + path +
 			// " to  manifest, not a regular file");
 			// }
 			FileEntry entry = manifestFactory.createFileEntry();
 			entry.setFullPath(bundle.getRoot().relativize(path).toString());
-			if (pathMetadata.getMediatype() != null) {
+			if (pathMetadata.getMediatype() != null)
 				entry.setMediaType(pathMetadata.getMediatype());
-			} else {
+			else
 				entry.setMediaType("application/octet-stream");
-			}
 
 			try {
-				entry.setSize(BigInteger.valueOf(Files.size(path)));
+				entry.setSize(BigInteger.valueOf(size(path)));
 			} catch (IOException e) {
-				logger.log(Level.WARNING, "Can't find size of " + path, e);
+				logger.log(WARNING, "Can't find size of " + path, e);
 			}
-			if (pathMetadata.getConformsTo() != null) {
+			if (pathMetadata.getConformsTo() != null)
 				entry.setVersion(pathMetadata.getConformsTo().toString());
-			}
 			odfManifest.getFileEntry().add(entry);
 		}
 		Path manifestXml = manifestXmlPath(bundle);
-		Files.createDirectories(manifestXml.getParent());
-		try (OutputStream outStream = Files.newOutputStream(manifestXml)) {
+		createDirectories(manifestXml.getParent());
+		try (OutputStream outStream = newOutputStream(manifestXml)) {
 			try {
 				createMarshaller().marshal(odfManifest, outStream);
 			} catch (JAXBException e) {
@@ -275,47 +279,41 @@ public class ODFManifest {
 	public void readManifestXML() throws IOException {
 		Path manifestXml = manifestXmlPath(bundle);
 		Manifest odfManifest;
-		try (InputStream inStream = Files.newInputStream(manifestXml)) {
+		try (InputStream inStream = newInputStream(manifestXml)) {
 			odfManifest = (Manifest) createUnMarshaller().unmarshal(inStream);
 		} catch (JAXBException e) {
 			// logger.warning("Could not parse " + manifestXml);
 			throw new IOException("Could not parse " + manifestXml, e);
 		}
-		if (!manifest.getManifest().contains(manifestXml)) {
+		if (!manifest.getManifest().contains(manifestXml))
 			manifest.getManifest().add(manifestXml);
-		}
 		for (FileEntry f : odfManifest.getFileEntry()) {
 			Path path = bundle.getRoot().resolve(f.getFullPath());
-			if (!Files.exists(path)) {
+			if (!exists(path)) {
 				logger.warning(MANIFEST_XML + " listed " + path
 						+ ", but it does not exist in bundle");
 				continue;
 			}
 			PathMetadata metadata = manifest.getAggregation(path);
-			if (f.getMediaType() != null && f.getMediaType().contains("/")) {
+			if (f.getMediaType() != null && f.getMediaType().contains("/"))
 				metadata.setMediatype(f.getMediaType());
-			}
 			if (f.getEncryptionData() != null) {
 				logger.warning("Unsupported encryption for " + path);
 				continue;
 			}
-			if (f.getVersion() != null) {
-				try {
+			try {
+				if (f.getVersion() != null)
 					metadata.setConformsTo(new URI(f.getVersion()));
-				} catch (URISyntaxException e) {
-					logger.warning("Ignoring unsupported version "
-							+ f.getVersion());
-				}
+			} catch (URISyntaxException e) {
+				logger.warning("Ignoring unsupported version " + f.getVersion());
 			}
-			if (Files.isRegularFile(path) && f.getSize() != null) {
-				long actualSize = Files.size(path);
+			if (isRegularFile(path) && f.getSize() != null) {
+				long actualSize = size(path);
 				long expectedSize = f.getSize().longValue();
-				if (expectedSize != actualSize) {
+				if (expectedSize != actualSize)
 					logger.warning("Wrong file size for " + path
 							+ ", expected: " + expectedSize + ", actually: "
 							+ actualSize);
-
-				}
 			}
 		}
 	}

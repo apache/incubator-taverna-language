@@ -38,48 +38,59 @@ public class BundleFileStore extends FileStore {
 		this.origFileStore = origFileStore;
 	}
 
+	@Override
 	public Object getAttribute(String attribute) throws IOException {
 		return origFileStore.getAttribute(attribute);
 	}
 
+	@Override
 	public <V extends FileStoreAttributeView> V getFileStoreAttributeView(
 			Class<V> type) {
 		return origFileStore.getFileStoreAttributeView(type);
 	}
 
+	@Override
 	public long getTotalSpace() throws IOException {
 		return origFileStore.getTotalSpace();
 	}
 
+	@Override
 	public long getUnallocatedSpace() throws IOException {
 		return origFileStore.getUnallocatedSpace();
 	}
 
+	@Override
 	public long getUsableSpace() throws IOException {
 		return origFileStore.getUsableSpace();
 	}
 
+	@Override
 	public boolean isReadOnly() {
 		return origFileStore.isReadOnly();
 	}
 
+	@Override
 	public String name() {
 		return origFileStore.name();
 	}
 
+	@Override
 	public boolean supportsFileAttributeView(
 			Class<? extends FileAttributeView> type) {
 		return origFileStore.supportsFileAttributeView(type);
 	}
 
+	@Override
 	public boolean supportsFileAttributeView(String name) {
 		return origFileStore.supportsFileAttributeView(name);
 	}
 
+	@Override
 	public String toString() {
 		return origFileStore.toString();
 	}
 
+	@Override
 	public String type() {
 		return "bundle";
 	}

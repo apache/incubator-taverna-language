@@ -46,18 +46,22 @@ public class BundlePath implements Path {
 		this.zipPath = zipPath;
 	}
 
+	@Override
 	public int compareTo(Path other) {
 		return zipPath.compareTo(fs.unwrap(other));
 	}
 
+	@Override
 	public boolean endsWith(Path other) {
 		return zipPath.endsWith(fs.unwrap(other));
 	}
 
+	@Override
 	public boolean endsWith(String other) {
 		return zipPath.endsWith(other);
 	}
 
+	@Override
 	public boolean equals(Object other) {
 		if (!(other instanceof BundlePath)) {
 			return false;
@@ -66,6 +70,7 @@ public class BundlePath implements Path {
 		return zipPath.equals(fs.unwrap(bundlePath));
 	}
 
+	@Override
 	public BundlePath getFileName() {
 		return fs.wrap(zipPath.getFileName());
 	}
@@ -75,18 +80,22 @@ public class BundlePath implements Path {
 		return fs;
 	}
 
+	@Override
 	public BundlePath getName(int index) {
 		return fs.wrap(zipPath.getName(index));
 	}
 
+	@Override
 	public int getNameCount() {
 		return zipPath.getNameCount();
 	}
 
+	@Override
 	public BundlePath getParent() {
 		return fs.wrap(zipPath.getParent());
 	}
 
+	@Override
 	public BundlePath getRoot() {
 		return fs.wrap(zipPath.getRoot());
 	}
@@ -95,72 +104,89 @@ public class BundlePath implements Path {
 		return zipPath;
 	}
 
+	@Override
 	public int hashCode() {
 		return zipPath.hashCode();
 	}
 
+	@Override
 	public boolean isAbsolute() {
 		return zipPath.isAbsolute();
 	}
 
+	@Override
 	public Iterator<Path> iterator() {
 		return fs.wrapIterator(zipPath.iterator());
 	}
 
+	@Override
 	public BundlePath normalize() {
 		return fs.wrap(zipPath.normalize());
 	}
 
+	@Override
 	public WatchKey register(WatchService watcher, Kind<?>... events)
 			throws IOException {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public WatchKey register(WatchService watcher, Kind<?>[] events,
 			Modifier... modifiers) throws IOException {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public BundlePath relativize(Path other) {
 		return fs.wrap(zipPath.relativize(fs.unwrap(other)));
 	}
 
+	@Override
 	public BundlePath resolve(Path other) {
 		return fs.wrap(zipPath.resolve(fs.unwrap(other)));
 	}
 
+	@Override
 	public BundlePath resolve(String other) {
 		return fs.wrap(zipPath.resolve(other));
 	}
 
+	@Override
 	public BundlePath resolveSibling(Path other) {
 		return fs.wrap(zipPath.resolveSibling(fs.unwrap(other)));
 	}
 
+	@Override
 	public BundlePath resolveSibling(String other) {
 		return fs.wrap(zipPath.resolveSibling(other));
 	}
 
+	@Override
 	public boolean startsWith(Path other) {
 		return zipPath.startsWith(fs.unwrap(other));
 	}
 
+	@Override
 	public boolean startsWith(String other) {
 		return zipPath.startsWith(other);
 	}
 
+	@Override
 	public BundlePath subpath(int beginIndex, int endIndex) {
 		return fs.wrap(zipPath.subpath(beginIndex, endIndex));
 	}
 
+	@Override
 	public BundlePath toAbsolutePath() {
 		return fs.wrap(zipPath.toAbsolutePath());
 	}
 
+	@Override
 	public File toFile() {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public BundlePath toRealPath(LinkOption... options) throws IOException {
 		return fs.wrap(zipPath.toRealPath(options));
 	}
@@ -169,6 +195,7 @@ public class BundlePath implements Path {
 	 * Note: This method is used by JSON serialization and should return a valid
 	 * relative path from .ro/ or /
 	 */
+	@Override
 	public String toString() {
 		if (zipPath.isAbsolute() && zipPath.startsWith("/.ro/")) {
 			Path base = fs.getRootDirectory().zipPath.resolve(".ro");
@@ -178,6 +205,7 @@ public class BundlePath implements Path {
 		}
 	}
 
+	@Override
 	public URI toUri() {
 		Path abs = zipPath.toAbsolutePath();
 		URI pathRel;

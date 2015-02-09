@@ -20,34 +20,37 @@ package org.apache.taverna.robundle.utils;
  */
 
 
+import static java.nio.file.FileVisitResult.CONTINUE;
+import static java.nio.file.Files.delete;
+import static java.nio.file.Files.isDirectory;
+import static java.nio.file.Files.walkFileTree;
+
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
 public class RecursiveDeleteVisitor extends SimpleFileVisitor<Path> {
 	public static void deleteRecursively(Path p) throws IOException {
-		if (Files.isDirectory(p)) {
-			Files.walkFileTree(p, new RecursiveDeleteVisitor());
-		} else {
-			Files.delete(p);
-		}
+		if (isDirectory(p))
+			walkFileTree(p, new RecursiveDeleteVisitor());
+		else
+			delete(p);
 	}
 
 	@Override
 	public FileVisitResult postVisitDirectory(Path dir, IOException exc)
 			throws IOException {
 		super.postVisitDirectory(dir, exc);
-		Files.delete(dir);
-		return FileVisitResult.CONTINUE;
+		delete(dir);
+		return CONTINUE;
 	}
 
 	@Override
 	public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
 			throws IOException {
-		Files.delete(file);
-		return FileVisitResult.CONTINUE;
+		delete(file);
+		return CONTINUE;
 	}
 }

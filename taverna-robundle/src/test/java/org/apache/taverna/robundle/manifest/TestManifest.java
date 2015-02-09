@@ -54,6 +54,7 @@ import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.Resource;
 
+@SuppressWarnings({ "deprecation", "unused" })
 public class TestManifest {
 	private Bundle bundle;
 
