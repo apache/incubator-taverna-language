@@ -27,34 +27,7 @@
 	<name>Apache Taverna Scufl 2 RDF/XML</name>
 	<description>XSD based XML serialisation which is RDF/XML compatible</description>
 	<build>
-		<plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <!-- NO!
-                <configuration>
-                    <instructions>
-                        <Export-Package>org.apache.taverna.scufl2.api.io;provide:=true</Export-Package>
-                    </instructions>
-                </configuration>
-                 -->
-            </plugin>
-     
-	            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
-            </plugin>
-                <plugin>
-        <groupId>org.apache.rat</groupId>
-        <artifactId>apache-rat-plugin</artifactId>
-      </plugin>
-            </plugins>
-            </build>	<dependencies>
-
+  <dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>taverna-scufl2-api</artifactId>
@@ -122,30 +95,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<repositories>
-    <!-- Sesame repositories no longer needed as it's in Central
-		<repository>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<id>aduna-opensource.releases</id>
-			<name>Aduna Open Source - Maven releases</name>
-			<url>http://repo.aduna-software.org/maven2/releases</url>
-		</repository>
-		<repository>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<id>aduna-opensource.snapshots</id>
-			<name>Aduna Open Source - Maven snapshots</name>
-			<url>http://repo.aduna-software.org/maven2/snapshots</url>
-		</repository>
-    -->
-	</repositories>
 </project>
