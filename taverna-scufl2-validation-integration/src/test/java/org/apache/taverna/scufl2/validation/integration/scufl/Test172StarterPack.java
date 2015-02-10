@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.apache.taverna.scufl2.validation.integration.scufl;
 /*
  *
