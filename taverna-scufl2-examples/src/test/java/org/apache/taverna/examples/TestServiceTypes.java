@@ -20,18 +20,19 @@ package org.apache.taverna.examples;
  */
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.taverna.examples.ServiceTypes;
 import org.junit.Test;
 
 public class TestServiceTypes {
@@ -64,7 +65,12 @@ public class TestServiceTypes {
 
 		Set<String> types = new ServiceTypes().serviceTypes(new String[] { tmp
 				.getAbsolutePath() });
-		assertEquals(expectedTypes.toString(), types.toString());
+//		List<String> expected = new ArrayList<>(expectedTypes);
+//		List<String> actual = new ArrayList<>(types);
+//		Collections.sort(expected);
+//		Collections.sort(actual);
+//		assertEquals(expected.toString(), actual.toString());
+		assertEquals(expectedTypes, types);
 	}
 	
 	@Test
