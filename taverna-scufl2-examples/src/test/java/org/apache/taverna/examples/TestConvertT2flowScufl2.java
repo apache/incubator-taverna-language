@@ -36,9 +36,9 @@ import org.junit.Test;
 public class TestConvertT2flowScufl2 {
 	@Test
 	public void convertToScufl2() throws Exception {
-		File tmp = File.createTempFile("scufl2-ebi-interproscan", ".t2flow");
+		File tmp = File.createTempFile("helloworld", ".t2flow");
 		tmp.deleteOnExit();
-		InputStream ebi = getClass().getResourceAsStream("/workflows/t2flow/ebi_interproscan_for_taverna_2_317472.t2flow");
+		InputStream ebi = getClass().getResourceAsStream("/workflows/t2flow/helloworld.t2flow");
 		FileOutputStream output = new FileOutputStream(tmp);
 		IOUtils.copy(ebi, output);
 		output.close();
