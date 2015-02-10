@@ -1,8 +1,13 @@
 <?xml version='1.0'?>
 <!--
     Copyright © 2015 W3C® (MIT, ERCIM, Keio, Beihang). This software or 
-	document includes material copied from or derived from
-	XML namespace http://www.w3.org/2001/xml.xsd  
+	document includes material copied from or derived from:
+
+  Extensible Markup Language (XML) 1.0 (Fifth Edition)
+  W3C Recommendation 26 November 2008
+  http://www.w3.org/2001/xml.xsd
+  http://www.w3.org/TR/xml/
+
 -->
 <xs:schema targetNamespace="http://www.w3.org/XML/1998/namespace" 
   xmlns:xs="http://www.w3.org/2001/XMLSchema" 
