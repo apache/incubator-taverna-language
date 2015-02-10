@@ -279,9 +279,6 @@
 	<modules>
 		<module>taverna-scufl2-ucfpackage</module>
 		<module>taverna-scufl2-api</module>
-		<!--
-		<module>taverna-scufl2-rdf</module>
-		-->
 		<module>taverna-scufl2-rdfxml</module>
 		<module>taverna-scufl2-t2flow</module>
 		<module>taverna-scufl2-scufl</module>
