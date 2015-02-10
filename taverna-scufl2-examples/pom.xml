@@ -15,30 +15,31 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.apache.taverna.language</groupId>
-    <artifactId>taverna-language</artifactId>
-    <version>0.16.1-incubating-SNAPSHOT</version>
-  </parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.apache.taverna.language</groupId>
+		<artifactId>taverna-language</artifactId>
+		<version>0.16.1-incubating-SNAPSHOT</version>
+	</parent>
 	<artifactId>taverna-scufl2-examples</artifactId>
 	<name>Apache Taverna SCUFL2 examples</name>
-  <dependencies>
+	<dependencies>
 		<dependency>
-      <groupId>${project.parent.groupId}</groupId>
+			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>taverna-scufl2-api</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-      <groupId>${project.parent.groupId}</groupId>
+			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>taverna-scufl2-t2flow</artifactId>
-      <version>${project.parent.version}</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
-      <groupId>${project.parent.groupId}</groupId>
+			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>taverna-scufl2-rdfxml</artifactId>
-      <version>${project.parent.version}</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 
 		<!-- Included to get rid of "Could not set prefix mapper" warning, but 
@@ -50,13 +51,13 @@
 			<optional>true</optional>
 		</dependency>
 
-        <!--  For writing out JSON-LD annotations -->
+		<!-- For writing out JSON-LD annotations -->
 
-        <dependency>
-            <groupId>org.apache.jena</groupId>
-            <artifactId>jena-arq</artifactId>
-            <version>${jena.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>org.apache.jena</groupId>
+			<artifactId>jena-arq</artifactId>
+			<version>${jena.version}</version>
+		</dependency>
 
 		<!-- Following only needed by src/test/java -->
 		<dependency>
@@ -116,34 +117,36 @@
 					</programs>
 				</configuration>
 			</plugin>
-             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <!--<version>2.0</version> does not work with Maven 2 :( -->
-                <version>1.7.1</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <shadedArtifactAttached>true</shadedArtifactAttached>
-                            <shadedClassifierName>standalone</shadedClassifierName>
-                            <transformers>
-                              <transformer
-                                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>org.apache.taverna.examples.Scufl2Tool</mainClass>
-                              </transformer>
-                              <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                              <transformer implementation="org.apache.maven.plugins.shade.resource.XmlAppendingTransformer">
-                                  <resource>META-INF/spring</resource>
-                              </transformer>
-                            </transformers>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<!--<version>2.0</version> does not work with Maven 2 :( -->
+				<version>1.7.1</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<shadedArtifactAttached>true</shadedArtifactAttached>
+							<shadedClassifierName>standalone</shadedClassifierName>
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>org.apache.taverna.examples.Scufl2Tool</mainClass>
+								</transformer>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.XmlAppendingTransformer">
+									<resource>META-INF/spring</resource>
+								</transformer>
+							</transformers>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
