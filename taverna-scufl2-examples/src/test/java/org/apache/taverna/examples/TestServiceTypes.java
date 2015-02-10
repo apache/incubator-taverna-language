@@ -36,45 +36,63 @@ import org.junit.Test;
 
 public class TestServiceTypes {
 	@Test
-	public void wsdlServices() throws Exception {
-		File tmp = File.createTempFile("scufl2-ebi-interproscan", ".t2flow");
+	public void defaultActivitiesT2flow() throws Exception {
+		File tmp = File.createTempFile("defaultActivities2.2", ".t2flow");
 		tmp.deleteOnExit();
 		InputStream ebi = getClass()
 				.getResourceAsStream(
-						"/workflows/t2flow/ebi_interproscan_for_taverna_2_317472.t2flow");
+						"/workflows/t2flow/defaultActivitiesTaverna2.2.t2flow");
 		FileOutputStream output = new FileOutputStream(tmp);
 		IOUtils.copy(ebi, output);
 		output.close();
 
 		Set<String> expectedTypes = new HashSet<String>();
 		expectedTypes.addAll(Arrays.asList(
-				"http://ns.taverna.org.uk/2010/activity/xml-splitter/in",
 				"http://ns.taverna.org.uk/2010/activity/beanshell",
+				"http://ns.taverna.org.uk/2010/activity/nested-workflow",
+				"http://ns.taverna.org.uk/2010/activity/rshell",
+				"http://ns.taverna.org.uk/2010/activity/spreadsheet-import",
+				"http://ns.taverna.org.uk/2010/activity/constant",
+				"http://ns.taverna.org.uk/2010/activity/apiconsumer",
+				"http://ns.taverna.org.uk/2010/activity/biomart",
+				"http://ns.taverna.org.uk/2010/activity/biomoby/object",
+				"http://ns.taverna.org.uk/2010/activity/biomoby/service",
 				"http://ns.taverna.org.uk/2010/activity/wsdl",
-				"http://ns.taverna.org.uk/2010/activity/constant"));
+				"http://ns.taverna.org.uk/2010/activity/xml-splitter/in",
+				"http://ns.taverna.org.uk/2010/activity/xml-splitter/out",
+				"http://ns.taverna.org.uk/2010/activity/soaplab"));
 
 		Set<String> types = new ServiceTypes().serviceTypes(new String[] { tmp
 				.getAbsolutePath() });
-		assertEquals(expectedTypes, types);
+		assertEquals(expectedTypes.toString(), types.toString());
 	}
 	
 	@Test
-	public void wsdlServicesWfBundle() throws Exception {
-		File tmp = File.createTempFile("scufl2-ebi-interproscan", ".wfbundle");
+	public void defaultActivitiesWfBundle() throws Exception {
+		File tmp = File.createTempFile("defaultActivities2.2", ".wfbundle");
 		tmp.deleteOnExit();
 		InputStream ebi = getClass()
 				.getResourceAsStream(
-						"/workflows/wfbundle/ebi_interproscan_for_taverna_2_317472.wfbundle");
+						"/workflows/wfbundle/defaultActivitiesTaverna2.wfbundle");
 		FileOutputStream output = new FileOutputStream(tmp);
 		IOUtils.copy(ebi, output);
 		output.close();
 
 		Set<String> expectedTypes = new HashSet<String>();
 		expectedTypes.addAll(Arrays.asList(
-				"http://ns.taverna.org.uk/2010/activity/xml-splitter/in",
 				"http://ns.taverna.org.uk/2010/activity/beanshell",
+				"http://ns.taverna.org.uk/2010/activity/nested-workflow",
+				"http://ns.taverna.org.uk/2010/activity/rshell",
+				"http://ns.taverna.org.uk/2010/activity/spreadsheet-import",
+				"http://ns.taverna.org.uk/2010/activity/constant",
+				"http://ns.taverna.org.uk/2010/activity/apiconsumer",
+				"http://ns.taverna.org.uk/2010/activity/biomart",
+				"http://ns.taverna.org.uk/2010/activity/biomoby/object",
+				"http://ns.taverna.org.uk/2010/activity/biomoby/service",
 				"http://ns.taverna.org.uk/2010/activity/wsdl",
-				"http://ns.taverna.org.uk/2010/activity/constant"));
+				"http://ns.taverna.org.uk/2010/activity/xml-splitter/in",
+				"http://ns.taverna.org.uk/2010/activity/xml-splitter/out",
+				"http://ns.taverna.org.uk/2010/activity/soaplab"));
 
 		Set<String> types = new ServiceTypes().serviceTypes(new String[] { tmp
 				.getAbsolutePath() });
