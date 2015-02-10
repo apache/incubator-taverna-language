@@ -24,6 +24,7 @@
 	</parent>
 	<artifactId>taverna-scufl2-integration-tests</artifactId>
 	<name>Apache Taverna Scufl 2 integration tests</name>
+	<packaging>bundle</packaging>
 	<description>Integration tests depending on multiple modules</description>
 	<build>
 		<plugins>
