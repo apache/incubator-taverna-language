@@ -26,7 +26,6 @@
 	<packaging>bundle</packaging>
 	<name>Apache Taverna Scufl 2 RDF/XML</name>
 	<description>XSD based XML serialisation which is RDF/XML compatible</description>
-	<build>
   <dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
