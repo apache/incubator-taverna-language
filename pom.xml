@@ -79,6 +79,8 @@
 						<exclude>**/resources/sample-output/outputs/**</exclude>
 						<exclude>**/src/test/resources/win8.url</exclude>
 						<exclude>**/src/test/resources/full-example/**</exclude>
+            <!-- No headers in JSON which haven't got comments .. -->
+            <exclude>**/*.json</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
