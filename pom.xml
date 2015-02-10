@@ -291,6 +291,7 @@
 		<module>taverna-scufl2-validation-integration</module>
 		<module>taverna-scufl2-integration-tests</module>
 		<module>taverna-scufl2-annotation</module>
+		<module>taverna-scufl2-schemas</module>
 		<module>taverna-scufl2-wfdesc</module>
 		<module>taverna-robundle</module>
 		<module>taverna-databundle</module>
