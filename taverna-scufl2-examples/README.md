@@ -75,17 +75,17 @@ processornames
 --------------
 This tool lists a tree of the processor names in the workflows of the given bundle.
 
-    C:\Users\stain\workspace\scufl2-examples> target\scufl2-examples\bin\processornames helloworld.t2flow
+    C:\Users\stain\workspace\scufl2-examples> target\scufl2-examples\bin\processornames examples/helloworld.t2flow
     + Hello_World
       - hello
     
     
-    C:\Users\stain\workspace\scufl2-examples> target\scufl2-examples\bin\processornames helloanyone.t2flow
+    C:\Users\stain\workspace\scufl2-examples> target\scufl2-examples\bin\processornames examples/helloanyone.t2flow
     + Hello_Anyone
       - Concatenate_two_strings
       - hello
 
-See the source code for [org.apache.taverna.examples.ProcessorNames](src/main/java/com/example/ProcessorNames.java)
+See the source code for [org.apache.taverna.examples.ProcessorNames](src/main/java/org/apache/taverna/examples/ProcessorNames.java)
  for how this is implemented.
 
 
@@ -93,11 +93,11 @@ servicetypes
 ------------
 This tool lists the URIs of the types of services (activities) used in the workflow.
 
-    C:\Users\stain\workspace\scufl2-examples> target\scufl2-examples\bin\servicetypes helloanyone.t2flow
+    C:\Users\stain\workspace\scufl2-examples> target\scufl2-examples\bin\servicetypes examples/helloanyone.t2flow
     http://ns.taverna.org.uk/2010/activity/beanshell
     http://ns.taverna.org.uk/2010/activity/constant
 
-See the source code for [org.apache.taverna.examples.ServiceTypes](src/main/java/com/example/ServiceTypes.java)
+See the source code for [org.apache.taverna.examples.ServiceTypes](src/main/java/org/apache/taverna/examples/ServiceTypes.java)
  for how this is implemented.
 
 
@@ -140,7 +140,7 @@ This tool shows how to construct a workflow from scratch and save it as a
             '''out1 = in1'''
 
 
-See the source code for [org.apache.taverna.examples.WorkflowMaker](src/main/java/com/example/WorkflowMaker.java) 
+See the source code for [org.apache.taverna.examples.WorkflowMaker](src/main/java/org/apache/taverna/WorkflowMaker.java) 
 for how this is implemented.
 
 
@@ -174,7 +174,7 @@ This tool shows how to convert a *.t2flow* file to a
     No errors detected in compressed data of helloworld.wfbundle.
 
 See the source code for 
-[org.apache.taverna.examples.ConvertT2flowToWorkflowBundle.java](src/main/java/com/example/ConvertT2flowToWorkflowBundle.java)
+[org.apache.taverna.examples.ConvertT2flowToWorkflowBundle.java](src/main/java/org/apache/taverna/examples/ConvertT2flowToWorkflowBundle.java)
 for how this is implemented.
 
 The included files [helloworld.wfbundle](helloworld.wfbundle?raw=true) and
@@ -201,16 +201,16 @@ Usage:
 
 Converting multiple files:
 
-    c:\Users\stain\src\scufl2-examples> target\scufl2-examples\bin\jsonexport helloworld.t2flow helloanyone.wfbundle
-    helloworld.json
-    helloanyone.json
+    c:\Users\stain\src\scufl2-examples> target\scufl2-examples\bin\jsonexport examples/helloworld.t2flow examples/helloanyone.wfbundle
+    examples/helloworld.json
+    examples/helloanyone.json
     
-See the converted [helloworld.json](helloworld.json) and
-[helloanyone.json](helloanyone.json)
+See the converted [examples/helloworld.json](helloworld.json) and
+[examples/helloanyone.json](helloanyone.json).
 
 Example using STDIN/STDOUT:
 
-    c:\Users\stain\src\scufl2-examples> target\scufl2-examples\bin\jsonexport - < helloworld.t2flow
+    c:\Users\stain\src\scufl2-examples> target\scufl2-examples\bin\jsonexport - < examples/helloworld.t2flow
     {
       "@context" : [ "https://w3id.org/scufl2/context", {
         "@base" : "http://ns.taverna.org.uk/2010/workflowBundle/8781d5f4-d0ba-48a8-a1d1-14281bd8a917/"
@@ -248,3 +248,4 @@ Example using STDIN/STDOUT:
         "http://purl.org/dc/terms/title" : "Hello World"
       }
     }
+
