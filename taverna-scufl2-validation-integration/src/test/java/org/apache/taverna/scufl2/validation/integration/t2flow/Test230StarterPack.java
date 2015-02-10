@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uk.org.taverna.scufl2.validation.integration.t2flow;
+package org.apache.taverna.scufl2.validation.integration.t2flow;
 /*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -42,13 +42,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import uk.org.taverna.scufl2.api.container.WorkflowBundle;
-import uk.org.taverna.scufl2.api.io.ReaderException;
-import uk.org.taverna.scufl2.translator.t2flow.T2FlowParser;
-import uk.org.taverna.scufl2.validation.correctness.CorrectnessValidator;
-import uk.org.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener;
-import uk.org.taverna.scufl2.validation.structural.ReportStructuralValidationListener;
-import uk.org.taverna.scufl2.validation.structural.StructuralValidator;
+import org.apache.taverna.scufl2.api.container.WorkflowBundle;
+import org.apache.taverna.scufl2.api.io.ReaderException;
+import org.apache.taverna.scufl2.translator.t2flow.T2FlowParser;
+import org.apache.taverna.scufl2.validation.correctness.CorrectnessValidator;
+import org.apache.taverna.scufl2.validation.correctness.ReportCorrectnessValidationListener;
+import org.apache.taverna.scufl2.validation.structural.ReportStructuralValidationListener;
+import org.apache.taverna.scufl2.validation.structural.StructuralValidator;
 
 /**
  * @author alanrw
