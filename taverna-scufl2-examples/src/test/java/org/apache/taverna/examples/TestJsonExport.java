@@ -1,4 +1,4 @@
-package com.example;
+package org.apache.taverna.examples;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -28,6 +28,7 @@ import java.io.InputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.taverna.examples.JsonExport;
 import org.junit.Ignore;
 import org.junit.Test;
 

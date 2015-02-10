@@ -6,7 +6,7 @@ Examples of using the [SCUFL2 API](http://dev.mygrid.org.uk/wiki/display/develop
 [![Build Status](https://travis-ci.org/myGrid/scufl2-examples.svg?branch=master)](https://travis-ci.org/myGrid/scufl2-examples)
 
 As this code is meant only as examples that you can extend and modify, the
-groupId and package name are `com.example`, which should be changed
+groupId and package name are `org.apache.taverna.examples`, which should be changed
 in your application.
 
 
@@ -85,7 +85,7 @@ This tool lists a tree of the processor names in the workflows of the given bund
       - Concatenate_two_strings
       - hello
 
-See the source code for [com.example.ProcessorNames](src/main/java/com/example/ProcessorNames.java)
+See the source code for [org.apache.taverna.examples.ProcessorNames](src/main/java/com/example/ProcessorNames.java)
  for how this is implemented.
 
 
@@ -97,7 +97,7 @@ This tool lists the URIs of the types of services (activities) used in the workf
     http://ns.taverna.org.uk/2010/activity/beanshell
     http://ns.taverna.org.uk/2010/activity/constant
 
-See the source code for [com.example.ServiceTypes](src/main/java/com/example/ServiceTypes.java)
+See the source code for [org.apache.taverna.examples.ServiceTypes](src/main/java/com/example/ServiceTypes.java)
  for how this is implemented.
 
 
@@ -140,7 +140,7 @@ This tool shows how to construct a workflow from scratch and save it as a
             '''out1 = in1'''
 
 
-See the source code for [com.example.WorkflowMaker](src/main/java/com/example/WorkflowMaker.java) 
+See the source code for [org.apache.taverna.examples.WorkflowMaker](src/main/java/com/example/WorkflowMaker.java) 
 for how this is implemented.
 
 
@@ -174,7 +174,7 @@ This tool shows how to convert a *.t2flow* file to a
     No errors detected in compressed data of helloworld.wfbundle.
 
 See the source code for 
-[com.example.ConvertT2flowToWorkflowBundle.java](src/main/java/com/example/ConvertT2flowToWorkflowBundle.java)
+[org.apache.taverna.examples.ConvertT2flowToWorkflowBundle.java](src/main/java/com/example/ConvertT2flowToWorkflowBundle.java)
 for how this is implemented.
 
 The included files [helloworld.wfbundle](helloworld.wfbundle?raw=true) and

@@ -1,4 +1,4 @@
-package com.example;
+package org.apache.taverna.examples;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one

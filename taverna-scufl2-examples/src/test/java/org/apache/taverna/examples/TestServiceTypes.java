@@ -1,4 +1,4 @@
-package com.example;
+package org.apache.taverna.examples;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.taverna.examples.ServiceTypes;
 import org.junit.Test;
 
 public class TestServiceTypes {

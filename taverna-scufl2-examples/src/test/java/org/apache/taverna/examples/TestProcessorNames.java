@@ -1,4 +1,4 @@
-package com.example;
+package org.apache.taverna.examples;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -32,7 +32,7 @@ import javax.xml.bind.JAXBException;
 
 import org.junit.Ignore;
 import org.junit.Test;
-
+import org.apache.taverna.examples.ProcessorNames;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;

@@ -94,23 +94,23 @@
 					<assembleDirectory>${project.build.directory}/${project.artifactId}</assembleDirectory>
 					<programs>
 						<program>
-							<mainClass>com.example.ConvertT2flowToWorkflowBundle</mainClass>
+							<mainClass>org.apache.taverna.examples.ConvertT2flowToWorkflowBundle</mainClass>
 							<name>t2flowtowfbundle</name>
 						</program>
 						<program>
-							<mainClass>com.example.ProcessorNames</mainClass>
+							<mainClass>org.apache.taverna.examples.ProcessorNames</mainClass>
 							<name>processornames</name>
 						</program>
 						<program>
-							<mainClass>com.example.ServiceTypes</mainClass>
+							<mainClass>org.apache.taverna.examples.ServiceTypes</mainClass>
 							<name>servicetypes</name>
 						</program>
 						<program>
-							<mainClass>com.example.WorkflowMaker</mainClass>
+							<mainClass>org.apache.taverna.examples.WorkflowMaker</mainClass>
 							<name>workflowmaker</name>
 						</program>
 						<program>
-							<mainClass>com.example.JsonExport</mainClass>
+							<mainClass>org.apache.taverna.examples.JsonExport</mainClass>
 							<name>jsonexport</name>
 						</program>
 					</programs>
@@ -133,7 +133,7 @@
                             <transformers>
                               <transformer
                                     implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.example.Scufl2Tool</mainClass>
+                                    <mainClass>org.apache.taverna.examples.Scufl2Tool</mainClass>
                               </transformer>
                               <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                               <transformer implementation="org.apache.maven.plugins.shade.resource.XmlAppendingTransformer">
