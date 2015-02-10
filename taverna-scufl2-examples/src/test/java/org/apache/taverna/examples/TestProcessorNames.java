@@ -30,29 +30,30 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.apache.taverna.examples.ProcessorNames;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
+import org.junit.Test;
 
 public class TestProcessorNames {
 
 	@Test
 	public void processorNames() throws JAXBException, IOException, ReaderException {
 		InputStream workflow = getClass().getResourceAsStream(
-				"/workflows/t2flow/biomartandembossanalysis_904962.t2flow");
+				"/workflows/t2flow/defaultActivitiesTaverna2.2.t2flow");
 		assertNotNull(workflow);
 
 		WorkflowBundleIO io = new WorkflowBundleIO();
 		WorkflowBundle ro = io.readBundle(workflow,
 				"application/vnd.taverna.t2flow+xml");
 
-		List<String> expected = Arrays.asList("CreateFasta",
-				"FlattenImageList", "GetUniqueHomolog", "emma",
-				"getHSapSequence", "getMMusSequence", "getRNorSequence",
-				"hsapiensGeneEnsembl", "plot", "seqret");
+		List<String> expected = Arrays.asList("Beanshell", "Nested_workflow",
+				"Rshell", "Send_an_Email", "SpreadsheetImport",
+				"String_constant", "TavernaResearchObject", "biomart",
+				"localWorker", "localWorker_bytearray", "mobyObject",
+				"mobyService", "run", "run_input", "run_output",
+				"setWorkflows", "soaplab", "wsdl_document", "wsdl_rpc",
+				"wsdl_secured", "xmlSplitter");
 		ProcessorNames processorNames = new ProcessorNames();
 		assertEquals(expected, processorNames.showProcessorNames(ro));
 		System.out.println(processorNames.showProcessorTree(ro));
