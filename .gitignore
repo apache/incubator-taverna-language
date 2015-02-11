@@ -2,4 +2,4 @@
 .settings
 .classpath
 target
-
+.gitignore
