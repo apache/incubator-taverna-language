@@ -24,7 +24,7 @@
 		<version>0.16.1-incubating-SNAPSHOT</version>
 	</parent>
 	<artifactId>taverna-scufl2-examples</artifactId>
-	<name>Apache Taverna Scufl2 examples</name>
+	<name>Apache Taverna Scufl 2 examples</name>
 	<dependencies>
 		<dependency>
 			<groupId>${project.parent.groupId}</groupId>
