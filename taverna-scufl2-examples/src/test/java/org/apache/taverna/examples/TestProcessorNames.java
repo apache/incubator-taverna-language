@@ -56,7 +56,6 @@ public class TestProcessorNames {
 				"wsdl_secured", "xmlSplitter");
 		ProcessorNames processorNames = new ProcessorNames();
 		assertEquals(expected, processorNames.showProcessorNames(ro));
-		System.out.println(processorNames.showProcessorTree(ro));
 	}
 	
 
@@ -70,7 +69,7 @@ public class TestProcessorNames {
 		WorkflowBundle ro = io.readBundle(workflow,
 				"application/vnd.taverna.t2flow+xml");
 		ProcessorNames processorNames = new ProcessorNames();
-		System.out.println(processorNames.showProcessorTree(ro));
+		assertEquals(8, processorNames.showProcessorNames(ro).size());
 	}
 	
 
@@ -83,7 +82,7 @@ public class TestProcessorNames {
 		WorkflowBundleIO io = new WorkflowBundleIO();
 		WorkflowBundle ro = io.readBundle(workflow, null);
 		ProcessorNames processorNames = new ProcessorNames();
-		System.out.println(processorNames.showProcessorTree(ro));
+		assertEquals(8, processorNames.showProcessorNames(ro).size());
 	}
 	
 }

@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.taverna.examples.JsonExport;
 import org.junit.Ignore;
@@ -49,7 +48,7 @@ public class TestJsonExport {
         assertTrue(jsonFile.isFile());
         jsonFile.deleteOnExit();
 //      System.out.println(scufl2File);
-        System.out.println(FileUtils.readFileToString(jsonFile, "UTF-8"));
+        //System.out.println(FileUtils.readFileToString(jsonFile, "UTF-8"));
     }
     
     @Ignore("Takes 24 seconds!")
@@ -68,7 +67,7 @@ public class TestJsonExport {
         File jsonFile = new File(tmp.getAbsolutePath().replace(".t2flow", ".json"));
         assertTrue(jsonFile.isFile());
 //        jsonFile.deleteOnExit();
-      System.out.println(jsonFile);
+      //System.out.println(jsonFile);
 //        System.out.println(FileUtils.readFileToString(jsonFile, "UTF-8"));
     }
     

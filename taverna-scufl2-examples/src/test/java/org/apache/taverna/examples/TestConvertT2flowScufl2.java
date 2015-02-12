@@ -46,7 +46,9 @@ public class TestConvertT2flowScufl2 {
 		ConvertT2flowToWorkflowBundle.main(new String[]{tmp.getAbsolutePath()});		
 		File scufl2File = new File(tmp.getAbsolutePath().replace(".t2flow", ".wfbundle"));
 		assertTrue(scufl2File.isFile());
-		assertNotNull(new ZipFile(scufl2File).getEntry("workflowBundle.rdf"));
+		try (ZipFile zip = new ZipFile(scufl2File)) {
+			assertNotNull(zip.getEntry("workflowBundle.rdf"));
+		}
 		scufl2File.deleteOnExit();
 //		System.out.println(scufl2File);
 	}
