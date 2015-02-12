@@ -21,6 +21,8 @@ package org.apache.taverna.robundle;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.OutputStream;
 import java.net.URI;
@@ -51,14 +53,16 @@ public class TestExample {
 		Bundles.setStringValue(in1, "Hello");
 
 		// And retrieving it
-		if (Bundles.isValue(in1)) {
-			System.out.println(Bundles.getStringValue(in1));
-		}
+		assertTrue(Bundles.isValue(in1));
+		assertEquals("Hello", Bundles.getStringValue(in1));
 
 		// Or just use the regular Files methods:
+		int lines = 0;
 		for (String line : Files.readAllLines(in1, Charset.forName("UTF-8"))) {
-			System.out.println(line);
+			assertEquals("Hello", line);
+			lines++;
 		}
+		assertEquals(1, lines);
 
 		// Binaries and large files are done through the Files API
 		try (OutputStream out = Files.newOutputStream(in1,
@@ -68,17 +72,18 @@ public class TestExample {
 		// Or Java 7 style
 		Path localFile = Files.createTempFile("", ".txt");
 		Files.copy(in1, localFile, StandardCopyOption.REPLACE_EXISTING);
-		System.out.println("Written to: " + localFile);
+		//System.out.println("Written to: " + localFile);
 
 		Files.copy(localFile, bundle.getRoot().resolve("out1"));
 
 		// Representing references
 		URI ref = URI.create("http://example.com/external.txt");
 		Path out3 = bundle.getRoot().resolve("out3");
-		System.out.println(Bundles.setReference(out3, ref));
+		Bundles.setReference(out3, ref);
 		if (Bundles.isReference(out3)) {
 			URI resolved = Bundles.getReference(out3);
-			System.out.println(resolved);
+			assertNotNull(resolved);
+			//System.out.println(resolved);
 		}
 
 		// Saving a bundle:
@@ -87,7 +92,7 @@ public class TestExample {
 		// NOTE: From now "bundle" and its Path's are CLOSED
 		// and can no longer be accessed
 
-		System.out.println("Saved to " + zip);
+		//System.out.println("Saved to " + zip);
 
 		// Loading a bundle back from disk
 		try (Bundle bundle2 = Bundles.openBundle(zip)) {

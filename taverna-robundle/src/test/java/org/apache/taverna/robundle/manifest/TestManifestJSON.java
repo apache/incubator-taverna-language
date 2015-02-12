@@ -145,7 +145,7 @@ public class TestManifestJSON {
 			Path jsonPath = bundle.getManifest().writeAsJsonLD();
 			ObjectMapper objectMapper = new ObjectMapper();
 			String jsonStr = Bundles.getStringValue(jsonPath);
-			System.out.println(jsonStr);
+			//System.out.println(jsonStr);
 			JsonNode json = objectMapper.readTree(jsonStr);
 			checkManifestJson(json);
 		}
