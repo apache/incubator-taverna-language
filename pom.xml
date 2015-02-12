@@ -86,16 +86,12 @@
 			            <!-- No headers in JSON which haven't got comments .. -->
             			<exclude>**/*.json</exclude>
 						<!-- Various files used for testing and test support only. -->
-            			<exclude>**/src/test/resources/annotated2.2-xsd.t2flow</exclude>
             			<exclude>**/src/test/resources/annotated2.2.t2flow</exclude>
             			<exclude>**/src/test/resources/annotation_with_backslash.t2flow</exclude>
-            			<exclude>**/src/test/resources/annotations_2_4-xsd.t2flow</exclude>
-            			<exclude>**/src/test/resources/annotations_2_4.t2flow</exclude>
             			<exclude>**/src/test/resources/as.t2flow</exclude>
             			<exclude>**/src/test/resources/beanshell-deps.t2flow</exclude>
             			<exclude>**/src/test/resources/component_simple.t2flow</exclude>
             			<exclude>**/src/test/resources/dataflow_link_then_merge.t2flow</exclude>
-            			<exclude>**/src/test/resources/defaultActivitiesTaverna2.2-xsd.t2flow</exclude>
             			<exclude>**/src/test/resources/defaultActivitiesTaverna2.2.t2flow</exclude>
             			<exclude>**/src/test/resources/dispatchlayers-xsd.t2flow</exclude>
             			<exclude>**/src/test/resources/dispatchlayers.t2flow</exclude>
@@ -110,28 +106,13 @@
             			<exclude>**/src/test/resources/missing_merge.t2flow</exclude>
             			<exclude>**/src/test/resources/missing_produced_by_941.t2flow</exclude>
             			<exclude>**/src/test/resources/random.t2flow</exclude>
-            			<exclude>**/src/test/resources/rest-2-2-saved-2-3-xsd.t2flow</exclude>
-            			<exclude>**/src/test/resources/rest-2-2-saved-2-3.t2flow</exclude>
-            			<exclude>**/src/test/resources/rest-2-2-xsd.t2flow</exclude>
             			<exclude>**/src/test/resources/rest-2-2.t2flow</exclude>
-            			<exclude>**/src/test/resources/rest-2-3-xsd.t2flow</exclude>
-            			<exclude>**/src/test/resources/rest-2-3.t2flow</exclude>
             			<exclude>**/src/test/resources/rshell-2-2.t2flow</exclude>
-            			<exclude>**/src/test/resources/rshell-2-3.t2flow</exclude>
-            			<exclude>**/src/test/resources/rshell-simple-2-3-xsd.t2flow</exclude>
-            			<exclude>**/src/test/resources/rshell-simple-2-3.t2flow</exclude>
-            			<exclude>**/src/test/resources/semantic_annotations__eclipse-xsd.t2flow</exclude>
             			<exclude>**/src/test/resources/semantic_annotations__eclipse.t2flow</exclude>
             			<exclude>**/src/test/resources/simple_fasta.t2flow</exclude>
             			<exclude>**/src/test/resources/sleepers.t2flow</exclude>
             			<exclude>**/src/test/resources/spreadsheet_activity_defaults_892.t2flow</exclude>
             			<exclude>**/src/test/resources/T3-1226-annotations-with-quotes.t2flow</exclude>
-            			<exclude>**/src/test/resources/tool-2-2-resaved-2-3-xsd.t2flow</exclude>
-            			<exclude>**/src/test/resources/tool-2-2-resaved-2-3.t2flow</exclude>
-            			<exclude>**/src/test/resources/tool-2-2-tweaked-xsd.t2flow</exclude>
-            			<exclude>**/src/test/resources/tool-2-2.t2flow</exclude>
-            			<exclude>**/src/test/resources/tool-2-3-xsd.t2flow</exclude>
-            			<exclude>**/src/test/resources/tool-2-3.t2flow</exclude>
             			<exclude>**/src/test/resources/xpath_workflow.t2flow</exclude>
             			<exclude>**/examples/helloanyone.t2flow</exclude>
             			<exclude>**/examples/helloworld.t2flow</exclude>
