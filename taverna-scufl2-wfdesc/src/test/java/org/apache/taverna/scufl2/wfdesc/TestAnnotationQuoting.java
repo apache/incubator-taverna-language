@@ -35,10 +35,8 @@ import org.apache.taverna.scufl2.api.io.WriterException;
 import org.apache.taverna.scufl2.wfdesc.ROEvoSerializer;
 import org.junit.Before;
 import org.junit.Test;
-import org.openrdf.query.Binding;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.Query;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.TupleQueryResult;
@@ -78,7 +76,7 @@ public class TestAnnotationQuoting {
 		myRepository.initialize();
 		RepositoryConnection con = myRepository.getConnection();
 		String root = "app://600aac93-0ea8-4e9d-9593-081149e31d5a/";
-		System.out.write(output.toByteArray());
+		//System.out.write(output.toByteArray());
 		con.add(new ByteArrayInputStream(output.toByteArray()), root, RDFFormat.TURTLE);
 		
 		TupleQueryResult results = con.prepareTupleQuery(QueryLanguage.SPARQL, 

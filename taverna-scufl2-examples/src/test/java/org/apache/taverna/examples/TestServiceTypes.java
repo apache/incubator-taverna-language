@@ -25,11 +25,8 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.IOUtils;

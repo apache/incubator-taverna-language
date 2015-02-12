@@ -120,15 +120,13 @@
             			<exclude>**/src/test/resources/rest.t2flow</exclude>
             			<exclude>**/src/test/resources/helloanyone.t2flow</exclude>
             			<exclude>**/src/test/resources/valid_component_imagemagickconvert.t2flow</exclude>
-            			<exclude>**/src/test/resources/3582.t2flow</exclude>
             			<exclude>**/src/test/resources/allTypes.t2flow</exclude>
             			<exclude>**/src/test/resources/enm-v21.t2flow</exclude>
             			<exclude>**/src/test/resources/helloworld.t2flow</exclude>
+            			<exclude>**/src/test/resources/helloworld.wfdesc.ttl</exclude>
             			<exclude>**/src/test/resources/localdependency.t2flow</exclude>
             			<exclude>**/src/test/resources/nested.t2flow</exclude>
             			<exclude>**/src/test/resources/rdf-in-example-annotation.t2flow</exclude>
-						<exclude>**/resources/**/*.wfdesc.ttl</exclude>
-						<exclude>**/resources/**/*.prov.ttl</exclude>
 						<exclude>**/mimetype</exclude><!-- really a binary format -->
 						<exclude>**/src/test/resources/*starterpacklist</exclude>
 						<exclude>**/src/test/resources/**/*.txt</exclude>

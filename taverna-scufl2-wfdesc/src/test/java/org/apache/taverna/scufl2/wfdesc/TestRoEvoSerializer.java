@@ -22,7 +22,9 @@ package org.apache.taverna.scufl2.wfdesc;
 
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -52,9 +54,11 @@ public class TestRoEvoSerializer {
 	
 	
 	@Test
-	public void workflowUUIDs() throws Exception {		
-		roEvo.workflowHistory(helloWorld.getMainWorkflow(), System.out);
-		
+	public void workflowUUIDs() throws Exception {
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		roEvo.workflowHistory(helloWorld.getMainWorkflow(), os);
+		assertTrue(500 < os.size());
+		assertTrue(os.toString("UTF-8").indexOf(" a roevo:VersionableResource , prov:Entity ;") > 0);
 	}
 	
 }

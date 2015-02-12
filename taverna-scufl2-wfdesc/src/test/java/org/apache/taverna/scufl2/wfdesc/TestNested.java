@@ -64,7 +64,7 @@ public class TestNested {
 		nestedWfdesc = File.createTempFile("scufl2-wfdesc", ".ttl");
 		nestedWfdesc.delete();
 //		allTypesWfdesc.deleteOnExit();
-		 System.out.println(nestedWfdesc);
+		// System.out.println(nestedWfdesc);
 	}
 
 	@Test
@@ -112,15 +112,18 @@ public class TestNested {
 				oldWf = wf;
 			}
 			String proc = binding.path("proc").path("value").asText();
+			assertNotNull(proc);
 			String procType = binding.path("procType").path("value").asText();
 			String procTypeshort = null;
 			if (procType != null) {
 			    procTypeshort = URI.create(procType).getFragment();
 			}
 			String procLabel = binding.path("procLabel").path("value").asText();
-			System.out.println(" Processor " + procLabel + " (" + procTypeshort
-					+ ")");
-			System.out.println("   " + proc + " " + procType);
+			assertNotNull(procLabel);
+			assertNotNull(procTypeshort);
+			//System.out.println(" Processor " + procLabel + " (" + procTypeshort
+			//		+ ")");
+			//System.out.println("   " + proc + " " + procType);
 		}
 
 		out.reset();
@@ -146,18 +149,22 @@ public class TestNested {
 		for (JsonNode binding : jsonNode.path("results").path("bindings")) {
 			String wf = binding.path("wf").path("value").asText();
 			if (!wf.equals(oldWf)) {
-				System.out.println(wf);
+				//System.out.println(wf);
 				oldWf = wf;
 			}
 			String fromProcLabel = binding.path("fromProcLabel").path("value")
 					.asText();
+			assertNotNull(fromProcLabel);
 			String toProcLabel = binding.path("toProcLabel").path("value")
 					.asText();
+			assertNotNull(toProcLabel);
 			String fromProc = binding.path("fromProc").path("value").asText();
+			assertNotNull(fromProc);
 			String toProc = binding.path("toProc").path("value").asText();
-			System.out.print(" " + fromProcLabel);
-			System.out.println(" -> " + toProcLabel);
-			System.out.println("    " + fromProc + " -> " + toProc);
+			assertNotNull(toProc);
+			//System.out.print(" " + fromProcLabel);
+			//System.out.println(" -> " + toProcLabel);
+			//System.out.println("    " + fromProc + " -> " + toProc);
 		}
 
 	}

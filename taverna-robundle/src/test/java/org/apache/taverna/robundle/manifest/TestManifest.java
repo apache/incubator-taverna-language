@@ -26,6 +26,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -81,7 +82,7 @@ public class TestManifest {
 					.replace("uuid:", ""));
 			assertEquals(s.getCreatedOn(), Files.getLastModifiedTime(path));
 		}
-		System.out.println(uris);
+		//System.out.println(uris);
 		assertFalse(uris.contains("/mimetype"));
 		assertFalse(uris.contains("/META-INF"));
 		assertTrue(uris.remove("/hello.txt"));
@@ -118,7 +119,7 @@ public class TestManifest {
 					.replace("uuid:", ""));
 			assertEquals(s.getCreatedOn(), Files.getLastModifiedTime(path));
 		}
-		System.out.println(uris);
+		//System.out.println(uris);
 		assertFalse(uris.contains("/mimetype"));
 		assertFalse(uris.contains("/META-INF"));
 		assertTrue(uris.remove("/hello.txt"));
@@ -152,7 +153,7 @@ public class TestManifest {
 				jsonld);
 		assertTrue(Files.exists(jsonld));
 		String manifestStr = new String(Files.readAllBytes(jsonld), "UTF8");
-		System.out.println(manifestStr);
+		//System.out.println(manifestStr);
 
 		// Rough and ready that somethings are there
 		// TODO: Read back and check as JSON structure
@@ -167,8 +168,8 @@ public class TestManifest {
 		try (InputStream jsonIn = Files.newInputStream(jsonld)) {
 			URI baseURI = jsonld.toUri();
 			Model model = RDFToManifest.jsonLdAsJenaModel(jsonIn, baseURI);
-			model.write(System.out, "TURTLE", baseURI.toString());
-			model.write(System.out, "RDF/XML", baseURI.toString());
+			model.write(new ByteArrayOutputStream(), "TURTLE", baseURI.toString());
+			model.write(new ByteArrayOutputStream(), "RDF/XML", baseURI.toString());
 
 			String queryStr = "PREFIX ore: <http://www.openarchives.org/ore/terms/>"
 					+ "PREFIX bundle: <http://purl.org/wf4ever/bundle#>"
@@ -186,8 +187,8 @@ public class TestManifest {
 					QuerySolution soln = results.nextSolution();
 					Resource fileRes = soln.getResource("file");
 					Resource proxy = soln.getResource("proxy");
-					System.out.println("File: " + fileRes);
-					System.out.println(asURI(fileRes));
+					//System.out.println("File: " + fileRes);
+					//System.out.println(asURI(fileRes));
 
 					Path file = Paths.get(asURI(fileRes));
 					assertTrue(Files.exists(file));
@@ -231,7 +232,7 @@ public class TestManifest {
 		// assertNotNull(manifest.getAggregation(
 		// URI.create("http://example.com/comments.txt")).getProxy());
 
-		System.out.println(manifest.getAnnotations());
+		//System.out.println(manifest.getAnnotations());
 
 		assertEquals(3, manifest.getAnnotations().size());
 

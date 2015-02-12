@@ -24,17 +24,16 @@ package org.apache.taverna.databundle;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.awt.Desktop;
-import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.NavigableMap;
 import java.util.UUID;
 
 import org.apache.taverna.databundle.DataBundles;
@@ -110,67 +109,55 @@ public class TestFullExample {
         // NOTE: From now dataBundle and its Path's are CLOSED
         // and can no longer be accessed
 
-        System.out.println("Saved to " + zip);
-        if (Desktop.isDesktopSupported()) {
-            // Open ZIP file for browsing
-            Desktop.getDesktop().open(zip.toFile());
-        }
+        //System.out.println("Saved to " + zip);
 
         // Loading a data bundle back from disk
         try (Bundle dataBundle2 = DataBundles.openBundle(zip)) {
             assertEquals(zip, dataBundle2.getSource());
 
-            System.out.println("\n== Inputs");
-            printPorts(DataBundles.getInputs(dataBundle2));
-            System.out.println("\n== Outputs");
-            printPorts(DataBundles.getOutputs(dataBundle2));
+			List<String> s = new ArrayList<>(DataBundles.getPorts(
+					DataBundles.getInputs(dataBundle2)).keySet());
+			Collections.sort(s);
+			assertEquals("[email, sequence]", s.toString());
+			assertEquals(
+					"soiland-reyes@cs.manchester.ac.uk",
+					DataBundles.getStringValue(DataBundles.getPort(
+							DataBundles.getInputs(dataBundle2), "email")));
+			s = new ArrayList<>(DataBundles.getPorts(
+					DataBundles.getOutputs(dataBundle2)).keySet());
+			Collections.sort(s);
+			assertEquals(
+					"[Graphical_output, Workflow16_getStatus_output_status, "
+					+ "getResult_3_output_output, getResult_output_output]",
+					s.toString());
+			assertEquals("FINISHED", DataBundles.getStringValue(DataBundles
+					.getPort(DataBundles.getOutputs(dataBundle2),
+							"Workflow16_getStatus_output_status")));
             
-            System.out.println("\n== Intermediates");
             UUID uuid = UUID.fromString("1f536bcf-ba43-44ec-a983-b30a45f2b739");
             Path intermediate = DataBundles.getIntermediate(dataBundle2, uuid); 
             String intermediateStr = DataBundles.getStringValue(intermediate);
             assertTrue(intermediateStr.contains("<status>RUNNING</status>"));
-            System.out.println(uuid + ": " + intermediateStr);
             
             Path prov = DataBundles.getWorkflowRunProvenance(dataBundle2);
             List<String> provLines = Files.readAllLines(prov, Charset.forName("UTF8"));
-            System.out.println("\n== Provenance");
-            for (String line : provLines.subList(13, 18)) {
-                // Show a tiny abstract
-                System.out.println(line);
-            }
+            assertEquals("	prov:startedAtTime \"2013-05-31T11:23:10.463+01:00\"^^xsd:dateTime ;",
+            		provLines.get(15));
             
-            System.out.println("\n== Workflow bundle");
             WorkflowBundle wfb = DataBundles.getWorkflowBundle(dataBundle2);
-            System.out.print(wfb.getName());
-            System.out.println(" containing processors: ");
+            assertEquals("EBI_InterproScan_NewServices", wfb.getName());
+            s=new ArrayList<>();
             for (Workflow w : wfb.getWorkflows()) {
                 for (Processor p : w.getProcessors()) {
-                    System.out.print(p.getName() + " ");
+                	s.add(p.getName());
                 }
             }
-            System.out.println();
-            
-            
-
-        }
-    }
-
-
-    private void printPorts(Path path) throws IOException {
-        NavigableMap<String, Path> ports = DataBundles.getPorts(path);
-        for (String portName : ports.keySet()) {
-            Path port = ports.get(portName);
-            if (DataBundles.isValue(port)) {
-                System.out.print(portName + ": ");
-                long size = Files.size(port);
-                if (size < 1024) {
-                    // TODO: Detect binaries properly
-                    System.out.println(DataBundles.getStringValue(port));
-                } else {
-                    System.out.println("(" + size + " bytes) " + port);
-                }
-            }
+            Collections.sort(s);
+            assertEquals("[Status, getResult, getResult_graphic, getResult_graphic_input, "
+            		+ "getResult_graphic_output, getResult_input, getResult_output, getResult_xml, "
+            		+ "getResult_xml_input, getResult_xml_output, getStatus, getStatus_input, "
+            		+ "getStatus_output, run, run_input, run_input_2, run_output, text, visual_png, "
+            		+ "xml]", s.toString());
         }
     }
 }

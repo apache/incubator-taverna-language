@@ -28,31 +28,15 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.taverna.robundle.Bundle;
 import org.apache.taverna.robundle.Bundles;
 import org.apache.taverna.robundle.manifest.Agent;
 import org.apache.taverna.robundle.manifest.Manifest;
 import org.apache.taverna.robundle.manifest.PathMetadata;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class TestCombineManifest {
-
-	@BeforeClass
-	public static void setLogging() {
-		Logger logger = Logger.getLogger("");
-		// logger.setLevel(Level.FINER);
-		ConsoleHandler console = new ConsoleHandler();
-		console.setLevel(Level.FINEST);
-		logger.addHandler(console);
-		Logger.getLogger("org.apache.taverna.robundle.manifest.combine")
-				.setLevel(Level.FINEST);
-	}
-
 	@Test
 	public void convertAslanidi() throws Exception {
 		Path file = Files.createTempFile("aslanidi", ".zip");
@@ -94,7 +78,7 @@ public class TestCombineManifest {
 				"/combine/Boris.omex")) {
 			Files.copy(src, file, StandardCopyOption.REPLACE_EXISTING);
 		}
-		System.out.println(file);
+		//System.out.println(file);
 		try (Bundle bundle = Bundles.openBundle(file)) {
 			Manifest manifest = bundle.getManifest();
 			Path manifestXml = bundle.getRoot().resolve("manifest.xml");
@@ -122,7 +106,7 @@ public class TestCombineManifest {
 				"/combine/DirectoryMadness.omex")) {
 			Files.copy(src, file, StandardCopyOption.REPLACE_EXISTING);
 		}
-		System.out.println(file);
+		//System.out.println(file);
 		try (Bundle bundle = Bundles.openBundle(file)) {
 			Manifest manifest = bundle.getManifest();
 			Path manifestXml = bundle.getRoot().resolve("manifest.xml");
@@ -162,7 +146,7 @@ public class TestCombineManifest {
 				"/combine/DirectoryMadnessZipped.omex")) {
 			Files.copy(src, file, StandardCopyOption.REPLACE_EXISTING);
 		}
-		System.out.println(file);
+		//System.out.println(file);
 		try (Bundle bundle = Bundles.openBundle(file)) {
 
 		}
