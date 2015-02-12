@@ -24,7 +24,7 @@
     </parent>
     <artifactId>taverna-scufl2-wfdesc</artifactId>
     <packaging>bundle</packaging>
-    <name>Apache Taverna Scufl2 wfdesc export</name>
+    <name>Apache Taverna Scufl 2 wfdesc export</name>
     <description>Convert Scufl2 workflow to wfdesc structure (from Wf4Ever RO ontology)</description>
     <properties>
       <!-- ancient sesame that works with elmo. Only exists now
