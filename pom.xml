@@ -64,9 +64,17 @@
 						<!-- META-INF services files can include comments but a license header 
 							would be unecessarily clutter so we exclude these -->
 						<exclude>**/META-INF/services/*</exclude>
+			            <!-- No headers in JSON which haven't got comments ... -->
+            			<exclude>**/*.json</exclude>
+						<!-- Really a binary format, but must look like text -->
+						<exclude>**/mimetype</exclude>
+						<!-- Effectively a binary format -->
+						<exclude>**/*.url</exclude>
 						<!-- The following schemas are W3C; automatic retrieval during build is 
 							blocked by their administrative processes, yet they are explicitly
-							standardised documents intended for wide use. -->
+							standardised documents intended for wide use. Their licenses should
+							be standard W3C ones, but that's never stated explicitly by the W3C.
+							"Thanks!" -->
 						<exclude>**/xml.xsd</exclude>
 						<exclude>**/xenc-schema.xsd</exclude>
 						<exclude>**/xmldsig-core-schema.xsd</exclude>
@@ -76,64 +84,66 @@
 							has no copyright statement at all in it. -->
 						<exclude>**/foaf.rdf</exclude>
 						<!-- The following contain a mix of licenses. PROBLEM! -->
-						<exclude>**/src/main/resources/ontologies/*.owl</exclude>
-						<exclude>**/src/main/resources/ontologies/*.rdf</exclude>
-						<exclude>**/src/main/resources/org/purl/wf4ever/wfdesc/roterms.ttl</exclude>
-						<exclude>**/src/main/resources/org/purl/wf4ever/wfdesc/wf4ever.ttl</exclude>
-						<exclude>**/src/main/resources/org/purl/wf4ever/wfdesc/wfdesc.ttl</exclude>
-						<exclude>**/src/main/resources/org/purl/wf4ever/wfdesc/wfprov.ttl</exclude>
-						<exclude>**/src/main/resources/org/w3/prov-o.ttl</exclude>
-			            <!-- No headers in JSON which haven't got comments .. -->
-            			<exclude>**/*.json</exclude>
+						<exclude>/src/main/resources/ontologies/*.owl</exclude>
+						<exclude>/src/main/resources/ontologies/*.rdf</exclude>
+						<exclude>/src/main/resources/org/purl/wf4ever/wfdesc/roterms.ttl</exclude>
+						<exclude>/src/main/resources/org/purl/wf4ever/wfdesc/wf4ever.ttl</exclude>
+						<exclude>/src/main/resources/org/purl/wf4ever/wfdesc/wfdesc.ttl</exclude>
+						<exclude>/src/main/resources/org/purl/wf4ever/wfdesc/wfprov.ttl</exclude>
+						<exclude>/src/main/resources/org/w3/prov-o.ttl</exclude>
 						<!-- Various files used for testing and test support only. -->
-            			<exclude>**/src/test/resources/annotated2.2.t2flow</exclude>
-            			<exclude>**/src/test/resources/annotation_with_backslash.t2flow</exclude>
-            			<exclude>**/src/test/resources/as.t2flow</exclude>
-            			<exclude>**/src/test/resources/beanshell-deps.t2flow</exclude>
-            			<exclude>**/src/test/resources/component_simple.t2flow</exclude>
-            			<exclude>**/src/test/resources/dataflow_link_then_merge.t2flow</exclude>
-            			<exclude>**/src/test/resources/defaultActivitiesTaverna2.2.t2flow</exclude>
-            			<exclude>**/src/test/resources/dispatchlayers-xsd.t2flow</exclude>
-            			<exclude>**/src/test/resources/dispatchlayers.t2flow</exclude>
-            			<exclude>**/src/test/resources/fasta_and_pscan.t2flow</exclude>
-            			<exclude>**/src/test/resources/fasta_pscan_and_dbfetch.t2flow</exclude>
-            			<exclude>**/src/test/resources/interaction-with-strange-loop.t2flow</exclude>
-            			<exclude>**/src/test/resources/interaction_multiple_choice.t2flow</exclude>
-            			<exclude>**/src/test/resources/interaction_simple_tell.t2flow</exclude>
-            			<exclude>**/src/test/resources/iterationstrategies.t2flow</exclude>
-            			<exclude>**/src/test/resources/merge_fun.t2flow</exclude>
-            			<exclude>**/src/test/resources/merge_then_dataflow_link.t2flow</exclude>
-            			<exclude>**/src/test/resources/missing_merge.t2flow</exclude>
-            			<exclude>**/src/test/resources/missing_produced_by_941.t2flow</exclude>
-            			<exclude>**/src/test/resources/random.t2flow</exclude>
-            			<exclude>**/src/test/resources/rest-2-2.t2flow</exclude>
-            			<exclude>**/src/test/resources/rshell-2-2.t2flow</exclude>
-            			<exclude>**/src/test/resources/semantic_annotations__eclipse.t2flow</exclude>
-            			<exclude>**/src/test/resources/simple_fasta.t2flow</exclude>
-            			<exclude>**/src/test/resources/sleepers.t2flow</exclude>
-            			<exclude>**/src/test/resources/spreadsheet_activity_defaults_892.t2flow</exclude>
-            			<exclude>**/src/test/resources/T3-1226-annotations-with-quotes.t2flow</exclude>
-            			<exclude>**/src/test/resources/xpath_workflow.t2flow</exclude>
-            			<exclude>**/examples/helloanyone.t2flow</exclude>
-            			<exclude>**/examples/helloworld.t2flow</exclude>
-            			<exclude>**/src/test/resources/apiconsumer.t2flow</exclude>
-            			<exclude>**/src/test/resources/rest.t2flow</exclude>
-            			<exclude>**/src/test/resources/helloanyone.t2flow</exclude>
-            			<exclude>**/src/test/resources/valid_component_imagemagickconvert.t2flow</exclude>
-            			<exclude>**/src/test/resources/allTypes.t2flow</exclude>
-            			<exclude>**/src/test/resources/enm-v21.t2flow</exclude>
-            			<exclude>**/src/test/resources/helloworld.t2flow</exclude>
-            			<exclude>**/src/test/resources/helloworld.wfdesc.ttl</exclude>
-            			<exclude>**/src/test/resources/localdependency.t2flow</exclude>
-            			<exclude>**/src/test/resources/nested.t2flow</exclude>
-            			<exclude>**/src/test/resources/rdf-in-example-annotation.t2flow</exclude>
-						<exclude>**/mimetype</exclude><!-- really a binary format -->
-						<exclude>**/src/test/resources/*starterpacklist</exclude>
-						<exclude>**/src/test/resources/**/*.txt</exclude>
-						<exclude>**/src/test/resources/**/*.url</exclude>
-						<exclude>**/src/test/resources/**/workflow*.xml</exclude>
-						<exclude>**/resources/sample-output/outputs/**</exclude>
-						<exclude>**/src/test/resources/full-example/**</exclude>
+						<!-- THESE SUPPORT COMMENTS with # --><!--taverna-integration-test-->
+						<exclude>/src/test/resources/t172starterpacklist</exclude>
+						<exclude>/src/test/resources/t230starterpacklist</exclude>
+						<!-- THESE ARE XML AND SUPPORT COMMENTS -->
+            			<exclude>/src/test/resources/annotated2.2.t2flow</exclude>
+            			<exclude>/src/test/resources/annotation_with_backslash.t2flow</exclude>
+            			<exclude>/src/test/resources/as.t2flow</exclude>
+            			<exclude>/src/test/resources/beanshell-deps.t2flow</exclude>
+            			<exclude>/src/test/resources/component_simple.t2flow</exclude>
+            			<exclude>/src/test/resources/dataflow_link_then_merge.t2flow</exclude>
+            			<exclude>/src/test/resources/defaultActivitiesTaverna2.2.t2flow</exclude>
+            			<exclude>/src/test/resources/dispatchlayers-xsd.t2flow</exclude>
+            			<exclude>/src/test/resources/dispatchlayers.t2flow</exclude>
+            			<exclude>/src/test/resources/fasta_and_pscan.t2flow</exclude>
+            			<exclude>/src/test/resources/fasta_pscan_and_dbfetch.t2flow</exclude>
+            			<exclude>/src/test/resources/interaction-with-strange-loop.t2flow</exclude>
+            			<exclude>/src/test/resources/interaction_multiple_choice.t2flow</exclude>
+            			<exclude>/src/test/resources/interaction_simple_tell.t2flow</exclude>
+            			<exclude>/src/test/resources/iterationstrategies.t2flow</exclude>
+            			<exclude>/src/test/resources/merge_fun.t2flow</exclude>
+            			<exclude>/src/test/resources/merge_then_dataflow_link.t2flow</exclude>
+            			<exclude>/src/test/resources/missing_merge.t2flow</exclude>
+            			<exclude>/src/test/resources/missing_produced_by_941.t2flow</exclude>
+            			<exclude>/src/test/resources/random.t2flow</exclude>
+            			<exclude>/src/test/resources/rest-2-2.t2flow</exclude>
+            			<exclude>/src/test/resources/rshell-2-2.t2flow</exclude>
+            			<exclude>/src/test/resources/semantic_annotations__eclipse.t2flow</exclude>
+            			<exclude>/src/test/resources/simple_fasta.t2flow</exclude>
+            			<exclude>/src/test/resources/sleepers.t2flow</exclude>
+            			<exclude>/src/test/resources/spreadsheet_activity_defaults_892.t2flow</exclude>
+            			<exclude>/src/test/resources/T3-1226-annotations-with-quotes.t2flow</exclude>
+            			<exclude>/src/test/resources/xpath_workflow.t2flow</exclude>
+            			<exclude>/examples/helloanyone.t2flow</exclude>
+            			<exclude>/examples/helloworld.t2flow</exclude>
+            			<exclude>/src/test/resources/apiconsumer.t2flow</exclude>
+            			<exclude>/src/test/resources/rest.t2flow</exclude>
+            			<exclude>/src/test/resources/helloanyone.t2flow</exclude>
+            			<exclude>/src/test/resources/valid_component_imagemagickconvert.t2flow</exclude>
+            			<exclude>/src/test/resources/allTypes.t2flow</exclude>
+            			<exclude>/src/test/resources/enm-v21.t2flow</exclude>
+            			<exclude>/src/test/resources/helloworld.t2flow</exclude>
+            			<exclude>/src/test/resources/helloworld.wfdesc.ttl</exclude>
+            			<exclude>/src/test/resources/localdependency.t2flow</exclude>
+            			<exclude>/src/test/resources/nested.t2flow</exclude>
+            			<exclude>/src/test/resources/rdf-in-example-annotation.t2flow</exclude>
+            			<exclude>/src/test/resources/workflow10.xml</exclude>
+            			<exclude>/src/test/resources/full-example/ebi_interproscan_newservices_900329.t2flow</exclude>
+						<!-- Cannot contain comments; content must match program output. -->
+						<exclude>/src/test/resources/org/apache/taverna/scufl2/api/io/HelloWorld.txt</exclude>
+						<exclude>/src/test/resources/as.txt</exclude>
+						<!-- Expanded data bundle. Generated. -->
+						<exclude>/src/test/resources/full-example/ebi-wfrun-2013-05-31/</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
