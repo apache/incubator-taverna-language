@@ -49,13 +49,13 @@
 				<configuration>
 					<useDefaultExcludes>true</useDefaultExcludes>
 					<excludes>
-					    <!-- Following excludes needed for taverna-scufl2-rdf,
-					    taverna-scufl2-integration-tests and taverna-scufl2-validation-integration
-					    subfolders that should be modules but are not. -->
-					    <exclude>**/.classpath</exclude>
-					    <exclude>**/.project</exclude>
-					    <exclude>**/.settings/</exclude>
-					    <exclude>**/target/</exclude>
+						<!-- Following excludes needed for taverna-scufl2-rdf,
+						taverna-scufl2-integration-tests and taverna-scufl2-validation-integration
+						subfolders that should be modules but are not. -->
+						<exclude>**/.classpath</exclude>
+						<exclude>**/.project</exclude>
+						<exclude>**/.settings/</exclude>
+						<exclude>**/target/</exclude>
 						<!-- Text and Markdown files are typically used only for documentation 
 							purposes and license declarations are usually spurious in these files since 
 							often they will refer to the LICENSE/NOTICE for users to find the actual 
@@ -64,8 +64,8 @@
 						<!-- META-INF services files can include comments but a license header 
 							would be unecessarily clutter so we exclude these -->
 						<exclude>**/META-INF/services/*</exclude>
-			            <!-- No headers in JSON which haven't got comments ... -->
-            			<exclude>**/*.json</exclude>
+						<!-- No headers in JSON which haven't got comments ... -->
+						<exclude>**/*.json</exclude>
 						<!-- Really a binary format, but must look like text -->
 						<exclude>**/mimetype</exclude>
 						<!-- Effectively a binary format -->
@@ -96,49 +96,36 @@
 						<exclude>/src/test/resources/t172starterpacklist</exclude>
 						<exclude>/src/test/resources/t230starterpacklist</exclude>
 						<!-- THESE ARE XML AND SUPPORT COMMENTS -->
-            			<exclude>/src/test/resources/annotated2.2.t2flow</exclude>
-            			<exclude>/src/test/resources/annotation_with_backslash.t2flow</exclude>
-            			<exclude>/src/test/resources/as.t2flow</exclude>
-            			<exclude>/src/test/resources/beanshell-deps.t2flow</exclude>
-            			<exclude>/src/test/resources/component_simple.t2flow</exclude>
-            			<exclude>/src/test/resources/dataflow_link_then_merge.t2flow</exclude>
-            			<exclude>/src/test/resources/defaultActivitiesTaverna2.2.t2flow</exclude>
-            			<exclude>/src/test/resources/dispatchlayers-xsd.t2flow</exclude>
-            			<exclude>/src/test/resources/dispatchlayers.t2flow</exclude>
-            			<exclude>/src/test/resources/fasta_and_pscan.t2flow</exclude>
-            			<exclude>/src/test/resources/fasta_pscan_and_dbfetch.t2flow</exclude>
-            			<exclude>/src/test/resources/interaction-with-strange-loop.t2flow</exclude>
-            			<exclude>/src/test/resources/interaction_multiple_choice.t2flow</exclude>
-            			<exclude>/src/test/resources/interaction_simple_tell.t2flow</exclude>
-            			<exclude>/src/test/resources/iterationstrategies.t2flow</exclude>
-            			<exclude>/src/test/resources/merge_fun.t2flow</exclude>
-            			<exclude>/src/test/resources/merge_then_dataflow_link.t2flow</exclude>
-            			<exclude>/src/test/resources/missing_merge.t2flow</exclude>
-            			<exclude>/src/test/resources/missing_produced_by_941.t2flow</exclude>
-            			<exclude>/src/test/resources/random.t2flow</exclude>
-            			<exclude>/src/test/resources/rest-2-2.t2flow</exclude>
-            			<exclude>/src/test/resources/rshell-2-2.t2flow</exclude>
-            			<exclude>/src/test/resources/semantic_annotations__eclipse.t2flow</exclude>
-            			<exclude>/src/test/resources/simple_fasta.t2flow</exclude>
-            			<exclude>/src/test/resources/sleepers.t2flow</exclude>
-            			<exclude>/src/test/resources/spreadsheet_activity_defaults_892.t2flow</exclude>
-            			<exclude>/src/test/resources/T3-1226-annotations-with-quotes.t2flow</exclude>
-            			<exclude>/src/test/resources/xpath_workflow.t2flow</exclude>
-            			<exclude>/examples/helloanyone.t2flow</exclude>
-            			<exclude>/examples/helloworld.t2flow</exclude>
-            			<exclude>/src/test/resources/apiconsumer.t2flow</exclude>
-            			<exclude>/src/test/resources/rest.t2flow</exclude>
-            			<exclude>/src/test/resources/helloanyone.t2flow</exclude>
-            			<exclude>/src/test/resources/valid_component_imagemagickconvert.t2flow</exclude>
-            			<exclude>/src/test/resources/allTypes.t2flow</exclude>
-            			<exclude>/src/test/resources/enm-v21.t2flow</exclude>
-            			<exclude>/src/test/resources/helloworld.t2flow</exclude>
-            			<exclude>/src/test/resources/helloworld.wfdesc.ttl</exclude>
-            			<exclude>/src/test/resources/localdependency.t2flow</exclude>
-            			<exclude>/src/test/resources/nested.t2flow</exclude>
-            			<exclude>/src/test/resources/rdf-in-example-annotation.t2flow</exclude>
-            			<exclude>/src/test/resources/workflow10.xml</exclude>
-            			<exclude>/src/test/resources/full-example/ebi_interproscan_newservices_900329.t2flow</exclude>
+						<exclude>/src/test/resources/annotation_with_backslash.t2flow</exclude>
+						<exclude>/src/test/resources/beanshell-deps.t2flow</exclude>
+						<exclude>/src/test/resources/component_simple.t2flow</exclude>
+						<exclude>/src/test/resources/dataflow_link_then_merge.t2flow</exclude>
+						<exclude>/src/test/resources/dispatchlayers-xsd.t2flow</exclude>
+						<exclude>/src/test/resources/dispatchlayers.t2flow</exclude>
+						<exclude>/src/test/resources/fasta_and_pscan.t2flow</exclude>
+						<exclude>/src/test/resources/fasta_pscan_and_dbfetch.t2flow</exclude>
+						<exclude>/src/test/resources/interaction-with-strange-loop.t2flow</exclude>
+						<exclude>/src/test/resources/interaction_multiple_choice.t2flow</exclude>
+						<exclude>/src/test/resources/interaction_simple_tell.t2flow</exclude>
+						<exclude>/src/test/resources/iterationstrategies.t2flow</exclude><!-- TOM -->
+						<exclude>/src/test/resources/merge_fun.t2flow</exclude>
+						<exclude>/src/test/resources/merge_then_dataflow_link.t2flow</exclude>
+						<exclude>/src/test/resources/missing_merge.t2flow</exclude>
+						<exclude>/src/test/resources/missing_produced_by_941.t2flow</exclude>
+						<exclude>/src/test/resources/rest-2-2.t2flow</exclude>
+						<exclude>/src/test/resources/rshell-2-2.t2flow</exclude>
+						<exclude>/src/test/resources/simple_fasta.t2flow</exclude>
+						<exclude>/src/test/resources/sleepers.t2flow</exclude>
+						<exclude>/src/test/resources/apiconsumer.t2flow</exclude>
+						<exclude>/src/test/resources/rest.t2flow</exclude>
+						<exclude>/src/test/resources/valid_component_imagemagickconvert.t2flow</exclude>
+						<exclude>/src/test/resources/enm-v21.t2flow</exclude>
+						<exclude>/src/test/resources/helloworld.wfdesc.ttl</exclude>
+						<exclude>/src/test/resources/localdependency.t2flow</exclude>
+						<exclude>/src/test/resources/nested.t2flow</exclude>
+						<exclude>/src/test/resources/rdf-in-example-annotation.t2flow</exclude>
+						<exclude>/src/test/resources/workflow10.xml</exclude>
+						<exclude>/src/test/resources/full-example/ebi_interproscan_newservices_900329.t2flow</exclude>
 						<!-- Cannot contain comments; content must match program output. -->
 						<exclude>/src/test/resources/org/apache/taverna/scufl2/api/io/HelloWorld.txt</exclude>
 						<exclude>/src/test/resources/as.txt</exclude>
@@ -173,7 +160,7 @@
 								<licenseMerge>Eclipse Public License, Version 1.0|Eclipse Public License</licenseMerge>
 							</licenseMerges>
 						</configuration>
-	                </execution>
+					</execution>
 				</executions>
 			</plugin>
 			-->
@@ -344,7 +331,7 @@
 	<modules>
 		<module>taverna-scufl2-ucfpackage</module>
 		<module>taverna-scufl2-api</module>
-    <module>taverna-scufl2-examples</module>
+		<module>taverna-scufl2-examples</module>
 		<module>taverna-scufl2-rdfxml</module>
 		<module>taverna-scufl2-t2flow</module>
 		<module>taverna-scufl2-scufl</module>
