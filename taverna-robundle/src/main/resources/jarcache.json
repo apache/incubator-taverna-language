@@ -1,8 +1,0 @@
-[
-  {
-  	"Content-Location": "https://w3id.org/bundle/context",
-  	"X-Classpath": "contexts/bundle.jsonld",
-  	"Content-Type": "application/ld+json"
-  }
-]
-
