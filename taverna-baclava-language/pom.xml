@@ -27,7 +27,7 @@ under the License.
 	</parent>
   <artifactId>baclava-language</artifactId>
   <version>0.0.1-SNAPSHOT</version>
-  <name>baclava</name>
+  <name>Apache Taverna Baclava support</name>
   <packaging>bundle</packaging>
   <description>Support for reading and writing Baclava files</description>
   <build>
