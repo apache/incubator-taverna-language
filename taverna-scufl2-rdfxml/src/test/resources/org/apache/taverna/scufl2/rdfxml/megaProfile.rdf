@@ -1,0 +1,696 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+
+-->
+
+<rdf:RDF xmlns="http://ns.taverna.org.uk/2010/scufl2#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ProfileDocument" xml:base="taverna-2.2.0/" xsi:schemaLocation="http://ns.taverna.org.uk/2010/scufl2# http://ns.taverna.org.uk/2010/scufl2/scufl2.xsd http://www.w3.org/1999/02/22-rdf-syntax-ns# http://ns.taverna.org.uk/2010/scufl2/rdf.xsd">
+    <Profile rdf:about="">
+        <name>taverna-2.2.0</name>
+        <activateConfiguration rdf:resource="configuration/Content_list/"/>
+        <activateConfiguration rdf:resource="configuration/Format_as_GFF/"/>
+        <activateConfiguration rdf:resource="configuration/Get_XML_result/"/>
+        <activateConfiguration rdf:resource="configuration/Get_XML_result_type_defaultValue/"/>
+        <activateConfiguration rdf:resource="configuration/Get_text_result/"/>
+        <activateConfiguration rdf:resource="configuration/Get_text_result_type_defaultValue/"/>
+        <activateConfiguration rdf:resource="configuration/Input_data/"/>
+        <activateConfiguration rdf:resource="configuration/Input_data_type_defaultValue/"/>
+        <activateConfiguration rdf:resource="configuration/Job_params/"/>
+        <activateConfiguration rdf:resource="configuration/Job_params_async_defaultValue/"/>
+        <activateConfiguration rdf:resource="configuration/Job_params_crc_defaultValue/"/>
+        <activateConfiguration rdf:resource="configuration/Job_params_goterms_defaultValue/"/>
+        <activateConfiguration rdf:resource="configuration/Job_params_seqtype_defaultValue/"/>
+        <activateConfiguration rdf:resource="configuration/Unpack_XML_result/"/>
+        <activateConfiguration rdf:resource="configuration/Unpack_text_result/"/>
+        <activateConfiguration rdf:resource="configuration/checkStatus/"/>
+        <activateConfiguration rdf:resource="configuration/runInterProScan/"/>
+    </Profile>
+    <Activity rdf:about="activity/Content_list/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/xml-splitter/in"/>
+        <name>Content_list</name>
+        <inputActivityPort>
+            <InputActivityPort rdf:about="activity/Content_list/in/WSArrayofData">
+                <name>WSArrayofData</name>
+                <portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</portDepth>
+            </InputActivityPort>
+        </inputActivityPort>
+        <outputActivityPort>
+            <OutputActivityPort rdf:about="activity/Content_list/out/output">
+                <name>output</name>
+                <portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+                <granularPortDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</granularPortDepth>
+            </OutputActivityPort>
+        </outputActivityPort>
+    </Activity>
+    <Activity rdf:about="activity/Format_as_GFF/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/beanshell"/>
+        <name>Format_as_GFF</name>
+        <inputActivityPort>
+            <InputActivityPort rdf:about="activity/Format_as_GFF/in/interproscan_text">
+                <name>interproscan_text</name>
+                <portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+            </InputActivityPort>
+        </inputActivityPort>
+        <outputActivityPort>
+            <OutputActivityPort rdf:about="activity/Format_as_GFF/out/interproscan_gff">
+                <name>interproscan_gff</name>
+                <portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+                <granularPortDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</granularPortDepth>
+            </OutputActivityPort>
+        </outputActivityPort>
+    </Activity>
+    <Activity rdf:about="activity/Get_XML_result/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/wsdl"/>
+        <name>Get_XML_result</name>
+        <inputActivityPort>
+            <InputActivityPort rdf:about="activity/Get_XML_result/in/jobid">
+                <name>jobid</name>
+            </InputActivityPort>
+        </inputActivityPort>
+        <inputActivityPort>
+            <InputActivityPort rdf:about="activity/Get_XML_result/in/type">
+                <name>type</name>
+            </InputActivityPort>
+        </inputActivityPort>
+        <outputActivityPort>
+            <OutputActivityPort rdf:about="activity/Get_XML_result/out/attachmentList">
+                <name>attachmentList</name>
+            </OutputActivityPort>
+        </outputActivityPort>
+        <outputActivityPort>
+            <OutputActivityPort rdf:about="activity/Get_XML_result/out/result">
+                <name>result</name>
+            </OutputActivityPort>
+        </outputActivityPort>
+    </Activity>
+    <Activity rdf:about="activity/Get_XML_result_type_defaultValue/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/constant"/>
+        <name>Get_XML_result_type_defaultValue</name>
+        <outputActivityPort>
+            <OutputActivityPort rdf:about="activity/Get_XML_result_type_defaultValue/out/value">
+                <name>value</name>
+            </OutputActivityPort>
+        </outputActivityPort>
+    </Activity>
+    <Activity rdf:about="activity/Get_text_result/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/wsdl"/>
+        <name>Get_text_result</name>
+        <inputActivityPort>
+            <InputActivityPort rdf:about="activity/Get_text_result/in/jobid">
+                <name>jobid</name>
+            </InputActivityPort>
+        </inputActivityPort>
+        <inputActivityPort>
+            <InputActivityPort rdf:about="activity/Get_text_result/in/type">
+                <name>type</name>
+            </InputActivityPort>
+        </inputActivityPort>
+        <outputActivityPort>
+            <OutputActivityPort rdf:about="activity/Get_text_result/out/attachmentList">
+                <name>attachmentList</name>
+            </OutputActivityPort>
+        </outputActivityPort>
+        <outputActivityPort>
+            <OutputActivityPort rdf:about="activity/Get_text_result/out/result">
+                <name>result</name>
+            </OutputActivityPort>
+        </outputActivityPort>
+    </Activity>
+    <Activity rdf:about="activity/Get_text_result_type_defaultValue/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/constant"/>
+        <name>Get_text_result_type_defaultValue</name>
+        <outputActivityPort>
+            <OutputActivityPort rdf:about="activity/Get_text_result_type_defaultValue/out/value">
+                <name>value</name>
+            </OutputActivityPort>
+        </outputActivityPort>
+    </Activity>
+    <Activity rdf:about="activity/Input_data/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/xml-splitter/in"/>
+        <name>Input_data</name>
+        <inputActivityPort>
+            <InputActivityPort rdf:about="activity/Input_data/in/content">
+                <name>content</name>
+                <portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+            </InputActivityPort>
+        </inputActivityPort>
+        <inputActivityPort>
+            <InputActivityPort rdf:about="activity/Input_data/in/type">
+                <name>type</name>
+                <portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+            </InputActivityPort>
+        </inputActivityPort>
+        <outputActivityPort>
+            <OutputActivityPort rdf:about="activity/Input_data/out/output">
+                <name>output</name>
+                <portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+                <granularPortDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</granularPortDepth>
+            </OutputActivityPort>
+        </outputActivityPort>
+    </Activity>
+    <Activity rdf:about="activity/Input_data_type_defaultValue/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/constant"/>
+        <name>Input_data_type_defaultValue</name>
+        <outputActivityPort>
+            <OutputActivityPort rdf:about="activity/Input_data_type_defaultValue/out/value">
+                <name>value</name>
+            </OutputActivityPort>
+        </outputActivityPort>
+    </Activity>
+    <Activity rdf:about="activity/Job_params/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/xml-splitter/in"/>
+        <name>Job_params</name>
+        <inputActivityPort>
+            <InputActivityPort rdf:about="activity/Job_params/in/app">
+                <name>app</name>
+                <portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+            </InputActivityPort>
+        </inputActivityPort>
+        <inputActivityPort>
+            <InputActivityPort rdf:about="activity/Job_params/in/async">
+                <name>async</name>
+                <portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+            </InputActivityPort>
+        </inputActivityPort>
+        <inputActivityPort>
+            <InputActivityPort rdf:about="activity/Job_params/in/crc">
+                <name>crc</name>
+                <portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+            </InputActivityPort>
+        </inputActivityPort>
+        <inputActivityPort>
+            <InputActivityPort rdf:about="activity/Job_params/in/email">
+                <name>email</name>
+                <portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+            </InputActivityPort>
+        </inputActivityPort>
+        <inputActivityPort>
+            <InputActivityPort rdf:about="activity/Job_params/in/goterms">
+                <name>goterms</name>
+                <portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+            </InputActivityPort>
+        </inputActivityPort>
+        <inputActivityPort>
+            <InputActivityPort rdf:about="activity/Job_params/in/outformat">
+                <name>outformat</name>
+                <portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+            </InputActivityPort>
+        </inputActivityPort>
+        <inputActivityPort>
+            <InputActivityPort rdf:about="activity/Job_params/in/seqtype">
+                <name>seqtype</name>
+                <portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+            </InputActivityPort>
+        </inputActivityPort>
+        <inputActivityPort>
+            <InputActivityPort rdf:about="activity/Job_params/in/trlen">
+                <name>trlen</name>
+                <portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+            </InputActivityPort>
+        </inputActivityPort>
+        <inputActivityPort>
+            <InputActivityPort rdf:about="activity/Job_params/in/trtable">
+                <name>trtable</name>
+                <portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+            </InputActivityPort>
+        </inputActivityPort>
+        <outputActivityPort>
+            <OutputActivityPort rdf:about="activity/Job_params/out/output">
+                <name>output</name>
+                <portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+                <granularPortDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</granularPortDepth>
+            </OutputActivityPort>
+        </outputActivityPort>
+    </Activity>
+    <Activity rdf:about="activity/Job_params_async_defaultValue/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/constant"/>
+        <name>Job_params_async_defaultValue</name>
+        <outputActivityPort>
+            <OutputActivityPort rdf:about="activity/Job_params_async_defaultValue/out/value">
+                <name>value</name>
+            </OutputActivityPort>
+        </outputActivityPort>
+    </Activity>
+    <Activity rdf:about="activity/Job_params_crc_defaultValue/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/constant"/>
+        <name>Job_params_crc_defaultValue</name>
+        <outputActivityPort>
+            <OutputActivityPort rdf:about="activity/Job_params_crc_defaultValue/out/value">
+                <name>value</name>
+            </OutputActivityPort>
+        </outputActivityPort>
+    </Activity>
+    <Activity rdf:about="activity/Job_params_goterms_defaultValue/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/constant"/>
+        <name>Job_params_goterms_defaultValue</name>
+        <outputActivityPort>
+            <OutputActivityPort rdf:about="activity/Job_params_goterms_defaultValue/out/value">
+                <name>value</name>
+            </OutputActivityPort>
+        </outputActivityPort>
+    </Activity>
+    <Activity rdf:about="activity/Job_params_seqtype_defaultValue/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/constant"/>
+        <name>Job_params_seqtype_defaultValue</name>
+        <outputActivityPort>
+            <OutputActivityPort rdf:about="activity/Job_params_seqtype_defaultValue/out/value">
+                <name>value</name>
+            </OutputActivityPort>
+        </outputActivityPort>
+    </Activity>
+    <Activity rdf:about="activity/Unpack_XML_result/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/beanshell"/>
+        <name>Unpack_XML_result</name>
+        <inputActivityPort>
+            <InputActivityPort rdf:about="activity/Unpack_XML_result/in/bytes">
+                <name>bytes</name>
+                <portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+            </InputActivityPort>
+        </inputActivityPort>
+        <outputActivityPort>
+            <OutputActivityPort rdf:about="activity/Unpack_XML_result/out/string">
+                <name>string</name>
+                <portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+                <granularPortDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</granularPortDepth>
+            </OutputActivityPort>
+        </outputActivityPort>
+    </Activity>
+    <Activity rdf:about="activity/Unpack_text_result/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/beanshell"/>
+        <name>Unpack_text_result</name>
+        <inputActivityPort>
+            <InputActivityPort rdf:about="activity/Unpack_text_result/in/bytes">
+                <name>bytes</name>
+                <portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+            </InputActivityPort>
+        </inputActivityPort>
+        <outputActivityPort>
+            <OutputActivityPort rdf:about="activity/Unpack_text_result/out/string">
+                <name>string</name>
+                <portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+                <granularPortDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</granularPortDepth>
+            </OutputActivityPort>
+        </outputActivityPort>
+    </Activity>
+    <Activity rdf:about="activity/checkStatus/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/wsdl"/>
+        <name>checkStatus</name>
+        <inputActivityPort>
+            <InputActivityPort rdf:about="activity/checkStatus/in/jobid">
+                <name>jobid</name>
+            </InputActivityPort>
+        </inputActivityPort>
+        <outputActivityPort>
+            <OutputActivityPort rdf:about="activity/checkStatus/out/status">
+                <name>status</name>
+            </OutputActivityPort>
+        </outputActivityPort>
+    </Activity>
+    <Activity rdf:about="activity/runInterProScan/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/wsdl"/>
+        <name>runInterProScan</name>
+        <inputActivityPort>
+            <InputActivityPort rdf:about="activity/runInterProScan/in/content">
+                <name>content</name>
+            </InputActivityPort>
+        </inputActivityPort>
+        <inputActivityPort>
+            <InputActivityPort rdf:about="activity/runInterProScan/in/params">
+                <name>params</name>
+            </InputActivityPort>
+        </inputActivityPort>
+        <outputActivityPort>
+            <OutputActivityPort rdf:about="activity/runInterProScan/out/attachmentList">
+                <name>attachmentList</name>
+            </OutputActivityPort>
+        </outputActivityPort>
+        <outputActivityPort>
+            <OutputActivityPort rdf:about="activity/runInterProScan/out/jobid">
+                <name>jobid</name>
+            </OutputActivityPort>
+        </outputActivityPort>
+    </Activity>
+    <Configuration rdf:about="configuration/Content_list/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/xml-splitter#Config"/>
+        <name>Content_list</name>
+        <configure rdf:resource="activity/Content_list/"/>
+        <wrappedType:wrappedType xmlns:wrappedType="http://ns.taverna.org.uk/2010/activity/xml-splitter#" rdf:parseType="Literal">
+            <s:extensions xmlns:s="http://org.embl.ebi.escience/xscufl/0.1alpha">
+                <s:arraytype name="content" optional="false" qname="{http://www.ebi.ac.uk/WSInterProScan}WSArrayofData" typename="WSArrayofData" unbounded="false" wrapped="false">
+                    <s:elementtype>
+                        <s:complextype name="" optional="false" qname="{http://www.ebi.ac.uk/WSInterProScan}data" typename="data" unbounded="false">
+                            <s:elements>
+<s:basetype name="type" optional="false" qname="data&gt;type" typename="string" unbounded="false"/>
+<s:basetype name="content" optional="false" qname="data&gt;content" typename="string" unbounded="false"/>
+                            </s:elements>
+                        </s:complextype>
+                    </s:elementtype>
+                </s:arraytype>
+            </s:extensions>
+        </wrappedType:wrappedType>
+        <inputPortDefinition>
+            <InputPortDefinition>
+                <dataType rdf:resource="java:java.lang.String"/>
+                <definesInputPort rdf:resource="../../activity/Content_list/in/WSArrayofData"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/xml"/>
+            </InputPortDefinition>
+        </inputPortDefinition>
+        <outputPortDefinition>
+            <OutputPortDefinition>
+                <definesOutputPort rdf:resource="../../activity/Content_list/out/output"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/xml"/>
+            </OutputPortDefinition>
+        </outputPortDefinition>
+    </Configuration>
+    <Configuration rdf:about="configuration/Format_as_GFF/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/beanshell#Config"/>
+        <name>Format_as_GFF</name>
+        <configure rdf:resource="activity/Format_as_GFF/"/>
+        <script:script xmlns:script="http://ns.taverna.org.uk/2010/activity/beanshell#">import java.util.StringTokenizer;
+
+interproscan_gff = &quot;&quot;;
+
+// Split into lines
+StringTokenizer tok1 = new StringTokenizer(interproscan_text, &quot;\n&quot;);
+while(tok1.hasMoreElements()) {
+  feat1 = tok1.nextElement();
+  // Split into fields
+  StringTokenizer tok2 = new StringTokenizer(feat1, &quot;\t&quot;);
+  fieldCount = 0;
+  attributeStr = &quot;&quot;;
+  while(tok2.hasMoreElements()) {
+    fieldCount++;
+    fieldStr = tok2.nextElement();
+    if(fieldCount &lt; 2) { // First field is the ID
+      interproscan_gff += fieldStr;
+    }
+    // The tool, feature, start and stop
+    else if(fieldCount == 4 || (fieldCount &gt; 5 &amp;&amp; fieldCount &lt; 9)) {
+      interproscan_gff += &quot;\t&quot; + fieldStr;
+    }
+    // Score
+    else if(fieldCount == 9) {
+      if(fieldStr.equals(&quot;NA&quot;)) {
+        interproscan_gff += &quot;\t.&quot;;
+      } else {
+        interproscan_gff += &quot;\t&quot; + fieldStr;
+      }
+    }
+    // Matching InterPro entry
+    else if(fieldCount == 12 &amp;&amp; !fieldStr.equals(&quot;NULL&quot;)) {
+      attributeStr += fieldStr;
+    }
+    // Matching InterPro entry name
+    else if(fieldCount == 13 &amp;&amp; !fieldStr.equals(&quot;NULL&quot;)) {
+      attributeStr += &quot; &quot; + fieldStr;
+    }
+  }
+  interproscan_gff += &quot;\t.\t.\tInterProScan&quot;;
+  if(attributeStr.length() &gt; 0) {
+    interproscan_gff += &quot; ; &quot; + attributeStr;
+  }
+  interproscan_gff += &quot;\n&quot;;
+}</script:script>
+        <inputPortDefinition>
+            <InputPortDefinition>
+                <dataType rdf:resource="java:java.lang.String"/>
+                <definesInputPort rdf:resource="../../activity/Format_as_GFF/in/interproscan_text"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
+            </InputPortDefinition>
+        </inputPortDefinition>
+        <outputPortDefinition>
+            <OutputPortDefinition>
+                <definesOutputPort rdf:resource="../../activity/Format_as_GFF/out/interproscan_gff"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
+            </OutputPortDefinition>
+        </outputPortDefinition>
+    </Configuration>
+    <Configuration rdf:about="configuration/Get_XML_result/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/wsdl#Config"/>
+        <name>Get_XML_result</name>
+        <configure rdf:resource="activity/Get_XML_result/"/>
+        <operation:operation xmlns:operation="http://ns.taverna.org.uk/2010/activity/wsdl#">
+            <ns6:operation xmlns:ns6="http://ns.taverna.org.uk/2010/activity/wsdl/">
+                <name:name xmlns:name="http://ns.taverna.org.uk/2010/activity/wsdl/operation#">poll</name:name>
+                <wsdl:wsdl xmlns:wsdl="http://ns.taverna.org.uk/2010/activity/wsdl/operation#" rdf:resource="http://www.ebi.ac.uk/Tools/webservices/wsdl/WSInterProScan.wsdl"/>
+            </ns6:operation>
+        </operation:operation>
+    </Configuration>
+    <Configuration rdf:about="configuration/Get_XML_result_type_defaultValue/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/constant#Config"/>
+        <name>Get_XML_result_type_defaultValue</name>
+        <configure rdf:resource="activity/Get_XML_result_type_defaultValue/"/>
+        <string:string xmlns:string="http://ns.taverna.org.uk/2010/activity/constant#">toolxml</string:string>
+    </Configuration>
+    <Configuration rdf:about="configuration/Get_text_result/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/wsdl#Config"/>
+        <name>Get_text_result</name>
+        <configure rdf:resource="activity/Get_text_result/"/>
+        <operation:operation xmlns:operation="http://ns.taverna.org.uk/2010/activity/wsdl#">
+            <ns6:operation xmlns:ns6="http://ns.taverna.org.uk/2010/activity/wsdl/">
+                <name:name xmlns:name="http://ns.taverna.org.uk/2010/activity/wsdl/operation#">poll</name:name>
+                <wsdl:wsdl xmlns:wsdl="http://ns.taverna.org.uk/2010/activity/wsdl/operation#" rdf:resource="http://www.ebi.ac.uk/Tools/webservices/wsdl/WSInterProScan.wsdl"/>
+            </ns6:operation>
+        </operation:operation>
+    </Configuration>
+    <Configuration rdf:about="configuration/Get_text_result_type_defaultValue/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/constant#Config"/>
+        <name>Get_text_result_type_defaultValue</name>
+        <configure rdf:resource="activity/Get_text_result_type_defaultValue/"/>
+        <string:string xmlns:string="http://ns.taverna.org.uk/2010/activity/constant#">toolraw</string:string>
+    </Configuration>
+    <Configuration rdf:about="configuration/Input_data/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/xml-splitter#Config"/>
+        <name>Input_data</name>
+        <configure rdf:resource="activity/Input_data/"/>
+        <wrappedType:wrappedType xmlns:wrappedType="http://ns.taverna.org.uk/2010/activity/xml-splitter#" rdf:parseType="Literal">
+            <s:extensions xmlns:s="http://org.embl.ebi.escience/xscufl/0.1alpha">
+                <s:complextype name="" optional="false" qname="{http://www.ebi.ac.uk/WSInterProScan}data" typename="data" unbounded="false">
+                    <s:elements>
+                        <s:basetype name="type" optional="false" qname="data&gt;type" typename="string" unbounded="false"/>
+                        <s:basetype name="content" optional="false" qname="data&gt;content" typename="string" unbounded="false"/>
+                    </s:elements>
+                </s:complextype>
+            </s:extensions>
+        </wrappedType:wrappedType>
+        <inputPortDefinition>
+            <InputPortDefinition>
+                <dataType rdf:resource="java:java.lang.String"/>
+                <definesInputPort rdf:resource="../../activity/Input_data/in/content"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
+            </InputPortDefinition>
+        </inputPortDefinition>
+        <inputPortDefinition>
+            <InputPortDefinition>
+                <dataType rdf:resource="java:java.lang.String"/>
+                <definesInputPort rdf:resource="../../activity/Input_data/in/type"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
+            </InputPortDefinition>
+        </inputPortDefinition>
+        <outputPortDefinition>
+            <OutputPortDefinition>
+                <definesOutputPort rdf:resource="../../activity/Input_data/out/output"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/xml"/>
+            </OutputPortDefinition>
+        </outputPortDefinition>
+    </Configuration>
+    <Configuration rdf:about="configuration/Input_data_type_defaultValue/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/constant#Config"/>
+        <name>Input_data_type_defaultValue</name>
+        <configure rdf:resource="activity/Input_data_type_defaultValue/"/>
+        <string:string xmlns:string="http://ns.taverna.org.uk/2010/activity/constant#">sequence</string:string>
+    </Configuration>
+    <Configuration rdf:about="configuration/Job_params/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/xml-splitter#Config"/>
+        <name>Job_params</name>
+        <configure rdf:resource="activity/Job_params/"/>
+        <wrappedType:wrappedType xmlns:wrappedType="http://ns.taverna.org.uk/2010/activity/xml-splitter#" rdf:parseType="Literal">
+            <s:extensions xmlns:s="http://org.embl.ebi.escience/xscufl/0.1alpha">
+                <s:complextype name="params" optional="false" qname="{http://www.ebi.ac.uk/WSInterProScan}inputParams" typename="inputParams" unbounded="false">
+                    <s:elements>
+                        <s:basetype name="app" optional="false" qname="inputParams&gt;app" typename="string" unbounded="false"/>
+                        <s:basetype name="crc" optional="false" qname="inputParams&gt;crc" typename="boolean" unbounded="false"/>
+                        <s:basetype name="seqtype" optional="false" qname="inputParams&gt;seqtype" typename="string" unbounded="false"/>
+                        <s:basetype name="trlen" optional="false" qname="inputParams&gt;trlen" typename="int" unbounded="false"/>
+                        <s:basetype name="trtable" optional="false" qname="inputParams&gt;trtable" typename="int" unbounded="false"/>
+                        <s:basetype name="goterms" optional="false" qname="inputParams&gt;goterms" typename="boolean" unbounded="false"/>
+                        <s:basetype name="async" optional="false" qname="inputParams&gt;async" typename="boolean" unbounded="false"/>
+                        <s:basetype name="outformat" optional="false" qname="inputParams&gt;outformat" typename="string" unbounded="false"/>
+                        <s:basetype name="email" optional="false" qname="inputParams&gt;email" typename="string" unbounded="false"/>
+                    </s:elements>
+                </s:complextype>
+            </s:extensions>
+        </wrappedType:wrappedType>
+        <inputPortDefinition>
+            <InputPortDefinition>
+                <dataType rdf:resource="java:java.lang.String"/>
+                <definesInputPort rdf:resource="../../activity/Job_params/in/app"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
+            </InputPortDefinition>
+        </inputPortDefinition>
+        <inputPortDefinition>
+            <InputPortDefinition>
+                <dataType rdf:resource="java:java.lang.String"/>
+                <definesInputPort rdf:resource="../../activity/Job_params/in/async"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
+            </InputPortDefinition>
+        </inputPortDefinition>
+        <inputPortDefinition>
+            <InputPortDefinition>
+                <dataType rdf:resource="java:java.lang.String"/>
+                <definesInputPort rdf:resource="../../activity/Job_params/in/crc"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
+            </InputPortDefinition>
+        </inputPortDefinition>
+        <inputPortDefinition>
+            <InputPortDefinition>
+                <dataType rdf:resource="java:java.lang.String"/>
+                <definesInputPort rdf:resource="../../activity/Job_params/in/email"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
+            </InputPortDefinition>
+        </inputPortDefinition>
+        <inputPortDefinition>
+            <InputPortDefinition>
+                <dataType rdf:resource="java:java.lang.String"/>
+                <definesInputPort rdf:resource="../../activity/Job_params/in/goterms"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
+            </InputPortDefinition>
+        </inputPortDefinition>
+        <inputPortDefinition>
+            <InputPortDefinition>
+                <dataType rdf:resource="java:java.lang.String"/>
+                <definesInputPort rdf:resource="../../activity/Job_params/in/outformat"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
+            </InputPortDefinition>
+        </inputPortDefinition>
+        <inputPortDefinition>
+            <InputPortDefinition>
+                <dataType rdf:resource="java:java.lang.String"/>
+                <definesInputPort rdf:resource="../../activity/Job_params/in/seqtype"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
+            </InputPortDefinition>
+        </inputPortDefinition>
+        <inputPortDefinition>
+            <InputPortDefinition>
+                <dataType rdf:resource="java:java.lang.String"/>
+                <definesInputPort rdf:resource="../../activity/Job_params/in/trlen"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
+            </InputPortDefinition>
+        </inputPortDefinition>
+        <inputPortDefinition>
+            <InputPortDefinition>
+                <dataType rdf:resource="java:java.lang.String"/>
+                <definesInputPort rdf:resource="../../activity/Job_params/in/trtable"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
+            </InputPortDefinition>
+        </inputPortDefinition>
+        <outputPortDefinition>
+            <OutputPortDefinition>
+                <definesOutputPort rdf:resource="../../activity/Job_params/out/output"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/xml"/>
+            </OutputPortDefinition>
+        </outputPortDefinition>
+    </Configuration>
+    <Configuration rdf:about="configuration/Job_params_async_defaultValue/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/constant#Config"/>
+        <name>Job_params_async_defaultValue</name>
+        <configure rdf:resource="activity/Job_params_async_defaultValue/"/>
+        <string:string xmlns:string="http://ns.taverna.org.uk/2010/activity/constant#">1</string:string>
+    </Configuration>
+    <Configuration rdf:about="configuration/Job_params_crc_defaultValue/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/constant#Config"/>
+        <name>Job_params_crc_defaultValue</name>
+        <configure rdf:resource="activity/Job_params_crc_defaultValue/"/>
+        <string:string xmlns:string="http://ns.taverna.org.uk/2010/activity/constant#">1</string:string>
+    </Configuration>
+    <Configuration rdf:about="configuration/Job_params_goterms_defaultValue/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/constant#Config"/>
+        <name>Job_params_goterms_defaultValue</name>
+        <configure rdf:resource="activity/Job_params_goterms_defaultValue/"/>
+        <string:string xmlns:string="http://ns.taverna.org.uk/2010/activity/constant#">1</string:string>
+    </Configuration>
+    <Configuration rdf:about="configuration/Job_params_seqtype_defaultValue/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/constant#Config"/>
+        <name>Job_params_seqtype_defaultValue</name>
+        <configure rdf:resource="activity/Job_params_seqtype_defaultValue/"/>
+        <string:string xmlns:string="http://ns.taverna.org.uk/2010/activity/constant#">p</string:string>
+    </Configuration>
+    <Configuration rdf:about="configuration/Unpack_XML_result/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/beanshell#Config"/>
+        <name>Unpack_XML_result</name>
+        <configure rdf:resource="activity/Unpack_XML_result/"/>
+        <script:script xmlns:script="http://ns.taverna.org.uk/2010/activity/beanshell#">string = new String(bytes);
+</script:script>
+        <inputPortDefinition>
+            <InputPortDefinition>
+                <dataType rdf:resource="java:[B"/>
+                <definesInputPort rdf:resource="../../activity/Unpack_XML_result/in/bytes"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/application/octet-stream"/>
+            </InputPortDefinition>
+        </inputPortDefinition>
+        <outputPortDefinition>
+            <OutputPortDefinition>
+                <definesOutputPort rdf:resource="../../activity/Unpack_XML_result/out/string"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
+            </OutputPortDefinition>
+        </outputPortDefinition>
+    </Configuration>
+    <Configuration rdf:about="configuration/Unpack_text_result/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/beanshell#Config"/>
+        <name>Unpack_text_result</name>
+        <configure rdf:resource="activity/Unpack_text_result/"/>
+        <script:script xmlns:script="http://ns.taverna.org.uk/2010/activity/beanshell#">string = new String(bytes);
+</script:script>
+        <inputPortDefinition>
+            <InputPortDefinition>
+                <dataType rdf:resource="java:[B"/>
+                <definesInputPort rdf:resource="../../activity/Unpack_text_result/in/bytes"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/application/octet-stream"/>
+            </InputPortDefinition>
+        </inputPortDefinition>
+        <outputPortDefinition>
+            <OutputPortDefinition>
+                <definesOutputPort rdf:resource="../../activity/Unpack_text_result/out/string"/>
+                <expectedMimeType rdf:resource="http://purl.org/NET/mediatypes/text/plain"/>
+            </OutputPortDefinition>
+        </outputPortDefinition>
+    </Configuration>
+    <Configuration rdf:about="configuration/checkStatus/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/wsdl#Config"/>
+        <name>checkStatus</name>
+        <configure rdf:resource="activity/checkStatus/"/>
+        <operation:operation xmlns:operation="http://ns.taverna.org.uk/2010/activity/wsdl#">
+            <ns6:operation xmlns:ns6="http://ns.taverna.org.uk/2010/activity/wsdl/">
+                <name:name xmlns:name="http://ns.taverna.org.uk/2010/activity/wsdl/operation#">checkStatus</name:name>
+                <wsdl:wsdl xmlns:wsdl="http://ns.taverna.org.uk/2010/activity/wsdl/operation#" rdf:resource="http://www.ebi.ac.uk/Tools/webservices/wsdl/WSInterProScan.wsdl"/>
+            </ns6:operation>
+        </operation:operation>
+    </Configuration>
+    <Configuration rdf:about="configuration/runInterProScan/">
+        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/activity/wsdl#Config"/>
+        <name>runInterProScan</name>
+        <configure rdf:resource="activity/runInterProScan/"/>
+        <operation:operation xmlns:operation="http://ns.taverna.org.uk/2010/activity/wsdl#">
+            <ns6:operation xmlns:ns6="http://ns.taverna.org.uk/2010/activity/wsdl/">
+                <name:name xmlns:name="http://ns.taverna.org.uk/2010/activity/wsdl/operation#">runInterProScan</name:name>
+                <wsdl:wsdl xmlns:wsdl="http://ns.taverna.org.uk/2010/activity/wsdl/operation#" rdf:resource="http://www.ebi.ac.uk/Tools/webservices/wsdl/WSInterProScan.wsdl"/>
+            </ns6:operation>
+        </operation:operation>
+    </Configuration>
+</rdf:RDF>

@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<xsd:schema elementFormDefault="unqualified"
+
+	xmlns:tool="http://taverna.sf.net/2011/xml/activity/external-tool"
+	xmlns:tav="http://taverna.sf.net/2008/xml/t2flow" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:jxb="http://java.sun.com/xml/ns/jaxb" jxb:version="1.0">
+
+	<xsd:annotation>
+		<xsd:appinfo>
+			<!-- See http://docs.rakeshv.org/java/jaxb/users-guide/jaxb-custom.html -->
+
+			<jxb:schemaBindings>
+				<jxb:package name="uk.org.taverna.scufl2.xml.t2flow.externalTool.jaxb" />
+			</jxb:schemaBindings>
+		</xsd:appinfo>
+	</xsd:annotation>
+
+	<xsd:import namespace="http://taverna.sf.net/2008/xml/t2flow"
+		schemaLocation="t2flow.xsd" />
+
+	<xsd:element
+		name="net.sf.taverna.t2.activities.externaltool.ExternalToolActivityConfigurationBean"
+		type="ExternalToolConfig" substitutionGroup="tav:abstractConfigBean" />
+
+	<xsd:element
+		name="net.sf.taverna.t2.activities.usecase.UseCaseActivityConfigurationBean"
+		type="UsecaseConfig" substitutionGroup="tav:abstractConfigBean" />
+
+
+
+	<xsd:complexType name="UsecaseConfig">
+		<xsd:complexContent>
+			<xsd:extension base="tav:AbstractConfigBean">
+				<xsd:sequence>
+					<xsd:element name="repositoryUrl" type="xsd:anyURI" />
+					<xsd:element name="usecaseid" type="xsd:string" />
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+
+	<xsd:complexType name="ExternalToolConfig">
+		<xsd:complexContent>
+			<xsd:extension base="tav:AbstractConfigBean">
+				<xsd:sequence>
+
+					<xsd:choice>
+						<xsd:sequence>
+							<xsd:element name="mechanismType" type="xsd:string" />
+							<xsd:element name="mechanismName" type="xsd:string" />
+							<xsd:element name="mechanismXML" type="xsd:string" />						
+						</xsd:sequence>
+						<xsd:element name="group" type="Group" />					
+					</xsd:choice>
+					<xsd:element name="repositoryUrl" type="xsd:anyURI" minOccurs="0" />
+					<xsd:element name="externaltoolid" type="xsd:string"  />
+
+					<xsd:element name="useCaseDescription" type="UsecaseDescription" />
+					<xsd:element name="edited" type="xsd:boolean" />
+
+				</xsd:sequence>
+			</xsd:extension>
+
+		</xsd:complexContent>
+
+	</xsd:complexType>
+
+	<xsd:complexType name="UsecaseDescription">
+		<xsd:sequence>
+			<xsd:element name="usecaseid" type="xsd:string" />
+			<xsd:element name="group" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="description" type="xsd:string" />
+			<xsd:element name="command" type="xsd:string" />
+			<xsd:element name="test__local" type="xsd:string"
+				minOccurs="0" />
+			<xsd:element name="preparingTimeoutInSeconds" type="xsd:int" />
+			<xsd:element name="executionTimeoutInSeconds" type="xsd:int" />
+			<xsd:element name="tags" />
+			<xsd:element name="REs" />
+			<xsd:element name="queue__preferred" />
+			<xsd:element name="queue__deny" />
+			<xsd:element name="static__inputs" type="StaticInputs" />
+			<xsd:element name="inputs" type="EntryMap" />
+			<xsd:element name="outputs" type="EntryMap" />
+
+			<xsd:element name="includeStdIn" type="xsd:boolean" />
+			<xsd:element name="includeStdOut" type="xsd:boolean" />
+			<xsd:element name="includeStdErr" type="xsd:boolean" />
+			<xsd:element name="validReturnCodes" type="ReturnCodes" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="EntryMap">
+		<xsd:sequence>
+			<xsd:element name="entry" minOccurs="0" maxOccurs="unbounded"
+				type="Entry" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="ReturnCodes">
+		<xsd:sequence>
+			<xsd:element name="int" minOccurs="0" maxOccurs="unbounded"
+				type="xsd:int" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="StaticInputs">
+		<xsd:sequence>
+			<xsd:element name="de.uni__luebeck.inb.knowarc.usecases.ScriptInputStatic"
+					type="ScriptInputStatic" minOccurs="0" maxOccurs="unbounded" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="Group">
+		<xsd:sequence>
+			<xsd:element name="invocationGroupName" type="xsd:string" />			
+			<xsd:element name="mechanismType" type="xsd:string" />
+			<xsd:element name="mechanismName" type="xsd:string" />
+			<xsd:element name="mechanismXML" type="xsd:string" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+
+	<xsd:complexType name="Entry">
+		<xsd:sequence>
+			<xsd:element name="string" type="xsd:string" />
+			<xsd:choice>
+				<xsd:element name="de.uni__luebeck.inb.knowarc.usecases.ScriptInputUser"
+					type="ScriptInputUser" />
+				<xsd:element name="de.uni__luebeck.inb.knowarc.usecases.ScriptOutput"
+					type="ScriptOutput" />
+			</xsd:choice>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="ScriptInputUser">
+		<xsd:sequence>
+			<xsd:element name="tag" type="xsd:string" />
+			<xsd:element name="file" type="xsd:boolean" />
+			<xsd:element name="tempFile" type="xsd:boolean" />
+			<xsd:element name="binary" type="xsd:boolean" />
+			<xsd:element name="charsetName" type="xsd:string" />
+			<xsd:element name="forceCopy" type="xsd:boolean" />
+			<xsd:element name="list" type="xsd:boolean" />
+			<xsd:element name="concatenate" type="xsd:boolean" />
+			<xsd:element name="mime" />
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	
+	<xsd:complexType name="ScriptInputStatic">
+		<xsd:sequence>
+			<xsd:element name="tag" type="xsd:string" />
+			<xsd:element name="file" type="xsd:boolean" />
+			<xsd:element name="tempFile" type="xsd:boolean" />
+			<xsd:element name="binary" type="xsd:boolean" />
+			<xsd:element name="charsetName" type="xsd:string" />
+			<xsd:element name="forceCopy" type="xsd:boolean" />
+			<xsd:choice>
+				<xsd:element name="content" >
+					<xsd:complexType>
+						<xsd:simpleContent><xsd:extension base="xsd:string">
+							<xsd:attribute name="class" fixed="string" use="optional"/>
+						</xsd:extension>						
+						</xsd:simpleContent>						
+					</xsd:complexType>					
+				</xsd:element>
+				<xsd:element name="url" type="xsd:anyURI" />			
+			</xsd:choice>
+
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="ScriptOutput">
+		<xsd:sequence>
+			<xsd:element name="path" type="xsd:string" />
+			<xsd:element name="binary" type="xsd:boolean" />
+			<xsd:element name="mime" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+</xsd:schema>

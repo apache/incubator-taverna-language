@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://org.embl.ebi.escience/xscufl/0.1alpha"
+            targetNamespace="http://org.embl.ebi.escience/xscufl/0.1alpha"
+            xmlns:scufl="http://org.embl.ebi.escience/xscufl/0.1alpha">
+            
+<xsd:include schemaLocation="scufl.xsd" />
+<xsd:include schemaLocation="scufl-local.xsd" />
+
+<xsd:attributeGroup name="xmlElementAttributes">
+  <xsd:attribute name="optional" type="xsd:boolean"/>
+  <xsd:attribute name="unbounded" type="xsd:boolean"/>
+  <xsd:attribute name="wrapped" type="xsd:boolean"/>
+  <xsd:attribute name="typename" type="xsd:string"/>
+  <xsd:attribute name="name" type="xsd:string"/>
+</xsd:attributeGroup>
+
+<xsd:complexType name="elementtypeType">
+  <xsd:choice>
+    <xsd:element ref="complextype"/>
+    <xsd:element ref="arraytype"/>
+    <xsd:element ref="basetype"/>
+  </xsd:choice>
+</xsd:complexType>
+
+<xsd:complexType name="basetypeType">
+    <xsd:attribute name="qname" type="xsd:string"/>
+    <xsd:attributeGroup ref="scufl:xmlElementAttributes"/>
+</xsd:complexType>
+
+<xsd:complexType name="elementsType">
+    <xsd:sequence>
+      <xsd:choice maxOccurs="unbounded" minOccurs="0">
+        <xsd:element ref="complextype"/>
+        <xsd:element ref="arraytype"/>
+        <xsd:element ref="basetype"/>
+      </xsd:choice>
+    </xsd:sequence>
+</xsd:complexType>
+            
+<xsd:complexType name="complextypeType">
+    <xsd:sequence>
+     <xsd:element ref="elements" maxOccurs="1" minOccurs="0"/>
+     </xsd:sequence>
+    <xsd:attribute name="qname" type="xsd:string"/>
+    <xsd:attribute name="id" type="xsd:string"/>
+    <xsd:attributeGroup ref="scufl:xmlElementAttributes"/>
+</xsd:complexType>
+
+<xsd:complexType name="arraytypeType">
+    <xsd:sequence>
+      <xsd:element ref="elementtype"/>
+    </xsd:sequence>
+    <xsd:attribute name="qname" type="xsd:string"/>
+    <xsd:attribute name="id" type="xsd:string"/>
+    <xsd:attributeGroup ref="scufl:xmlElementAttributes"/>
+</xsd:complexType>
+
+
+<xsd:complexType name="wsdlType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+<xsd:complexType name="operationType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+<xsd:complexType name="arbitraryWsdlType">
+ 			<xsd:sequence>
+			  <xsd:element ref="wsdl" minOccurs="1" maxOccurs="1"/>
+			  <xsd:element ref="operation" minOccurs="1" maxOccurs="1"/>
+			</xsd:sequence>
+     <xsd:attributeGroup ref="scufl:processorElementAttributes"/>
+</xsd:complexType>
+
+<xsd:element name="elementtype" type="scufl:elementtypeType"/>
+
+<xsd:element name="basetype" type="scufl:basetypeType"/>
+
+<xsd:element name="elements" type="scufl:elementsType"/>
+
+<xsd:element name="complextype" type="scufl:complextypeType"/>
+
+<xsd:element name="arraytype" type="scufl:arraytypeType"/>
+
+<xsd:element name="wsdl" type="scufl:wsdlType"/>
+
+<xsd:element name="operation" type="scufl:operationType"/>
+    
+<xsd:element name="arbitrarywsdl" type="scufl:arbitraryWsdlType" substitutionGroup="processorElement">
+</xsd:element>
+
+</xsd:schema>

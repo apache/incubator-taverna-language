@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="t2FlowParser" class="org.apache.taverna.scufl2.translator.t2flow.T2FlowParser">
+		<property name="t2Parsers" ref="t2Parsers" />
+	</bean>
+
+	<bean id="t2FlowReader" class="org.apache.taverna.scufl2.translator.t2flow.T2FlowReader">
+		<property name="parser">
+			<ref local="t2FlowParser" />
+		</property>
+	</bean>
+
+	<bean id="dataflowActivityParser" class="org.apache.taverna.scufl2.translator.t2flow.defaultactivities.DataflowActivityParser" />
+	<bean id="beanshellActivityParser" class="org.apache.taverna.scufl2.translator.t2flow.defaultactivities.BeanshellActivityParser" />
+	<bean id="rshellActivityParser" class="org.apache.taverna.scufl2.translator.t2flow.defaultactivities.RshellActivityParser" />
+	<bean id="spreadsheetActivityParser" class="org.apache.taverna.scufl2.translator.t2flow.defaultactivities.SpreadsheetActivityParser" />
+	<bean id="stringConstantActivityParser"
+		class="org.apache.taverna.scufl2.translator.t2flow.defaultactivities.StringConstantActivityParser" />
+	<bean id="biomobyActivityParser" class="org.apache.taverna.scufl2.translator.t2flow.defaultactivities.BiomobyActivityParser" />
+	<bean id="soaplabActivityParser" class="org.apache.taverna.scufl2.translator.t2flow.defaultactivities.SoaplabActivityParser" />
+	<bean id="wsdlActivityParser" class="org.apache.taverna.scufl2.translator.t2flow.defaultactivities.WSDLActivityParser" />
+	<bean id="wsdlXMLSplitterParser" class="org.apache.taverna.scufl2.translator.t2flow.defaultactivities.WSDLXMLSplitterParser" />
+	<bean id="biomartActivityParser" class="org.apache.taverna.scufl2.translator.t2flow.defaultactivities.BiomartActivityParser" />
+	<bean id="apiConsomerActivityParser" class="org.apache.taverna.scufl2.translator.t2flow.defaultactivities.ApiConsomerActivityParser" />
+
+	<bean id="externalToolActivityParser" class="org.apache.taverna.scufl2.translator.t2flow.t23activities.ExternalToolActivityParser" />
+	<bean id="restActivityParser" class="org.apache.taverna.scufl2.translator.t2flow.t23activities.RESTActivityParser" />
+	<bean id="xPathActivityParser" class="org.apache.taverna.scufl2.translator.t2flow.t23activities.XPathActivityParser" />
+
+	<bean id="interactionActivityParser" class="org.apache.taverna.scufl2.translator.t2flow.defaultactivities.InteractionActivityParser" />
+	<bean id="componentActivityParser" class="org.apache.taverna.scufl2.translator.t2flow.defaultactivities.ComponentActivityParser" />
+	
+	<bean id="parallelizeParser" class="org.apache.taverna.scufl2.translator.t2flow.defaultdispatchstack.ParallelizeParser" />
+	<bean id="errorBounceParser" class="org.apache.taverna.scufl2.translator.t2flow.defaultdispatchstack.ErrorBounceParser" />
+	<bean id="failoverParser" class="org.apache.taverna.scufl2.translator.t2flow.defaultdispatchstack.FailoverParser" />
+	<bean id="retryParser" class="org.apache.taverna.scufl2.translator.t2flow.defaultdispatchstack.RetryParser" />
+	<bean id="loopParser" class="org.apache.taverna.scufl2.translator.t2flow.defaultdispatchstack.LoopParser" />
+	<bean id="invokeParser" class="org.apache.taverna.scufl2.translator.t2flow.defaultdispatchstack.InvokeParser" />
+
+
+</beans>

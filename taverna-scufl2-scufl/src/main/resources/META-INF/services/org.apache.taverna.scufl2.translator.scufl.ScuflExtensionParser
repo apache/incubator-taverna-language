@@ -1,0 +1,10 @@
+org.apache.taverna.scufl2.translator.scufl.processorelement.AbstractProcessorExtensionParser
+org.apache.taverna.scufl2.translator.scufl.processorelement.ApiConsumerExtensionParser
+org.apache.taverna.scufl2.translator.scufl.processorelement.BeanshellExtensionParser
+org.apache.taverna.scufl2.translator.scufl.processorelement.BiomartExtensionParser
+org.apache.taverna.scufl2.translator.scufl.processorelement.BiomobyExtensionParser
+org.apache.taverna.scufl2.translator.scufl.processorelement.LocalExtensionParser
+org.apache.taverna.scufl2.translator.scufl.processorelement.RshellExtensionParser
+org.apache.taverna.scufl2.translator.scufl.processorelement.SoaplabExtensionParser
+org.apache.taverna.scufl2.translator.scufl.processorelement.StringConstantExtensionParser
+org.apache.taverna.scufl2.translator.scufl.processorelement.WsdlExtensionParser

@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<schema targetNamespace="http://org.embl.ebi.escience/baclava/0.1alpha"
+	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:b="http://org.embl.ebi.escience/baclava/0.1alpha"
+	xmlns:s="http://org.embl.ebi.escience/xscufl/0.1alpha"
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	jaxb:version="2.0">
+
+	<import schemaLocation="xscufl.xsd" namespace="http://org.embl.ebi.escience/xscufl/0.1alpha"></import>
+	<element name="dataThingMap" type="b:DataThingMapType"></element>
+
+	<complexType name="DataThingMapType">
+		<sequence>
+			<element ref="b:dataThing" minOccurs="1"
+				maxOccurs="unbounded">
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="DataThingType">
+		<sequence>
+			<element ref="b:myGridDataDocument" minOccurs="1"
+				maxOccurs="1">
+			</element>
+		</sequence>
+		<attribute name="key" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+					<whiteSpace value="collapse"></whiteSpace>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+
+	<element name="dataThing" type="b:DataThingType"></element>
+
+	<complexType name="MyGridDataDocumentType">
+		<sequence>
+			<element ref="s:metadata" minOccurs="1" maxOccurs="1"></element>
+			<choice minOccurs="1" maxOccurs="1">
+				<element ref="b:partialOrder"></element>
+				<element ref="b:dataElement"></element>
+			</choice>
+		</sequence>
+		<attribute name="lsid" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="0"></minLength>
+					<whiteSpace value="collapse"></whiteSpace>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="syntactictype" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="1"></minLength>
+					<whiteSpace value="collapse"></whiteSpace>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+
+	<element name="myGridDataDocument"
+		type="b:MyGridDataDocumentType">
+	</element>
+
+
+	<complexType name="PartialOrderType">
+		<sequence>
+			<element ref="b:relationList" minOccurs="0" maxOccurs="1"></element>
+			<element ref="b:itemList" minOccurs="0" maxOccurs="1"></element>
+		</sequence>
+		<attribute name="lsid" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="0"></minLength>
+					<whiteSpace value="collapse"></whiteSpace>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="type" type="string" use="required"
+			fixed="list">
+		</attribute>
+		<attribute name="index" use="optional">
+			<simpleType>
+				<restriction base="int">
+					<minExclusive value="0"></minExclusive>
+					<whiteSpace value="collapse"></whiteSpace>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+
+	<complexType name="RelationListType">
+		<sequence>
+			<element ref="b:relation" minOccurs="0" maxOccurs="unbounded"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="ItemListType">
+		<sequence>
+			<element ref="b:dataElement" minOccurs="0"
+				maxOccurs="unbounded">
+			</element>
+		</sequence>
+	</complexType>
+
+
+
+	<element name="partialOrder" type="b:PartialOrderType"></element>
+
+	<element name="relationList" type="b:RelationListType"></element>
+
+	<element name="itemList" type="b:ItemListType"></element>
+
+	<element name="dataElement" type="b:DataElementType"></element>
+
+	<element name="dataElementData" type="string"></element>
+
+	<complexType name="DataElementType">
+		<sequence>
+			<element ref="b:dataElementData" minOccurs="1"
+				maxOccurs="1">
+			</element>
+		</sequence>
+		<attribute name="lsid" use="required">
+			<simpleType>
+				<restriction base="string">
+					<minLength value="0"></minLength>
+					<whiteSpace value="collapse"></whiteSpace>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="index" use="optional">
+			<simpleType>
+				<restriction base="int">
+					<minInclusive value="0"></minInclusive>
+					<whiteSpace value="collapse"></whiteSpace>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+
+	<complexType name="RelationType">
+		<attribute name="parent" use="required">
+			<simpleType>
+				<restriction base="int">
+					<minInclusive value="0"></minInclusive>
+					<whiteSpace value="collapse"></whiteSpace>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="child">
+			<simpleType>
+				<restriction base="int">
+					<minExclusive value="0"></minExclusive>
+					<whiteSpace value="collapse"></whiteSpace>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+
+	<element name="relation" type="b:RelationType"></element>
+</schema>

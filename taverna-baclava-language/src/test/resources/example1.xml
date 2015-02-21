@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<b:dataThingMap xmlns:b="http://org.embl.ebi.escience/baclava/0.1alpha">
+  <b:dataThing key="status">
+    <b:myGridDataDocument lsid="" syntactictype="l('text/plain')">
+      <s:metadata xmlns:s="http://org.embl.ebi.escience/xscufl/0.1alpha">
+        <s:mimeTypes>
+          <s:mimeType>text/plain</s:mimeType>
+        </s:mimeTypes>
+      </s:metadata>
+      <b:partialOrder lsid="" type="list">
+        <b:relationList />
+        <b:itemList>
+          <b:dataElement lsid="" index="0">
+            <b:dataElementData>RklOSVNIRUQ=</b:dataElementData>
+          </b:dataElement>
+        </b:itemList>
+      </b:partialOrder>
+    </b:myGridDataDocument>
+  </b:dataThing>
+  <b:dataThing key="proteinIDs">
+    <b:myGridDataDocument lsid="" syntactictype="'text/plain'">
+      <s:metadata xmlns:s="http://org.embl.ebi.escience/xscufl/0.1alpha">
+        <s:mimeTypes>
+          <s:mimeType>text/plain</s:mimeType>
+        </s:mimeTypes>
+      </s:metadata>
+      <b:dataElement lsid="">
+        <b:dataElementData>UDE1MDE4</b:dataElementData>
+      </b:dataElement>
+    </b:myGridDataDocument>
+  </b:dataThing>
+  <b:dataThing key="output">
+    <b:myGridDataDocument lsid="" syntactictype="l('application/octet-stream')">
+      <s:metadata xmlns:s="http://org.embl.ebi.escience/xscufl/0.1alpha">
+        <s:mimeTypes>
+          <s:mimeType>application/octet-stream</s:mimeType>
+        </s:mimeTypes>
+      </s:metadata>
+      <b:partialOrder lsid="" type="list">
+        <b:relationList />
+        <b:itemList>
+          <b:dataElement lsid="" index="0">
+            <b:dataElementData>SUQgICBnaXwxMjYyNzl8c3B8UDE1MDE4LjF8TElGX0hVTUFOCkZUICAgU0lHTkFMICAgICAgICAx
+ICAgICAzMiAgICAgICAKRlQgICBET01BSU4gICAgICAgIDEgICAgICAyICAgICAgIE4tUkVHSU9O
+LgpGVCAgIERPTUFJTiAgICAgICAgMyAgICAgMTQgICAgICAgSC1SRUdJT04uCkZUICAgRE9NQUlO
+ICAgICAgIDE1ICAgICAzMiAgICAgICBDLVJFR0lPTi4KRlQgICBET01BSU4gICAgICAgMzMgICAg
+MjAyICAgICAgIE5PTiBDWVRPUExBU01JQy4KLy8K</b:dataElementData>
+          </b:dataElement>
+        </b:itemList>
+      </b:partialOrder>
+    </b:myGridDataDocument>
+  </b:dataThing>
+</b:dataThingMap>
+

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<xsd:schema
+	targetNamespace="http://identifiers.org/combine.specifications/omex-manifest"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://identifiers.org/combine.specifications/omex-manifest"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xsd:annotation>
+    	<xsd:documentation># COMBINE Archive specification
+
+Based on Version 1, Draft, 2014-04-02
+http://co.mbine.org/specifications/combine_archive-Draft1.pdf
+
+Authors: 
+  * [Stian Soiland-Reyes](http://orcid.org/0000-0001-9842-9718)
+
+Copyright 2014, University of Manchester
+
+MIT license (See LICENSE.md or http://opensource.org/licenses/MIT)
+</xsd:documentation></xsd:annotation>
+    <xsd:element name="omexManifest">
+    	<xsd:annotation>
+    		<xsd:documentation>At the root of the COMBINE archive stands one file, with the prescribed name `manifest.xml`. 
+This file contains an instantiation of the *OmexManifest* class.</xsd:documentation>
+    	</xsd:annotation>
+    
+	    <xsd:complexType>
+	        <xsd:annotation>
+	        	<xsd:documentation>The root of the COMBINE archive.
+	
+	It contains a number of `content` entries, one of which represents the manifest itself.</xsd:documentation>
+	        </xsd:annotation>
+	        <xsd:sequence>
+	    		<xsd:element name="content" type="Content" minOccurs="1" maxOccurs="unbounded">
+	    			<xsd:annotation>
+	    				<xsd:documentation>An entry in the *OmexManifest*.
+	
+	Note that a valid manifest needs to have at least one entry, that of the manifest itself, but may contain as many
+	entries as needed.</xsd:documentation>
+	    			</xsd:annotation></xsd:element>
+	    	</xsd:sequence>
+	    </xsd:complexType>
+   	</xsd:element>
+
+            
+    <xsd:complexType name="Content">
+        <xsd:annotation>
+        	<xsd:documentation>The *Content* class represents an entry in the *OmexManifest* and by extension a file in the _COMBINE archive_.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="location" type="xsd:string">
+    		<xsd:annotation>
+    			<xsd:documentation>The `location` attribute is a required attribute of type `string`. It represents a 
+relative location to an entry within the archive. The root of the archive 
+is represented by a dot `.`.</xsd:documentation>
+    		</xsd:annotation></xsd:attribute>
+    	<xsd:attribute name="format" type="xsd:string">
+    		<xsd:annotation>
+    			<xsd:documentation>The format is a required attribute of type `string`. It indicates the file type of the 
+*Content* element. The values of the `format` attribute fall in two categories. Either the
+`format` denotes one of the COMBINE standards, in which case the format will 
+begin with its `identifiers.org` url. Otherwise the format will represent a MIME type.
+Using identifiers.org allows to unambiguously define the COMBINE standard, and even its level and version.
+For example, the identifier:
+
+    http://identifiers.org/combine.specifications/sbml 
+
+would denote the *Content* element as being encoded in the SBML format. That is 
+usually sufficient, as tools supporting one level of SBML usually support others as
+well. However, if the software exporting the COMBINE archive wanted to be more precise, it could specify that it is an SBML Level 2 document with
+
+    http://identifiers.org/combine.specifications/sbml.level-2
+
+or even declare its Version with
+     http://identifiers.org/combine.specifications/sbml.level-2.version-3
+</xsd:documentation>
+    		</xsd:annotation></xsd:attribute>
+    	<xsd:attribute name="master" type="xsd:boolean" use="optional" default="false">
+    		<xsd:annotation>
+    			<xsd:documentation>The `master` is an optional attribute of type `boolean`. It represents a hint, 
+that a certain file is to be used first when processing the content of an archive. 
+Are top model description in a composed model, calling the various submodels; 
+simulation description, calling the different model descriptions and 
+data sources used in the experiment.
+
+At most one content element per archive may have its master attribute set to `true`.</xsd:documentation>
+    		</xsd:annotation></xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

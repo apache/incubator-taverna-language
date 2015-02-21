@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://org.embl.ebi.escience/xscufl/0.1alpha"
+            targetNamespace="http://org.embl.ebi.escience/xscufl/0.1alpha"
+            xmlns:scufl="http://org.embl.ebi.escience/xscufl/0.1alpha"
+            xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+            jaxb:version="1.0">
+
+<xsd:include schemaLocation="scufl.xsd" />
+
+<xsd:complexType name="biomobywsdlType">
+  <xsd:sequence>
+    <xsd:element ref="mobyEndpoint"/>
+    <xsd:element ref="serviceName"/>
+    <xsd:element ref="authorityName"/>
+    <xsd:element ref="Parameter" maxOccurs="unbounded"/>
+  </xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType name="mobyEndpointType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+<xsd:complexType name="serviceNameType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+<xsd:complexType name="authorityNameType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+<xsd:complexType name="ParameterType">
+	<xsd:annotation>
+         <xsd:appinfo>
+            <jaxb:class name="BiomobyParameterType"/>
+         </xsd:appinfo>
+      </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+      <xsd:attribute name="name" type="xsd:string"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+<xsd:complexType name="endpointType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+<xsd:complexType name="articleNameType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+<xsd:complexType name="datatypeType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+
+
+<xsd:complexType name="biomobyparserType">
+  <xsd:sequence>
+    <xsd:element ref="endpoint"/>
+    <xsd:element ref="datatype"/>
+    <xsd:element ref="articleName"/>
+    <xsd:element ref="description"/>
+  </xsd:sequence>
+</xsd:complexType>
+
+<xsd:element name="Parameter" type="ParameterType">
+	<xsd:annotation>
+         <xsd:appinfo>
+            <jaxb:class name="BiomobyParameter"/>
+         </xsd:appinfo>
+      </xsd:annotation>
+</xsd:element>
+
+<xsd:complexType name="biomobyobjectType">
+  <xsd:sequence>
+    <xsd:element ref="mobyEndpoint"/>
+    <xsd:element ref="serviceName"/>
+    <xsd:element ref="authorityName"/>
+  </xsd:sequence>
+</xsd:complexType>
+
+
+<xsd:element name="articleName" type="articleNameType"/>
+
+<xsd:element name="datatype" type="datatypeType"/>
+
+<xsd:element name="endpoint" type="endpointType"/>
+
+<xsd:element name="mobyEndpoint" type="mobyEndpointType"/>
+
+<xsd:element name="serviceName" type="serviceNameType"/>
+
+<xsd:element name="authorityName" type="authorityNameType"/>
+
+<xsd:element name="biomobywsdl" type="scufl:biomobywsdlType" substitutionGroup="processorElement"/>
+
+<xsd:element name="biomobyparser" type="scufl:biomobyparserType" substitutionGroup="processorElement"/>
+
+<xsd:element name="biomobyobject" type="scufl:biomobyobjectType" substitutionGroup="processorElement"/>
+
+</xsd:schema>

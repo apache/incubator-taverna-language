@@ -1,0 +1,1 @@
+<ns2:getStatusResponse xmlns:ns2="http://soap.jdispatcher.ebi.ac.uk"><status>FINISHED</status></ns2:getStatusResponse>

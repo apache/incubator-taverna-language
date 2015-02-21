@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://org.embl.ebi.escience/xscufl/0.1alpha"
+            targetNamespace="http://org.embl.ebi.escience/xscufl/0.1alpha"
+            xmlns:scufl="http://org.embl.ebi.escience/xscufl/0.1alpha">
+
+
+<xsd:complexType name="workflowDescriptionType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="lsid" type="xsd:string"/>
+        <xsd:attribute name="author" type="xsd:string"/>
+        <xsd:attribute name="title" type="xsd:string"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+<xsd:complexType name="descriptionType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+<xsd:complexType name="defaultType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="name" type="xsd:string"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+<xsd:complexType name="defaultsType">
+  <xsd:sequence>
+    <xsd:element ref="default" maxOccurs="unbounded" minOccurs="0"/>
+  </xsd:sequence>
+</xsd:complexType>
+
+<xsd:attributeGroup name="processorElementAttributes">
+  <xsd:attribute name="maxretries" type="xsd:positiveInteger"/>
+  <xsd:attribute name="retrydelay" type="xsd:positiveInteger"/>
+  <xsd:attribute name="retrybackoff" type="xsd:double"/>
+  <xsd:attribute name="critical" type="xsd:boolean"/>
+  <xsd:attribute name="breakpoint" type="xsd:boolean"/>
+</xsd:attributeGroup>
+
+<xsd:complexType name="mergemodeType">
+  <xsd:attribute name="input" type="xsd:string"/>
+  <xsd:attribute name="mode" fixed="merge" type="xsd:string"/>
+</xsd:complexType>
+
+<xsd:complexType name="iteratorType">
+  <xsd:sequence/>
+  <xsd:attribute name="name" type="xsd:string"/>
+</xsd:complexType>
+
+<xsd:complexType name="iterationstrategyType">
+  <xsd:choice>
+    <xsd:element ref="iterator"/>
+    <xsd:element ref="dot"/>
+    <xsd:element ref="cross"/>
+  </xsd:choice>
+</xsd:complexType>
+
+<xsd:complexType name="dotType">
+  <xsd:sequence>
+  <xsd:choice>
+    <xsd:element ref="iterator"/>
+    <xsd:element ref="dot"/>
+    <xsd:element ref="cross"/>
+  </xsd:choice>
+  </xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType name="crossType">
+  <xsd:sequence>
+  <xsd:choice>
+    <xsd:element ref="iterator"/> 
+    <xsd:element ref="dot"/>
+    <xsd:element ref="cross"/>
+  </xsd:choice>
+  </xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType name="templateLiteralType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+<xsd:complexType name="templatePortReferenceType">
+  <xsd:attribute name="name" type="xsd:string"/>
+</xsd:complexType>
+
+<xsd:complexType name="mapType">
+  <xsd:attribute name="key" type="xsd:string"/>
+  <xsd:attribute name="value" type="xsd:string"/>
+</xsd:complexType>
+
+<xsd:complexType name="templateType">
+  <xsd:sequence>
+    <xsd:choice maxOccurs="unbounded" minOccurs="1">
+      <xsd:element ref="templateLiteral"/>
+      <xsd:element ref="templatePortReference"/>
+    </xsd:choice>
+  </xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType name="processorType">
+  <xsd:sequence>
+    <xsd:element ref="description" maxOccurs="1" minOccurs="0"/>
+    <xsd:element ref="defaults" maxOccurs="1" minOccurs="0"/>
+    <xsd:element ref="processorElement" maxOccurs="1" minOccurs="1"/>
+    <xsd:element ref="mergemode" maxOccurs="unbounded" minOccurs="0"/>
+    <xsd:element ref="iterationstrategy" maxOccurs="1" minOccurs="0"/>
+    <xsd:element ref="alternate" maxOccurs="unbounded" minOccurs="0"/>
+    <xsd:element ref="template"/>
+  </xsd:sequence>
+  <xsd:attribute name="name" type="xsd:string"/>
+  <xsd:attribute name="workers" type="xsd:positiveInteger"/>
+  <xsd:attribute name="boring" type="xsd:boolean"/>
+  <xsd:attribute name="log" type="xsd:string"/>
+</xsd:complexType>
+
+<xsd:complexType name="alternateType">
+  <xsd:complexContent>
+    <xsd:extension base="scufl:processorType">
+      <xsd:sequence>
+        <xsd:element ref="inputmap" maxOccurs="unbounded" minOccurs="0"/>
+       <xsd:element ref="outputmap" maxOccurs="unbounded" minOccurs="0"/>
+      </xsd:sequence>
+    </xsd:extension>
+  </xsd:complexContent>
+</xsd:complexType>
+
+<xsd:complexType name="nodeType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+<xsd:complexType name="linkType">
+  <xsd:sequence>
+    <xsd:element ref="input"/>
+    <xsd:element ref="output"/>
+  </xsd:sequence>
+  <xsd:attribute name="source" type="xsd:string"/>
+  <xsd:attribute name="sink" type="xsd:string"/>
+</xsd:complexType>
+
+<xsd:complexType name="mimeTypeType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+<xsd:complexType name="semanticTypeType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+<xsd:complexType name="metadataType">
+  <xsd:sequence>
+    <xsd:element ref="mimeTypes"/>
+    <xsd:element ref="description"/>
+    <xsd:element ref="semanticType"/>
+  </xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType name="sourceType">
+  <xsd:sequence>
+    <xsd:element ref="metadata"/>
+  </xsd:sequence>
+  <xsd:attribute name="name" type="xsd:string"/>
+</xsd:complexType>
+
+<xsd:complexType name="sinkType">
+  <xsd:sequence>
+   <xsd:element ref="metadata"/>
+  </xsd:sequence>
+  <xsd:attribute name="mode" type="xsd:string"/>
+  <xsd:attribute name="name" type="xsd:string"/>
+</xsd:complexType>
+
+<xsd:complexType name="conditionStateType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+<xsd:complexType name="targetType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+
+<xsd:complexType name="conditionType">
+  <xsd:sequence>
+    <xsd:element ref="state" minOccurs="1" maxOccurs="1"/>
+     <xsd:element ref="target" minOccurs="1" maxOccurs="1"/>
+  </xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType name="statusCodeType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+<xsd:complexType name="statechangeType">
+  <xsd:sequence>
+    <xsd:element ref="from" minOccurs="1" maxOccurs="1"/>
+     <xsd:element ref="to" minOccurs="1" maxOccurs="1"/>
+  </xsd:sequence>
+</xsd:complexType>
+
+
+<xsd:complexType name="actionType">
+  <xsd:sequence>
+    <xsd:element ref="target" minOccurs="1" maxOccurs="1"/>
+    <xsd:element ref="statechange" minOccurs="1" maxOccurs="1"/>
+  </xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType name="coordinationType">
+  <xsd:sequence>
+    <xsd:element ref="condition" minOccurs="1" maxOccurs="1"/>
+    <xsd:element ref="action" minOccurs="1" maxOccurs="1"/>
+  </xsd:sequence>
+  <xsd:attribute name="name" type="xsd:string"/>
+</xsd:complexType>
+
+<xsd:complexType name="scuflType">
+  <xsd:sequence>
+    <xsd:element ref="workflowdescription" minOccurs="1" maxOccurs="1"/>
+    <xsd:element ref="processor" minOccurs="0" maxOccurs="unbounded"/>
+    <xsd:element ref="link" minOccurs="0" maxOccurs="unbounded"/>
+    <xsd:element ref="source" minOccurs="0" maxOccurs="unbounded"/>
+    <xsd:element ref="sink" minOccurs="0" maxOccurs="unbounded"/>
+    <xsd:element ref="coordination" minOccurs ="0" maxOccurs="unbounded"/>
+  </xsd:sequence>
+  <xsd:attribute name="version" type="xsd:string"/>
+  <xsd:attribute name="log" type="xsd:nonNegativeInteger"/>
+</xsd:complexType>
+
+
+<xsd:element name="action" type="scufl:actionType"/>
+
+<xsd:element name="alternate" type="scufl:alternateType"/>
+    
+<xsd:element name="condition" type="scufl:conditionType"/>
+
+<xsd:element name="coordination" type="scufl:coordinationType"/>
+
+<xsd:element name="cross" type="scufl:crossType"/>
+
+<xsd:element name="default" type="scufl:defaultType"/>
+
+<xsd:element name="defaults" type="scufl:defaultsType"/>
+
+<xsd:element name="description" type="scufl:descriptionType"/>
+
+<xsd:element name="dot" type="scufl:dotType"/>
+
+<xsd:element name="from" type="scufl:statusCodeType"/>
+
+<xsd:element name="input" type="scufl:nodeType"/>
+
+<xsd:element name="inputmap" type="scufl:mapType"/>
+
+<xsd:element name="iterationstrategy" type="scufl:iterationstrategyType"/>
+ 
+
+<xsd:element name="iterator" type="scufl:iteratorType"/>
+
+<xsd:element name="link" type="scufl:linkType"/>
+
+<xsd:element name="mergemode" type="scufl:mergemodeType"/>
+
+<xsd:element name="metadata" type="scufl:metadataType"/>
+
+<xsd:element name="mimeType" type="scufl:mimeTypeType"/>
+
+<xsd:element name="mimeTypes">
+      <xsd:complexType>
+      <xsd:sequence>
+      <xsd:element ref="mimeType"/>
+      </xsd:sequence>
+      </xsd:complexType>
+</xsd:element>
+
+<xsd:element name="output" type="scufl:nodeType"/>
+
+<xsd:element name="outputmap" type="scufl:mapType"/>
+
+<xsd:element name="processor" type="scufl:processorType"/>
+
+<xsd:element name="processorElement" abstract="true"/>
+
+<xsd:element name="scufl" type="scufl:scuflType"/>
+
+<xsd:element name="semanticType" type="scufl:semanticTypeType"/>
+
+<xsd:element name="sink" type="scufl:sinkType"/>
+
+<xsd:element name="source" type="scufl:sourceType"/>
+
+<xsd:element name="state" type="scufl:conditionStateType"/>
+
+<xsd:element name="statechange" type="scufl:statechangeType"/>
+
+
+<xsd:element name="target" type="scufl:targetType"/>
+
+<xsd:element name="template" type="scufl:templateType"/>
+
+<xsd:element name="templateLiteral" type="scufl:templateLiteralType"/>
+
+<xsd:element name="templatePortReference"
+                   type="scufl:templatePortReferenceType"/>
+                   
+<xsd:element name="to" type="scufl:statusCodeType"/>
+
+<xsd:element name="workflowdescription" type="scufl:workflowDescriptionType"/>
+
+</xsd:schema>

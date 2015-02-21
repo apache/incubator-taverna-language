@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY dcterms "http://purl.org/dc/terms/" >
+    <!ENTITY foaf "http://xmlns.com/foaf/0.1/" >
+    <!ENTITY dcmitype "http://purl.org/dc/dcmitype/" >
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY ore "http://www.openarchives.org/ore/terms/" >
+    <!ENTITY rdfg "http://www.w3.org/2004/03/trix/rdfg-1/" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+]>
+
+
+<rdf:RDF xmlns="http://ns.taverna.org.uk/2015/ore#"
+     xml:base="http://ns.taverna.org.uk/2015/ore"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:foaf="http://xmlns.com/foaf/0.1/"
+     xmlns:dcmitype="http://purl.org/dc/dcmitype/"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:ore="http://www.openarchives.org/ore/terms/"
+     xmlns:rdfg="http://www.w3.org/2004/03/trix/rdfg-1/"
+     xmlns:dcterms="http://purl.org/dc/terms/">
+    <owl:Ontology rdf:about="http://ns.taverna.org.uk/2015/ore">
+        <rdfs:comment xml:lang="en">Terms in http://www.openarchives.org/ore/terms/ namespace
+
+Created by using only the URIs and structure from http://www.openarchives.org/ore/1.0/vocabulary
+to bypass incompatible license.
+
+See http://www.openarchives.org/ore/1.0/vocabulary for definition of terms.
+
+
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the &quot;License&quot;); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.</rdfs:comment>
+        <rdfs:seeAlso rdf:resource="http://www.openarchives.org/ore/1.0/vocabulary"/>
+        <owl:backwardCompatibleWith rdf:resource="http://www.openarchives.org/ore/terms/"/>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.openarchives.org/ore/terms/similarTo -->
+
+    <owl:AnnotationProperty rdf:about="&ore;similarTo">
+        <rdfs:isDefinedBy rdf:resource="http://www.openarchives.org/ore/terms/"/>
+        <rdfs:domain rdf:resource="&ore;Aggregation"/>
+        <rdfs:subPropertyOf rdf:resource="&rdfs;seeAlso"/>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://purl.org/dc/terms/hasPart -->
+
+    <rdf:Description rdf:about="&dcterms;hasPart">
+        <rdfs:isDefinedBy rdf:resource="http://purl.org/dc/terms/"/>
+    </rdf:Description>
+    
+
+
+    <!-- http://purl.org/dc/terms/isPartOf -->
+
+    <rdf:Description rdf:about="&dcterms;isPartOf">
+        <rdfs:isDefinedBy rdf:resource="http://purl.org/dc/terms/"/>
+    </rdf:Description>
+    
+
+
+    <!-- http://www.openarchives.org/ore/terms/aggregates -->
+
+    <owl:ObjectProperty rdf:about="&ore;aggregates">
+        <rdfs:subPropertyOf rdf:resource="&dcterms;hasPart"/>
+        <rdfs:isDefinedBy rdf:resource="http://www.openarchives.org/ore/terms/"/>
+        <rdfs:range rdf:resource="&ore;AggregatedResource"/>
+        <rdfs:domain rdf:resource="&ore;Aggregation"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.openarchives.org/ore/terms/describes -->
+
+    <owl:ObjectProperty rdf:about="&ore;describes">
+        <rdfs:isDefinedBy rdf:resource="http://www.openarchives.org/ore/terms/"/>
+        <rdfs:range rdf:resource="&ore;Aggregation"/>
+        <rdfs:domain rdf:resource="&ore;ResourceMap"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.openarchives.org/ore/terms/isAggregatedBy -->
+
+    <owl:ObjectProperty rdf:about="&ore;isAggregatedBy">
+        <rdfs:subPropertyOf rdf:resource="&dcterms;isPartOf"/>
+        <rdfs:isDefinedBy rdf:resource="http://www.openarchives.org/ore/terms/"/>
+        <rdfs:domain rdf:resource="&ore;AggregatedResource"/>
+        <rdfs:range rdf:resource="&ore;Aggregation"/>
+        <owl:inverseOf rdf:resource="&ore;aggregates"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.openarchives.org/ore/terms/isDescribedBy -->
+
+    <owl:ObjectProperty rdf:about="&ore;isDescribedBy">
+        <rdfs:isDefinedBy rdf:resource="http://www.openarchives.org/ore/terms/"/>
+        <rdfs:domain rdf:resource="&ore;Aggregation"/>
+        <rdfs:range rdf:resource="&ore;ResourceMap"/>
+        <owl:inverseOf rdf:resource="&ore;describes"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.openarchives.org/ore/terms/lineage -->
+
+    <owl:ObjectProperty rdf:about="&ore;lineage">
+        <rdfs:isDefinedBy rdf:resource="http://www.openarchives.org/ore/terms/"/>
+        <rdfs:domain rdf:resource="&ore;Proxy"/>
+        <rdfs:range rdf:resource="&ore;Proxy"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.openarchives.org/ore/terms/proxyFor -->
+
+    <owl:ObjectProperty rdf:about="&ore;proxyFor">
+        <rdfs:isDefinedBy rdf:resource="http://www.openarchives.org/ore/terms/"/>
+        <rdfs:range rdf:resource="&ore;AggregatedResource"/>
+        <rdfs:domain rdf:resource="&ore;Proxy"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.openarchives.org/ore/terms/proxyIn -->
+
+    <owl:ObjectProperty rdf:about="&ore;proxyIn">
+        <rdfs:isDefinedBy rdf:resource="http://www.openarchives.org/ore/terms/"/>
+        <rdfs:range rdf:resource="&ore;Aggregation"/>
+        <rdfs:domain rdf:resource="&ore;Proxy"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://purl.org/dc/dcmitype/Collection -->
+
+    <rdf:Description rdf:about="&dcmitype;Collection">
+        <rdfs:isDefinedBy rdf:resource="http://purl.org/dc/dcmitype/"/>
+    </rdf:Description>
+    
+
+
+    <!-- http://www.openarchives.org/ore/terms/AggregatedResource -->
+
+    <owl:Class rdf:about="&ore;AggregatedResource">
+        <rdfs:isDefinedBy rdf:resource="http://www.openarchives.org/ore/terms/"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.openarchives.org/ore/terms/Aggregation -->
+
+    <owl:Class rdf:about="&ore;Aggregation">
+        <rdfs:subClassOf rdf:resource="&dcmitype;Collection"/>
+        <rdfs:isDefinedBy rdf:resource="http://www.openarchives.org/ore/terms/"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.openarchives.org/ore/terms/Proxy -->
+
+    <owl:Class rdf:about="&ore;Proxy">
+        <rdfs:isDefinedBy rdf:resource="http://www.openarchives.org/ore/terms/"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.openarchives.org/ore/terms/ResourceMap -->
+
+    <owl:Class rdf:about="&ore;ResourceMap">
+        <rdfs:subClassOf rdf:resource="&rdfg;Graph"/>
+        <rdfs:isDefinedBy rdf:resource="http://www.openarchives.org/ore/terms/"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.w3.org/2004/03/trix/rdfg-1/Graph -->
+
+    <rdf:Description rdf:about="&rdfg;Graph">
+        <rdfs:isDefinedBy rdf:resource="http://www.w3.org/2004/03/trix/rdfg-1/"/>
+    </rdf:Description>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.5.0) http://owlapi.sourceforge.net -->
+

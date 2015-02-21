@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://org.embl.ebi.escience/xscufl/0.1alpha"
+            targetNamespace="http://org.embl.ebi.escience/xscufl/0.1alpha"
+            xmlns:scufl="http://org.embl.ebi.escience/xscufl/0.1alpha"
+            xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+            jaxb:version="1.0">
+
+
+<xsd:include schemaLocation="scufl.xsd" />
+<xsd:include schemaLocation="scufl-dependency.xsd" />
+
+<xsd:complexType name="apiconsumerType">
+      <xsd:sequence>
+      <xsd:element ref="class" maxOccurs="1" minOccurs="1"/>
+      <xsd:element ref="method" maxOccurs="1" minOccurs="1"/>
+      <xsd:element ref="description" maxOccurs="1" minOccurs="1"/>
+      <xsd:sequence>
+        <xsd:element ref="parameter" maxOccurs="unbounded"/>
+      </xsd:sequence>
+      <xsd:element ref="dependencies" maxOccurs="1" minOccurs="1"/>
+      <xsd:element ref="repositories" maxOccurs="1" minOccurs="1"/>
+      </xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType name="classType">
+  <xsd:attribute name="name" type="xsd:string"/>
+</xsd:complexType>
+
+<xsd:complexType name="methodType">
+  <xsd:attribute name="name" type="xsd:string"/>
+  <xsd:attribute name="static" type="xsd:boolean"/>
+  <xsd:attribute name="constructor" type="xsd:boolean"/>
+  <xsd:attribute name="type" type="xsd:string"/>
+  <xsd:attribute name="dimension" type="xsd:nonNegativeInteger"/>
+</xsd:complexType>
+
+<xsd:complexType name="parameterType">
+  	<xsd:annotation>
+         <xsd:appinfo>
+            <jaxb:class name="ApiConsumerParameterType"/>
+         </xsd:appinfo>
+      </xsd:annotation>
+  <xsd:attribute name="name" type="xsd:string"/>
+  <xsd:attribute name="type" type="xsd:string"/>
+  <xsd:attribute name="dimension" type="xsd:nonNegativeInteger"/>
+</xsd:complexType>
+
+<xsd:element name="parameter" type="scufl:parameterType">
+ 	<xsd:annotation>
+         <xsd:appinfo>
+            <jaxb:class name="ApiConsumerParameter"/>
+         </xsd:appinfo>
+      </xsd:annotation>
+</xsd:element>
+
+<xsd:element name="class" type="scufl:classType"/>
+
+<xsd:element name="method" type="scufl:methodType"/>
+
+<xsd:element name="apiconsumer" type="scufl:apiconsumerType" substitutionGroup="processorElement"/>
+
+</xsd:schema>

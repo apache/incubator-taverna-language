@@ -1,0 +1,1 @@
+<parameters xmlns="http://soap.jdispatcher.ebi.ac.uk"><jobId xmlns="">iprscan-S20130531-112044-0159-59919420-oy</jobId><type xmlns="">visual-png</type></parameters>

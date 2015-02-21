@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+
+-->
+
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://ns.taverna.org.uk/2010/scufl2#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="WorkflowDocument" xml:base="HelloWorld/" xsi:schemaLocation="http://ns.taverna.org.uk/2010/scufl2# http://ns.taverna.org.uk/2010/scufl2/scufl2.xsd http://www.w3.org/1999/02/22-rdf-syntax-ns# http://ns.taverna.org.uk/2010/scufl2/rdf.xsd">
+    <Workflow rdf:about="">
+        <name>HelloWorld</name>
+        <workflowIdentifier rdf:resource="http://ns.taverna.org.uk/2010/workflow/00626652-55ae-4a9e-80d4-c8e9ac84e2ca/"/>
+        <inputWorkflowPort>
+            <InputWorkflowPort rdf:about="in/yourName">
+                <name>yourName</name>
+                <portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+            </InputWorkflowPort>
+        </inputWorkflowPort>
+        <outputWorkflowPort>
+            <OutputWorkflowPort rdf:about="out/results">
+                <name>results</name>
+            </OutputWorkflowPort>
+        </outputWorkflowPort>
+        <processor>
+            <Processor rdf:about="processor/Hello/">
+                <name>Hello</name>
+                <inputProcessorPort>
+                    <InputProcessorPort rdf:about="processor/Hello/in/name">
+                        <name>name</name>
+                        <portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+                    </InputProcessorPort>
+                </inputProcessorPort>
+                <outputProcessorPort>
+                    <OutputProcessorPort rdf:about="processor/Hello/out/greeting">
+                        <name>greeting</name>
+                        <portDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</portDepth>
+                        <granularPortDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</granularPortDepth>
+                    </OutputProcessorPort>
+                </outputProcessorPort>
+                <dispatchStack>
+                    <DispatchStack rdf:about="processor/Hello/dispatchstack/">
+                        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/taverna/2.2/DefaultDispatchStack"/>
+                        <dispatchStackLayers rdf:parseType="Collection">
+                            <DispatchStackLayer rdf:about="processor/Hello/dispatchstack/0/">
+<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/taverna/2.2/Parallelise"/>
+                            </DispatchStackLayer>
+                            <DispatchStackLayer rdf:about="processor/Hello/dispatchstack/1/">
+<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/taverna/2.2/ErrorBounce"/>
+                            </DispatchStackLayer>
+                            <DispatchStackLayer rdf:about="processor/Hello/dispatchstack/2/">
+<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/taverna/2.2/Failover"/>
+                            </DispatchStackLayer>
+                            <DispatchStackLayer rdf:about="processor/Hello/dispatchstack/3/">
+<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/taverna/2.2/Retry"/>
+                            </DispatchStackLayer>
+                            <DispatchStackLayer rdf:about="processor/Hello/dispatchstack/4/">
+<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/taverna/2.2/Stop"/>
+                            </DispatchStackLayer>
+                            <DispatchStackLayer rdf:about="processor/Hello/dispatchstack/5/">
+<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/taverna/2.2/Invoke"/>
+                            </DispatchStackLayer>
+                        </dispatchStackLayers>
+                    </DispatchStack>
+                </dispatchStack>
+                <iterationStrategyStack>
+                    <IterationStrategyStack rdf:about="processor/Hello/iterationstrategy/">
+                        <iterationStrategies rdf:parseType="Collection">
+                            <CrossProduct rdf:about="processor/Hello/iterationstrategy/0/">
+<productOf rdf:parseType="Collection">
+    <PortNode rdf:about="processor/Hello/iterationstrategy/0/0/">
+        <iterateOverInputPort rdf:resource="processor/Hello/in/name"/>
+        <desiredDepth rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</desiredDepth>
+    </PortNode>
+</productOf>
+                            </CrossProduct>
+                        </iterationStrategies>
+                    </IterationStrategyStack>
+                </iterationStrategyStack>
+            </Processor>
+        </processor>
+        <processor>
+            <Processor rdf:about="processor/wait4me/">
+                <name>wait4me</name>
+                <dispatchStack>
+                    <DispatchStack rdf:about="processor/wait4me/dispatchstack/">
+                        <rdf:type rdf:resource="http://ns.taverna.org.uk/2010/taverna/2.2/DefaultDispatchStack"/>
+                        <dispatchStackLayers rdf:parseType="Collection">
+                            <DispatchStackLayer rdf:about="processor/wait4me/dispatchstack/0/">
+<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/taverna/2.2/Parallelise"/>
+                            </DispatchStackLayer>
+                            <DispatchStackLayer rdf:about="processor/wait4me/dispatchstack/1/">
+<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/taverna/2.2/ErrorBounce"/>
+                            </DispatchStackLayer>
+                            <DispatchStackLayer rdf:about="processor/wait4me/dispatchstack/2/">
+<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/taverna/2.2/Failover"/>
+                            </DispatchStackLayer>
+                            <DispatchStackLayer rdf:about="processor/wait4me/dispatchstack/3/">
+<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/taverna/2.2/Retry"/>
+                            </DispatchStackLayer>
+                            <DispatchStackLayer rdf:about="processor/wait4me/dispatchstack/4/">
+<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/taverna/2.2/Stop"/>
+                            </DispatchStackLayer>
+                            <DispatchStackLayer rdf:about="processor/wait4me/dispatchstack/5/">
+<rdf:type rdf:resource="http://ns.taverna.org.uk/2010/taverna/2.2/Invoke"/>
+                            </DispatchStackLayer>
+                        </dispatchStackLayers>
+                    </DispatchStack>
+                </dispatchStack>
+                <iterationStrategyStack>
+                    <IterationStrategyStack rdf:about="processor/wait4me/iterationstrategy/">
+                        <iterationStrategies rdf:parseType="Collection">
+                            <CrossProduct rdf:about="processor/wait4me/iterationstrategy/0/">
+<productOf rdf:parseType="Collection"/>
+                            </CrossProduct>
+                        </iterationStrategies>
+                    </IterationStrategyStack>
+                </iterationStrategyStack>
+            </Processor>
+        </processor>
+        <datalink>
+            <DataLink rdf:about="datalink?from=processor/Hello/out/greeting&amp;to=out/results&amp;mergePosition=0">
+                <receiveFrom rdf:resource="processor/Hello/out/greeting"/>
+                <sendTo rdf:resource="out/results"/>
+                <mergePosition rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</mergePosition>
+            </DataLink>
+        </datalink>
+        <datalink>
+            <DataLink rdf:about="datalink?from=in/yourName&amp;to=processor/Hello/in/name">
+                <receiveFrom rdf:resource="in/yourName"/>
+                <sendTo rdf:resource="processor/Hello/in/name"/>
+            </DataLink>
+        </datalink>
+        <datalink>
+            <DataLink rdf:about="datalink?from=in/yourName&amp;to=out/results&amp;mergePosition=1">
+                <receiveFrom rdf:resource="in/yourName"/>
+                <sendTo rdf:resource="out/results"/>
+                <mergePosition rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</mergePosition>
+            </DataLink>
+        </datalink>
+        <control>
+            <Blocking rdf:about="control?block=processor/Hello/&amp;untilFinished=processor/wait4me/">
+                <block rdf:resource="processor/Hello/"/>
+                <untilFinished rdf:resource="processor/wait4me/"/>
+            </Blocking>
+        </control>
+    </Workflow>
+</rdf:RDF>

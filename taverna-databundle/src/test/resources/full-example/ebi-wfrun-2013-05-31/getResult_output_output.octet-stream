@@ -1,0 +1,12 @@
+Sequence "TMM43_HUMAN" crc64 checksum: 70FDDD4ED1AA11DF length: 400 aa.
+
+InterPro       IPR012430      Transmembrane protein 43 family
+method         AccNumber      shortName                               location
+HMMPanther     PTHR13416      UNCHARACTERIZED                         T[1-400] 2.8e-209
+HMMPfam        PF07787        DUF1625                                 T[121-373] 5.2e-82
+
+InterPro       NULL           NULL
+method         AccNumber      shortName                               location
+HMMPanther     PTHR13416:SF0  SUBFAMILY NOT NAMED                     T[1-400] 2.8e-209
+TMHMM          tmhmm          transmembrane_regions                   ?[33-51] NA ?[313-331] NA ?[350-370] NA ?[375-395] NA
+

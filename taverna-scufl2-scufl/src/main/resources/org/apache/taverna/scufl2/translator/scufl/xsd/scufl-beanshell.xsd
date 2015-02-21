@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://org.embl.ebi.escience/xscufl/0.1alpha"
+            targetNamespace="http://org.embl.ebi.escience/xscufl/0.1alpha"
+            xmlns:scufl="http://org.embl.ebi.escience/xscufl/0.1alpha">
+
+<xsd:include schemaLocation="scufl.xsd" />
+<xsd:include schemaLocation="scufl-dependency.xsd" />
+
+<xsd:complexType name="beanshellType">
+      <xsd:sequence>
+      <xsd:element ref="scriptvalue" maxOccurs="1" minOccurs="1"/>
+      <xsd:element ref="beanshellinputlist" maxOccurs="1" minOccurs="1"/>
+      <xsd:element ref="beanshelloutputlist" maxOccurs="1" minOccurs="1"/>
+      <xsd:element ref="dependencies" maxOccurs="1" minOccurs="1"/>
+      <xsd:element ref="repositories" maxOccurs="1" minOccurs="1"/>      
+      </xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType name="scriptvalueType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+<xsd:complexType name="beanshellinputType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="syntactictype" type="xsd:string" form="qualified"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+<xsd:complexType name="beanshellinputlistType">
+  <xsd:sequence>
+    <xsd:element ref="beanshellinput" maxOccurs="unbounded" minOccurs="0"/>
+  </xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType name="beanshelloutputType">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="syntactictype" type="xsd:string" form="qualified"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+</xsd:complexType>
+
+<xsd:complexType name="beanshelloutputlistType">
+  <xsd:sequence>
+    <xsd:element ref="beanshelloutput" maxOccurs="unbounded" minOccurs="0"/>
+  </xsd:sequence>
+</xsd:complexType>
+
+<xsd:element name="beanshelloutput" type="scufl:beanshelloutputType"/>
+
+<xsd:element name="beanshelloutputlist" type="scufl:beanshelloutputlistType"/>
+
+<xsd:element name="beanshellinput" type="scufl:beanshellinputType"/>
+
+<xsd:element name="beanshellinputlist" type="scufl:beanshellinputlistType"/>
+
+<xsd:element name="scriptvalue" type="scufl:scriptvalueType"/>
+
+<xsd:element name="beanshell" type="scufl:beanshellType" substitutionGroup="processorElement"/>
+
+</xsd:schema>
