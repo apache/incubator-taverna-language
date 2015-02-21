@@ -25,42 +25,27 @@ under the License.
 		<artifactId>taverna-language</artifactId>
 		<version>0.15.0-incubating-SNAPSHOT</version>
 	</parent>
-  <artifactId>baclava-language</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <artifactId>taverna-baclava-language</artifactId>
   <name>Apache Taverna Baclava support</name>
   <packaging>bundle</packaging>
   <description>Support for reading and writing Baclava files</description>
   <build>
 		<plugins>
-
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jaxb2-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>xjc</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<packageName>org.apache.taverna.baclava</packageName>
-					<schemaDirectory>src/main/resources/xsd/</schemaDirectory>
-				</configuration>
-			</plugin>
-
-	            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
-            </plugin>
-			<plugin>
-				<groupId>org.apache.rat</groupId>
-				<artifactId>apache-rat-plugin</artifactId>
-			</plugin>
-                  </plugins>
-            </build>
+      <plugin>
+          <groupId>org.jvnet.jaxb2.maven2</groupId>
+          <artifactId>maven-jaxb2-plugin</artifactId>
+          <executions>
+            <execution>
+                <goals>
+                    <goal>generate</goal>
+                </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <schemaDirectory>src/main/resources/xsd/</schemaDirectory>
+					<generatePackage>org.apache.taverna.baclava</generatePackage>
+          </configuration>
+        </plugin>
+      </plugins>
+  </build>
 </project>
