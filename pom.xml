@@ -170,7 +170,7 @@
 				<plugin>
 					<groupId>org.jvnet.jaxb2.maven2</groupId>
 					<artifactId>maven-jaxb2-plugin</artifactId>
-					<version>0.11.0</version>
+					<version>0.12.3</version>
 					<configuration>
 						<enableIntrospection>true</enableIntrospection>
 						<specVersion>2.2</specVersion>
