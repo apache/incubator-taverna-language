@@ -28,17 +28,6 @@
 	<description>Schemas for SCUFL2</description>
 	<build>
 		<plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <!-- NO!
-                <configuration>
-                    <instructions>
-                        <Export-Package>org.apache.taverna.scufl2.api.io;provide:=true</Export-Package>
-                    </instructions>
-                </configuration>
-                 -->
-            </plugin>
       <plugin>
           <groupId>org.jvnet.jaxb2.maven2</groupId>
           <artifactId>maven-jaxb2-plugin</artifactId>
@@ -53,23 +42,6 @@
             <schemaDirectory>src/main/resources/org/apache/taverna/scufl2/rdfxml/xsd/</schemaDirectory>
           </configuration>
       </plugin>
-
-	            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
-            </plugin>
-                <plugin>
-        <groupId>org.apache.rat</groupId>
-        <artifactId>apache-rat-plugin</artifactId>
-      </plugin>
-            </plugins>
-            </build>	<dependencies>
-	</dependencies>
-	<repositories>
-
-	</repositories>
+   </plugins>
+ </build>	
 </project>

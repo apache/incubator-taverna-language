@@ -25,33 +25,10 @@
     <artifactId>taverna-scufl2-validation-structural</artifactId>
     <packaging>bundle</packaging>
     <name>Apache Taverna Scufl 2 validation structural</name>
-    <description>Code to check that the SCUFL 2 could run as a valid workflow. This is separate from checking the activities within the SCUFL 2 are "live"</description>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Export-Package>org.apache.taverna.scufl2.validation.structural.*;provide:=true</Export-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-
-	            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
-            </plugin>
-                <plugin>
-        <groupId>org.apache.rat</groupId>
-        <artifactId>apache-rat-plugin</artifactId>
-      </plugin>
-                  </plugins>
-            </build>
+    <description>Code to check that the SCUFL 2 could run as a valid workflow.
+      This is separate from checking the activities within the SCUFL 2 are
+      "live"
+    </description> 
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>

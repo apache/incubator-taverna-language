@@ -40,11 +40,7 @@
 					</execution>
 				</executions>
 			</plugin>
-                <plugin>
-        <groupId>org.apache.rat</groupId>
-        <artifactId>apache-rat-plugin</artifactId>
-      </plugin>
-      		</plugins>
+    </plugins>
 	</build>
 	<dependencies>
 		<dependency>
@@ -68,7 +64,7 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-                        <version>${commons.io.version}</version>
+      <version>${commons.io.version}</version>
 			<type>jar</type>
 			<scope>test</scope>
 		</dependency>

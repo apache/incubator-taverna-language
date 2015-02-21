@@ -167,43 +167,6 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
-
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>jaxb2-maven-plugin</artifactId>
-					<version>1.6</version>
-					<configuration>
-						<target>2.2</target>
-						<enableIntrospection>true</enableIntrospection>
-						<!--
-						Needed for consistency across Java 6 and Java 7 on optional Booleans.
-						http://www.olivergierke.de/wordpress/2011/03/a-jaxb-or-rather-xjc-odyssey/
-						http://www.mojavelinux.com/blog/archives/2006/09/the_great_jaxb_api_blunder/
-						http://java.net/jira/browse/JAXB-131
-						-->
-						<!--
-						<arguments>-disableXmlSecurity</arguments>
-						-->
-						<!--
-						Needed to read schemas from file: (!!)
-						https://github.com/stianh/gradle-jaxb-plugin/issues/20
-						-->
-					</configuration>
-					<dependencies>
-						<!--
-						<dependency>
-							<groupId>com.sun.xml.bind</groupId>
-							<artifactId>jaxb-xjc</artifactId>
-							<version>${jaxb.version}</version>
-						</dependency>
-						<dependency>
-							<groupId>com.sun.xml.bind</groupId>
-							<artifactId>jaxb-impl</artifactId>
-							<version>${jaxb.version}</version> 
-						</dependency>
-						-->
-					</dependencies>
-				</plugin>
 				<plugin>
 					<groupId>org.jvnet.jaxb2.maven2</groupId>
 					<artifactId>maven-jaxb2-plugin</artifactId>
