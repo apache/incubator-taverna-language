@@ -89,6 +89,8 @@ import org.apache.taverna.scufl2.api.profiles.Profile;
  * </dl>
  */
 public class WorkflowBundleIO {
+	private static final int FIRST_BYTES = 1024;
+
 	private static Logger log = Logger.getLogger(WorkflowBundleIO.class
 			.getCanonicalName());
 
@@ -286,7 +288,7 @@ public class WorkflowBundleIO {
 	public WorkflowBundle readBundle(File bundleFile, String mediaType)
 			throws ReaderException, IOException {
 		if (mediaType == null) {
-			byte[] firstBytes = new byte[1024];
+			byte[] firstBytes = new byte[FIRST_BYTES];
 			try (FileInputStream fileIn = new FileInputStream(bundleFile)) {
 				fileIn.read(firstBytes);
 			}
@@ -326,7 +328,7 @@ public class WorkflowBundleIO {
 	public WorkflowBundle readBundle(InputStream inputStream, String mediaType)
 			throws ReaderException, IOException {
 		if (mediaType == null) {
-			byte[] firstBytes = new byte[1024];
+			byte[] firstBytes = new byte[FIRST_BYTES];
 			inputStream = new BufferedInputStream(inputStream);
 			try {
 				inputStream.mark(firstBytes.length * 2);
@@ -389,7 +391,7 @@ public class WorkflowBundleIO {
 				contentType = mediaType; // might still be null -> guess
 			else
 				for (String ignore : ignoreTypes)
-					if (contentType.toLowerCase().startsWith(ignore))
+					if (contentType != null && contentType.toLowerCase().startsWith(ignore))
 						contentType = mediaType; // might still be null -> guess
 			// TODO: Pass URL to reader (as baseURI)
 			return readBundle(url.openStream(), contentType);
