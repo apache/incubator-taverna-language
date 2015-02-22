@@ -33,7 +33,7 @@
         </dependency>
         <dependency>
           <groupId>${project.groupId}</groupId>
-          <artifactId>taverna-scufl2-rdfxml</artifactId>
+          <artifactId>taverna-scufl2-wfbundle</artifactId>
           <version>${project.version}</version>
         </dependency>
         <dependency>

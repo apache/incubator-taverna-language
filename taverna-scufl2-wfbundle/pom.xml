@@ -22,10 +22,10 @@
 		<artifactId>taverna-language</artifactId>
 		<version>0.15.0-incubating-SNAPSHOT</version>
 	</parent>
-	<artifactId>taverna-scufl2-rdfxml</artifactId>
+	<artifactId>taverna-scufl2-wfbundle</artifactId>
 	<packaging>bundle</packaging>
-	<name>Apache Taverna Scufl 2 RDF/XML</name>
-	<description>XSD based XML serialisation which is RDF/XML compatible</description>
+	<name>Apache Taverna Scufl 2 wfbundle read/write</name>
+	<description>Read/write support for wfbundle with RDF/XML-compatible XML files</description>
   <dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>

@@ -27,10 +27,10 @@ require 'zip/zipfilesystem'
 scufl2 = RDF::Vocabulary.new("http://ns.taverna.org.uk/2010/scufl2#")
 dc = RDF::Vocabulary.new("http://purl.org/dc/elements/1.1/")
 
-graph = RDF::Graph.load("../../../../taverna-scufl2-rdfxml/src/test/resources/org/apache/taverna/scufl2/rdfxml/example/workflowBundle.rdf")
+graph = RDF::Graph.load("../../../../taverna-scufl2-wfbundle/src/test/resources/org/apache/taverna/scufl2/rdfxml/example/workflowBundle.rdf")
 
 graph = RDF::Graph.new()
-Zip::ZipFile.open("../../../../taverna-scufl2-rdfxml/src/test/resources/org/apache/taverna/scufl2/rdfxml/example.wfbundle") {
+Zip::ZipFile.open("../../../../taverna-scufl2-wfbundle/src/test/resources/org/apache/taverna/scufl2/rdfxml/example.wfbundle") {
     |zipfile|
     a = zipfile.file.read("workflowBundle.rdf")
     RDF::Reader.for(:rdfxml).new(a) do |reader|
