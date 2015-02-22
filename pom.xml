@@ -292,22 +292,22 @@
 		</dependencies>
 	</dependencyManagement>
 	<modules>
-		<module>taverna-scufl2-ucfpackage</module>
-		<module>taverna-scufl2-api</module>
-		<module>taverna-scufl2-examples</module>
-		<module>taverna-scufl2-wfbundle</module>
-		<module>taverna-scufl2-t2flow</module>
-		<module>taverna-scufl2-scufl</module>
-		<module>taverna-scufl2-validation</module>
-		<module>taverna-scufl2-validation-structural</module>
-		<module>taverna-scufl2-validation-correctness</module>
-		<module>taverna-scufl2-validation-integration</module>
-		<module>taverna-scufl2-integration-tests</module>
-		<module>taverna-scufl2-annotation</module>
-		<module>taverna-scufl2-schemas</module>
-		<module>taverna-scufl2-wfdesc</module>
-		<module>taverna-robundle</module>
-		<module>taverna-databundle</module>
-		<module>taverna-baclava-language</module>
+    <module>taverna-baclava-language</module>
+    <module>taverna-databundle</module>
+    <module>taverna-robundle</module>
+    <module>taverna-scufl2-annotation</module>
+    <module>taverna-scufl2-api</module>
+    <module>taverna-scufl2-examples</module>
+    <module>taverna-scufl2-integration-tests</module>
+    <module>taverna-scufl2-schemas</module>
+    <module>taverna-scufl2-scufl</module>
+    <module>taverna-scufl2-t2flow</module>
+    <module>taverna-scufl2-ucfpackage</module>
+    <module>taverna-scufl2-validation</module>
+    <module>taverna-scufl2-validation-correctness</module>
+    <module>taverna-scufl2-validation-integration</module>
+    <module>taverna-scufl2-validation-structural</module>
+    <module>taverna-scufl2-wfbundle</module>
+    <module>taverna-scufl2-wfdesc</module>
 	</modules>
 </project>
