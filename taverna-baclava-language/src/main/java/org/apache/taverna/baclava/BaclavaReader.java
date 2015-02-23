@@ -30,12 +30,18 @@ import javax.xml.bind.Unmarshaller;
 
 public class BaclavaReader {
 	
-	private static JAXBContext jaxbContext;
-	private static Unmarshaller unmarshaller;
+	private static final JAXBContext jaxbContext = initContext();
+	
+	private static JAXBContext initContext() {
+        try {
+			return JAXBContext.newInstance("org.apache.taverna.baclava");
+		} catch (JAXBException e) {
+			return null;
+		}
+    }
 
 	public static DataThingMapType readBaclava(Reader r) throws JAXBException {
-		jaxbContext = JAXBContext.newInstance("org.apache.taverna.baclava");
-		unmarshaller = jaxbContext.createUnmarshaller();
+		Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 		JAXBElement<?> jb = (JAXBElement<?>) unmarshaller.unmarshal(r);
 		return (DataThingMapType) jb.getValue();
 	}

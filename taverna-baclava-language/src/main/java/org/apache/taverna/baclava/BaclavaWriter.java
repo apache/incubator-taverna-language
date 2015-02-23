@@ -34,9 +34,18 @@ import javax.xml.bind.Marshaller;
  *
  */
 public class BaclavaWriter {
+	
+	private static final JAXBContext jaxbContext = initContext();
+	
+	private static JAXBContext initContext() {
+        try {
+			return JAXBContext.newInstance("org.apache.taverna.baclava");
+		} catch (JAXBException e) {
+			return null;
+		}
+    }
 
 	public static void writeBaclava(DataThingMapType d, Writer w) throws JAXBException {
-		JAXBContext jaxbContext = JAXBContext.newInstance(ObjectFactory.class);
 		Marshaller marshaller = jaxbContext.createMarshaller();
 		marshaller.setProperty("jaxb.formatted.output", true);
 		
