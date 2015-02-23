@@ -180,60 +180,22 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-<!-- TODO: Update -->
 	<scm>
-		<!-- TODO: Replace with git.apache.org details :
 		<connection>scm:git:https://git-wip-us.apache.org/repos/asf/incubator-taverna-language.git</connection>
 		<developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/incubator-taverna-language.git</developerConnection>
-		<url>https://git-wip-us.apache.org/repos/asf/incubator-taverna-language.git</url>
-		-->
-		<connection>scm:git:https://github.com/taverna-incubator/incubator-taverna-language.git</connection>
-		<developerConnection>scm:git:git@github.com:taverna-incubator/incubator-taverna-language.git</developerConnection>
-		<url>https://github.com/taverna-incubator/incubator-taverna-language</url>
+		<url>https://github.com/apache/incubator-taverna-language</url>
 		<tag>HEAD</tag>
 	</scm>
 
-	<repositories>
-		<!--
-		<repository>
-			<id>com.springsource.repository.bundles.release</id>
-			<name>SpringSource Enterprise Bundle Repository - SpringSource Bundle Releases</name>
-			<url>http://repository.springsource.com/maven/bundles/release</url>
-			<releases />
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>com.springsource.repository.bundles.external</id>
-			<name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
-			<url>http://repository.springsource.com/maven/bundles/external</url>
-			<releases />
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		-->
-
-<!-- TODO: Remove myGrid repositories -->
-		<repository>
-			<id>taverna-incubating</id>
-			<name>Apache Taverna incubating Repository</name>
-			<url>http://repository.mygrid.org.uk/artifactory/incubator-snapshot-local/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots />
-		</repository>
-		<repository>
-<!-- TODO: Use Apache snapshot repo instead -->
-			<id>taverna-incubating-release</id>
-			<name>Taverna incubating test release</name>
-			<url>http://repository.mygrid.org.uk/artifactory/incubator-release-test/</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
+  <repositories>
+    <repository>
+      <id>apache.snapshots</id>
+      <name>Apache Snapshot Repository</name>
+      <url>http://repository.apache.org/snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
 	</repositories>
 
 	<dependencyManagement>
