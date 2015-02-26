@@ -29,22 +29,11 @@ import org.apache.taverna.scufl2.api.annotation.Revision;
 import org.apache.taverna.scufl2.api.core.Workflow;
 import org.apache.taverna.scufl2.api.io.WriterException;
 import org.apache.taverna.scufl2.wfdesc.ontologies.Prov_o;
-import org.openrdf.OpenRDFException;
-import org.openrdf.model.URI;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.model.vocabulary.RDF;
-import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.sail.SailRepository;
-import org.openrdf.rio.helpers.OrganizedRDFWriter;
-import org.openrdf.sail.memory.MemoryStore;
 
 import com.hp.hpl.jena.ontology.Individual;
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Resource;
 
 
 public class ROEvoSerializer {
@@ -63,23 +52,15 @@ public class ROEvoSerializer {
 		}
 		
 		java.net.URI baseURI = Workflow.WORKFLOW_ROOT;
-		
-		try {
-			con.setNamespace("roevo", "http://purl.org/wf4ever/roevo#");
-			con.setNamespace("prov", "http://www.w3.org/ns/prov#");
-//			con.setNamespace("wfdesc",
-//					"http://purl.org/wf4ever/wfdesc#");
-//			con.setNamespace("wf4ever",
-//					"http://purl.org/wf4ever/wf4ever#");
-			con.setNamespace("rdfs",
-					"http://www.w3.org/2000/01/rdf-schema#");
-
+		model.setNsPrefix("roevo", "http://purl.org/wf4ever/roevo#");
+		model.setNsPrefix("prov", "http://www.w3.org/ns/prov#");
+		model.setNsPrefix("rdfs",
+				"http://www.w3.org/2000/01/rdf-schema#");
 			
-			con.export(new OrganizedRDFWriter(
-					new TurtleWriterWithBase(output, baseURI)));
-		} catch (OpenRDFException e) {
-			throw new WriterException("Can't write to output", e);
-		}
+		model.write(output, "turtle", baseURI.toASCIIString());
+
+//			throw new WriterException("Can't write to output", e);
+		
 		
 	}
 
