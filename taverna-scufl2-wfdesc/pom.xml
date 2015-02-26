@@ -48,7 +48,7 @@
                 <fileOptions>
                   <source>
                     <input>default</input>
-                    <package-name>org.apache.taverna.scufl2.wfdesc.impl.ontologies</package-name>
+                    <package-name>org.apache.taverna.scufl2.wfdesc.ontologies</package-name>
                     <ontology>true</ontology>
                   </source>
                 </fileOptions>
@@ -166,6 +166,11 @@
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+        	<groupId>org.apache.jena</groupId>
+        	<artifactId>jena-core</artifactId>
+        	<version>${jena.version}</version>
         </dependency>
 
         <dependency>
