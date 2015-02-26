@@ -43,11 +43,11 @@ details about embedded third-party libraries and source code.
 
 Official modules:
 
-* [taverna-robundle](taverna-robundle/) [Research Object bundles](https://w3id.org/bundle), a ZIP-based container format
-* [taverna-databundle](taverna-databundle/) DataBundle - load/save RO bundle
-  with workflow inputs/outputs/provenance of Taverna workflow runs
+* [taverna-robundle](taverna-robundle/) load/save/manage [Research Object bundles](https://w3id.org/bundle), (ZIP-based container)
+* [taverna-databundle](taverna-databundle/) load/save RO bundle with workflow
+  inputs/outputs/workflow run provenance
 * [taverna-scufl2-api](taverna-scufl2-api/) Inspect and build SCUFL2 workflow
-  definitions that can be executed and edited in Apache Taverna 3
+  definitions 
 * [taverna-scufl2-wfbundle](taverna-scufl2-wfbundle/) load/save Apache Taverna 3 `.wfbundle` workflows
 * [taverna-scufl2-t2flow](taverna-scufl2-t2flow/) load Taverna 2 `.t2flow` workflows
 * [taverna-scufl2-schemas](taverna-scufl2-schemas) SCUFL2 XML Schemas and OWL ontologies
@@ -61,9 +61,9 @@ Experimental modules:
 * [taverna-baclava-language](taverna-baclava-language) Load Taverna 2 data documents (wokrkflow inputs/outputs)
 
 Deprecated modules:
-* *taverna-scufl2-ucfpackage*: API for [Adobe
+* [taverna-scufl2-ucfpackage](taverna-scufl2-ucfpackage/): API for [Adobe
   UCF](https://wikidocs.adobe.com/wiki/display/PDFNAV/Universal+Container+Format)
-  ZIP files - superseeded by *taverna-robundle*
+  ZIP files - superseeded by `taverna-robundle`
 
 
 For more details, see the READMEs of:
@@ -87,7 +87,7 @@ To build Apache Taverna Language, use:
     mvn clean install
 
 This will build each module and run their tests, producing JARs like
-`taverna-scufl2-api/target/scufl2-api-0.14.0.jar`. 
+`taverna-scufl2-api/target/taverna-scufl2-api-0.15.0-incubating.jar`. 
 Some of the experimental modules are not built automatically, to build
 them separately, run the same command from within their folder.
 
@@ -145,22 +145,21 @@ Typical users of this API will depend on these modules:
 		</dependency> 
 
 To find the latest `<version>` to use above (this README might
-not have been updated), see the the [Apache Taverna Language download
-page](http://taverna.incubator.apache.org/download/language/)
+not have been updated), see the [Apache Taverna Language downloads]
+(http://taverna.incubator.apache.org/download/language/).
 
-
-All Scufl2 modules are also valid OSGi bundles, see the OSGi section
-below.  
+All Scufl2 modules are also valid [OSGi](http://www.osgi.org/) bundles, see the
+OSGi section below.  
 
 You can alternatively copy and add these JARs from the build to add
 to your classpath:
 
-* taverna-robundle/target/taverna-scufl2-robundle-0.15.0-incubating.jar
-* taverna-databundle/target/taverna-scufl2-databundle-0.15.0-incubating.jar
-* taverna-scufl2-api/target/taverna-scufl2-api-0.15.0-incubating.jar
-* taverna-scufl2-wfbundle/target/taverna-scufl2-wfbundle-0.15.0-incubating.jar
-* taverna-scufl2-ucfpackage/target/taverna-scufl2-ucfpackage-0.15.0-incubating.jar
-* taverna-scufl2-t2flow/target/taverna-scufl2-t2flow-0.15.0-incubating.jar
+* `taverna-robundle/target/taverna-scufl2-robundle-0.15.0-incubating.jar`
+* `taverna-databundle/target/taverna-scufl2-databundle-0.15.0-incubating.jar`
+* `taverna-scufl2-api/target/taverna-scufl2-api-0.15.0-incubating.jar`
+* `taverna-scufl2-wfbundle/target/taverna-scufl2-wfbundle-0.15.0-incubating.jar`
+* `taverna-scufl2-ucfpackage/target/taverna-scufl2-ucfpackage-0.15.0-incubating.jar`
+* `taverna-scufl2-t2flow/target/taverna-scufl2-t2flow-0.15.0-incubating.jar`
 
 ## Javadoc
 
