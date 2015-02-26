@@ -21,9 +21,12 @@ package org.apache.taverna.scufl2.wfdesc;
 */
 
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,9 +34,13 @@ import java.io.InputStream;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
-import org.apache.taverna.scufl2.wfdesc.ROEvoSerializer;
+import org.apache.taverna.scufl2.wfdesc.ontologies.Prov_o;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Resource;
 
 
 public class TestRoEvoSerializer {
@@ -50,15 +57,28 @@ public class TestRoEvoSerializer {
 		assertNotNull(helloStream);
 		helloWorld = io.readBundle(helloStream, "application/vnd.taverna.t2flow+xml");
 		assertNotNull(helloWorld);
+		assertEquals("/2010/workflow/01348671-5aaa-4cc2-84cc-477329b70b0d/",
+				helloWorld.getMainWorkflow().getIdentifier().getPath());
 	}
-	
 	
 	@Test
 	public void workflowUUIDs() throws Exception {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		roEvo.workflowHistory(helloWorld.getMainWorkflow(), os);
+		System.out.write(os.toByteArray());
 		assertTrue(500 < os.size());
-		assertTrue(os.toString("UTF-8").indexOf(" a roevo:VersionableResource , prov:Entity ;") > 0);
+		String ttl = os.toString("UTF-8");
+		assertTrue(ttl.contains("01348671-5aaa-4cc2-84cc-477329b70b0d"));
+		assertTrue(ttl.contains("VersionableResource"));
+		assertTrue(ttl.contains("Entity"));
+		
+		OntModel m = ModelFactory.createOntologyModel();
+		m.read(new ByteArrayInputStream(os.toByteArray()), "http://example.com/", "Turtle");
+		Resource mainWf = m.getResource(helloWorld.getMainWorkflow().getIdentifier().toASCIIString());		
+		Resource older = mainWf.getProperty(Prov_o.wasRevisionOf).getResource();
+		Resource oldest = older.getProperty(Prov_o.wasRevisionOf).getResource();
+		assertNull(oldest.getProperty(Prov_o.wasRevisionOf));
+		
 	}
 	
 }
