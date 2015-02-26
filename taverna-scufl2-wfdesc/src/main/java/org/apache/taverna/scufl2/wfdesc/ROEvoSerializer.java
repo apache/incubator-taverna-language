@@ -57,7 +57,7 @@ public class ROEvoSerializer {
 		model.setNsPrefix("rdfs",
 				"http://www.w3.org/2000/01/rdf-schema#");
 			
-		model.write(output, "turtle", baseURI.toASCIIString());
+		model.write(output, "Turtle", baseURI.toASCIIString());
 
 //			throw new WriterException("Can't write to output", e);
 		
