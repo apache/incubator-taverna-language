@@ -28,6 +28,7 @@ import java.io.OutputStream;
 import org.apache.taverna.scufl2.api.annotation.Revision;
 import org.apache.taverna.scufl2.api.core.Workflow;
 import org.apache.taverna.scufl2.api.io.WriterException;
+import org.apache.taverna.scufl2.wfdesc.ontologies.Prov_o;
 import org.openrdf.OpenRDFException;
 import org.openrdf.model.URI;
 import org.openrdf.model.ValueFactory;
@@ -39,32 +40,24 @@ import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.rio.helpers.OrganizedRDFWriter;
 import org.openrdf.sail.memory.MemoryStore;
 
+import com.hp.hpl.jena.ontology.Individual;
+import com.hp.hpl.jena.ontology.OntClass;
+import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Resource;
+
 
 public class ROEvoSerializer {
 	//private URITools uriTools = new URITools();
 	
 	public void workflowHistory(Workflow mainWorkflow, OutputStream output) throws WriterException {	
-		Repository repository = new SailRepository(new MemoryStore());
-		try {
-			repository.initialize();
-		} catch (RepositoryException e1) {
-			throw new IllegalStateException("Can't initialize memory SAIL repository", e1);
-		}
-		ValueFactory factory = repository.getValueFactory();
-	
-		
-		RepositoryConnection con;
-		try {
-			con = repository.getConnection();
-		} catch (RepositoryException e1) {
-			throw new IllegalStateException("Can't get repository connection", e1);
-		}
+		OntModel model = ModelFactory.createOntologyModel();
 		Revision revision = mainWorkflow.getCurrentRevision();
 		Revision previous = revision.getPreviousRevision();
-		addRevision(factory, con, revision);
+		addRevision(model, revision);
 		while (previous != null) {
-			addRevision(factory, con, previous);
-			addPrevious(factory, con, revision, previous);			
+			addRevision(model, previous);
+			addPrevious(model, revision, previous);			
 			revision = previous;
 			previous = revision.getPreviousRevision();
 		}
@@ -90,33 +83,25 @@ public class ROEvoSerializer {
 		
 	}
 
-	private void addRevision(ValueFactory factory, RepositoryConnection con,
+	private void addRevision(OntModel model,
 			Revision revision) {
-		URI revisionURI = factory.createURI(revision.getIdentifier().toASCIIString());			
-		
-		URI version = factory.createURI("http://purl.org/wf4ever/roevo#VersionableResource");		
-		URI entity = factory.createURI("http://www.w3.org/ns/prov#Entity");		
-		try {
-			con.add(revisionURI, RDF.TYPE, version);
-			con.add(revisionURI, RDF.TYPE, entity);
-		} catch (RepositoryException e1) {
-			throw new IllegalStateException("Can't add triple to repository", e1);
-		}
-		
+		OntClass VersionableResource = model.createClass("http://purl.org/wf4ever/roevo#VersionableResource");
+		VersionableResource.addSuperClass(Prov_o.Entity);
+		Individual revisionResource = model.createIndividual(revision.getIdentifier().toASCIIString(), 
+				VersionableResource);
+		revisionResource.addRDFType(Prov_o.Entity);
 	}
 
-	private void addPrevious(ValueFactory factory, RepositoryConnection con,
+	private void addPrevious(OntModel model,
 			Revision revision, Revision previous) {
-		URI revisionURI = factory.createURI(revision.getIdentifier().toASCIIString());			
-		URI previousURI = factory.createURI(previous.getIdentifier().toASCIIString());
+		OntClass VersionableResource = model.createClass("http://purl.org/wf4ever/roevo#VersionableResource");
+		VersionableResource.addSuperClass(Prov_o.Entity);
 		
-		URI prev = factory.createURI("http://www.w3.org/ns/prov#wasRevisionOf");
-		
-		try {
-			con.add(revisionURI, prev, previousURI);
-		} catch (RepositoryException e1) {
-			throw new IllegalStateException("Can't add triple to repository", e1);
-		}
+		Individual revisionResource = model.createIndividual(revision.getIdentifier().toASCIIString(), 
+				VersionableResource);
+		Individual previousResource = model.createIndividual(previous.getIdentifier().toASCIIString(), 
+				VersionableResource);
+		revisionResource.addProperty(Prov_o.wasRevisionOf, previousResource);
 	}
 	
 }
