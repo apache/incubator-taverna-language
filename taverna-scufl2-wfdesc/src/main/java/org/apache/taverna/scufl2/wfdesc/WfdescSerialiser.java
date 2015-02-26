@@ -76,7 +76,6 @@ import org.purl.wf4ever.wfdesc.Output;
 import org.purl.wf4ever.wfdesc.Process;
 import org.w3.prov.Entity;
 
-
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class WfdescSerialiser {
@@ -97,42 +96,20 @@ public class WfdescSerialiser {
 	.create("http://ns.taverna.org.uk/2010/activity/tool");
 	
 	private Scufl2Tools scufl2Tools = new Scufl2Tools();
-	private SesameManager sesameManager;
 	private URITools uriTools = new URITools();
 	private WorkflowBundle wfBundle;
 
-	public Repository getRepository() {
-		return getSesameManager().getConnection().getRepository();
-	}
 
 	public Scufl2Tools getScufl2Tools() {
 		return scufl2Tools;
-	}
-
-	public SesameManager getSesameManager() {
-		if (sesameManager == null) {
-		    
-		    // Raven workaround - register SPARQLParserFactory
-		    QueryParserRegistry.getInstance().add(new SPARQLParserFactory());
-		    
-			ElmoModule module = new ElmoModule();
-			module.addConcept(Labelled.class);
-			SesameManagerFactory factory = new SesameManagerFactory(module);
-			factory.setInferencingEnabled(true);
-			sesameManager = factory.createElmoManager();
-		}
-		return sesameManager;
 	}
 
 	public URITools getUriTools() {
 		return uriTools;
 	}
 
-	private QName qnameForBean(WorkflowBean bean) {
-		URI uri = uriTools.uriForBean(bean);
-		org.openrdf.model.URI sesameUri = getRepository().getValueFactory()
-				.createURI(uri.toASCIIString());
-		return new QName(sesameUri.getNamespace(), sesameUri.getLocalName());
+	private String uriForBean(WorkflowBean bean) {
+		return uriTools.uriForBean(bean).toASCIIString();
 	}
 	
 	protected void save(final WorkflowBundle bundle) {
@@ -319,7 +296,7 @@ public class WfdescSerialiser {
             }
 
             private <T> T entityForBean(WorkflowBean bean, Class<T> type) {
-                return getSesameManager().create(qnameForBean(bean), type);
+                return getSesameManager().create(uriForBean(bean), type);
             }
 
 //			@Override
