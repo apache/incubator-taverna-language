@@ -37,15 +37,6 @@
 			<plugin>
 				<groupId>org.apache.rat</groupId>
 				<artifactId>apache-rat-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>rat-checks</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
 				<configuration>
 					<useDefaultExcludes>true</useDefaultExcludes>
 					<excludes>
