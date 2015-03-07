@@ -1,37 +1,14 @@
 <?xml version='1.0'?>
-
 <!--
+Copyright © 2000-2014 Dan Brickley and Libby Miller
 
-
-This work is licensed under a Creative Commons Attribution License. This copyright applies to the FOAF Vocabulary Specification and accompanying documentation in RDF.
+This work is licensed under a Creative Commons Attribution License. This
+copyright applies to the FOAF Vocabulary Specification and accompanying
+documentation in RDF.
 
 http://creativecommons.org/licenses/by/1.0/
 
-
-You are free to:
-
-    Share — copy and redistribute the material in any medium or format
-    Adapt — remix, transform, and build upon the material
-    for any purpose, even commercially.
-
-    The licensor cannot revoke these freedoms as long as you follow the license terms.
-
-Under the following terms:
-
-    Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
-
-    No additional restrictions — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits.
-
-
-Notices:
-
-    You do not have to comply with the license for elements of the material in the public domain or where your use is permitted by an applicable exception or limitation.
-    No warranties are given. The license may not give you all of the permissions necessary for your intended use. For example, other rights such as publicity, privacy, or moral rights may limit how you use the material.
-
-
-
-     -->
-
+-->
 <!-- This is the FOAF formal vocabulary description, expressed using W3C RDFS and OWL markup. foaf/spec version -->
 <!-- For more information about FOAF:                                            -->
 <!--   see the FOAF project homepage, http://www.foaf-project.org/               -->
@@ -86,11 +63,12 @@ Notices:
 <!-- FOAF classes (types) are listed first. -->
 
   <rdfs:Class rdf:about="http://xmlns.com/foaf/0.1/Person" rdfs:label="Person" rdfs:comment="A person." vs:term_status="stable">
-    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class" />
+    <owl:equivalentClass rdf:resource="http://schema.org/Person" />
+    <owl:equivalentClass rdf:resource="http://www.w3.org/2000/10/swap/pim/contact#Person" />
 <!--    <rdfs:subClassOf><owl:Class rdf:about="http://xmlns.com/wordnet/1.6/Person"/></rdfs:subClassOf> -->
     <rdfs:subClassOf><owl:Class rdf:about="http://xmlns.com/foaf/0.1/Agent"/></rdfs:subClassOf>
 <!--    <rdfs:subClassOf><owl:Class rdf:about="http://xmlns.com/wordnet/1.6/Agent"/></rdfs:subClassOf> -->
-    <rdfs:subClassOf><owl:Class rdf:about="http://www.w3.org/2000/10/swap/pim/contact#Person" rdfs:label="Person"/></rdfs:subClassOf>
     <rdfs:subClassOf><owl:Class rdf:about="http://www.w3.org/2003/01/geo/wgs84_pos#SpatialThing" rdfs:label="Spatial Thing"/></rdfs:subClassOf>
     <!-- aside: 
 	are spatial things always spatially located? 
@@ -102,8 +80,9 @@ Notices:
     <owl:disjointWith rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
     <owl:disjointWith rdf:resource="http://xmlns.com/foaf/0.1/Project"/>
   </rdfs:Class>
-  <rdfs:Class rdf:about="http://xmlns.com/foaf/0.1/Document" rdfs:label="Document" rdfs:comment="A document." vs:term_status="testing">
+  <rdfs:Class rdf:about="http://xmlns.com/foaf/0.1/Document" rdfs:label="Document" rdfs:comment="A document." vs:term_status="stable">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:equivalentClass rdf:resource="http://schema.org/CreativeWork" />
 <!--    <rdfs:subClassOf rdf:resource="http://xmlns.com/wordnet/1.6/Document"/> -->
     <rdfs:isDefinedBy rdf:resource="http://xmlns.com/foaf/0.1/"/>
     <owl:disjointWith rdf:resource="http://xmlns.com/foaf/0.1/Organization"/>
@@ -134,8 +113,9 @@ Notices:
     <owl:disjointWith rdf:resource="http://xmlns.com/foaf/0.1/Document"/>
 <!-- arguably a subclass of Agent; to be discussed -->
   </rdfs:Class>
-  <rdfs:Class rdf:about="http://xmlns.com/foaf/0.1/Image" vs:term_status="testing" rdfs:label="Image" rdfs:comment="An image.">
+  <rdfs:Class rdf:about="http://xmlns.com/foaf/0.1/Image" vs:term_status="stable" rdfs:label="Image" rdfs:comment="An image.">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#Class"/>
+    <owl:equivalentClass rdf:resource="http://schema.org/ImageObject" />
 <!--    <rdfs:subClassOf><owl:Class rdf:about="http://xmlns.com/wordnet/1.6/Document"/></rdfs:subClassOf> -->
     <rdfs:subClassOf><owl:Class rdf:about="http://xmlns.com/foaf/0.1/Document"/></rdfs:subClassOf>
     <rdfs:isDefinedBy rdf:resource="http://xmlns.com/foaf/0.1/"/>
@@ -371,7 +351,7 @@ we don't want the implied rdfs:domain here.
     <rdfs:range rdf:resource="http://xmlns.com/foaf/0.1/Document"/>
     <rdfs:isDefinedBy rdf:resource="http://xmlns.com/foaf/0.1/"/>
   </rdf:Property>
-  <rdf:Property rdf:about="http://xmlns.com/foaf/0.1/weblog" vs:term_status="testing" rdfs:label="weblog" rdfs:comment="A weblog of some thing (whether person, group, company etc.).">
+  <rdf:Property rdf:about="http://xmlns.com/foaf/0.1/weblog" vs:term_status="stable" rdfs:label="weblog" rdfs:comment="A weblog of some thing (whether person, group, company etc.).">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
     <rdfs:subPropertyOf rdf:resource="http://xmlns.com/foaf/0.1/page"/>
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#InverseFunctionalProperty"/>
@@ -553,7 +533,7 @@ made this thing.">
     <rdfs:isDefinedBy rdf:resource="http://xmlns.com/foaf/0.1/"/>
   </rdf:Property>
 
-  <rdf:Property rdf:about="http://xmlns.com/foaf/0.1/page" vs:term_status="testing" rdfs:label="page" rdfs:comment="A page or document about this thing.">
+  <rdf:Property rdf:about="http://xmlns.com/foaf/0.1/page" vs:term_status="stable" rdfs:label="page" rdfs:comment="A page or document about this thing.">
     <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
     <rdfs:domain rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
     <rdfs:range rdf:resource="http://xmlns.com/foaf/0.1/Document"/>
