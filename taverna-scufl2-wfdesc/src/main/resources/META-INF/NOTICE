@@ -1,0 +1,56 @@
+Apache Taverna Scufl 2 wfdesc export
+Copyright 2015 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+---------------------------------------------------------
+
+FOAF vocabulary http://xmlns.com/foaf/spec/20140114.rdf
+Copyright © 2000-2014 Dan Brickley and Libby Miller
+This work is licensed under a Creative Commons Attribution License.
+http://creativecommons.org/licenses/by/1.0/
+
+---------------------------------------------------------
+
+W3C PROVenance Interchange Ontology (PROV-O)
+http://www.w3.org/ns/prov-o.rdf
+http://www.w3.org/TR/2013/REC-prov-o-20130430/
+
+Copyright © 2011-2013 W3C® (MIT, ERCIM, Keio, Beihang), All Rights Reserved.
+W3C liability, trademark and document use rules apply.
+http://www.w3.org/Consortium/Legal/2015/doc-license
+
+---------------------------------------------------------
+
+Wf4Ever Research Object Model 1.0 
+https://w3id.org/ro/
+
+wfdesc ontology
+https://w3id.org/ro/wfdesc
+
+wfprov ontology
+https://w3id.org/ro/wfprov
+
+roterms ontology
+http://purl.org/wf4ever/roterms
+
+wf4ever ontology
+https://w3id.org/ro/wf4ever
+
+(c) 2011-2014
+  Stian Soiland-Reyes, University of Manchester
+  Sean Bechhofer, University of Manchester
+  Khalid Belhajjame, University of Manchester
+  Graham Klyne, University of Oxford
+  Daniel Garijo, UPM
+  Oscar Corcho, UPM
+  Esteban García Cuesta, iSOCO
+  Raul Palma, PSNC
+
+Licensed under a Creative Commons Attribution 3.0 License.
+http://creativecommons.org/licenses/by/3.0/
+
+---------------------------------------------------------
+
+

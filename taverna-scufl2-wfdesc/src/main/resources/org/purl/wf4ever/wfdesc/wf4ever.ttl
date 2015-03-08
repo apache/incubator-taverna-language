@@ -1,3 +1,21 @@
+# wf4ever ontology
+# https://w3id.org/ro/wf4ever
+# Wf4Ever Research Object Model 1.0
+# https://w3id.org/ro/
+#
+# (c) 2011-2014
+#   Stian Soiland-Reyes, University of Manchester
+#   Sean Bechhofer, University of Manchester
+#   Khalid Belhajjame, University of Manchester
+#   Graham Klyne, University of Oxford
+#   Daniel Garijo, UPM
+#   Oscar Corcho, UPM
+#   Esteban García Cuesta, iSOCO
+#   Raul Palma, PSNC
+#
+# Licensed under a Creative Commons Attribution 3.0 License.
+# http://creativecommons.org/licenses/by/3.0/
+#
 @prefix wfprov: <http://purl.org/wf4ever/wfprov#> .
 @prefix wf4ever: <http://purl.org/wf4ever/wf4ever#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .

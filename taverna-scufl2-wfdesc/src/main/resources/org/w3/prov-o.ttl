@@ -1,3 +1,10 @@
+# W3C PROVenance Interchange Ontology (PROV-O)
+# http://www.w3.org/ns/prov-o.rdf
+# http://www.w3.org/TR/2013/REC-prov-o-20130430/
+# 
+# Copyright © 2011-2013 W3C® (MIT, ERCIM, Keio, Beihang), All Rights Reserved.
+# W3C liability, trademark and document use rules apply.
+# http://www.w3.org/Consortium/Legal/2015/doc-license
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix : <http://www.w3.org/ns/prov#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .

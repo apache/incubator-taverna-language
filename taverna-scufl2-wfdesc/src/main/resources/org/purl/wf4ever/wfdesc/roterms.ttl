@@ -1,3 +1,19 @@
+# roterms ontology
+# http://purl.org/wf4ever/roterms
+#
+# (c) 2011-2014
+#   Stian Soiland-Reyes, University of Manchester
+#   Sean Bechhofer, University of Manchester
+#   Khalid Belhajjame, University of Manchester
+#   Graham Klyne, University of Oxford
+#   Daniel Garijo, UPM
+#   Oscar Corcho, UPM
+#   Esteban García Cuesta, iSOCO
+#   Raul Palma, PSNC
+#
+# Licensed under a Creative Commons Attribution 3.0 License.
+# http://creativecommons.org/licenses/by/3.0/
+#
 @prefix : <http://purl.org/wf4ever/roterms> .
 @prefix co: <http://purl.org/co/> .
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
