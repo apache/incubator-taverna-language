@@ -28,7 +28,9 @@ http://www.w3.org/Consortium/Legal/2015/doc-license
 
 ---------------------------------------------------------
 
-FOAF vocabulary http://xmlns.com/foaf/spec/20140114.rdf
+Friend of a Friend (FOAF) RDF vocabulary
+http://xmlns.com/foaf/spec/20140114.rdf
+
 Copyright © 2000-2014 Dan Brickley and Libby Miller
 This work is licensed under a Creative Commons Attribution License.
 http://creativecommons.org/licenses/by/1.0/
