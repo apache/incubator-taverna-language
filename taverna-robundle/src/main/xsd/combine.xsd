@@ -27,10 +27,6 @@ http://co.mbine.org/specifications/combine_archive-Draft1.pdf
 
 Authors: 
   * [Stian Soiland-Reyes](http://orcid.org/0000-0001-9842-9718)
-
-Copyright 2014, University of Manchester
-
-MIT license (See LICENSE.md or http://opensource.org/licenses/MIT)
 </xsd:documentation></xsd:annotation>
     <xsd:element name="omexManifest">
     	<xsd:annotation>
