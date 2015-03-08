@@ -91,41 +91,6 @@
             <exclude>**/wfdesc.ttl</exclude>
             <exclude>**/wfprov.ttl</exclude>
 
-						<!-- Various files used for testing and test support only. -->
-						<!-- THESE SUPPORT COMMENTS with # --><!--taverna-integration-test-->
-						<exclude>/src/test/resources/t172starterpacklist</exclude>
-						<exclude>/src/test/resources/t230starterpacklist</exclude>
-						<!-- THESE ARE XML AND SUPPORT COMMENTS -->
-						<exclude>/src/test/resources/annotation_with_backslash.t2flow</exclude>
-						<exclude>/src/test/resources/beanshell-deps.t2flow</exclude>
-						<exclude>/src/test/resources/component_simple.t2flow</exclude>
-						<exclude>/src/test/resources/dataflow_link_then_merge.t2flow</exclude>
-						<exclude>/src/test/resources/dispatchlayers-xsd.t2flow</exclude>
-						<exclude>/src/test/resources/dispatchlayers.t2flow</exclude>
-						<exclude>/src/test/resources/fasta_and_pscan.t2flow</exclude>
-						<exclude>/src/test/resources/fasta_pscan_and_dbfetch.t2flow</exclude>
-						<exclude>/src/test/resources/interaction-with-strange-loop.t2flow</exclude>
-						<exclude>/src/test/resources/interaction_multiple_choice.t2flow</exclude>
-						<exclude>/src/test/resources/interaction_simple_tell.t2flow</exclude>
-						<exclude>/src/test/resources/iterationstrategies.t2flow</exclude><!-- TOM -->
-						<exclude>/src/test/resources/merge_fun.t2flow</exclude>
-						<exclude>/src/test/resources/merge_then_dataflow_link.t2flow</exclude>
-						<exclude>/src/test/resources/missing_merge.t2flow</exclude>
-						<exclude>/src/test/resources/missing_produced_by_941.t2flow</exclude>
-						<exclude>/src/test/resources/rest-2-2.t2flow</exclude>
-						<exclude>/src/test/resources/rshell-2-2.t2flow</exclude>
-						<exclude>/src/test/resources/simple_fasta.t2flow</exclude>
-						<exclude>/src/test/resources/sleepers.t2flow</exclude>
-						<exclude>/src/test/resources/apiconsumer.t2flow</exclude>
-						<exclude>/src/test/resources/rest.t2flow</exclude>
-						<exclude>/src/test/resources/valid_component_imagemagickconvert.t2flow</exclude>
-						<exclude>/src/test/resources/enm-v21.t2flow</exclude>
-						<exclude>/src/test/resources/helloworld.wfdesc.ttl</exclude>
-						<exclude>/src/test/resources/localdependency.t2flow</exclude>
-						<exclude>/src/test/resources/nested.t2flow</exclude>
-						<exclude>/src/test/resources/rdf-in-example-annotation.t2flow</exclude>
-						<exclude>/src/test/resources/workflow10.xml</exclude>
-						<exclude>/src/test/resources/full-example/ebi_interproscan_newservices_900329.t2flow</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
