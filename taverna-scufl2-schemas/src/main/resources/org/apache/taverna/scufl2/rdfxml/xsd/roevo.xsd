@@ -14,6 +14,21 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+
+Derived from Research Object Evolution Ontology (roevo)
+http://w3id.org/ro/roevo
+
+  (c) 2011-2014
+    Raul Palma, PSNC
+    Jun Zhao, University of Oxford
+    Khalid Belhajjame, University of Manchester
+    Stian Soiland-Reyes, University of Manchester
+    Oscar Corcho, UPM
+
+  Creative Commons Attribution 3.0 License 
+  http://creativecommons.org/licenses/by/3.0
+
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="qualified"
 	elementFormDefault="qualified" targetNamespace="http://purl.org/wf4ever/roevo#" 

@@ -1,0 +1,35 @@
+Apache Taverna Scufl 2 Schemas
+Copyright 2015 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+------------------------------------------------------
+xml.xsd
+Extensible Markup Language (XML) 1.0 (Fifth Edition)
+W3C Recommendation 26 November 2008
+http://www.w3.org/2001/xml.xsd
+http://www.w3.org/TR/xml/
+
+Copyright © 2015 W3C® (MIT, ERCIM, Keio, Beihang). This software or 
+document includes material copied from or derived from:
+
+W3C liability, trademark and document use rules apply.
+http://www.w3.org/Consortium/Legal/2015/doc-license
+
+------------------------------------------------------
+
+roevo.xsd derived from 
+Research Object Evolution Ontology (roevo)
+http://w3id.org/ro/roevo
+
+  (c) 2011-2014
+    Raul Palma, PSNC
+    Jun Zhao, University of Oxford
+    Khalid Belhajjame, University of Manchester
+    Stian Soiland-Reyes, University of Manchester
+    Oscar Corcho, UPM
+
+  Creative Commons Attribution 3.0 License 
+  http://creativecommons.org/licenses/by/3.0
+
