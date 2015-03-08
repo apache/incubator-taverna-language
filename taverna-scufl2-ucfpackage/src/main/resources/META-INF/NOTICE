@@ -1,0 +1,42 @@
+Apache Taverna Scufl 2 UCF Package
+Copyright 2015 The Apache Software Foundation
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+---------------------------------------------------------
+
+XML Encryption Syntax and Processing
+W3C Recommendation 10 December 2002
+http://www.w3.org/TR/xmlenc-core/xenc-schema.xsd
+http://www.w3.org/TR/xmlenc-core/
+
+Copyright © 2002 World Wide Web Consortium, (Massachusetts
+Institute of Technology, Institut National de Recherche en Informatique et en
+Automatique, Keio University). All Rights Reserved.
+http://www.w3.org/Consortium/Legal/
+
+---------------------------------------------------------
+
+Schema for XML Signatures
+http://www.w3.org/2000/09/xmldsig#
+$Revision: 1.1 $ on $Date: 2002/02/08 20:32:26 $ by $Author: reagle $
+
+Copyright 2001 The Internet Society and W3C (Massachusetts Institute
+of Technology, Institut National de Recherche en Informatique et en
+Automatique, Keio University). All Rights Reserved.
+http://www.w3.org/Consortium/Legal/
+
+This document is governed by the W3C Software License [1] as described
+in the FAQ [2].
+
+[1] http://www.w3.org/Consortium/Legal/copyright-software-19980720
+[2] http://www.w3.org/Consortium/Legal/IPR-FAQ-20000620.html#DTD
+
+
+---------------------------------------------------------
+
+ODFDOM
+Copyright 2008, 2010 Oracle and/or its affiliates. All rights reserved.
+
+---------------------------------------------------------
