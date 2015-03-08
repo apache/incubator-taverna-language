@@ -1,13 +1,17 @@
 <?xml version="1.0"?>
 <!--
 
-Copyright © 2012-2013 the Contributors to the Open Annotation Core Data Model Specification, published by the Open Annotation Community Group under the W3C Community Contributor License Agreement (CLA). A human-readable summary is available.      
+Open Annotation Data Model
+http://www.w3.org/ns/oa
+
+Copyright © 2012-2013 the Contributors to the Open Annotation Core Data Model
+Specification, published by the Open Annotation Community Group under the W3C
+Community Contributor License Agreement (CLA). A human-readable summary is
+available.      
 
 http://www.w3.org/community/about/agreements/cla/
 
-http://www.w3.org/ns/oa
-
-     -->
+-->
 
 <!DOCTYPE rdf:RDF [
     <!ENTITY oa "http://www.w3.org/ns/oa#" >

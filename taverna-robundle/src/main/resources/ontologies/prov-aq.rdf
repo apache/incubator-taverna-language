@@ -1,4 +1,14 @@
 <?xml version="1.0"?>
+<!--
+W3C PROV Access and Query Ontology (PROV-AQ)
+http://www.w3.org/ns/prov-aq.owl
+http://www.w3.org/TR/2013/NOTE-prov-aq-20130430/
+
+Copyright © 2011-2013 W3C® (MIT, ERCIM, Keio, Beihang), All Rights Reserved.
+W3C liability, trademark and document use rules apply.
+http://www.w3.org/Consortium/Legal/2015/doc-license
+-->
+
 
 <!DOCTYPE rdf:RDF [
     <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
