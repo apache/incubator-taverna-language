@@ -41,7 +41,7 @@ public class TestCombineManifest {
 	public void convertAslanidi() throws Exception {
 		Path file = Files.createTempFile("aslanidi", ".zip");
 		try (InputStream src = getClass().getResourceAsStream(
-				"/combine/aslanidi_purkinje_model_2009.zip")) {
+				"/combine/aslanidi_purkinje_model_skeleton.zip")) {
 			Files.copy(src, file, StandardCopyOption.REPLACE_EXISTING);
 		}
 		System.out.println(file);
@@ -75,7 +75,7 @@ public class TestCombineManifest {
 	public void convertBoris() throws Exception {
 		Path file = Files.createTempFile("Boris", ".omex");
 		try (InputStream src = getClass().getResourceAsStream(
-				"/combine/Boris.omex")) {
+				"/combine/Boris-skeleton.omex")) {
 			Files.copy(src, file, StandardCopyOption.REPLACE_EXISTING);
 		}
 		//System.out.println(file);
@@ -103,7 +103,7 @@ public class TestCombineManifest {
 	public void convertDirectoryMadness() throws Exception {
 		Path file = Files.createTempFile("DirectoryMadness", ".omex");
 		try (InputStream src = getClass().getResourceAsStream(
-				"/combine/DirectoryMadness.omex")) {
+				"/combine/DirectoryMadness-skeleton.omex")) {
 			Files.copy(src, file, StandardCopyOption.REPLACE_EXISTING);
 		}
 		//System.out.println(file);
@@ -143,7 +143,7 @@ public class TestCombineManifest {
 	public void convertDirectoryMadnessZipped() throws Exception {
 		Path file = Files.createTempFile("DirectoryMadnessZipped", ".omex");
 		try (InputStream src = getClass().getResourceAsStream(
-				"/combine/DirectoryMadnessZipped.omex")) {
+				"/combine/DirectoryMadnessZipped-skeleton.omex")) {
 			Files.copy(src, file, StandardCopyOption.REPLACE_EXISTING);
 		}
 		//System.out.println(file);
