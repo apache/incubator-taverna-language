@@ -40,8 +40,6 @@ public class TestT2FlowParser {
 
 	private static final String INTERACTION_WITH_LOOP = "/interaction-with-strange-loop.t2flow";
 	private static final String AS_T2FLOW = "/as.t2flow";
-	// Workflows from myExperiment that had issues being parsed in 0.11:
-	private static final String MISSING_PRODUCED_BY = "/missing_produced_by_941.t2flow";
 	
 	@Test
 	public void readSimpleWorkflow() throws Exception {
@@ -68,16 +66,6 @@ public class TestT2FlowParser {
 		
 		Configuration config = scufl2Tools.configurationFor(interaction, wfBundle.getMainProfile());
 		assertNull(config.getJsonAsObjectNode().get("loop"));
-	}
-	
-	@Test
-	public void parseMissingProducedBy() throws Exception {
-		URL wfResource = getClass().getResource(MISSING_PRODUCED_BY);
-		assertNotNull("Could not find workflow " + MISSING_PRODUCED_BY, wfResource);
-		T2FlowParser parser = new T2FlowParser();
-		WorkflowBundle wfBundle = parser.parseT2Flow(wfResource.openStream());
-		Profile profile = wfBundle.getMainProfile();
-		assertEquals("unspecified", profile.getName());		
 	}
 	
 }
