@@ -1,4 +1,4 @@
-<workflow xmlns="http://taverna.sf.net/2008/xml/t2flow" version="1" producedBy="taverna-2.1.0">
+<?xml version="1.0"?>
 <!-- 
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -17,6 +17,7 @@
  * specific language governing permissions and limitations
  * under the License.
  -->
+<workflow xmlns="http://taverna.sf.net/2008/xml/t2flow" version="1" producedBy="taverna-2.1.0">
   <dataflow id="92c5e8d5-8360-4f86-a845-09c9849cbdc5" role="top">
     <name>Workflow1</name>
     <inputPorts />

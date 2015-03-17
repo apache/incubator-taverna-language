@@ -1,3 +1,22 @@
+<?xml version="1.0"?>
+<!-- 
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+-->
 <workflow xmlns="http://taverna.sf.net/2008/xml/t2flow" version="1" producedBy="taverna-digitalpreservation-2.5.0"><dataflow id="b521b6df-57f3-4eed-8536-c4c1a044dfcc" role="top"><name>Workflow1</name><inputPorts><port><name>doc1</name><depth>0</depth><granularDepth>0</granularDepth><annotations /></port><port><name>doc2</name><depth>0</depth><granularDepth>0</granularDepth><annotations /></port></inputPorts><outputPorts><port><name>docOut</name><lastPredictedDepth>0</lastPredictedDepth><annotations /></port></outputPorts><processors><processor><name>combiner</name><inputPorts><port><name>metricDocument1</name><depth>0</depth></port><port><name>metricDocument2</name><depth>0</depth></port></inputPorts><outputPorts><port><name>combinedMetricDocument</name><depth>0</depth><granularDepth>0</granularDepth></port></outputPorts><annotations /><activities><activity><raven><group>net.sf.taverna.t2.component</group><artifact>component-activity</artifact><version>1.5</version></raven><class>net.sf.taverna.t2.component.ComponentActivity</class><inputMap><map from="metricDocument1" to="metricDocument1" /><map from="metricDocument2" to="metricDocument2" /></inputMap><outputMap><map from="combinedMetricDocument" to="combinedMetricDocument" /></outputMap><configBean encoding="xstream"><net.sf.taverna.t2.component.ComponentActivityConfigurationBean xmlns="">
   <registryBase>http://www.myexperiment.org</registryBase>
   <familyName>SCAPE Utility Components</familyName>
