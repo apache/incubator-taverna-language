@@ -1,3 +1,22 @@
+<?xml version="1.0"?>
+<!-- 
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ -->
 <workflow xmlns="http://taverna.sf.net/2008/xml/t2flow" version="1" producedBy="taverna-biodiversity-2.5.0"><dataflow id="da58acd5-937d-419d-aaf4-79ade8491adf" role="top"><name>Workflow3</name><inputPorts /><outputPorts><port><name>answers</name><lastPredictedDepth>1</lastPredictedDepth><annotations /></port></outputPorts><processors><processor><name>Interaction</name><inputPorts><port><name>selectionValues</name><depth>1</depth></port></inputPorts><outputPorts><port><name>answers</name><depth>1</depth><granularDepth>1</granularDepth></port></outputPorts><annotations /><activities><activity><raven><group>net.sf.taverna.t2.activities</group><artifact>interaction-activity</artifact><version>1.5</version></raven><class>net.sf.taverna.t2.activities.interaction.InteractionActivity</class><inputMap><map from="selectionValues" to="selectionValues" /></inputMap><outputMap><map from="answers" to="answers" /></outputMap><configBean encoding="xstream"><net.sf.taverna.t2.activities.interaction.InteractionActivityConfigurationBean xmlns="">
   <inputs>
     <net.sf.taverna.t2.workflowmodel.processor.activity.config.ActivityInputPortDefinitionBean>
