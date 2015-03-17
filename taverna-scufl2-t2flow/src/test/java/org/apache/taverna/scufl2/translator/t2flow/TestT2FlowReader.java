@@ -72,7 +72,7 @@ public class TestT2FlowReader {
 		getClass().getResourceAsStream(AS_T2FLOW).read(firstBytes);		
 		assertEquals(APPLICATION_VND_TAVERNA_T2FLOW_XML, io.guessMediaTypeForSignature(firstBytes));
 		// Mess up the xmlns declaration
-		firstBytes[49] = 32;
+		firstBytes[885] = 32;
 		assertEquals(null, io.guessMediaTypeForSignature(firstBytes));
 	}
 
