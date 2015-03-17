@@ -67,6 +67,16 @@
 						<!-- Expanded data bundle. Generated. -->
 						<exclude>/src/test/resources/full-example/ebi-wfrun-2013-05-31/</exclude>
 
+            <!-- Test COMBINE archives. Skeleton only (files empty) -->
+            <exclude>/src/test/resources/combine/aslanidi_purkinje_model_skeleton.zip</exclude>
+            <exclude>/src/test/resources/combine/Boris-skeleton.omex</exclude>
+            <exclude>/src/test/resources/combine/DirectoryMadnessZipped-skeleton.omex</exclude>
+            <exclude>/src/test/resources/combine/DirectoryMadness-skeleton.omex</exclude>
+
+            <!-- Our own test documents - contains LICENSE -->
+            <exclude>src/test/resources/document.odt</exclude>
+            <exclude>src/test/resources/workflowrun.bundle.zip</exclude>
+
             <!-- 
                  Below exclusions are for 
                  externally sourced/derived files 
@@ -90,6 +100,10 @@
             <exclude>**/wf4ever.ttl</exclude>
             <exclude>**/wfdesc.ttl</exclude>
             <exclude>**/wfprov.ttl</exclude>
+
+            <!-- Dublin Core, Creative Commons Attribution 3.0 -->
+            <exclude>**/dcam.owl</exclude>
+            <exclude>**/dcterms_od.owl</exclude>
 
 					</excludes>
 				</configuration>
