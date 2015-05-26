@@ -120,6 +120,7 @@ public class CombineManifest {
 	protected static synchronized Marshaller createMarshaller()
 			throws JAXBException {
 		Marshaller marshaller = getJaxbContext().createMarshaller();
+		marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 		setPrefixMapper(marshaller);
 		return marshaller;
 	}
@@ -429,7 +430,7 @@ public class CombineManifest {
 			if (file == null) {
 				content.setLocation(metadata.getUri().toString());
 			} else {
-				Path relPath = metadata.getFile().relativize(bundle.getRoot());
+				Path relPath = bundle.getRoot().relativize(file);
 				content.setLocation("./" + relPath);
 			}
 			if (metadata.getMediatype() != null
