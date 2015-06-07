@@ -23,7 +23,7 @@ public class TavernaCommandline {
 
 	public static void main(String args[]){
 		CommandLineTool tool = new CommandLineTool();
-		tool.parse(args);
+		tool.parse("version");
 		
 	}
 }
