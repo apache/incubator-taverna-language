@@ -46,7 +46,7 @@ import com.google.common.collect.Lists;
 public class CommandLineTool {
 	
 	private Cli<TvnLangTool> parser(){
-		CliBuilder<TvnLangTool> build = Cli.<TvnLangTool>builder("tvnlang")
+		CliBuilder<TvnLangTool> build = Cli.<TvnLangTool>builder("tavlang")
 				.withDescription("Convert, manage workflows")
 				.withDefaultCommand(HelpCommand.class)
 				.withCommand(CommandConvert.class)
@@ -61,7 +61,7 @@ public class CommandLineTool {
 	public CommandLineTool(){};
 	public void parse(String... args)
     {
-        System.out.println("$ tvnlang " + Joiner.on(" ").join(args));
+        System.out.println("$ tavlang " + Joiner.on(" ").join(args));
         TvnLangTool command = parser().parse(args);
         command.execute();
         System.out.println();
@@ -100,12 +100,30 @@ public class CommandLineTool {
 			else return null;
 		}
 		
+	}
+	
+	public static class Inspect{
+		@Option(name = "-servicetypes", description = "List the service types")
+		public static boolean servicetypes = false;
+		
+		@Option(name = "-processornames", description = "List the processor names")
+		public static boolean processor = false;
+		
+		public String getWay(){
+			if(servicetypes) return "servicetypes";
+			else if (processor) return "processornames";
+			else return null;
+		}
 		
 	}
 	
 	
 	//Placeholder for optional parameters: Ex: -i, -o 
 	public static class Optional{
+		
+		
+		@Option(name={"-l", "--log"}, description = "Save a results to a file")
+		public boolean log = false;
 		
 		//The input file or directory
 		@Option(name = {"-i", "--input"}, description="Input file/ file dir for convertion")
@@ -123,9 +141,6 @@ public class CommandLineTool {
 			return out_file_dir;
 		}
 
-//		public boolean isMulti(){
-//			return this.multi;
-//		}
 	}
 	
 	@Command(name = "help", description = "Display help information about Tvarna")
@@ -194,7 +209,7 @@ public class CommandLineTool {
 		@Override
 		public void execute() {
 			// TODO Auto-generated method stub
-			
+			System.out.println("Apache Taverna Language Command line tool. \nVersion 1.0 ");
 		}
 		
 	}
@@ -206,12 +221,13 @@ public class CommandLineTool {
 		@Inject
 		Optional optional = new Optional();
 		
-		@Option(name={"-l", "--log"}, description = "Save a results to a file")
-		public String log_file;
+		@Inject
+		Inspect inspect = new Inspect();
 		
 		@Override
 		public void execute() {
 			// TODO Auto-generated method stub
+			
 			
 		}
 		
@@ -223,9 +239,6 @@ public class CommandLineTool {
 
 		@Inject
 		Optional optional = new Optional();
-		
-		@Option(name={"-l", "--log"}, description = "Save a results to a file")
-		public String log_file;
 		
 		@Override
 		public void execute() {
