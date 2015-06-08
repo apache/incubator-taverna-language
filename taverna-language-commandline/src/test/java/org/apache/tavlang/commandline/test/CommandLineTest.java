@@ -28,7 +28,7 @@ public class CommandLineTest {
 	CommandLineTool commandLineTool = new CommandLineTool();
 	
 	@Test
-	public void test(){
+	public void testHelp(){
 //		Assert
 		commandLineTool.parse();
 		commandLineTool.parse("version");
@@ -37,9 +37,15 @@ public class CommandLineTest {
 		commandLineTool.parse("help", "inspect");
 		commandLineTool.parse("help", "validate");
 		commandLineTool.parse("help", "help");
+	}
+	
+	@Test
+	public void testConvert(){
 		
-		commandLineTool.parse("convert", "-r", "-robundle", "-o", "/files/dir", "-i", "/files0/dir");
-		commandLineTool.parse("convert", "-r", "-json", "-o", "/files/dir", "-i", "/files0/dir");
+//		CommandLineTool tool = new CommandLineTool();
+		commandLineTool.parse("convert", "-r", "-wfbundle", "-o", "/files/dir", "-i", "/files0/dir");
+//		CommandLineTool tool2 = new CommandLineTool();
+		commandLineTool.parse("convert", "-r", "-wfdesc", "-o", "/files/dir", "-i", "/files0/dir");
 //		commandLineTool.parse();
 //		commandLineTool.parse();
 //		commandLineTool.parse();
