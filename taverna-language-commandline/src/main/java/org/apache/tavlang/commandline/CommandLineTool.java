@@ -181,6 +181,7 @@ public class CommandLineTool {
 		public void execute(){
 			Tools to = new Tools();
 			
+			System.out.println(filetypes.isTrue());
 			ConvertionTools t = ConvertionTools.valueOf(filetypes.isTrue());
 			t.run();
 //			
