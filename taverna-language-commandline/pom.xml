@@ -89,7 +89,7 @@
             <configuration>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                  <mainClass>org.apache.taverna.commandline.TavernaCommandline</mainClass>
+                  <mainClass>org.apache.tavlang.commandline</mainClass>
                 </transformer>
               </transformers>
             </configuration>
