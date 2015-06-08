@@ -224,6 +224,9 @@ public class CommandLineTool {
 		@Inject
 		Inspect inspect = new Inspect();
 		
+		@Arguments(usage="<option> <input files> <output dir>", description="Inspect the given workflow")
+		public List<String> toInspect = Lists.newArrayList();
+		
 		@Override
 		public void execute() {
 			// TODO Auto-generated method stub
@@ -239,6 +242,9 @@ public class CommandLineTool {
 
 		@Inject
 		Optional optional = new Optional();
+		
+		@Arguments(usage="<option> <input files> <output dir>", description="Validate the given workflow file/s")
+		public List<String> toValidate = Lists.newArrayList();
 		
 		@Override
 		public void execute() {
