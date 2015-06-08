@@ -1,4 +1,4 @@
-package org.apache.taverna.commandline;
+package org.apache.tavlang.commandline;
 
 
 /*
@@ -33,6 +33,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.tavlang.commandline.tools.Tools;
+import org.apache.tavlang.commandline.tools.Tools.ConvertionTools;
+
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
@@ -40,7 +43,6 @@ import com.google.common.collect.Lists;
 /*
  * The command line options for convert, validate and inspect workflows.
  * Use the airlift/airline library
- * Author: Menaka Madushanka <menaka12350@gmail.com>
  * */
 
 public class CommandLineTool {
@@ -77,10 +79,10 @@ public class CommandLineTool {
 		@Option(name= "-wfdesc", description="Convert the workflow file to wfdesc-turtle")
 		public static boolean isWfdesc = false;
 		
-		@Option(name="-wfbundel", description="Convert the workflow file to wfbundel")
+		@Option(name="-wfbundle", description="Convert the workflow file to wfbundel")
 		public static boolean isWfbundel = false;
 		
-		@Option(name =  "-robundel", description = "Convert given bundel in to Research Object bundel")
+		@Option(name =  "-robundle", description = "Convert given bundel in to Research Object bundel")
 		public static boolean isRo = false;
 		
 		@Option(name= "-structure", description = "Convert the workflow into *.structure")
@@ -93,8 +95,8 @@ public class CommandLineTool {
 		//Return the file type which is selected
 		public static String isTrue(){
 			if(isWfdesc) return "wfdesc";
-			else if(isWfbundel) return "wfbundel";
-			else if(isRo) return "ro";
+			else if(isWfbundel) return "wfbundle";
+			else if(isRo) return "robundle";
 			else if(isStructure) return "structure";
 			else if(isJson) return "json";
 			else return null;
@@ -103,10 +105,10 @@ public class CommandLineTool {
 	}
 	
 	public static class Inspect{
-		@Option(name = "-servicetypes", description = "List the service types")
+		@Option(name = "-servicetypes", description = "List the service types used in workflow")
 		public static boolean servicetypes = false;
 		
-		@Option(name = "-processornames", description = "List the processor names")
+		@Option(name = "-processornames", description = "List a tree of processor names used in workflow")
 		public static boolean processor = false;
 		
 		public String getWay(){
@@ -177,6 +179,10 @@ public class CommandLineTool {
 		
 		@Override
 		public void execute(){
+			Tools to = new Tools();
+			
+			ConvertionTools t = ConvertionTools.valueOf(filetypes.isTrue());
+			t.run();
 //			
 //			if(Filetypes.isWfbundel){
 //				if(!files.isEmpty() && optional.getInFile()!=null){
