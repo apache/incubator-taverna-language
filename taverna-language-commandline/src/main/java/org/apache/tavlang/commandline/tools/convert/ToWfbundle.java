@@ -165,7 +165,8 @@ public class ToWfbundle{
 	public void convertFile(File t2File, File outFile){
 		WorkflowBundleIO wfbio = new WorkflowBundleIO();
 		String filename = t2File.getName();
-		filename = filename.replaceFirst("\\..*", this.type);			
+		filename = filename.replaceFirst("\\..*", this.type);
+		System.out.println(filename);
 		File scufl2File = new File(outFile.getAbsolutePath(), filename);
 		
 		WorkflowBundle wfBundle;
