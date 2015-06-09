@@ -30,6 +30,11 @@
     <dependencies>
     
     	<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+    
+    	<dependency>
 		<groupId>${project.parent.groupId}</groupId>
 		<artifactId>taverna-scufl2-api</artifactId>
 		<version>${project.parent.version}</version>
@@ -46,14 +51,20 @@
           <artifactId>taverna-scufl2-t2flow</artifactId>
           <version>${project.version}</version>
         </dependency>
-        <!-- Dissabled temporily
-        <dependency>
+        
+       <!--  <dependency>
           <groupId>${project.groupId}</groupId>
           <artifactId>taverna-scufl2-wfdesc</artifactId>
           <version>${project.version}</version>
           <optional>true</optional>
-        </dependency>
-	-->
+        </dependency> -->
+	<!-- 
+		<dependency>
+    		<groupId>org.purl.wf4ever</groupId>
+    		<artifactId>scufl2-wfdesc</artifactId>
+    		<version>0.3.7</version>
+		</dependency>
+	 -->
 		<dependency>
         	<groupId>com.fasterxml.jackson.core</groupId>
         	<artifactId>jackson-core</artifactId>
@@ -119,6 +130,16 @@
     </build>
 
   <repositories>
+  <repository>
+        <releases>
+            <enabled>false</enabled>
+        </releases>
+        <snapshots />
+        <id>mygrid-repository</id>
+        <name>myGrid Repository</name>
+        <url>http://www.mygrid.org.uk/maven/repository</url>
+    </repository>
+    
       <repository>
 	      <id>apache.snapshots</id>
 	      <name>Apache Snapshot Repository</name>

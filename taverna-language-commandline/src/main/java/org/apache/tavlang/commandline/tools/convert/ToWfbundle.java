@@ -28,32 +28,42 @@ import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 import org.apache.taverna.scufl2.api.io.WriterException;
+import org.apache.tavlang.commandline.tools.Tools.ConvertionTools;
 
 
 /*
- * Converts .t2flow workflows into .workflowbundle format.
+ * Converts 
+ * 	.t2flow --> .wfbundle
+ * 	.t2flow --> .structure
+ * 	.wfbunddle --> .structure
  * two constructors.
  * ToWfbundle(List<String> list, String out) --> will save the converted files in 'out folder or a directory named /converted in the same folder.
  * ToWfbundle(String in, String out) --> Will convert all the files in the 'in' folder and save them in 'out' folder --> -r must be true.
  * 
  * */
-public class ToWfbundle implements Runnable{
+public class ToWfbundle{
 	
-	private String MEDIA_TYPE = "application/vnd.taverna.scufl2.workflow-bundle";
+	private ConvertionTools t;
+	private String MEDIA_TYPE;
 	private String input;
 	private String output;
+	private String type;
 	private List<String> filesList;
 	
-	public ToWfbundle(List<String> files, String out){
+	public ToWfbundle(String type, List<String> files, String out){
 		this.filesList = files;
 		this.output = out;
+		this.type = type.equals("wfdesc")?".wfdesc.ttl":"."+type;
+		this.MEDIA_TYPE = ConvertionTools.valueOf(type).getMediaType(t);
 		this.convert();
 	}
 	
 	//When recursive case is on....
-	public ToWfbundle(String in, String out){
+	public ToWfbundle(String type, String in, String out){
 		this.input = in;
 		this.output = out;
+		this.type = type.equals("wfdesc")?".wfdesc.ttl":"."+type;
+		this.MEDIA_TYPE = ConvertionTools.valueOf(type).getMediaType(t);	//Determine the writer media type
 		
 		if(output == null){
 			File outFile = new File(this.input, "converted");
@@ -66,7 +76,7 @@ public class ToWfbundle implements Runnable{
 				e1.printStackTrace();
 			}
 		}else{
-			File outFile = new File(this.input);
+			File outFile = new File(this.output);
 			try {
 				FileUtils.forceMkdir(outFile);
 				
@@ -76,13 +86,13 @@ public class ToWfbundle implements Runnable{
 				e1.printStackTrace();
 			}
 		}
-		this.run();
+		this.rec_convert(this.input);
 	}
 	
 	//Convert the given file. Return in case of an exception.
-	public void convert(){
+	public boolean convert(){
 		WorkflowBundleIO wfbio = new WorkflowBundleIO();
-		
+		boolean check = false;
 		// If the output folder is given, save the converted files in to that folder.
 		 
 		if(this.filesList.size()>0 && this.output != null){
@@ -96,15 +106,16 @@ public class ToWfbundle implements Runnable{
 				File t2File = new File(file);
 				
 				String filename = t2File.getName();
-				filename = filename.replaceFirst("\\..*", ".wfbundle");			
+				filename = filename.replaceFirst("\\..*", this.type);			
 				File scufl2File = new File(outFile.getAbsolutePath(), filename);
 				
 				WorkflowBundle wfBundle;
 				try {
-					wfBundle = wfbio.readBundle(t2File, "application/vnd.taverna.t2flow+xml");
+//					wfBundle = wfbio.readBundle(t2File, "application/vnd.taverna.t2flow+xml");
+					wfBundle = wfbio.readBundle(t2File, null);
 					wfbio.writeBundle(wfBundle, scufl2File, this.MEDIA_TYPE);
 					System.out.println(scufl2File.getPath() + " is created.");
-					
+					check = true;
 					//Exceptions
 				
 				} catch (ReaderException e){
@@ -113,8 +124,10 @@ public class ToWfbundle implements Runnable{
 					System.err.println("Error reading the file");
 				}catch(WriterException e) {
 					System.err.println("Error writing the file");
-				}	
+				}
+				
 			}
+			
 		}
 		
 		 /* If the output file is not given, save the converted files in 
@@ -133,31 +146,36 @@ public class ToWfbundle implements Runnable{
 				}
 				
 				String filename = t2File.getName();
-				filename = filename.replaceFirst("\\..*", ".wfbundle");			
+				filename = filename.replaceFirst("\\..*", this.type);			
 				File scufl2File = new File(out.getAbsolutePath(), filename);
 				
 				WorkflowBundle wfBundle;
 				try {
-					wfBundle = wfbio.readBundle(t2File,
-							"application/vnd.taverna.t2flow+xml");
+					wfBundle = wfbio.readBundle(t2File, null);	// null --> will guess the media type for reading. 
 					wfbio.writeBundle(wfBundle, scufl2File, this.MEDIA_TYPE);
 					System.out.println(scufl2File.getPath() + " is created.");
+					check = true;
 				}catch (ReaderException e){
 					System.err.println("Error reading the file");
+					e.printStackTrace();
 				}catch(IOException e){
 					System.err.println("Error reading the file");
+					e.printStackTrace();
 				}catch(WriterException e) {
 					System.err.println("Error writing the file");
+					e.printStackTrace();
 				}
 				
 			}
 		}
+		
+		return check;
 	}
 	
 	//Convert the files in a given directory and save the converted files in to specified dir or /converted folder.
 	//Recursive conversion
 	public void rec_convert(String dir){
-					
+			
 			File parent = new File(this.input);
 			if(!parent.exists()){
 				System.err.println("Input directory not found");
@@ -173,37 +191,34 @@ public class ToWfbundle implements Runnable{
 			
 			
 	}
-	public void recConvert(File t2File){
+	public boolean recConvert(File t2File){
 
-//		File t2File = new File(file);
-		
+		boolean check = false;
 		String filename = t2File.getName();
-		System.out.println(t2File.getAbsolutePath());
-		filename = filename.replaceFirst("\\..*", ".wfbundle");			
+		filename = filename.replaceFirst("\\..*", this.type);			
 		File scufl2File = new File(this.output, filename);
 		
 		WorkflowBundleIO wfbio = new WorkflowBundleIO();
 		
 		WorkflowBundle wfBundle;
 		try {
-			wfBundle = wfbio.readBundle(t2File, "application/vnd.taverna.t2flow+xml");
+			wfBundle = wfbio.readBundle(t2File, null);
 			wfbio.writeBundle(wfBundle, scufl2File, this.MEDIA_TYPE);
 			System.out.println(scufl2File.getPath() + " is created.");
-			
+			check = true;
 			//Exceptions
 		
 		} catch (ReaderException e){
 			System.err.println("Error reading the file");
+			e.printStackTrace();
 		}catch(IOException e){
 			System.err.println("Error reading the file");
+			e.printStackTrace();
 		}catch(WriterException e) {
 			System.err.println("Error writing the file");
+			e.printStackTrace();
 		}
+		return check;
 	}
 	
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		rec_convert(this.input);
-	}
 }
