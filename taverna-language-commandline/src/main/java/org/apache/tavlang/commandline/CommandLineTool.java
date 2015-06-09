@@ -29,12 +29,18 @@ import io.airlift.airline.Help;
 import io.airlift.airline.Option;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.xml.bind.JAXBException;
 
+import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.tavlang.commandline.tools.Tools;
 import org.apache.tavlang.commandline.tools.Tools.ConvertionTools;
+import org.apache.tavlang.commandline.tools.convert.ToWfbundle;
+import org.apache.tavlang.commandline.tools.inspect.ProcessorNames;
+import org.apache.tavlang.commandline.tools.inspect.ServiceTypes;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -123,12 +129,8 @@ public class CommandLineTool {
 	//Placeholder for optional parameters: Ex: -i, -o 
 	public static class Optional{
 		
-		
-		@Option(name={"-l", "--log"}, description = "Save a results to a file")
-		public boolean log = false;
-		
 		//The input file or directory
-		@Option(name = {"-i", "--input"}, description="Input file/ file dir for convertion")
+		@Option(name = {"-i", "--input"}, description="Input file/ file dir for conversion")
 		public static String in_file_dir;
 		
 		//The out put file or directory. When this is set, all the converted files will be saved into the directory that specified.
@@ -179,31 +181,16 @@ public class CommandLineTool {
 		
 		@Override
 		public void execute(){
-			Tools to = new Tools();
-			
-			System.out.println(filetypes.isTrue());
-			ConvertionTools t = ConvertionTools.valueOf(filetypes.isTrue());
-			t.run();
-//			
-//			if(Filetypes.isWfbundel){
-//				if(!files.isEmpty() && optional.getInFile()!=null){
-//					System.err.println("Unexpected arguments:"+" " + files.toString() + " "+ optional.getInFile());
-//					return;
-//				}
-//				File dir = new File(Optional.getInFile());
-//				File odir = new File(Optional.getOutFile());
-//				if(!odir.exists()){
-//					odir.mkdirs();
-//				}
-//				for(File f : dir.listFiles()){
-////					(new ToWfbundel(f.toString(), odir.toString())).run();
-////					System.out.println(f);
-//					
-//				}
-//					
-//			}
-			
-			
+			ToWfbundle bn; 
+			if(!filetypes.isJson || !filetypes.isRo){
+				if(recurse){
+					bn = new ToWfbundle(filetypes.isTrue(), optional.getInFile(), optional.getOutFile());
+				}else{
+					bn =  new ToWfbundle(filetypes.isTrue(), files, optional.getOutFile());
+				}
+			}else{
+				System.out.println("To be implemented");
+			}
 			
 		}
 		
@@ -222,22 +209,38 @@ public class CommandLineTool {
 	}
 	
 	//Command for inspection of workflows....!!
-	@Command(name="inspect", description="Inspect the given workflow")
+	@Command(name="inspect", description="Inspect the given workflow and show the results on the terminal")
 	public static class CommandInspect extends TvnLangTool{
-
-		@Inject
-		Optional optional = new Optional();
 		
 		@Inject
 		Inspect inspect = new Inspect();
 		
-		@Arguments(usage="<option> <input files> <output dir>", description="Inspect the given workflow")
+		@Option(name={"-l", "--log"}, description="Specify the file name where results should be stored ([some dir]/log.txt)")
+		public String file;
+		
+		@Arguments(usage="<option> <input files>", description="Inspect the given workflow")
 		public List<String> toInspect = Lists.newArrayList();
 		
 		@Override
 		public void execute() {
 			// TODO Auto-generated method stub
-			
+			if(inspect.processor){
+				try {
+					ProcessorNames pn = new ProcessorNames(toInspect, file);
+						
+				} catch (ReaderException | IOException | JAXBException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}else if(inspect.servicetypes){
+				try {
+					ServiceTypes st = new ServiceTypes(toInspect, file);
+				} catch (IOException | ReaderException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
 			
 		}
 		
