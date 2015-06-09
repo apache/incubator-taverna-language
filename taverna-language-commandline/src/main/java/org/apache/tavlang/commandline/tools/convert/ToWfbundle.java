@@ -35,7 +35,7 @@ import org.apache.tavlang.commandline.tools.Tools.ConvertionTools;
  * Converts 
  * 	.t2flow --> .wfbundle
  * 	.t2flow --> .structure
- * 	.wfbunddle --> .structure
+ * 	.wfbundle --> .structure
  * two constructors.
  * ToWfbundle(List<String> list, String out) --> will save the converted files in 'out folder or a directory named /converted in the same folder.
  * ToWfbundle(String in, String out) --> Will convert all the files in the 'in' folder and save them in 'out' folder --> -r must be true.
@@ -65,6 +65,11 @@ public class ToWfbundle{
 		this.type = type.equals("wfdesc")?".wfdesc.ttl":"."+type;
 		this.MEDIA_TYPE = ConvertionTools.valueOf(type).getMediaType(t);	//Determine the writer media type
 		
+		this.createdir();
+	}
+	
+	//Create the dir if not exists
+	public void createdir(){
 		if(output == null){
 			File outFile = new File(this.input, "converted");
 			try {
@@ -91,7 +96,7 @@ public class ToWfbundle{
 	
 	//Convert the given file. Return in case of an exception.
 	public boolean convert(){
-		WorkflowBundleIO wfbio = new WorkflowBundleIO();
+		
 		boolean check = false;
 		// If the output folder is given, save the converted files in to that folder.
 		 
@@ -105,26 +110,7 @@ public class ToWfbundle{
 			for(String file : this.filesList){
 				File t2File = new File(file);
 				
-				String filename = t2File.getName();
-				filename = filename.replaceFirst("\\..*", this.type);			
-				File scufl2File = new File(outFile.getAbsolutePath(), filename);
-				
-				WorkflowBundle wfBundle;
-				try {
-//					wfBundle = wfbio.readBundle(t2File, "application/vnd.taverna.t2flow+xml");
-					wfBundle = wfbio.readBundle(t2File, null);
-					wfbio.writeBundle(wfBundle, scufl2File, this.MEDIA_TYPE);
-					System.out.println(scufl2File.getPath() + " is created.");
-					check = true;
-					//Exceptions
-				
-				} catch (ReaderException e){
-					System.err.println("Error reading the file");
-				}catch(IOException e){
-					System.err.println("Error reading the file");
-				}catch(WriterException e) {
-					System.err.println("Error writing the file");
-				}
+				convertFile(t2File, outFile);
 				
 			}
 			
@@ -134,39 +120,23 @@ public class ToWfbundle{
 		  *  '/converted' folder.
 		  */
 		 
-		if(this.filesList.size()>0 && this.output == null){
+		else if(this.filesList.size()>0 && this.output == null){
 			for(String file : this.filesList){
 				File t2File = new File(file);
 				
-				File out = new File(t2File.getParentFile(), "converted");
+				File outFile = new File(t2File.getParentFile(), "converted");
 				try {
-					FileUtils.forceMkdir(out);
+					FileUtils.forceMkdir(outFile);
 				} catch (IOException e1) {
 					System.err.println("Error creating the directory...!!!");
 				}
 				
-				String filename = t2File.getName();
-				filename = filename.replaceFirst("\\..*", this.type);			
-				File scufl2File = new File(out.getAbsolutePath(), filename);
-				
-				WorkflowBundle wfBundle;
-				try {
-					wfBundle = wfbio.readBundle(t2File, null);	// null --> will guess the media type for reading. 
-					wfbio.writeBundle(wfBundle, scufl2File, this.MEDIA_TYPE);
-					System.out.println(scufl2File.getPath() + " is created.");
-					check = true;
-				}catch (ReaderException e){
-					System.err.println("Error reading the file");
-					e.printStackTrace();
-				}catch(IOException e){
-					System.err.println("Error reading the file");
-					e.printStackTrace();
-				}catch(WriterException e) {
-					System.err.println("Error writing the file");
-					e.printStackTrace();
-				}
+				convertFile(t2File, outFile);
 				
 			}
+		}else{
+			System.err.println("Argument mismatch");
+			check = false;
 		}
 		
 		return check;
@@ -184,31 +154,26 @@ public class ToWfbundle{
 					if(file.isDirectory())
 						rec_convert(file.getAbsolutePath());
 					else{
-						recConvert(file);
+						File outFile = new File(this.output);
+						convertFile(file, outFile);
 					}
 				}
 			}
-			
-			
 	}
-	public boolean recConvert(File t2File){
-
-		boolean check = false;
+	
+	//Convert the file
+	public void convertFile(File t2File, File outFile){
+		WorkflowBundleIO wfbio = new WorkflowBundleIO();
 		String filename = t2File.getName();
 		filename = filename.replaceFirst("\\..*", this.type);			
-		File scufl2File = new File(this.output, filename);
-		
-		WorkflowBundleIO wfbio = new WorkflowBundleIO();
+		File scufl2File = new File(outFile.getAbsolutePath(), filename);
 		
 		WorkflowBundle wfBundle;
 		try {
-			wfBundle = wfbio.readBundle(t2File, null);
+			wfBundle = wfbio.readBundle(t2File, null);	// null --> will guess the media type for reading. 
 			wfbio.writeBundle(wfBundle, scufl2File, this.MEDIA_TYPE);
 			System.out.println(scufl2File.getPath() + " is created.");
-			check = true;
-			//Exceptions
-		
-		} catch (ReaderException e){
+		}catch (ReaderException e){
 			System.err.println("Error reading the file");
 			e.printStackTrace();
 		}catch(IOException e){
@@ -218,7 +183,7 @@ public class ToWfbundle{
 			System.err.println("Error writing the file");
 			e.printStackTrace();
 		}
-		return check;
 	}
+
 	
 }
