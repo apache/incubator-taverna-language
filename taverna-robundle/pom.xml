@@ -50,12 +50,14 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
+    <!--
 		<dependency>
 			<groupId>com.github.jsonld-java</groupId>
 			<artifactId>jsonld-java</artifactId>
 			<version>${jsonld.version}</version>
 			<scope>test</scope>
 		</dependency>
+    -->
 		<dependency>
 			<groupId>commons-configuration</groupId>
 			<artifactId>commons-configuration</artifactId>
@@ -63,14 +65,8 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.jena</groupId>
-			<artifactId>jena-arq</artifactId>
+			<artifactId>jena-osgi</artifactId>
 			<version>${jena.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>httpclient</artifactId>
-					<groupId>org.apache.httpcomponents</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 <!--
 		<dependency>
@@ -100,12 +96,14 @@
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
 				<extensions>true</extensions>
+        <!--
 				<configuration>
 					<instructions>
 						<Embed-Dependency>*;groupId=com.github.jsonld-java</Embed-Dependency>
 						<Embed-Transitive>true</Embed-Transitive>
 					</instructions>
 				</configuration>
+        -->
 			</plugin>
       <plugin>
           <groupId>org.jvnet.jaxb2.maven2</groupId>
