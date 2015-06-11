@@ -29,6 +29,7 @@ import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 import org.apache.taverna.scufl2.api.io.WriterException;
 import org.apache.tavlang.commandline.tools.Tools.ConvertionTools;
+import org.apache.tavlang.commandline.tools.validate.Validate;
 
 
 /*
@@ -37,11 +38,11 @@ import org.apache.tavlang.commandline.tools.Tools.ConvertionTools;
  * 	.t2flow --> .structure
  * 	.wfbundle --> .structure
  * two constructors.
- * ToWfbundle(List<String> list, String out) --> will save the converted files in 'out folder or a directory named /converted in the same folder.
- * ToWfbundle(String in, String out) --> Will convert all the files in the 'in' folder and save them in 'out' folder --> -r must be true.
+ * Scufl2Convert(List<String> list, String out) --> will save the converted files in 'out folder or a directory named /converted in the same folder.
+ * Scufl2Convert(String in, String out) --> Will convert all the files in the 'in' folder and save them in 'out' folder --> -r must be true.
  * 
  * */
-public class ToWfbundle{
+public class Scufl2Convert{
 	
 	private ConvertionTools t;
 	private String MEDIA_TYPE;
@@ -50,7 +51,7 @@ public class ToWfbundle{
 	private String type;
 	private List<String> filesList;
 	
-	public ToWfbundle(String type, List<String> files, String out){
+	public Scufl2Convert(String type, List<String> files, String out){
 		this.filesList = files;
 		this.output = out;
 		this.type = type.equals("wfdesc")?".wfdesc.ttl":"."+type;
@@ -59,7 +60,7 @@ public class ToWfbundle{
 	}
 	
 	//When recursive case is on....
-	public ToWfbundle(String type, String in, String out){
+	public Scufl2Convert(String type, String in, String out){
 		this.input = in;
 		this.output = out;
 		this.type = type.equals("wfdesc")?".wfdesc.ttl":"."+type;
@@ -166,23 +167,23 @@ public class ToWfbundle{
 		WorkflowBundleIO wfbio = new WorkflowBundleIO();
 		String filename = t2File.getName();
 		filename = filename.replaceFirst("\\..*", this.type);
-		System.out.println(filename);
+//		System.out.println(filename);
 		File scufl2File = new File(outFile.getAbsolutePath(), filename);
 		
 		WorkflowBundle wfBundle;
 		try {
-			wfBundle = wfbio.readBundle(t2File, null);	// null --> will guess the media type for reading. 
+			wfBundle = wfbio.readBundle(t2File, null);// null --> will guess the media type for reading.
 			wfbio.writeBundle(wfBundle, scufl2File, this.MEDIA_TYPE);
 			System.out.println(scufl2File.getPath() + " is created.");
 		}catch (ReaderException e){
-			System.err.println("Error reading the file");
-			e.printStackTrace();
+			System.err.println(e.getLocalizedMessage());
+//			e.printStackTrace();
 		}catch(IOException e){
-			System.err.println("Error reading the file");
-			e.printStackTrace();
+			System.err.println(e.getLocalizedMessage());
+//			e.printStackTrace();
 		}catch(WriterException e) {
-			System.err.println("Error writing the file");
-			e.printStackTrace();
+			System.err.println(e.getLocalizedMessage());
+//			e.printStackTrace();
 		}
 	}
 
