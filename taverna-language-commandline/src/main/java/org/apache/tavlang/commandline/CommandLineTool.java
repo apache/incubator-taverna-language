@@ -38,7 +38,8 @@ import javax.xml.bind.JAXBException;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.tavlang.commandline.tools.Tools;
 import org.apache.tavlang.commandline.tools.Tools.ConvertionTools;
-import org.apache.tavlang.commandline.tools.convert.ToWfbundle;
+import org.apache.tavlang.commandline.tools.convert.ToRobundle;
+import org.apache.tavlang.commandline.tools.convert.Scufl2Convert;
 import org.apache.tavlang.commandline.tools.inspect.ProcessorNames;
 import org.apache.tavlang.commandline.tools.inspect.ServiceTypes;
 
@@ -181,15 +182,22 @@ public class CommandLineTool {
 		
 		@Override
 		public void execute(){
-			ToWfbundle bn; 
-			if(!filetypes.isJson || !filetypes.isRo){
-				if(recurse){
-					bn = new ToWfbundle(filetypes.isTrue(), optional.getInFile(), optional.getOutFile());
-				}else{
-					bn =  new ToWfbundle(filetypes.isTrue(), files, optional.getOutFile());
+			Scufl2Convert bn; 
+			if(filetypes.isJson ){
+				
+			}else if(filetypes.isRo){
+				try {
+					ToRobundle ro = new ToRobundle(files, optional.getOutFile());
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}else{
-				System.out.println("To be implemented");
+				if(recurse){
+					bn = new Scufl2Convert(filetypes.isTrue(), optional.getInFile(), optional.getOutFile());
+				}else{
+					bn =  new Scufl2Convert(filetypes.isTrue(), files, optional.getOutFile());
+				}
 			}
 			
 		}
