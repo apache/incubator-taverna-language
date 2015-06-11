@@ -152,9 +152,8 @@ public class Scufl2Convert{
 				System.err.println("Input directory not found");
 			}else{
 				for(File file : parent.listFiles()){
-					if(file.isDirectory())
-						rec_convert(file.getAbsolutePath());
-					else{
+					if(!file.isDirectory())
+					{
 						File outFile = new File(this.output);
 						convertFile(file, outFile);
 					}
