@@ -1,4 +1,4 @@
-package org.apache.tavlang.commandline.tools.convert;
+package org.apache.taverna.tavlang.tools.convert;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -28,8 +28,8 @@ import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 import org.apache.taverna.scufl2.api.io.WriterException;
-import org.apache.tavlang.commandline.tools.Tools.ConvertionTools;
-import org.apache.tavlang.commandline.tools.validate.Validate;
+import org.apache.taverna.tavlang.tools.Tools.ConvertionTools;
+import org.apache.taverna.tavlang.tools.validate.Validate;
 
 
 /*

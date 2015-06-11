@@ -1,4 +1,4 @@
-package org.apache.tavlang.commandline.tools.inspect;
+package org.apache.taverna.tavlang.tools.inspect;
 
 
 /*

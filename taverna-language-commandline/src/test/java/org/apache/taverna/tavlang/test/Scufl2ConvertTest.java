@@ -1,4 +1,4 @@
-package org.apache.tavlang.commandline.test;
+package org.apache.taverna.tavlang.test;
 
 import static org.junit.Assert.*;
 

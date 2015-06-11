@@ -1,4 +1,4 @@
-package org.apache.tavlang.commandline.tools.validate;
+package org.apache.taverna.tavlang.tools.validate;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one

@@ -1,4 +1,4 @@
-package org.apache.tavlang.commandline.test;
+package org.apache.taverna.tavlang.test;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -20,7 +20,7 @@ package org.apache.tavlang.commandline.test;
  */
 
 
-import org.apache.tavlang.commandline.CommandLineTool;
+import org.apache.taverna.tavlang.CommandLineTool;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -44,7 +44,7 @@ public class CommandLineTest {
 		
 		
 //		CommandLineTool tool = new CommandLineTool();
-//		commandLineTool.parse("convert", "-r", "-wfbundle", "-o", "/files/dir", "-i", "/files0/dir");
+		commandLineTool.parse("convert", "-r", "-structure",  "-i", "/home/menaka/conv/aaa");
 //		CommandLineTool tool2 = new CommandLineTool();
 //		commandLineTool.parse("convert", "-r", "-wfdesc", "-o", "/files/dir", "-i", "/files0/dir");
 //		commandLineTool.parse();
