@@ -83,19 +83,19 @@ public class CommandLineTool {
 	
 	//placeholder for output file types
 	public static class Filetypes{
-		@Option(name= "-wfdesc", description="Convert the workflow file to wfdesc-turtle")
+		@Option(name= "--wfdesc", description="Convert the workflow file to wfdesc-turtle")
 		public static boolean isWfdesc = false;
 		
-		@Option(name="-wfbundle", description="Convert the workflow file to wfbundel")
+		@Option(name="--wfbundle", description="Convert the workflow file to wfbundel")
 		public static boolean isWfbundel = false;
 		
-		@Option(name =  "-robundle", description = "Convert given bundel in to Research Object bundel")
+		@Option(name =  "--robundle", description = "Convert given bundel in to Research Object bundel")
 		public static boolean isRo = false;
 		
-		@Option(name= "-structure", description = "Convert the workflow into *.structure")
+		@Option(name= "--structure", description = "Convert the workflow into *.structure")
 		public static boolean isStructure = false;
 
-		@Option(name = "-json", description = "Convert the workflow into json")
+		@Option(name = "--json", description = "Convert the workflow into json")
 		public static boolean isJson = false;
 		
 		//The tool can only handle one output format at a time.
@@ -112,10 +112,10 @@ public class CommandLineTool {
 	}
 	
 	public static class Inspect{
-		@Option(name = "-servicetypes", description = "List the service types used in workflow")
+		@Option(name = "--servicetypes", description = "List the service types used in workflow")
 		public static boolean servicetypes = false;
 		
-		@Option(name = "-processornames", description = "List a tree of processor names used in workflow")
+		@Option(name = "--processornames", description = "List a tree of processor names used in workflow")
 		public static boolean processor = false;
 		
 		public String getWay(){
