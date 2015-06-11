@@ -1,4 +1,4 @@
-package org.apache.tavlang.commandline;
+package org.apache.taverna.tavlang;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one

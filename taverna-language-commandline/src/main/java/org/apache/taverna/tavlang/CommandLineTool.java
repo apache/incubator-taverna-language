@@ -1,4 +1,4 @@
-package org.apache.tavlang.commandline;
+package org.apache.taverna.tavlang;
 
 
 /*
@@ -36,12 +36,12 @@ import javax.inject.Inject;
 import javax.xml.bind.JAXBException;
 
 import org.apache.taverna.scufl2.api.io.ReaderException;
-import org.apache.tavlang.commandline.tools.Tools;
-import org.apache.tavlang.commandline.tools.Tools.ConvertionTools;
-import org.apache.tavlang.commandline.tools.convert.Scufl2Convert;
-import org.apache.tavlang.commandline.tools.convert.ToRobundle;
-import org.apache.tavlang.commandline.tools.inspect.ProcessorNames;
-import org.apache.tavlang.commandline.tools.inspect.ServiceTypes;
+import org.apache.taverna.tavlang.tools.Tools;
+import org.apache.taverna.tavlang.tools.Tools.ConvertionTools;
+import org.apache.taverna.tavlang.tools.convert.Scufl2Convert;
+import org.apache.taverna.tavlang.tools.convert.ToRobundle;
+import org.apache.taverna.tavlang.tools.inspect.ProcessorNames;
+import org.apache.taverna.tavlang.tools.inspect.ServiceTypes;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
