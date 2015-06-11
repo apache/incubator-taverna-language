@@ -42,10 +42,11 @@ public class CommandLineTest {
 	@Test
 	public void testConvert(){
 		
+		
 //		CommandLineTool tool = new CommandLineTool();
-		commandLineTool.parse("convert", "-r", "-wfbundle", "-o", "/files/dir", "-i", "/files0/dir");
+//		commandLineTool.parse("convert", "-r", "-wfbundle", "-o", "/files/dir", "-i", "/files0/dir");
 //		CommandLineTool tool2 = new CommandLineTool();
-		commandLineTool.parse("convert", "-r", "-wfdesc", "-o", "/files/dir", "-i", "/files0/dir");
+//		commandLineTool.parse("convert", "-r", "-wfdesc", "-o", "/files/dir", "-i", "/files0/dir");
 //		commandLineTool.parse();
 //		commandLineTool.parse();
 //		commandLineTool.parse();
