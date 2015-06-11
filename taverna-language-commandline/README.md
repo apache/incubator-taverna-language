@@ -63,11 +63,9 @@ before accepting a larger contribution.
 
 # Building and install requirements
 
-_TODO_
-
 ## Requisites
 
-* Java 1.8 or newer
+* Java 1.7 or newer
 * [Apache Maven](https://maven.apache.org/download.html) 3.2.5 or newer (older
   versions probably also work)
 
@@ -81,9 +79,16 @@ To build, run:
 
 # Usage
 
-_TODO_
-
-* ...
+	usage: tavlang <command> [<args>]
+	
+	The most commonly used tavlang commands are:
+	    convert    Convert the given workflow
+	    help       Display help information about Tvarna
+	    inspect    Inspect the given workflow and show the results on the terminal
+	    validate   validate the given workflow
+	    version    Show version informantion
+	
+	See 'tavlang help <command>' for more information on a specific command.
 
 # Documentation
 
