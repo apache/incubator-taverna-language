@@ -28,9 +28,11 @@ import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 import org.apache.taverna.scufl2.api.io.WriterException;
+
+import org.shiwa.*;
+
 import org.apache.taverna.tavlang.tools.Tools.ConvertionTools;
 import org.apache.taverna.tavlang.tools.validate.Validate;
-
 
 /*
  * Converts 
@@ -42,36 +44,37 @@ import org.apache.taverna.tavlang.tools.validate.Validate;
  * Scufl2Convert(String in, String out) --> Will convert all the files in the 'in' folder and save them in 'out' folder --> -r must be true.
  * 
  * */
-public class Scufl2Convert{
-	
+public class Scufl2Convert {
+
 	private ConvertionTools t;
 	private String MEDIA_TYPE;
 	private String input;
 	private String output;
 	private String type;
 	private List<String> filesList;
-	
-	public Scufl2Convert(String type, List<String> files, String out){
+
+	public Scufl2Convert(String type, List<String> files, String out) {
 		this.filesList = files;
 		this.output = out;
-		this.type = type.equals("wfdesc")?".wfdesc.ttl":"."+type;
+		this.type = type.equals("wfdesc") ? ".wfdesc.ttl" : "." + type;
 		this.MEDIA_TYPE = ConvertionTools.valueOf(type).getMediaType(t);
 		this.convert();
 	}
-	
-	//When recursive case is on....
-	public Scufl2Convert(String type, String in, String out){
+
+	// When recursive case is on....
+	public Scufl2Convert(String type, String in, String out) {
 		this.input = in;
 		this.output = out;
-		this.type = type.equals("wfdesc")?".wfdesc.ttl":"."+type;
-		this.MEDIA_TYPE = ConvertionTools.valueOf(type).getMediaType(t);	//Determine the writer media type
-		
+		this.type = type.equals("wfdesc") ? ".wfdesc.ttl" : "." + type;
+		this.MEDIA_TYPE = ConvertionTools.valueOf(type).getMediaType(t); 
+		// Determine the writer media type
+
 		this.createdir();
 	}
-	
-	//Create the dir if not exists
-	public void createdir(){
-		if(output == null){
+
+	// Create the dir if not exists
+	public void createdir() {
+		if (output == null) {
 			File outFile = new File(this.input, "converted");
 			try {
 				FileUtils.forceMkdir(outFile);
@@ -81,11 +84,11 @@ public class Scufl2Convert{
 				System.err.println("Error creating the directory...!!!!");
 				e1.printStackTrace();
 			}
-		}else{
+		} else {
 			File outFile = new File(this.output);
 			try {
 				FileUtils.forceMkdir(outFile);
-				
+
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				System.err.println("Error creating the directory...!!!!");
@@ -94,97 +97,101 @@ public class Scufl2Convert{
 		}
 		this.rec_convert(this.input);
 	}
-	
-	//Convert the given file. Return in case of an exception.
-	public boolean convert(){
-		
+
+	// Convert the given file. Return in case of an exception.
+	public boolean convert() {
+
 		boolean check = false;
-		// If the output folder is given, save the converted files in to that folder.
-		 
-		if(this.filesList.size()>0 && this.output != null){
+		// If the output folder is given, save the converted files in to that
+		// folder.
+
+		if (this.filesList.size() > 0 && this.output != null) {
 			File outFile = new File(this.output);
 			try {
 				FileUtils.forceMkdir(outFile);
 			} catch (IOException e1) {
 				System.err.println("Error creating the directory...!!!");
 			}
-			for(String file : this.filesList){
+			for (String file : this.filesList) {
 				File t2File = new File(file);
-				
+
 				convertFile(t2File, outFile);
-				
+
 			}
-			
+
 		}
-		
-		 /* If the output file is not given, save the converted files in 
-		  *  '/converted' folder.
-		  */
-		 
-		else if(this.filesList.size()>0 && this.output == null){
-			for(String file : this.filesList){
+
+		/*
+		 * If the output file is not given, save the converted files in
+		 * '/converted' folder.
+		 */
+
+		else if (this.filesList.size() > 0 && this.output == null) {
+			for (String file : this.filesList) {
 				File t2File = new File(file);
-				
+
 				File outFile = new File(t2File.getParentFile(), "converted");
 				try {
 					FileUtils.forceMkdir(outFile);
 				} catch (IOException e1) {
 					System.err.println("Error creating the directory...!!!");
 				}
-				
+
 				convertFile(t2File, outFile);
-				
+
 			}
-		}else{
+		} else {
 			System.err.println("Argument mismatch");
 			check = false;
 		}
-		
+
 		return check;
 	}
-	
-	//Convert the files in a given directory and save the converted files in to specified dir or /converted folder.
-	//Recursive conversion
-	public void rec_convert(String dir){
-			
-			File parent = new File(this.input);
-			if(!parent.exists()){
-				System.err.println("Input directory not found");
-			}else{
-				for(File file : parent.listFiles()){
-					if(!file.isDirectory())
-					{
-						File outFile = new File(this.output);
-						convertFile(file, outFile);
-					}
+
+	// Convert the files in a given directory and save the converted files in to
+	// specified dir or /converted folder.
+	// Recursive conversion
+	public void rec_convert(String dir) {
+
+		File parent = new File(this.input);
+		if (!parent.exists()) {
+			System.err.println("Input directory not found");
+		} else {
+			for (File file : parent.listFiles()) {
+				if (!file.isDirectory()) {
+					File outFile = new File(this.output);
+					convertFile(file, outFile);
 				}
 			}
-	}
-	
-	//Convert the file
-	public void convertFile(File t2File, File outFile){
-		WorkflowBundleIO wfbio = new WorkflowBundleIO();
-		String filename = t2File.getName();
-		filename = filename.replaceFirst("\\..*", this.type);
-//		System.out.println(filename);
-		File scufl2File = new File(outFile.getAbsolutePath(), filename);
-		
-		WorkflowBundle wfBundle;
-		try {
-			wfBundle = wfbio.readBundle(t2File, null);// null --> will guess the media type for reading.
-			wfbio.writeBundle(wfBundle, scufl2File, this.MEDIA_TYPE);
-			System.out.println(scufl2File.getPath() + " is created.");
-		}catch (ReaderException e){
-			System.err.println(e.getLocalizedMessage());
-//			e.printStackTrace();
-		}catch(IOException e){
-			System.err.println(e.getLocalizedMessage());
-//			e.printStackTrace();
-		}catch(WriterException e) {
-			System.err.println(e.getLocalizedMessage());
-//			e.printStackTrace();
 		}
 	}
 
-	
+	// Convert the file
+	public void convertFile(File t2File, File outFile) {
+		WorkflowBundleIO wfbio = new WorkflowBundleIO();
+		String filename = t2File.getName();
+		filename = filename.replaceFirst("\\..*", this.type);
+		System.out.println(wfbio.getSupportedWriterMediaTypes());
+		File scufl2File = new File(outFile.getAbsolutePath(), filename);
+
+		WorkflowBundle wfBundle;
+		try {
+
+			wfBundle = wfbio.readBundle(t2File, null);// null --> will guess the
+														// media type for
+														// reading.
+			wfbio.writeBundle(wfBundle, scufl2File, this.MEDIA_TYPE);
+			System.out.println(scufl2File.getPath() + " is created.");
+		} catch (ReaderException e) {
+			System.err.println(e.getLocalizedMessage());
+			// e.printStackTrace();
+		} catch (IOException e) {
+			System.err.println(e.getLocalizedMessage());
+			// e.printStackTrace();
+		} catch (WriterException e) {
+			System.err.println(e.getLocalizedMessage());
+			// e.printStackTrace();
+		}
+	}
+
 }
