@@ -195,9 +195,7 @@ public class CommandLineTool {
 		@Override
 		public void execute() {
 			Scufl2Convert bn;
-			if (filetypes.isJson) {
-
-			} else if (filetypes.isRo) {
+			if (filetypes.isRo) {
 				try {
 					ToRobundle ro = new ToRobundle(files, optional.getOutFile());
 				} catch (Exception e) {

@@ -82,11 +82,6 @@ public class ToJson {
 
     }
 
-    public static void main(String[] args) throws ReaderException, IOException,
-            WriterException {
-    	String[] args2 = {"/home/menaka/conv/aaa/as.wfbundle"};
-        new ToJson().convert(args2);
-    }
 
 
     private WorkflowBundleIO io = new WorkflowBundleIO();;
@@ -137,26 +132,16 @@ public class ToJson {
         return node;
     }
 
-    public void convert(String[] filepaths) throws ReaderException,
+    public void convert(File in, File out) throws ReaderException,
             IOException, WriterException {
-        if (filepaths[0].equals("-")) {
-            // Do piped Stdin/Stdout instead
-            WorkflowBundle wfBundle = io.readBundle(System.in, null);
-            io.writeBundle(wfBundle, System.err, "application/ld+json");
-            return;
-        }
-
-        for (String filepath : filepaths) {
-            File workflow = new File(filepath);
-
-            String filename = workflow.getName();
+            String filename = in.getName();
             filename = filename.replaceFirst("\\..*", ".json");
-            File workflowFile = new File(workflow.getParentFile(), filename);
+            File workflowFile = new File(out.getAbsolutePath(), filename);
 
-            WorkflowBundle wfBundle = io.readBundle(workflow, null);
+            WorkflowBundle wfBundle = io.readBundle(in, null);
             io.writeBundle(wfBundle, workflowFile, "application/ld+json");
             System.out.println(workflowFile);
-        } 
+        
     }
 
     protected ObjectNode toJson(Port port) {

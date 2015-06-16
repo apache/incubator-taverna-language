@@ -27,10 +27,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
+import org.apache.taverna.scufl2.api.io.WorkflowBundleWriter;
 import org.apache.taverna.scufl2.api.io.WriterException;
 import org.shiwa.*;
 import org.apache.taverna.tavlang.iwir.IwirWriter;
 import org.apache.taverna.tavlang.tools.Tools.ConvertionTools;
+import org.apache.taverna.tavlang.tools.convert.ToJson.JsonWriter;
 import org.apache.taverna.tavlang.tools.validate.Validate;
 
 /*
@@ -38,6 +40,9 @@ import org.apache.taverna.tavlang.tools.validate.Validate;
  * 	.t2flow --> .wfbundle
  * 	.t2flow --> .structure
  * 	.wfbundle --> .structure
+ * 	.wfbundle --> .iwir
+ *  .t2flow --> .iwir
+ *  .t2flow / .wfbundle -> .json
  * two constructors.
  * Scufl2Convert(List<String> list, String out) --> will save the converted files in 'out folder or a directory named /converted in the same folder.
  * Scufl2Convert(String in, String out) --> Will convert all the files in the 'in' folder and save them in 'out' folder --> -r must be true.
@@ -170,7 +175,6 @@ public class Scufl2Convert {
 		WorkflowBundleIO wfbio = new WorkflowBundleIO();
 		String filename = t2File.getName();
 		filename = filename.replaceFirst("\\..*", this.type);
-		System.out.println(wfbio.getSupportedWriterMediaTypes());
 		File scufl2File = new File(outFile.getAbsolutePath(), filename);
 
 		WorkflowBundle wfBundle;
@@ -179,10 +183,16 @@ public class Scufl2Convert {
 			wfBundle = wfbio.readBundle(t2File, null);// null --> will guess the
 														// media type for
 														// reading.
+			
+			//If the output file format is iwir, then use the overwritten methods.
 			if(this.type.equals(".iwir")){
 				IwirWriter iww = new IwirWriter();
 				iww.writeBundle(wfBundle, scufl2File, this.MEDIA_TYPE);
-			}else{
+			}else if(this.type.equals(".json")){
+				ToJson toJ = new ToJson();
+				toJ.convert(t2File, outFile);
+			}
+			else{
 				wfbio.writeBundle(wfBundle, scufl2File, this.MEDIA_TYPE);
 			}
 			
