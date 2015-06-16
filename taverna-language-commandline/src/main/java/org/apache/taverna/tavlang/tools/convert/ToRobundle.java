@@ -31,9 +31,11 @@ import java.util.logging.Logger;
 
 import org.apache.taverna.robundle.Bundle;
 import org.apache.taverna.robundle.Bundles;
+import org.apache.taverna.robundle.fs.BundleFileTypeDetector;
 
 public class ToRobundle{
 
+	
 	public ToRobundle(List<String> files, String out) throws Exception{
 		
 		Logger logger = Logger.getLogger("");
@@ -57,8 +59,10 @@ public class ToRobundle{
 	
 	public void convert(Path file) throws IOException{
 		try (Bundle bundle = Bundles.openBundle(file)) {
+			BundleFileTypeDetector bftd = new BundleFileTypeDetector();
+			bftd.probeContentType(file);
 			
-			System.out.println(bundle.getManifest().toString());
+			System.out.println(bftd.probeContentType(file));
 //			bundle.getManifest().writeAsJsonLD();
 //			bundle.getManifest().writeAsCombineManifest();
 		}
