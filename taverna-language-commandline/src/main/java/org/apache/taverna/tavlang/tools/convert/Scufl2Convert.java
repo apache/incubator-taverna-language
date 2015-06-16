@@ -28,9 +28,8 @@ import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 import org.apache.taverna.scufl2.api.io.WriterException;
-
 import org.shiwa.*;
-
+import org.apache.taverna.tavlang.iwir.IwirWriter;
 import org.apache.taverna.tavlang.tools.Tools.ConvertionTools;
 import org.apache.taverna.tavlang.tools.validate.Validate;
 
@@ -180,7 +179,13 @@ public class Scufl2Convert {
 			wfBundle = wfbio.readBundle(t2File, null);// null --> will guess the
 														// media type for
 														// reading.
-			wfbio.writeBundle(wfBundle, scufl2File, this.MEDIA_TYPE);
+			if(this.type.equals(".iwir")){
+				IwirWriter iww = new IwirWriter();
+				iww.writeBundle(wfBundle, scufl2File, this.MEDIA_TYPE);
+			}else{
+				wfbio.writeBundle(wfBundle, scufl2File, this.MEDIA_TYPE);
+			}
+			
 			System.out.println(scufl2File.getPath() + " is created.");
 		} catch (ReaderException e) {
 			System.err.println(e.getLocalizedMessage());
