@@ -48,7 +48,7 @@ import com.google.common.collect.Lists;
 
 public class CommandLineTool {
 
-	private Cli<TvnLangTool> parser() {
+	private static Cli<TvnLangTool> parser() {
 		CliBuilder<TvnLangTool> build = Cli.<TvnLangTool> builder("tavlang")
 				.withDescription("Convert, manage workflows")
 				.withDefaultCommand(HelpCommand.class)
@@ -111,8 +111,13 @@ public class CommandLineTool {
 				return "json";
 			else if (isIwir)
 				return "iwir";
-			else
+			else{
+				System.out.println("Invalid argument....");
+				TvnLangTool command = parser().parse("help", "convert");
+				command.execute();
 				return null;
+			}
+				
 		}
 
 	}
@@ -129,8 +134,14 @@ public class CommandLineTool {
 				return "servicetypes";
 			else if (processor)
 				return "processornames";
-			else
+			else{
+				System.out.println("Invalid argument....");
+				TvnLangTool command = parser().parse("help", "inspect");
+				command.execute();
 				return null;
+				
+			}
+				
 		}
 
 	}
@@ -198,7 +209,7 @@ public class CommandLineTool {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			} else {
+			} else if(Filetypes.isIwir || Filetypes.isJson || Filetypes.isStructure || Filetypes.isWfbundel || Filetypes.isWfdesc){
 				if (recurse) {
 					new Scufl2Convert(Filetypes.isTrue(),
 							Optional.getInFile(), Optional.getOutFile());
@@ -206,6 +217,10 @@ public class CommandLineTool {
 					new Scufl2Convert(Filetypes.isTrue(), files,
 							Optional.getOutFile());
 				}
+			}else{
+				System.out.println("Invalid argument....");
+				TvnLangTool command = parser().parse("help", "convert");
+				command.execute();
 			}
 
 		}
@@ -257,6 +272,10 @@ public class CommandLineTool {
 					e.printStackTrace();
 				}
 
+			}else{
+				System.out.println("Invalid argument....");
+				TvnLangTool command = parser().parse("help", "inspect");
+				command.execute();
 			}
 
 		}
@@ -276,6 +295,9 @@ public class CommandLineTool {
 		@Override
 		public void execute() {
 			// TODO Auto-generated method stub
+			System.out.println("Invalid argument....");
+			TvnLangTool command = parser().parse("help", "validate");
+			command.execute();
 
 		}
 
