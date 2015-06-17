@@ -28,6 +28,7 @@ import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 import org.apache.taverna.scufl2.api.io.WriterException;
+import org.apache.taverna.tavlang.iwir.IwirWriter;
 import org.apache.taverna.tavlang.tools.Tools.ConvertionTools;
 import org.apache.taverna.tavlang.tools.validate.Validate;
 
@@ -172,7 +173,16 @@ public class Scufl2Convert{
 		WorkflowBundle wfBundle;
 		try {
 			wfBundle = wfbio.readBundle(t2File, null);// null --> will guess the media type for reading.
-			wfbio.writeBundle(wfBundle, scufl2File, this.MEDIA_TYPE);
+			if(this.type.equals(".iwir")){
+				IwirWriter iww = new IwirWriter();
+				iww.writeBundle(wfBundle, scufl2File, this.MEDIA_TYPE);
+			}else if(this.type.equals(".json")){
+				ToJson toJ = new ToJson();
+				toJ.convert(t2File, outFile);
+			}
+			else{
+				wfbio.writeBundle(wfBundle, scufl2File, this.MEDIA_TYPE);
+			}
 			System.out.println(scufl2File.getPath() + " is created.");
 		}catch (ReaderException e){
 			System.err.println(e.getLocalizedMessage());
