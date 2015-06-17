@@ -44,7 +44,7 @@ public class CommandLineTest {
 		
 		
 //		CommandLineTool tool = new CommandLineTool();
-		commandLineTool.parse("convert", "-r", "-structure",  "-i", "/home/menaka/conv/aaa");
+//		commandLineTool.parse("convert", "-r", "-structure",  "-i", "/home/menaka/conv/aaa");
 //		CommandLineTool tool2 = new CommandLineTool();
 //		commandLineTool.parse("convert", "-r", "-wfdesc", "-o", "/files/dir", "-i", "/files0/dir");
 //		commandLineTool.parse();
