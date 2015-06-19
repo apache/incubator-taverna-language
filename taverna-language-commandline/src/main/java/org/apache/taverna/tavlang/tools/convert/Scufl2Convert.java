@@ -173,10 +173,13 @@ public class Scufl2Convert{
 		WorkflowBundle wfBundle;
 		try {
 			wfBundle = wfbio.readBundle(t2File, null);// null --> will guess the media type for reading.
-			if(this.type.equals(".iwir")){
-				IwirWriter iww = new IwirWriter();
-				iww.writeBundle(wfBundle, scufl2File, this.MEDIA_TYPE);
-			}else if(this.type.equals(".json")){
+			
+//			if(this.type.equals(".iwir")){
+//				IwirWriter iww = new IwirWriter();
+//				iww.writeBundle(wfBundle, scufl2File, this.MEDIA_TYPE);
+//			}else
+			
+			if(this.type.equals(".json")){
 				ToJson toJ = new ToJson();
 				toJ.convert(t2File, outFile);
 			}
