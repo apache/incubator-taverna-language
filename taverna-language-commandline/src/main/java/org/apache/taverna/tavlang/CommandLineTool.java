@@ -93,9 +93,11 @@ public class CommandLineTool {
 		@Option(name = "--json", description = "Convert the workflow into json")
 		public static boolean isJson = false;
 
+		/*
 		@Option(name = "--iwir", description = "Convert scufl2 workflows into IWIR 1.1 specification")
 		public static boolean isIwir = false;
-
+		*/
+		
 		// The tool can only handle one output format at a time.
 		// Return the file type which is selected
 		public static String isTrue() {
@@ -109,8 +111,11 @@ public class CommandLineTool {
 				return "structure";
 			else if (isJson)
 				return "json";
-			else if (isIwir)
+			
+			/*else if (isIwir)
 				return "iwir";
+				*/
+			
 			else{
 				System.out.println("Invalid argument....");
 				TvnLangTool command = parser().parse("help", "convert");
@@ -209,7 +214,8 @@ public class CommandLineTool {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			} else if(Filetypes.isIwir || Filetypes.isJson || Filetypes.isStructure || Filetypes.isWfbundel || Filetypes.isWfdesc){
+//				else if(Filetypes.isIwir || Filetypes.isJson || Filetypes.isStructure || Filetypes.isWfbundel || Filetypes.isWfdesc)
+			} else if(Filetypes.isJson || Filetypes.isStructure || Filetypes.isWfbundel || Filetypes.isWfdesc){
 				if (recurse) {
 					new Scufl2Convert(Filetypes.isTrue(),
 							Optional.getInFile(), Optional.getOutFile());
