@@ -29,7 +29,6 @@ public class CommandLineTest {
 	
 	@Test
 	public void testHelp(){
-//		Assert
 		commandLineTool.parse();
 		commandLineTool.parse("version");
 		commandLineTool.parse("help");
@@ -39,19 +38,6 @@ public class CommandLineTest {
 		commandLineTool.parse("help", "help");
 	}
 	
-	@Test
-	public void testConvert(){
-		
-		
-//		CommandLineTool tool = new CommandLineTool();
-//		commandLineTool.parse("convert", "-r", "-structure",  "-i", "/home/menaka/conv/aaa");
-//		CommandLineTool tool2 = new CommandLineTool();
-//		commandLineTool.parse("convert", "-r", "-wfdesc", "-o", "/files/dir", "-i", "/files0/dir");
-//		commandLineTool.parse();
-//		commandLineTool.parse();
-//		commandLineTool.parse();
-		
-	}
 	
 
 }
