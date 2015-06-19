@@ -52,6 +52,12 @@
 			<artifactId>taverna-scufl2-t2flow</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>no.s11.scufl2</groupId>
+			<artifactId>scufl2-iwir</artifactId>
+			<version>0.2-SNAPSHOT</version>
+    	</dependency>
 
 <!-- 		<dependency> -->
 <!-- 			<groupId>org.shiwa.iwir</groupId> -->
@@ -61,11 +67,11 @@
 <!-- 			<systemPath>${project.build.directory}/taverna-language-commandline/lib/</systemPath> -->
 <!-- 		</dependency> -->
 		
-<!-- 		<dependency> -->
-<!-- 			<groupId>com.thoughtworks.xstream</groupId> -->
-<!-- 			<artifactId>xstream</artifactId> -->
-<!-- 			<version>1.4.8</version> -->
-<!-- 		</dependency> -->
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+			<version>1.4.8</version>
+		</dependency>
 
 
 		<!-- <dependency> <groupId>${project.groupId}</groupId> <artifactId>taverna-scufl2-wfdesc</artifactId> 
@@ -177,6 +183,16 @@
 			<name>myGrid Repository</name>
 			<url>http://www.mygrid.org.uk/maven/repository</url>
 		</repository>
+
+		<repository>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots />
+            <id>mygrid-snapshot-repository</id>
+            <name>myGrid Snapshot Repository</name>
+            <url>http://www.mygrid.org.uk/maven/snapshot-repository/</url>
+        </repository>
 
 		<repository>
 			<id>apache.snapshots</id>
