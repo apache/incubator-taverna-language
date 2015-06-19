@@ -28,7 +28,6 @@ import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 import org.apache.taverna.scufl2.api.io.WriterException;
-import org.apache.taverna.tavlang.iwir.IwirWriter;
 import org.apache.taverna.tavlang.tools.Tools.ConvertionTools;
 import org.apache.taverna.tavlang.tools.validate.Validate;
 
