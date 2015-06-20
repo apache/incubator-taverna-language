@@ -215,7 +215,7 @@ public class CommandLineTool {
 					e.printStackTrace();
 				}
 //				else if(Filetypes.isIwir || Filetypes.isJson || Filetypes.isStructure || Filetypes.isWfbundel || Filetypes.isWfdesc)
-			} else if(Filetypes.isJson || Filetypes.isStructure || Filetypes.isWfbundel || Filetypes.isWfdesc){
+			} else if(Filetypes.isIwir || Filetypes.isJson || Filetypes.isStructure || Filetypes.isWfbundel || Filetypes.isWfdesc){
 				if (recurse) {
 					new Scufl2Convert(Filetypes.isTrue(),
 							Optional.getInFile(), Optional.getOutFile());
