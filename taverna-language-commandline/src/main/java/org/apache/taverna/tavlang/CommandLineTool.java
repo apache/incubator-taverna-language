@@ -93,10 +93,10 @@ public class CommandLineTool {
 		@Option(name = "--json", description = "Convert the workflow into json")
 		public static boolean isJson = false;
 
-		/*
+		
 		@Option(name = "--iwir", description = "Convert scufl2 workflows into IWIR 1.1 specification")
 		public static boolean isIwir = false;
-		*/
+		
 		
 		// The tool can only handle one output format at a time.
 		// Return the file type which is selected
@@ -112,9 +112,9 @@ public class CommandLineTool {
 			else if (isJson)
 				return "json";
 			
-			/*else if (isIwir)
+			else if (isIwir)
 				return "iwir";
-				*/
+				
 			
 			else{
 				System.out.println("Invalid argument....");
