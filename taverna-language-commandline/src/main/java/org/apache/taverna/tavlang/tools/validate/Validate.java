@@ -23,7 +23,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
@@ -39,45 +38,53 @@ import org.apache.taverna.scufl2.validation.correctness.ReportCorrectnessValidat
 public class Validate {
 
 	private String logfile;
-	private String finalrep = "";
+	private List<String> files;
+	WorkflowBundleIO io = new WorkflowBundleIO();
 
 	public Validate(List<String> files, String file) {
 		this.logfile = file;
-		for (String f : files) {
-			File wfile = new File(f);
-			read(wfile);
-		}
+		this.files = files;
 	}
 
-	public void read(File file) {
-		WorkflowBundleIO io = new WorkflowBundleIO();
-		try {
-			this.finalrep += validate(io.readBundle(file, null), file.getName());
-			if (this.logfile != null) {
-				saveToLog(finalrep);
+	public void read() {
+		String rep = "";
+		for (String f : files) {
+				File wfile = new File(f);
+				try {
+				
+				rep += validate(io.readBundle(wfile, null), wfile.getName());
+				
+				
+			} catch (ReaderException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+	
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+	
 			}
-		} catch (ReaderException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-
 		}
+		if (this.logfile != null) {
+			saveToLog(rep);
+		}else{
+			System.out.println(rep);
+		}
+		
 	}
 
 	public String validate(WorkflowBundle wfb, String file) {
 		System.out.println("Validation started...");
 		StringBuilder report2 = new StringBuilder();
+		
 		CorrectnessValidationListener r = new ReportCorrectnessValidationListener();
 		CorrectnessValidator v = new CorrectnessValidator();
 		r = v.validate(wfb);
+		
 		String report = r.toString().replace(
 				"ReportCorrectnessValidationListener [", "");
 
 		String[] sections = report.split(", ");
-		HashMap<String, String> map = new HashMap<>();
 
 		System.out.println("Validation completed.......");
 
