@@ -37,6 +37,7 @@ import org.apache.taverna.tavlang.tools.convert.Scufl2Convert;
 import org.apache.taverna.tavlang.tools.convert.ToRobundle;
 import org.apache.taverna.tavlang.tools.inspect.ProcessorNames;
 import org.apache.taverna.tavlang.tools.inspect.ServiceTypes;
+import org.apache.taverna.tavlang.tools.validate.Validate;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -292,18 +293,25 @@ public class CommandLineTool {
 	@Command(name = "validate", description = "validate the given workflow")
 	public static class CommandValidate extends TvnLangTool {
 
-		@Inject
-		Optional optional = new Optional();
+		@Option(name = { "-l", "--log" }, description = "Specify the file name where results should be stored ([some dir]/log.txt)")
+		public String file;
+		
+//		@Inject
+//		Optional optional = new Optional();
 
-		@Arguments(usage = "<option> <input files> <output dir>", description = "Validate the given workflow file/s")
+//		@Arguments(usage = "<option> <input files> <output dir>", description = "Validate the given workflow file/s")
+		@Arguments(usage = "input files", description = "Validate the given workflow file/s")
 		public List<String> toValidate = Lists.newArrayList();
 
 		@Override
 		public void execute() {
 			// TODO Auto-generated method stub
-			System.out.println("Invalid argument....");
-			TvnLangTool command = parser().parse("help", "validate");
-			command.execute();
+			
+				Validate validate = new Validate(toValidate, file);
+			
+//			System.out.println("Invalid argument....");
+//			TvnLangTool command = parser().parse("help", "validate");
+//			command.execute();
 
 		}
 
