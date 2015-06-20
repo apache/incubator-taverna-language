@@ -61,11 +61,20 @@
 <!-- 			<systemPath>${project.build.directory}/taverna-language-commandline/lib/</systemPath> -->
 <!-- 		</dependency> -->
 		
-<!-- 		<dependency> -->
-<!-- 			<groupId>com.thoughtworks.xstream</groupId> -->
-<!-- 			<artifactId>xstream</artifactId> -->
-<!-- 			<version>1.4.8</version> -->
-<!-- 		</dependency> -->
+   	 <dependency>
+		<groupId>no.s11.scufl2</groupId>
+		<artifactId>scufl2-iwir</artifactId>
+		<version>0.2-SNAPSHOT</version>
+        <optional>true</optional>
+    </dependency>
+
+ 
+		
+		<dependency>
+			<groupId>com.thoughtworks.xstream</groupId>
+			<artifactId>xstream</artifactId>
+			<version>1.4.8</version>
+		</dependency>
 
 
 		<!-- <dependency> <groupId>${project.groupId}</groupId> <artifactId>taverna-scufl2-wfdesc</artifactId> 
