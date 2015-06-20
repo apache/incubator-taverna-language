@@ -308,6 +308,7 @@ public class CommandLineTool {
 			// TODO Auto-generated method stub
 			
 				Validate validate = new Validate(toValidate, file);
+				validate.read();
 			
 //			System.out.println("Invalid argument....");
 //			TvnLangTool command = parser().parse("help", "validate");
