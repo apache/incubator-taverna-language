@@ -1,4 +1,5 @@
 Apache Taverna Language
+Copyright 2010-2014 University of Manchester, UK
 Copyright 2015 The Apache Software Foundation
 
 This product includes software developed at
@@ -13,7 +14,7 @@ Copyright 2008, 2010 Oracle and/or its affiliates. All rights reserved.
 ---------------------------------------------------------
 
 PAV ontology http://purl.org/pav/
-© Copyright 2008-2014 Massachusetts General Hospital; Harvard Medical School;
+(c) Copyright 2008-2014 Massachusetts General Hospital; Harvard Medical School;
 Balboa Systems; University of Manchester
 
 ---------------------------------------------------------
@@ -26,7 +27,7 @@ W3C PROV Access and Query Ontology (PROV-AQ)
 http://www.w3.org/ns/prov-aq.owl
 http://www.w3.org/TR/2013/NOTE-prov-aq-20130430/
 
-Copyright © 2011-2013 W3C® (MIT, ERCIM, Keio, Beihang), All Rights Reserved.
+Copyright (c) 2011-2013 W3C(R) (MIT, ERCIM, Keio, Beihang), All Rights Reserved.
 W3C liability, trademark and document use rules apply.
 http://www.w3.org/Consortium/Legal/2015/doc-license
 
@@ -37,7 +38,7 @@ W3C Recommendation 10 December 2002
 http://www.w3.org/TR/xmlenc-core/xenc-schema.xsd
 http://www.w3.org/TR/xmlenc-core/
 
-Copyright © 2002 World Wide Web Consortium, (Massachusetts
+Copyright (c) 2002 World Wide Web Consortium, (Massachusetts
 Institute of Technology, Institut National de Recherche en Informatique et en
 Automatique, Keio University). All Rights Reserved.
 http://www.w3.org/Consortium/Legal/
@@ -65,7 +66,7 @@ in the FAQ [2].
 Friend of a Friend (FOAF) RDF vocabulary
 http://xmlns.com/foaf/spec/20140114.rdf
 
-Copyright © 2000-2014 Dan Brickley and Libby Miller
+Copyright (c) 2000-2014 Dan Brickley and Libby Miller
 This work is licensed under a Creative Commons Attribution License.
 http://creativecommons.org/licenses/by/1.0/
 
@@ -94,9 +95,9 @@ Modified for OWL compliance
 Adapted from Dublin Core
 http://purl.org/dc/dcam/
 
-Copyright © 2012-2015 University of Manchester
-Copyright © 2009-2014 Simon Reinhardt (http://simon-reinhardt.de/)
-Copyright © 1995-2012 DCMI, the Dublin Core Metadata Initiative (http://dublincore.org/)
+Copyright (c) 2012-2015 University of Manchester
+Copyright (c) 2009-2014 Simon Reinhardt (http://simon-reinhardt.de/)
+Copyright (c) 1995-2012 DCMI, the Dublin Core Metadata Initiative (http://dublincore.org/)
 
 Licensed under a Creative Commons Attribution 3.0 Unported License (CC BY 3.0).
 http://creativecommons.org/licenses/by/3.0/
@@ -106,7 +107,7 @@ http://creativecommons.org/licenses/by/3.0/
 Open Annotation Data Model
 http://www.w3.org/ns/oa
 
-Copyright © 2012-2013 the Contributors to the Open Annotation Core Data Model
+Copyright (c) 2012-2013 the Contributors to the Open Annotation Core Data Model
 Specification, published by the Open Annotation Community Group under the W3C
 Community Contributor License Agreement (CLA). A human-readable summary is
 available.      
@@ -139,14 +140,14 @@ http://purl.org/wf4ever/roterms
 wf4ever ontology
 https://w3id.org/ro/wf4ever
 
-(c) 2011-2014
+Copyright (c) 2011-2014
   Stian Soiland-Reyes, University of Manchester
   Sean Bechhofer, University of Manchester
   Khalid Belhajjame, University of Manchester
   Graham Klyne, University of Oxford
   Daniel Garijo, UPM
   Oscar Corcho, UPM
-  Esteban García Cuesta, iSOCO
+  Esteban Garcia Cuesta, iSOCO
   Raul Palma, PSNC
 
 Licensed under a Creative Commons Attribution 3.0 License.
@@ -161,7 +162,7 @@ W3C Recommendation 26 November 2008
 http://www.w3.org/2001/xml.xsd
 http://www.w3.org/TR/xml/
 
-Copyright © 2015 W3C® (MIT, ERCIM, Keio, Beihang). This software or 
+Copyright (c) 2015 W3C(R) (MIT, ERCIM, Keio, Beihang). This software or 
 document includes material copied from or derived from:
 
 W3C liability, trademark and document use rules apply.
@@ -173,7 +174,7 @@ roevo.xsd derived from
 Research Object Evolution Ontology (roevo)
 http://w3id.org/ro/roevo
 
-  (c) 2011-2014
+Copyright (c) 2011-2014
     Raul Palma, PSNC
     Jun Zhao, University of Oxford
     Khalid Belhajjame, University of Manchester
