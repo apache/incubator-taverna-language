@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
@@ -37,6 +38,8 @@ import org.apache.taverna.tavlang.tools.validate.Validate;
  * 	.t2flow --> .wfbundle
  * 	.t2flow --> .structure
  * 	.wfbundle --> .structure
+ *  .wfbundle --> .json
+ *  .t2flow --> .json
  * two constructors.
  * Scufl2Convert(List<String> list, String out) --> will save the converted files in 'out folder or a directory named /converted in the same folder.
  * Scufl2Convert(String in, String out) --> Will convert all the files in the 'in' folder and save them in 'out' folder --> -r must be true.
@@ -163,6 +166,14 @@ public class Scufl2Convert{
 	
 	//Convert the file
 	public void convertFile(File t2File, File outFile){
+		
+		//Check weather the input files are in valid format...!!!
+		String ext = FilenameUtils.getExtension(t2File.getName());
+		if(!ext.equals("t2flow")||!ext.equals("wfbundle")){
+			System.err.println("Invalid input file format...!!!");
+			return;
+		}
+		
 		WorkflowBundleIO wfbio = new WorkflowBundleIO();
 		String filename = t2File.getName();
 		filename = filename.replaceFirst("\\..*", this.type);
@@ -172,7 +183,19 @@ public class Scufl2Convert{
 		WorkflowBundle wfBundle;
 		try {
 			wfBundle = wfbio.readBundle(t2File, null);// null --> will guess the media type for reading.
-			wfbio.writeBundle(wfBundle, scufl2File, this.MEDIA_TYPE);
+			
+//			if(this.type.equals(".iwir")){
+//				IwirWriter iww = new IwirWriter();
+//				iww.writeBundle(wfBundle, scufl2File, this.MEDIA_TYPE);
+//			}else
+			
+			if(this.type.equals(".json")){
+				ToJson toJ = new ToJson();
+				toJ.convert(t2File, outFile);
+			}
+			else{
+				wfbio.writeBundle(wfBundle, scufl2File, this.MEDIA_TYPE);
+			}
 			System.out.println(scufl2File.getPath() + " is created.");
 		}catch (ReaderException e){
 			System.err.println(e.getLocalizedMessage());

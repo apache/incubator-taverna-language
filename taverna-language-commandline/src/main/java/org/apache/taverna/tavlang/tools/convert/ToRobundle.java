@@ -58,9 +58,9 @@ public class ToRobundle{
 	public void convert(Path file) throws IOException{
 		try (Bundle bundle = Bundles.openBundle(file)) {
 			
-			System.out.println(bundle.getManifest().toString());
-//			bundle.getManifest().writeAsJsonLD();
-//			bundle.getManifest().writeAsCombineManifest();
+//			System.out.println(bundle.getManifest().toString());
+			bundle.getManifest().writeAsJsonLD();
+			bundle.getManifest().writeAsCombineManifest();
 		}
 	}
 	
