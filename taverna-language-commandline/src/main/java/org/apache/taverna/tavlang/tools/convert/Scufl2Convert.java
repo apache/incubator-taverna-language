@@ -37,6 +37,8 @@ import org.apache.taverna.tavlang.tools.validate.Validate;
  * 	.t2flow --> .wfbundle
  * 	.t2flow --> .structure
  * 	.wfbundle --> .structure
+ *  .wfbundle --> .json
+ *  .t2flow --> .json
  * two constructors.
  * Scufl2Convert(List<String> list, String out) --> will save the converted files in 'out folder or a directory named /converted in the same folder.
  * Scufl2Convert(String in, String out) --> Will convert all the files in the 'in' folder and save them in 'out' folder --> -r must be true.
