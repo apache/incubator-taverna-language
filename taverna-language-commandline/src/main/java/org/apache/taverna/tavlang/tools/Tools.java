@@ -37,7 +37,7 @@ public class Tools {
 			}
 		},
 		json{
-			public String mediaType = "application/json";
+			public String mediaType = "application/ld+json";
 
 
 			@Override
@@ -76,9 +76,17 @@ public class Tools {
 				System.out.println(mediaType);
 				return mediaType;
 			}
-
-			
 		};
+//		iwir{
+//				public String mediaType = "application/vnd.shiwa.iwir+xml";
+//				
+//				@Override
+//				public String getMediaType(ConvertionTools t) {
+//					// TODO Auto-generated method stub
+////					System.out.println(mediaType);
+//					return mediaType;
+//				}
+//		};
 		
 		ConvertionTools(){}
 		
