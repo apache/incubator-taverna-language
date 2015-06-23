@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
@@ -165,6 +166,14 @@ public class Scufl2Convert{
 	
 	//Convert the file
 	public void convertFile(File t2File, File outFile){
+		
+		//Check weather the input files are in valid format...!!!
+		String ext = FilenameUtils.getExtension(t2File.getName());
+		if(ext.equals("t2flow")||ext.equals("wfbundle")){
+			System.err.println("Invalid input file format...!!!");
+			return;
+		}
+		
 		WorkflowBundleIO wfbio = new WorkflowBundleIO();
 		String filename = t2File.getName();
 		filename = filename.replaceFirst("\\..*", this.type);
