@@ -89,20 +89,22 @@ public class Validate {
 		System.out.println("Validation completed.......");
 
 		if (!r.detectedProblems()){
-			report2.append("The workflow " + file + " has no errors. \n");
-			System.out.println("The workflow " + file + " has no errors. \n");
+			report2.append("The workflow " + file + " has no errors. \n\n");
 		}
 			
 		
 //		System.out.println("The validation report for " + file);
 		report2.append("The validation report for " + file + "......\n");
+		report2.append("-------------------------------------------------------------------------------- \n");
 		for (int i = 0; i < sections.length; i++) {
-			String line = sections[i].split("=")[0].replace("()", "").replace(
+			String line = "-->"+sections[i].split("=")[0].replace("()", "").replace(
 					"get", "")
-					+ "\n \t"
-					+ sections[i].split("=")[1].replace("[", "").replace("]","");
+					+ ":- ";
+			report2.append(line);
+			String line2 =  sections[i].split("=")[1].replace("[", "").replace("]","");
+			if(line2.equals("")) report2.append("null \n\n");
+			else report2.append("\t").append(line2).append("\n");
 			
-			report2.append(line).append("\n");
 		
 		}
 		report2.append("--------------------------------------------------------------------------------- \n\n");
