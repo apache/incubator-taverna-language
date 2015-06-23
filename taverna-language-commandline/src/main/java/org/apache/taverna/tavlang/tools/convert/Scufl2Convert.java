@@ -164,10 +164,10 @@ public class Scufl2Convert{
 	
 	//Convert the file
 	public void convertFile(File t2File, File outFile){
-		String ext = FilenameUtils.getExtension(t2File.getName());
 		
 		//Check weather the input files are in valid format...!!!
-		if(ext.equals("t2flow")||ext.equals("wfbundle")){
+		String ext = FilenameUtils.getExtension(t2File.getName());
+		if(!ext.equals("t2flow")||!ext.equals("wfbundle")){
 			System.err.println("Invalid input file format...!!!");
 			return;
 		}
