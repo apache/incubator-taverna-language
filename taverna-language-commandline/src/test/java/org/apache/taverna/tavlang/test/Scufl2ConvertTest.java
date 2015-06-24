@@ -26,8 +26,9 @@ import org.junit.Test;
 public class Scufl2ConvertTest{
 
 	@Test
-	public void test() {
+	public void testConvertS() {
 //		fail("Not yet implemented");
+		
 	}
 
 }
