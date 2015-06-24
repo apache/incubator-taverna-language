@@ -170,6 +170,11 @@
         <enabled>false</enabled>
       </releases>
     </repository>
+     <repository>
+      <id>apache Staging</id>
+      <name>Apache Staging Repository</name>
+      <url>http://repository.apache.org/content/groups/staging</url>
+	</repository>
 	</repositories>
 
 	<dependencyManagement>
