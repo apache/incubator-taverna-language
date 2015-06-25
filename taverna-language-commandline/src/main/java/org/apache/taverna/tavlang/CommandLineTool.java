@@ -42,6 +42,7 @@ import org.apache.taverna.tavlang.tools.convert.Scufl2Convert;
 import org.apache.taverna.tavlang.tools.convert.ToRobundle;
 import org.apache.taverna.tavlang.tools.inspect.ProcessorNames;
 import org.apache.taverna.tavlang.tools.inspect.ServiceTypes;
+import org.apache.taverna.tavlang.tools.validate.Validate;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -257,20 +258,22 @@ public class CommandLineTool {
 	//Command for validation
 	@Command(name = "validate", description = "validate the given workflow")
 	public static class CommandValidate extends TvnLangTool{
+		@Option(name = { "-l", "--log" }, description = "Specify the file name where results should be stored ([some dir]/log.txt)")
+		public String file;
+		
+//		@Inject
+//		Optional optional = new Optional();
 
-		@Inject
-		Optional optional = new Optional();
-		
-		@Arguments(usage="<option> <input files> <output dir>", description="Validate the given workflow file/s")
+//		@Arguments(usage = "<option> <input files> <output dir>", description = "Validate the given workflow file/s")
+		@Arguments(usage = "input files", description = "Validate the given workflow file/s")
 		public List<String> toValidate = Lists.newArrayList();
-		
+
 		@Override
 		public void execute() {
 			// TODO Auto-generated method stub
 			
+				Validate validate = new Validate(toValidate, file);
 		}
-		
 	}
-	
 	
 }
