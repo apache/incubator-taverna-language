@@ -167,11 +167,11 @@ public class Scufl2Convert{
 	public void convertFile(File t2File, File outFile){
 		
 		//Check weather the input files are in valid format...!!!
-		String ext = FilenameUtils.getExtension(t2File.getName());
-		if(!ext.equals("t2flow")||!ext.equals("wfbundle")){
-			System.err.println("Invalid input file format...!!!");
-			return;
-		}
+//		String ext = FilenameUtils.getExtension(t2File.getName());
+//		if(!ext.equals("t2flow")||!ext.equals("wfbundle")){
+//			System.err.println("Invalid input file format...!!!");
+//			return;
+//		}
 		
 		WorkflowBundleIO wfbio = new WorkflowBundleIO();
 		String filename = t2File.getName();
