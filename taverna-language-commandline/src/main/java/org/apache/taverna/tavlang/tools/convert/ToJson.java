@@ -138,7 +138,7 @@ public class ToJson {
 
 		WorkflowBundle wfBundle = io.readBundle(in, null);
 		io.writeBundle(wfBundle, workflowFile, "application/ld+json");
-		System.out.println(workflowFile);
+//		System.out.println(workflowFile);
 
 	}
 
