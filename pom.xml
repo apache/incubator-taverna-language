@@ -40,6 +40,8 @@
 				<configuration>
 					<useDefaultExcludes>true</useDefaultExcludes>
 					<excludes>
+            <!--Just a META-INF file -->
+            <exclude>DEPENDENCIES</exclude>
 						<!-- Following excludes needed for taverna-scufl2-rdf,
 						taverna-scufl2-integration-tests and taverna-scufl2-validation-integration
 						subfolders that should be modules but are not. -->
