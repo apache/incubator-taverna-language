@@ -18,8 +18,8 @@
 
 Apache Taverna Language is a set of APIs for workflow definitions (SCUFL2)
 and workflow inputs/outputs/run (DataBundle), as consumed and produced
-by the [Apache Taverna](http://taverna.incubator.apache.org/) workflow
-system.
+by the [Apache Taverna](http://taverna.incubator.apache.org/) (incubating)
+workflow system.
 
 The API includes support for the legacy formats from Taverna 2 and Taverna
 1, and therefore can be also used independently of Apache Taverna 3. 
@@ -31,8 +31,8 @@ The API includes support for the legacy formats from Taverna 2 and Taverna
 This product includes software developed at The [Apache Software
 Foundation](http://www.apache.org/).
 
-Licensed under the [Apache License
-2.0](https://www.apache.org/licenses/LICENSE-2.0), see the file
+Licensed under the 
+[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0), see the file
 [LICENSE](LICENSE) for details.
 
 The file [NOTICE](NOTICE) contain any additional attributions and
@@ -73,7 +73,7 @@ For more details, see the READMEs of:
 * [taverna-scufl2-api](taverna-scufl2-api/) 
 
 
-## Requisites
+## Prerequisites
 
 * Java 1.7 or newer (tested with OpenJDK 1.8)
 * [Apache Maven](https://maven.apache.org/download.html) 3.2.5 or newer (older
