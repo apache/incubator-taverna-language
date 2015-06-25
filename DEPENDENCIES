@@ -1,0 +1,4 @@
+Dependencies are declared within each Maven submodule.
+
+See */target/classes/META-INF/DEPENDENCIES
+after running: mvn process-resources
