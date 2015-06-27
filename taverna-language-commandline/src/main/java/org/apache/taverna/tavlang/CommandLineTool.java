@@ -26,7 +26,10 @@ import io.airlift.airline.Command;
 import io.airlift.airline.Help;
 import io.airlift.airline.Option;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -304,10 +307,15 @@ public class CommandLineTool {
 
 		@Override
 		public void execute() {
-			// TODO Auto-generated method stub
-			System.out.println("Invalid argument....");
-			TvnLangTool command = parser().parse("help", "validate");
-			command.execute();
+			File f = new File(file);
+			
+			if(!f.isFile()){
+				System.out.println("Invalid argument...." + " " + file);
+				TvnLangTool command = parser().parse("help", "validate");
+				command.execute();
+			}
+			Validate validate = new Validate(toValidate, file);
+			
 
 		}
 
