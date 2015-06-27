@@ -66,7 +66,7 @@ public class CommandLineTool {
 	};
 
 	public void parse(String... args) {
-		System.out.println("$ tavlang " + Joiner.on(" ").join(args));
+//		System.out.println("$ tavlang " + Joiner.on(" ").join(args));
 		TvnLangTool command = parser().parse(args);
 		command.execute();
 		System.out.println();
