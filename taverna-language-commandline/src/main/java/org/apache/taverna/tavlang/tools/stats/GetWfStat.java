@@ -3,6 +3,7 @@ package org.apache.taverna.tavlang.tools.stats;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.taverna.scufl2.api.common.NamedSet;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
@@ -14,9 +15,19 @@ public class GetWfStat {
 	
 	public Workflow wflow;
 	public NamedSet<Workflow> set;
+	public String logFile;
 	
-	public GetWfStat(){
-		
+	//If given file is a workflow file
+	public GetWfStat(List<String> wf_files, String log){
+		this.logFile = log;
+		for(String files : wf_files){
+			File f = new File(files);
+			if(f.isFile()){
+				this.read(f);
+			}else{
+				System.out.println("Error reading the file " + f.getName());
+			}
+		}
 	}
 	
 	public void read(File file){
