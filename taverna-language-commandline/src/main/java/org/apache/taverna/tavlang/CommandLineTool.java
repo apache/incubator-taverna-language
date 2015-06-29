@@ -56,11 +56,12 @@ public class CommandLineTool {
 		CliBuilder<TvnLangTool> build = Cli.<TvnLangTool> builder("tavlang")
 				.withDescription("Convert, manage workflows")
 				.withDefaultCommand(HelpCommand.class)
-				.withCommand(CommandConvert.class)
-				.withCommand(HelpCommand.class)
-				.withCommand(CommandInspect.class)
-				.withCommand(CommandValidate.class)
-				.withCommand(CommandVersion.class);
+				.withCommand(CommandConvert.class) // Conversion
+				.withCommand(HelpCommand.class) // Help
+				.withCommand(CommandInspect.class) // Inspect
+				.withCommand(CommandValidate.class) // Validate
+				.withCommand(CommandVersion.class) // Version
+				.withCommand(CommandStat.class); // Statistics
 
 		return build.build();
 	}
@@ -319,6 +320,33 @@ public class CommandLineTool {
 
 		}
 
+	}
+	
+	//Command for getting workflow stats
+	@Command (name = "stats", description = "Shows the workflow statistics")
+	public static class CommandStat extends TvnLangTool{
+
+		@Option(name={"-wf", "--workflow"}, description ="Specify the input is workflow file or bundle")
+		public boolean isWf;
+		
+		@Option(name = {"-l", "--log"}, description="Save the workflow statictics in a file")
+		public String file;
+		
+		@Arguments(usage="option> <input files", description = "Enter the workflow bundles/ files")
+		public List<String> files;
+		
+		@Override
+		public void execute() {
+			// TODO Auto-generated method stub
+			File f = new File(file);
+			
+			if(!f.isFile()){
+				System.out.println("Invalid argument...." + " " + file);
+				TvnLangTool command = parser().parse("help", "validate");
+				command.execute();
+			}
+		}
+		
 	}
 
 }
