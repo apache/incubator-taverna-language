@@ -325,14 +325,14 @@ public class CommandLineTool {
 	//Command for getting workflow stats
 	@Command (name = "stats", description = "Shows the workflow statistics")
 	public static class CommandStat extends TvnLangTool{
-
-		@Option(name={"-wf", "--workflow"}, description ="Specify the input is workflow file or bundle")
-		public boolean isWf;
+//
+//		@Option(name={"-wf", "--workflow"}, description ="Specify the input is workflow file or bundle")
+//		public boolean isWf;
 		
 		@Option(name = {"-l", "--log"}, description="Save the workflow statictics in a file")
 		public String file;
 		
-		@Arguments(usage="option> <input files", description = "Enter the workflow bundles/ files")
+		@Arguments(usage="input files", description = "Enter the workflow bundles")
 		public List<String> files;
 		
 		@Override
