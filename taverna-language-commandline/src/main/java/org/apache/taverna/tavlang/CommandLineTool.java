@@ -40,6 +40,7 @@ import org.apache.taverna.tavlang.tools.convert.Scufl2Convert;
 import org.apache.taverna.tavlang.tools.convert.ToRobundle;
 import org.apache.taverna.tavlang.tools.inspect.ProcessorNames;
 import org.apache.taverna.tavlang.tools.inspect.ServiceTypes;
+import org.apache.taverna.tavlang.tools.stats.GetWfStat;
 import org.apache.taverna.tavlang.tools.validate.Validate;
 
 import com.google.common.base.Joiner;
@@ -296,6 +297,7 @@ public class CommandLineTool {
 	// Command for validation
 	@Command(name = "validate", description = "validate the given workflow")
 	public static class CommandValidate extends TvnLangTool{
+	
 		@Option(name = { "-l", "--log" }, description = "Specify the file name where results should be stored ([some dir]/log.txt)")
 		public String file;
 		
@@ -308,13 +310,18 @@ public class CommandLineTool {
 
 		@Override
 		public void execute() {
-			File f = new File(file);
+			if(file!=null){
+				File f = new File(file);
 			
-			if(!f.isFile()){
-				System.out.println("Invalid argument...." + " " + file);
-				TvnLangTool command = parser().parse("help", "validate");
-				command.execute();
+				if(!f.isFile()){
+					System.out.println("Invalid argument...." + " " + file);
+					TvnLangTool command = parser().parse("help", "validate");
+					command.execute();
+					return;
+				}
+				
 			}
+			
 			Validate validate = new Validate(toValidate, file);
 			
 
@@ -338,13 +345,20 @@ public class CommandLineTool {
 		@Override
 		public void execute() {
 			// TODO Auto-generated method stub
-			File f = new File(file);
+			if(file!=null){
+				File f = new File(file);
 			
-			if(!f.isFile()){
-				System.out.println("Invalid argument...." + " " + file);
-				TvnLangTool command = parser().parse("help", "validate");
-				command.execute();
+				if(!f.isFile()){
+					System.out.println("Invalid argument...." + " " + file);
+					TvnLangTool command = parser().parse("help", "validate");
+					command.execute();
+					return;
+				}
+				
 			}
+			
+			GetWfStat stat = new GetWfStat(files, file);
+			
 		}
 		
 	}
