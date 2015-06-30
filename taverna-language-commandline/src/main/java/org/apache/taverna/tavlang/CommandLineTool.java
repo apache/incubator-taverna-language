@@ -336,10 +336,13 @@ public class CommandLineTool {
 //		@Option(name={"-wf", "--workflow"}, description ="Specify the input is workflow file or bundle")
 //		public boolean isWf;
 		
-		@Option(name = {"-l", "--log"}, description="Save the workflow statictics in a file")
+		@Option(name = {"-l", "--log"}, description ="Save the workflow statictics in a file")
 		public String file;
 		
-		@Arguments(usage="input files", description = "Enter the workflow bundles")
+		@Option(name = {"-v", "--verbose"}, description = "Verbose mode")
+		public boolean verbose;
+		
+		@Arguments(usage="input files", description = "Enter the workflow bundle files")
 		public List<String> files;
 		
 		@Override
@@ -357,7 +360,7 @@ public class CommandLineTool {
 				
 			}
 			
-			GetWfStat stat = new GetWfStat(files, file);
+			GetWfStat stat = new GetWfStat(files, file, verbose);
 			
 		}
 		
