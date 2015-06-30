@@ -140,7 +140,7 @@ public class GetWfStat {
 				this.str_verb.append("  |--> Number of Output Ports = " + wrf.getOutputPorts().size()+"\n");
 				
 				if(this.verbose && wrf.getOutputPorts().size()!=0){
-					this.str_verb.append("  |     |--> Input Ports\n");
+					this.str_verb.append("  |     |--> Output Ports\n");
 					for(OutputPort o_port : wrf.getOutputPorts()){
 						this.str_verb.append("  |          |--> " + o_port.toString()+"\n");
 					}
