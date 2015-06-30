@@ -42,7 +42,8 @@ public class GetWfStat {
 	private NamedSet<Workflow> set;
 	private String logFile;
 	private boolean verbose;
-	private StringBuilder str;
+	private StringBuilder str_verb = new StringBuilder();
+	private StringBuilder str_nverb = new StringBuilder();
 	
 	
 	//If given file is a workflow file
@@ -54,73 +55,101 @@ public class GetWfStat {
 			File f = new File(files);
 			if(f.isFile()){
 				this.read(f);
+				
 			}else{
 				System.err.println("Error reading the file " + f.getName());
 			}
 		}
+		
+		this.isVerbose();
+		
+		if(log!=null){
+			this.writefile(this.str_verb.toString(), this.logFile);
+		}
 	}
 	
-	
+	//Read the workflow file and extract the resources.
+	//And append them to a String builder
 	public void read(File file){
 		WorkflowBundleIO io = new WorkflowBundleIO();
 		try {
 			WorkflowBundle wf = io.readBundle(file, null);
 			this.set = wf.getWorkflows();
-			System.out.println("Statistics of the workflow bundle: " + wf.getName());
+
+			//String to be written to a file.
+			this.str_nverb.append(">>> Statistics of the workflow bundle: " + wf.getName() + " <<<\n");
+			this.str_verb.append(">>> Statistics of the workflow bundle: " + wf.getName() + " <<<\n");
+			
 			for(Workflow wrf : set){
 				//TODO :- Take each type of resource and make a system to view them to the user.
-				System.out.println("Name of the workflow = " + wrf.getName());
-				System.out.println("  |--> Number of Processors = " + wrf.getProcessors().size());
+				String name = "Name of the workflow = " + wrf.getName();
+				this.str_verb.append(name + "\n");
+				this.str_nverb.append(name + "\n");
+
+				
+				String noP = "  |--> Number of Processors = " + wrf.getProcessors().size();
+				this.str_verb.append(noP + "\n");
+				this.str_nverb.append(noP + "\n");
 				
 				if(this.verbose && wrf.getProcessors().size()!=0){
-					System.out.println("  |     |--> Processors: ");
+					this.str_verb.append("  |     |--> Processors: " + "\n");
+					
 					for(Processor p : wrf.getProcessors()){
-						System.out.println("  |          |--> " + p.getName());
+						this.str_verb.append("  |          |--> " + p.getName() + "\n");
 					}
-					System.out.println("  |");
+					this.str_verb.append("  |" + "\n");
 				}
 				
-				System.out.println("  |--> Number of Data Links = " + wrf.getDataLinks().size());
+				this.str_verb.append("  |--> Number of Data Links = " + wrf.getDataLinks().size() + "\n");
+				this.str_nverb.append("  |--> Number of Data Links = " + wrf.getDataLinks().size() + "\n");
 				
 				if(this.verbose && wrf.getDataLinks().size()!=0){
-					System.out.println("  |     |--> Data Links");
+					this.str_verb.append("  |     |--> Data Links" + "\n");
+					
 					for(DataLink link : wrf.getDataLinks()){
-						System.out.println("  |          |--> " + link);
+						this.str_verb.append("  |          |--> " + link + "\n");
 					}
-					System.out.println("  |");
+					this.str_verb.append("  |" + "\n");
 				}
 				
-				System.out.println("  |--> Number of Control Links = " + wrf.getControlLinks().size());
+				this.str_nverb.append("  |--> Number of Control Links = " + wrf.getControlLinks().size() + "\n");
+				this.str_verb.append("  |--> Number of Control Links = " + wrf.getControlLinks().size() + "\n");
+				
 				
 				if(this.verbose && wrf.getControlLinks().size()!=0){
-					System.out.println("  |     |--> Control Links");
+					this.str_verb.append("  |     |--> Control Links\n");
 					for(ControlLink link : wrf.getControlLinks()){
-						System.out.println("  |          |--> " + link);
+						this.str_verb.append("  |          |--> " + link + "\n");
 					}
-					System.out.println("  |");
+					this.str_verb.append("  |\n");
 				}
 				
-				System.out.println("  |--> Number of Input ports = " + wrf.getInputPorts().size());
+				this.str_nverb.append("  |--> Number of Input ports = " + wrf.getInputPorts().size()+"\n");
+				this.str_verb.append("  |--> Number of Input ports = " + wrf.getInputPorts().size()+"\n");
+				
 				
 				if(this.verbose && wrf.getInputPorts().size()!=0){
-					System.out.println("  |     |--> Input Ports");
+					this.str_verb.append("  |     |--> Input Ports\n");
 					for(InputPort iport : wrf.getInputPorts()){
-						System.out.println("  |          |--> " + iport.toString());
+						this.str_verb.append("  |          |--> " + iport.toString()+"\n");
 					}
-					System.out.println("  |");
+					this.str_verb.append("  |\n");
 				}
-				
-				System.out.println("  |--> Number of Output Ports = " + wrf.getOutputPorts().size());
+			
+				this.str_nverb.append("  |--> Number of Output Ports = " + wrf.getOutputPorts().size()+"\n");
+				this.str_verb.append("  |--> Number of Output Ports = " + wrf.getOutputPorts().size()+"\n");
 				
 				if(this.verbose && wrf.getOutputPorts().size()!=0){
-					System.out.println("  |     |--> Input Ports");
+					this.str_verb.append("  |     |--> Input Ports\n");
 					for(OutputPort o_port : wrf.getOutputPorts()){
-						System.out.println("  |          |--> " + o_port.toString());
+						this.str_verb.append("  |          |--> " + o_port.toString()+"\n");
 					}
-					System.out.println("");
+					
+					this.str_verb.append("\n");
 				}
 				
-				System.out.println("");
+				this.str_nverb.append("\n");
+				this.str_verb.append("\n");
 			}
 			
 		} catch (ReaderException | IOException e) {
@@ -129,27 +158,36 @@ public class GetWfStat {
 		}
 	}
 	
+	
+	//Saving the output into a log
 	public void writefile(String report, String url){
 		
-		File file = new File(url);
+			File file = new File(url);
+			
+			if(!file.isFile()){
+				System.err.println("Error in writing the log file...");
+			}
+			
+			FileWriter writer;
+			BufferedWriter bfw;
+			try {
+				writer = new FileWriter(file);
+				bfw = new BufferedWriter(writer);
+				bfw.write(report);
+				bfw.close();
+				writer.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		
-		if(!file.isFile()){
-			System.err.println("Error in writing the log file...");
-		}
+	}
 		
-		FileWriter writer;
-		BufferedWriter bfw;
-		try {
-			writer = new FileWriter(file);
-			bfw = new BufferedWriter(writer);
-			bfw.write(report);
-			bfw.close();
-			writer.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+	public void isVerbose(){
+		if(verbose)
+			System.out.println(this.str_verb.toString());
+		else 
+			System.out.println(this.str_nverb.toString());
 	}
 	
 
