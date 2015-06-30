@@ -310,18 +310,7 @@ public class CommandLineTool {
 
 		@Override
 		public void execute() {
-			if(file!=null){
-				File f = new File(file);
-			
-				if(!f.isFile()){
-					System.out.println("Invalid argument...." + " " + file);
-					TvnLangTool command = parser().parse("help", "validate");
-					command.execute();
-					return;
-				}
-				
-			}
-			
+		
 			Validate validate = new Validate(toValidate, file);
 			
 
@@ -348,17 +337,6 @@ public class CommandLineTool {
 		@Override
 		public void execute() {
 			// TODO Auto-generated method stub
-			if(file!=null){
-				File f = new File(file);
-			
-				if(!f.isFile()){
-					System.out.println("Invalid argument...." + " " + file);
-					TvnLangTool command = parser().parse("help", "validate");
-					command.execute();
-					return;
-				}
-				
-			}
 			
 			GetWfStat stat = new GetWfStat(files, file, verbose);
 			
