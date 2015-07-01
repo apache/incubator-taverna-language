@@ -176,6 +176,7 @@ public class GetWfStat {
 				bfw.write(report);
 				bfw.close();
 				writer.close();
+				System.out.println("Results were saved into " + file.getPath());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
