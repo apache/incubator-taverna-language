@@ -39,13 +39,26 @@ import org.apache.taverna.scufl2.validation.correctness.ReportCorrectnessValidat
 public class Validate {
 
 	private String logfile;
+	private String nonVerbose = "";
 	private String finalrep = "";
+	private boolean verbose;
+	
 
-	public Validate(List<String> files, String file) {
+	public Validate(List<String> files, String file, boolean verbose) {
+		this.verbose = verbose;
 		this.logfile = file;
+		System.out.println("Validation started....");
 		for (String f : files) {
+			System.out.println("Validating " + f);
 			File wfile = new File(f);
 			read(wfile);
+			
+		}
+		System.out.println("Validation completed.......");
+		
+		
+		if (this.logfile != null) {
+			saveToLog(this.finalrep);
 		}
 	}
 
@@ -53,9 +66,7 @@ public class Validate {
 		WorkflowBundleIO io = new WorkflowBundleIO();
 		try {
 			this.finalrep += validate(io.readBundle(file, null), file.getName());
-			if (this.logfile != null) {
-				saveToLog(finalrep);
-			}
+			
 		} catch (ReaderException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -68,21 +79,22 @@ public class Validate {
 	}
 
 	public String validate(WorkflowBundle wfb, String file) {
-		System.out.println("Validation started...");
+		
 		StringBuilder report2 = new StringBuilder();
-		CorrectnessValidationListener r = new ReportCorrectnessValidationListener();
-		CorrectnessValidator v = new CorrectnessValidator();
-		r = v.validate(wfb);
-		String report = r.toString().replace(
+		CorrectnessValidationListener correctnessValidationListener = new ReportCorrectnessValidationListener();
+		CorrectnessValidator correctnessValidator = new CorrectnessValidator();
+		correctnessValidationListener = correctnessValidator.validate(wfb);
+		String report = correctnessValidationListener.toString().replace(
 				"ReportCorrectnessValidationListener [", "");
 
 		String[] sections = report.split(", ");
-		HashMap<String, String> map = new HashMap<>();
 
-		System.out.println("Validation completed.......");
-
-		if (!r.detectedProblems()){
+		
+		
+		boolean detect = correctnessValidationListener.detectedProblems();
+		if (!detect){
 			report2.append("The workflow " + file + " has no errors. \n\n");
+			this.nonVerbose = "The workflow " + file + " has no errors. \n";
 		}
 			
 		
@@ -102,8 +114,15 @@ public class Validate {
 		}
 		report2.append("--------------------------------------------------------------------------------- \n\n");
 		
-		if(r.detectedProblems())
+		if(detect){
+			System.out.println("The workflow bundle has following problems: \n"+report2.toString());
+		}
+		
+		if(verbose){
 			System.out.println(report2.toString());
+		}else{
+			System.out.println(this.nonVerbose);
+		}
 		
 		return report2.toString();
 
@@ -118,6 +137,7 @@ public class Validate {
 			blw.write(s);
 			blw.close();
 			logwriter.close();
+			System.out.println("Results were saved into " + logFile.getPath());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

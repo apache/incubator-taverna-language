@@ -213,6 +213,12 @@ public class CommandLineTool {
 
 		@Override
 		public void execute() {
+			
+			//Validate before convert
+			if(validate){
+				Validate validate = new Validate(files, null, false);
+			}
+			
 			if (Filetypes.isRo) {
 				try {
 					new ToRobundle(files, Optional.getOutFile());
@@ -301,6 +307,9 @@ public class CommandLineTool {
 		@Option(name = { "-l", "--log" }, description = "Specify the file name where results should be stored ([some dir]/log.txt)")
 		public String file;
 		
+		@Option(name = {"-v", "--verbose"}, description = "Verbose mode")
+		public boolean verbose;
+		
 //		@Inject
 //		Optional optional = new Optional();
 
@@ -311,7 +320,7 @@ public class CommandLineTool {
 		@Override
 		public void execute() {
 		
-			Validate validate = new Validate(toValidate, file);
+			Validate validate = new Validate(toValidate, file, verbose);
 			
 
 		}
