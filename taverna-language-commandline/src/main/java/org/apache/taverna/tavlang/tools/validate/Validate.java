@@ -42,6 +42,7 @@ public class Validate {
 	private String nonVerbose = "";
 	private String finalrep = "";
 	private boolean verbose;
+	private boolean check = false;
 	
 
 	public Validate(List<String> files, String file, boolean verbose) {
@@ -116,6 +117,7 @@ public class Validate {
 		
 		if(detect){
 			System.out.println("The workflow bundle has following problems: \n"+report2.toString());
+			check = true;
 		}
 		
 		if(verbose){
@@ -143,6 +145,10 @@ public class Validate {
 			e.printStackTrace();
 		}
 
+	}
+	
+	public boolean getCheck(){
+		return this.check;
 	}
 
 }

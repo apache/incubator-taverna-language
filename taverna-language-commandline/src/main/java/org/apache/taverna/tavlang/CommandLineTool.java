@@ -217,6 +217,8 @@ public class CommandLineTool {
 			//Validate before convert
 			if(validate){
 				Validate validate = new Validate(files, null, false);
+				if(!validate.getCheck())
+					return;
 			}
 			
 			if (Filetypes.isRo) {
