@@ -69,7 +69,6 @@ public class UCFPackage implements Cloneable {
 	public static final String MIME_TEXT_PLAIN = "text/plain";
 	public static final String MIME_TEXT_XML = "text/xml";
 	public static final String MIME_RDF = "application/rdf+xml";
-	public static final String MIME_EPUB = "application/epub+zip";
 	public static final String MIME_WORKFLOW_BUNDLE = "application/vnd.taverna.workflow-bundle";
 
     private Bundle bundle;
@@ -86,8 +85,6 @@ public class UCFPackage implements Cloneable {
 		} catch (Exception e) {
 			throw new IOException("Could not create empty UCF Package", e);
 		}
-		Bundles.setMimeType(bundle, MIME_EPUB);
-		// odfPackage.setMediaType(MIME_EPUB);
 	}
 
 	public UCFPackage(File containerFile) throws IOException {
