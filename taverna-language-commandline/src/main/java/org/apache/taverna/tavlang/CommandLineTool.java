@@ -26,10 +26,7 @@ import io.airlift.airline.Command;
 import io.airlift.airline.Help;
 import io.airlift.airline.Option;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -43,7 +40,6 @@ import org.apache.taverna.tavlang.tools.inspect.ServiceTypes;
 import org.apache.taverna.tavlang.tools.stats.GetWfStat;
 import org.apache.taverna.tavlang.tools.validate.Validate;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 /*

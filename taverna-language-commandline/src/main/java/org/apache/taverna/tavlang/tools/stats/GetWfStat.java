@@ -77,8 +77,8 @@ public class GetWfStat {
 			this.set = wf.getWorkflows();
 
 			//String to be written to a file.
-			this.str_nverb.append(">>> Statistics of the workflow bundle: " + wf.getName() + " <<<\n");
-			this.str_verb.append(">>> Statistics of the workflow bundle: " + wf.getName() + " <<<\n");
+			this.str_nverb.append(">>> Statistics of the workflow bundle: " + file.getName() + " <<<\n");
+			this.str_verb.append(">>> Statistics of the workflow bundle: " + file.getName() + " <<<\n");
 			
 			for(Workflow wrf : set){
 				//TODO :- Take each type of resource and make a system to view them to the user.

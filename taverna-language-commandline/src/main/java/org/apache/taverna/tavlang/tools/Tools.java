@@ -20,7 +20,6 @@ package org.apache.taverna.tavlang.tools;
  */
 
 
-import javax.print.attribute.standard.Media;
 
 public class Tools {
 	
