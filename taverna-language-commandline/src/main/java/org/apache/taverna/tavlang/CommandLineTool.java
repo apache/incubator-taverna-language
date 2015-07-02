@@ -37,9 +37,9 @@ import org.apache.taverna.tavlang.tools.convert.Scufl2Convert;
 import org.apache.taverna.tavlang.tools.convert.ToRobundle;
 import org.apache.taverna.tavlang.tools.inspect.ProcessorNames;
 import org.apache.taverna.tavlang.tools.inspect.ServiceTypes;
+import org.apache.taverna.tavlang.tools.stats.GetWfStat;
 import org.apache.taverna.tavlang.tools.validate.Validate;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 /*
@@ -53,11 +53,12 @@ public class CommandLineTool {
 		CliBuilder<TvnLangTool> build = Cli.<TvnLangTool> builder("tavlang")
 				.withDescription("Convert, manage workflows")
 				.withDefaultCommand(HelpCommand.class)
-				.withCommand(CommandConvert.class)
-				.withCommand(HelpCommand.class)
-				.withCommand(CommandInspect.class)
-				.withCommand(CommandValidate.class)
-				.withCommand(CommandVersion.class);
+				.withCommand(CommandConvert.class) // Conversion
+				.withCommand(HelpCommand.class) // Help
+				.withCommand(CommandInspect.class) // Inspect
+				.withCommand(CommandValidate.class) // Validate
+				.withCommand(CommandVersion.class) // Version
+				.withCommand(CommandStat.class); // Statistics
 
 		return build.build();
 	}
@@ -66,7 +67,7 @@ public class CommandLineTool {
 	};
 
 	public void parse(String... args) {
-		System.out.println("$ tavlang " + Joiner.on(" ").join(args));
+//		System.out.println("$ tavlang " + Joiner.on(" ").join(args));
 		TvnLangTool command = parser().parse(args);
 		command.execute();
 		System.out.println();
@@ -208,6 +209,14 @@ public class CommandLineTool {
 
 		@Override
 		public void execute() {
+			
+			//Validate before convert
+			if(validate){
+				Validate validate = new Validate(files, null, false);
+				if(!validate.getCheck())
+					return;
+			}
+			
 			if (Filetypes.isRo) {
 				try {
 					new ToRobundle(files, Optional.getOutFile());
@@ -292,8 +301,12 @@ public class CommandLineTool {
 	// Command for validation
 	@Command(name = "validate", description = "validate the given workflow")
 	public static class CommandValidate extends TvnLangTool{
+	
 		@Option(name = { "-l", "--log" }, description = "Specify the file name where results should be stored ([some dir]/log.txt)")
 		public String file;
+		
+		@Option(name = {"-v", "--verbose"}, description = "Verbose mode")
+		public boolean verbose;
 		
 //		@Inject
 //		Optional optional = new Optional();
@@ -304,13 +317,38 @@ public class CommandLineTool {
 
 		@Override
 		public void execute() {
-			// TODO Auto-generated method stub
-			System.out.println("Invalid argument....");
-			TvnLangTool command = parser().parse("help", "validate");
-			command.execute();
+		
+			Validate validate = new Validate(toValidate, file, verbose);
+			
 
 		}
 
+	}
+	
+	//Command for getting workflow stats
+	@Command (name = "stats", description = "Shows the workflow statistics")
+	public static class CommandStat extends TvnLangTool{
+//
+//		@Option(name={"-wf", "--workflow"}, description ="Specify the input is workflow file or bundle")
+//		public boolean isWf;
+		
+		@Option(name = {"-l", "--log"}, description ="Save the workflow statictics in a file")
+		public String file;
+		
+		@Option(name = {"-v", "--verbose"}, description = "Verbose mode")
+		public boolean verbose;
+		
+		@Arguments(usage="input files", description = "Enter the workflow bundle files")
+		public List<String> files;
+		
+		@Override
+		public void execute() {
+			// TODO Auto-generated method stub
+			
+			GetWfStat stat = new GetWfStat(files, file, verbose);
+			
+		}
+		
 	}
 
 }

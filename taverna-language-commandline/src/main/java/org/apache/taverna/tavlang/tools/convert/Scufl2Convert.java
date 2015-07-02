@@ -30,7 +30,6 @@ import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 import org.apache.taverna.scufl2.api.io.WriterException;
 import org.apache.taverna.tavlang.tools.Tools.ConvertionTools;
-import org.apache.taverna.tavlang.tools.validate.Validate;
 
 
 /*
@@ -168,7 +167,7 @@ public class Scufl2Convert{
 		
 		//Check weather the input files are in valid format...!!!
 		String ext = FilenameUtils.getExtension(t2File.getName());
-		if(!ext.equals("t2flow")||!ext.equals("wfbundle")){
+		if(!ext.equalsIgnoreCase("t2flow")&&!ext.equalsIgnoreCase("wfbundle")){
 			System.err.println("Invalid input file format...!!!");
 			return;
 		}
