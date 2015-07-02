@@ -42,7 +42,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-//import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,19 +52,14 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-//import org.apache.taverna.scufl2.ucfpackage.impl.odfdom.pkg.OdfPackage;
-//import org.apache.taverna.scufl2.ucfpackage.impl.odfdom.pkg.manifest.OdfFileEntry;
-//import org.oasis_open.names.tc.opendocument.xmlns.container.Container;
-//import org.oasis_open.names.tc.opendocument.xmlns.container.Container.RootFiles;
-//import org.oasis_open.names.tc.opendocument.xmlns.container.ObjectFactory;
-//import org.oasis_open.names.tc.opendocument.xmlns.container.RootFile;
-import org.purl.wf4ever.robundle.Bundle;
-import org.purl.wf4ever.robundle.Bundles;
-import org.purl.wf4ever.robundle.manifest.Manifest;
-import org.purl.wf4ever.robundle.manifest.PathMetadata;
-import org.purl.wf4ever.robundle.utils.RecursiveDeleteVisitor;
-import org.purl.wf4ever.robundle.utils.TemporaryFiles;
+import org.apache.taverna.robundle.Bundle;
+import org.apache.taverna.robundle.Bundles;
+import org.apache.taverna.robundle.manifest.Manifest;
+import org.apache.taverna.robundle.manifest.PathMetadata;
+import org.apache.taverna.robundle.utils.RecursiveDeleteVisitor;
+import org.apache.taverna.robundle.utils.TemporaryFiles;
 import org.w3c.dom.Document;
+
 
 public class UCFPackage implements Cloneable {
 	private static Logger logger = Logger.getLogger(UCFPackage.class.getName());
@@ -135,12 +129,12 @@ public class UCFPackage implements Cloneable {
 	}
 
 	public void setPackageMediaType(String mediaType) {
-		try {
-					Bundles.setMimeType(bundle, mediaType);
-			} catch (IOException e) {
-					throw new RuntimeException("Can't set media type", e);
-			}
-}
+	    try {
+            Bundles.setMimeType(bundle, mediaType);
+        } catch (IOException e) {
+            throw new RuntimeException("Can't set media type", e);
+        }
+	}
 
 	public void save(File packageFile) throws IOException {
 	    Path source = bundle.getSource();
@@ -153,8 +147,56 @@ public class UCFPackage implements Cloneable {
 	}
 
 
-		if (path.equals(CONTAINER_XML)) {
-			parseContainerXML();
+	public void addResource(String stringValue, String path, String mediaType)
+			throws IOException {
+	    Path bundlePath = writableBundlePath(path);
+	    Bundles.setStringValue(bundlePath, stringValue);
+	    Manifest manifest = bundle.getManifest();
+	    manifest.getAggregation(bundlePath).setMediatype(mediaType);
+	}
+
+	public void addResource(byte[] bytesValue, String path, String mediaType)
+			throws IOException {
+
+	    Path bundlePath = writableBundlePath(path);
+	    Files.write(bundlePath, bytesValue);
+        Manifest manifest = bundle.getManifest();
+        manifest.getAggregation(bundlePath).setMediatype(mediaType);
+	}
+
+    private Path writableBundlePath(String path) {
+        Path bundlePath = bundle.getRoot().resolve(path);
+        if (bundlePath.getParent() != null) {
+            try {
+                Files.createDirectories(bundlePath.getParent());
+            } catch (IOException e) {
+                throw new RuntimeException("Could not create parent directories of " + path, e);
+            }
+        }
+        return bundlePath;
+    }
+
+	@Deprecated
+	public void addResource(Document document, String path, String mediaType)
+			throws IOException {
+
+        Path bundlePath = writableBundlePath(path);
+        TransformerFactory tFactory = TransformerFactory.newInstance();
+        Transformer transformer;
+        try {
+            transformer = tFactory.newTransformer();
+        } catch (TransformerConfigurationException e) {
+            throw new IOException("Can't create XML transformer to save "
+                    + path, e);
+        }
+
+        DOMSource source = new DOMSource(document);
+        try (OutputStream outStream = Files.newOutputStream(bundlePath)) {
+            StreamResult result = new StreamResult(outStream);
+            transformer.transform(source, result);
+        } catch (TransformerException e) {
+            throw new IOException("Can't save XML to " + path, e);
+        }
 	}
 
 	public void addResource(InputStream inputStream, String path,
@@ -316,11 +358,12 @@ public class UCFPackage implements Cloneable {
 
 		@Override
 		public boolean equals(Object obj) {
-			if (!(obj instanceof ResourceEntry))
+			if (! (obj instanceof ResourceEntry)) {
 				return false;
+			}
 			ResourceEntry other = (ResourceEntry) obj;
 
-			if (!getUcfPackage().equals(other.getUcfPackage()))
+			if (! getUcfPackage().equals(other.getUcfPackage())) {
 				return false;
 			}
 			return path.equals(other.path);
@@ -357,13 +400,13 @@ public class UCFPackage implements Cloneable {
 		return listResources("/", true);
 	}
 
-	public void setRootFile(String path) {
-		bundle.addRootFile(bundle.getPath(path));
-	}
+//	public void setRootFile(String path) {
+//		bundle.addRootFile(bundle.getPath(path));
+//	}
 
 	@SuppressWarnings("rawtypes")
 	public void setRootFile(String path, String version) {
-		setRootFile(path);
+//		setRootFile(path);
 		if (version == null) {
 			return;
 		}
@@ -375,15 +418,15 @@ public class UCFPackage implements Cloneable {
 		}
 	}
 
-	public List<ResourceEntry> getRootFiles() {
-		List<ResourceEntry> files = new ArrayList<>();
-		for (Path path : bundle.getRootFiles()) {
-			if (Files.exists(path)) {
-				files.add(new ResourceEntry(path));
-			}
-		}
-		return files;
-	}
+//	public List<ResourceEntry> getRootFiles() {
+//		List<ResourceEntry> files = new ArrayList<>();
+//		for (Path path : bundle.getRootFiles()) {
+//			if (Files.exists(path)) {
+//				files.add(new ResourceEntry(path));
+//			}
+//		}
+//		return files;
+//	}
 
 
 	public ResourceEntry getResourceEntry(String path) {
@@ -394,10 +437,10 @@ public class UCFPackage implements Cloneable {
 	    return null;
 	}
 
-	@SuppressWarnings("rawtypes")
-	public void unsetRootFile(String path) {
-		bundle.removeAsRootFile(bundle.getPath(path));
-	}
+//	@SuppressWarnings("rawtypes")
+	//public void unsetRootFile(String path) {
+		//bundle.removeAsRootFile(bundle.getPath(path));
+	//}
 
 	public void save(OutputStream output) throws IOException {
         Path source = bundle.getSource();
@@ -413,8 +456,7 @@ public class UCFPackage implements Cloneable {
 
 	public OutputStream addResourceUsingOutputStream(String path,
 			String mediaType) throws IOException {
-		if (path.equals(CONTAINER_XML))
-			// as we need to parse it after insertion, this must fail
+		if (path.equals(CONTAINER_XML)) {
 			throw new IllegalArgumentException("Can't add " + CONTAINER_XML
 					+ " using OutputStream");
 			// as we need to parse it after insertion
@@ -464,15 +506,15 @@ public class UCFPackage implements Cloneable {
 						outputStream.close();
 					}
 				} catch (IOException e) {
-					logger.log(INFO,
-							"Could not save/close UCF package while cloning", e);
+					logger.log(Level.INFO, "Could not save/close UCF package while cloning", e);
 				}
 			}
 		}.start();
 		return inputStream;
 	}
 
-	public String getRootFileVersion(String rootFile) {
-		return getResourceEntry(rootFile).getVersion();
-	}
+    public String getRootFileVersion(String rootFile) {
+        return getResourceEntry(rootFile).getVersion();
+    }
+
 }
