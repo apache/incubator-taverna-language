@@ -601,64 +601,64 @@ public class TestUCFPackage {
 		assertNull(xpathSelectElement(doc.getRootElement(), "/manifest:manifest/*"));
 		
 	}
-
-	@Test
-	public void getRootfiles() throws Exception {
-		UCFPackage container = new UCFPackage();
-		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
-		container.addResource("Hello there", "helloworld.txt", "text/plain");
-		assertTrue("Root files not empty", container.getRootFiles().isEmpty());
-		assertNotSame("Should return copy of rootfiles",
-				container.getRootFiles(), container.getRootFiles());
-	}
-
-	@Test
-	public void setRootfile() throws Exception {
-		UCFPackage container = new UCFPackage();
-		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
-		container.addResource("Hello there", "helloworld.txt", "text/plain");
-		container.addResource("Soup for everyone", "soup.txt", "text/plain");
-		container.setRootFile("helloworld.txt");
-
-		List<ResourceEntry> rootFiles = container.getRootFiles();
-
-		assertEquals(1, rootFiles.size());
-		ResourceEntry rootFile = rootFiles.get(0);
-		assertEquals("helloworld.txt", rootFile.getPath());
-		assertEquals("text/plain", rootFile.getMediaType());
-	}
-
-	@Test
-	public void setRootfileSaved() throws Exception {
-		UCFPackage container = new UCFPackage();
-		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
-		container.addResource("Hello there", "helloworld.txt", "text/plain");
-		container.addResource("Soup for everyone", "soup.txt", "text/plain");
-		container.setRootFile("helloworld.txt");
-		container.save(tmpFile);
-
-		ZipFile zipFile = new ZipFile(tmpFile);
-		ZipEntry manifestEntry = zipFile.getEntry("META-INF/container.xml");		
-		InputStream manifestStream = zipFile.getInputStream(manifestEntry);
-		
-
-		//System.out.println(IOUtils.toString(manifestStream, "UTF-8"));
-		/*
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<container xmlns="urn:oasis:names:tc:opendocument:xmlns:container" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="http://www.w3.org/2001/04/xmlenc#">
-    <rootFiles>
-        <rootFile full-path="helloworld.txt" media-type="text/plain"/>
-    </rootFiles>
-</container>
-		 */
-		Document doc = parseXml(manifestStream);
-		assertEquals(CONTAINER_NS, doc.getRootElement().getNamespace());
-		assertEquals("", doc.getRootElement().getNamespacePrefix());
-		assertEquals("container", doc.getRootElement().getQualifiedName());
-		assertXpathEquals("helloworld.txt", doc.getRootElement(), "/c:container/c:rootFiles/c:rootFile/@full-path");
-		assertXpathEquals("text/plain", doc.getRootElement(), "/c:container/c:rootFiles/c:rootFile/@media-type");
-
-	}
+//
+//	@Test
+//	public void getRootfiles() throws Exception {
+//		UCFPackage container = new UCFPackage();
+//		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
+//		container.addResource("Hello there", "helloworld.txt", "text/plain");
+//		assertTrue("Root files not empty", container.getRootFiles().isEmpty());
+//		assertNotSame("Should return copy of rootfiles",
+//				container.getRootFiles(), container.getRootFiles());
+//	}
+//
+//	@Test
+//	public void setRootfile() throws Exception {
+//		UCFPackage container = new UCFPackage();
+//		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
+//		container.addResource("Hello there", "helloworld.txt", "text/plain");
+//		container.addResource("Soup for everyone", "soup.txt", "text/plain");
+//		container.setRootFile("helloworld.txt");
+//
+//		List<ResourceEntry> rootFiles = container.getRootFiles();
+//
+//		assertEquals(1, rootFiles.size());
+//		ResourceEntry rootFile = rootFiles.get(0);
+//		assertEquals("helloworld.txt", rootFile.getPath());
+//		assertEquals("text/plain", rootFile.getMediaType());
+//	}
+//
+//	@Test
+//	public void setRootfileSaved() throws Exception {
+//		UCFPackage container = new UCFPackage();
+//		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
+//		container.addResource("Hello there", "helloworld.txt", "text/plain");
+//		container.addResource("Soup for everyone", "soup.txt", "text/plain");
+//		container.setRootFile("helloworld.txt");
+//		container.save(tmpFile);
+//
+//		ZipFile zipFile = new ZipFile(tmpFile);
+//		ZipEntry manifestEntry = zipFile.getEntry("META-INF/container.xml");		
+//		InputStream manifestStream = zipFile.getInputStream(manifestEntry);
+//		
+//
+//		//System.out.println(IOUtils.toString(manifestStream, "UTF-8"));
+//		/*
+//<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+//<container xmlns="urn:oasis:names:tc:opendocument:xmlns:container" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="http://www.w3.org/2001/04/xmlenc#">
+//    <rootFiles>
+//        <rootFile full-path="helloworld.txt" media-type="text/plain"/>
+//    </rootFiles>
+//</container>
+//		 */
+//		Document doc = parseXml(manifestStream);
+//		assertEquals(CONTAINER_NS, doc.getRootElement().getNamespace());
+//		assertEquals("", doc.getRootElement().getNamespacePrefix());
+//		assertEquals("container", doc.getRootElement().getQualifiedName());
+//		assertXpathEquals("helloworld.txt", doc.getRootElement(), "/c:container/c:rootFiles/c:rootFile/@full-path");
+//		assertXpathEquals("text/plain", doc.getRootElement(), "/c:container/c:rootFiles/c:rootFile/@media-type");
+//
+//	}
 
 	@Test
 	public void addResourceContainerXml() throws Exception {
@@ -666,24 +666,6 @@ public class TestUCFPackage {
 		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
 		container.addResource("Hello there", "helloworld.txt", "text/plain");
 		container.addResource("Soup for everyone", "soup.txt", "text/plain");
-		container.setRootFile("helloworld.txt");
-		assertEquals("helloworld.txt", container.getRootFiles().get(0)
-				.getPath());
-
-		String containerXml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
-				+ "<container xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\" xmlns:ns2=\"http://www.w3.org/2000/09/xmldsig#\" xmlns:ns3=\"http://www.w3.org/2001/04/xmlenc#\">\n"
-				+ "    <ex:example xmlns:ex=\"http://example.com/\">first example</ex:example>\n"
-				+ "    <rootFiles>\n"
-				+ "        <rootFile xmlns:ex=\"http://example.com/\" media-type=\"text/plain\" full-path=\"soup.txt\" ex:extraAnnotation=\"hello\"/>\n"
-				+ "    </rootFiles>\n"
-				+ "    <ex:example xmlns:ex=\"http://example.com/\">second example</ex:example>\n"
-				+ "    <ex:example xmlns:ex=\"http://example.com/\">third example</ex:example>\n"
-				+ "</container>\n";
-		// Should overwrite setRootFile()
-		container.addResource(containerXml, "META-INF/container.xml",
-				"text/xml");
-
-		assertEquals("soup.txt", container.getRootFiles().get(0).getPath());
 
 		container.save(tmpFile);
 
@@ -707,9 +689,6 @@ public class TestUCFPackage {
 		assertEquals(CONTAINER_NS, doc.getRootElement().getNamespace());
 		assertEquals("", doc.getRootElement().getNamespacePrefix());
 		assertEquals("container", doc.getRootElement().getQualifiedName());
-		assertXpathEquals("soup.txt", doc.getRootElement(), "/c:container/c:rootFiles/c:rootFile[1]/@full-path");
-		assertXpathEquals("text/plain", doc.getRootElement(), "/c:container/c:rootFiles/c:rootFile[1]/@media-type");
-		assertXpathEquals("hello", doc.getRootElement(), "/c:container/c:rootFiles/c:rootFile[1]/@ex:extraAnnotation");
 
 		assertXpathEquals("first example", doc.getRootElement(), "/c:container/ex:example[1]");
 		assertXpathEquals("second example", doc.getRootElement(), "/c:container/ex:example[2]");
@@ -718,8 +697,8 @@ public class TestUCFPackage {
 		// Check order
 		Element first = (Element) xpathSelectElement(doc.getRootElement(), "/c:container/*[1]");
 		assertEquals("ex:example", first.getQualifiedName());
-		Element second = (Element) xpathSelectElement(doc.getRootElement(), "/c:container/*[2]");
-		assertEquals("rootFiles", second.getQualifiedName());
+//		Element second = (Element) xpathSelectElement(doc.getRootElement(), "/c:container/*[2]");
+//		assertEquals("rootFiles", second.getQualifiedName());
 		Element third = (Element) xpathSelectElement(doc.getRootElement(), "/c:container/*[3]");
 		assertEquals("ex:example", third.getQualifiedName());
 		Element fourth = (Element) xpathSelectElement(doc.getRootElement(), "/c:container/*[4]");
@@ -747,14 +726,14 @@ public class TestUCFPackage {
 		// Should overwrite setRootFile()
 		container.addResource(containerXml, "META-INF/container.xml",
 				"text/xml");
-		assertEquals("helloworld.html", container.getRootFiles().get(0)
-				.getPath());
+//		assertEquals("helloworld.html", container.getRootFiles().get(0)
+//				.getPath());
 
-		container.setRootFile("helloworld.txt");
-		assertEquals("helloworld.html", container.getRootFiles().get(0)
-				.getPath());
-		assertEquals("helloworld.txt", container.getRootFiles().get(1)
-				.getPath());
+//		container.setRootFile("helloworld.txt");
+//		assertEquals("helloworld.html", container.getRootFiles().get(0)
+//				.getPath());
+//		assertEquals("helloworld.txt", container.getRootFiles().get(1)
+//				.getPath());
 		container.save(tmpFile);
 //
 //		String expectedContainerXml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
@@ -804,33 +783,7 @@ public class TestUCFPackage {
 		
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void setRootfileMissing() throws Exception {
-		UCFPackage container = new UCFPackage();
-		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
-		container.addResource("Hello there", "helloworld.txt", "text/plain");
-		try {
-			container.setRootFile("unknown.txt");
-		} finally {
-			assertTrue("Should not have added unknown.txt", container
-					.getRootFiles().isEmpty());
-		}
 
-	}
-
-	@Test
-	public void unmodifiableRootFiles() throws Exception {
-		UCFPackage container = new UCFPackage();
-		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
-		container.addResource("Hello there", "helloworld.txt", "text/plain");
-		container.setRootFile("helloworld.txt");
-		List<ResourceEntry> rootFiles = container.getRootFiles();
-		assertEquals(1, rootFiles.size());
-		rootFiles.remove(0);
-		assertEquals(0, rootFiles.size());
-		assertEquals("Should not be able to modify rootFiles list", 1,
-				container.getRootFiles().size());
-	}
 
 
     @Test
@@ -841,8 +794,6 @@ public class TestUCFPackage {
         container.setRootFile("helloworld.txt", "1.2.3");
         container.save(tmpFile);
         UCFPackage reloaded = new UCFPackage(tmpFile);
-        ResourceEntry rootFile = reloaded.getRootFiles().get(0);
-        assertEquals("helloworld.txt", rootFile.getPath());
         assertEquals("1.2.3", reloaded.getRootFileVersion("helloworld.txt"));
     }
 	
@@ -854,7 +805,7 @@ public class TestUCFPackage {
         container.setRootFile("helloworld.txt", "1.2.3");
         container.save(tmpFile);
         UCFPackage reloaded = new UCFPackage(tmpFile);
-        reloaded.setRootFile("helloworld.txt");
+//        reloaded.setRootFile("helloworld.txt");
         reloaded.save(tmpFile);
         @SuppressWarnings("unused")
 		UCFPackage again = new UCFPackage(tmpFile);
@@ -862,96 +813,11 @@ public class TestUCFPackage {
     }
 
 	@Test
-	public void multipleRootfiles() throws Exception {
-		UCFPackage container = new UCFPackage();
-		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
-		container.addResource("Hello there", "helloworld.txt", "text/plain");
-		container.addResource("<html><body><h1>Yo</h1></body></html>",
-				"helloworld.html", "text/html");
-		container.addResource("Soup for everyone", "soup.txt", "text/plain");
-		container.setRootFile("helloworld.txt");
-		// Adding a second file of a different mime type
-		container.setRootFile("helloworld.html");
-		List<ResourceEntry> rootFiles = container.getRootFiles();
-		assertEquals(2, rootFiles.size());
-
-		ResourceEntry rootFile0 = rootFiles.get(0);
-		assertEquals("helloworld.txt", rootFile0.getPath());
-		assertEquals("text/plain", rootFile0.getMediaType());
-
-		ResourceEntry rootFile1 = rootFiles.get(1);
-		assertEquals("helloworld.html", rootFile1.getPath());
-		assertEquals("text/html", rootFile1.getMediaType());
-	}
-
-	@Test
-	public void multipleRootfilesReloaded() throws Exception {
-		UCFPackage container = new UCFPackage();
-		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
-		container.addResource("Hello there", "helloworld.txt", "text/plain");
-		container.addResource("<html><body><h1>Yo</h1></body></html>",
-				"helloworld.html", "text/html");
-		container.addResource("Soup for everyone", "soup.txt", "text/plain");
-		container.setRootFile("helloworld.txt");
-		// Adding a second file of a different mime type
-		container.setRootFile("helloworld.html");
-
-		container.save(tmpFile);
-		UCFPackage reloaded = new UCFPackage(tmpFile);
-
-		List<ResourceEntry> rootFiles = reloaded.getRootFiles();
-		assertEquals(2, rootFiles.size());
-
-		ResourceEntry rootFile0 = rootFiles.get(0);
-		assertEquals("helloworld.txt", rootFile0.getPath());
-		assertEquals("text/plain", rootFile0.getMediaType());
-
-		ResourceEntry rootFile1 = rootFiles.get(1);
-		assertEquals("helloworld.html", rootFile1.getPath());
-		assertEquals("text/html", rootFile1.getMediaType());
-	}
-
-	@Test
-	public void unsetMultipleRootFiles() throws Exception {
-		UCFPackage container = new UCFPackage();
-		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
-		container.addResource("Hello there", "helloworld.txt", "text/plain");
-		container.addResource("<html><body><h1>Yo</h1></body></html>",
-				"helloworld.html", "text/html");
-		container.addResource("Soup for everyone", "soup.txt", "text/plain");
-		container.setRootFile("helloworld.txt");
-		container.setRootFile("helloworld.html");
-		List<ResourceEntry> rootFiles = container.getRootFiles();
-		assertEquals(2, rootFiles.size());
-
-		container.unsetRootFile("helloworld.txt");
-		rootFiles = container.getRootFiles();
-		assertEquals(1, rootFiles.size());
-
-		ResourceEntry rootFile0 = rootFiles.get(0);
-		assertEquals("helloworld.html", rootFile0.getPath());
-		assertEquals("text/html", rootFile0.getMediaType());
-	}
-
-	@Test
-	public void unsetRootFile() throws Exception {
-		UCFPackage container = new UCFPackage();
-		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
-		container.addResource("Hello there", "helloworld.txt", "text/plain");
-		container.addResource("Soup for everyone", "soup.txt", "text/plain");
-		container.setRootFile("helloworld.txt");
-		assertEquals(1, container.getRootFiles().size());
-		container.unsetRootFile("helloworld.txt");
-		assertEquals(0, container.getRootFiles().size());
-	}
-
-	@Test
 	public void cloneUcfPackage() throws Exception {
 		UCFPackage container = new UCFPackage();
 		container.setPackageMediaType(UCFPackage.MIME_WORKFLOW_BUNDLE);
 		container.addResource("Hello there", "helloworld.txt", "text/plain");
 		container.addResource("Soup for everyone", "soup.txt", "text/plain");
-		container.setRootFile("helloworld.txt");
 //		System.out.println(container.listAllResources());
 		assertEquals(2, container.listAllResources().size());
 
@@ -963,14 +829,12 @@ public class TestUCFPackage {
 		container.addResource("Something else", "helloworld.txt", "test/other");
 		container.addResource("extra", "extra1.txt", "text/plain");
 		container.addResource("extra", "extra2.txt", "text/plain");
-		container.setRootFile("extra1.txt");
 		
 		assertEquals(UCFPackage.MIME_WORKFLOW_BUNDLE, clone.getPackageMediaType());
 		assertEquals("Hello there", clone.getResourceAsString("helloworld.txt"));
 		ResourceEntry helloWorldEntry = clone.getResourceEntry("helloworld.txt");
 		assertEquals("text/plain", helloWorldEntry.getMediaType());
 		assertEquals("Soup for everyone", clone.getResourceAsString("soup.txt"));
-		assertEquals(Arrays.asList(helloWorldEntry), clone.getRootFiles());
 //		System.out.println(clone.listAllResources());
 		assertEquals(2, clone.listAllResources().size());		
 	}
