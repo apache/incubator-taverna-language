@@ -90,6 +90,7 @@ public class ProcessorNames {
 			bw.write(sb.toString());
 			bw.close();
 			fw.close();
+			System.out.println("Results were saved into " + file2);
 		}
 	}
 	

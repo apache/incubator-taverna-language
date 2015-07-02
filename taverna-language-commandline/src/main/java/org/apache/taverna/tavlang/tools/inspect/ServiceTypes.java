@@ -104,6 +104,7 @@ public class ServiceTypes {
 			bw.write(sb.toString());
 			bw.close();
 			fw.close();
+			System.out.println("Results were saved into " + save);
 		}
 		
 	}
