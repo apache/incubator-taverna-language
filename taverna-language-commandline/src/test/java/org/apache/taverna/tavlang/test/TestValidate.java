@@ -22,13 +22,27 @@ package org.apache.taverna.tavlang.test;
 
 import static org.junit.Assert.*;
 
+import java.awt.List;
+import java.util.ArrayList;
+
+import org.apache.taverna.tavlang.tools.validate.Validate;
+import org.junit.Assert;
 import org.junit.Test;
+
+import com.google.common.collect.Lists;
 
 public class TestValidate {
 
 	@Test
 	public void test() {
-		fail("Not yet implemented");
+		ArrayList<String> list = Lists.newArrayList();
+		list.add("/home/menaka/conv/aaa/helloworld.wfbundle");
+		list.add("/home/menaka/conv/aaa/workflows/t2flow/as.t2flow");
+		
+//		fail("Not yet implemented");
+		Validate val = new Validate(list, null, false);
+		assertEquals(false, val.getCheck());
+		
 	}
 
 }
