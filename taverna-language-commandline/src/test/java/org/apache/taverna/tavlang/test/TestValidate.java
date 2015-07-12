@@ -36,7 +36,7 @@ public class TestValidate {
 	@Test
 	public void test() {
 		ArrayList<String> list = Lists.newArrayList();
-		list.add("/home/menaka/conv/aaa/helloworld.wfbundle");
+//		list.add("/as.t2flow");
 		list.add("/home/menaka/conv/aaa/workflows/t2flow/as.t2flow");
 		
 //		fail("Not yet implemented");
