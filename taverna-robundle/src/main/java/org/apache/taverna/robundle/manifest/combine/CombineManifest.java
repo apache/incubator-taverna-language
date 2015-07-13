@@ -377,14 +377,18 @@ public class CombineManifest {
 				}
 			}
 
+			// add the COMBINE "creators" as RO "authors"
+			List<Agent> authors = pathMetadata.getAuthoredBy ();
+			
 			for (RDFNode s : creatingAgentsFor(resource)) {
-				if (pathMetadata.getCreatedBy() != null) {
-					logger.warning("Ignoring additional createdBy agents for "
-							+ resource);
-					break;
+				if (authors == null)
+				{
+					authors = new ArrayList<Agent> ();
+					pathMetadata.setAuthoredBy (authors);
 				}
+				
 				if (s.isLiteral()) {
-					pathMetadata.setCreatedBy(new Agent(s.asLiteral()
+					authors.add (new Agent(s.asLiteral()
 							.getLexicalForm()));
 					continue;
 				}
@@ -402,8 +406,12 @@ public class CombineManifest {
 						agent.setUri(URI.create(mbox.getURI()));
 				}
 				agent.setName(nameForAgent(agentResource));
-				pathMetadata.setCreatedBy(agent);
+				authors.add (agent);
 			}
+			// if there is a single COMBINE "creator" it is also the RO "creator"
+			if (authors != null && authors.size () == 1)
+				pathMetadata.setCreatedBy (authors.get (0));
+			
 			if (pathMetadata.getFile().equals(bundle.getRoot())
 					|| pathMetadata.getFile().equals(metadataRdf)) {
 				// Statements where about the RO itself
