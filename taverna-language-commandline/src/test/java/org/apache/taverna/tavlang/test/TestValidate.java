@@ -25,6 +25,7 @@ import static org.junit.Assert.*;
 import java.awt.List;
 import java.util.ArrayList;
 
+import org.apache.taverna.robundle.Bundle;
 import org.apache.taverna.tavlang.tools.validate.Validate;
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,14 +34,14 @@ import com.google.common.collect.Lists;
 
 public class TestValidate {
 
+	
+	
 	@Test
 	public void test() {
 		ArrayList<String> list = Lists.newArrayList();
-//		list.add("/as.t2flow");
-		list.add("/home/menaka/conv/aaa/workflows/t2flow/as.t2flow");
-		
-//		fail("Not yet implemented");
+		list.add("src/test/resources/workflows/t2flow/as.t2flow");
 		Validate val = new Validate(list, null, false);
+		
 		assertEquals(false, val.getCheck());
 		
 	}
