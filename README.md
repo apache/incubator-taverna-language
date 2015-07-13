@@ -39,6 +39,12 @@ The file [NOTICE](NOTICE) contain any additional attributions and
 details about embedded third-party libraries and source code.
 
 
+## Contribute
+
+Feel free to contribute by [submitting an issue](https://issues.apache.org/jira/browse/TAVERNA), send a [pull request](https://github.com/apache/incubator-taverna-language/pulls), or discuss the project at the [dev@taverna mailing list](http://taverna.incubator.apache.org/community/lists#devtaverna).
+
+All contributions are assumed to be licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0), unless otherwise noted.
+
 ## Modules
 
 Official modules:
