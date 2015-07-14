@@ -213,10 +213,15 @@ public class CommandLineTool {
 			//Validate before convert
 			if(validate){
 				Validate validate = new Validate(files, null, false);
-				if(!validate.getCheck())
+				if(validate.getCheck()){
 					return;
+				}else{
+					runcommand();
+				}
 			}
+		}
 			
+		public void runcommand(){
 			if (Filetypes.isRo) {
 				try {
 					new ToRobundle(files, Optional.getOutFile());
@@ -240,7 +245,9 @@ public class CommandLineTool {
 			}
 
 		}
-
+		
+		
+		
 	}
 
 	// Version command
