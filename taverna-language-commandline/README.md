@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
+
 # Apache Taverna Language Command Line
 
 
@@ -100,10 +101,39 @@ The tool has following functionalities.
 * Validation and Viewing workflow statistics.
 	
 ## Command line structure 
+	
 	tavlang <command> <options> [arguments and parameters]
 	
 Each command has it's own set of options.
 
 ###Commands and Options
+The tool has following major commands.
 
+* convert
+* inspect
+* validate
+* stats
+
+##### Convert
+
+	Usage:
+	tavlang convert <--output_fomat> <options> [arguments]
+	
+ Supported output formats are,
+ 
+ * wfbundle
+ * iwir
+ * json
+ * robundle
+ * structure
+ 
+There are two usages of conversion command.
+
+1. Non-recursive method
+
+	Usage: tavlang convert <--output_format> <options> [arguments]
+	
+
+
+2. Recursive method
 

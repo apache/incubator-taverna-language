@@ -54,7 +54,7 @@ public class Validate {
 			read(wfile);
 			
 		}
-		System.out.println("Validation completed.......");
+//		System.out.println("Validation completed.......");
 		
 		
 		if (this.logfile != null) {
@@ -68,12 +68,10 @@ public class Validate {
 			this.finalrep += validate(io.readBundle(file, null), file.getName());
 			
 		} catch (ReaderException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("Error: Connot read the file " + file.getAbsolutePath());
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("Error: File not found " + file.getAbsolutePath());
 
 		}
 	}
@@ -140,8 +138,7 @@ public class Validate {
 			logwriter.close();
 			System.out.println("Results were saved into " + logFile.getPath());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("Error occured in saving log file");
 		}
 
 	}
