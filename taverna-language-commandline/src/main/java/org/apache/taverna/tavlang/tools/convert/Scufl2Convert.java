@@ -196,13 +196,13 @@ public class Scufl2Convert{
 			}
 			System.out.println(scufl2File.getPath() + " is created.");
 		}catch (ReaderException e){
-			System.err.println(e.getLocalizedMessage());
+			System.err.println("Error: Connot read the file");
 //			e.printStackTrace();
 		}catch(IOException e){
-			System.err.println(e.getLocalizedMessage());
+			System.err.println("Error: File not found");
 //			e.printStackTrace();
 		}catch(WriterException e) {
-			System.err.println(e.getLocalizedMessage());
+			System.err.println("Error: Cannot write to the file");
 //			e.printStackTrace();
 		}
 	}
