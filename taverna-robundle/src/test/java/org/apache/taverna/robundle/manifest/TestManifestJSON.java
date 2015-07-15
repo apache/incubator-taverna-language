@@ -21,10 +21,13 @@ package org.apache.taverna.robundle.manifest;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,16 +38,69 @@ import java.util.TimeZone;
 
 import org.apache.taverna.robundle.Bundle;
 import org.apache.taverna.robundle.Bundles;
-import org.apache.taverna.robundle.manifest.Agent;
-import org.apache.taverna.robundle.manifest.Manifest;
-import org.apache.taverna.robundle.manifest.PathAnnotation;
-import org.apache.taverna.robundle.manifest.PathMetadata;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TestManifestJSON {
+	
+	@Test
+	public void testHistory () throws IOException
+	{
+		Path tmpBundle = Files.createTempFile ("testbundle", "history");
+
+		// create history
+		try (Bundle bundle = Bundles.createBundle())
+		{
+			Bundles.closeAndSaveBundle (bundle, tmpBundle);
+		}
+		catch (IOException e)
+		{
+			fail ("failed to create bundle for history test: " + e.getMessage ());
+		}
+		
+		// make sure it doesn't fail if there is no history
+		try (Bundle bundle = Bundles.openBundle (tmpBundle))
+		{
+			Manifest manifest = bundle.getManifest();
+			Path evolutionPath = bundle.getPath(".ro/evolution.ttl");
+			assertFalse ("did not expect a history file", Files.exists (evolutionPath));
+			assertEquals ("did not expect a history", 0, manifest.getHistory ().size ());
+			
+			Files.createDirectories(evolutionPath.getParent());
+			Bundles.setStringValue(
+					evolutionPath,
+					"<manifest.json> < http://purl.org/pav/retrievedFrom> "
+							+ "<http://wf4ever.github.io/ro/bundle/2013-05-21/example/.ro/manifest.json> .");
+			manifest.getHistory().add(evolutionPath);
+			assertTrue ("expected a history file", Files.exists (evolutionPath));
+			assertTrue ("expected a history", manifest.getHistory ().size () > 0);
+			
+			Bundles.closeBundle (bundle);
+		}
+		catch (IOException e)
+		{
+			fail ("failed to read bundle for history test: " + e.getMessage ());
+		}
+		
+		// check if history is still there
+		try (Bundle bundle = Bundles.openBundleReadOnly (tmpBundle))
+		{
+			Manifest manifest = bundle.getManifest();
+			Path evolutionPath = bundle.getPath(".ro/evolution.ttl");
+			assertTrue ("expected a history file", Files.exists (evolutionPath));
+			assertEquals ("expected exactly one history", 1, manifest.getHistory ().size ());
+			Bundles.closeBundle (bundle);
+		}
+		catch (IOException e)
+		{
+			fail ("failed to read bundle for history test: " + e.getMessage ());
+		}
+		
+		Files.delete (tmpBundle);
+	}
+	
 	@Test
 	public void createBundle() throws Exception {
 		// Create bundle as in Example 3 of the specification
