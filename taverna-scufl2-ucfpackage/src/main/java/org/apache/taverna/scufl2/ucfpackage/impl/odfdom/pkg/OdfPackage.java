@@ -20,6 +20,11 @@
  * limitations under the License.
  *
  ************************************************************************/
+/*  This file is derived from ODFDOM 0.8.6, and
+ *  has been modified for Apache Taverna.
+ *  (c) 2010-2014 University of Manchester
+ *  (c) 2015 The Apache Software Foundation
+ */
 package org.apache.taverna.scufl2.ucfpackage.impl.odfdom.pkg;
 
 import static java.util.logging.Level.INFO;
@@ -1180,12 +1185,12 @@ public class OdfPackage implements AutoCloseable {
 					buf.append(i);
 					buf.append("\"");
 				}
-				if (fileEntry.getVersion() != null) { 
+				if (fileEntry.getVersion() != null) {
 				    buf.append(" manifest:version=\"");
 	                buf.append(encodeXMLAttributes(fileEntry.getVersion()));
 	                buf.append("\"");
 				}
-				
+
 				EncryptionData enc = fileEntry.getEncryptionData();
 
 				if (enc != null) {
@@ -1352,7 +1357,7 @@ public class OdfPackage implements AutoCloseable {
 		 * if we would return ZipFile getInputStream(entry) we would not be able
 		 * to read 2 Entries at the same time. This is a limitation of the
 		 * ZipFile class.
-		 * 
+		 *
 		 * As it would be quite a common thing to read the content.xml and the
 		 * styles.xml simultaneously when using XSLT on OdfPackages we want to
 		 * circumvent this limitation

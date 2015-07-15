@@ -19,7 +19,11 @@ package org.apache.taverna.scufl2.ucfpackage.impl.odfdom.pkg;
  * under the License.
  *
 */
-
+/*  This file is derived from ODFDOM 0.8.6, and
+ *  has been modified for Apache Taverna.
+ *  (c) 2010-2014 University of Manchester
+ *  (c) 2015 The Apache Software Foundation
+ */
 
 import java.io.IOException;
 import java.io.InputStream;
