@@ -20,11 +20,11 @@
 	<parent>
 		<groupId>org.apache.taverna</groupId>
 		<artifactId>taverna-parent</artifactId>
-		<version>1-incubating-SNAPSHOT</version>
+		<version>2-incubating-SNAPSHOT</version>
 	</parent>
 	<groupId>org.apache.taverna.language</groupId>
 	<artifactId>taverna-language</artifactId>
-	<version>0.15.0-incubating-SNAPSHOT</version>
+	<version>0.15.1-incubating-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>Apache Taverna Language APIs (Scufl2, Databundle)</name>

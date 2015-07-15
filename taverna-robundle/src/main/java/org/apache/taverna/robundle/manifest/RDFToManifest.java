@@ -40,6 +40,7 @@ import java.util.logging.Logger;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RiotException;
+import org.apache.taverna.robundle.Bundles;
 
 import com.hp.hpl.jena.ontology.DatatypeProperty;
 import com.hp.hpl.jena.ontology.Individual;
@@ -424,6 +425,13 @@ public class RDFToManifest {
 
 		RDFNode created = ro.getPropertyValue(createdOn);
 		manifest.setCreatedOn(literalAsFileTime(created));
+		
+		
+		List<Path> history = new ArrayList<Path> ();
+		for (Individual histItem : listObjectProperties (ro, hasProvenance))
+			history.add (Bundles.uriToBundlePath (manifest.getBundle (), relativizeFromBase(histItem.getURI (), root)));
+		manifest.setHistory (history);
+		
 
 		List<Agent> authors = getAgents(root, ro, authoredBy);
 		if (!authors.isEmpty())

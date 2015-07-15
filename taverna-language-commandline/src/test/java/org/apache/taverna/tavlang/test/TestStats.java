@@ -19,16 +19,16 @@ package org.apache.taverna.tavlang.test;
  * under the License.
  */
 
+
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-public class Scufl2ConvertTest{
+public class TestStats {
 
 	@Test
-	public void testConvertS() {
+	public void test() {
 //		fail("Not yet implemented");
-		
 	}
 
 }
