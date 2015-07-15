@@ -92,7 +92,18 @@ To build, run:
 
 # Documentation
 
-_TODO_
+Taverna language command line tool is for access the features of the Taverna language modules. 
+The tool has following functionalities.
 
-* ...
+* Conversion
+* Inspection
+* Validation and Viewing workflow statistics.
+	
+## Command line structure 
+	tavlang <command> <options> [arguments and parameters]
+	
+Each command has it's own set of options.
+
+###Commands and Options
+
 
