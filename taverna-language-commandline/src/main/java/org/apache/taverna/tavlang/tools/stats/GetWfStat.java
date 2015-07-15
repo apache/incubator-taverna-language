@@ -152,9 +152,11 @@ public class GetWfStat {
 				this.str_verb.append("\n");
 			}
 			
-		} catch (ReaderException | IOException e) {
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("Error: File not found");
+		}catch(ReaderException e){
+			System.err.println("Error:Cannot read the file");
 		}
 	}
 	
