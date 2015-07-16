@@ -218,12 +218,15 @@ public class CommandLineTool {
 				}else{
 					runcommand();
 				}
+			}else{
+				runcommand();
 			}
 		}
 			
 		public void runcommand(){
 			if (Filetypes.isRo) {
 				try {
+					System.out.println("Ro bundle");
 					new ToRobundle(files, Optional.getOutFile());
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -281,7 +284,13 @@ public class CommandLineTool {
 			// TODO Auto-generated method stub
 			if (Inspect.processor) {
 				try {
-					new ProcessorNames(toInspect, file);
+					if(toInspect.size()==0){
+						System.err.println("Error: No input files");
+						return;
+					}else{
+						new ProcessorNames(toInspect, file);
+					}
+					
 
 				} catch (ReaderException | IOException | JAXBException e) {
 					// TODO Auto-generated catch block
@@ -289,7 +298,13 @@ public class CommandLineTool {
 				}
 			} else if (Inspect.servicetypes) {
 				try {
-					new ServiceTypes(toInspect, file);
+					if(toInspect.size()==0){
+						System.err.println("Error: No input files");
+						return;
+					}else{
+						new ServiceTypes(toInspect, file);
+					}
+					
 				} catch (IOException | ReaderException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -324,10 +339,15 @@ public class CommandLineTool {
 
 		@Override
 		public void execute() {
-		
-			Validate validate = new Validate(toValidate, file, verbose);
 			
-
+			if(toValidate.size()==0){
+				System.err.println("Error: No input files");
+				TvnLangTool command = parser().parse("help", "validate");
+				return;
+			}else{
+				Validate validate = new Validate(toValidate, file, verbose);
+			}
+			
 		}
 
 	}
@@ -351,8 +371,14 @@ public class CommandLineTool {
 		@Override
 		public void execute() {
 			// TODO Auto-generated method stub
+			if(files.size()==0){
+				System.err.println("Error: No input files");
+				TvnLangTool command = parser().parse("help", "stats");
+				return;
+			}else{
+				GetWfStat stat = new GetWfStat(files, file, verbose);
+			}
 			
-			GetWfStat stat = new GetWfStat(files, file, verbose);
 			
 		}
 		

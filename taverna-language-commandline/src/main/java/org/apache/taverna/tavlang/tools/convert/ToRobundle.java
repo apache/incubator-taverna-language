@@ -60,6 +60,7 @@ public class ToRobundle{
 //			System.out.println(bundle.getManifest().toString());
 			bundle.getManifest().writeAsJsonLD();
 			bundle.getManifest().writeAsCombineManifest();
+			
 		}
 	}
 	
