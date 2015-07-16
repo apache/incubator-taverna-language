@@ -218,12 +218,15 @@ public class CommandLineTool {
 				}else{
 					runcommand();
 				}
+			}else{
+				runcommand();
 			}
 		}
 			
 		public void runcommand(){
 			if (Filetypes.isRo) {
 				try {
+					System.out.println("Ro bundle");
 					new ToRobundle(files, Optional.getOutFile());
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
