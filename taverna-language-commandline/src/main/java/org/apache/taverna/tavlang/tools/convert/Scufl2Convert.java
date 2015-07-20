@@ -79,7 +79,7 @@ public class Scufl2Convert{
 				this.output = outFile.getAbsolutePath();
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
-				System.err.println("Error creating the directory...!!!!");
+				System.err.println("Error: The directory cannot be created...!!!!");
 				e1.printStackTrace();
 			}
 		}else{
@@ -89,7 +89,7 @@ public class Scufl2Convert{
 				
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
-				System.err.println("Error creating the directory...!!!!");
+				System.err.println("Error: The directory cannot be created...!!!!");
 				e1.printStackTrace();
 			}
 		}
@@ -107,7 +107,7 @@ public class Scufl2Convert{
 			try {
 				FileUtils.forceMkdir(outFile);
 			} catch (IOException e1) {
-				System.err.println("Error creating the directory...!!!");
+				System.err.println("Error: The directory cannot be created...!!!");
 			}
 			for(String file : this.filesList){
 				File t2File = new File(file);
@@ -130,14 +130,14 @@ public class Scufl2Convert{
 				try {
 					FileUtils.forceMkdir(outFile);
 				} catch (IOException e1) {
-					System.err.println("Error creating the directory...!!!");
+					System.err.println("Error: The directory cannot be created...!!!");
 				}
 				
 				convertFile(t2File, outFile);
 				
 			}
 		}else{
-			System.err.println("Argument mismatch");
+			System.err.println("Error: Argument mismatch");
 			check = false;
 		}
 		
@@ -150,7 +150,7 @@ public class Scufl2Convert{
 			
 			File parent = new File(this.input);
 			if(!parent.exists()){
-				System.err.println("Input directory not found");
+				System.err.println("Error: Input directory not found");
 			}else{
 				for(File file : parent.listFiles()){
 					if(!file.isDirectory())
@@ -168,7 +168,7 @@ public class Scufl2Convert{
 		//Check weather the input files are in valid format...!!!
 		String ext = FilenameUtils.getExtension(t2File.getName());
 		if(!ext.equalsIgnoreCase("t2flow")&&!ext.equalsIgnoreCase("wfbundle")){
-			System.err.println("Invalid input file format...!!!");
+			System.err.println("Error: Invalid input file format...!!!");
 			return;
 		}
 		
@@ -196,13 +196,13 @@ public class Scufl2Convert{
 			}
 			System.out.println(scufl2File.getPath() + " is created.");
 		}catch (ReaderException e){
-			System.err.println(e.getLocalizedMessage());
+			System.err.println("Error: Connot read the file");
 //			e.printStackTrace();
 		}catch(IOException e){
-			System.err.println(e.getLocalizedMessage());
+			System.err.println("Error: File not found");
 //			e.printStackTrace();
 		}catch(WriterException e) {
-			System.err.println(e.getLocalizedMessage());
+			System.err.println("Error: Cannot write to the file");
 //			e.printStackTrace();
 		}
 	}
