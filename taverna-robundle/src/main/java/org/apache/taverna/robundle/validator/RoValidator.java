@@ -19,6 +19,90 @@ package org.apache.taverna.robundle.validator;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
+import javax.swing.event.ListSelectionEvent;
+
+import org.apache.taverna.robundle.Bundle;
+import org.apache.taverna.robundle.Bundles;
+import org.apache.taverna.robundle.manifest.Manifest;
+import org.apache.taverna.robundle.manifest.PathAnnotation;
+import org.apache.taverna.robundle.manifest.PathMetadata;
+
+
+
+
+/*
+ * Validation Process:
+ * The class validates RO bundles for manifest and aggregates.
+ * Aggregate validation:
+ * 	There are 03 cases,
+ * 		1. If the aggregates are listed in manifest but not found in the container: AggregatenotFound Error
+ * 		2. If aggregates contain an external uri, there will be a warning
+ * 		3. If aggregate is not listed but included in the container, info-level warning.
+ * 
+ * Also in annotations....
+ * If the about contain a /-based resource which is not listed or not in the container, there will be an error.
+ */
 public class RoValidator {
+	
+	private Path p;
+	//Store all aggregates to be checked
+	private List<PathMetadata> aggr;
+	
+	//Store all the annotations
+	private List<PathAnnotation> anno;
+	
+	
+	//ArrayList for errors :- If aggregate is listed in manifest but not in bundle
+	private ArrayList<String> errorList = new ArrayList<>();
+	
+	//ArrayList for warnings :- If files not listed in the manifest are included in bundle
+	private ArrayList<String> warningList = new ArrayList<String>();
+	
+	
+	public RoValidator(Path path){
+		this.p = path;
+	}
+	
+	public void validate(){
+		Bundle bundle;
+		ArrayList<String> items = new ArrayList<String>();
+		try {
+			bundle = Bundles.openBundle(this.p);
+			Manifest manifest = bundle.getManifest();
+			this.aggr = manifest.getAggregates();
+			this.anno = manifest.getAnnotations();
+			
+			
+			ZipFile zip = new ZipFile(new File(this.p.toString()));
+			Enumeration<? extends ZipEntry> ent = zip.entries();
+			while(ent.hasMoreElements()){
+		        ZipEntry entry = ent.nextElement();
+		        if(!entry.isDirectory()){
+		        	items.add("/"+entry.getName());
+		        }
+		    }
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		check(items);
+		
+	}
+	
+	public void check(ArrayList<String> list){
+		
+	}
 	
 }
