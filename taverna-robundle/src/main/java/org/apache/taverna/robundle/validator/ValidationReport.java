@@ -9,6 +9,10 @@ public class ValidationReport {
 	private ArrayList<String> infoWarnings;
 	
 	private ArrayList<String> warnings;
+	
+	public ValidationReport(){
+		
+	}
 
 	public ArrayList<String> getErrorList() {
 		return errorList;

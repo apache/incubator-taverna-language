@@ -66,11 +66,15 @@ public class RoValidator {
 	private ArrayList<String> errorList = new ArrayList<>();
 	
 	//ArrayList for warnings :- If files not listed in the manifest are included in bundle
-	private ArrayList<String> warningList = new ArrayList<String>();
+	private ArrayList<String> infoWarningList = new ArrayList<String>();
+	
+	//If there are external urls
+	private ArrayList<String> warning = new ArrayList<String>();
 	
 	
 	public RoValidator(Path path){
 		this.p = path;
+		this.validate();
 	}
 	
 	public void validate(){
@@ -99,10 +103,56 @@ public class RoValidator {
 		
 		check(items);
 		
-	}
-	
-	public void check(ArrayList<String> list){
 		
 	}
+	
+	public ValidationReport check(ArrayList<String> list){
+		
+		ValidationReport report = new ValidationReport();
+		
+		for(PathMetadata pm : this.aggr){
+			
+			//If aggregates listed in manifest are not found in bundle...
+			if(!list.contains(pm.toString())){
+				
+				/*
+				 * Here it can be a external url or the file is missing
+				 * */
+				//If the aggregate is a external URL...
+				if(pm.toString().contains("http://") || pm.toString().contains(".com")){
+					this.warning.add(pm.toString());
+				}else{
+					this.errorList.add(pm.toString());	
+				}
+			}
+		}
+			
+		/*
+		 * There could be files in the bundle, which are not included as aggregates.
+		 * There are default files: mimetype and LICENSE
+		 * */
+		
+		for(String s : list){
+			
+			s = s.toLowerCase();
+			PathMetadata p = new PathMetadata(s);
+			if(s.contains("mimetype")||s.contains("license")){
+				//This is ok and skip
+			}else{
+				if(!this.aggr.contains(p)){
+					this.infoWarningList.add(s);
+				}
+			}
+		}
+		
+		report.setErrorList(this.errorList);
+		report.setInfoWarnings(this.infoWarningList);
+		report.setWarnings(this.warning);
+		
+		return report;
+	}
+	
+	
+	
 	
 }
