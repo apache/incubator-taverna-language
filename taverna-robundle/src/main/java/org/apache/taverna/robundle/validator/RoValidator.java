@@ -25,7 +25,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -129,15 +131,19 @@ public class RoValidator {
 		 * There are default files: mimetype and LICENSE
 		 * */
 		
+		
+		//FIX ME : performance ???
+		Set<String> set = new HashSet<>();
+		for(PathMetadata p : this.aggr){
+			set.add(p.toString());
+		}
+		
 		for(String s : this.items){
 			
-//			s = s.toLowerCase();
-			PathMetadata p = new PathMetadata(s);
-//			System.out.println(p);
-			if(s.contains("mimetype")||s.toLowerCase().contains("license")){
+			if(s.contains("mimetype")||s.toLowerCase().contains("license")||s.contains(".ro")){
 				//This is ok and skip
 			}else{
-				if(!this.aggr.contains(p)){
+				if(!set.contains(s)){
 					this.infoWarningList.add(p.toString());
 				}
 			}
