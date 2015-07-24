@@ -21,13 +21,23 @@ package org.apache.taverna.robundle.validator;
 
 import static org.junit.Assert.*;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import org.junit.Test;
 
 public class ValidatorTest {
 
+	private Path path = Paths.get("src/test/resources/workflowrun.bundle.zip");
+	
 	@Test
 	public void test() {
-		fail("Not yet implemented");
+		RoValidator validator = new RoValidator(path);
+		ValidationReport r = validator.check();
+		
+		System.out.println(r.getErrorList());
+		System.out.println(r.getInfoWarnings());
+		System.out.println(r.getWarnings());
 	}
 
 }
