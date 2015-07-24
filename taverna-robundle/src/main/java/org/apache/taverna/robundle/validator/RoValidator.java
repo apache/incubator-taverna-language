@@ -37,9 +37,6 @@ import org.apache.taverna.robundle.manifest.Manifest;
 import org.apache.taverna.robundle.manifest.PathAnnotation;
 import org.apache.taverna.robundle.manifest.PathMetadata;
 
-
-
-
 /*
  * Validation Process:
  * The class validates RO bundles for manifest and aggregates.
@@ -52,6 +49,7 @@ import org.apache.taverna.robundle.manifest.PathMetadata;
  * Also in annotations....
  * If the about contain a /-based resource which is not listed or not in the container, there will be an error.
  */
+
 public class RoValidator {
 	
 	private Path p;
@@ -60,6 +58,9 @@ public class RoValidator {
 	
 	//Store all the annotations
 	private List<PathAnnotation> anno;
+	
+	//List of resources in the bundle
+	private ArrayList<String> items = new ArrayList<String>();
 	
 	
 	//ArrayList for errors :- If aggregate is listed in manifest but not in bundle
@@ -79,13 +80,12 @@ public class RoValidator {
 	
 	public void validate(){
 		Bundle bundle;
-		ArrayList<String> items = new ArrayList<String>();
+		
 		try {
 			bundle = Bundles.openBundle(this.p);
 			Manifest manifest = bundle.getManifest();
 			this.aggr = manifest.getAggregates();
 			this.anno = manifest.getAnnotations();
-			
 			
 			ZipFile zip = new ZipFile(new File(this.p.toString()));
 			Enumeration<? extends ZipEntry> ent = zip.entries();
@@ -100,20 +100,17 @@ public class RoValidator {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		check(items);
-		
-		
+				
 	}
 	
-	public ValidationReport check(ArrayList<String> list){
+	public ValidationReport check(){
 		
 		ValidationReport report = new ValidationReport();
 		
 		for(PathMetadata pm : this.aggr){
-			
+//			System.out.println("Path metedata " + pm);
 			//If aggregates listed in manifest are not found in bundle...
-			if(!list.contains(pm.toString())){
+			if(!this.items.contains(pm.toString())){
 				
 				/*
 				 * Here it can be a external url or the file is missing
@@ -132,15 +129,16 @@ public class RoValidator {
 		 * There are default files: mimetype and LICENSE
 		 * */
 		
-		for(String s : list){
+		for(String s : this.items){
 			
-			s = s.toLowerCase();
+//			s = s.toLowerCase();
 			PathMetadata p = new PathMetadata(s);
-			if(s.contains("mimetype")||s.contains("license")){
+//			System.out.println(p);
+			if(s.contains("mimetype")||s.toLowerCase().contains("license")){
 				//This is ok and skip
 			}else{
 				if(!this.aggr.contains(p)){
-					this.infoWarningList.add(s);
+					this.infoWarningList.add(p.toString());
 				}
 			}
 		}

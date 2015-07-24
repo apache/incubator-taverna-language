@@ -51,57 +51,63 @@ public class ValidationReport {
 	public ValidationReport(){
 		
 	}
+	
+	public void setWarnings(ArrayList<String> warnings) {
+		this.warnings = warnings;
+	}
+	
+	public void setInfoWarnings(ArrayList<String> infoWarnings) {
+		this.infoWarnings = infoWarnings;
+	}
+	
+	public void setErrorList(ArrayList<String> errorList) {
+		this.errorList = errorList;
+	}
 
+	
 	public String getErrorList() {
 		String errors = "";
 		if(this.errorList.size()!=0){
 			for(String e : this.errorList){
-				errors += e + "\n";
+				errors += "Aggregate not found error: " + e + "\n";
 			}
 		}else{
-			return "The ro bundle has no errors";
+			return "The bundle has no errors";
 		}
 		
 		return "Aggregate not found errors: " +"\n"+ errors;
 	}
 
-	public void setErrorList(ArrayList<String> errorList) {
-		this.errorList = errorList;
-	}
+	
 
 	public String getInfoWarnings() {
 		String warning = "";
 		if(this.warnings.size()!=0){
 			for(String w : this.warnings){
-				warning += w + "\n";
+				warning += "Warning: " +w + " is an external URL \n";
 			}
 		}else{
 			return "The bundle has no warnings";
 		}
-		return "Warnings" + "\n" + warning;
+		return warning;
 	}
 
-	public void setInfoWarnings(ArrayList<String> infoWarnings) {
-		this.infoWarnings = infoWarnings;
-	}
+	
 
 	public String getWarnings() {
 		String infoWarning = "";
 		
 		if(this.infoWarnings.size()!=0){
 			for(String iw : this.infoWarnings){
-				infoWarning += iw + "\n";
+				infoWarning += "Warning (info) "+iw + "\n";
 			}
 		}else{
 			return "The Bundle has no Info level warnings";
 		}
-		return "Info-Level warnings: " +"\n"+infoWarning;
+		return infoWarning;
 		
 	}
 
-	public void setWarnings(ArrayList<String> warnings) {
-		this.warnings = warnings;
-	}
 	
 
 }
