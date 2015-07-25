@@ -129,11 +129,28 @@ The tool has following major commands.
  
 There are two usages of conversion command.
 
-1. Non-recursive method
+###### 1. Non-recursive method
 
 	Usage: tavlang convert <--output_format> <options> [arguments]
 	
+####### Example 1: Without specifying any options
+	
+	$tavlang convert --structure /helloworld.t2flow
 
+Convert the helloworld.t2flow into helloworld.structure format and store in /converted directory
 
-2. Recursive method
+###### Example 2: Convert multiple workflows
+	
+	$tavlang convert --json /helloworld.t2flow /hello.t2flow
+	
+Convert both workflow files and store them in /converted directory
 
+###### Example 3: with options and arguments
+
+	$tavlang convert --wfbundle /helloworld.t2flow -o /output/workflows
+	
+Convert the workflow file/s and store them in the specified output directory
+
+###### 2. Recursive method
+	
+	Usage: tavlang convert -r <--output_format> -i <workflow_src_dir> <options> [arguments]
