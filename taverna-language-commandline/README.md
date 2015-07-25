@@ -118,6 +118,8 @@ The tool has following major commands.
 
 ### Convert
 
+Convert the given workwlow file/s into a specified output format.
+
 Usage:
 	
 	tavlang convert <--output_fomat> <options> [arguments]
@@ -129,12 +131,12 @@ Usage:
  * json
  * robundle
  * structure
- 
-There are two usages of conversion command.
 
 *The tool can only convert into one format at a time
 
-###### 1. Non-recursive method
+There are two usage scenarios of conversion command.
+
+### * 1. Non-recursive method
 
 Usage: 
 
@@ -171,7 +173,7 @@ Output:
 	
 Convert the workflow file/s and store them in the specified output directory
 
-###### 2. Recursive method
+###* 2. Recursive method
 
 If there are many workflows in a directory, which are needed to be converted into one single format use this method.
 	
