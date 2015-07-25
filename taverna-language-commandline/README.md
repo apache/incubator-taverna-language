@@ -109,10 +109,10 @@ Each command has it's own set of options.
 ###Commands and Options
 The tool has following major commands.
 
-* convert
-* inspect
-* validate
-* stats
+* convert: Options {-r -- recursive, -i --input, -o --output,}
+* inspect: Options {-l --log}
+* validate: Options {-l --log, -v --verbose}
+* stats: Options {-l --log, -v --verbose}
 
 ## Commands in detail
 
