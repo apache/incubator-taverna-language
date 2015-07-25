@@ -136,7 +136,7 @@ Usage:
 
 There are two usage scenarios of conversion command.
 
-### * 1. Non-recursive method
+#### * 1. Non-recursive method
 
 Usage: 
 
@@ -173,7 +173,7 @@ Output:
 	
 Convert the workflow file/s and store them in the specified output directory
 
-###* 2. Recursive method
+#### * 2. Recursive method
 
 If there are many workflows in a directory, which are needed to be converted into one single format use this method.
 	
