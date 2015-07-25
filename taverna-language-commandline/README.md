@@ -102,7 +102,7 @@ The tool has following functionalities.
 	
 ## Command line structure 
 	
-	tavlang <command> <options> [arguments and parameters]
+	$tavlang <command> <options> [arguments and parameters]
 	
 Each command has it's own set of options.
 
@@ -116,7 +116,8 @@ The tool has following major commands.
 
 ##### Convert
 
-	Usage:
+Usage:
+	
 	tavlang convert <--output_fomat> <options> [arguments]
 	
  Supported output formats are,
@@ -129,13 +130,21 @@ The tool has following major commands.
  
 There are two usages of conversion command.
 
+*The tool can only convert into one format at a time
+
 ###### 1. Non-recursive method
 
-	Usage: tavlang convert <--output_format> <options> [arguments]
+Usage: 
+
+	$tavlang convert <--output_format> <options> [arguments]
 	
 ####### Example 1: Without specifying any options
 	
 	$tavlang convert --structure /helloworld.t2flow
+	
+Output:
+
+	/converted/helloworld.structure is created
 
 Convert the helloworld.t2flow into helloworld.structure format and store in /converted directory
 
@@ -143,14 +152,37 @@ Convert the helloworld.t2flow into helloworld.structure format and store in /con
 	
 	$tavlang convert --json /helloworld.t2flow /hello.t2flow
 	
+Output:
+	
+	/converted/helloworld.json is created
+	/converted/hello.json is created
+	
 Convert both workflow files and store them in /converted directory
 
 ###### Example 3: with options and arguments
 
 	$tavlang convert --wfbundle /helloworld.t2flow -o /output/workflows
 	
+Output:
+	
+	/output/workflows/helloworld.wfbundle is created
+	
 Convert the workflow file/s and store them in the specified output directory
 
 ###### 2. Recursive method
+
+If there are many workflows in a directory, which are needed to be converted into one single format use this method.
 	
-	Usage: tavlang convert -r <--output_format> -i <workflow_src_dir> <options> [arguments]
+Usage: 
+	
+	$tavlang convert -r <--output_format> -i <workflow_src_dir> <options> [arguments]
+
+###### Example 4: Without options and arguments
+
+	$tavlang convert -r --json -i /home/user/workflows_to_convert
+	
+Convert all the workflows in the input directory into the specified format and store them in /home/user/workflows_to_convert/converted directory.
+
+###### Example 5: with output dir is specified
+
+	
