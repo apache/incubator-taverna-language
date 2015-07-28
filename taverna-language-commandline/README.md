@@ -116,7 +116,7 @@ The tool has following major commands.
 
 ## Commands in detail
 
-### Convert
+### convert
 
 Convert the given workwlow file/s into a specified output format.
 
@@ -202,3 +202,51 @@ Output:
 
 	/home/final/1.iwir is created
 	/home/final/2.iwir is created
+	
+### inspect
+
+Inspect the given workflow file/s and give the inspection report. 
+Support workflow bundle formats: .wfbundle, .t2flow
+
+Usage:-
+	
+	$tavlang inspect <--inspection_options> <-other-options> [arguments] <workflow bundles to be inspected>
+	
+Inspection options: 
+
+ * --servcetypes :- List all the service-types used in the workflow
+ * --processornames :- List the tree of the processor names used in the workflow
+ 
+Other Options:
+
+ * -l, --log :- save the inspection report in a text file 
+ 
+###### Example 1: Without any other-options
+
+1.
+	$tavlang inspect --servicetypes helloworld.wfbundle
+	Service types used in helloworld.wfbundle :
+
+	http://ns.taverna.org.uk/2010/activity/constant
+	**************************************************
+
+2.
+	
+	$tavlang inspect --processornames helloworld.wfbundle
+	Processor tree of helloworld.wfbundle 
+	+ Hello_World
+	  - hello
+	
+###### Example 2: With other options
+The output is the same but the results will be saved in the given file.
+
+	$tavlang inspect --processornames helloworld.wfbundle -l results.txt
+	Processor tree of helloworld.wfbundle 
+	+ Hello_World
+	 - hello
+
+
+The output will be saved in results.txt in the same format.
+
+### validate
+### stats
