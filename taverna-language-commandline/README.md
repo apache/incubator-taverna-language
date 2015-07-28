@@ -224,6 +224,7 @@ Other Options:
 ###### Example 1: Without any other-options
 
 1.
+
 	$tavlang inspect --servicetypes helloworld.wfbundle
 	Service types used in helloworld.wfbundle :
 
