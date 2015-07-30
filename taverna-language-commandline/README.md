@@ -98,7 +98,8 @@ The tool has following functionalities.
 
 * Conversion
 * Inspection
-* Validation and Viewing workflow statistics.
+* Validation
+* Viewing workflow statistics.
 	
 ## Command line structure 
 	
@@ -348,3 +349,22 @@ The report is more explained.
 	Results were saved into log2.txt
 
 ### stats
+
+A workflow contains several resources.
+
+* Processors
+* Input ports
+* Output ports
+* Data links
+* Control links
+
+The stats command gives a report of the resorces used in the workflow.
+
+Usage:- 
+
+	$tavlang stats [options] input_files
+	
+Options:- 
+
+ * -l, – – log : Save results in a log file
+ * -v, – – verbose : verbose mode
