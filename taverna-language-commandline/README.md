@@ -250,4 +250,101 @@ The output is the same but the results will be saved in the given file.
 The output will be saved in results.txt in the same format.
 
 ### validate
+
+Validates the given workflow file or files and give the validation report. 
+validate tool checks for the following problematic conditions.
+
+ * Empty Iteration Strategy Top-Node Problems
+ * Mismatch Configurable Type Problems
+ * Non Absolute URI Problems
+ * Null Field Problems
+ * Out-Of-Scope Value Problems
+ * Port Mentioned Twice Problems
+ * Port Missing From Iteration Strategy Stack Problems
+ * Wrong Parent Problems
+ * Incompatible Granular Depth Problems
+ 
+Usage:-
+
+	$tavlang validate [options][arguments] input_files
+
+Options:- 
+
+ * -l, --log: Save the validation report in a text file
+ * -v, --verbose: Verbose mode
+
+Supported workflow bundle formats: .t2flow and .wfbundle
+
+###### Example 1: Normal mode
+
+ * Validate one workflow bundle
+
+	$tavlang validate helloworld.t2flow
+	
+Output: 
+	
+	Validation started....
+	Validating helloworld.t2flow
+	The workflow helloworld.t2flow has no errors. 
+
+	Validation completed.......
+ 
+ * Validate more than one workflow bundles
+ 
+	$tavlang validate ../../workflow2.t2flow ../../workflow3.wfbundle
+
+	Validation started....
+	Validating ../../workflow2.t2flow
+	The workflow workflow2.t2flow has no errors. 
+
+	Validating ../../workflow3.wfbundle
+	The workflow workflow3.t2flow has no errors. 
+
+	Validation completed.......
+
+
+###### Example 2: Verbose mode
+
+The report is more explained.
+
+	$tavlang validate -v ../../workflow2.t2flow
+
+	Validation started....
+	Validating ../../workflow2.t2flow
+	The workflow workflow2.t2flow has no errors. 
+
+	The validation report for defaultActivitiesTaverna2.wfbundle......
+	-------------------------------------------------------------------------------- 
+	-->NegativeValueProblems:- null 
+	
+	-->EmptyIterationStrategyTopNodeProblems:- null 
+
+	-->MismatchConfigurableTypeProblems:- null 
+
+	-->NonAbsoluteURIProblems:- null 
+
+	-->NullFieldProblems:- null 
+
+	-->OutOfScopeValueProblems:- null 
+
+	-->PortMentionedTwiceProblems:- null 
+
+	-->PortMissingFromIterationStrategyStackProblems:- null 
+
+	-->WrongParentProblems:- null 
+
+	-->IncompatibleGranularDepthProblems:- null 
+
+	---------------------------------------------------------------------------------
+
+###### Example 3: Saving results to a file
+
+	$tavlang validate workflow2.t2flow -l log2.txt 
+	Validation started.... 
+	Validating workflow2.t2flow 
+	The workflow helloworld.wfbundle has no errors. 
+	Validation completed....... 
+	
+	Results were saved into log2.txt
+
 ### stats
