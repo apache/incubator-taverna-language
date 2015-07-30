@@ -368,3 +368,50 @@ Options:-
 
  * -l, – – log : Save results in a log file
  * -v, – – verbose : verbose mode
+ 
+Supported workflow bundle formats:- .t2flow, .wfbundle
+
+###### Example 1: Normal mode
+
+	$tavlang helloworld.wfbundle
+	>>> Statistics of the workflow bundle: helloworld.wfbundle <<<
+	Name of the workflow = Hello_World
+	 |--> Number of Processors = 1
+	 |--> Number of Data Links = 1
+	 |--> Number of Control Links = 0
+	 |--> Number of Input ports = 0
+	 |--> Number of Output Ports = 1
+ 
+###### Example 2: Verbose mode 
+
+	$tavlang -v ../../../helloworld.wfbundle
+	>>> Statistics of the workflow bundle: helloworld.wfbundle <<<
+	Name of the workflow = Hello_World
+	 |--> Number of Processors = 1
+	 | |--> Processors: 
+	 |      |--> hello
+	 |
+	 |--> Number of Data Links = 1
+	 | |--> Data Links
+	 |      |--> DataLink value=>greeting
+	 |
+	 |--> Number of Control Links = 0
+	 |--> Number of Input ports = 0
+	 |--> Number of Output Ports = 1
+	 | |--> Output Ports
+	 |      |--> OutputWorkflowPort "greeting"
+	 
+###### Example 3: Saving results in a file 
+
+	$tavlang -l ../../results.txt ../../../helloworld.wfbundle
+	>>> Statistics of the workflow bundle: helloworld.wfbundle <<<
+	Name of the workflow = Hello_World
+	 |--> Number of Processors = 1
+	 |--> Number of Data Links = 1
+	 |--> Number of Control Links = 0
+	 |--> Number of Input ports = 0
+	 |--> Number of Output Ports = 1
+
+	Results were saved into ../../results.txt
+	
+-----------------------------------------------------------------------------------------------------------------------------------------
