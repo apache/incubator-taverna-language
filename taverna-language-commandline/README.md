@@ -137,7 +137,7 @@ Usage:
 
 There are two usage scenarios of conversion command.
 
-#### * 1. Non-recursive method
+####  1. Non-recursive method
 
 Usage: 
 
