@@ -117,7 +117,7 @@ The tool has following major commands.
 
 ## Commands in detail
 
-### convert
+### convert ------------------------------------------------------
 
 Convert the given workwlow file/s into a specified output format.
 
@@ -174,7 +174,7 @@ Output:
 	
 Convert the workflow file/s and store them in the specified output directory
 
-#### * 2. Recursive method
+####  2. Recursive method
 
 If there are many workflows in a directory, which are needed to be converted into one single format use this method.
 	
@@ -204,7 +204,7 @@ Output:
 	/home/final/1.iwir is created
 	/home/final/2.iwir is created
 	
-### inspect
+### inspect -----------------------------------------------------------------
 
 Inspect the given workflow file/s and give the inspection report. 
 Support workflow bundle formats: .wfbundle, .t2flow
@@ -250,7 +250,7 @@ The output is the same but the results will be saved in the given file.
 
 The output will be saved in results.txt in the same format.
 
-### validate
+### validate ----------------------------------------------------------------------
 
 Validates the given workflow file or files and give the validation report. 
 validate tool checks for the following problematic conditions.
@@ -348,7 +348,7 @@ The report is more explained.
 	
 	Results were saved into log2.txt
 
-### stats
+### stats ----------------------------------------------------------------------------------
 
 A workflow contains several resources.
 
