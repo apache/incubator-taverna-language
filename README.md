@@ -113,7 +113,7 @@ For more details, see the READMEs of:
 
 ## Prerequisites
 
-* Java 1.7 or newer (tested with OpenJDK 1.8)
+* Java 1.8 or newer (tested with OpenJDK 1.8)
 * [Apache Maven](https://maven.apache.org/download.html) 3.2.5 or newer (older
   versions probably also work)
 
