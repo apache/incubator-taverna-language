@@ -119,7 +119,7 @@ The tool has following major commands.
 
 ### convert ------------------------------------------------------
 
-Convert the given workwlow file/s into a specified output format.
+Convert the given workflow file/s into a specified output format.
 
 Usage:
 	
