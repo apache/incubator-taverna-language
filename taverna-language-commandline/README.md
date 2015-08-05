@@ -23,7 +23,7 @@ This is planned as a command line for the
 an API for the 
 [Apache Taverna](http://taverna.incubator.apache.org/) workflows.
 
-This module is **work in progress** as part of Google Summer of Code 2015.
+This module is a **work in progress** as part of Google Summer of Code 2015.
 
 
 
@@ -38,18 +38,18 @@ Licensed under the [Apache License
 2.0](https://www.apache.org/licenses/LICENSE-2.0), see the file
 [../LICENSE](../LICENSE) for details.
 
-The file [NOTICE](src/main/resources/NOTICE) contain any additional attributions and
+The file [NOTICE](src/main/resources/NOTICE) contains any additional attributions and
 details about embedded third-party libraries and source code.
 
 
 # Contribute
 
 Please subscribe to and contact the 
-[dev@taverna](http://taverna.incubator.apache.org/community/lists#dev mailing list)
+[dev@taverna](http://taverna.incubator.apache.org/community/lists#dev%20mailing%20list)
 for any questions, suggestions and discussions about 
 Apache Taverna Language Commandline.
 
-Bugs and feature plannings are tracked in the Jira
+Bugs and planned features are tracked in the Jira
 [Issue tracker](https://issues.apache.org/jira/browse/TAVERNA/component/12326903)
 under the `TAVERNA` component _GSOC Taverna Language Command line_. Feel free
 to add an issue!
@@ -86,15 +86,15 @@ To build, run:
 	    convert    Convert the given workflow
 	    help       Display help information about Tvarna
 	    inspect    Inspect the given workflow and show the results on the terminal
-	    validate   validate the given workflow
+	    validate   Validate the given workflow
 	    version    Show version informantion
 	
 	See 'tavlang help <command>' for more information on a specific command.
 
 # Documentation
 
-Taverna language command line tool is for access the features of the Taverna language modules. 
-The tool has following functionalities.
+The Taverna language command line tool is for accessing the features of the Taverna language modules. 
+The tool has the following functions:
 
 * Conversion
 * Inspection
@@ -105,10 +105,10 @@ The tool has following functionalities.
 	
 	$tavlang <command> <options> [arguments and parameters]
 	
-Each command has it's own set of options.
+Each command has its own set of options.
 
 ###Commands and Options
-The tool has following major commands.
+The tool has the following major commands:
 
 * convert: Options {-r -- recursive, -i --input, -o --output,}
 * inspect: Options {-l --log}
@@ -123,7 +123,7 @@ Convert the given workflow file/s into a specified output format.
 
 Usage:
 	
-	tavlang convert <--output_fomat> <options> [arguments]
+	tavlang convert (--output_fomat) ([[options] [arguments]]|files...)
 	
  Supported output formats are,
  
@@ -132,16 +132,22 @@ Usage:
  * json
  * robundle
  * structure
+ 
+Options:
+
+ * -r, --recursive : Convert all workflow files in a given directory recursively
+ * -i, --input     : Used with recursive case. Specify the input directory
+ * -o, --output    : Specify the out put directory 
 
 *The tool can only convert into one format at a time
 
-There are two usage scenarios of conversion command.
+There are two methods for using the conversion command.
 
 ####  1. Non-recursive method
 
 Usage: 
 
-	$tavlang convert <--output_format> <options> [arguments]
+	$tavlang convert (--output_format) [options] [arguments] 
 	
 ####### Example 1: Without specifying any options
 	
@@ -151,7 +157,7 @@ Output:
 
 	/converted/helloworld.structure is created
 
-Convert the helloworld.t2flow into helloworld.structure format and store in /converted directory
+Convert the helloworld.t2flow into helloworld.structure format and store in the /converted directory
 
 ###### Example 2: Convert multiple workflows
 	
@@ -180,13 +186,13 @@ If there are many workflows in a directory, which are needed to be converted int
 	
 Usage: 
 	
-	$tavlang convert -r <--output_format> -i <workflow_src_dir> <options> [arguments]
+	$tavlang convert -r (--output_format) -i workflow_src_dir <options> [arguments]
 
 ###### Example 4: Without options and arguments
 
-	$tavlang convert -r --json -i /home/workflows
+	$tavlang convert -r --json -i /home/user/workflows
 	
-Convert all the workflows in the input directory into the specified format and store them in /home/user/workflows_to_convert/converted directory.
+Convert all the workflows in the input directory into the specified format and store them in the "/home/user/workflows/converted" directory.
 
 Output: Suppose that there are 2 workflow files in the dir 1.t2flow and 2.t2flow
 
@@ -207,15 +213,15 @@ Output:
 ### inspect -----------------------------------------------------------------
 
 Inspect the given workflow file/s and give the inspection report. 
-Support workflow bundle formats: .wfbundle, .t2flow
+Supported workflow bundle formats: .wfbundle, .t2flow
 
 Usage:-
 	
-	$tavlang inspect <--inspection_options> <-other-options> [arguments] <workflow bundles to be inspected>
+	$tavlang inspect (--inspection_options) <-other-options> [arguments] workflow_undles_to_be_inspected
 	
 Inspection options: 
 
- * --servcetypes :- List all the service-types used in the workflow
+ * --servicetypes :- List all the service-types used in the workflow
  * --processornames :- List the tree of the processor names used in the workflow
  
 Other Options:
@@ -224,7 +230,7 @@ Other Options:
  
 ###### Example 1: Without any other-options
 
-1.
+1. Inspection result for Service types
 
 	$tavlang inspect --servicetypes helloworld.wfbundle
 	Service types used in helloworld.wfbundle :
@@ -232,7 +238,7 @@ Other Options:
 	http://ns.taverna.org.uk/2010/activity/constant
 	**************************************************
 
-2.
+2. inspection result for Processor names
 	
 	$tavlang inspect --processornames helloworld.wfbundle
 	Processor tree of helloworld.wfbundle 
@@ -252,12 +258,12 @@ The output will be saved in results.txt in the same format.
 
 ### validate ----------------------------------------------------------------------
 
-Validates the given workflow file or files and give the validation report. 
-validate tool checks for the following problematic conditions.
+Validates the given workflow file or files and gives the validation report. 
+Validate tool checks for the following problematic conditions.
 
  * Empty Iteration Strategy Top-Node Problems
  * Mismatch Configurable Type Problems
- * Non Absolute URI Problems
+ * Non-Absolute URI Problems
  * Null Field Problems
  * Out-Of-Scope Value Problems
  * Port Mentioned Twice Problems
@@ -278,7 +284,7 @@ Supported workflow bundle formats: .t2flow and .wfbundle
 
 ###### Example 1: Normal mode
 
- * Validate one workflow bundle
+  Validate one workflow bundle
 
 	$tavlang validate helloworld.t2flow
 	
@@ -290,7 +296,7 @@ Output:
 
 	Validation completed.......
  
- * Validate more than one workflow bundles
+  Validate more than one workflow bundles
  
 	$tavlang validate ../../workflow2.t2flow ../../workflow3.wfbundle
 
@@ -306,7 +312,7 @@ Output:
 
 ###### Example 2: Verbose mode
 
-The report is more explained.
+The report is more explanatory.
 
 	$tavlang validate -v ../../workflow2.t2flow
 
@@ -358,11 +364,11 @@ A workflow contains several resources.
 * Data links
 * Control links
 
-The stats command gives a report of the resorces used in the workflow.
+The stats command gives a report of the resources used in the workflow.
 
 Usage:- 
 
-	$tavlang stats [options] input_files
+	$tavlang stats <options>[arguments] input_files...
 	
 Options:- 
 
