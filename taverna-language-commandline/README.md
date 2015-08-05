@@ -232,6 +232,7 @@ Other Options:
 
 1. Inspection result for Service types
 
+
 	$tavlang inspect --servicetypes helloworld.wfbundle
 	Service types used in helloworld.wfbundle :
 
@@ -239,6 +240,7 @@ Other Options:
 	**************************************************
 
 2. inspection result for Processor names
+	
 	
 	$tavlang inspect --processornames helloworld.wfbundle
 	Processor tree of helloworld.wfbundle 
