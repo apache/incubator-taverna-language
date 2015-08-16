@@ -100,6 +100,7 @@ public class RoValidator {
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			System.err.println("Unable to open the bundle");
 			e.printStackTrace();
 		}
 				
