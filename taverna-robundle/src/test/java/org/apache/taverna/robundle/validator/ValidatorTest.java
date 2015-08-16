@@ -28,37 +28,30 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+import junit.framework.AssertionFailedError;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 public class ValidatorTest {
 
-	 Path path;
-	    @Before
-	      public void copyExample() {
-	                try {
-						path = Files.createTempFile("test", ".bundle.zip");
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-	                try {
-						Files.copy(getClass().getResourceAsStream("/workflowrun.bundle.zip"), path, StandardCopyOption.REPLACE_EXISTING);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-	    }
-	
+	Path path;
+	 	
 	@Test
-	public void test() {
+	public void test() throws Exception{
+		
+		path = Files.createTempFile("test", ".bundle.zip");
+		Files.copy(getClass().getResourceAsStream("/workflowrun.bundle.zip"), path, StandardCopyOption.REPLACE_EXISTING);
+		
 		RoValidator validator = new RoValidator(path);
 		ValidationReport r = validator.check();
 		
-		assertTrue(r.getErrorList()!=null);
-		assertTrue(r.getInfoWarnings()!=null);
-		assertTrue(r.getWarnings()!=null);
+		assertNotNull("Errors List", r.getErrorList_l());
+		assertNotNull("Warnings List", r.getInfoWarnings());
+		assertNotNull("Info Warnings List", r.getInfoWarnings_l());
+		
+		Files.delete(path);
 		
 	}
 
