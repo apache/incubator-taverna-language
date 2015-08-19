@@ -257,6 +257,7 @@
     <module>taverna-scufl2-t2flow</module>
     <module>taverna-scufl2-ucfpackage</module>
     <module>taverna-scufl2-wfbundle</module>
+    <module>taverna-language-commandline</module>
     <!-- Disabled temporarily due to dependency overload..
     <module>taverna-scufl2-wfdesc</module>
     -->
