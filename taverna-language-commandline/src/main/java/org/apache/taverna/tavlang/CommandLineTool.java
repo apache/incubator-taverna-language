@@ -214,6 +214,7 @@ public class CommandLineTool {
 			if(validate){
 				Validate validate = new Validate(files, null, false);
 				if(validate.getCheck()){
+					
 					return;
 				}else{
 					runcommand();

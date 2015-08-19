@@ -69,11 +69,12 @@ public class Validate {
 			
 		} catch (ReaderException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("Workflow bundle not found!");
+			System.err.println(e.getMessage());
 
 		}
 	}
