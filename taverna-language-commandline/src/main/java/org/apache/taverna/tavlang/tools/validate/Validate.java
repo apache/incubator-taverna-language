@@ -69,7 +69,7 @@ public class Validate {
 			
 		} catch (ReaderException e) {
 			// TODO Auto-generated catch block
-			System.out.println(e.getMessage());
+			System.err.println(e.getMessage());
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -142,7 +142,7 @@ public class Validate {
 			System.out.println("Results were saved into " + logFile.getPath());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("Error writing to the file \n" + e.getMessage());
 		}
 
 	}
