@@ -214,7 +214,7 @@ public class CommandLineTool {
 			if(validate){
 				Validate validate = new Validate(files, null, false);
 				if(validate.getCheck()){
-					
+					System.out.println("Conversion failed...! Workflow bundle has errors");
 					return;
 				}else{
 					runcommand();
