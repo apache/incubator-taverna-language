@@ -48,28 +48,53 @@ public class ValidationReport {
 	//For warnings
 	private ArrayList<String> warnings;
 	
+	//Constructor
 	public ValidationReport(){
 		
 	}
 	
+	//To set the Warnings list
 	public void setWarnings(ArrayList<String> warnings) {
 		this.warnings = warnings;
 	}
 	
+	//To set the infoLevelWarnings list
 	public void setInfoWarnings(ArrayList<String> infoWarnings) {
 		this.infoWarnings = infoWarnings;
 	}
 	
+	//To set the errors list
 	public void setErrorList(ArrayList<String> errorList) {
 		this.errorList = errorList;
 	}
-
 	
+
+	/*
+	 * To get the results in general manner use these methods or straight from the RoVallidator code.
+	 * */
+
+	//Returns the errors list
+	public ArrayList<String> getErrorList_l() {
+		return errorList;
+	}
+
+	//Returns the info warnings list
+	public ArrayList<String> getInfoWarnings_l() {
+		return infoWarnings;
+	}
+	
+	//Returns the Warnings list
+	public ArrayList<String> getWarnings_l() {
+		return warnings;
+	}
+	
+	
+//	In order to get the output with some verbosity
 	public String getErrorList() {
-		String errors = "";
+		String errors = "Aggregate not found error: \n";
 		if(this.errorList.size()!=0){
 			for(String e : this.errorList){
-				errors += "Aggregate not found error: " + e + "\n";
+				errors += e + "\n";
 			}
 		}else{
 			return "The bundle has no errors";
@@ -81,10 +106,10 @@ public class ValidationReport {
 	
 
 	public String getInfoWarnings() {
-		String warning = "";
+		String warning = "Warning: \n";
 		if(this.warnings.size()!=0){
 			for(String w : this.warnings){
-				warning += "Warning: " +w + " is an external URL \n";
+				warning += w + " is an external URL \n";
 			}
 		}else{
 			return "The bundle has no warnings";
@@ -95,11 +120,11 @@ public class ValidationReport {
 	
 
 	public String getWarnings() {
-		String infoWarning = "";
+		String infoWarning = "Warning (info) : \n";
 		
 		if(this.infoWarnings.size()!=0){
 			for(String iw : this.infoWarnings){
-				infoWarning += "Warning (info) "+iw + "\n";
+				infoWarning += iw + "\n";
 			}
 		}else{
 			return "The Bundle has no Info level warnings";

@@ -21,23 +21,38 @@ package org.apache.taverna.robundle.validator;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
+import junit.framework.AssertionFailedError;
+
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 public class ValidatorTest {
 
-	private Path path = Paths.get("src/test/resources/workflowrun.bundle.zip");
-	
+	Path path;
+	 	
 	@Test
-	public void test() {
+	public void test() throws Exception{
+		
+		path = Files.createTempFile("test", ".bundle.zip");
+		Files.copy(getClass().getResourceAsStream("/workflowrun.bundle.zip"), path, StandardCopyOption.REPLACE_EXISTING);
+		
 		RoValidator validator = new RoValidator(path);
 		ValidationReport r = validator.check();
 		
-		System.out.println(r.getErrorList());
-		System.out.println(r.getInfoWarnings());
-		System.out.println(r.getWarnings());
+		assertNotNull("Errors List", r.getErrorList_l());
+		assertNotNull("Warnings List", r.getInfoWarnings());
+		assertNotNull("Info Warnings List", r.getInfoWarnings_l());
+		
+		Files.delete(path);
+		
 	}
 
 }
