@@ -214,7 +214,7 @@ public class CommandLineTool {
 			if(validate){
 				Validate validate = new Validate(files, null, false);
 				if(validate.getCheck()){
-					
+					System.out.println("Conversion failed...! Workflow bundle has errors");
 					return;
 				}else{
 					runcommand();
@@ -258,8 +258,9 @@ public class CommandLineTool {
 		@Override
 		public void execute() {
 			// TODO Auto-generated method stub
-			System.out
-					.println("Apache Taverna Language Command line tool. \nVersion 1.0 ");
+			
+			System.out.print(getClass().getPackage().getImplementationTitle());
+            System.out.println(" " + getClass().getPackage().getImplementationVersion());
 		}
 
 	}
