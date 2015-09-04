@@ -1,8 +1,11 @@
 <?xml version="1.0"?>
-<?xml-stylesheet type="text/xsl" href="owl2html.xslt"?>
 <!--
 © Copyright 2008-2014 Massachusetts General Hospital; Harvard Medical School;
 Balboa Systems; University of Manchester
+Copyright 2015 Apache Software Foundation
+
+Modified for Apache Taverna to remove xml-stylesheet.
+For original, see http://purl.org/pav/
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use
 this file except in compliance with the License. You may obtain a copy of the
