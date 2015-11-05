@@ -404,7 +404,7 @@ public class DataBundles extends Bundles {
 			throws ReaderException, IOException {
 		Path wf = getWorkflow(dataBundle);
 		// String type = Files.probeContentType(wf);
-		return wfBundleIO.readBundle(newInputStream(wf), null);
+		return getWfBundleIO().readBundle(newInputStream(wf), null);
 	}
 
 	public static Path getIntermediates(Bundle dataBundle) throws IOException {
