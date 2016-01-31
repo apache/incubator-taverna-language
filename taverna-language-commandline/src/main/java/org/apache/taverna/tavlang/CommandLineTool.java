@@ -67,7 +67,6 @@ public class CommandLineTool {
 	};
 
 	public void parse(String... args) {
-//		System.out.println("$ tavlang " + Joiner.on(" ").join(args));
 		TvnLangTool command = parser().parse(args);
 		command.execute();
 		System.out.println();
@@ -83,10 +82,10 @@ public class CommandLineTool {
 		@Option(name = "--wfdesc", description = "Convert the workflow file to wfdesc-turtle")
 		public static boolean isWfdesc = false;
 
-		@Option(name = "--wfbundle", description = "Convert the workflow file to wfbundel")
-		public static boolean isWfbundel = false;
+		@Option(name = "--wfbundle", description = "Convert the workflow file to wfbundle")
+		public static boolean isWfbundle = false;
 
-		@Option(name = "--robundle", description = "Convert given bundel in to Research Object bundel")
+		@Option(name = "--robundle", description = "Convert given bundel in to Research Object bundle")
 		public static boolean isRo = false;
 
 		@Option(name = "--structure", description = "Convert the workflow into *.structure")
@@ -227,7 +226,6 @@ public class CommandLineTool {
 				try {
 					new ToRobundle(files, Optional.getOutFile());
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 //				else if(Filetypes.isIwir || Filetypes.isJson || Filetypes.isStructure || Filetypes.isWfbundel || Filetypes.isWfdesc)
@@ -280,7 +278,6 @@ public class CommandLineTool {
 
 		@Override
 		public void execute() {
-			// TODO Auto-generated method stub
 			if (Inspect.processor) {
 				try {
 					new ProcessorNames(toInspect, file);
@@ -352,7 +349,6 @@ public class CommandLineTool {
 		
 		@Override
 		public void execute() {
-			// TODO Auto-generated method stub
 			
 			GetWfStat stat = new GetWfStat(files, file, verbose);
 			
