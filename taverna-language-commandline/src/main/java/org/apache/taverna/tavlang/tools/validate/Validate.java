@@ -68,11 +68,9 @@ public class Validate {
 			this.finalrep += validate(io.readBundle(file, null), file.getName());
 			
 		} catch (ReaderException e) {
-			// TODO Auto-generated catch block
 			System.err.println(e.getMessage());
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			System.err.println("Workflow bundle not found!");
 			System.err.println(e.getMessage());
 
@@ -141,7 +139,6 @@ public class Validate {
 			logwriter.close();
 			System.out.println("Results were saved into " + logFile.getPath());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			System.err.println("Error writing to the file \n" + e.getMessage());
 		}
 

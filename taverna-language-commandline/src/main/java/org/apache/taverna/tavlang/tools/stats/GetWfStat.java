@@ -153,7 +153,6 @@ public class GetWfStat {
 			}
 			
 		} catch (ReaderException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -178,7 +177,6 @@ public class GetWfStat {
 				writer.close();
 				System.out.println("Results were saved into " + file.getPath());
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		

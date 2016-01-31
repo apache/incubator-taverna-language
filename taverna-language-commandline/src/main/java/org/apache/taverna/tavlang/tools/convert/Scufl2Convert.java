@@ -78,7 +78,6 @@ public class Scufl2Convert{
 				FileUtils.forceMkdir(outFile);
 				this.output = outFile.getAbsolutePath();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				System.err.println("Error: The directory cannot be created...!!!!");
 				e1.printStackTrace();
 			}
@@ -88,7 +87,6 @@ public class Scufl2Convert{
 				FileUtils.forceMkdir(outFile);
 				
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				System.err.println("Error: The directory cannot be created...!!!!");
 				e1.printStackTrace();
 			}
@@ -175,7 +173,6 @@ public class Scufl2Convert{
 		WorkflowBundleIO wfbio = new WorkflowBundleIO();
 		String filename = t2File.getName();
 		filename = filename.replaceFirst("\\..*", this.type);
-//		System.out.println(filename);
 		File scufl2File = new File(outFile.getAbsolutePath(), filename);
 		
 		WorkflowBundle wfBundle;
@@ -197,10 +194,8 @@ public class Scufl2Convert{
 			System.out.println(scufl2File.getPath() + " is created.");
 		}catch (ReaderException e){
 			System.err.println("Error: Connot read the file");
-//			e.printStackTrace();
 		}catch(IOException e){
 			System.err.println("Error: File not found");
-//			e.printStackTrace();
 		}catch(WriterException e) {
 			System.err.println("Error: Cannot write to the file");
 //			e.printStackTrace();

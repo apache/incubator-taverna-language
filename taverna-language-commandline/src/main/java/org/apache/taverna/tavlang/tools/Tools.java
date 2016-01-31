@@ -30,8 +30,6 @@ public class Tools {
 
 			@Override
 			public String getMediaType(ConvertionTools t) {
-				// TODO Auto-generated method stub
-//				System.out.println(mediaType);
 				return this.mediaType;
 			}
 		},
@@ -41,8 +39,6 @@ public class Tools {
 
 			@Override
 			public String getMediaType(ConvertionTools t) {
-				// TODO Auto-generated method stub
-//				System.out.println(mediaType);
 				return mediaType;
 			}
 		},
@@ -61,7 +57,6 @@ public class Tools {
 
 			@Override
 			public String getMediaType(ConvertionTools t) {
-				// TODO Auto-generated method stub
 				return null;
 			}
 		
@@ -71,8 +66,6 @@ public class Tools {
 			
 			@Override
 			public String getMediaType(ConvertionTools t) {
-				// TODO Auto-generated method stub
-//				System.out.println(mediaType);
 				return mediaType;
 			}
 		},
@@ -82,8 +75,6 @@ public class Tools {
 				
 				@Override
 				public String getMediaType(ConvertionTools t) {
-					// TODO Auto-generated method stub
-//					System.out.println(mediaType);
 					return mediaType;
 				}
 		};

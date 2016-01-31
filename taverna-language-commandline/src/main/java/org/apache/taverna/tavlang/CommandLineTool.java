@@ -255,8 +255,6 @@ public class CommandLineTool {
 
 		@Override
 		public void execute() {
-			// TODO Auto-generated method stub
-			
 			System.out.print(getClass().getPackage().getImplementationTitle());
             System.out.println(" " + getClass().getPackage().getImplementationVersion());
 		}
@@ -283,14 +281,12 @@ public class CommandLineTool {
 					new ProcessorNames(toInspect, file);
 
 				} catch (ReaderException | IOException | JAXBException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			} else if (Inspect.servicetypes) {
 				try {
 					new ServiceTypes(toInspect, file);
 				} catch (IOException | ReaderException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
@@ -313,9 +309,6 @@ public class CommandLineTool {
 		
 		@Option(name = {"-v", "--verbose"}, description = "Verbose mode")
 		public boolean verbose;
-		
-//		@Inject
-//		Optional optional = new Optional();
 
 //		@Arguments(usage = "<option> <input files> <output dir>", description = "Validate the given workflow file/s")
 		@Arguments(usage = "input files", description = "Validate the given workflow file/s")
@@ -334,9 +327,7 @@ public class CommandLineTool {
 	//Command for getting workflow stats
 	@Command (name = "stats", description = "Shows the workflow statistics")
 	public static class CommandStat extends TvnLangTool{
-//
-//		@Option(name={"-wf", "--workflow"}, description ="Specify the input is workflow file or bundle")
-//		public boolean isWf;
+
 		
 		@Option(name = {"-l", "--log"}, description ="Save the workflow statictics in a file")
 		public String file;
