@@ -25,7 +25,7 @@ an API for the
 
 This module is a **work in progress** as part of Google Summer of Code 2015.
 
-
+See below for [Building and Install Requirements](#building-and-install-requirements), [Usage](#usage), and [Documentation](#documentation).
 
 ## License
 
@@ -84,7 +84,7 @@ To build, run:
 	
 	The most commonly used tavlang commands are:
 	    convert    Convert the given workflow
-	    help       Display help information about Tvarna
+	    help       Display help information about Taverna
 	    inspect    Inspect the given workflow and show the results on the terminal
 	    validate   Validate the given workflow
 	    version    Show version informantion
