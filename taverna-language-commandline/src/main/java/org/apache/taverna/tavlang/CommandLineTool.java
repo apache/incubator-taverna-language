@@ -85,7 +85,7 @@ public class CommandLineTool {
 		@Option(name = "--wfbundle", description = "Convert the workflow file to wfbundle")
 		public static boolean isWfbundle = false;
 
-		@Option(name = "--robundle", description = "Convert given bundel in to Research Object bundle")
+		@Option(name = "--robundle", description = "Convert given bundle in to Research Object bundle")
 		public static boolean isRo = false;
 
 		@Option(name = "--structure", description = "Convert the workflow into *.structure")
@@ -104,7 +104,7 @@ public class CommandLineTool {
 		public static String isTrue() {
 			if (isWfdesc)
 				return "wfdesc";
-			else if (isWfbundel)
+			else if (isWfbundle)
 				return "wfbundle";
 			else if (isRo)
 				return "robundle";
@@ -228,8 +228,8 @@ public class CommandLineTool {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-//				else if(Filetypes.isIwir || Filetypes.isJson || Filetypes.isStructure || Filetypes.isWfbundel || Filetypes.isWfdesc)
-			} else if(Filetypes.isIwir || Filetypes.isJson || Filetypes.isStructure || Filetypes.isWfbundel || Filetypes.isWfdesc){
+//				else if(Filetypes.isIwir || Filetypes.isJson || Filetypes.isStructure || Filetypes.isWfbundle || Filetypes.isWfdesc)
+			} else if(Filetypes.isIwir || Filetypes.isJson || Filetypes.isStructure || Filetypes.isWfbundle || Filetypes.isWfdesc){
 				if (recurse) {
 					new Scufl2Convert(Filetypes.isTrue(),
 							Optional.getInFile(), Optional.getOutFile());
