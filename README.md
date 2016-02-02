@@ -27,8 +27,7 @@ The API includes support for the legacy formats from Taverna 2 and Taverna
 ## License
 
 (c) 2010-2014 University of Manchester
-
-(c) 2014-2015 Apache Software Foundation
+(c) 2014-2016 Apache Software Foundation
 
 This product includes software developed at The [Apache Software
 Foundation](http://www.apache.org/).
@@ -91,6 +90,7 @@ Official modules:
 * [taverna-scufl2-schemas](taverna-scufl2-schemas) SCUFL2 XML Schemas and OWL ontologies
 * [taverna-scufl2-wfdesc](taverna-scufl2-wfdesc/) save [wfdesc](https://w3id.org/ro#wfdesc) workflow structure as RDF Turtle
 * [taverna-scufl2-examples](taverna-scufl2-examples) Example usage of the SCUFL2 APIs
+* [taverna-tavlang-tool](taverna-tavlang-tool) Taverna Language tool `tavlang`
 
 Experimental modules:
 
@@ -208,3 +208,4 @@ points:
  * [org.apache.taverna.scufl2.api](http://taverna.incubator.apache.org/javadoc/taverna-language/org/apache/taverna/scufl2/api/package-summary.html)
  * [org.apache.taverna.robundle](http://taverna.incubator.apache.org/javadoc/taverna-language/org/apache/taverna/robundle/package-summary.html)
  * [org.apache.taverna.databundle](http://taverna.incubator.apache.org/javadoc/taverna-language/org/apache/taverna/databundle/package-summary.html)
+
