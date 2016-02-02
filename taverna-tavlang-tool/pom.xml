@@ -23,8 +23,8 @@
       	<version>0.15.1-incubating-SNAPSHOT</version>
     </parent>
     <artifactId>taverna-tavlang-tool</artifactId>
-    <name>Apache Taverna Language Commandline</name>
-    <description>Command line for Taverna Language (experimental)</description>
+    <name>Apache Taverna tavlang tool</name>
+    <description>Command line for Taverna Language</description>
 
 	
     <dependencies>
