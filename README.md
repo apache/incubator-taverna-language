@@ -26,8 +26,8 @@ The API includes support for the legacy formats from Taverna 2 and Taverna
 
 ## License
 
-(c) 2010-2014 University of Manchester
-(c) 2014-2016 Apache Software Foundation
+* (c) 2010-2014 University of Manchester
+* (c) 2014-2016 Apache Software Foundation
 
 This product includes software developed at The [Apache Software
 Foundation](http://www.apache.org/).
@@ -50,7 +50,7 @@ Apache Taverna.
 Bugs and feature plannings are tracked in the Jira
 [Issue tracker](https://issues.apache.org/jira/browse/TAVERNA/component/12326808)
 under the `TAVERNA` component _Taverna Language._ Feel free
-to add an issue!
+to [add an issue](http://taverna.incubator.apache.org/community/issue-tracker)!
 
 To suggest changes to this source code, feel free to raise a
 [GitHub pull request](https://github.com/apache/incubator-taverna-language/pulls).
@@ -96,7 +96,7 @@ Experimental modules:
 
 * [taverna-scufl2-scufl](taverna-scufl2-scufl/) Load Taverna 1 `.xml` workflows (SCUFL 1)
 * [taverna-scufl2-annotation](taverna-scufl2-annotation/) Annotation utillity functions
-* [taverna-baclava-language](taverna-baclava-language) Load Taverna 2 data documents (wokrkflow inputs/outputs)
+* [taverna-baclava-language](taverna-baclava-language) Load Taverna 2 data documents (workflow inputs/outputs)
 
 Deprecated modules:
 * [taverna-scufl2-ucfpackage](taverna-scufl2-ucfpackage/): API for [Adobe
@@ -186,8 +186,9 @@ To find the latest `<version>` to use above (this README might
 not have been updated), see the [Apache Taverna Language downloads]
 (http://taverna.incubator.apache.org/download/language/).
 
-All Scufl2 modules are also valid [OSGi](http://www.osgi.org/) bundles, see the
-OSGi section below.  
+All Scufl2 modules are also valid [OSGi](http://www.osgi.org/) bundles,
+providing [OSGi services](taverna-scufl2-api#osgi-services).
+
 
 You can alternatively copy and add these JARs from the build to add
 to your classpath:
@@ -208,4 +209,3 @@ points:
  * [org.apache.taverna.scufl2.api](http://taverna.incubator.apache.org/javadoc/taverna-language/org/apache/taverna/scufl2/api/package-summary.html)
  * [org.apache.taverna.robundle](http://taverna.incubator.apache.org/javadoc/taverna-language/org/apache/taverna/robundle/package-summary.html)
  * [org.apache.taverna.databundle](http://taverna.incubator.apache.org/javadoc/taverna-language/org/apache/taverna/databundle/package-summary.html)
-
