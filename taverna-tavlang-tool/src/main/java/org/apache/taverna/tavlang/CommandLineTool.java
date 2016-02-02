@@ -85,7 +85,7 @@ public class CommandLineTool {
 		@Option(name = "--wfbundle", description = "Convert the workflow file to wfbundle")
 		public static boolean isWfbundle = false;
 
-		@Option(name = "--robundle", description = "Convert given bundle in to Research Object bundle")
+		@Option(name = "--robundle", description = "Convert the given bundle into Research Object bundle")
 		public static boolean isRo = false;
 
 		@Option(name = "--structure", description = "Convert the workflow into *.structure")
@@ -174,7 +174,7 @@ public class CommandLineTool {
 
 	}
 
-	@Command(name = "help", description = "Display help information about Tvarna")
+	@Command(name = "help", description = "Display help information about Taverna")
 	public static class HelpCommand extends TvnLangTool {
 		@Inject
 		public Help help;
@@ -250,7 +250,7 @@ public class CommandLineTool {
 	}
 
 	// Version command
-	@Command(name = "version", description = "Show version informantion")
+	@Command(name = "version", description = "Show version information")
 	public static class CommandVersion extends TvnLangTool {
 
 		@Override
@@ -301,7 +301,7 @@ public class CommandLineTool {
 	}
 
 	// Command for validation
-	@Command(name = "validate", description = "validate the given workflow")
+	@Command(name = "validate", description = "Validate the given workflow")
 	public static class CommandValidate extends TvnLangTool{
 	
 		@Option(name = { "-l", "--log" }, description = "Specify the file name where results should be stored ([some dir]/log.txt)")
@@ -329,7 +329,7 @@ public class CommandLineTool {
 	public static class CommandStat extends TvnLangTool{
 
 		
-		@Option(name = {"-l", "--log"}, description ="Save the workflow statictics in a file")
+		@Option(name = {"-l", "--log"}, description ="Save the workflow statistics in a file")
 		public String file;
 		
 		@Option(name = {"-v", "--verbose"}, description = "Verbose mode")
