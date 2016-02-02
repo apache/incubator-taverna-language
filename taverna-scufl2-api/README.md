@@ -87,8 +87,8 @@ Supported file formats with `WorkflowBundleIO` and their required modules:
 | text/vnd.taverna.scufl2.structure | read/write | taverna-scufl2-api | Textual format for testing/debugging |
 | text/vnd.wf4ever.wfdesc+turtle | write | taverna-scufl2-wfdesc | Abstract workflow structure in [RDF Turtle](http://www.w3.org/TR/turtle/") according to the [Wf4Ever wfdesc ontology](https://w3id.org/ro/#wfdesc) |
 | text/vnd.mgrast.awe.awf+json | read | [scufl2-awf](https://github.com/stain/scufl2-awf) | Workflow definition of the MG-RAST [AWE](https://github.com/MG-RAST/AWE) workflow engine. (experimental) |
-| application/vnd.shiwa.iwir+xml | read/write | [scufl2-iwir]()https://github.com/stain/scufl2-iwir/| [SHIWA](http://www.shiwa-workflow.eu/)'s [IWIR](https://www.shiwa-workflow.eu/documents/10753/55350/IWIR+v1.1+Specification) interoperabile workflow language (experimental) |
-| application/json | >write | taverna-scufl2-examples | Abstract workflow as JSON (experimental) |
+| application/vnd.shiwa.iwir+xml | read/write | [scufl2-iwir](https://github.com/stain/scufl2-iwir/) | [SHIWA](http://www.shiwa-workflow.eu/)'s [IWIR](https://www.shiwa-workflow.eu/documents/10753/55350/IWIR+v1.1+Specification) interoperabile workflow language (experimental) |
+| application/json | write | taverna-scufl2-examples | Abstract workflow as JSON (experimental) |
 
 
 Note that the ability for Scufl2 API to read a workflow bundle (using
