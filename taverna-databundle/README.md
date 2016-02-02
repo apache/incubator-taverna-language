@@ -1,10 +1,9 @@
 Data bundles API
 ================
 
-API for Taverna Data Bundles
+API for Taverna Data Bundles.
 
-See [Data bundle requirements](http://dev.mygrid.org.uk/wiki/display/TAVOSGI/2013-02+Data+bundle+requirements)
-and [TestDataBundles.java](src/test/java/org/apache/taverna/databundle/TestDataBundles.java)
+See also the [structure of the data bundle](https://github.com/apache/incubator-taverna-engine/tree/master/taverna-prov#structure-of-exported-provenance).
 
 This API is built on the Java NIO Files and the [RO Bundle API](../taverna-robundle/), which
 uses the [Java ZIP file provider](http://docs.oracle.com/javase/8/docs/technotes/guides/io/fsp/zipfilesystemprovider.html) to generate the Data Bundle.
@@ -57,7 +56,7 @@ Alternatively, use the regular Files methods:
 ```
 
 
-Binaries and large files are done through the Files API
+Binaries and large files are done through the Files API:
 ```java
         try (OutputStream out = Files.newOutputStream(portIn1,
                 StandardOpenOption.APPEND)) {
@@ -65,7 +64,7 @@ Binaries and large files are done through the Files API
         }
 ```
 
-Or Java 7 style:
+Or using NIO:
 ```java
         Path localFile = Files.createTempFile("", ".txt");
         Files.copy(portIn1, localFile, StandardCopyOption.REPLACE_EXISTING);
