@@ -15,15 +15,13 @@
    limitations under the License.
 -->
 
-# Apache Taverna Language Command Line
+# Apache Taverna tavlang tool
 
 
-This is planned as a command line for the
-[Apache Taverna Language](https://github.com/apache/incubator-taverna-language/),
+This is a command line for the [Apache Taverna
+Language](https://github.com/apache/incubator-taverna-language/),
 an API for the 
 [Apache Taverna](http://taverna.incubator.apache.org/) workflows.
-
-This module is a **work in progress** as part of Google Summer of Code 2015.
 
 
 
@@ -66,7 +64,7 @@ before accepting a larger contribution.
 
 ## Requisites
 
-* Java 1.7 or newer
+* Java 1.8 or newer
 * [Apache Maven](https://maven.apache.org/download.html) 3.2.5 or newer (older
   versions probably also work)
 
