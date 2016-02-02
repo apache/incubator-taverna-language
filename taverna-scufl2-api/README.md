@@ -36,7 +36,8 @@ of this API.
 
 
 For more information, see the [SCUFL2 API][9] pages, the
-[Javadoc][10] and the [SCUFL2 examples](../scufl2-examples/).
+[Javadoc](http://taverna.incubator.apache.org/javadoc/taverna-language/)
+and the [SCUFL2 examples](../taverna-scufl2-examples/).
 
 
 Usage
@@ -50,7 +51,8 @@ loading and saving of SCUFL2 workflows in the `.wfbundle` format.
 All Scufl2 modules are also valid OSGi bundles, see the [OSGi
 section](#osgi-services) below.  
 
-See the [Taverna Language Javadoc][10] for documentation of classes and methods
+See the [Taverna Language Javadoc](http://taverna.incubator.apache.org/javadoc/taverna-language/)
+for documentation of classes and methods
 of SCUFL2. The package
 [org.apache.taverna.scufl2.api](http://taverna.incubator.apache.org/javadoc/taverna-language/org/apache/taverna/scufl2/api/package-summary.html)
 is a good starting point.
