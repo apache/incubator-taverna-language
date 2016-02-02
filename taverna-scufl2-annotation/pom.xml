@@ -23,6 +23,7 @@
 		<version>0.15.1-incubating-SNAPSHOT</version>
 	</parent>
 	<artifactId>taverna-scufl2-annotation</artifactId>
+	<packaging>bundle</packaging>
 	<name>Apache Taverna Scufl 2 annotations</name>
 	<description>Convenience methods for working with SCUFL2 annotations</description>
 	<dependencies>
