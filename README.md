@@ -36,7 +36,7 @@ Licensed under the
 [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0), see the file
 [LICENSE](LICENSE) for details.
 
-The file [NOTICE](NOTICE) contain any additional attributions and
+The file [NOTICE](NOTICE) contains any additional attributions and
 details about embedded third-party libraries and source code.
 
 
