@@ -22,7 +22,7 @@
       	<artifactId>taverna-language</artifactId>
       	<version>0.15.1-incubating-SNAPSHOT</version>
     </parent>
-    <artifactId>taverna-language-commandline</artifactId>
+    <artifactId>taverna-tavlang-tool</artifactId>
     <name>Apache Taverna Language Commandline</name>
     <description>Command line for Taverna Language (experimental)</description>
 
