@@ -22,29 +22,6 @@ To build, you'll need [Maven](http://maven.apache.org/download) 3.0.5 or newer, 
 To run the examples, see the folder ```target/scufl2-examples``` which has a `bin/`
 executable for each of the below tools. Note that these tools require the provided `bin/` and `lib/` folder structure.
 
-Alternatively you can use ```java -jar target/scufl2-examples-0.15.0-standalone.jar```
-(or equivalent filename) - this is a standalone
-JAR file that can execute any of the tools as the first argument.
-
-Linux users can install this with:
-
-    chmod 755 target/scufl2-examples-*-standalone.jar
-    sudo cp target/scufl2-examples-*-standalone.jar /usr/local/bin/scufl2tool
-
-as long as JAR files are recognized as executables:
-
-    stain@biggie-mint ~/src/scufl2-examples $ target/scufl2-examples-0.15.0-standalone.jar
-    SCUFL2 workflow tool
-    Usage: scufl2tool <tool> [option] ...
-
-    Available tools:
-    t2flowtowfbundle - Convert t2flow workflows to wfbundle
-    jsonexport - Export JSON structure of workflow
-    processornames - List tree of processor names in workflow
-    servicetypes - List service types used in workflow
-    workflowmaker - Create an example workflow programmatically
-
-
 
 processornames
 --------------
