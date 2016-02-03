@@ -74,7 +74,6 @@ Usage:
  Supported output formats are,
 
  * wfbundle
- * iwir
  * json
  * robundle
  * structure
@@ -147,14 +146,14 @@ Output: Suppose that there are 2 workflow files in the dir 1.t2flow and 2.t2flow
 
 ###### Example 5: with output dir is specified
 
-	$tavlang convert -r --iwir -i /home/workflows -o /home/final
+	$tavlang convert -r --json -i /home/workflows -o /home/final
 
 Convert all the workflows in the input directory and store them in /home/final directory
 
 Output:
 
-	/home/final/1.iwir is created
-	/home/final/2.iwir is created
+	/home/final/1.json is created
+	/home/final/2.json is created
 
 ### inspect -----------------------------------------------------------------
 
