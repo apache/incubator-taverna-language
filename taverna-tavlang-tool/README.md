@@ -24,59 +24,6 @@ an API for the
 [Apache Taverna](http://taverna.incubator.apache.org/) workflows.
 
 
-See below for [Building and Install Requirements](#building-and-install-requirements), [Usage](#usage), and [Documentation](#documentation).
-
-## License
-
-(c) 2015 Apache Software Foundation
-
-This product includes software developed at The [Apache Software
-Foundation](http://www.apache.org/).
-
-Licensed under the [Apache License
-2.0](https://www.apache.org/licenses/LICENSE-2.0), see the file
-[../LICENSE](../LICENSE) for details.
-
-The file [NOTICE](src/main/resources/NOTICE) contains any additional attributions and
-details about embedded third-party libraries and source code.
-
-
-# Contribute
-
-Please subscribe to and contact the
-[dev@taverna](http://taverna.incubator.apache.org/community/lists#dev%20mailing%20list)
-for any questions, suggestions and discussions about
-Apache Taverna Language Commandline.
-
-Bugs and planned features are tracked in the Jira
-[Issue tracker](https://issues.apache.org/jira/browse/TAVERNA/component/12326903)
-under the `TAVERNA` component _GSOC Taverna Language Command line_. Feel free
-to add an issue!
-
-To suggest changes to this source code, feel free to raise a
-[GitHub pull request](https://github.com/apache/incubator-taverna-mobile/pulls).
-Any contributions received are assumed to be covered by the [Apache License
-2.0](https://www.apache.org/licenses/LICENSE-2.0). We might ask you
-to sign a [Contributor License Agreement](https://www.apache.org/licenses/#clas)
-before accepting a larger contribution.
-
-
-# Building and install requirements
-
-## Requisites
-
-* Java 1.8 or newer
-* [Apache Maven](https://maven.apache.org/download.html) 3.2.5 or newer (older
-  versions probably also work)
-
-
-## Building
-
-To build, run:
-
-    mvn clean install
-
-
 # Usage
 
 	usage: tavlang <command> [<args>]
