@@ -26,9 +26,9 @@
     <name>Apache Taverna tavlang tool</name>
     <description>Command line for Taverna Language</description>
 
-	
+
     <dependencies>
-    
+
     	<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
@@ -59,16 +59,17 @@
 <!-- 			<scope>optional</scope> -->
 <!-- 			<systemPath>${project.build.directory}/taverna-language-commandline/lib/</systemPath> -->
 <!-- 		</dependency> -->
-		
+
+    <!-- Disabled due to LGPL depenency
    	 <dependency>
 		<groupId>no.s11.scufl2</groupId>
 		<artifactId>scufl2-iwir</artifactId>
 		<version>0.2-SNAPSHOT</version>
         <optional>true</optional>
     </dependency>
+-->
 
- 
-		
+
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
@@ -76,9 +77,9 @@
 		</dependency>
 
 
-		<!-- <dependency> <groupId>${project.groupId}</groupId> <artifactId>taverna-scufl2-wfdesc</artifactId> 
+		<!-- <dependency> <groupId>${project.groupId}</groupId> <artifactId>taverna-scufl2-wfdesc</artifactId>
 			<version>${project.version}</version> <optional>true</optional> </dependency> -->
-		<!-- <dependency> <groupId>org.purl.wf4ever</groupId> <artifactId>scufl2-wfdesc</artifactId> 
+		<!-- <dependency> <groupId>org.purl.wf4ever</groupId> <artifactId>scufl2-wfdesc</artifactId>
 			<version>0.3.7</version> </dependency> -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -180,6 +181,7 @@
 	</build>
 
 	<repositories>
+    <!-- Enable the below if using scufl2-iwir
 		<repository>
 			<releases>
 				<enabled>false</enabled>
@@ -189,7 +191,7 @@
 			<name>myGrid Repository</name>
 			<url>http://www.mygrid.org.uk/maven/repository</url>
 		</repository>
-		
+
 		<repository>
 			<id>mygrid-snapshot-repository</id>
 			<name>myGrid Snapshot Repository</name>
@@ -199,6 +201,7 @@
 			</releases>
 			<snapshots />
 		</repository>
+-->
 
 		<repository>
 			<id>apache.snapshots</id>
