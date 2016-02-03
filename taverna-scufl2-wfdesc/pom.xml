@@ -20,9 +20,10 @@
     <parent>
       	<groupId>org.apache.taverna.language</groupId>
       	<artifactId>taverna-language</artifactId>
-      	<version>0.15.0-incubating-SNAPSHOT</version>
+      	<version>0.15.0-incubating</version>
     </parent>
     <artifactId>taverna-scufl2-wfdesc</artifactId>
+    <version>0.15.1-incubating-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>Apache Taverna Scufl 2 wfdesc export</name>
     <description>Convert Scufl2 workflow to wfdesc structure (from Wf4Ever RO ontology)</description>
@@ -347,8 +348,11 @@
                 <enabled>false</enabled>
             </snapshots>
             <id>aduna-opensource.releases</id>
-            <name>Apache Taverna Half-a-mirror of http://repo.aduna-software.org/maven2/releases/</name>
-            <url>http://repository.mygrid.org.uk/artifactory/aduna/</url>
+            <name>Aduna (Sesame) releases</name>
+            <url>http://repo.aduna-software.org/maven2/releases/</url>
+            <!-- Also mirrored at
+                  <url>http://repository.mygrid.org.uk/artifactory/aduna/</url>
+           -->
         </repository>
     </repositories>
     <pluginRepositories>
@@ -360,8 +364,11 @@
                 <enabled>false</enabled>
             </snapshots>
             <id>aduna-opensource.releases</id>
-            <name>Apache Taverna Half-a-mirror of http://repo.aduna-software.org/maven2/releases/</name>
-	    <url>http://repository.mygrid.org.uk/artifactory/aduna/</url>
+            <name>Aduna (Sesame) releases</name>
+            <url>http://repo.aduna-software.org/maven2/releases/</url>
+            <!-- Also mirrored at
+                  <url>http://repository.mygrid.org.uk/artifactory/aduna/</url>
+           -->
         </pluginRepository>
     </pluginRepositories>
 </project>
