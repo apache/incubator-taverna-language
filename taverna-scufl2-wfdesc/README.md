@@ -135,3 +135,44 @@ io.writeBundle(wfBundle, output, "text/vnd.wf4ever.wfdesc+turtle");
 ```
 
 # Common queries
+
+These queries can be executed using [SPARQL](http://www.w3.org/TR/sparql11-query/) on the returned wfdesc Turtle, and assume these PREFIXes:
+
+    PREFIX prov: <http://www.w3.org/ns/prov#>
+    PREFIX wfdesc: <http://purl.org/wf4ever/wfdesc#>
+    PREFIX wfprov: <http://purl.org/wf4ever/wfprov#>
+    PREFIX tavernaprov: <http://ns.taverna.org.uk/2012/tavernaprov/>
+    PREFIX cnt:  <http://www.w3.org/2011/content#>
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX wf4ever: <http://purl.org/wf4ever/wf4ever#>
+    PREFIX comp: <http://purl.org/DP/components#>
+
+## How do I exclude nested workflows from a query?
+
+The wfdesc model does not have a concept of "top-level" workflow, however you can
+use a SPARQL `NOT EXISTS` filter to skip any nested workflows:
+
+    SELECT ?wf WHERE {
+      ?wf a wfdesc:Workflow .
+
+      FILTER NOT EXISTS {
+          ?processInParent prov:specializationOf ?wf .
+          ?parent wfdesc:hasSubProcess ?processInParent
+      } .
+    }
+
+Thus any workflow `?wf` which (specialization) has been used as a sub-process in `?parent` are excluded from the result. As SCUFL2 workflows have unique URIs within each workflow bundle, e.g. http://ns.taverna.org.uk/2010/workflowBundle/01348671-5aaa-4cc2-84cc-477329b70b0d/workflow/Hello_Anyone/ - the above would *not* be excluding a workflow just because its structure has been reused elsewhere.
+
+## How do I select processors in the top-level workflows?
+
+A variant of the above is if you are only interested in processors in top-level workflows:
+
+    SELECT ?proc WHERE {
+      ?wf a wfdesc:Workflow ;
+          wfdesc:hasSubProcess ?proc .
+
+      FILTER NOT EXISTS {
+          ?processInParent prov:specializationOf ?wf .
+          ?parent wfdesc:hasSubProcess ?processInParent
+      } .
+    }
