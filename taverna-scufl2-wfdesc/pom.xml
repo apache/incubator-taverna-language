@@ -76,29 +76,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>appassembler-maven-plugin</artifactId>
-				<version>1.1.1</version>
-				<executions>
-					<execution>
-						<id>assemble</id>
-						<phase>package</phase>
-						<goals>
-							<goal>assemble</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<assembleDirectory>${project.build.directory}/${project.artifactId}</assembleDirectory>
-					<programs>
-						<program>
-							<mainClass>org.apache.taverna.scufl2.wfdesc.ConvertToWfdesc</mainClass>
-							<name>Apache Taverna scufl2-to-wfdesc</name>
-						</program>
-					</programs>
-				</configuration>
-			</plugin>			
 		</plugins>
 		<pluginManagement>
 			<plugins>
