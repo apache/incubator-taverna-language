@@ -8,9 +8,9 @@ package org.apache.taverna.tavlang;
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -94,11 +94,11 @@ public class CommandLineTool {
 		@Option(name = "--json", description = "Convert the workflow into json")
 		public static boolean isJson = false;
 
-		
+
 		@Option(name = "--iwir", description = "Convert scufl2 workflows into IWIR 1.1 specification")
 		public static boolean isIwir = false;
-		
-		
+
+
 		// The tool can only handle one output format at a time.
 		// Return the file type which is selected
 		public static String isTrue() {
@@ -112,18 +112,18 @@ public class CommandLineTool {
 				return "structure";
 			else if (isJson)
 				return "json";
-			
+
 			else if (isIwir)
 				return "iwir";
-				
-			
+
+
 			else{
 				System.out.println("Invalid argument....");
 				TvnLangTool command = parser().parse("help", "convert");
 				command.execute();
 				return null;
 			}
-				
+
 		}
 
 	}
@@ -145,9 +145,9 @@ public class CommandLineTool {
 				TvnLangTool command = parser().parse("help", "inspect");
 				command.execute();
 				return null;
-				
+
 			}
-				
+
 		}
 
 	}
@@ -208,19 +208,18 @@ public class CommandLineTool {
 
 		@Override
 		public void execute() {
-			
+
 			//Validate before convert
 			if(validate){
 				Validate validate = new Validate(files, null, false);
 				if(validate.getCheck()){
 					System.out.println("Conversion failed...! Workflow bundle has errors");
 					return;
-				}else{
-					runcommand();
 				}
 			}
+			runcommand();
 		}
-			
+
 		public void runcommand(){
 			if (Filetypes.isRo) {
 				try {
@@ -244,9 +243,9 @@ public class CommandLineTool {
 			}
 
 		}
-		
-		
-		
+
+
+
 	}
 
 	// Version command
@@ -303,10 +302,10 @@ public class CommandLineTool {
 	// Command for validation
 	@Command(name = "validate", description = "Validate the given workflow")
 	public static class CommandValidate extends TvnLangTool{
-	
+
 		@Option(name = { "-l", "--log" }, description = "Specify the file name where results should be stored ([some dir]/log.txt)")
 		public String file;
-		
+
 		@Option(name = {"-v", "--verbose"}, description = "Verbose mode")
 		public boolean verbose;
 
@@ -316,35 +315,35 @@ public class CommandLineTool {
 
 		@Override
 		public void execute() {
-		
+
 			Validate validate = new Validate(toValidate, file, verbose);
-			
+
 
 		}
 
 	}
-	
+
 	//Command for getting workflow stats
 	@Command (name = "stats", description = "Shows the workflow statistics")
 	public static class CommandStat extends TvnLangTool{
 
-		
+
 		@Option(name = {"-l", "--log"}, description ="Save the workflow statistics in a file")
 		public String file;
-		
+
 		@Option(name = {"-v", "--verbose"}, description = "Verbose mode")
 		public boolean verbose;
-		
+
 		@Arguments(usage="input files", description = "Enter the workflow bundle files")
 		public List<String> files;
-		
+
 		@Override
 		public void execute() {
-			
+
 			GetWfStat stat = new GetWfStat(files, file, verbose);
-			
+
 		}
-		
+
 	}
 
 }
