@@ -40,13 +40,13 @@ import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.ucfpackage.UCFPackage.ResourceEntry;
 
 
-import com.hp.hpl.jena.graph.Node;
-import com.hp.hpl.jena.graph.NodeFactory;
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.query.DatasetFactory;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.sparql.core.Quad;
+import org.apache.jena.graph.Node;
+import org.apache.jena.graph.NodeFactory;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.query.DatasetFactory;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.sparql.core.Quad;
 
 public class AnnotationTools {
 	private static final String EXAMPLE_DATA_PREDICATE = "http://biocatalogue.org/attribute/exampleData";

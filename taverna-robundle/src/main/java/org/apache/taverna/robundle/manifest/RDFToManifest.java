@@ -20,8 +20,8 @@ package org.apache.taverna.robundle.manifest;
  */
 
 
-import static com.hp.hpl.jena.ontology.OntModelSpec.OWL_DL_MEM_RULE_INF;
-import static com.hp.hpl.jena.rdf.model.ModelFactory.createOntologyModel;
+import static org.apache.jena.ontology.OntModelSpec.OWL_DL_MEM_RULE_INF;
+import static org.apache.jena.rdf.model.ModelFactory.createOntologyModel;
 import static org.apache.taverna.robundle.utils.PathHelper.relativizeFromBase;
 import static org.apache.taverna.robundle.utils.RDFUtils.literalAsFileTime;
 
@@ -42,16 +42,16 @@ import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RiotException;
 import org.apache.taverna.robundle.Bundles;
 
-import com.hp.hpl.jena.ontology.DatatypeProperty;
-import com.hp.hpl.jena.ontology.Individual;
-import com.hp.hpl.jena.ontology.ObjectProperty;
-import com.hp.hpl.jena.ontology.OntClass;
-import com.hp.hpl.jena.ontology.OntModel;
-import com.hp.hpl.jena.ontology.OntResource;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.ontology.DatatypeProperty;
+import org.apache.jena.ontology.Individual;
+import org.apache.jena.ontology.ObjectProperty;
+import org.apache.jena.ontology.OntClass;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntResource;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.util.iterator.ExtendedIterator;
 
 public class RDFToManifest {
 	public static class ClosableIterable<T> implements AutoCloseable,

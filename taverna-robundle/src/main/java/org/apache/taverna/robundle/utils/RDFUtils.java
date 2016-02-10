@@ -20,16 +20,16 @@ package org.apache.taverna.robundle.utils;
  */
 
 
-import static com.hp.hpl.jena.datatypes.xsd.XSDDatatype.XSDdateTime;
+import static org.apache.jena.datatypes.xsd.XSDDatatype.XSDdateTime;
 import static java.nio.file.attribute.FileTime.fromMillis;
 
 import java.nio.file.attribute.FileTime;
 import java.util.logging.Logger;
 
-import com.hp.hpl.jena.datatypes.DatatypeFormatException;
-import com.hp.hpl.jena.datatypes.xsd.XSDDateTime;
-import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.RDFNode;
+import org.apache.jena.datatypes.DatatypeFormatException;
+import org.apache.jena.datatypes.xsd.XSDDateTime;
+import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.rdf.model.RDFNode;
 
 public class RDFUtils {
 	private static final Logger logger = Logger.getLogger(RDFUtils.class
