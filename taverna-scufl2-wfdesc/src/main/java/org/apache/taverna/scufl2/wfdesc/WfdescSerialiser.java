@@ -34,6 +34,12 @@ import java.util.logging.Logger;
 
 import javax.xml.namespace.QName;
 
+import org.apache.jena.ontology.Individual;
+import org.apache.jena.ontology.OntClass;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDFS;
 import org.apache.taverna.scufl2.api.activity.Activity;
 import org.apache.taverna.scufl2.api.annotation.Annotation;
 import org.apache.taverna.scufl2.api.common.Child;
@@ -54,27 +60,9 @@ import org.apache.taverna.scufl2.api.port.WorkflowPort;
 import org.apache.taverna.scufl2.api.profiles.ProcessorBinding;
 import org.apache.taverna.scufl2.api.profiles.ProcessorPortBinding;
 import org.apache.taverna.scufl2.api.profiles.Profile;
-import org.openrdf.OpenRDFException;
-import org.openrdf.concepts.rdfs.Resource;
-import org.openrdf.elmo.ElmoModule;
-import org.openrdf.elmo.sesame.SesameManager;
-import org.openrdf.elmo.sesame.SesameManagerFactory;
-import org.openrdf.query.parser.QueryParserRegistry;
-import org.openrdf.query.parser.sparql.SPARQLParserFactory;
-import org.openrdf.repository.Repository;
-import org.openrdf.repository.contextaware.ContextAwareConnection;
-import org.openrdf.rio.RDFFormat;
-import org.openrdf.rio.helpers.OrganizedRDFWriter;
-import org.purl.wf4ever.roterms.RotermsResource;
-import org.purl.wf4ever.wf4ever.BeanshellScript;
-import org.purl.wf4ever.wf4ever.CommandLineTool;
-import org.purl.wf4ever.wf4ever.RESTService;
-import org.purl.wf4ever.wf4ever.RScript;
-import org.purl.wf4ever.wf4ever.SOAPService;
-import org.purl.wf4ever.wfdesc.Input;
-import org.purl.wf4ever.wfdesc.Output;
-import org.purl.wf4ever.wfdesc.Process;
-import org.w3.prov.Entity;
+import org.apache.taverna.scufl2.wfdesc.ontologies.Roterms;
+import org.apache.taverna.scufl2.wfdesc.ontologies.Wf4ever;
+import org.apache.taverna.scufl2.wfdesc.ontologies.Wfdesc;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -113,8 +101,10 @@ public class WfdescSerialiser {
 	}
 	
 	protected void save(final WorkflowBundle bundle) {
-	    bundle.accept(new VisitorWithPath() {
+		final OntModel model = ModelFactory.createOntologyModel();
+		bundle.accept(new VisitorWithPath() {
 			Scufl2Tools scufl2Tools = new Scufl2Tools();
+			
             public boolean visit() {
                 WorkflowBean node = getCurrentNode(); 
 //                System.out.println(node);
@@ -124,34 +114,37 @@ public class WfdescSerialiser {
 //				@SuppressWarnings("rawtypes")
 								
                 if (node instanceof org.apache.taverna.scufl2.api.core.Workflow) {
-				    entityForBean(node, org.purl.wf4ever.wfdesc.Workflow.class);					
+				    entityForBean(node, Wfdesc.Workflow);					
 				} else if (node instanceof Processor) {
 				    Processor processor = (Processor)node;
-				    Process process = entityForBean(processor, Process.class);
-				    entityForBean(processor.getParent(), org.purl.wf4ever.wfdesc.Workflow.class).getWfHasSubProcess().add(process);
+				    Individual process = entityForBean(processor, Wfdesc.Process);
+				    Individual wf = entityForBean(processor.getParent(), Wfdesc.Workflow);
+				    wf.addProperty(Wfdesc.hasSubProcess, process);				    
 				} else if (node instanceof InputPort) {
 					WorkflowBean parent = ((Child) node).getParent();
-                    Input input = entityForBean(node, Input.class);
-					Process process = entityForBean(parent, Process.class); 
-					process.getWfHasInput().add(input);
+					Individual input = entityForBean(node, Wfdesc.Input);
+					Individual process = entityForBean(parent, Wfdesc.Process);
+					process.addProperty(Wfdesc.hasInput, input);
+					
 				} else if (node instanceof OutputPort) {
                     WorkflowBean parent = ((Child) node).getParent();
-				    Output output = entityForBean(node, Output.class);
-                    Process process = entityForBean(parent, Process.class);
-                    process.getWfHasOutput().add(output);
+				    Individual output = entityForBean(node, Wfdesc.Output);
+				    Individual process = entityForBean(parent, Wfdesc.Process);                    
+                    process.addProperty(Wfdesc.hasOutput, output);
 				} else if (node instanceof DataLink) {
 				    WorkflowBean parent = ((Child) node).getParent();
                     DataLink link = (DataLink) node;
-                    org.purl.wf4ever.wfdesc.DataLink dl = entityForBean(link,
-                            org.purl.wf4ever.wfdesc.DataLink.class);
-                    Output source = entityForBean(link.getReceivesFrom(),
-                            Output.class);
-                    dl.getWfHasSource().add(source);
-                    Input sink = entityForBean(link.getSendsTo(), Input.class);
-                    dl.getWfHasSink().add(sink);
-                    entityForBean(parent,
-                            org.purl.wf4ever.wfdesc.Workflow.class)
-                            .getWfHasDataLink().add(dl);
+                    Individual dl = entityForBean(link,
+                    		Wfdesc.DataLink);
+
+                    Individual source = entityForBean(link.getReceivesFrom(),
+                    		Wfdesc.Output);
+                    dl.addProperty(Wfdesc.hasSource, source);
+                   
+                    Individual sink = entityForBean(link.getSendsTo(), Wfdesc.Input);                   
+                    dl.addProperty(Wfdesc.hasSink, sink);
+                    Individual wf = entityForBean(parent, Wfdesc.Workflow);
+                    wf.addProperty(Wfdesc.hasDataLink, dl);
 				} else if (node instanceof Profile) {
 				    // So that we can get at the ProcessorBinding - buy only if it is the main Profile
 				    return node == bundle.getMainProfile();
@@ -159,7 +152,7 @@ public class WfdescSerialiser {
                     ProcessorBinding b = (ProcessorBinding) node;
                     Activity a = b.getBoundActivity();
                     Processor boundProcessor = b.getBoundProcessor();
-                    Process process = entityForBean(boundProcessor, Process.class);
+                    Individual process = entityForBean(boundProcessor, Wfdesc.Process);
                     
                     // Note: We don't describe the activity and processor binding in wfdesc. Instead we 
                     // assign additional types and attributes to the parent processor
@@ -169,19 +162,18 @@ public class WfdescSerialiser {
                         Configuration c = scufl2Tools.configurationFor(a, b.getParent());
                         JsonNode json = c.getJson();
                         if (type.equals(BEANSHELL)) {                                   
-                            BeanshellScript script = getSesameManager().designateEntity(process, BeanshellScript.class);                         
+                            process.addRDFType(Wf4ever.BeanshellScript);                                                
                             String s = json.get("script").asText();
-                            script.getWfScript().add(s);
-
+                            process.addProperty(Wf4ever.script, s);
                             JsonNode localDep = json.get("localDependency");
                             if (localDep != null && localDep.isArray()) {
                                 for (int i=0; i<localDep.size(); i++) {
                                     String depStr = localDep.get(i).asText();
-                                    RotermsResource res = getSesameManager().designateEntity(script, RotermsResource.class);
-                                    RotermsResource dep = getSesameManager().create(RotermsResource.class);
-                                    dep.getWfLabel().add(depStr);
-                                    dep.getWfComment().add("JAR dependency");
-                                    res.getWfRequiresSoftware().add(dep);
+                                    // FIXME: Better class for dependency?
+                                    Individual dep = model.createIndividual(OWL.Thing);
+                                    dep.addLabel(depStr, null);
+                                    dep.addComment("JAR dependency", "en");
+                                    process.addProperty(Roterms.requiresSoftware, dep);
                                     // Somehow this gets the whole thing to fall out of the graph!
 //                                  QName depQ = new QName("http://google.com/", ""+ UUID.randomUUID());
 //                                  sesameManager.rename(dep, depQ);
@@ -189,22 +181,21 @@ public class WfdescSerialiser {
                                 }
                             }
                         }
-                        if (type.equals(RSHELL)) {                                  
-                            RScript script = getSesameManager().designateEntity(process, RScript.class);
-                            String s = json.get("script").asText();
-                            script.getWfScript().add(s);
+                        if (type.equals(RSHELL)) {
+                        	process.addRDFType(Wf4ever.RScript);                            
+                            String s = json.get("script").asText();                            
+                            process.addProperty(Wf4ever.script, s);
                         }
                         if (type.equals(WSDL)) {
-                            SOAPService soap = getSesameManager().designateEntity(process, SOAPService.class);
+                        	process.addRDFType(Wf4ever.SOAPService);                            
                             JsonNode operation = json.get("operation");
                             URI wsdl = URI.create(operation.get("wsdl").asText());
-                            soap.getWfWsdlURI().add(wsdl);
-                            soap.getWfWsdlOperationName().add(operation.get("name").asText());
-                            soap.getWfRootURI().add(wsdl.resolve("/"));
-
+                            process.addProperty(Wf4ever.wsdlURI, wsdl.toASCIIString());
+                            process.addProperty(Wf4ever.wsdlOperationName, operation.get("name").asText()); 
+                            process.addProperty(Wf4ever.rootURI, wsdl.resolve("/").toASCIIString());
                         } 
                         if (type.equals(REST)) {
-                            RESTService rest = getSesameManager().designateEntity(process, RESTService.class);
+                        	process.addRDFType(Wf4ever.RESTService);                            
 //                            System.out.println(json);
                             JsonNode request = json.get("request");
                             String absoluteURITemplate = request.get("absoluteURITemplate").asText();
@@ -213,7 +204,7 @@ public class WfdescSerialiser {
                             // TODO: Detect {}
                             try {
                             	URI root = new URI(uriTemplate).resolve("/");
-                            	rest.getWfRootURI().add(root);
+                            	process.addProperty(Wf4ever.rootURI, root.toASCIIString());
                             } catch (URISyntaxException e) {
                             	logger.warning("Potentially invalid URI template: " + absoluteURITemplate);
 //                            	Uncomment to temporarily break TestInvalidURITemplate:
@@ -221,12 +212,12 @@ public class WfdescSerialiser {
 							}
                         } 
                         if (type.equals(TOOL)) {
-                            CommandLineTool cmd = getSesameManager().designateEntity(process, CommandLineTool.class);
+                        	process.addRDFType(Wf4ever.CommandLineTool);
                             JsonNode desc = json.get("toolDescription");
                             //System.out.println(json);
                             JsonNode command = desc.get("command");
                             if (command != null) { 
-                                cmd.getWfCommand().add(command.asText());
+                            	process.addProperty(Wf4ever.command, command.asText());
                             }
                         } 
                         if (type.equals(NESTED_WORKFLOW)) {
@@ -234,7 +225,7 @@ public class WfdescSerialiser {
                             // The parent process is a specialization of the nested workflow
                             // (because the nested workflow could exist as several processors)
                             specializationOf(boundProcessor, nestedWf);
-                            getSesameManager().designateEntity(process, org.purl.wf4ever.wfdesc.Workflow.class);
+                            process.addRDFType(Wfdesc.Workflow);
                             
                             // Just like the Processor specializes the nested workflow, the 
                             // ProcessorPorts specialize the WorkflowPort 
@@ -295,8 +286,8 @@ public class WfdescSerialiser {
                 specialEnt.getWfSpecializationOf().add(generalEnt);
             }
 
-            private <T> T entityForBean(WorkflowBean bean, Class<T> type) {
-                return getSesameManager().create(uriForBean(bean), type);
+            private Individual entityForBean(WorkflowBean bean, OntClass type) {
+            	return model.createIndividual(uriForBean(bean), type);
             }
 
 //			@Override
@@ -334,6 +325,7 @@ public class WfdescSerialiser {
 				throw new WriterException(
 						"wfdesc format requires a main workflow");
 			}
+			
 			ContextAwareConnection connection = getSesameManager().getConnection();
 			try {
 
@@ -371,10 +363,6 @@ public class WfdescSerialiser {
 
 	public void setScufl2Tools(Scufl2Tools scufl2Tools) {
 		this.scufl2Tools = scufl2Tools;
-	}
-
-	public void setSesameManager(SesameManager sesameManager) {
-		this.sesameManager = sesameManager;
 	}
 
 	public void setUriTools(URITools uriTools) {
