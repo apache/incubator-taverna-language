@@ -31,27 +31,22 @@ import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.xml.namespace.QName;
-
 import org.apache.jena.ontology.Individual;
-import org.apache.jena.ontology.OntClass;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RiotException;
-import org.apache.jena.riot.WriterGraphRIOT;
 import org.apache.jena.vocabulary.OWL;
-import org.apache.jena.vocabulary.RDFS;
 import org.apache.taverna.scufl2.api.activity.Activity;
 import org.apache.taverna.scufl2.api.annotation.Annotation;
 import org.apache.taverna.scufl2.api.common.Child;
 import org.apache.taverna.scufl2.api.common.Named;
 import org.apache.taverna.scufl2.api.common.Scufl2Tools;
 import org.apache.taverna.scufl2.api.common.URITools;
-import org.apache.taverna.scufl2.api.common.WorkflowBean;
 import org.apache.taverna.scufl2.api.common.Visitor.VisitorWithPath;
+import org.apache.taverna.scufl2.api.common.WorkflowBean;
 import org.apache.taverna.scufl2.api.configurations.Configuration;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.core.DataLink;
@@ -314,45 +309,39 @@ public class WfdescSerialiser {
 		return model;
 	}
 
-	public void save(WorkflowBundle wfBundle, OutputStream output)
-			throws WriterException {
+	public void save(WorkflowBundle wfBundle, OutputStream output) throws WriterException {
 		OntModel model;
-		
-			final URI baseURI;
-			if (wfBundle.getMainWorkflow() != null) {
-				Workflow mainWorkflow = wfBundle.getMainWorkflow();
-				baseURI = uriTools.uriForBean(mainWorkflow);
-				model = save(wfBundle);
-			} else {
-				throw new WriterException(
-						"wfdesc format requires a main workflow");
-			}
 
-				model.setNsPrefix("rdfs",
-						"http://www.w3.org/2000/01/rdf-schema#");
-				model.setNsPrefix("xsd", "http://www.w3.org/2001/XMLSchema#");
-				model.setNsPrefix("owl", "http://www.w3.org/2002/07/owl#");
-				model.setNsPrefix("prov", "http://www.w3.org/ns/prov#");
-				model.setNsPrefix("wfdesc",
-				        "http://purl.org/wf4ever/wfdesc#");
-				model.setNsPrefix("wf4ever",
-				        "http://purl.org/wf4ever/wf4ever#");
-				model.setNsPrefix("roterms",
-				        "http://purl.org/wf4ever/roterms#");
-				model.setNsPrefix("dc", "http://purl.org/dc/elements/1.1/");
-				model.setNsPrefix("dcterms", "http://purl.org/dc/terms/");
-				model.setNsPrefix("comp", "http://purl.org/DP/components#");
-				model.setNsPrefix("dep", "http://scape.keep.pt/vocab/dependencies#");
-				model.setNsPrefix("biocat", "http://biocatalogue.org/attribute/");
-				
-                model.setNsPrefix("", "#");
-                
-             try {
-                model.write(output, Lang.TURTLE.getName(), baseURI.toString());				
-			} catch (RiotException e) {
-				throw new WriterException("Can't write to output", e);
-			}
-		
+		final URI baseURI;
+		if (wfBundle.getMainWorkflow() != null) {
+			Workflow mainWorkflow = wfBundle.getMainWorkflow();
+			baseURI = uriTools.uriForBean(mainWorkflow);
+			model = save(wfBundle);
+		} else {
+			throw new WriterException("wfdesc format requires a main workflow");
+		}
+
+		model.setNsPrefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+		model.setNsPrefix("xsd", "http://www.w3.org/2001/XMLSchema#");
+		model.setNsPrefix("owl", "http://www.w3.org/2002/07/owl#");
+		model.setNsPrefix("prov", "http://www.w3.org/ns/prov#");
+		model.setNsPrefix("wfdesc", "http://purl.org/wf4ever/wfdesc#");
+		model.setNsPrefix("wf4ever", "http://purl.org/wf4ever/wf4ever#");
+		model.setNsPrefix("roterms", "http://purl.org/wf4ever/roterms#");
+		model.setNsPrefix("dc", "http://purl.org/dc/elements/1.1/");
+		model.setNsPrefix("dcterms", "http://purl.org/dc/terms/");
+		model.setNsPrefix("comp", "http://purl.org/DP/components#");
+		model.setNsPrefix("dep", "http://scape.keep.pt/vocab/dependencies#");
+		model.setNsPrefix("biocat", "http://biocatalogue.org/attribute/");
+
+		model.setNsPrefix("", "#");
+
+		try {
+			model.write(output, Lang.TURTLE.getName(), baseURI.toString());
+		} catch (RiotException e) {
+			throw new WriterException("Can't write to output", e);
+		}
+
 	}
 
 	public void setScufl2Tools(Scufl2Tools scufl2Tools) {
