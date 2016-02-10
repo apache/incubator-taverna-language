@@ -6,45 +6,16 @@ provides the export capability to wfdesc ontology from the
 [Wf4Ever](http://www.wf4ever-project.org/) [2] RO
 [wfdesc ontology](https://w3id.org/ro#wfdesc).
 
-This is exposed as a command line tool `scufl2-to-wfdesc`, but can also be
-accessed programmatically as a plugin for the
-[Scufl2 API](../taverna-scufl2-api).
+You can use the [tavlang convert](../taverna-tavlang-tool/) command line tool for converting Taverna
+workflows to wfdesc.
 
 
-Building
---------
+## Example
 
-    mvn clean install
-
-
-
-Command line tool
------------------
-
-After building, the folder `target/scufl2-wfdesc` contains a
-distribution of the command line tool `scufl2-to-wfdesc`, with launchers
-generated for Unix and Windows.  You may copy and distribute this folder for a standalone usage of the
-conversion tool.
-
-Alternatively, you can use the `target/scufl2-wfdesc-0.3.0-SNAPSHOT-standalone.jar` directly with
-`java -jar` - this JAR embeds all required libraries and hence can
-be copied anywhere on your file system. This JAR is however not recommended for programmatic
-use as it embeds third party libraries.
-
-The command line tool takes a list of Taverna workflow filenames (supported file
-types are `*.t2flow` and `*.wfbundle`). If no filenames are given, the tool
-will read a workflow definition from STDIN and write wfdesc to STDOUT.
-The argument `-h`  or `--help` should give a minimal help.
-
-
-
-Example:
-
-    : stain@ralph ~/src/wf4ever/scufl2-wfdesc; target/scufl2-wfdesc/bin/scufl2-to-wfdesc src/test/resources/helloworld.t2flow
-    Converted src/test/resources/helloworld.t2flow to src/test/resources/helloworld.wfdesc.ttl
 
 The output is a [RDF Turtle](http://www.w3.org/TR/turtle/) document containing statements about the workflow structure
-according to the [RO ontology wfdesc](https://w3id.org/ro#wfdesc) ontology.
+according to the [RO ontology wfdesc](https://w3id.org/ro#wfdesc) ontology, with additional service
+descriptions using the [wf4ever ontology](https://w3id.org/ro#wf4ever) where supported.
 
     : stain@ralph ~/src/wf4ever/scufl2-wfdesc; cat src/test/resources/helloworld.wfdesc.ttl
 
