@@ -21,7 +21,6 @@ package org.apache.taverna.scufl2.wfdesc;
  *
 */
 
-
 import static org.apache.taverna.scufl2.api.common.Scufl2Tools.NESTED_WORKFLOW;
 
 import java.io.IOException;
@@ -32,16 +31,22 @@ import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.xml.namespace.QName;
-
+import org.apache.jena.ontology.Individual;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RiotException;
+import org.apache.jena.vocabulary.OWL;
 import org.apache.taverna.scufl2.api.activity.Activity;
 import org.apache.taverna.scufl2.api.annotation.Annotation;
 import org.apache.taverna.scufl2.api.common.Child;
 import org.apache.taverna.scufl2.api.common.Named;
 import org.apache.taverna.scufl2.api.common.Scufl2Tools;
 import org.apache.taverna.scufl2.api.common.URITools;
-import org.apache.taverna.scufl2.api.common.WorkflowBean;
 import org.apache.taverna.scufl2.api.common.Visitor.VisitorWithPath;
+import org.apache.taverna.scufl2.api.common.WorkflowBean;
 import org.apache.taverna.scufl2.api.configurations.Configuration;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.core.DataLink;
@@ -54,350 +59,293 @@ import org.apache.taverna.scufl2.api.port.WorkflowPort;
 import org.apache.taverna.scufl2.api.profiles.ProcessorBinding;
 import org.apache.taverna.scufl2.api.profiles.ProcessorPortBinding;
 import org.apache.taverna.scufl2.api.profiles.Profile;
-import org.openrdf.OpenRDFException;
-import org.openrdf.concepts.rdfs.Resource;
-import org.openrdf.elmo.ElmoModule;
-import org.openrdf.elmo.sesame.SesameManager;
-import org.openrdf.elmo.sesame.SesameManagerFactory;
-import org.openrdf.query.parser.QueryParserRegistry;
-import org.openrdf.query.parser.sparql.SPARQLParserFactory;
-import org.openrdf.repository.Repository;
-import org.openrdf.repository.contextaware.ContextAwareConnection;
-import org.openrdf.rio.RDFFormat;
-import org.openrdf.rio.helpers.OrganizedRDFWriter;
-import org.purl.wf4ever.roterms.RotermsResource;
-import org.purl.wf4ever.wf4ever.BeanshellScript;
-import org.purl.wf4ever.wf4ever.CommandLineTool;
-import org.purl.wf4ever.wf4ever.RESTService;
-import org.purl.wf4ever.wf4ever.RScript;
-import org.purl.wf4ever.wf4ever.SOAPService;
-import org.purl.wf4ever.wfdesc.Input;
-import org.purl.wf4ever.wfdesc.Output;
-import org.purl.wf4ever.wfdesc.Process;
-import org.w3.prov.Entity;
-
+import org.apache.taverna.scufl2.wfdesc.ontologies.Prov_o;
+import org.apache.taverna.scufl2.wfdesc.ontologies.Roterms;
+import org.apache.taverna.scufl2.wfdesc.ontologies.Wf4ever;
+import org.apache.taverna.scufl2.wfdesc.ontologies.Wfdesc;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class WfdescSerialiser {
 
-    private static Logger logger = Logger.getLogger(WfdescSerialiser.class.getCanonicalName());
-    
-    public static URI REST = URI
-            .create("http://ns.taverna.org.uk/2010/activity/rest");
-	public static URI WSDL = URI
-			.create("http://ns.taverna.org.uk/2010/activity/wsdl");
+	private static Logger logger = Logger.getLogger(WfdescSerialiser.class.getCanonicalName());
+
+	public static URI REST = URI.create("http://ns.taverna.org.uk/2010/activity/rest");
+	public static URI WSDL = URI.create("http://ns.taverna.org.uk/2010/activity/wsdl");
 	public static URI SECURITY = WSDL.resolve("wsdl/security");
 	public static URI OPERATION = WSDL.resolve("wsdl/operation");
-	public static URI BEANSHELL = URI
-	.create("http://ns.taverna.org.uk/2010/activity/beanshell");
-	public static URI RSHELL = URI
-	.create("http://ns.taverna.org.uk/2010/activity/rshell");
-	public static URI TOOL = URI
-	.create("http://ns.taverna.org.uk/2010/activity/tool");
-	
-	private Scufl2Tools scufl2Tools = new Scufl2Tools();
-	private SesameManager sesameManager;
-	private URITools uriTools = new URITools();
-	private WorkflowBundle wfBundle;
+	public static URI BEANSHELL = URI.create("http://ns.taverna.org.uk/2010/activity/beanshell");
+	public static URI RSHELL = URI.create("http://ns.taverna.org.uk/2010/activity/rshell");
+	public static URI TOOL = URI.create("http://ns.taverna.org.uk/2010/activity/tool");
 
-	public Repository getRepository() {
-		return getSesameManager().getConnection().getRepository();
-	}
+	private Scufl2Tools scufl2Tools = new Scufl2Tools();
+	private URITools uriTools = new URITools();
 
 	public Scufl2Tools getScufl2Tools() {
 		return scufl2Tools;
-	}
-
-	public SesameManager getSesameManager() {
-		if (sesameManager == null) {
-		    
-		    // Raven workaround - register SPARQLParserFactory
-		    QueryParserRegistry.getInstance().add(new SPARQLParserFactory());
-		    
-			ElmoModule module = new ElmoModule();
-			module.addConcept(Labelled.class);
-			SesameManagerFactory factory = new SesameManagerFactory(module);
-			factory.setInferencingEnabled(true);
-			sesameManager = factory.createElmoManager();
-		}
-		return sesameManager;
 	}
 
 	public URITools getUriTools() {
 		return uriTools;
 	}
 
-	private QName qnameForBean(WorkflowBean bean) {
-		URI uri = uriTools.uriForBean(bean);
-		org.openrdf.model.URI sesameUri = getRepository().getValueFactory()
-				.createURI(uri.toASCIIString());
-		return new QName(sesameUri.getNamespace(), sesameUri.getLocalName());
+	private String uriForBean(WorkflowBean bean) {
+		return uriTools.uriForBean(bean).toASCIIString();
 	}
-	
-	protected void save(final WorkflowBundle bundle) {
-	    bundle.accept(new VisitorWithPath() {
+
+	protected OntModel save(final WorkflowBundle bundle) {
+		final OntModel model = ModelFactory.createOntologyModel();
+		bundle.accept(new VisitorWithPath() {
 			Scufl2Tools scufl2Tools = new Scufl2Tools();
-            public boolean visit() {
-                WorkflowBean node = getCurrentNode(); 
-//                System.out.println(node);
-                if (node instanceof WorkflowBundle) {
-                    return true;
-                }
-//				@SuppressWarnings("rawtypes")
-								
-                if (node instanceof org.apache.taverna.scufl2.api.core.Workflow) {
-				    entityForBean(node, org.purl.wf4ever.wfdesc.Workflow.class);					
+
+			public boolean visit() {
+				WorkflowBean node = getCurrentNode();
+				// System.out.println(node);
+				if (node instanceof WorkflowBundle) {
+					return true;
+				}
+				// @SuppressWarnings("rawtypes")
+
+				if (node instanceof org.apache.taverna.scufl2.api.core.Workflow) {
+					entityForBean(node, Wfdesc.Workflow);
 				} else if (node instanceof Processor) {
-				    Processor processor = (Processor)node;
-				    Process process = entityForBean(processor, Process.class);
-				    entityForBean(processor.getParent(), org.purl.wf4ever.wfdesc.Workflow.class).getWfHasSubProcess().add(process);
+					Processor processor = (Processor) node;
+					Individual process = entityForBean(processor, Wfdesc.Process);
+					Individual wf = entityForBean(processor.getParent(), Wfdesc.Workflow);
+					wf.addProperty(Wfdesc.hasSubProcess, process);
 				} else if (node instanceof InputPort) {
 					WorkflowBean parent = ((Child) node).getParent();
-                    Input input = entityForBean(node, Input.class);
-					Process process = entityForBean(parent, Process.class); 
-					process.getWfHasInput().add(input);
+					Individual input = entityForBean(node, Wfdesc.Input);
+					Individual process = entityForBean(parent, Wfdesc.Process);
+					process.addProperty(Wfdesc.hasInput, input);
+
 				} else if (node instanceof OutputPort) {
-                    WorkflowBean parent = ((Child) node).getParent();
-				    Output output = entityForBean(node, Output.class);
-                    Process process = entityForBean(parent, Process.class);
-                    process.getWfHasOutput().add(output);
+					WorkflowBean parent = ((Child) node).getParent();
+					Individual output = entityForBean(node, Wfdesc.Output);
+					Individual process = entityForBean(parent, Wfdesc.Process);
+					process.addProperty(Wfdesc.hasOutput, output);
 				} else if (node instanceof DataLink) {
-				    WorkflowBean parent = ((Child) node).getParent();
-                    DataLink link = (DataLink) node;
-                    org.purl.wf4ever.wfdesc.DataLink dl = entityForBean(link,
-                            org.purl.wf4ever.wfdesc.DataLink.class);
-                    Output source = entityForBean(link.getReceivesFrom(),
-                            Output.class);
-                    dl.getWfHasSource().add(source);
-                    Input sink = entityForBean(link.getSendsTo(), Input.class);
-                    dl.getWfHasSink().add(sink);
-                    entityForBean(parent,
-                            org.purl.wf4ever.wfdesc.Workflow.class)
-                            .getWfHasDataLink().add(dl);
+					WorkflowBean parent = ((Child) node).getParent();
+					DataLink link = (DataLink) node;
+					Individual dl = entityForBean(link, Wfdesc.DataLink);
+
+					Individual source = entityForBean(link.getReceivesFrom(), Wfdesc.Output);
+					dl.addProperty(Wfdesc.hasSource, source);
+
+					Individual sink = entityForBean(link.getSendsTo(), Wfdesc.Input);
+					dl.addProperty(Wfdesc.hasSink, sink);
+					Individual wf = entityForBean(parent, Wfdesc.Workflow);
+					wf.addProperty(Wfdesc.hasDataLink, dl);
 				} else if (node instanceof Profile) {
-				    // So that we can get at the ProcessorBinding - buy only if it is the main Profile
-				    return node == bundle.getMainProfile();
-                } else if (node instanceof ProcessorBinding) {
-                    ProcessorBinding b = (ProcessorBinding) node;
-                    Activity a = b.getBoundActivity();
-                    Processor boundProcessor = b.getBoundProcessor();
-                    Process process = entityForBean(boundProcessor, Process.class);
-                    
-                    // Note: We don't describe the activity and processor binding in wfdesc. Instead we 
-                    // assign additional types and attributes to the parent processor
-                    
-                    try {
-                        URI type = a.getType();
-                        Configuration c = scufl2Tools.configurationFor(a, b.getParent());
-                        JsonNode json = c.getJson();
-                        if (type.equals(BEANSHELL)) {                                   
-                            BeanshellScript script = getSesameManager().designateEntity(process, BeanshellScript.class);                         
-                            String s = json.get("script").asText();
-                            script.getWfScript().add(s);
+					// So that we can get at the ProcessorBinding - buy only if
+					// it is the main Profile
+					return node == bundle.getMainProfile();
+				} else if (node instanceof ProcessorBinding) {
+					ProcessorBinding b = (ProcessorBinding) node;
+					Activity a = b.getBoundActivity();
+					Processor boundProcessor = b.getBoundProcessor();
+					Individual process = entityForBean(boundProcessor, Wfdesc.Process);
 
-                            JsonNode localDep = json.get("localDependency");
-                            if (localDep != null && localDep.isArray()) {
-                                for (int i=0; i<localDep.size(); i++) {
-                                    String depStr = localDep.get(i).asText();
-                                    RotermsResource res = getSesameManager().designateEntity(script, RotermsResource.class);
-                                    RotermsResource dep = getSesameManager().create(RotermsResource.class);
-                                    dep.getWfLabel().add(depStr);
-                                    dep.getWfComment().add("JAR dependency");
-                                    res.getWfRequiresSoftware().add(dep);
-                                    // Somehow this gets the whole thing to fall out of the graph!
-//                                  QName depQ = new QName("http://google.com/", ""+ UUID.randomUUID());
-//                                  sesameManager.rename(dep, depQ);
-                                    
-                                }
-                            }
-                        }
-                        if (type.equals(RSHELL)) {                                  
-                            RScript script = getSesameManager().designateEntity(process, RScript.class);
-                            String s = json.get("script").asText();
-                            script.getWfScript().add(s);
-                        }
-                        if (type.equals(WSDL)) {
-                            SOAPService soap = getSesameManager().designateEntity(process, SOAPService.class);
-                            JsonNode operation = json.get("operation");
-                            URI wsdl = URI.create(operation.get("wsdl").asText());
-                            soap.getWfWsdlURI().add(wsdl);
-                            soap.getWfWsdlOperationName().add(operation.get("name").asText());
-                            soap.getWfRootURI().add(wsdl.resolve("/"));
+					// Note: We don't describe the activity and processor
+					// binding in wfdesc. Instead we
+					// assign additional types and attributes to the parent
+					// processor
 
-                        } 
-                        if (type.equals(REST)) {
-                            RESTService rest = getSesameManager().designateEntity(process, RESTService.class);
-//                            System.out.println(json);
-                            JsonNode request = json.get("request");
-                            String absoluteURITemplate = request.get("absoluteURITemplate").asText();
-                            String uriTemplate = absoluteURITemplate.replace("{", "");
-                            uriTemplate = uriTemplate.replace("}", "");
-                            // TODO: Detect {}
-                            try {
-                            	URI root = new URI(uriTemplate).resolve("/");
-                            	rest.getWfRootURI().add(root);
-                            } catch (URISyntaxException e) {
-                            	logger.warning("Potentially invalid URI template: " + absoluteURITemplate);
-//                            	Uncomment to temporarily break TestInvalidURITemplate:
-//								rest.getWfRootURI().add(URI.create("http://example.com/FRED"));
+					try {
+						URI type = a.getType();
+						Configuration c = scufl2Tools.configurationFor(a, b.getParent());
+						JsonNode json = c.getJson();
+						if (type.equals(BEANSHELL)) {
+							process.addRDFType(Wf4ever.BeanshellScript);
+							String s = json.get("script").asText();
+							process.addProperty(Wf4ever.script, s);
+							JsonNode localDep = json.get("localDependency");
+							if (localDep != null && localDep.isArray()) {
+								for (int i = 0; i < localDep.size(); i++) {
+									String depStr = localDep.get(i).asText();
+									// FIXME: Better class for dependency?
+									Individual dep = model.createIndividual(OWL.Thing);
+									dep.addLabel(depStr, null);
+									dep.addComment("JAR dependency", "en");
+									process.addProperty(Roterms.requiresSoftware, dep);
+									// Somehow this gets the whole thing to fall
+									// out of the graph!
+									// QName depQ = new
+									// QName("http://google.com/", ""+
+									// UUID.randomUUID());
+									// sesameManager.rename(dep, depQ);
+
+								}
 							}
-                        } 
-                        if (type.equals(TOOL)) {
-                            CommandLineTool cmd = getSesameManager().designateEntity(process, CommandLineTool.class);
-                            JsonNode desc = json.get("toolDescription");
-                            //System.out.println(json);
-                            JsonNode command = desc.get("command");
-                            if (command != null) { 
-                                cmd.getWfCommand().add(command.asText());
-                            }
-                        } 
-                        if (type.equals(NESTED_WORKFLOW)) {
-                            Workflow nestedWf = scufl2Tools.nestedWorkflowForProcessor(boundProcessor, b.getParent());
-                            // The parent process is a specialization of the nested workflow
-                            // (because the nested workflow could exist as several processors)
-                            specializationOf(boundProcessor, nestedWf);
-                            getSesameManager().designateEntity(process, org.purl.wf4ever.wfdesc.Workflow.class);
-                            
-                            // Just like the Processor specializes the nested workflow, the 
-                            // ProcessorPorts specialize the WorkflowPort 
-                            for (ProcessorPortBinding portBinding : b.getInputPortBindings()) {
-                                // Map from activity port (not in wfdesc) to WorkflowPort
-                                WorkflowPort wfPort = nestedWf.getInputPorts().getByName(portBinding.getBoundActivityPort().getName());
-                                if (wfPort == null) { 
-                                    continue;
-                                }
-                                specializationOf(portBinding.getBoundProcessorPort(), wfPort);                                                                                         
-                            }
-                            for (ProcessorPortBinding portBinding : b.getOutputPortBindings()) {
-                                WorkflowPort wfPort = nestedWf.getOutputPorts().getByName(portBinding.getBoundActivityPort().getName());
-                                if (wfPort == null) { 
-                                    continue;
-                                }
-                                specializationOf(portBinding.getBoundProcessorPort(), wfPort);                         
-                            }
-                        }
-                    } catch (IndexOutOfBoundsException ex) {
-                    }
-                    return false;
+						}
+						if (type.equals(RSHELL)) {
+							process.addRDFType(Wf4ever.RScript);
+							String s = json.get("script").asText();
+							process.addProperty(Wf4ever.script, s);
+						}
+						if (type.equals(WSDL)) {
+							process.addRDFType(Wf4ever.SOAPService);
+							JsonNode operation = json.get("operation");
+							URI wsdl = URI.create(operation.get("wsdl").asText());
+							process.addProperty(Wf4ever.wsdlURI, wsdl.toASCIIString());
+							process.addProperty(Wf4ever.wsdlOperationName, operation.get("name").asText());
+							process.addProperty(Wf4ever.rootURI, wsdl.resolve("/").toASCIIString());
+						}
+						if (type.equals(REST)) {
+							process.addRDFType(Wf4ever.RESTService);
+							// System.out.println(json);
+							JsonNode request = json.get("request");
+							String absoluteURITemplate = request.get("absoluteURITemplate").asText();
+							String uriTemplate = absoluteURITemplate.replace("{", "");
+							uriTemplate = uriTemplate.replace("}", "");
+							// TODO: Detect {}
+							try {
+								URI root = new URI(uriTemplate).resolve("/");
+								process.addProperty(Wf4ever.rootURI, root.toASCIIString());
+							} catch (URISyntaxException e) {
+								logger.warning("Potentially invalid URI template: " + absoluteURITemplate);
+								// Uncomment to temporarily break
+								// TestInvalidURITemplate:
+								// rest.getWfRootURI().add(URI.create("http://example.com/FRED"));
+							}
+						}
+						if (type.equals(TOOL)) {
+							process.addRDFType(Wf4ever.CommandLineTool);
+							JsonNode desc = json.get("toolDescription");
+							// System.out.println(json);
+							JsonNode command = desc.get("command");
+							if (command != null) {
+								process.addProperty(Wf4ever.command, command.asText());
+							}
+						}
+						if (type.equals(NESTED_WORKFLOW)) {
+							Workflow nestedWf = scufl2Tools.nestedWorkflowForProcessor(boundProcessor, b.getParent());
+							// The parent process is a specialization of the
+							// nested workflow
+							// (because the nested workflow could exist as
+							// several processors)
+							specializationOf(boundProcessor, nestedWf);
+							process.addRDFType(Wfdesc.Workflow);
+
+							// Just like the Processor specializes the nested
+							// workflow, the
+							// ProcessorPorts specialize the WorkflowPort
+							for (ProcessorPortBinding portBinding : b.getInputPortBindings()) {
+								// Map from activity port (not in wfdesc) to
+								// WorkflowPort
+								WorkflowPort wfPort = nestedWf.getInputPorts()
+										.getByName(portBinding.getBoundActivityPort().getName());
+								if (wfPort == null) {
+									continue;
+								}
+								specializationOf(portBinding.getBoundProcessorPort(), wfPort);
+							}
+							for (ProcessorPortBinding portBinding : b.getOutputPortBindings()) {
+								WorkflowPort wfPort = nestedWf.getOutputPorts()
+										.getByName(portBinding.getBoundActivityPort().getName());
+								if (wfPort == null) {
+									continue;
+								}
+								specializationOf(portBinding.getBoundProcessorPort(), wfPort);
+							}
+						}
+					} catch (IndexOutOfBoundsException ex) {
+					}
+					return false;
 				} else {
-//				    System.out.println("--NO!");
+					// System.out.println("--NO!");
 					return false;
 				}
-                for (Annotation ann : scufl2Tools.annotationsFor(node, bundle)) {
-                    String annotationBody = ann.getBody().toASCIIString();
-                    String baseURI = bundle.getGlobalBaseURI().resolve(ann.getBody()).toASCIIString();
-                    InputStream annotationStream;
-                    try {                        
-                        annotationStream = bundle.getResources().getResourceAsInputStream(
-                                annotationBody);
-                   
-                        RDFFormat dataFormat = RDFFormat.TURTLE;
-                        try {
-                            getSesameManager().getConnection().add(annotationStream, baseURI, dataFormat);                    
-                        } catch (OpenRDFException e) {
-                            logger.log(Level.WARNING, "Can't parse RDF Turtle from " + annotationBody, e); 
-                        } finally {
-                            annotationStream.close();
-                        } 
-                    } catch (IOException e) {
-                        logger.log(Level.WARNING, "Can't read " + annotationBody, e);
-                    }
-                }            
+				for (Annotation ann : scufl2Tools.annotationsFor(node, bundle)) {
+					String annotationBody = ann.getBody().toASCIIString();
+					String baseURI = bundle.getGlobalBaseURI().resolve(ann.getBody()).toASCIIString();
+					InputStream annotationStream;
+					try {
+						annotationStream = bundle.getResources().getResourceAsInputStream(annotationBody);
+
+						try {
+							// FIXME: Don't just assume Lang.TURTLE
+							RDFDataMgr.read(model, annotationStream, baseURI, Lang.TURTLE);
+						} catch (RiotException e) {
+							logger.log(Level.WARNING, "Can't parse RDF Turtle from " + annotationBody, e);
+						} finally {
+							annotationStream.close();
+						}
+					} catch (IOException e) {
+						logger.log(Level.WARNING, "Can't read " + annotationBody, e);
+					}
+				}
 				if (node instanceof Named) {
 					Named named = (Named) node;
-                    Labelled labelled = entityForBean(node, Labelled.class);
-					labelled.getLabel().add(named.getName());
+					entityForBean(node, OWL.Thing).addLabel(named.getName(), null);
 				}
 				return true;
 			}
 
-            private void specializationOf(WorkflowBean special, WorkflowBean general) {
-                Entity specialEnt = entityForBean(special, Entity.class); 
-                Entity generalEnt = entityForBean(general, Entity.class);
-                specialEnt.getWfSpecializationOf().add(generalEnt);
-            }
+			private void specializationOf(WorkflowBean special, WorkflowBean general) {
+				Individual specialEnt = entityForBean(special, Prov_o.Entity);
+				Individual generalEnt = entityForBean(general, Prov_o.Entity);
+				specialEnt.addProperty(Prov_o.specializationOf, generalEnt);
+			}
 
-            private <T> T entityForBean(WorkflowBean bean, Class<T> type) {
-                return getSesameManager().create(qnameForBean(bean), type);
-            }
+			private Individual entityForBean(WorkflowBean bean, Resource thing) {
+				return model.createIndividual(uriForBean(bean), thing);
+			}
 
-//			@Override
-//			public boolean visitEnter(WorkflowBean node) {
-//                if (node instanceof Processor
-//                        || node instanceof org.apache.taverna.scufl2.api.core.Workflow
-//                        || node instanceof Port || node instanceof DataLink) {
-//					visit(node);
-//					return true;
-//				}
-//                // The other node types (e.g. dispatch stack, configuration) are
-//                // not (directly) represented in wfdesc
-////				 System.out.println("Skipping " + node);
-//				return false;
-//			};
+			// @Override
+			// public boolean visitEnter(WorkflowBean node) {
+			// if (node instanceof Processor
+			// || node instanceof org.apache.taverna.scufl2.api.core.Workflow
+			// || node instanceof Port || node instanceof DataLink) {
+			// visit(node);
+			// return true;
+			// }
+			// // The other node types (e.g. dispatch stack, configuration) are
+			// // not (directly) represented in wfdesc
+			//// System.out.println("Skipping " + node);
+			// return false;
+			// };
 		});
+		return model;
 	}
 
-	public void save(WorkflowBundle wfBundle, OutputStream output)
-			throws WriterException {
-		synchronized (this) {
-			if (this.wfBundle != null) {
-				throw new IllegalStateException(
-						"This serializer is not thread-safe and can only save one WorkflowBundle at a time");
-			}
-			this.wfBundle = wfBundle;
+	public void save(WorkflowBundle wfBundle, OutputStream output) throws WriterException {
+		OntModel model;
+
+		final URI baseURI;
+		if (wfBundle.getMainWorkflow() != null) {
+			Workflow mainWorkflow = wfBundle.getMainWorkflow();
+			baseURI = uriTools.uriForBean(mainWorkflow);
+			model = save(wfBundle);
+		} else {
+			throw new WriterException("wfdesc format requires a main workflow");
 		}
+
+		model.setNsPrefix("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+		model.setNsPrefix("xsd", "http://www.w3.org/2001/XMLSchema#");
+		model.setNsPrefix("owl", "http://www.w3.org/2002/07/owl#");
+		model.setNsPrefix("prov", "http://www.w3.org/ns/prov#");
+		model.setNsPrefix("wfdesc", "http://purl.org/wf4ever/wfdesc#");
+		model.setNsPrefix("wf4ever", "http://purl.org/wf4ever/wf4ever#");
+		model.setNsPrefix("roterms", "http://purl.org/wf4ever/roterms#");
+		model.setNsPrefix("dc", "http://purl.org/dc/elements/1.1/");
+		model.setNsPrefix("dcterms", "http://purl.org/dc/terms/");
+		model.setNsPrefix("comp", "http://purl.org/DP/components#");
+		model.setNsPrefix("dep", "http://scape.keep.pt/vocab/dependencies#");
+		model.setNsPrefix("biocat", "http://biocatalogue.org/attribute/");
+
+		model.setNsPrefix("", "#");
+
 		try {
-			final URI baseURI;
-			if (wfBundle.getMainWorkflow() != null) {
-				Workflow mainWorkflow = wfBundle.getMainWorkflow();
-				baseURI = uriTools.uriForBean(mainWorkflow);
-				save(wfBundle);
-			} else {
-				throw new WriterException(
-						"wfdesc format requires a main workflow");
-			}
-			ContextAwareConnection connection = getSesameManager().getConnection();
-			try {
-
-				connection.setNamespace("rdfs",
-						"http://www.w3.org/2000/01/rdf-schema#");
-				connection.setNamespace("xsd", "http://www.w3.org/2001/XMLSchema#");
-				connection.setNamespace("owl", "http://www.w3.org/2002/07/owl#");
-				connection.setNamespace("prov", "http://www.w3.org/ns/prov#");
-				connection.setNamespace("wfdesc",
-				        "http://purl.org/wf4ever/wfdesc#");
-				connection.setNamespace("wf4ever",
-				        "http://purl.org/wf4ever/wf4ever#");
-				connection.setNamespace("roterms",
-				        "http://purl.org/wf4ever/roterms#");
-				connection.setNamespace("dc", "http://purl.org/dc/elements/1.1/");
-				connection.setNamespace("dcterms", "http://purl.org/dc/terms/");
-				connection.setNamespace("comp", "http://purl.org/DP/components#");
-				connection.setNamespace("dep", "http://scape.keep.pt/vocab/dependencies#");
-				connection.setNamespace("biocat", "http://biocatalogue.org/attribute/");
-				
-                connection.setNamespace("", "#");
-
-				
-				connection.export(new OrganizedRDFWriter(
-						new TurtleWriterWithBase(output, baseURI)));
-			} catch (OpenRDFException e) {
-				throw new WriterException("Can't write to output", e);
-			}
-		} finally {
-			synchronized (this) {
-				this.wfBundle = null;
-			}
+			model.write(output, Lang.TURTLE.getName(), baseURI.toString());
+		} catch (RiotException e) {
+			throw new WriterException("Can't write to output", e);
 		}
+
 	}
 
 	public void setScufl2Tools(Scufl2Tools scufl2Tools) {
 		this.scufl2Tools = scufl2Tools;
-	}
-
-	public void setSesameManager(SesameManager sesameManager) {
-		this.sesameManager = sesameManager;
 	}
 
 	public void setUriTools(URITools uriTools) {

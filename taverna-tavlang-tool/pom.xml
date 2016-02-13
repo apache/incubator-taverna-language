@@ -77,10 +77,11 @@
 		</dependency>
 
 
-		<!-- <dependency> <groupId>${project.groupId}</groupId> <artifactId>taverna-scufl2-wfdesc</artifactId>
-			<version>${project.version}</version> <optional>true</optional> </dependency> -->
-		<!-- <dependency> <groupId>org.purl.wf4ever</groupId> <artifactId>scufl2-wfdesc</artifactId>
-			<version>0.3.7</version> </dependency> -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>taverna-scufl2-wfdesc</artifactId>
+			<version>${project.version}</version>
+		</dependency> 
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
