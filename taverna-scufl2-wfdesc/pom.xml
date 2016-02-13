@@ -30,7 +30,7 @@
 			<plugin>
 				<groupId>org.apache.jena</groupId>
 				<artifactId>jena-maven-tools</artifactId>
-				<version>3.0.1</version>
+				<version>${jena.version}</version>
 				<configuration>
 					<includes>
 						<include>src/main/resources/org/purl/wf4ever/wfdesc/*.ttl</include>
@@ -142,7 +142,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.jena</groupId>
-			<artifactId>jena-arq</artifactId>
+			<artifactId>jena-osgi</artifactId>
 			<version>${jena.version}</version>
 		</dependency>
 		<dependency>
