@@ -17,9 +17,6 @@
 		<artifactId>taverna-language</artifactId>
 		<version>0.15.0-incubating</version>
 	</parent>
-	<properties>		
-		<jena.version>3.0.1</jena.version>
-	</properties>
 	<artifactId>taverna-scufl2-wfdesc</artifactId>
 	<version>0.15.1-incubating-SNAPSHOT</version>
 	<packaging>bundle</packaging>
