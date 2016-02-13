@@ -32,7 +32,7 @@
 		and workflow inputs/outputs/run (DataBundle).
 	</description>
 	<properties>
-		<jena.version>3.0.0</jena.version> <!-- TAVERNA-892 -->
+		<jena.version>3.0.0</jena.version> <!-- TAVERNA-892 - avoid 3.0.1 -->
 	</properties>
 
 	<build>
@@ -40,7 +40,6 @@
 			<plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-javadoc-plugin</artifactId>
-    <version>2.9</version>
     <executions>
         <execution>
             <id>attach-javadocs</id>
