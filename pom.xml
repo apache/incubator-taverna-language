@@ -32,7 +32,7 @@
 		and workflow inputs/outputs/run (DataBundle).
 	</description>
 	<properties>
-		<jena.version>3.0.1</jena.version> <!-- TAVERNA-892 -->
+		<jena.version>3.0.0</jena.version> <!-- TAVERNA-892 -->
 	</properties>
 
 	<build>
@@ -261,8 +261,6 @@
     <module>taverna-scufl2-ucfpackage</module>
     <module>taverna-scufl2-wfbundle</module>
     <module>taverna-tavlang-tool</module>
-    <!-- Disabled temporarily due to dependency overload..
     <module>taverna-scufl2-wfdesc</module>
-    -->
 	</modules>
 </project>
