@@ -20,7 +20,7 @@
     <parent>
       	<groupId>org.apache.taverna.language</groupId>
       	<artifactId>apache-taverna-language</artifactId>
-      	<version>0.15.1-incubating-SNAPSHOT</version>
+      	<version>0.15.2-incubating-SNAPSHOT</version>
     </parent>
     <artifactId>taverna-tavlang-tool</artifactId>
     <name>Apache Taverna tavlang tool</name>
@@ -161,10 +161,8 @@
 						</goals>
 						<configuration>
 							<transformers>
-								<transformer
-									implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-								<transformer
-									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 									<mainClass>org.apache.taverna.tavlang.TavernaCommandline</mainClass>
 								</transformer>
 								<transformer implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer">
