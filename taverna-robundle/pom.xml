@@ -20,7 +20,7 @@
 	<packaging>bundle</packaging>
 	<parent>
 		<groupId>org.apache.taverna.language</groupId>
-		<artifactId>taverna-language</artifactId>
+		<artifactId>apache-taverna-language</artifactId>
 		<version>0.15.1-incubating-SNAPSHOT</version>
 	</parent>
 	<artifactId>taverna-robundle</artifactId>

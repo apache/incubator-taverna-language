@@ -19,7 +19,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.apache.taverna.language</groupId>
-		<artifactId>taverna-language</artifactId>
+		<artifactId>apache-taverna-language</artifactId>
 		<version>0.15.1-incubating-SNAPSHOT</version>
 	</parent>
 	<artifactId>taverna-scufl2-api</artifactId>
