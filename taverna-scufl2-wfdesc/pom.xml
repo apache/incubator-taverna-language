@@ -15,10 +15,9 @@
 	<parent>
 		<groupId>org.apache.taverna.language</groupId>
 		<artifactId>apache-taverna-language</artifactId>
-		<version>0.15.0-incubating</version>
+		<version>0.15.1-incubating-SNAPSHOT</version>
 	</parent>
 	<artifactId>taverna-scufl2-wfdesc</artifactId>
-	<version>0.15.1-incubating-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 	<name>Apache Taverna Scufl 2 wfdesc export</name>
 	<description>Convert Scufl2 workflow to wfdesc structure (from Wf4Ever RO ontology)</description>
