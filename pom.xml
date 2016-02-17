@@ -97,6 +97,9 @@
             <exclude>src/test/resources/document.odt</exclude>
             <exclude>src/test/resources/workflowrun.bundle.zip</exclude>
 
+           <!-- Created by Maven Shade plugin -->
+           <exclude>dependency-reduced-pom.xml</exclude>
+
             <!-- 
                  Below exclusions are for 
                  externally sourced/derived files 
