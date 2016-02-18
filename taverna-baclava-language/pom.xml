@@ -23,7 +23,7 @@ under the License.
 	<parent>
 		<groupId>org.apache.taverna.language</groupId>
 		<artifactId>apache-taverna-language</artifactId>
-		<version>0.15.2-incubating-SNAPSHOT</version>
+		<version>0.15.1-incubating</version>
 	</parent>
   <artifactId>taverna-baclava-language</artifactId>
   <name>Apache Taverna Baclava support</name>
