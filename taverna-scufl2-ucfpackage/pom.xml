@@ -28,6 +28,14 @@
 	<description>Adobe UCF compatible Package API, making a structured ZIP file with manifest</description>
 	<dependencies>
 		<dependency>
+			<!-- Avoid TAVERNA-920 namespace issue -->
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-osgi</artifactId>
+			<version>${jaxb.version}</version>
+			<optional>true</optional>
+		</dependency>
+	
+		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
       <version>${commons.io.version}</version>
