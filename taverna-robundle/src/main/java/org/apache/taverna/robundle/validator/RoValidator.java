@@ -54,7 +54,7 @@ import org.apache.taverna.robundle.manifest.PathMetadata;
 
 public class RoValidator {
 	
-	private Path p;
+	private Path path;
 	//Store all aggregates to be checked
 	private List<PathMetadata> aggr;
 	
@@ -76,20 +76,19 @@ public class RoValidator {
 	
 	
 	public RoValidator(Path path){
-		this.p = path;
+		this.path = path;
 		this.validate();
 	}
 	
 	public void validate(){
-		Bundle bundle;
 		
-		try {
-			bundle = Bundles.openBundle(this.p);
+		try (Bundle bundle = Bundles.openBundle(path)) {
+			
 			Manifest manifest = bundle.getManifest();
 			this.aggr = manifest.getAggregates();
 			this.anno = manifest.getAnnotations();
 			
-			ZipFile zip = new ZipFile(new File(this.p.toString()));
+			ZipFile zip = new ZipFile(new File(path.toString()));
 			Enumeration<? extends ZipEntry> ent = zip.entries();
 			while(ent.hasMoreElements()){
 		        ZipEntry entry = ent.nextElement();
@@ -145,7 +144,7 @@ public class RoValidator {
 				//This is ok and skip
 			}else{
 				if(!set.contains(s)){
-					this.infoWarningList.add(p.toString());
+					this.infoWarningList.add(path.toString());
 				}
 			}
 		}
