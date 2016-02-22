@@ -21,7 +21,7 @@
 	<parent>
 		<groupId>org.apache.taverna.language</groupId>
 		<artifactId>apache-taverna-language</artifactId>
-		<version>0.15.1-incubating-SNAPSHOT</version>
+		<version>0.15.1-incubating</version>
 	</parent>
 	<artifactId>taverna-robundle</artifactId>
 	<name>Apache Taverna RO Bundle API</name>
