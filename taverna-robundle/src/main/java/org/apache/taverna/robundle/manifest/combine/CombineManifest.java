@@ -62,7 +62,7 @@ import org.apache.taverna.robundle.manifest.PathMetadata;
 
 import org.apache.taverna.robundle.xml.combine.Content;
 import org.apache.taverna.robundle.xml.combine.ObjectFactory;
-import org.apache.taverna.robundle.xml.combine.OmexManifest;;
+import org.apache.taverna.robundle.xml.combine.OmexManifest;
 import org.xml.sax.InputSource;
 
 import org.apache.jena.query.QueryExecution;
