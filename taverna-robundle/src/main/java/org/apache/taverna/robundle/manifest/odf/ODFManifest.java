@@ -26,7 +26,6 @@ import static java.nio.file.Files.isRegularFile;
 import static java.nio.file.Files.newInputStream;
 import static java.nio.file.Files.newOutputStream;
 import static java.nio.file.Files.size;
-import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.WARNING;
 
 import java.io.IOException;
@@ -38,107 +37,31 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.logging.Logger;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-
-import oasis.names.tc.opendocument.xmlns.manifest._1.FileEntry;
-import oasis.names.tc.opendocument.xmlns.manifest._1.Manifest;
-import oasis.names.tc.opendocument.xmlns.manifest._1.ObjectFactory;
 
 import org.apache.taverna.robundle.Bundle;
 import org.apache.taverna.robundle.manifest.PathMetadata;
 
-import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
+import oasis.names.tc.opendocument.xmlns.manifest._1.FileEntry;
+import oasis.names.tc.opendocument.xmlns.manifest._1.Manifest;
 
-public class ODFManifest {
-	public static class ManifestNamespacePrefixMapperJAXB_RI extends
-			NamespacePrefixMapper {
-		@Override
-		public String[] getPreDeclaredNamespaceUris() {
-			// TODO Auto-generated method stub
-			return super.getPreDeclaredNamespaceUris();
-		}
+public class ODFManifest extends ODFJaxb {
 
-		@Override
-		public String getPreferredPrefix(String namespaceUri,
-				String suggestion, boolean requirePrefix) {
-			if (namespaceUri
-					.equals("urn:oasis:names:tc:opendocument:xmlns:manifest:1.0"))
-				return "manifest";
-			return suggestion;
-		}
-	}
-
-	public static final String CONTAINER_XML = "META-INF/container.xml";
-	private static JAXBContext jaxbContext;
 	private static Logger logger = Logger.getLogger(ODFManifest.class
 			.getCanonicalName());
-
+	
+	public static final String CONTAINER_XML = "META-INF/container.xml";
+	
 	public static final String MANIFEST_XML = "META-INF/manifest.xml";
 
 	private static final String ODF_MANIFEST_VERSION = "1.2";
-	private static boolean warnedPrefixMapper;
 
 	public static boolean containsManifest(Bundle bundle) {
 		return isRegularFile(manifestXmlPath(bundle));
 	}
 
-	protected static synchronized Marshaller createMarshaller()
-			throws JAXBException {
-		Marshaller marshaller = getJaxbContext().createMarshaller();
-		setPrefixMapper(marshaller);
-		return marshaller;
-	}
-	protected static synchronized Unmarshaller createUnMarshaller()
-			throws JAXBException {
-		return getJaxbContext().createUnmarshaller();
-	}
-
-	protected static synchronized JAXBContext getJaxbContext()
-			throws JAXBException {
-		if (jaxbContext == null) {
-			jaxbContext = JAXBContext.newInstance(ObjectFactory.class
-					// ,
-					// org.oasis_open.names.tc.opendocument.xmlns.container.ObjectFactory.class,
-					// org.w3._2000._09.xmldsig_.ObjectFactory.class,
-					// org.w3._2001._04.xmlenc_.ObjectFactory.class
-					);
-		}
-		return jaxbContext;
-	}
-
 	private static Path manifestXmlPath(Bundle bundle) {
 		return bundle.getRoot().resolve(MANIFEST_XML);
-	}
-
-	protected static void setPrefixMapper(Marshaller marshaller) {
-		boolean setPrefixMapper = false;
-
-		try {
-			/*
-			 * This only works with JAXB RI, in which case we can set the
-			 * namespace prefix mapper
-			 */
-			Class.forName("com.sun.xml.bind.marshaller.NamespacePrefixMapper");
-			marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper",
-					new ManifestNamespacePrefixMapperJAXB_RI());
-			/*
-			 * Note: A similar mapper for the built-in java
-			 * (com.sun.xml.bind.internal.namespacePrefixMapper) is no longer
-			 * included here, as it will not (easily) compile with Maven.
-			 */
-			setPrefixMapper = true;
-		} catch (Exception e) {
-			logger.log(FINE, "Can't find NamespacePrefixMapper", e);
-		}
-
-		if (!setPrefixMapper && !warnedPrefixMapper) {
-			logger.info("Could not set prefix mapper (missing or incompatible JAXB) "
-					+ "- will use prefixes ns0, ns1, ..");
-			warnedPrefixMapper = true;
-		}
 	}
 
 	private Bundle bundle;
@@ -226,8 +149,6 @@ public class ODFManifest {
 	// }
 
 	private org.apache.taverna.robundle.manifest.Manifest manifest;
-
-	private ObjectFactory manifestFactory = new ObjectFactory();
 
 	public ODFManifest(org.apache.taverna.robundle.manifest.Manifest manifest) {
 		this.manifest = manifest;

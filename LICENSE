@@ -223,7 +223,6 @@ http://www.w3.org/Consortium/Legal/2015/doc-license
 
 
 ---------------------------------------------------------
-./taverna-scufl2-ucfpackage/src/main/xsd/xenc-schema.xsd
 ./taverna-robundle/src/main/xsd/xenc-schema.xsd
 
 XML Encryption Syntax and Processing
@@ -238,7 +237,6 @@ http://www.w3.org/Consortium/Legal/
 
 
 ---------------------------------------------------------
-./taverna-scufl2-ucfpackage/src/main/xsd/xmldsig-core-schema.xsd
 ./taverna-robundle/src/main/xsd/xmldsig-core-schema.xsd
 
 Schema for XML Signatures
