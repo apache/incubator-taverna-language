@@ -36,12 +36,12 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.taverna.scufl2.api.annotation.Revision;
 import org.apache.taverna.scufl2.api.io.ReaderException;
-import org.purl.wf4ever.roevo.jaxb.Change;
-import org.purl.wf4ever.roevo.jaxb.ChangeSpecification;
-import org.purl.wf4ever.roevo.jaxb.ChangeSpecification.HasChange;
-import org.purl.wf4ever.roevo.jaxb.RoEvoDocument;
-import org.purl.wf4ever.roevo.jaxb.VersionableResource;
-import org.w3._1999._02._22_rdf_syntax_ns_.Resource;
+import org.apache.taverna.scufl2.xml.roevo.Change;
+import org.apache.taverna.scufl2.xml.roevo.ChangeSpecification;
+import org.apache.taverna.scufl2.xml.roevo.ChangeSpecification.HasChange;
+import org.apache.taverna.scufl2.xml.roevo.RoEvoDocument;
+import org.apache.taverna.scufl2.xml.roevo.VersionableResource;
+import org.apache.taverna.scufl2.xml.rdf.Resource;
 
 
 public class RevisionParser {
@@ -50,10 +50,10 @@ public class RevisionParser {
 	protected JAXBContext getJaxbContext() throws JAXBException {
 		if (jaxbContext == null) {
 			Class<?>[] packages = {
-					org.purl.wf4ever.roevo.jaxb.ObjectFactory.class,
-					org.w3.prov.jaxb.ObjectFactory.class,
-					org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory.class,
-					org.w3._2000._01.rdf_schema_.ObjectFactory.class };
+					org.apache.taverna.scufl2.xml.roevo.ObjectFactory.class,
+					org.apache.taverna.scufl2.xml.prov.ObjectFactory.class,
+					org.apache.taverna.scufl2.xml.rdf.ObjectFactory.class,
+					org.apache.taverna.scufl2.xml.rdfs.ObjectFactory.class };
 			jaxbContext = JAXBContext.newInstance(packages);
 		}
 		return jaxbContext;

@@ -32,13 +32,13 @@ import javax.xml.bind.Unmarshaller;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.apache.taverna.scufl2.rdfxml.jaxb.ObjectFactory;
-import org.apache.taverna.scufl2.rdfxml.jaxb.Profile;
-import org.apache.taverna.scufl2.rdfxml.jaxb.ProfileDocument;
-import org.apache.taverna.scufl2.rdfxml.jaxb.Workflow;
-import org.apache.taverna.scufl2.rdfxml.jaxb.WorkflowBundle;
-import org.apache.taverna.scufl2.rdfxml.jaxb.WorkflowBundleDocument;
-import org.apache.taverna.scufl2.rdfxml.jaxb.WorkflowDocument;
+import org.apache.taverna.scufl2.xml.ObjectFactory;
+import org.apache.taverna.scufl2.xml.Profile;
+import org.apache.taverna.scufl2.xml.ProfileDocument;
+import org.apache.taverna.scufl2.xml.Workflow;
+import org.apache.taverna.scufl2.xml.WorkflowBundle;
+import org.apache.taverna.scufl2.xml.WorkflowBundleDocument;
+import org.apache.taverna.scufl2.xml.WorkflowDocument;
 
 public class DummyParserTest {
 
@@ -91,8 +91,8 @@ public class DummyParserTest {
 	public void makeUnmarshaller() throws JAXBException {
 		
 		Class<?>[] packages = { ObjectFactory.class,
-				org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory.class,
-				org.w3._2000._01.rdf_schema_.ObjectFactory.class };
+				org.apache.taverna.scufl2.xml.rdf.ObjectFactory.class,
+				org.apache.taverna.scufl2.xml.rdfs.ObjectFactory.class };
 		jaxbContext = JAXBContext.newInstance(packages);	
 		unmarshaller = jaxbContext.createUnmarshaller();
 	}

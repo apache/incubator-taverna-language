@@ -40,17 +40,17 @@ import org.apache.taverna.scufl2.api.iterationstrategy.IterationStrategyParent;
 import org.apache.taverna.scufl2.api.port.ReceiverPort;
 import org.apache.taverna.scufl2.api.port.SenderPort;
 
-import org.apache.taverna.scufl2.rdfxml.jaxb.Blocking;
-import org.apache.taverna.scufl2.rdfxml.jaxb.CrossProduct;
-import org.apache.taverna.scufl2.rdfxml.jaxb.DataLink;
-import org.apache.taverna.scufl2.rdfxml.jaxb.DispatchStack;
-import org.apache.taverna.scufl2.rdfxml.jaxb.DotProduct;
-import org.apache.taverna.scufl2.rdfxml.jaxb.IterationStrategyStack;
-import org.apache.taverna.scufl2.rdfxml.jaxb.PortNode;
-import org.apache.taverna.scufl2.rdfxml.jaxb.Processor.InputProcessorPort;
-import org.apache.taverna.scufl2.rdfxml.jaxb.Processor.OutputProcessorPort;
-import org.apache.taverna.scufl2.rdfxml.jaxb.ProductOf;
-import org.apache.taverna.scufl2.rdfxml.jaxb.WorkflowDocument;
+import org.apache.taverna.scufl2.xml.Blocking;
+import org.apache.taverna.scufl2.xml.CrossProduct;
+import org.apache.taverna.scufl2.xml.DataLink;
+import org.apache.taverna.scufl2.xml.DispatchStack;
+import org.apache.taverna.scufl2.xml.DotProduct;
+import org.apache.taverna.scufl2.xml.IterationStrategyStack;
+import org.apache.taverna.scufl2.xml.PortNode;
+import org.apache.taverna.scufl2.xml.Processor.InputProcessorPort;
+import org.apache.taverna.scufl2.xml.Processor.OutputProcessorPort;
+import org.apache.taverna.scufl2.xml.ProductOf;
+import org.apache.taverna.scufl2.xml.WorkflowDocument;
 
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
@@ -187,7 +187,7 @@ public class WorkflowParser extends AbstractParser {
 	}
 
 	protected void parseInputWorkflowPort(
-			org.apache.taverna.scufl2.rdfxml.jaxb.InputWorkflowPort original) {
+			org.apache.taverna.scufl2.xml.InputWorkflowPort original) {
 		org.apache.taverna.scufl2.api.port.InputWorkflowPort port = new org.apache.taverna.scufl2.api.port.InputWorkflowPort();
 		port.setName(original.getName());
 		if (original.getPortDepth() != null)
@@ -217,7 +217,7 @@ public class WorkflowParser extends AbstractParser {
 	}
 
 	protected void parseOutputWorkflowPort(
-			org.apache.taverna.scufl2.rdfxml.jaxb.OutputWorkflowPort original) {
+			org.apache.taverna.scufl2.xml.OutputWorkflowPort original) {
 		org.apache.taverna.scufl2.api.port.OutputWorkflowPort port = new org.apache.taverna.scufl2.api.port.OutputWorkflowPort();
 		port.setName(original.getName());
 		port.setParent(getParserState().getCurrent(Workflow.class));
@@ -240,7 +240,7 @@ public class WorkflowParser extends AbstractParser {
 	}
 
 	protected void parseProcessor(
-			org.apache.taverna.scufl2.rdfxml.jaxb.Processor processor)
+			org.apache.taverna.scufl2.xml.Processor processor)
 			throws ReaderException {
 		org.apache.taverna.scufl2.api.core.Processor p = new org.apache.taverna.scufl2.api.core.Processor();
 		getParserState().push(p);
@@ -279,7 +279,7 @@ public class WorkflowParser extends AbstractParser {
 	}
 
 	protected void parseWorkflow(
-			org.apache.taverna.scufl2.rdfxml.jaxb.Workflow workflow, URI wfUri)
+			org.apache.taverna.scufl2.xml.Workflow workflow, URI wfUri)
 			throws ReaderException {
 		Workflow wf = new Workflow();
 		wf.setParent(getParserState().getCurrent(WorkflowBundle.class));
@@ -300,20 +300,20 @@ public class WorkflowParser extends AbstractParser {
 				wf.setIdentifier(getParserState().getCurrentBase().resolve(
 						workflow.getWorkflowIdentifier().getResource()));
 
-			for (org.apache.taverna.scufl2.rdfxml.jaxb.Workflow.InputWorkflowPort inputWorkflowPort : workflow
+			for (org.apache.taverna.scufl2.xml.Workflow.InputWorkflowPort inputWorkflowPort : workflow
 					.getInputWorkflowPort())
 				parseInputWorkflowPort(inputWorkflowPort.getInputWorkflowPort());
-			for (org.apache.taverna.scufl2.rdfxml.jaxb.Workflow.OutputWorkflowPort outputWorkflowPort : workflow
+			for (org.apache.taverna.scufl2.xml.Workflow.OutputWorkflowPort outputWorkflowPort : workflow
 					.getOutputWorkflowPort())
 				parseOutputWorkflowPort(outputWorkflowPort
 						.getOutputWorkflowPort());
-			for (org.apache.taverna.scufl2.rdfxml.jaxb.Workflow.Processor processor : workflow
+			for (org.apache.taverna.scufl2.xml.Workflow.Processor processor : workflow
 					.getProcessor())
 				parseProcessor(processor.getProcessor());
-			for (org.apache.taverna.scufl2.rdfxml.jaxb.DataLinkEntry dataLinkEntry : workflow
+			for (org.apache.taverna.scufl2.xml.DataLinkEntry dataLinkEntry : workflow
 					.getDatalink())
 				parseDataLink(dataLinkEntry.getDataLink());
-			for (org.apache.taverna.scufl2.rdfxml.jaxb.Control c : workflow
+			for (org.apache.taverna.scufl2.xml.Control c : workflow
 					.getControl())
 				parseControlLink(c.getBlocking());
 		} finally {
@@ -322,7 +322,7 @@ public class WorkflowParser extends AbstractParser {
 	}
 
 	protected void processorInputProcessorPort(
-			org.apache.taverna.scufl2.rdfxml.jaxb.InputProcessorPort original) {
+			org.apache.taverna.scufl2.xml.InputProcessorPort original) {
 		org.apache.taverna.scufl2.api.port.InputProcessorPort port = new org.apache.taverna.scufl2.api.port.InputProcessorPort();
 		port.setName(original.getName());
 		if (original.getPortDepth() != null)
@@ -333,7 +333,7 @@ public class WorkflowParser extends AbstractParser {
 	}
 
 	protected void processorOutputProcessorPort(
-			org.apache.taverna.scufl2.rdfxml.jaxb.OutputProcessorPort original) {
+			org.apache.taverna.scufl2.xml.OutputProcessorPort original) {
 		org.apache.taverna.scufl2.api.port.OutputProcessorPort port = new org.apache.taverna.scufl2.api.port.OutputProcessorPort();
 		port.setName(original.getName());
 		if (original.getPortDepth() != null)
@@ -372,7 +372,7 @@ public class WorkflowParser extends AbstractParser {
 		if (elem.getValue().getAny().size() != 1)
 			throw new ReaderException("Expects only a <Workflow> element in "
 					+ source);
-		org.apache.taverna.scufl2.rdfxml.jaxb.Workflow workflow = (org.apache.taverna.scufl2.rdfxml.jaxb.Workflow) elem
+		org.apache.taverna.scufl2.xml.Workflow workflow = (org.apache.taverna.scufl2.xml.Workflow) elem
 				.getValue().getAny().get(0);
 
 		getParserState().setCurrentBase(base);

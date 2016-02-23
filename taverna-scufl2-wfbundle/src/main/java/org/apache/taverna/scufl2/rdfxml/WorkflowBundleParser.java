@@ -38,7 +38,7 @@ import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.ucfpackage.UCFPackage;
 import org.apache.taverna.scufl2.ucfpackage.UCFPackage.ResourceEntry;
 
-import org.apache.taverna.scufl2.rdfxml.jaxb.WorkflowBundleDocument;
+import org.apache.taverna.scufl2.xml.WorkflowBundleDocument;
 
 public class WorkflowBundleParser extends AbstractParser {
 
@@ -62,7 +62,7 @@ public class WorkflowBundleParser extends AbstractParser {
 	}
 
 	protected WorkflowBundle parseWorkflowBundle(
-			org.apache.taverna.scufl2.rdfxml.jaxb.WorkflowBundle wb, URI base)
+			org.apache.taverna.scufl2.xml.WorkflowBundle wb, URI base)
 			throws ReaderException, IOException {
 		WorkflowBundle workflowBundle = new WorkflowBundle();
 		getParserState().push(workflowBundle);
@@ -75,7 +75,7 @@ public class WorkflowBundleParser extends AbstractParser {
 				workflowBundle.setGlobalBaseURI(base.resolve(wb
 						.getGlobalBaseURI().getResource()));
 			mapBean(base.resolve(wb.getAbout()), workflowBundle);
-			for (org.apache.taverna.scufl2.rdfxml.jaxb.WorkflowBundle.Workflow wfEntry : wb
+			for (org.apache.taverna.scufl2.xml.WorkflowBundle.Workflow wfEntry : wb
 					.getWorkflow()) {
 				URI wfUri = base.resolve(wfEntry.getWorkflow().getAbout());
 				String resource = wfEntry.getWorkflow().getSeeAlso()
@@ -84,7 +84,7 @@ public class WorkflowBundleParser extends AbstractParser {
 						.getLocation(), base.resolve(resource));
 				workflowParser.readWorkflow(wfUri, source);
 			}
-			for (org.apache.taverna.scufl2.rdfxml.jaxb.WorkflowBundle.Profile pfEntry : wb
+			for (org.apache.taverna.scufl2.xml.WorkflowBundle.Profile pfEntry : wb
 					.getProfile()) {
 				URI wfUri = base.resolve(pfEntry.getProfile().getAbout());
 				String resource = pfEntry.getProfile().getSeeAlso()
@@ -177,7 +177,7 @@ public class WorkflowBundleParser extends AbstractParser {
 				throw new ReaderException(
 						"Invalid WorkflowBundleDocument, expected only one <WorkflowBundle>");
 
-			org.apache.taverna.scufl2.rdfxml.jaxb.WorkflowBundle wb = (org.apache.taverna.scufl2.rdfxml.jaxb.WorkflowBundle) workflowBundleDocument
+			org.apache.taverna.scufl2.xml.WorkflowBundle wb = (org.apache.taverna.scufl2.xml.WorkflowBundle) workflowBundleDocument
 					.getAny().get(0);
 			WorkflowBundle workflowBundle = parseWorkflowBundle(wb, base);
 

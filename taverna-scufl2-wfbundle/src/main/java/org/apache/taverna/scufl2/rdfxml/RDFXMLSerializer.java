@@ -73,29 +73,29 @@ import org.apache.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
 import org.apache.taverna.scufl2.api.profiles.Profile;
 import org.apache.taverna.scufl2.rdfxml.impl.NamespacePrefixMapperJAXB_RI;
 import org.apache.taverna.scufl2.ucfpackage.UCFPackage;
-import org.w3._1999._02._22_rdf_syntax_ns_.RDF;
-import org.w3._1999._02._22_rdf_syntax_ns_.Resource;
-import org.w3._1999._02._22_rdf_syntax_ns_.Type;
-import org.w3._2000._01.rdf_schema_.SeeAlso;
+import org.apache.taverna.scufl2.xml.rdf.RDF;
+import org.apache.taverna.scufl2.xml.rdf.Resource;
+import org.apache.taverna.scufl2.xml.rdf.Type;
+import org.apache.taverna.scufl2.xml.rdfs.SeeAlso;
 import org.xml.sax.SAXException;
 
-import org.apache.taverna.scufl2.rdfxml.jaxb.Blocking;
-import org.apache.taverna.scufl2.rdfxml.jaxb.Control;
-import org.apache.taverna.scufl2.rdfxml.jaxb.DataLink.MergePosition;
-import org.apache.taverna.scufl2.rdfxml.jaxb.DataLinkEntry;
-import org.apache.taverna.scufl2.rdfxml.jaxb.GranularPortDepth;
-import org.apache.taverna.scufl2.rdfxml.jaxb.IterationStrategyStack.IterationStrategies;
-import org.apache.taverna.scufl2.rdfxml.jaxb.ObjectFactory;
-import org.apache.taverna.scufl2.rdfxml.jaxb.PortDepth;
-import org.apache.taverna.scufl2.rdfxml.jaxb.PortNode.DesiredDepth;
-import org.apache.taverna.scufl2.rdfxml.jaxb.ProcessorBinding.ActivityPosition;
-import org.apache.taverna.scufl2.rdfxml.jaxb.ProcessorBinding.InputPortBinding;
-import org.apache.taverna.scufl2.rdfxml.jaxb.ProcessorBinding.OutputPortBinding;
-import org.apache.taverna.scufl2.rdfxml.jaxb.ProductOf;
-import org.apache.taverna.scufl2.rdfxml.jaxb.ProfileDocument;
-import org.apache.taverna.scufl2.rdfxml.jaxb.SeeAlsoType;
-import org.apache.taverna.scufl2.rdfxml.jaxb.WorkflowBundleDocument;
-import org.apache.taverna.scufl2.rdfxml.jaxb.WorkflowDocument;
+import org.apache.taverna.scufl2.xml.Blocking;
+import org.apache.taverna.scufl2.xml.Control;
+import org.apache.taverna.scufl2.xml.DataLink.MergePosition;
+import org.apache.taverna.scufl2.xml.DataLinkEntry;
+import org.apache.taverna.scufl2.xml.GranularPortDepth;
+import org.apache.taverna.scufl2.xml.IterationStrategyStack.IterationStrategies;
+import org.apache.taverna.scufl2.xml.ObjectFactory;
+import org.apache.taverna.scufl2.xml.PortDepth;
+import org.apache.taverna.scufl2.xml.PortNode.DesiredDepth;
+import org.apache.taverna.scufl2.xml.ProcessorBinding.ActivityPosition;
+import org.apache.taverna.scufl2.xml.ProcessorBinding.InputPortBinding;
+import org.apache.taverna.scufl2.xml.ProcessorBinding.OutputPortBinding;
+import org.apache.taverna.scufl2.xml.ProductOf;
+import org.apache.taverna.scufl2.xml.ProfileDocument;
+import org.apache.taverna.scufl2.xml.SeeAlsoType;
+import org.apache.taverna.scufl2.xml.WorkflowBundleDocument;
+import org.apache.taverna.scufl2.xml.WorkflowDocument;
 
 public class RDFXMLSerializer {
 	private static final String DOT_RDF = ".rdf";
@@ -104,11 +104,11 @@ public class RDFXMLSerializer {
 	private static boolean warnedOnce = false;
 	
 	public class ProfileSerialisationVisitor implements Visitor {
-		private org.apache.taverna.scufl2.rdfxml.jaxb.Activity activity;
+		private org.apache.taverna.scufl2.xml.Activity activity;
 		private final ProfileDocument doc;
-		private org.apache.taverna.scufl2.rdfxml.jaxb.Profile profileElem;
+		private org.apache.taverna.scufl2.xml.Profile profileElem;
 		private Profile profile;
-		private org.apache.taverna.scufl2.rdfxml.jaxb.ProcessorBinding processorBindingElem;
+		private org.apache.taverna.scufl2.xml.ProcessorBinding processorBindingElem;
 
 		public ProfileSerialisationVisitor(ProfileDocument doc) {
 			this.doc = doc;
@@ -123,7 +123,7 @@ public class RDFXMLSerializer {
 		}
 
 		private void configuration(Configuration node) {
-			org.apache.taverna.scufl2.rdfxml.jaxb.Configuration configuration = objectFactory
+			org.apache.taverna.scufl2.xml.Configuration configuration = objectFactory
 					.createConfiguration();
 			configuration.setConfigure(resource(uri(node.getConfigures())));
 			configuration.setName(node.getName());
@@ -163,20 +163,20 @@ public class RDFXMLSerializer {
 		}
 
 		private void inputActivityPort(InputActivityPort node) {
-			org.apache.taverna.scufl2.rdfxml.jaxb.InputActivityPort inputActivityPort = objectFactory
+			org.apache.taverna.scufl2.xml.InputActivityPort inputActivityPort = objectFactory
 					.createInputActivityPort();
 			inputActivityPort.setAbout(uri(node));
 			inputActivityPort.setName(node.getName());
 			inputActivityPort.setPortDepth(portDepth(node.getDepth()));
 
-			org.apache.taverna.scufl2.rdfxml.jaxb.Activity.InputActivityPort wrapper = objectFactory
+			org.apache.taverna.scufl2.xml.Activity.InputActivityPort wrapper = objectFactory
 					.createActivityInputActivityPort();
 			wrapper.setInputActivityPort(inputActivityPort);
 			activity.getInputActivityPort().add(wrapper);
 		}
 
 		private void outputActivityPort(OutputActivityPort node) {
-			org.apache.taverna.scufl2.rdfxml.jaxb.OutputActivityPort outputActivityPort = objectFactory
+			org.apache.taverna.scufl2.xml.OutputActivityPort outputActivityPort = objectFactory
 					.createOutputActivityPort();
 			outputActivityPort.setAbout(uri(node));
 			outputActivityPort.setName(node.getName());
@@ -184,7 +184,7 @@ public class RDFXMLSerializer {
 			outputActivityPort.setGranularPortDepth(granularPortDepth(node
 					.getGranularDepth()));
 
-			org.apache.taverna.scufl2.rdfxml.jaxb.Activity.OutputActivityPort wrapper = objectFactory
+			org.apache.taverna.scufl2.xml.Activity.OutputActivityPort wrapper = objectFactory
 					.createActivityOutputActivityPort();
 			wrapper.setOutputActivityPort(outputActivityPort);
 			activity.getOutputActivityPort().add(wrapper);
@@ -219,7 +219,7 @@ public class RDFXMLSerializer {
 		}
 
 		private void processorInputPortBinding(ProcessorInputPortBinding node) {
-			org.apache.taverna.scufl2.rdfxml.jaxb.InputPortBinding inputBinding = objectFactory
+			org.apache.taverna.scufl2.xml.InputPortBinding inputBinding = objectFactory
 					.createInputPortBinding();
 			inputBinding.setAbout(uri(node));
 			inputBinding.setBindInputActivityPort(resource(uri(node
@@ -233,7 +233,7 @@ public class RDFXMLSerializer {
 		}
 
 		private void processorOutputPortBinding(ProcessorOutputPortBinding node) {
-			org.apache.taverna.scufl2.rdfxml.jaxb.OutputPortBinding outputBinding = objectFactory
+			org.apache.taverna.scufl2.xml.OutputPortBinding outputBinding = objectFactory
 					.createOutputPortBinding();
 			outputBinding.setAbout(uri(node));
 			outputBinding.setBindOutputActivityPort(resource(uri(node
@@ -293,17 +293,17 @@ public class RDFXMLSerializer {
 	}
 
 	public class WorkflowSerialisationVisitor implements Visitor {
-		private final org.apache.taverna.scufl2.rdfxml.jaxb.Workflow workflow;
-		private org.apache.taverna.scufl2.rdfxml.jaxb.Processor proc;
+		private final org.apache.taverna.scufl2.xml.Workflow workflow;
+		private org.apache.taverna.scufl2.xml.Processor proc;
 		private Workflow wf;
 		@SuppressWarnings("unused")
-		private org.apache.taverna.scufl2.rdfxml.jaxb.DispatchStack dispatchStack;
-		private org.apache.taverna.scufl2.rdfxml.jaxb.IterationStrategyStack iterationStrategyStack;
+		private org.apache.taverna.scufl2.xml.DispatchStack dispatchStack;
+		private org.apache.taverna.scufl2.xml.IterationStrategyStack iterationStrategyStack;
 		private IterationStrategies iterationStrategies;
 		private Stack<List<Object>> productStack;
 
 		public WorkflowSerialisationVisitor(
-				org.apache.taverna.scufl2.rdfxml.jaxb.Workflow workflow) {
+				org.apache.taverna.scufl2.xml.Workflow workflow) {
 			this.workflow = workflow;
 		}
 
@@ -350,9 +350,9 @@ public class RDFXMLSerializer {
 
 			if (node instanceof InputWorkflowPort) {
 				InputWorkflowPort ip = (InputWorkflowPort) node;
-				org.apache.taverna.scufl2.rdfxml.jaxb.Workflow.InputWorkflowPort inP = objectFactory
+				org.apache.taverna.scufl2.xml.Workflow.InputWorkflowPort inP = objectFactory
 						.createWorkflowInputWorkflowPort();
-				org.apache.taverna.scufl2.rdfxml.jaxb.InputWorkflowPort inPort = objectFactory
+				org.apache.taverna.scufl2.xml.InputWorkflowPort inPort = objectFactory
 						.createInputWorkflowPort();
 				inP.setInputWorkflowPort(inPort);
 				inPort.setName(ip.getName());
@@ -366,9 +366,9 @@ public class RDFXMLSerializer {
 			}
 			if (node instanceof OutputWorkflowPort) {
 				OutputWorkflowPort op = (OutputWorkflowPort) node;
-				org.apache.taverna.scufl2.rdfxml.jaxb.Workflow.OutputWorkflowPort inP = objectFactory
+				org.apache.taverna.scufl2.xml.Workflow.OutputWorkflowPort inP = objectFactory
 						.createWorkflowOutputWorkflowPort();
-				org.apache.taverna.scufl2.rdfxml.jaxb.OutputWorkflowPort outPort = objectFactory
+				org.apache.taverna.scufl2.xml.OutputWorkflowPort outPort = objectFactory
 						.createOutputWorkflowPort();
 				inP.setOutputWorkflowPort(outPort);
 				outPort.setName(op.getName());
@@ -379,7 +379,7 @@ public class RDFXMLSerializer {
 			}
 			if (node instanceof Processor) {
 				Processor processor = (Processor) node;
-				org.apache.taverna.scufl2.rdfxml.jaxb.Workflow.Processor wfProc = objectFactory
+				org.apache.taverna.scufl2.xml.Workflow.Processor wfProc = objectFactory
 						.createWorkflowProcessor();
 				proc = objectFactory.createProcessor();
 				wfProc.setProcessor(proc);
@@ -391,18 +391,18 @@ public class RDFXMLSerializer {
 			}
 			if (node instanceof InputProcessorPort) {
 				InputProcessorPort inPort = (InputProcessorPort) node;
-				org.apache.taverna.scufl2.rdfxml.jaxb.InputProcessorPort port = objectFactory
+				org.apache.taverna.scufl2.xml.InputProcessorPort port = objectFactory
 						.createInputProcessorPort();
 				port.setAbout(uri.toASCIIString());
 				port.setName(inPort.getName());
 				port.setPortDepth(makePortDepth(inPort.getDepth()));
-				org.apache.taverna.scufl2.rdfxml.jaxb.Processor.InputProcessorPort inputProcessorPort = objectFactory
+				org.apache.taverna.scufl2.xml.Processor.InputProcessorPort inputProcessorPort = objectFactory
 						.createProcessorInputProcessorPort();
 				inputProcessorPort.setInputProcessorPort(port);
 				proc.getInputProcessorPort().add(inputProcessorPort);
 			}
 			if (node instanceof OutputProcessorPort) {
-				org.apache.taverna.scufl2.rdfxml.jaxb.OutputProcessorPort port;
+				org.apache.taverna.scufl2.xml.OutputProcessorPort port;
 				OutputProcessorPort outPort = (OutputProcessorPort) node;
 				port = objectFactory.createOutputProcessorPort();
 				port.setAbout(uri.toASCIIString());
@@ -411,7 +411,7 @@ public class RDFXMLSerializer {
 				port.setGranularPortDepth(makeGranularPortDepth(outPort
 						.getGranularDepth()));
 
-				org.apache.taverna.scufl2.rdfxml.jaxb.Processor.OutputProcessorPort outputProcessorPort = objectFactory
+				org.apache.taverna.scufl2.xml.Processor.OutputProcessorPort outputProcessorPort = objectFactory
 						.createProcessorOutputProcessorPort();
 				outputProcessorPort.setOutputProcessorPort(port);
 				proc.getOutputProcessorPort().add(outputProcessorPort);
@@ -420,7 +420,7 @@ public class RDFXMLSerializer {
 				iterationStrategyStack = objectFactory
 						.createIterationStrategyStack();
 				iterationStrategyStack.setAbout(uri.toASCIIString());
-				org.apache.taverna.scufl2.rdfxml.jaxb.Processor.IterationStrategyStack processorIterationStrategyStack = objectFactory
+				org.apache.taverna.scufl2.xml.Processor.IterationStrategyStack processorIterationStrategyStack = objectFactory
 						.createProcessorIterationStrategyStack();
 				processorIterationStrategyStack
 						.setIterationStrategyStack(iterationStrategyStack);
@@ -440,7 +440,7 @@ public class RDFXMLSerializer {
 				productStack.add(dotProductOrCrossProduct);
 			}
 			if (node instanceof CrossProduct) {
-				org.apache.taverna.scufl2.rdfxml.jaxb.CrossProduct crossProduct = objectFactory
+				org.apache.taverna.scufl2.xml.CrossProduct crossProduct = objectFactory
 						.createCrossProduct();
 				crossProduct.setAbout(uri.toASCIIString());
 				productStack.peek().add(crossProduct);
@@ -450,7 +450,7 @@ public class RDFXMLSerializer {
 				productStack.add(crossProduct.getProductOf().getCrossProductOrDotProductOrPortNode());
 			}
 			if (node instanceof DotProduct) {
-				org.apache.taverna.scufl2.rdfxml.jaxb.DotProduct dotProduct = objectFactory
+				org.apache.taverna.scufl2.xml.DotProduct dotProduct = objectFactory
 						.createDotProduct();
 				dotProduct.setAbout(uri.toASCIIString());
 				productStack.peek().add(dotProduct);
@@ -464,7 +464,7 @@ public class RDFXMLSerializer {
 				PortNode portNode = (PortNode) node;
 				InputProcessorPort inPort = portNode.getInputProcessorPort();
 				URI portUri = uriTools.relativeUriForBean(inPort, wf);
-				org.apache.taverna.scufl2.rdfxml.jaxb.PortNode port = objectFactory.createPortNode();
+				org.apache.taverna.scufl2.xml.PortNode port = objectFactory.createPortNode();
 				port.setAbout(uri.toASCIIString());
 				if (portNode.getDesiredDepth() != null) {
 					DesiredDepth value = objectFactory.createPortNodeDesiredDepth();
@@ -477,7 +477,7 @@ public class RDFXMLSerializer {
 			}
 			if (node instanceof DataLink) {
 				DataLink dataLink = (DataLink) node;
-				org.apache.taverna.scufl2.rdfxml.jaxb.DataLink link = objectFactory
+				org.apache.taverna.scufl2.xml.DataLink link = objectFactory
 						.createDataLink();
 				link.setAbout(uri.toASCIIString());
 				URI fromUri = uriTools.relativeUriForBean(
@@ -539,8 +539,8 @@ public class RDFXMLSerializer {
 			throws JAXBException {
 		if (jaxbContextStatic == null) {
 			Class<?>[] packages = { ObjectFactory.class,
-					org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory.class,
-					org.w3._2000._01.rdf_schema_.ObjectFactory.class };
+					org.apache.taverna.scufl2.xml.rdf.ObjectFactory.class,
+					org.apache.taverna.scufl2.xml.rdfs.ObjectFactory.class };
 			jaxbContextStatic = JAXBContext.newInstance(packages);
 		}
 		return jaxbContextStatic;
@@ -612,8 +612,8 @@ public class RDFXMLSerializer {
 
 	private ObjectFactory objectFactory = new ObjectFactory();
 
-	private org.w3._2000._01.rdf_schema_.ObjectFactory rdfsObjectFactory = new org.w3._2000._01.rdf_schema_.ObjectFactory();
-	private org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory rdfObjectFactory = new org.w3._1999._02._22_rdf_syntax_ns_.ObjectFactory();
+	private org.apache.taverna.scufl2.xml.rdfs.ObjectFactory rdfsObjectFactory = new org.apache.taverna.scufl2.xml.rdfs.ObjectFactory();
+	private org.apache.taverna.scufl2.xml.rdf.ObjectFactory rdfObjectFactory = new org.apache.taverna.scufl2.xml.rdf.ObjectFactory();
 	private URITools uriTools = new URITools();
 	private boolean usingSchema = false;
 
@@ -685,17 +685,17 @@ public class RDFXMLSerializer {
 		return doc;
 	}
 
-	protected org.apache.taverna.scufl2.rdfxml.jaxb.Workflow makeWorkflow(
+	protected org.apache.taverna.scufl2.xml.Workflow makeWorkflow(
 			Workflow wf, URI documentPath) {
-		org.apache.taverna.scufl2.rdfxml.jaxb.Workflow workflow = objectFactory
+		org.apache.taverna.scufl2.xml.Workflow workflow = objectFactory
 				.createWorkflow();
 		wf.accept(new WorkflowSerialisationVisitor(workflow) {
 		});
 		return workflow;
 	}
 
-	protected org.apache.taverna.scufl2.rdfxml.jaxb.WorkflowBundle makeWorkflowBundleElem() {
-		org.apache.taverna.scufl2.rdfxml.jaxb.WorkflowBundle bundle = objectFactory
+	protected org.apache.taverna.scufl2.xml.WorkflowBundle makeWorkflowBundleElem() {
+		org.apache.taverna.scufl2.xml.WorkflowBundle bundle = objectFactory
 				.createWorkflowBundle();
 		// FIXME: Support other URIs
 		bundle.setAbout("");
@@ -708,7 +708,7 @@ public class RDFXMLSerializer {
 		}
 
 		for (Workflow wf : wfBundle.getWorkflows()) {
-			org.apache.taverna.scufl2.rdfxml.jaxb.WorkflowBundle.Workflow wfElem = objectFactory
+			org.apache.taverna.scufl2.xml.WorkflowBundle.Workflow wfElem = objectFactory
 					.createWorkflowBundleWorkflow();
 			SeeAlsoType seeAlsoElem = objectFactory.createSeeAlsoType();
 			seeAlsoElem.setAbout(uriTools.relativeUriForBean(wf, wfBundle)
@@ -733,7 +733,7 @@ public class RDFXMLSerializer {
 		}
 
 		for (Profile pf : wfBundle.getProfiles()) {
-			org.apache.taverna.scufl2.rdfxml.jaxb.WorkflowBundle.Profile wfElem = objectFactory
+			org.apache.taverna.scufl2.xml.WorkflowBundle.Profile wfElem = objectFactory
 					.createWorkflowBundleProfile();
 			SeeAlsoType seeAlsoElem = objectFactory.createSeeAlsoType();
 			seeAlsoElem.setAbout(uriTools.relativeUriForBean(pf, wfBundle)
@@ -831,7 +831,7 @@ public class RDFXMLSerializer {
 
 	public void workflowBundleDoc(OutputStream outputStream, URI path)
 			throws JAXBException, WriterException {
-		org.apache.taverna.scufl2.rdfxml.jaxb.WorkflowBundle bundle = makeWorkflowBundleElem();
+		org.apache.taverna.scufl2.xml.WorkflowBundle bundle = makeWorkflowBundleElem();
 		WorkflowBundleDocument doc = objectFactory
 				.createWorkflowBundleDocument();
 		doc.getAny().add(bundle);
@@ -845,7 +845,7 @@ public class RDFXMLSerializer {
 
 	public void workflowDoc(OutputStream outputStream, Workflow wf, URI path)
 			throws JAXBException, WriterException {
-		org.apache.taverna.scufl2.rdfxml.jaxb.Workflow wfElem = makeWorkflow(wf,
+		org.apache.taverna.scufl2.xml.Workflow wfElem = makeWorkflow(wf,
 				path);
 		WorkflowDocument doc = objectFactory.createWorkflowDocument();
 		doc.getAny().add(wfElem);
