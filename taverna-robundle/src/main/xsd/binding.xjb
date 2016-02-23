@@ -17,7 +17,7 @@
 -->
 <jaxb:bindings version="2.1" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd">
+	>
 	<jaxb:bindings scd="x-schema::xenc" xmlns:xenc="http://www.w3.org/2001/04/xmlenc#">
 		<jaxb:schemaBindings>
 			<jaxb:package name="org.apache.taverna.robundle.xml.xenc" />
@@ -34,14 +34,14 @@
 			<jaxb:package name="org.apache.taverna.robundle.xml.odf.manifest" />
 		</jaxb:schemaBindings>
 	</jaxb:bindings>
-	<jaxb:bindings scd="x-schema::manifest"
-		xmlns:manifest="urn:oasis:names:tc:opendocument:xmlns:container">
+	<jaxb:bindings scd="x-schema::container"
+		xmlns:container="urn:oasis:names:tc:opendocument:xmlns:container">
 		<jaxb:schemaBindings>
 			<jaxb:package name="org.apache.taverna.robundle.xml.odf.container" />
 		</jaxb:schemaBindings>
 	</jaxb:bindings>
-	<jaxb:bindings scd="x-schema::manifest"
-		xmlns:manifest="http://identifiers.org/combine.specifications/omex-manifest">
+	<jaxb:bindings scd="x-schema::combine"
+		xmlns:combine="http://identifiers.org/combine.specifications/omex-manifest">
 		<jaxb:schemaBindings>
 			<jaxb:package name="org.apache.taverna.robundle.xml.combine" />
 		</jaxb:schemaBindings>
