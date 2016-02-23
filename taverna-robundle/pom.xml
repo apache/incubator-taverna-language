@@ -108,8 +108,6 @@
             </execution>
           </executions>
         </plugin>
-
-							<!-- <packageName>oasis.names.tc.opendocument.xmlns.manifest</packageName>-->
 		</plugins>
 	</build>
 </project>
