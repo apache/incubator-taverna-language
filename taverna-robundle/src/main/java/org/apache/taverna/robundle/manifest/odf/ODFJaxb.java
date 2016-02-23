@@ -30,7 +30,7 @@ import javax.xml.bind.Unmarshaller;
 
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 
-import oasis.names.tc.opendocument.xmlns.manifest._1.ObjectFactory;
+import org.apache.taverna.robundle.xml.odf.manifest.ObjectFactory;
 
 /**
  * JAXB bindings for ODF manifest.xml / container.xml
@@ -79,11 +79,10 @@ public class ODFJaxb {
 
 	protected static synchronized JAXBContext getJaxbContext() throws JAXBException {
 		if (jaxbContext == null) {
-			jaxbContext = JAXBContext.newInstance(ObjectFactory.class
-			// ,
-			// org.oasis_open.names.tc.opendocument.xmlns.container.ObjectFactory.class,
-			// org.w3._2000._09.xmldsig_.ObjectFactory.class,
-			// org.w3._2001._04.xmlenc_.ObjectFactory.class
+			jaxbContext = JAXBContext.newInstance(ObjectFactory.class,
+					org.apache.taverna.robundle.xml.odf.container.ObjectFactory.class,
+					org.apache.taverna.robundle.xml.dsig.ObjectFactory.class,
+					org.apache.taverna.robundle.xml.xenc.ObjectFactory.class					
 			);
 		}
 		return jaxbContext;

@@ -42,8 +42,8 @@ import javax.xml.bind.JAXBException;
 import org.apache.taverna.robundle.Bundle;
 import org.apache.taverna.robundle.manifest.PathMetadata;
 
-import oasis.names.tc.opendocument.xmlns.manifest._1.FileEntry;
-import oasis.names.tc.opendocument.xmlns.manifest._1.Manifest;
+import org.apache.taverna.robundle.xml.odf.manifest.FileEntry;
+import org.apache.taverna.robundle.xml.odf.manifest.Manifest;
 
 public class ODFManifest extends ODFJaxb {
 
