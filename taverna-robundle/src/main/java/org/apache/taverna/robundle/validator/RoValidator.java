@@ -81,22 +81,22 @@ public class RoValidator {
 	}
 	
 	public void validate(){
-		
-		try (Bundle bundle = Bundles.openBundle(path)) {
-			
+		// Autoclose the zip file
+		try(ZipFile zip = new ZipFile(new File(path.toString()))) {
+			Enumeration<? extends ZipEntry> ent = zip.entries();
+			while(ent.hasMoreElements()){
+				ZipEntry entry = ent.nextElement();
+				if(!entry.isDirectory()){
+					items.add("/"+entry.getName());
+				}
+			}
+		} catch (IOException e) {
+				e.printStackTrace();
+		}
+		try (Bundle bundle = Bundles.openBundle(path)) {	
 			Manifest manifest = bundle.getManifest();
 			this.aggr = manifest.getAggregates();
 			this.anno = manifest.getAnnotations();
-			
-			ZipFile zip = new ZipFile(new File(path.toString()));
-			Enumeration<? extends ZipEntry> ent = zip.entries();
-			while(ent.hasMoreElements()){
-		        ZipEntry entry = ent.nextElement();
-		        if(!entry.isDirectory()){
-		        	items.add("/"+entry.getName());
-		        }
-		    }
-			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			System.err.println("Unable to open the bundle");
