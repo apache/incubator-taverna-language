@@ -209,3 +209,37 @@ points:
  * [org.apache.taverna.scufl2.api](http://taverna.incubator.apache.org/javadoc/taverna-language/org/apache/taverna/scufl2/api/package-summary.html)
  * [org.apache.taverna.robundle](http://taverna.incubator.apache.org/javadoc/taverna-language/org/apache/taverna/robundle/package-summary.html)
  * [org.apache.taverna.databundle](http://taverna.incubator.apache.org/javadoc/taverna-language/org/apache/taverna/databundle/package-summary.html)
+
+
+# Export restrictions
+
+This distribution includes cryptographic software.
+The country in which you currently reside may have restrictions
+on the import, possession, use, and/or re-export to another country,
+of encryption software. BEFORE using any encryption software,
+please check your country's laws, regulations and policies
+concerning the import, possession, or use, and re-export of
+encryption software, to see if this is permitted.
+See <http://www.wassenaar.org/> for more information.
+
+The U.S. Government Department of Commerce, Bureau of Industry and Security (BIS),
+has classified this software as Export Commodity Control Number (ECCN) 5D002.C.1,
+which includes information security software using or performing
+cryptographic functions with asymmetric algorithms.
+The form and manner of this Apache Software Foundation distribution makes
+it eligible for export under the License Exception
+ENC Technology Software Unrestricted (TSU) exception
+(see the BIS Export Administration Regulations, Section 740.13)
+for both object code and source code.
+
+The following provides more details on the included cryptographic software:
+
+* Apache Taverna Language depend on
+  [Apache Jena](http://jena.apache.org/), which depend on
+  [Apache HttpComponents](https://hc.apache.org/) Client, which can
+  initiate encrypted `https://` connections using
+  [Java Secure Socket Extension](https://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSSERefGuide.html)
+  (JSSE). Taverna Language does
+  not use this facility, however after building,
+  the shaded JAR of [taverna-tavlang-tool](taverna-tavlang-tool)
+  include Apache HttpComponents Core and Client.
