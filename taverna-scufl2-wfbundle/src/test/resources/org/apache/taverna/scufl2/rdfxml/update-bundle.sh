@@ -20,7 +20,7 @@
 #
 #
 set -e
-rm example.scufl2
+rm example.wfbundle
 cd example
-zip -0 -X ../example.scufl2 mimetype
-zip -r ../example.scufl2 . -x mimetype 
+zip -0 -X ../example.wfbundle mimetype
+zip -r ../example.wfbundle . -x mimetype 
