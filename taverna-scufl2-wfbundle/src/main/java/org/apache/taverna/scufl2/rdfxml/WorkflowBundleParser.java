@@ -154,8 +154,8 @@ public class WorkflowBundleParser extends AbstractParser {
 				// Not a semantic annotation
 				continue;
 			}
-			System.out.println(resource.getPath());
-			System.out.println(resource.getMediaType());
+			//System.out.println(resource.getPath());
+			//System.out.println(resource.getMediaType());
 			Annotation ann = new Annotation();
 			// Hackish way to generate a name from the annotation filename
 			// as these typically are UUIDs
@@ -169,7 +169,7 @@ public class WorkflowBundleParser extends AbstractParser {
 			Model model = ModelFactory.createDefaultModel();			
 			InputStream inputStream = resource.getUcfPackage().getResourceAsInputStream(path);
 			if (inputStream == null) {
-				System.out.println("Eh..?");
+				// Not found!
 				continue;
 			}
 			RDFDataMgr.read(model, inputStream, 

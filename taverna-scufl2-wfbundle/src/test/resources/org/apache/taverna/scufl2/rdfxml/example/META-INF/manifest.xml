@@ -23,13 +23,6 @@
 <manifest:manifest xmlns:manifest="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0">
  <manifest:file-entry manifest:media-type="application/vnd.taverna.scufl2.workflowBundle" manifest:full-path="/"/>
 
- <manifest:file-entry manifest:media-type="text/turtle" manifest:full-path="workflowBundle.ttl"/>
- <manifest:file-entry manifest:media-type="text/turtle" manifest:full-path="workflow/HelloWorld.ttl"/>
- <manifest:file-entry manifest:media-type="text/turtle" manifest:full-path="annotation/workflow/HelloWorld.ttl"/>
- <manifest:file-entry manifest:media-type="text/turtle" manifest:full-path="annotation/workflowBundle.ttl"/>
- <manifest:file-entry manifest:media-type="text/turtle" manifest:full-path="profile/tavernaWorkbench.ttl"/>
- <manifest:file-entry manifest:media-type="text/turtle" manifest:full-path="profile/tavernaServer.ttl"/>
-
  <manifest:file-entry manifest:media-type="application/rdf+xml" manifest:full-path="workflowBundle.rdf"/>
  <manifest:file-entry manifest:media-type="application/rdf+xml" manifest:full-path="workflow/HelloWorld.rdf"/>
  <manifest:file-entry manifest:media-type="application/rdf+xml" manifest:full-path="annotation/workflow/HelloWorld.rdf"/>
