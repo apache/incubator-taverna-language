@@ -234,12 +234,9 @@ for both object code and source code.
 
 The following provides more details on the included cryptographic software:
 
-* Apache Taverna Language depend on
-  [Apache Jena](http://jena.apache.org/), which depend on
-  [Apache HttpComponents](https://hc.apache.org/) Client, which can
-  initiate encrypted `https://` connections using
+* The shaded JAR of [taverna-tavlang-tool](taverna-tavlang-tool) include
+  [Apache HttpComponents](https://hc.apache.org/)
+  Core and Client,
+  which can initiate encrypted `https://` connections using
   [Java Secure Socket Extension](https://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSSERefGuide.html)
-  (JSSE). Taverna Language does
-  not use this facility, however after building,
-  the shaded JAR of [taverna-tavlang-tool](taverna-tavlang-tool)
-  include Apache HttpComponents Core and Client.
+  (JSSE).
