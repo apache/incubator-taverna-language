@@ -56,8 +56,8 @@ import org.apache.taverna.scufl2.api.profiles.Profile;
  * execution details such as retries or parallel jobs.
  * <p>
  * The {@link #getType()} of a Processor is normally fixed to the value given by
- * {@value #PROCESSOR_TYPE}. The configuration of a processor should
- * correspondingly be of the type given by the constant {@value #CONFIG_TYPE}.
+ * PROCESSOR_TYPE. The configuration of a processor should
+ * correspondingly be of the type given by the constant CONFIG_TYPE.
  * <p>
  * The default (implied) configuration of a Processor is as of Taverna 3.0 alpha
  * 2:
