@@ -32,6 +32,19 @@
             <artifactId>jena-osgi</artifactId>
             <version>${jena.version}</version>
         </dependency>
+
+    <dependency>
+      <groupId>org.apache.servicemix.bundles</groupId>
+      <artifactId>org.apache.servicemix.bundles.xerces</artifactId>
+      <version>${servicemix.xerces.version}</version>
+    </dependency>
+        <!-- JENA-1178 workaround: Upgrade jsonlld-java -->
+    <dependency>
+      <groupId>com.github.jsonld-java</groupId>
+      <artifactId>jsonld-java</artifactId>
+      <version>${jsonldjava.version}</version>
+     </dependency>
+
         <dependency>
           <groupId>${project.groupId}</groupId>
           <artifactId>taverna-scufl2-wfbundle</artifactId>

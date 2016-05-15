@@ -20,7 +20,7 @@
 	<parent>
 		<groupId>org.apache.taverna</groupId>
 		<artifactId>apache-taverna-parent</artifactId>
-		<version>2-incubating</version>
+		<version>3-incubating-SNAPSHOT</version>
 	</parent>
 	<groupId>org.apache.taverna.language</groupId>
 	<artifactId>apache-taverna-language</artifactId>
@@ -31,9 +31,6 @@
 	<description>Taverna Language API for workflow definitions (SCUFL2)
 		and workflow inputs/outputs/run (DataBundle).
 	</description>
-	<properties>
-		<jena.version>3.0.0</jena.version> <!-- TAVERNA-892 - avoid 3.0.1 -->
-	</properties>
 
 	<build>
 		<plugins>
@@ -249,6 +246,7 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
 	<modules>
     <module>taverna-baclava-language</module>
     <module>taverna-databundle</module>
