@@ -61,19 +61,6 @@
 			<version>${jena.version}</version>
 		</dependency>
 
-    <!-- Needed by jena-osgi -->
-    <dependency>
-      <groupId>org.apache.servicemix.bundles</groupId>
-      <artifactId>org.apache.servicemix.bundles.xerces</artifactId>
-      <version>${servicemix.xerces.version}</version>
-    </dependency>
-	<!-- JENA-1178 workaround: Upgrade jsonlld-java -->
-    <dependency>
-      <groupId>com.github.jsonld-java</groupId>
-      <artifactId>jsonld-java</artifactId>
-      <version>${jsonldjava.version}</version>
-     </dependency>
-
 
 
 <!--
@@ -100,19 +87,6 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<extensions>true</extensions>
-        <!--
-				<configuration>
-					<instructions>
-						<Embed-Dependency>*;groupId=com.github.jsonld-java</Embed-Dependency>
-						<Embed-Transitive>true</Embed-Transitive>
-					</instructions>
-				</configuration>
-        -->
-			</plugin>
       <plugin>
           <groupId>org.jvnet.jaxb2.maven2</groupId>
           <artifactId>maven-jaxb2-plugin</artifactId>
