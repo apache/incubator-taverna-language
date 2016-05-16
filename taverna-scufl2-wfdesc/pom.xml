@@ -85,20 +85,15 @@
 							<pluginExecutions>
 								<pluginExecution>
 									<pluginExecutionFilter>
-										<groupId>
-											org.apache.jena
-										</groupId>
-										<artifactId>
-											jena-maven-tools
-										</artifactId>
-										<versionRange>
-											[3.0.1,)
-										</versionRange>
+										<groupId>org.apache.jena</groupId>
+										<artifactId>jena-maven-tools</artifactId>
+										<versionRange>[${jena.version},)</versionRange>
 										<goals>
 											<goal>translate</goal>
 										</goals>
 									</pluginExecutionFilter>
 									<action>
+										<!-- Make target/generated-source/jena -->
 										<execute />
 									</action>
 								</pluginExecution>
@@ -140,17 +135,7 @@
 			<artifactId>jena-osgi</artifactId>
 			<version>${jena.version}</version>
 		</dependency>
-    <dependency>
-      <groupId>org.apache.servicemix.bundles</groupId>
-      <artifactId>org.apache.servicemix.bundles.xerces</artifactId>
-      <version>${servicemix.xerces.version}</version>
-    </dependency>
-        <!-- JENA-1178 workaround: Upgrade jsonlld-java -->
-    <dependency>
-      <groupId>com.github.jsonld-java</groupId>
-      <artifactId>jsonld-java</artifactId>
-      <version>${jsonldjava.version}</version>
-     </dependency>
+
 
 		<dependency>
 			<groupId>junit</groupId>
@@ -167,8 +152,8 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-mapper-asl</artifactId>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
 			<version>${jackson.version}</version>
 			<type>jar</type>
 		</dependency>
