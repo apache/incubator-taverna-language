@@ -9,11 +9,11 @@ public class CWLInputArraySchema {
 	@JsonProperty(required=true, defaultValue="array")
 	public String type = "array";
 	
-	List<JsonNode> types;
+	public List<JsonNode> types;
 	
-	List<String> secondaryFiles;
-	List<String> format;
-	Boolean streamable;
-	CWLCommandLineBinding inputBinding;
+	public List<String> secondaryFiles;
+	public List<String> format;
+	public Boolean streamable;
+	public CWLCommandLineBinding inputBinding;
 	
 }

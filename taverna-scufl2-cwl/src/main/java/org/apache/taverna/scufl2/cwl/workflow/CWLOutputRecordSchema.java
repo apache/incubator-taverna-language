@@ -8,8 +8,8 @@ public class CWLOutputRecordSchema {
 	@JsonProperty(required=true, defaultValue="record")
 	public String type="record";
 	
-	List<CWLOutputRecordField> fields;
-	List<String> secondaryFiles;
-	List<String> format;
-	boolean streamable;
+	public List<CWLOutputRecordField> fields;
+	public List<String> secondaryFiles;
+	public List<String> format;
+	public boolean streamable;
 }

@@ -9,10 +9,10 @@ public class CWLOutputArraySchema {
 	public String type = "array";
 	
 	@JsonProperty(required=true)
-	List<String> items;
-	List<String> secondaryFiles;
-	List<String> format;
-	Boolean streamable;
-	CWLCommandOutputBinding outputBinding;
+	public List<String> items;
+	public List<String> secondaryFiles;
+	public List<String> format;
+	public Boolean streamable;
+	public CWLCommandOutputBinding outputBinding;
 	
 }

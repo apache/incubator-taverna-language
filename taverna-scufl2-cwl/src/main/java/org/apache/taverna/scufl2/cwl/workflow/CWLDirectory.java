@@ -7,6 +7,6 @@ public class CWLDirectory {
 	@JsonProperty(value="class", defaultValue=DIRECTORY, required=true)
 	public String klass = DIRECTORY;
 	@JsonProperty(required=true)
-	String path;
+	public String path;
 
 }

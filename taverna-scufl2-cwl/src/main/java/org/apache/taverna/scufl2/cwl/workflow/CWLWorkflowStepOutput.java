@@ -4,5 +4,5 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class CWLWorkflowStepOutput {
 	@JsonProperty(required=true)
-	String id;
+	public String id;
 }

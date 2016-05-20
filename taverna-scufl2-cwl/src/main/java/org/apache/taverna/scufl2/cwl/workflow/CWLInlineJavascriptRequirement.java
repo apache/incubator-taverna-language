@@ -7,5 +7,5 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class CWLInlineJavascriptRequirement extends CWLRequirement {
 	@JsonProperty("class")
 	public String klass;
-	List<String> expressionLib;
+	public List<String> expressionLib;
 }

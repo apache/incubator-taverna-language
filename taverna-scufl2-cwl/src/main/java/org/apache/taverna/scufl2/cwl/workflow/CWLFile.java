@@ -9,10 +9,10 @@ public class CWLFile {
 	@JsonProperty(value="class", defaultValue=FILE, required=true)
 	public String klass = FILE;
 	@JsonProperty(required=true)
-	String path;
-	String checksum;
-	Long size;
-	List<CWLFile> secondaryFiles;
-	String format;
+	public String path;
+	public String checksum;
+	public Long size;
+	public List<CWLFile> secondaryFiles;
+	public String format;
 	
 }

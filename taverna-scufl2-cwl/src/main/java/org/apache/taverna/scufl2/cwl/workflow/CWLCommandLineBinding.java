@@ -1,11 +1,11 @@
 package org.apache.taverna.scufl2.cwl.workflow;
 
 public class CWLCommandLineBinding {
-	Boolean loadContents;
-	Integer position;
-	String prefix;
-	Boolean separate;
-	String itemSeparator;
-	String valueFrom;
-	Boolean shellQuote;
+	public Boolean loadContents;
+	public Integer position;
+	public String prefix;
+	public Boolean separate;
+	public String itemSeparator;
+	public String valueFrom;
+	public Boolean shellQuote;
 }

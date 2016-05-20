@@ -8,10 +8,10 @@ public class CWLOutputEnumSchema {
 	@JsonProperty(required=true, defaultValue="enum")
 	public String type = "enum";
 	
-	List<String> symbols;
-	List<String> secondaryFiles;
-	List<String> format;
-	Boolean streamable;
-	CWLCommandOutputBinding outputBinding;
+	public List<String> symbols;
+	public List<String> secondaryFiles;
+	public List<String> format;
+	public Boolean streamable;
+	public CWLCommandOutputBinding outputBinding;
 	
 }
