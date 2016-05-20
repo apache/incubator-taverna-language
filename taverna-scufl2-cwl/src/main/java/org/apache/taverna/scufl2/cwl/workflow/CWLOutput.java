@@ -1,4 +1,4 @@
-package org.apache.taverna.scufl2.cwl;
+package org.apache.taverna.scufl2.cwl.workflow;
 
 import java.util.List;
 import java.util.Map;

@@ -17,6 +17,7 @@ import org.apache.taverna.scufl2.api.core.Workflow;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleReader;
+import org.apache.taverna.scufl2.cwl.workflow.CWLWorkflow;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
