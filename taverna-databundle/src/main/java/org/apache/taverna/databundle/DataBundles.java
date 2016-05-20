@@ -49,8 +49,9 @@ import java.util.List;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
-import org.apache.log4j.Logger;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
@@ -91,7 +92,7 @@ public class DataBundles extends Bundles {
 
 	private static WorkflowBundleIO wfBundleIO;
 
-	private static Logger logger = Logger.getLogger(DataBundles.class);
+	private static Logger logger = Logger.getLogger(DataBundles.class.getCanonicalName());
 
 	private static final String WFBUNDLE_CONTENT_TYPE = "application/vnd.taverna.scufl2.workflow-bundle";
 	private static final String WFDESC_TURTLE = "text/vnd.wf4ever.wfdesc+turtle";
@@ -394,7 +395,7 @@ public class DataBundles extends Bundles {
 		try (OutputStream outputStream = newOutputStream(wfdescPath)) {
 			getWfBundleIO().writeBundle(wfBundle, outputStream, WFDESC_TURTLE);
 		} catch (IllegalArgumentException | WriterException e) {
-			logger.warn("Can't write wfdesc to: " + bundlePath, e);
+			logger.log(Level.WARNING, "Can't write wfdesc to: " + bundlePath, e);
 			delete(wfdescPath);
 			// throw new IOException("Can't write wfdesc to: " + bundlePath, e);
 		}
@@ -404,7 +405,7 @@ public class DataBundles extends Bundles {
 			throws ReaderException, IOException {
 		Path wf = getWorkflow(dataBundle);
 		// String type = Files.probeContentType(wf);
-		return wfBundleIO.readBundle(newInputStream(wf), null);
+		return getWfBundleIO().readBundle(newInputStream(wf), null);
 	}
 
 	public static Path getIntermediates(Bundle dataBundle) throws IOException {

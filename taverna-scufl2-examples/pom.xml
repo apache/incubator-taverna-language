@@ -19,10 +19,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.apache.taverna.language</groupId>
-		<artifactId>taverna-language</artifactId>
-		<version>0.15.0-incubating-SNAPSHOT</version>
+		<artifactId>apache-taverna-language</artifactId>
+		<version>0.15.2-incubating-SNAPSHOT</version>
 	</parent>
 	<artifactId>taverna-scufl2-examples</artifactId>
+	<packaging>bundle</packaging>
 	<name>Apache Taverna Scufl 2 examples</name>
 	<dependencies>
 		<dependency>
@@ -67,7 +68,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>appassembler-maven-plugin</artifactId>
-				<version>1.1.1</version>
+				<version>1.10</version>
 				<executions>
 					<execution>
 						<id>assemble</id>
@@ -104,32 +105,6 @@
 						</program>
 					</programs>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<shadedArtifactAttached>true</shadedArtifactAttached>
-							<shadedClassifierName>standalone</shadedClassifierName>
-							<transformers>
-								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>org.apache.taverna.examples.Scufl2Tool</mainClass>
-								</transformer>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer" />
-								<transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-								<transformer implementation="org.apache.maven.plugins.shade.resource.XmlAppendingTransformer">
-									<resource>META-INF/spring</resource>
-								</transformer>
-							</transformers>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>

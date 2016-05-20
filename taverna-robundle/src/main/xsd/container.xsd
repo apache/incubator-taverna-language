@@ -49,13 +49,6 @@
 			xmlns="urn:oasis:names:tc:opendocument:xmlns:container"&gt;
 			...
 			&lt;/container&gt; </xsd:documentation>
-		<xsd:appinfo>
-			<!-- See http://docs.rakeshv.org/java/jaxb/users-guide/jaxb-custom.html -->
-			<jaxb:globalBindings />
-			<jaxb:schemaBindings>
-				<jaxb:package name="org.oasis_open.names.tc.opendocument.xmlns.container" />
-			</jaxb:schemaBindings>
-		</xsd:appinfo>
 	</xsd:annotation>
 
 	<!-- xmldsig-core-schema.xsd is also included by xenc-schema.xsd -->

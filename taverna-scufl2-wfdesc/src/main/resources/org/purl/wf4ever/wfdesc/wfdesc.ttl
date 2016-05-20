@@ -19,7 +19,6 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix parrot: <http://vocab.ctic.es/parrot#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix : <http://www.semanticweb.org/owl/owlapi/turtle#> .
 @prefix wfdesc: <http://purl.org/wf4ever/wfdesc#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .

@@ -20,7 +20,7 @@ package org.apache.taverna.robundle.manifest.combine;
  */
 
 
-import static com.hp.hpl.jena.rdf.model.ModelFactory.createDefaultModel;
+import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
 import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.isRegularFile;
@@ -59,21 +59,22 @@ import org.apache.taverna.robundle.Bundle;
 import org.apache.taverna.robundle.manifest.Agent;
 import org.apache.taverna.robundle.manifest.PathAnnotation;
 import org.apache.taverna.robundle.manifest.PathMetadata;
-import org.identifiers.combine_specifications.omex_manifest.Content;
-import org.identifiers.combine_specifications.omex_manifest.ObjectFactory;
-import org.identifiers.combine_specifications.omex_manifest.OmexManifest;
+
+import org.apache.taverna.robundle.xml.combine.Content;
+import org.apache.taverna.robundle.xml.combine.ObjectFactory;
+import org.apache.taverna.robundle.xml.combine.OmexManifest;
 import org.xml.sax.InputSource;
 
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QueryFactory;
-import com.hp.hpl.jena.query.QuerySolutionMap;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.Statement;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QueryFactory;
+import org.apache.jena.query.QuerySolutionMap;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.Statement;
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 
 /**
@@ -377,14 +378,18 @@ public class CombineManifest {
 				}
 			}
 
+			// add the COMBINE "creators" as RO "authors"
+			List<Agent> authors = pathMetadata.getAuthoredBy ();
+			
 			for (RDFNode s : creatingAgentsFor(resource)) {
-				if (pathMetadata.getCreatedBy() != null) {
-					logger.warning("Ignoring additional createdBy agents for "
-							+ resource);
-					break;
+				if (authors == null)
+				{
+					authors = new ArrayList<Agent> ();
+					pathMetadata.setAuthoredBy (authors);
 				}
+				
 				if (s.isLiteral()) {
-					pathMetadata.setCreatedBy(new Agent(s.asLiteral()
+					authors.add (new Agent(s.asLiteral()
 							.getLexicalForm()));
 					continue;
 				}
@@ -402,8 +407,12 @@ public class CombineManifest {
 						agent.setUri(URI.create(mbox.getURI()));
 				}
 				agent.setName(nameForAgent(agentResource));
-				pathMetadata.setCreatedBy(agent);
+				authors.add (agent);
 			}
+			// if there is a single COMBINE "creator" it is also the RO "creator"
+			if (authors != null && authors.size () == 1)
+				pathMetadata.setCreatedBy (authors.get (0));
+			
 			if (pathMetadata.getFile().equals(bundle.getRoot())
 					|| pathMetadata.getFile().equals(metadataRdf)) {
 				// Statements where about the RO itself

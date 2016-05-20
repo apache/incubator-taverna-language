@@ -17,7 +17,19 @@
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="qualified"
 	elementFormDefault="qualified" targetNamespace="http://www.w3.org/2000/01/rdf-schema#"
-	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+	xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+	jxb:version="1.0">
+	
+	<xs:annotation>
+		<xs:appinfo>
+			<jxb:globalBindings />
+			<jxb:schemaBindings>
+				<jxb:package name="org.apache.taverna.scufl2.xml.rdfs" />
+			</jxb:schemaBindings>
+		</xs:appinfo>
+	</xs:annotation>
+	
 	
 	<xs:import namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 		schemaLocation="rdf.xsd" />

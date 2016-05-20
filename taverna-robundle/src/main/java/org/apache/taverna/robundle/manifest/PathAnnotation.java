@@ -67,7 +67,14 @@ public class PathAnnotation {
 	}
 
 	@Deprecated
+	@JsonIgnore
 	public URI getAnnotion() {
+		return getAnnotation();
+	}
+
+	@Deprecated
+	@JsonIgnore
+	public URI getAnnotation() {
 		return getUri();
 	}
 

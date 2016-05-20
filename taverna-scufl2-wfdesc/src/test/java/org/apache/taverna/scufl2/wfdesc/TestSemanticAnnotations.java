@@ -35,11 +35,6 @@ import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 import org.apache.taverna.scufl2.translator.t2flow.T2FlowReader;
 import org.junit.Before;
 import org.junit.Test;
-import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.sail.SailRepository;
-import org.openrdf.rio.RDFFormat;
-import org.openrdf.sail.memory.MemoryStore;
 
 
 public class TestSemanticAnnotations {
@@ -68,11 +63,13 @@ public class TestSemanticAnnotations {
 		bundleIO.writeBundle(workflowBundle, bundleFile,
 				TEXT_VND_WF4EVER_WFDESC_TURTLE);
 		FileUtils.readFileToString(bundleFile, "utf-8");
+
+		// FIXME: Update test to use Jena
 		
-		Repository myRepository = new SailRepository(new MemoryStore());
-		myRepository.initialize();
-		RepositoryConnection con = myRepository.getConnection();
-		con.add(bundleFile, bundleFile.toURI().toASCIIString(), RDFFormat.TURTLE);
+//		Repository myRepository = new SailRepository(new MemoryStore());
+//		myRepository.initialize();
+//		RepositoryConnection con = myRepository.getConnection();
+//		con.add(bundleFile, bundleFile.toURI().toASCIIString(), RDFFormat.TURTLE);
 //		assertTrue(con.prepareTupleQuery(QueryLanguage.SPARQL,
 //		assertTrue(con.prepareBooleanQuery(QueryLanguage.SPARQL, 
 //				"PREFIX wfdesc: <http://purl.org/wf4ever/wfdesc#>  " +

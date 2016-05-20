@@ -48,16 +48,17 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.taverna.robundle.manifest.odf.ODFJaxb;
 import org.apache.taverna.scufl2.ucfpackage.impl.odfdom.pkg.OdfPackage;
 import org.apache.taverna.scufl2.ucfpackage.impl.odfdom.pkg.manifest.OdfFileEntry;
-import org.oasis_open.names.tc.opendocument.xmlns.container.Container;
-import org.oasis_open.names.tc.opendocument.xmlns.container.Container.RootFiles;
-import org.oasis_open.names.tc.opendocument.xmlns.container.ObjectFactory;
-import org.oasis_open.names.tc.opendocument.xmlns.container.RootFile;
+import org.apache.taverna.robundle.xml.odf.container.Container;
+import org.apache.taverna.robundle.xml.odf.container.Container.RootFiles;
+import org.apache.taverna.robundle.xml.odf.container.ObjectFactory;
+import org.apache.taverna.robundle.xml.odf.container.RootFile;
 import org.w3c.dom.Document;
 
 
-public class UCFPackage implements Cloneable {
+public class UCFPackage extends ODFJaxb implements Cloneable  {
 	private static Logger logger = Logger.getLogger(UCFPackage.class.getName());
 	private static final String CONTAINER_XML = "META-INF/container.xml";
 	private static final Charset UTF_8 = Charset.forName("utf-8");
@@ -246,27 +247,6 @@ public class UCFPackage implements Cloneable {
 		} catch (Exception e) {
 			throw new IOException("Could not parse " + CONTAINER_XML, e);
 		}
-	}
-
-	protected static synchronized Marshaller createMarshaller()
-			throws JAXBException {
-		return getJaxbContext().createMarshaller();
-	}
-
-	protected static synchronized Unmarshaller createUnMarshaller()
-			throws JAXBException {
-		return getJaxbContext().createUnmarshaller();
-	}
-
-	protected static synchronized JAXBContext getJaxbContext()
-			throws JAXBException {
-		if (jaxbContext == null)
-			jaxbContext = JAXBContext
-					.newInstance(
-							org.oasis_open.names.tc.opendocument.xmlns.container.ObjectFactory.class,
-							org.w3._2000._09.xmldsig_.ObjectFactory.class,
-							org.w3._2001._04.xmlenc_.ObjectFactory.class);
-		return jaxbContext;
 	}
 
 	public void addResource(String stringValue, String path, String mediaType)

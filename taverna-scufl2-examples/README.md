@@ -1,74 +1,26 @@
 SCUFL2 examples
 ===============
 
-Examples of using the [SCUFL2 API](http://dev.mygrid.org.uk/wiki/display/developer/SCUFL2+API) v0.14.0.
-
-[![Build Status](https://travis-ci.org/myGrid/scufl2-examples.svg?branch=master)](https://travis-ci.org/myGrid/scufl2-examples)
+Examples of using the [SCUFL2 API](http://taverna.incubator.apache.org/download/language/).
 
 As this code is meant only as examples that you can extend and modify, the
 groupId and package name are `org.apache.taverna.examples`, which should be changed
 in your application.
 
-
-
-Download
---------
-Download the `scufl2-examples-0.x.x-standalone.jar` from the
-[latest build](http://build.mygrid.org.uk/ci/job/scufl2-examples/lastSuccessfulBuild/com.example$scufl2-examples/), or browse the [Maven snapshot repository](http://repository.mygrid.org.uk/artifactory/libs-snapshot-local/com/example/scufl2-examples/).
-
-This is a standalone executable JAR (see below). 
-
+Note that while these examples are presented as command line tools for
+ease of testing, they are not recommended for general command line usage.
+Instead, see the [tavlang](../taverna-tavlang-tool) tool.
 
 
 Build
 -----
 
+To build, you'll need [Maven](http://maven.apache.org/download) 3.0.5 or newer, and run
 
-To build, you'll need [Maven](http://maven.apache.org/download.cgi) 3.0.5 or newer, and run
-```mvn clean install```:
+    mvn clean install
 
-    C:\Users\stain\workspace\scufl2-examples> mvn clean install
-    
-    [INFO] ------------------------------------------------------------------------
-    [INFO] Building SCUFL2 examples 0.1.1-SNAPSHOT
-    [INFO] ------------------------------------------------------------------------
-    [INFO] 
-    [INFO] --- maven-clean-plugin:2.4.1:clean (default-clean) @ scufl2-examples ---
-    [INFO] Deleting C:\Users\stain\workspace\scufl2-examples\target
-    (..)
-    [INFO] Installing C:\Users\stain\workspace\scufl2-examples\target\scufl2-examples-0.1.1-SNAPSHOT.jar to C:\Users\stain\.m2\repository\com\example\scufl2-examples\0.1.1-SNAPSHOT\scufl2-examples-0.1.1-SNAPSHOT.jar
-    [INFO] Installing C:\Users\stain\workspace\scufl2-examples\pom.xml to C:\Users\stain\.m2\repository\com\example\scufl2-examples\0.1.1-SNAPSHOT\scufl2-examples-0.1.1-SNAPSHOT.pom
-    [INFO] ------------------------------------------------------------------------
-    [INFO] BUILD SUCCESS
-    [INFO] ------------------------------------------------------------------------
-    [INFO] Total time: 6.223s
-    [INFO] Finished at: Tue Apr 23 11:00:27 BST 2013
-    [INFO] Final Memory: 15M/243M
-    [INFO] ----------------    
-
-To run the examples, see the folder ```target\scufl2-examples``` which has a `bin/` executable for each of the below tools. Note that these tools require the provided `bin/` and `lib/` folder structure.
-
-Alternatively you can use ```java -jar target/scufl2-examples-0.2.0-SNAPSHOT-standalone.jar``` - this is a standalone
-JAR file that can execute any of the tools as the first argument. 
-
-Linux users can install this with:
-
-    chmod 755 target/scufl2-examples-*-standalone.jar
-    sudo cp target/scufl2-examples-*-standalone.jar /usr/local/bin/scufl2tool
-    
-as long as JAR files are recognized as executables:
-
-    stain@biggie-mint ~/src/scufl2-examples $ target/scufl2-examples-0.2.0-SNAPSHOT-standalone.jar 
-    SCUFL2 workflow tool
-    Usage: scufl2tool <tool> [option] ...
-
-    Available tools:
-    t2flowtowfbundle - Convert t2flow workflows to wfbundle
-    jsonexport - Export JSON structure of workflow
-    processornames - List tree of processor names in workflow
-    servicetypes - List service types used in workflow
-    workflowmaker - Create an example workflow programmatically
-
+To run the examples, see the folder ```target/scufl2-examples``` which has a `bin/`
+executable for each of the below tools. Note that these tools require the provided `bin/` and `lib/` folder structure.
 
 
 processornames
@@ -78,8 +30,8 @@ This tool lists a tree of the processor names in the workflows of the given bund
     C:\Users\stain\workspace\scufl2-examples> target\scufl2-examples\bin\processornames examples/helloworld.t2flow
     + Hello_World
       - hello
-    
-    
+
+
     C:\Users\stain\workspace\scufl2-examples> target\scufl2-examples\bin\processornames examples/helloanyone.t2flow
     + Hello_Anyone
       - Concatenate_two_strings
@@ -103,12 +55,12 @@ See the source code for [org.apache.taverna.examples.ServiceTypes](src/main/java
 
 workflowmaker
 -------------
-This tool shows how to construct a workflow from scratch and save it as a 
+This tool shows how to construct a workflow from scratch and save it as a
 [SCUFL2 wfbundle](http://dev.mygrid.org.uk/wiki/display/developer/Taverna+Workflow+Bundle).
 
     C:\Users\stain\workspace\scufl2-examples> target\scufl2-examples\bin\workflowmaker
     Written to C:\Users\stain\AppData\Local\Temp\test6264603033381329995.wfbundle
-    
+
     WorkflowBundle '4fdb73e3-a5c6-41a8-aafb-32f67ca552b2'
       MainWorkflow 'Echotest'
       Workflow 'Echotest'
@@ -140,20 +92,20 @@ This tool shows how to construct a workflow from scratch and save it as a
             '''out1 = in1'''
 
 
-See the source code for [org.apache.taverna.examples.WorkflowMaker](src/main/java/org/apache/taverna/WorkflowMaker.java) 
+See the source code for [WorkflowMaker](src/main/java/org/apache/taverna/examples/WorkflowMaker.java)
 for how this is implemented.
 
 
 t2flowtowfbundle
 ----------------
 
-This tool shows how to convert a *.t2flow* file to a 
-[SCUFL2 .wfbundle](http://dev.mygrid.org.uk/wiki/display/developer/Taverna+Workflow+Bundle).
+This tool shows how to convert a *.t2flow* file to a
+[SCUFL2 .wfbundle](http://taverna.incubator.apache.org/documentation/scufl2/bundle).
 
     C:\Users\stain\workspace\scufl2-examples> rm helloworld.wfbundle
-    
+
     C:\Users\stain\workspace\scufl2-examples> target\scufl2-examples\bin\t2flowtowfbu
-    
+
     C:\Users\stain\workspace\scufl2-examples> unzip -t helloworld.wfbundle
     Archive:  helloworld.wfbundle
         testing: mimetype                 OK
@@ -173,8 +125,8 @@ This tool shows how to convert a *.t2flow* file to a
         testing: META-INF/container.xml   OK
     No errors detected in compressed data of helloworld.wfbundle.
 
-See the source code for 
-[org.apache.taverna.examples.ConvertT2flowToWorkflowBundle.java](src/main/java/org/apache/taverna/examples/ConvertT2flowToWorkflowBundle.java)
+See the source code for
+[ConvertT2flowToWorkflowBundle.java](src/main/java/org/apache/taverna/examples/ConvertT2flowToWorkflowBundle.java)
 for how this is implemented.
 
 The included files [helloworld.wfbundle](helloworld.wfbundle?raw=true) and
@@ -204,13 +156,15 @@ Converting multiple files:
     c:\Users\stain\src\scufl2-examples> target\scufl2-examples\bin\jsonexport examples/helloworld.t2flow examples/helloanyone.wfbundle
     examples/helloworld.json
     examples/helloanyone.json
-    
+
 See the converted [examples/helloworld.json](helloworld.json) and
 [examples/helloanyone.json](helloanyone.json).
 
 Example using STDIN/STDOUT:
 
     c:\Users\stain\src\scufl2-examples> target\scufl2-examples\bin\jsonexport - < examples/helloworld.t2flow
+
+```json
     {
       "@context" : [ "https://w3id.org/scufl2/context", {
         "@base" : "http://ns.taverna.org.uk/2010/workflowBundle/8781d5f4-d0ba-48a8-a1d1-14281bd8a917/"
@@ -248,4 +202,8 @@ Example using STDIN/STDOUT:
         "http://purl.org/dc/terms/title" : "Hello World"
       }
     }
+```
 
+This JSON export is also available as `application/json` using the
+[WorkflowBundleIO](http://taverna.incubator.apache.org/javadoc/taverna-language/org/apache/taverna/scufl2/api/io/WorkflowBundleIO.html) API
+if `taverna-scufl2-examples` is on the class path.

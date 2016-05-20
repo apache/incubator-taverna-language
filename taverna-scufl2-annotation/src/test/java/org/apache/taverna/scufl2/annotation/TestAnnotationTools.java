@@ -34,10 +34,10 @@ import org.apache.taverna.scufl2.api.port.InputWorkflowPort;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
 
 
 public class TestAnnotationTools {

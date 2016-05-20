@@ -20,8 +20,8 @@
 	<packaging>bundle</packaging>
 	<parent>
 		<groupId>org.apache.taverna.language</groupId>
-		<artifactId>taverna-language</artifactId>
-		<version>0.15.0-incubating-SNAPSHOT</version>
+		<artifactId>apache-taverna-language</artifactId>
+		<version>0.15.2-incubating-SNAPSHOT</version>
 	</parent>
 	<artifactId>taverna-robundle</artifactId>
 	<name>Apache Taverna RO Bundle API</name>
@@ -50,24 +50,19 @@
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
-    <!--
-		<dependency>
-			<groupId>com.github.jsonld-java</groupId>
-			<artifactId>jsonld-java</artifactId>
-			<version>${jsonld.version}</version>
-			<scope>test</scope>
-		</dependency>
-    -->
 		<dependency>
 			<groupId>commons-configuration</groupId>
 			<artifactId>commons-configuration</artifactId>
-			<version>1.9</version>
+			<version>${commons.configuration.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.jena</groupId>
 			<artifactId>jena-osgi</artifactId>
 			<version>${jena.version}</version>
 		</dependency>
+
+
+
 <!--
 		<dependency>
 			<groupId>com.sun.xml.bind</groupId>
@@ -92,19 +87,6 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<extensions>true</extensions>
-        <!--
-				<configuration>
-					<instructions>
-						<Embed-Dependency>*;groupId=com.github.jsonld-java</Embed-Dependency>
-						<Embed-Transitive>true</Embed-Transitive>
-					</instructions>
-				</configuration>
-        -->
-			</plugin>
       <plugin>
           <groupId>org.jvnet.jaxb2.maven2</groupId>
           <artifactId>maven-jaxb2-plugin</artifactId>
@@ -116,8 +98,6 @@
             </execution>
           </executions>
         </plugin>
-
-							<!-- <packageName>oasis.names.tc.opendocument.xmlns.manifest</packageName>-->
 		</plugins>
 	</build>
 </project>

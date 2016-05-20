@@ -120,6 +120,7 @@
                         </dispatchStackLayers>
                     </DispatchStack>
                 </dispatchStack>
+<!--
                 <iterationStrategyStack>
                     <IterationStrategyStack rdf:about="processor/wait4me/iterationstrategy/">
                         <iterationStrategies rdf:parseType="Collection">
@@ -129,6 +130,7 @@
                         </iterationStrategies>
                     </IterationStrategyStack>
                 </iterationStrategyStack>
+-->
             </Processor>
         </processor>
         <datalink>

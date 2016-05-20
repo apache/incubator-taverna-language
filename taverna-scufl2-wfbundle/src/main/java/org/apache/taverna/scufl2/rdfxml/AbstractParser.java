@@ -33,7 +33,7 @@ import org.apache.taverna.scufl2.api.common.WorkflowBean;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 
-import org.apache.taverna.scufl2.rdfxml.jaxb.ObjectFactory;
+import org.apache.taverna.scufl2.xml.ObjectFactory;
 
 public class AbstractParser {
 	protected JAXBContext jaxbContext;
