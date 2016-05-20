@@ -12,12 +12,19 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
 
+import org.apache.taverna.scufl2.api.common.Named;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
+import org.apache.taverna.scufl2.api.core.Processor;
 import org.apache.taverna.scufl2.api.core.Workflow;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleReader;
+import org.apache.taverna.scufl2.api.port.InputWorkflowPort;
+import org.apache.taverna.scufl2.api.port.OutputWorkflowPort;
+import org.apache.taverna.scufl2.cwl.workflow.CWLInputParameter;
 import org.apache.taverna.scufl2.cwl.workflow.CWLWorkflow;
+import org.apache.taverna.scufl2.cwl.workflow.CWLWorkflowOutputParameter;
+import org.apache.taverna.scufl2.cwl.workflow.CWLWorkflowStep;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -27,7 +34,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 public class CwlReader implements WorkflowBundleReader  {
 
 	private static final WorkflowBundleIO WF_IO = new WorkflowBundleIO();
-	private static final String MEDIA_TYPE = "text/x-common-workflow-language+yaml";
+	public static final String MEDIA_TYPE = "text/vnd.commonwf.workflow+yaml";
 
 	@Override
 	public Set<String> getMediaTypes() {
@@ -56,14 +63,82 @@ public class CwlReader implements WorkflowBundleReader  {
 	private WorkflowBundle readBundle(InputStream inputStream, URI base) throws JsonParseException, JsonMappingException, IOException {
 		
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-		CWLWorkflow user = mapper.readValue(inputStream, CWLWorkflow.class);
-		System.out.println(user.id);
-		
+		CWLWorkflow cwlWf = mapper.readValue(inputStream, CWLWorkflow.class);		
 		WorkflowBundle wfb = WF_IO.createBundle();
-		Workflow wf = wfb.getMainWorkflow();
-		wf.setName("Hello");
+		
+		parseWorkflow(cwlWf, wfb.getMainWorkflow());
 		
 		return wfb;
+	}
+
+	private void parseWorkflow(CWLWorkflow src, Workflow dest) {
+		if (src.id != null) {
+			// TODO: Make id absolute
+			dest.setIdentifier(URI.create(src.id));
+			// TODO: Generate local name from ID, if possible
+			//dest.setName(src.id);
+		}		
+		
+		// TODO: Check compatibility and store as annotations
+		//src.cwlVersion;
+		//src.requirements;
+		//src.klass;
+		
+		// TODO: Store as annotations
+		//src.label;
+		//src.description;				
+		//src.hints;
+
+		
+		if (src.inputs != null) {
+			for (CWLInputParameter input : src.inputs) {
+				InputWorkflowPort p = new InputWorkflowPort();
+				p.setParent(dest);
+				parseInputPort(input, p);
+				
+			}
+		}
+		if (src.outputs != null) { 
+			for (CWLWorkflowOutputParameter out : src.outputs) {
+				OutputWorkflowPort p = new OutputWorkflowPort();
+				p.setParent(dest);
+				parseOutputPort(out, p);
+				
+			}
+		}
+		
+		if (src.steps != null) {
+			for (CWLWorkflowStep step : src.steps) {
+				Processor p = new Processor();
+				p.setParent(dest);
+				parseWorkflowStep(step, p);				
+			}
+		}
+		
+	}
+
+	private void parseWorkflowStep(CWLWorkflowStep step, Processor p) {
+		if (step.id != null && ! Named.INVALID_NAME.matcher(step.id).matches()) {
+			p.setName(step.id);
+		}		
+	}
+
+	private void parseOutputPort(CWLWorkflowOutputParameter out, OutputWorkflowPort p) {
+		if (out.id != null && ! Named.INVALID_NAME.matcher(out.id).matches()) {
+			p.setName(out.id);
+		}
+				
+	}
+
+	private void parseInputPort(CWLInputParameter input, InputWorkflowPort p) {
+		if (input.id != null && ! Named.INVALID_NAME.matcher(input.id).matches()) {
+			p.setName(input.id);
+		}
+		// TODO: Depth from input.type Array
+		// TODO: if (input.defaultValue
+		//input.
+		
+		
 	}
 
 	@Override
