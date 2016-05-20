@@ -19,20 +19,26 @@ import org.apache.taverna.scufl2.api.core.Workflow;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleReader;
+import org.apache.taverna.scufl2.api.port.InputProcessorPort;
 import org.apache.taverna.scufl2.api.port.InputWorkflowPort;
+import org.apache.taverna.scufl2.api.port.OutputProcessorPort;
 import org.apache.taverna.scufl2.api.port.OutputWorkflowPort;
 import org.apache.taverna.scufl2.cwl.workflow.CWLInputParameter;
 import org.apache.taverna.scufl2.cwl.workflow.CWLWorkflow;
 import org.apache.taverna.scufl2.cwl.workflow.CWLWorkflowOutputParameter;
 import org.apache.taverna.scufl2.cwl.workflow.CWLWorkflowStep;
+import org.apache.taverna.scufl2.cwl.workflow.CWLWorkflowStepInput;
+import org.apache.taverna.scufl2.cwl.workflow.CWLWorkflowStepOutput;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 public class CwlReader implements WorkflowBundleReader  {
 
+	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 	private static final WorkflowBundleIO WF_IO = new WorkflowBundleIO();
 	public static final String MEDIA_TYPE = "text/vnd.commonwf.workflow+yaml";
 
@@ -111,7 +117,8 @@ public class CwlReader implements WorkflowBundleReader  {
 			for (CWLWorkflowStep step : src.steps) {
 				Processor p = new Processor();
 				p.setParent(dest);
-				parseWorkflowStep(step, p);				
+				parseWorkflowStep(step, p);					
+
 			}
 		}
 		
@@ -121,6 +128,54 @@ public class CwlReader implements WorkflowBundleReader  {
 		if (step.id != null && ! Named.INVALID_NAME.matcher(step.id).matches()) {
 			p.setName(step.id);
 		}		
+		// TODO step.run
+		
+		if (step.in != null) { 
+			for (CWLWorkflowStepInput s : step.in) {
+				InputProcessorPort inp = new InputProcessorPort();
+				inp.setParent(p);
+				parseWorkflowStepInput(s, inp);
+			}
+		}
+		if (step.out != null) { 
+			for (JsonNode s : step.out) {
+				OutputProcessorPort outp = new OutputProcessorPort();
+				outp.setParent(p);
+				parseWorkflowStepOutput(s, outp);
+			}
+		}
+		
+		// TODO: Check compatibility
+		//step.requirements
+		
+		
+		// TODO: Annotations
+		//step.label;
+		//step.description;
+		//step.hints;
+
+		// TODO: Iteration strategy	
+		//step.scatter;
+		
+		// TODO: Handle run
+		// TODO: Handle nested workflows
+		//step.run;
+	}
+
+	private void parseWorkflowStepOutput(JsonNode s, OutputProcessorPort outp) {
+		if (s.isTextual() && ! Named.INVALID_NAME.matcher(s.asText()).matches()) { 
+			outp.setName(s.asText());
+		}
+		CWLWorkflowStepOutput out = OBJECT_MAPPER.convertValue(s, CWLWorkflowStepOutput.class);
+		if (out.id != null && ! Named.INVALID_NAME.matcher(out.id).matches()) {
+			outp.setName(out.id);
+		}
+		
+	}
+
+	private void parseWorkflowStepInput(CWLWorkflowStepInput s, InputProcessorPort inp) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	private void parseOutputPort(CWLWorkflowOutputParameter out, OutputWorkflowPort p) {
