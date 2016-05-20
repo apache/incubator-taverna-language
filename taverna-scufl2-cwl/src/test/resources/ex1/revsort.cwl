@@ -50,16 +50,18 @@ outputs:
 # parameter "#reversed" from the first step to the input parameter of the
 # tool "sorttool.cwl#input".
 steps:
-  - in:
+  - id: "#rev"
+    in:
       - { id: "#rev.input", source: "#input" }
     out:
       - { id: "#rev.output" }
-    run: { import: revtool.cwl }
+    run: { "$import": revtool.cwl }
 
-  - in:
+  - id: "#sorted"
+    in:
       - { id: "#sorted.input", source: "#rev.output" }
       - { id: "#sorted.reverse", source: "#reverse_sort" }
     out:
       - { id: "#sorted.output" }
-    run: { import: sorttool.cwl }
+    run: { "$import": sorttool.cwl }
     
