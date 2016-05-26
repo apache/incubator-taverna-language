@@ -94,9 +94,6 @@ public class RDFToManifest {
 	private static final String PROV_O_RDF = "/ontologies/prov-o.rdf";
 	@SuppressWarnings("unused")
 	private static final String RO = "http://purl.org/wf4ever/ro#";
-	static {
-		setCachedHttpClientInJsonLD();
-	}
 
 	public static <T> ClosableIterable<T> iterate(ExtendedIterator<T> iterator) {
 		return new ClosableIterable<T>(iterator);
@@ -105,42 +102,26 @@ public class RDFToManifest {
 	protected static Model jsonLdAsJenaModel(InputStream jsonIn, URI base)
 			throws IOException, RiotException {
 		Model model = ModelFactory.createDefaultModel();
-		RDFDataMgr.read(model, jsonIn, base.toASCIIString(), Lang.JSONLD);
+		
+		ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+		try { 
+			// TAVERNA-971: set context classloader so jarcache.json is consulted
+			// even through OSGi
+			Thread.currentThread().setContextClassLoader(RDFToManifest.class.getClassLoader());
+			
+			// Now we can parse the JSON-LD without network access
+			RDFDataMgr.read(model, jsonIn, base.toASCIIString(), Lang.JSONLD);
+		} finally { 
+			// Restore old context class loader (if any)
+			Thread.currentThread().setContextClassLoader(oldCl);
+		}
 		return model;
-
-		//
-		// Object input = JSONUtils.fromInputStream(jsonIn);
-		// JSONLDTripleCallback callback = new JenaTripleCallback();
-		// Model model = (Model)JSONLD.toRDF(input, callback, new
-		// Options(base.toASCIIString()));
-		// return model;
 	}
 
 	protected static URI makeBaseURI() throws URISyntaxException {
 		return new URI("app", UUID.randomUUID().toString(), "/", (String) null);
 	}
 
-	/**
-	 * Use a JarCacheStorage so that our JSON-LD @context can be loaded from our
-	 * classpath and not require network connectivity
-	 * 
-	 */
-	protected static void setCachedHttpClientInJsonLD() {
-		// JarCacheStorage cacheStorage = new JarCacheStorage(
-		// RDFToManifest.class.getClassLoader());
-		// synchronized (DocumentLoader.class) {
-		// HttpClient oldHttpClient = DocumentLoader.getHttpClient();
-		// CachingHttpClient wrappedHttpClient = new CachingHttpClient(
-		// oldHttpClient, cacheStorage, cacheStorage.getCacheConfig());
-		// DocumentLoader.setHttpClient(wrappedHttpClient);
-		// }
-		// synchronized (JSONUtils.class) {
-		// HttpClient oldHttpClient = JSONUtilsSub.getHttpClient();
-		// CachingHttpClient wrappedHttpClient = new CachingHttpClient(
-		// oldHttpClient, cacheStorage, cacheStorage.getCacheConfig());
-		// JSONUtilsSub.setHttpClient(wrappedHttpClient);
-		// }
-	}
 	private ObjectProperty aggregates;
 	private OntClass aggregation;
 	private ObjectProperty authoredBy;
