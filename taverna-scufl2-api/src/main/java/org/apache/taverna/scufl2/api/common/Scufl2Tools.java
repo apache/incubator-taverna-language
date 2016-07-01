@@ -43,6 +43,9 @@ import org.apache.taverna.scufl2.api.core.ControlLink;
 import org.apache.taverna.scufl2.api.core.DataLink;
 import org.apache.taverna.scufl2.api.core.Processor;
 import org.apache.taverna.scufl2.api.core.Workflow;
+import org.apache.taverna.scufl2.api.iterationstrategy.CrossProduct;
+import org.apache.taverna.scufl2.api.iterationstrategy.IterationStrategyStack;
+import org.apache.taverna.scufl2.api.iterationstrategy.PortNode;
 import org.apache.taverna.scufl2.api.port.ActivityPort;
 import org.apache.taverna.scufl2.api.port.InputActivityPort;
 import org.apache.taverna.scufl2.api.port.InputPort;
@@ -862,5 +865,17 @@ public class Scufl2Tools {
 				procs.add(bind.getBoundProcessor());
 		}
 		return procs;
+	}
+
+	public void createDefaultIterationStrategyStack(Processor p) {
+		p.setIterationStrategyStack(new IterationStrategyStack());
+		CrossProduct crossProduct = new CrossProduct();
+		for (InputProcessorPort in : p.getInputPorts()) {
+			// As this is a NamedSet the above will always be in 
+			// the same alphabetical order
+			// FIXME: What about different Locales?
+			crossProduct.add(new PortNode(crossProduct, in));
+		}
+		p.getIterationStrategyStack().add(crossProduct);
 	}
 }
