@@ -1,6 +1,4 @@
-package org.apache.taverna.databundle;
 /*
- *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -18,8 +16,8 @@ package org.apache.taverna.databundle;
  * specific language governing permissions and limitations
  * under the License.
  *
-*/
-
+ */
+package org.apache.taverna.databundle;
 
 import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.delete;
@@ -33,10 +31,12 @@ import static java.nio.file.Files.write;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryIteratorException;
 import java.nio.file.DirectoryStream;
@@ -49,15 +49,15 @@ import java.util.List;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.UUID;
-import java.util.logging.Logger;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import org.apache.taverna.robundle.Bundle;
+import org.apache.taverna.robundle.Bundles;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 import org.apache.taverna.scufl2.api.io.WriterException;
-import org.apache.taverna.robundle.Bundle;
-import org.apache.taverna.robundle.Bundles;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -68,7 +68,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * The style of using this class is similar to that of {@link Files}. In fact, a
  * data bundle is implemented as a set of {@link Path}s.
  * 
- * @author Stian Soiland-Reyes
  */
 public class DataBundles extends Bundles {
 	private static final class OBJECT_MAPPER {
@@ -438,6 +437,73 @@ public class DataBundles extends Bundles {
 			return max + 1;
 		} catch (DirectoryIteratorException ex) {
 			throw ex.getCause();
+		}
+	}
+	
+	/**
+	 * Deeply resolve a {@link Path} to JVM objects.
+	 * <p>
+	 * This method is intended for use with a particular input/output port from 
+	 * {@link #getPorts(Path)} or {@link #getPort(Path, String)}.
+	 * <p>
+	 * If the path is <code>null</code> or {@link #isMissing(Path)},
+	 * <code>null</code> is returned.
+	 * <p>
+	 * If the path {@link #isValue(Path)}, its {@link #getStringValue(Path)} is
+	 * returned (assuming an UTF-8 encoding). NOTE: Binary formats (e.g. PNG)
+	 * will NOT be represented correctly as such a String and should be read
+	 * directly with
+	 * {@link Files#newInputStream(Path, java.nio.file.OpenOption...)}.
+	 * <p>
+	 * If the path {@link #isError(Path)}, the corresponding
+	 * {@link ErrorDocument} is returned.
+	 * <p>
+	 * If the path {@link #isReference(Path)}, either a {@link File} or a
+	 * {@link URL} is returned, depending on its protocol.
+	 * <p>
+	 * If the path {@link #isList(Path)}, a {@link List} is returned
+	 * corresponding to resolving the paths from {@link #getList(Path)}. using
+	 * this method. Thus a depth 2 path which elements are lists of values will
+	 * effectively be returned as a <code>List&lt;List&lt;String&gt;&gt;</code>,
+	 * assuming no references, errors or empty slots.
+	 * <p>
+	 * If the path is neither of the above, the {@link Path} itself is returned.
+	 * 
+	 * @param path Data bundle path to resolve
+	 * @return <code>null</code>, a {@link String}, {@link ErrorDocument},
+	 *         {@link URL}, {@link File}, {@link Path} or {@link List}
+	 *         (containing any of these).
+	 * @throws IOException
+	 *             If the path (or any of the path in a contained list) can't be
+	 *             accessed
+	 */
+	public static Object resolve(Path path) throws IOException {
+		if (path == null) { 
+			return null;
+		}
+		if (isMissing(path)) { 
+			return null;
+		} else if (isValue(path)) {
+			return getStringValue(path);
+		} else if (isReference(path)) {
+			URI reference = getReference(path);
+			String scheme = reference.getScheme();
+			if ("file".equals(scheme)) {
+				return new File(reference);
+			} else {
+				return reference.toURL();
+			}
+		} else if (isList(path)) {			
+			List<Path> list = getList(path);
+			List<Object> objectList = new ArrayList<Object>(list.size());
+			for (Path pathElement : list) {
+				objectList.add(resolve(pathElement));
+			}
+			return objectList;
+		} else if (isError(path)) {
+			return getError(path);
+		} else {
+			return path;
 		}
 	}
 

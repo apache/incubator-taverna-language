@@ -23,9 +23,11 @@ package org.apache.taverna.databundle;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileAlreadyExistsException;
@@ -185,7 +187,7 @@ public class TestDataBundles {
 	public void getInputs() throws Exception {
 		Path inputs = DataBundles.getInputs(dataBundle);
 		assertTrue(Files.isDirectory(inputs));
-		// Second time should not fail because it already exists
+		// Second time should not fail because it alreadresolvy exists
 		inputs = DataBundles.getInputs(dataBundle);
 		assertTrue(Files.isDirectory(inputs));
 		assertEquals(dataBundle.getRoot(), inputs.getParent());
@@ -523,6 +525,55 @@ public class TestDataBundles {
 	}
     
     @Test
+    public void resolve() throws Exception {
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path list = DataBundles.getPort(inputs, "in1");
+		DataBundles.createList(list);
+		// 0 string value
+		DataBundles.setStringValue(DataBundles.newListItem(list), "test0");
+		// 1 http:// reference
+		URI reference = URI.create("http://example.com/");
+		DataBundles.setReference(DataBundles.newListItem(list), reference);
+		// 2 file:/// reference
+		Path tmpFile = Files.createTempFile("test", ".txt");
+		URI fileRef = tmpFile.toUri();
+		assertEquals("file", fileRef.getScheme());
+		DataBundles.setReference(DataBundles.newListItem(list), fileRef);
+		// 3 empty (null)
+		// 4 error
+		DataBundles.setError(DataBundles.getListItem(list,  4), "Example error", "1. Tried it\n2. Didn't work");
+		
+		
+		
+		
+		Object resolved = DataBundles.resolve(list);
+		assertTrue("Didn't resolve to a list", resolved instanceof List);
+		
+		List resolvedList = (List) resolved;
+		assertEquals("Unexpected list size", 5, resolvedList.size());
+		
+		assertTrue(resolvedList.get(0) instanceof String);
+		assertEquals("test0", resolvedList.get(0));
+		
+		assertTrue(resolvedList.get(1) instanceof URL);
+		assertEquals(reference, ((URL)resolvedList.get(1)).toURI());
+		
+		assertTrue(resolvedList.get(2) instanceof File);
+		assertEquals(tmpFile.toFile(), resolvedList.get(2));
+		
+		assertNull(resolvedList.get(3));
+		assertTrue(resolvedList.get(4) instanceof ErrorDocument);
+		assertEquals("Example error", ((ErrorDocument)resolvedList.get(4)).getMessage());
+		
+    }    
+    
+    @Test
+    public void resolveBreaksOnBinaries() throws Exception {
+    	Path inputs = DataBundles.getInputs(dataBundle);
+		Path list = DataBundles.getPort(inputs, "in1");
+    }
+    
+    @Test
 	public void setErrorArgs() throws Exception {
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path portIn1 = DataBundles.getPort(inputs, "in1");
@@ -765,6 +816,7 @@ public class TestDataBundles {
                 Files.probeContentType(wf));
     }
 
+    // TODO: Why was this ignored? Check with taverna-language-0.15.x RC emails
     @Ignore
     @Test
     public void getWorkflowBundle() throws Exception {
