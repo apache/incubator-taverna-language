@@ -21,7 +21,11 @@ package org.apache.taverna.databundle;
 */
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +33,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -40,8 +45,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.apache.taverna.databundle.DataBundles;
-import org.apache.taverna.databundle.ErrorDocument;
 import org.apache.taverna.robundle.Bundle;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
@@ -568,9 +571,26 @@ public class TestDataBundles {
     }    
     
     @Test
-    public void resolveBreaksOnBinaries() throws Exception {
+    public void resolveBinariesKindOf() throws Exception {
     	Path inputs = DataBundles.getInputs(dataBundle);
 		Path list = DataBundles.getPort(inputs, "in1");
+		Path item = DataBundles.newListItem(list);
+
+		byte[] bytes = new byte[] { 
+				// Those lovely lower bytes who don't work well in UTF-8
+				0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31, 
+				// and some higher ones for fun
+				-1,-2,-3,-4,-5,-6,-7,-8,-9,-10,-11,-12,-13,-14,-15,-16,-17,-18,
+				-19,-20,-21,-22,-23,-24,-25,-26,-27,-28,-29,-30,-31
+		};
+		Files.write(item, bytes);
+		List resolved = (List)DataBundles.resolve(list);
+		
+		// The below will always fail as several of the above bytes are not parsed as valid UTF-8
+		// but instead be substituted with replacement characters. 
+		
+		//assertArrayEquals(bytes, ((String)resolved.get(0)).getBytes(StandardCharsets.UTF_8));
+		
     }
     
     @Test

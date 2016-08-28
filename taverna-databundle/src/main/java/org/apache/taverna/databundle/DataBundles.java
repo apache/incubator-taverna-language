@@ -443,7 +443,7 @@ public class DataBundles extends Bundles {
 	/**
 	 * Deeply resolve a {@link Path} to JVM objects.
 	 * <p>
-	 * This method is intended for use with a particular input/output port from 
+	 * This method is intended for used with a particular input/output port from 
 	 * {@link #getPorts(Path)} or {@link #getPort(Path, String)}.
 	 * <p>
 	 * If the path is <code>null</code> or {@link #isMissing(Path)},
@@ -451,8 +451,8 @@ public class DataBundles extends Bundles {
 	 * <p>
 	 * If the path {@link #isValue(Path)}, its {@link #getStringValue(Path)} is
 	 * returned (assuming an UTF-8 encoding). NOTE: Binary formats (e.g. PNG)
-	 * will NOT be represented correctly as such a String and should be read
-	 * directly with
+	 * will NOT be represented correctly read as UTF-8 String and should 
+	 * instead be read directly with
 	 * {@link Files#newInputStream(Path, java.nio.file.OpenOption...)}.
 	 * <p>
 	 * If the path {@link #isError(Path)}, the corresponding
