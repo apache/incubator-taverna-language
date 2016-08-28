@@ -59,4 +59,11 @@ public class ErrorDocument {
 			trace = "";
 		this.trace = trace;
 	}
+	
+	@Override
+	public String toString() {
+		return "Error: " + getMessage() + "\n" + trace;
+		// TODO: also include the causedBy paths?
+	}
+	
 }
