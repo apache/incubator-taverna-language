@@ -35,8 +35,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
+import java.lang.reflect.Array;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLStreamHandler;
 import java.nio.charset.Charset;
 import java.nio.file.DirectoryIteratorException;
 import java.nio.file.DirectoryStream;
@@ -45,13 +49,19 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
+import org.apache.taverna.databundle.DataBundles.ResolveOptions;
 import org.apache.taverna.robundle.Bundle;
 import org.apache.taverna.robundle.Bundles;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
@@ -440,73 +450,278 @@ public class DataBundles extends Bundles {
 		}
 	}
 	
+	public enum ResolveOptions { 
+		/**
+		 * Leaf values are represented as bundle {@link Path}s, except errors as
+		 * {@link ErrorDocument} and references as {@link URL}. Note that specifying this
+		 * option does not negate any of the other options like {@link #BYTES}.
+		 */
+		DEFAULT,
+		/**
+		 * Leaf values should be represented as a {@link String} (NOTE: This won't work well if the path is a binary)
+		 */
+		STRING,
+		/**
+		 * Leaf values should be represented as a <code>byte[]</code>
+		 */
+		BYTES,
+		/**
+		 * Leaf values should always be represented as {@link URI}s (except errors)
+		 */
+		URI,
+		/**
+		 * Leaf values should be represented as bundle {@link Path}s (even if they are errors)
+		 */
+		PATH,
+		/**
+		 * Replace errors with <code>null</code>, or the empty string if {@link #REPLACE_NULL} is also specified.
+		 */
+		REPLACE_ERRORS,
+		/**
+		 * Instead of returning <code>null</code>, return the empty
+		 * {@link String} "", or empty byte[] if {@link #BYTES} is specified, or
+		 * the missing path if {@link #PATH} is specified.
+		 */
+		REPLACE_NULL
+	}
+		
 	/**
 	 * Deeply resolve a {@link Path} to JVM objects.
 	 * <p>
-	 * This method is intended for used with a particular input/output port from 
+	 * This method is intended mainly for presentational uses 
+	 * with a particular input/output port from
 	 * {@link #getPorts(Path)} or {@link #getPort(Path, String)}.
 	 * <p>
-	 * If the path is <code>null</code> or {@link #isMissing(Path)},
-	 * <code>null</code> is returned.
+	 * Note that as all lists are resolved deeply (including lists of lists)
+	 * and when using options {@link ResolveOptions#STRING} or {@link ResolveOptions#BYTES}
+	 * the full content of the values are read into memory, this 
+	 * method can be time-consuming.
 	 * <p>
-	 * If the path {@link #isValue(Path)}, its {@link #getStringValue(Path)} is
-	 * returned (assuming an UTF-8 encoding). NOTE: Binary formats (e.g. PNG)
-	 * will NOT be represented correctly read as UTF-8 String and should 
-	 * instead be read directly with
-	 * {@link Files#newInputStream(Path, java.nio.file.OpenOption...)}.
+	 * If the path is <code>null</code> or {@link #isMissing(Path)},
+	 * <code>null</code> is returned, unless the option
+	 * {@link ResolveOptions#REPLACE_NULL} is specified, which would return the
+	 * empty String "".
+	 * <p>
+	 * If the path {@link #isValue(Path)} and the option
+	 * {@link ResolveOptions#STRING} is specified, its
+	 * {@link #getStringValue(Path)} is returned (assuming an UTF-8 encoding).
+	 * NOTE: Binary formats (e.g. PNG) will NOT be represented correctly read as
+	 * UTF-8 String and should instead be read directly with
+	 * {@link Files#newInputStream(Path, java.nio.file.OpenOption...)}. Note
+	 * that this could consume a large amount of memory as no size checks are
+	 * performed.
+	 * <p>
+	 * If the option {@link ResolveOptions#URI} is specified, all non-missing 
+	 * non-error leaf values are resolved as a {@link URI}. If the path is a 
+	 * {@link #isReference(Path)} the URI will be the reference from 
+	 * {@link #getReference(Path)}, otherwise the URI will  
+	 * identify a {@link Path} within the current {@link Bundle}.
+	 * <p>
+	 * If the path {@link #isValue(Path)} and the option
+	 * {@link ResolveOptions#BYTES} is specified, the complete content is returned as
+	 * a <code>byte[]</code>. Note that this could consume a large amount of memory
+	 * as no size checks are performed.
 	 * <p>
 	 * If the path {@link #isError(Path)}, the corresponding
-	 * {@link ErrorDocument} is returned.
+	 * {@link ErrorDocument} is returned, except when the option
+	 * {@link ResolveOptions#REPLACE_ERRORS} is specified, which means errors are
+	 * returned as <code>null</code> (or <code>""</code> if {@link ResolveOptions#REPLACE_NULL} is also specified).
 	 * <p>
-	 * If the path {@link #isReference(Path)}, either a {@link File} or a
-	 * {@link URL} is returned, depending on its protocol.
+	 * If the path {@link #isReference(Path)} and the option 
+	 * {@link ResolveOptions#URI} is <strong>not</strong> set, 
+	 * either a {@link File} or a {@link URL} is returned, 
+	 * depending on its protocol. If the reference protocol has no
+	 * corresponding {@link URLStreamHandler}, a {@link URI} is returned
+	 * instead. 
 	 * <p>
 	 * If the path {@link #isList(Path)}, a {@link List} is returned
 	 * corresponding to resolving the paths from {@link #getList(Path)}. using
-	 * this method. Thus a depth 2 path which elements are lists of values will
-	 * effectively be returned as a <code>List&lt;List&lt;String&gt;&gt;</code>,
-	 * assuming no references, errors or empty slots.
+	 * this method with the same options.
 	 * <p>
-	 * If the path is neither of the above, the {@link Path} itself is returned.
+	 * If none of the above, the {@link Path} itself is returned. This is 
+	 * thus the default for non-reference non-error leaf values if neither 
+	 * {@link ResolveOptions#STRING}, {@link ResolveOptions#BYTES} or
+	 * {@link ResolveOptions#URI} are specified.
+	 * To force returning of {@link Path}s for all non-missing leaf values, specify
+	 * {@link ResolveOptions#PATH};
 	 * 
-	 * @param path Data bundle path to resolve
+	 * @param path
+	 *            Data bundle path to resolve
+	 * @param options
+	 *            Resolve options
 	 * @return <code>null</code>, a {@link String}, {@link ErrorDocument},
 	 *         {@link URL}, {@link File}, {@link Path} or {@link List}
-	 *         (containing any of these).
+	 *         (containing any of these) depending on the path type and the options.
 	 * @throws IOException
 	 *             If the path (or any of the path in a contained list) can't be
 	 *             accessed
 	 */
-	public static Object resolve(Path path) throws IOException {
-		if (path == null) { 
-			return null;
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static Object resolve(Path path, ResolveOptions... options) throws IOException {
+		EnumSet<ResolveOptions> opt;
+		if (options.length == 0) {
+			opt = EnumSet.of(ResolveOptions.DEFAULT); // no-op
+		} else {
+			opt = EnumSet.of(ResolveOptions.DEFAULT, options);
 		}
-		if (isMissing(path)) { 
-			return null;
-		} else if (isValue(path)) {
-			return getStringValue(path);
-		} else if (isReference(path)) {
+		
+		if (opt.contains(ResolveOptions.BYTES) && opt.contains(ResolveOptions.STRING)) {
+			throw new IllegalArgumentException("Incompatible options: BYTES and STRING");
+		}
+		if (opt.contains(ResolveOptions.BYTES) && opt.contains(ResolveOptions.PATH)) {
+			throw new IllegalArgumentException("Incompatible options: BYTES and PATH");
+		}
+		if (opt.contains(ResolveOptions.BYTES) && opt.contains(ResolveOptions.URI)) {
+			throw new IllegalArgumentException("Incompatible options: BYTES and URI");
+		}
+		if (opt.contains(ResolveOptions.STRING) && opt.contains(ResolveOptions.PATH)) {
+			throw new IllegalArgumentException("Incompatible options: STRING and PATH");
+		}
+		if (opt.contains(ResolveOptions.STRING) && opt.contains(ResolveOptions.URI)) {
+			throw new IllegalArgumentException("Incompatible options: STRING and URI");
+		}
+		if (opt.contains(ResolveOptions.PATH) && opt.contains(ResolveOptions.URI)) {
+			throw new IllegalArgumentException("Incompatible options: PATH and URI");
+		}
+
+		
+		if (path == null || isMissing(path)) {
+			if (! opt.contains(ResolveOptions.REPLACE_NULL)) { 
+				return null;
+			}
+			if (opt.contains(ResolveOptions.BYTES)) {
+				return new byte[0];
+			}
+			if (opt.contains(ResolveOptions.PATH)) { 
+				return path;
+			}
+			if (opt.contains(ResolveOptions.URI)) {
+				return path.toUri();
+			}
+			// STRING and DEFAULT
+			return "";			
+			
+ 
+		}
+		
+		if (isList(path)) {
+			List<Path> list = getList(path);
+			List<Object> objectList = new ArrayList<Object>(list.size());
+			for (Path pathElement : list) {
+				objectList.add(resolve(pathElement, options));
+			}
+			return objectList;
+		}		
+		if (opt.contains(ResolveOptions.PATH)) {
+			return path;
+		}		
+		if (isError(path)) {
+			if (opt.contains(ResolveOptions.REPLACE_ERRORS)) {
+				return opt.contains(ResolveOptions.REPLACE_NULL) ? "" : null;	
+			}
+			return getError(path);
+		}
+		if (opt.contains(ResolveOptions.URI)) {
+			if (isReference(path)) {
+				return getReference(path);
+			} else {
+				return path.toUri();
+			}
+		}
+		if (isReference(path)) {
 			URI reference = getReference(path);
 			String scheme = reference.getScheme();
 			if ("file".equals(scheme)) {
 				return new File(reference);
 			} else {
-				return reference.toURL();
+				try { 
+					return reference.toURL();
+				} catch (IllegalArgumentException|MalformedURLException e) {
+					return reference;
+				}
 			}
-		} else if (isList(path)) {			
-			List<Path> list = getList(path);
-			List<Object> objectList = new ArrayList<Object>(list.size());
-			for (Path pathElement : list) {
-				objectList.add(resolve(pathElement));
-			}
-			return objectList;
-		} else if (isError(path)) {
-			return getError(path);
-		} else {
-			return path;
 		}
+		if (isValue(path)) {
+			if (opt.contains(ResolveOptions.BYTES)) {
+				return Files.readAllBytes(path);
+			}
+			if (opt.contains(ResolveOptions.STRING)) {
+				return getStringValue(path);
+			}
+		}
+		// Fall-back - return Path as-is
+		return path;
 	}
 
+	/**
+	 * Deeply resolve path as a {@link Stream} that only contain leaf elements of 
+	 * the specified class.
+	 * <p>
+	 * This method is somewhat equivalent to {@link #resolve(Path, ResolveOptions...)}, but 
+	 * the returned stream is not in any particular order, and will contain the leaf
+	 * items from all deep lists. Empty lists and error documents are ignored.
+	 * <p>
+	 * Any {@link IOException}s occurring during resolution are 
+	 * wrapped as {@link UncheckedIOException}.
+	 * <p>
+	 * Supported types include:
+	 * <ul>
+	 *   <li>{@link String}.class</li>
+	 *   <li><code>byte[].class</code></li>
+	 *   <li>{@link Path}.class</li>
+	 *   <li>{@link URI}.class</li>
+	 *   <li>{@link URL}.class</li>  
+	 *   <li>{@link File}.class</li>
+	 *   <li>{@link ErrorDocument}.class</li>
+	 *   <li>{@link Object}.class</li>
+	 * </ul>
+	 * 
+	 * @param path Data bundle path to resolve
+	 * @param type Type of objects to return, e.g. <code>String.class</code>
+	 * @return A {@link Stream} of resolved objects, or an empty stream if no such objects were resolved.
+	 * @throws UncheckedIOException If the path could not be accessed. 
+	 */
+	public static <T> Stream<T> resolveAsStream(Path path, Class<T> type) throws UncheckedIOException {
+		ResolveOptions options;
+		if (type == String.class) {
+			options = ResolveOptions.STRING;
+		} else if (type == byte[].class) {
+			options = ResolveOptions.BYTES;
+		} else if (type == Path.class) {
+			options = ResolveOptions.PATH;
+		} else if (type == URI.class) {
+			options = ResolveOptions.URI;
+		} else {
+			// Dummy-option, we'll filter on the returned type anyway
+			options = ResolveOptions.DEFAULT;
+		}
+		if (isList(path)) {
+			// return Stream of unordered list of resolved list items,	
+			// recursing to find the leaf nodes			
+			try {
+				return Files.walk(path)
+						// avoid re-recursion
+						.filter(p -> !Files.isDirectory(p)) 
+						.flatMap(p -> resolveItemAsStream(path, type, options));
+			} catch (IOException e) {
+				throw new UncheckedIOException(e);
+			}
+		} else {
+			return resolveItemAsStream(path, type, options);
+		}
+	}
+	private static <T> Stream<T> resolveItemAsStream(Path path, Class<T> type, ResolveOptions options) throws UncheckedIOException {
+		try {
+			Object value = resolve(path, options);
+			if (type.isInstance(value)) {
+				return Stream.of(type.cast(value));
+			}
+			return Stream.empty();
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+	}
+	
 	public static WorkflowBundleIO getWfBundleIO() {
 		if (wfBundleIO == null)
 			wfBundleIO = new WorkflowBundleIO();
