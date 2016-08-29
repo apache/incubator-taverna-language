@@ -702,7 +702,7 @@ public class DataBundles extends Bundles {
 				return Files.walk(path)
 						// avoid re-recursion
 						.filter(p -> !Files.isDirectory(p)) 
-						.flatMap(p -> resolveItemAsStream(path, type, options));
+						.flatMap(p -> resolveItemAsStream(p, type, options));
 			} catch (IOException e) {
 				throw new UncheckedIOException(e);
 			}

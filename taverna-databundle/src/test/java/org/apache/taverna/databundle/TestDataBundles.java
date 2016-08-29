@@ -43,6 +43,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import org.apache.taverna.databundle.DataBundles.ResolveOptions;
 import org.apache.taverna.robundle.Bundle;
@@ -602,6 +603,45 @@ public class TestDataBundles {
 		assertEquals("test0,1", resolved.get(0).get(1));
 		assertEquals("test0,2", resolved.get(0).get(2));
 		assertEquals("test2,0", resolved.get(2).get(0));		
+    }        
+
+
+    @Test
+    public void resolveStream() throws Exception {
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path list = DataBundles.getPort(inputs, "in1");
+		DataBundles.createList(list);
+		
+		Path nested0 = DataBundles.newListItem(list);
+		DataBundles.newListItem(nested0);		
+		DataBundles.setStringValue(DataBundles.newListItem(nested0), "test0,0");
+		DataBundles.setStringValue(DataBundles.newListItem(nested0), "test0,1");
+		DataBundles.setStringValue(DataBundles.newListItem(nested0), "test0,2");
+		DataBundles.setError(DataBundles.newListItem(nested0), "Ignore me", "This error is hidden");
+		Path nested1 = DataBundles.newListItem(list);
+		DataBundles.newListItem(nested1); // empty
+		Path nested2 = DataBundles.newListItem(list);
+		DataBundles.newListItem(nested2);
+		DataBundles.setStringValue(DataBundles.newListItem(nested2), "test2,0");
+		DataBundles.setReference(DataBundles.newListItem(nested2), URI.create("http://example.com/"));
+		
+		
+
+		assertEquals(6, DataBundles.resolveAsStream(list, Object.class).count());		
+		assertEquals(6, DataBundles.resolveAsStream(list, Path.class).count());
+		assertEquals(5, DataBundles.resolveAsStream(list, URI.class).count());
+		assertEquals(1, DataBundles.resolveAsStream(list, URL.class).count());
+		assertEquals(0, DataBundles.resolveAsStream(list, File.class).count());
+		assertEquals(1, DataBundles.resolveAsStream(list, ErrorDocument.class).count());
+		// Let's have a look at one of the types in detail
+		assertEquals(4, DataBundles.resolveAsStream(list, String.class).count());		
+		Stream<String> resolved = DataBundles.resolveAsStream(list, String.class);
+		Object[] strings = resolved.sorted().map(t -> t.replace("test", "X")).toArray();
+		// NOTE: We can only assume the below order because we used .sorted()
+		assertEquals("X0,0", strings[0]);
+		assertEquals("X0,1", strings[1]);
+		assertEquals("X0,2", strings[2]);
+		assertEquals("X2,0", strings[3]);
     }        
     
     @Test
