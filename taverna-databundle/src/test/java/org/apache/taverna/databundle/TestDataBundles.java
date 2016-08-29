@@ -33,7 +33,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
@@ -45,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.taverna.databundle.DataBundles.ResolveOptions;
 import org.apache.taverna.robundle.Bundle;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
@@ -528,7 +528,7 @@ public class TestDataBundles {
 	}
     
     @Test
-    public void resolve() throws Exception {
+    public void resolveString() throws Exception {
 		Path inputs = DataBundles.getInputs(dataBundle);
 		Path list = DataBundles.getPort(inputs, "in1");
 		DataBundles.createList(list);
@@ -549,7 +549,7 @@ public class TestDataBundles {
 		
 		
 		
-		Object resolved = DataBundles.resolve(list);
+		Object resolved = DataBundles.resolve(list, ResolveOptions.STRING);
 		assertTrue("Didn't resolve to a list", resolved instanceof List);
 		
 		List resolvedList = (List) resolved;
@@ -569,9 +569,169 @@ public class TestDataBundles {
 		assertEquals("Example error", ((ErrorDocument)resolvedList.get(4)).getMessage());
 		
     }    
+
+    @Test
+    public void resolveNestedString() throws Exception {
+		Path inputs = DataBundles.getInputs(dataBundle);
+		Path list = DataBundles.getPort(inputs, "in1");
+		DataBundles.createList(list);
+		
+		
+		Path nested0 = DataBundles.newListItem(list);
+		DataBundles.newListItem(nested0);		
+		DataBundles.setStringValue(DataBundles.newListItem(nested0), "test0,0");
+		DataBundles.setStringValue(DataBundles.newListItem(nested0), "test0,1");
+		DataBundles.setStringValue(DataBundles.newListItem(nested0), "test0,2");
+		Path nested1 = DataBundles.newListItem(list);
+		DataBundles.newListItem(nested1); // empty
+		Path nested2 = DataBundles.newListItem(list);
+		DataBundles.newListItem(nested2);
+		DataBundles.setStringValue(DataBundles.newListItem(nested2), "test2,0");
+		
+		
+		
+		List<List<String>> resolved = (List<List<String>>) DataBundles.resolve(list, ResolveOptions.STRING);
+		
+		assertEquals("Unexpected list size", 3, resolved.size());
+		assertEquals("Unexpected sublist[0] size", 3, resolved.get(0).size());
+		assertEquals("Unexpected sublist[1] size", 0, resolved.get(1).size());
+		assertEquals("Unexpected sublist[2] size", 1, resolved.get(2).size());
+
+		
+		assertEquals("test0,0", resolved.get(0).get(0));
+		assertEquals("test0,1", resolved.get(0).get(1));
+		assertEquals("test0,2", resolved.get(0).get(2));
+		assertEquals("test2,0", resolved.get(2).get(0));		
+    }        
     
     @Test
-    public void resolveBinariesKindOf() throws Exception {
+    public void resolveURIs() throws Exception {
+    	Path inputs = DataBundles.getInputs(dataBundle);
+		Path list = DataBundles.getPort(inputs, "in1");
+		DataBundles.createList(list);
+		// 0 string value
+		Path test0 = DataBundles.newListItem(list);
+		DataBundles.setStringValue(test0, "test0");
+		// 1 http:// reference
+		URI reference = URI.create("http://example.com/");
+		DataBundles.setReference(DataBundles.newListItem(list), reference);
+		// 2 file:/// reference
+		Path tmpFile = Files.createTempFile("test", ".txt");
+		URI fileRef = tmpFile.toUri();
+		assertEquals("file", fileRef.getScheme());
+		DataBundles.setReference(DataBundles.newListItem(list), fileRef);
+		// 3 empty (null)
+		// 4 error
+		Path error4 = DataBundles.getListItem(list,  4);
+		DataBundles.setError(error4, "Example error", "1. Tried it\n2. Didn't work");
+		
+		List resolved = (List) DataBundles.resolve(list, ResolveOptions.URI);
+		assertEquals(test0.toUri(), resolved.get(0));
+		assertEquals(reference, resolved.get(1));
+		assertEquals(fileRef, resolved.get(2));
+		assertNull(resolved.get(3));
+		// NOTE: Need to get the Path again due to different file extension
+		assertTrue(resolved.get(4) instanceof ErrorDocument);		
+		//assertTrue(DataBundles.getListItem(list,  4).toUri(), resolved.get(4));
+    }
+    
+
+    @Test
+    public void resolvePaths() throws Exception {
+    	Path inputs = DataBundles.getInputs(dataBundle);
+		Path list = DataBundles.getPort(inputs, "in1");
+		DataBundles.createList(list);
+		// 0 string value
+		Path test0 = DataBundles.newListItem(list);
+		DataBundles.setStringValue(test0, "test0");
+		// 1 http:// reference
+		URI reference = URI.create("http://example.com/");
+		Path test1 = DataBundles.setReference(DataBundles.newListItem(list), reference);
+		// 2 file:/// reference
+		Path tmpFile = Files.createTempFile("test", ".txt");
+		URI fileRef = tmpFile.toUri();
+		assertEquals("file", fileRef.getScheme());
+		Path test2 = DataBundles.setReference(DataBundles.newListItem(list), fileRef);
+		// 3 empty (null)
+		// 4 error
+		Path error4 = DataBundles.setError(DataBundles.getListItem(list,  4), "Example error", "1. Tried it\n2. Didn't work");
+		
+		List<Path> resolved = (List<Path>) DataBundles.resolve(list, ResolveOptions.PATH);
+		assertEquals(test0, resolved.get(0));
+		assertEquals(test1, resolved.get(1));
+		assertEquals(test2, resolved.get(2));
+		assertNull(resolved.get(3));
+		assertEquals(error4, resolved.get(4));		
+    }
+
+    @Test
+    public void resolveReplaceError() throws Exception {
+    	Path inputs = DataBundles.getInputs(dataBundle);
+		Path list = DataBundles.getPort(inputs, "in1");
+		DataBundles.createList(list);
+		// 0 string value
+		DataBundles.setStringValue(DataBundles.newListItem(list), "test0");
+		// 1 error
+		DataBundles.setError(DataBundles.newListItem(list), 
+				"Example error", "1. Tried it\n2. Didn't work");
+		
+		List resolved = (List) DataBundles.resolve(list, ResolveOptions.STRING, ResolveOptions.REPLACE_ERRORS);
+		assertEquals("test0", resolved.get(0));
+		assertNull(resolved.get(1));
+    }
+
+    @Test
+    public void resolveReplaceNull() throws Exception {
+    	Path inputs = DataBundles.getInputs(dataBundle);
+		Path list = DataBundles.getPort(inputs, "in1");
+		DataBundles.createList(list);
+		// 0 string value
+		Path test0 = DataBundles.newListItem(list);
+		DataBundles.setStringValue(test0, "test0");
+		// 1 empty
+		// 2 error
+		DataBundles.setError(DataBundles.getListItem(list, 2), 
+				"Example error", "1. Tried it\n2. Didn't work");
+		
+		List resolved = (List) DataBundles.resolve(list, ResolveOptions.REPLACE_ERRORS, ResolveOptions.REPLACE_NULL);
+		assertEquals(test0, resolved.get(0));
+		assertEquals("", resolved.get(1));
+		assertEquals("", resolved.get(2));
+    }
+    
+
+    @Test
+    public void resolveDefault() throws Exception {
+    	Path inputs = DataBundles.getInputs(dataBundle);
+		Path list = DataBundles.getPort(inputs, "in1");
+		DataBundles.createList(list);
+		// 0 string value
+		Path test0 = DataBundles.newListItem(list);
+		DataBundles.setStringValue(test0, "test0");
+		// 1 http:// reference
+		URI reference = URI.create("http://example.com/");
+		Path test1 = DataBundles.setReference(DataBundles.newListItem(list), reference);
+		// 2 file:/// reference
+		Path tmpFile = Files.createTempFile("test", ".txt");
+		URI fileRef = tmpFile.toUri();
+		assertEquals("file", fileRef.getScheme());
+		Path test2 = DataBundles.setReference(DataBundles.newListItem(list), fileRef);
+		// 3 empty (null)
+		// 4 error
+		Path error4 = DataBundles.setError(DataBundles.getListItem(list,  4), "Example error", "1. Tried it\n2. Didn't work");
+		
+		List resolved = (List) DataBundles.resolve(list, ResolveOptions.DEFAULT);
+		assertEquals(test0, resolved.get(0));
+		assertTrue(resolved.get(1) instanceof URL);
+		assertEquals("http://example.com/", resolved.get(1).toString());
+		assertTrue(resolved.get(2) instanceof File);
+		assertEquals(tmpFile.toFile(), resolved.get(2));
+		assertNull(resolved.get(3));
+		assertTrue(resolved.get(4) instanceof ErrorDocument);
+    }
+    
+    @Test
+    public void resolveBinaries() throws Exception {
     	Path inputs = DataBundles.getInputs(dataBundle);
 		Path list = DataBundles.getPort(inputs, "in1");
 		Path item = DataBundles.newListItem(list);
@@ -584,13 +744,15 @@ public class TestDataBundles {
 				-19,-20,-21,-22,-23,-24,-25,-26,-27,-28,-29,-30,-31
 		};
 		Files.write(item, bytes);
-		List resolved = (List)DataBundles.resolve(list);
 		
+		
+		List resolvedBytes = (List)DataBundles.resolve(list, ResolveOptions.BYTES);
+		assertArrayEquals(bytes, (byte[])resolvedBytes.get(0));
+
+		List resolvedString = (List)DataBundles.resolve(list, ResolveOptions.STRING);		
 		// The below will always fail as several of the above bytes are not parsed as valid UTF-8
-		// but instead be substituted with replacement characters. 
-		
-		//assertArrayEquals(bytes, ((String)resolved.get(0)).getBytes(StandardCharsets.UTF_8));
-		
+		// but instead be substituted with replacement characters. 		
+		//assertArrayEquals(bytes, ((String)resolvedString.get(0)).getBytes(StandardCharsets.UTF_8));
     }
     
     @Test
