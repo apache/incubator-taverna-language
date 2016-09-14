@@ -63,7 +63,7 @@ that reflect this.
 Example of use
 --------------
 
-Example in full is at [org.apache.taverna.robundle.TestExample](src/test/java/org/apache.taverna.robundle/TestExample.java)
+Example in full is at [org.apache.taverna.robundle.TestExample](src/test/java/org/apache/taverna/robundle/TestExample.java)
 
 ```java
 		// Create a new (temporary) RO bundle
