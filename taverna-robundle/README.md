@@ -26,7 +26,7 @@ If you use [Maven 3](http://maven.apache.org/), then add to your `pom.xml`:
     <dependency>
         <groupId>org.apache.taverna.language</groupId>
         <artifactId>taverna-robundle</artifactId>
-        <version>>0.15.0-incubating</version>
+        <version>0.15.1-incubating</version>
     </dependency>
 </dependencies>
 ```
