@@ -125,7 +125,7 @@ To build Apache Taverna Language, use:
     mvn clean install
 
 This will build each module and run their tests, producing JARs like
-`taverna-scufl2-api/target/taverna-scufl2-api-0.15.0-incubating.jar`.
+`taverna-scufl2-api/target/taverna-scufl2-api-0.15.1-incubating.jar`.
 Some of the experimental modules are not built automatically, to build
 them separately, run the same command from within their folder.
 
@@ -169,27 +169,27 @@ Typical users of this API will depend on these modules:
 		<dependency>
 			<groupId>org.apache.taverna.language</groupId>
 			<artifactId>taverna-robundle</artifactId>
-			<version>0.15.0-incubating</version>
+			<version>0.15.1-incubating</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.taverna.language</groupId>
 			<artifactId>taverna-databundle</artifactId>
-			<version>0.15.0-incubating</version>
+			<version>0.15.1-incubating</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.taverna.language</groupId>
 			<artifactId>taverna-scufl2-api</artifactId>
-			<version>0.15.0-incubating</version>
+			<version>0.15.1-incubating</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.taverna.language</groupId>
 			<artifactId>taverna-scufl2-wfbundle</artifactId>
-			<version>0.15.0-incubating</version>
+			<version>0.15.1-incubating</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.taverna.language</groupId>
 			<artifactId>taverna-scufl2-t2flow</artifactId>
-			<version>0.15.0-incubating</version>
+			<version>0.15.1-incubating</version>
 		</dependency>
 
 To find the latest `<version>` to use above (this README might
@@ -203,12 +203,12 @@ providing [OSGi services](taverna-scufl2-api#osgi-services).
 You can alternatively copy and add these JARs from the build to add
 to your classpath:
 
-* `taverna-robundle/target/taverna-scufl2-robundle-0.15.0-incubating.jar`
-* `taverna-databundle/target/taverna-scufl2-databundle-0.15.0-incubating.jar`
-* `taverna-scufl2-api/target/taverna-scufl2-api-0.15.0-incubating.jar`
-* `taverna-scufl2-wfbundle/target/taverna-scufl2-wfbundle-0.15.0-incubating.jar`
-* `taverna-scufl2-ucfpackage/target/taverna-scufl2-ucfpackage-0.15.0-incubating.jar`
-* `taverna-scufl2-t2flow/target/taverna-scufl2-t2flow-0.15.0-incubating.jar`
+* `taverna-robundle/target/taverna-scufl2-robundle-0.15.1-incubating.jar`
+* `taverna-databundle/target/taverna-scufl2-databundle-0.15.1-incubating.jar`
+* `taverna-scufl2-api/target/taverna-scufl2-api-0.15.1-incubating.jar`
+* `taverna-scufl2-wfbundle/target/taverna-scufl2-wfbundle-0.15.1-incubating.jar`
+* `taverna-scufl2-ucfpackage/target/taverna-scufl2-ucfpackage-0.15.1-incubating.jar`
+* `taverna-scufl2-t2flow/target/taverna-scufl2-t2flow-0.15.1-incubating.jar`
 
 ## Javadoc
 
