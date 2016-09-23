@@ -153,6 +153,12 @@ that enforces Apache headers in every source file - to disable it, try:
 
     mvn clean install -Drat.skip=true
 
+## Building for Android
+
+To use the workflow parsers in Android you need to use the `android` profile. This excludes any  
+modules which use Java 8 features (Java 7 source is ok for Android API 19 and above eg `scufl2-ufcpackage` uses the diamond operator)  
+
+    mvn -P android clean install
 
 
 Usage
