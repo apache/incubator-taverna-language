@@ -31,7 +31,6 @@
 	<description>Taverna Language API for workflow definitions (SCUFL2)
 		and workflow inputs/outputs/run (DataBundle).
 	</description>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -274,7 +273,12 @@ additional dependencies to be a happy OSGi bundle -->
     </dependency>
 
 </dependencies>
-
+<profiles>
+<profile>
+<id>all</id>
+    <activation>
+      <activeByDefault>true</activeByDefault>
+    </activation>
 	<modules>
     <module>taverna-baclava-language</module>
     <module>taverna-databundle</module>
@@ -291,4 +295,33 @@ additional dependencies to be a happy OSGi bundle -->
     <module>taverna-tavlang-tool</module>
     <module>taverna-scufl2-wfdesc</module>
 	</modules>
+</profile>
+  <profile>
+    <id>android</id>
+ <!--    <activation>
+      <property>
+        <name>environment</name>
+        <value>android</value>
+      </property>
+    </activation>-->
+    <properties>
+<maven.compiler.source>1.7</maven.compiler.source>
+<maven.compiler.target>1.7</maven.compiler.target>
+</properties>
+	<modules>
+    <module>taverna-baclava-language</module>
+    <module>taverna-scufl2-annotation</module>
+    <module>taverna-scufl2-api</module>
+    <module>taverna-scufl2-examples</module>
+    <module>taverna-scufl2-integration-tests</module>
+    <module>taverna-scufl2-schemas</module>
+    <module>taverna-scufl2-scufl</module>
+    <module>taverna-scufl2-t2flow</module>
+    <module>taverna-scufl2-ucfpackage</module>
+    <module>taverna-scufl2-wfbundle</module>
+    <module>taverna-tavlang-tool</module>
+	</modules>
+  </profile>
+</profiles>
+
 </project>
