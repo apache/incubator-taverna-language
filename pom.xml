@@ -31,6 +31,9 @@
 	<description>Taverna Language API for workflow definitions (SCUFL2)
 		and workflow inputs/outputs/run (DataBundle).
 	</description>
+	<properties>
+		<commons.rdf.version>0.4.0-incubating-SNAPSHOT</commons.rdf.version>
+	</properties>
 	<build>
 		<plugins>
 			<plugin>

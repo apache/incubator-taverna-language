@@ -26,12 +26,19 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
-import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.riot.RDFLanguages;
+import org.apache.commons.rdf.api.Dataset;
+import org.apache.commons.rdf.api.Graph;
+import org.apache.commons.rdf.api.IRI;
+import org.apache.commons.rdf.api.Literal;
+import org.apache.commons.rdf.api.Quad;
+import org.apache.commons.rdf.jena.JenaIRI;
+import org.apache.commons.rdf.jena.JenaLiteral;
+import org.apache.commons.rdf.jena.JenaRDF;
+import org.apache.commons.rdf.jena.experimental.JenaRDFParser;
 import org.apache.taverna.scufl2.api.annotation.Annotation;
 import org.apache.taverna.scufl2.api.common.Child;
 import org.apache.taverna.scufl2.api.common.Scufl2Tools;
@@ -39,24 +46,14 @@ import org.apache.taverna.scufl2.api.common.URITools;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.ucfpackage.UCFPackage.ResourceEntry;
 
-
-import org.apache.jena.graph.Node;
-import org.apache.jena.graph.NodeFactory;
-import org.apache.jena.query.Dataset;
-import org.apache.jena.query.DatasetFactory;
-import org.apache.jena.rdf.model.Model;
-import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.sparql.core.Quad;
-
 public class AnnotationTools {
-	private static final String EXAMPLE_DATA_PREDICATE = "http://biocatalogue.org/attribute/exampleData";
-	public static final URI EXAMPLE_DATA = URI.create(EXAMPLE_DATA_PREDICATE);
-	private static final String TITLE_PREDICATE = "http://purl.org/dc/terms/title";
-	public static final URI TITLE = URI.create(TITLE_PREDICATE);
-	private static final String DESCRIPTION_PREDICATE = "http://purl.org/dc/terms/description";
-	public static final URI DESCRIPTION = URI.create(DESCRIPTION_PREDICATE);
-	private static final String CREATOR_PREDICATE = "http://purl.org/dc/elements/1.1/creator";
-	public static final URI CREATOR = URI.create(CREATOR_PREDICATE);
+    
+    private static JenaRDF rdf = new JenaRDF();
+    	
+	public static final IRI EXAMPLE_DATA = rdf.createIRI("http://biocatalogue.org/attribute/exampleData");
+	public static final IRI TITLE = rdf.createIRI("http://purl.org/dc/terms/title");
+	public static final IRI DESCRIPTION = rdf.createIRI("http://purl.org/dc/terms/description");
+	public static final IRI CREATOR = rdf.createIRI("http://purl.org/dc/elements/1.1/creator");
 
 	private static Logger logger = Logger.getLogger(AnnotationTools.class
 			.getCanonicalName());
@@ -65,7 +62,7 @@ public class AnnotationTools {
 	private URITools uritools = new URITools();
 
 	public Dataset annotationDatasetFor(Child<?> workflowBean) {
-		Dataset dataset = DatasetFactory.createMem();
+		Dataset dataset = rdf.createDataset();
 		for (Annotation ann : scufl2Tools.annotationsFor(workflowBean)) {
 			WorkflowBundle bundle = ann.getParent();
 			URI annUri = uritools.uriForBean(ann);
@@ -87,57 +84,79 @@ public class AnnotationTools {
 				continue;
 			}
 			String contentType = resourceEntry.getMediaType();
-			Lang lang = RDFLanguages.contentTypeToLang(contentType);
-			if (lang == null) {
-				lang = RDFLanguages.filenameToLang(path);
-			}
-			if (lang == null) {
-				logger.warning("Can't find media type of annotation body: "
-						+ ann.getBody());
-				continue;
-			}
-			Model model = ModelFactory.createDefaultModel();
+			
 			try (InputStream inStream = bundle.getResources()
 					.getResourceAsInputStream(path)) {
-				RDFDataMgr.read(model, inStream, bodyUri, lang);
+			    
+			    Optional<Graph> graph = graphForAnnotation(dataset, annUri);
+			    
+			            
+			    JenaRDFParser parser = new JenaRDFParser()
+			            .base(bodyUri).source(inStream)
+			            .contentType(contentType)
+			            .target(graph.get());
+                // TODO: Do multiple parsings in one go to speed up outer
+                // for-loop? Would need thread-safe Dataset backed by say TDB in memory			    
+			    try {
+                    parser.parse().get();
+                } catch (IllegalStateException | InterruptedException | ExecutionException e) {
+                    logger.warning("Can't parse annotation body: " + path);
+                    continue;
+                }
 			} catch (IOException e) {
 				logger.warning("Can't read annotation body: " + path);
 				continue;
 			}
-			dataset.addNamedModel(annUri.toString(), model);
 		}
 
 		return dataset;
 	}
 
+    private Optional<Graph> graphForAnnotation(Dataset dataset, URI annUri) {
+        IRI graphUri = uritools.asIRI(annUri);
+        Optional<Graph> graph = dataset.getGraph(graphUri);
+        
+        if (! graph.isPresent()) {
+            // Need a dummy quad first? 
+            JenaIRI example = rdf.createIRI("http://example.com/");
+            dataset.add(graphUri, example, example, example);
+            graph = dataset.getGraph(graphUri);
+            if (! graph.isPresent()) {
+                logger.severe("Can't create named graph: " + graphUri.getIRIString());
+            }
+            // Remove dummy triple :)  This will crash if the above can't create graph. 
+            graph.get().remove(example, example, example);
+        }
+        
+        return graph;
+    }
+
 	public String getTitle(Child<?> workflowBean) {
-		return getLiteral(workflowBean, TITLE_PREDICATE);
+		return getLiteral(workflowBean, TITLE).orElse(null);
 	}
 
-	private String getLiteral(Child<?> workflowBean, String propertyUri) {
+	private Optional<String> getLiteral(Child<?> workflowBean, IRI property) {
+	    // TODO: Cache dataset PARSING!
 		Dataset annotations = annotationDatasetFor(workflowBean);
-		URI beanUri = uritools.uriForBean(workflowBean);
-		Node subject = NodeFactory.createURI(beanUri.toString());
-		Node property = NodeFactory.createURI(propertyUri);
-
-		Iterator<Quad> found = annotations.asDatasetGraph().find(null, subject,
-				property, null);
-		if (!found.hasNext()) {
-			return null;
-		}
-		return found.next().getObject().toString(false);
+		IRI beanIRI = uritools.asIRI(uritools.uriForBean(workflowBean));		
+		return annotations.stream(null, beanIRI, property, null).map(Quad::getObject)
+		        // Pick any Literal property value, if it exist
+		    .filter(Literal.class::isInstance).map(Literal.class::cast)
+		    .map(Literal::getLexicalForm).findAny();	
 	}
 
 	public String getCreator(Child<?> workflowBean) {
-		return getLiteral(workflowBean, CREATOR_PREDICATE);
+	    // TODO: Also support dcterms:creator and foaf:name ?
+		return getLiteral(workflowBean, CREATOR).orElse(null);
 	}
 
 	public String getExampleValue(Child<?> workflowBean) {
-		return getLiteral(workflowBean, EXAMPLE_DATA_PREDICATE);
+	    // TODO: Also support example value as a path?
+		return getLiteral(workflowBean, EXAMPLE_DATA).orElse(null);
 	}
 
-	public String getDescription(Child<?> workflowBean) {
-		return getLiteral(workflowBean, DESCRIPTION_PREDICATE);
+	public String getDescription(Child<?> workflowBean) {	    
+		return getLiteral(workflowBean, DESCRIPTION).orElse(null);
 	}
 
 	/**
@@ -150,7 +169,7 @@ public class AnnotationTools {
 	 * @throws IOException
 	 */
 	public Annotation createNewAnnotation(WorkflowBundle workflowBundle,
-			Child<?> subject, URI predicate, String value) throws IOException {
+			Child<?> subject, IRI predicate, String value) throws IOException {
 		Object parent = subject.getParent();
 		while (parent instanceof Child)
 			parent = ((Child<?>) parent).getParent();
@@ -176,25 +195,22 @@ public class AnnotationTools {
 		annotation.setAnnotatedAt(now);
 		// annotation.setAnnotator();//FIXME
 		annotation.setSerializedAt(now);
-		URI annotatedSubject = uritools.relativeUriForBean(subject, annotation);
+		IRI annotatedSubject = uritools.asIRI(uritools.relativeUriForBean(subject, annotation));
+		
+		
 		StringBuilder turtle = new StringBuilder();
-		turtle.append("<");
-		turtle.append(annotatedSubject.toASCIIString());
-		turtle.append("> ");
+		turtle.append(annotatedSubject.ntriplesString());
 
-		turtle.append("<");
-		turtle.append(predicate.toASCIIString());
-		turtle.append("> ");
+		turtle.append(" ");
+		turtle.append(predicate.ntriplesString());
 
-		// A potentially multi-line string
-		turtle.append("\"\"\"");
-		// Escape existing \ to \\
-		String escaped = value.replace("\\", "\\\\");
-		// Escape existing " to \" (beware Java's escaping of \ and " below)
-		escaped = escaped.replace("\"", "\\\"");
-		turtle.append(escaped);
-		turtle.append("\"\"\"");
-		turtle.append(" .");
+		turtle.append(" ");
+		JenaLiteral literal = rdf.createLiteral(value);
+		turtle.append(literal.ntriplesString());
+		
+		turtle.append(" .\n");
+		
+		// TODO: Save with Jena instead
 		try {
 			workflowBundle.getResources().addResource(turtle.toString(), path,
 					"text/turtle");

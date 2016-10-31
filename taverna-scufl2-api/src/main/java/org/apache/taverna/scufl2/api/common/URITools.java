@@ -27,6 +27,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.rdf.api.IRI;
+import org.apache.commons.rdf.api.RDF;
+import org.apache.commons.rdf.simple.SimpleRDF;
 import org.apache.taverna.scufl2.api.annotation.Annotation;
 import org.apache.taverna.scufl2.api.annotation.Revision;
 import org.apache.taverna.scufl2.api.common.Visitor.VisitorWithPath;
@@ -53,6 +56,18 @@ public class URITools {
 	private static final String DATALINK = "datalink";
 	private static final URI DOT = URI.create(".");
 
+	private RDF rdf = new SimpleRDF();
+	
+	public IRI asIRI(URI uri) {
+	    // TODO: Handle internationalization?
+	    return rdf.createIRI(uri.toString());
+	}
+	
+	public URI asURI(IRI iri) {
+        // TODO: Handle internationalization?
+	    return URI.create(iri.getIRIString());
+	}
+	
 	public URI relativePath(URI base, URI uri) {
 		URI root = base.resolve("/");
 		if (!root.equals(uri.resolve("/")))
