@@ -32,6 +32,7 @@
 		and workflow inputs/outputs/run (DataBundle).
 	</description>
 	<build>
+		<plugins>
 			<plugin>
 				<groupId>org.apache.rat</groupId>
 				<artifactId>apache-rat-plugin</artifactId>
