@@ -68,8 +68,9 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @JsonPropertyOrder(value = { "@context", "id", "manifest", "createdOn",
-		"createdBy", "createdOn", "authoredOn", "authoredBy", "history",
-		"aggregates", "annotations", "@graph" })
+		"createdBy", "createdOn", "authoredOn", "authoredBy",
+		"retrievedFrom", "retrievedOn", "retrievedBy",
+		"history", "aggregates", "annotations", "@graph" })
 public class Manifest {
 	public abstract class FileTimeMixin {
 		@Override
@@ -120,6 +121,9 @@ public class Manifest {
 	private Bundle bundle;
 	private Agent createdBy = null;
 	private FileTime createdOn = now();
+	private URI retrievedFrom = null;
+	private Agent retrievedBy = null;
+	private FileTime retrievedOn = null;
 	private List<String> graph;
 	private List<Path> history = new ArrayList<>();
 	private URI id = URI.create("/");
@@ -193,6 +197,18 @@ public class Manifest {
 
 	public FileTime getCreatedOn() {
 		return createdOn;
+	}
+
+	public URI getRetrievedFrom() {
+		return retrievedFrom;
+	}
+
+	public Agent getRetrievedBy() {
+		return retrievedBy;
+	}
+
+	public FileTime getRetrievedOn() {
+		return retrievedOn;
 	}
 
 	public List<String> getGraph() {
@@ -383,6 +399,18 @@ public class Manifest {
 
 	public void setCreatedOn(FileTime createdOn) {
 		this.createdOn = createdOn;
+	}
+
+	public void setRetrievedFrom(URI retrievedFrom) {
+		this.retrievedFrom = retrievedFrom;
+	}
+
+	public void setRetrievedBy(Agent retrievedBy) {
+		this.retrievedBy = retrievedBy;
+	}
+
+	public void setRetrievedOn(FileTime retrievedOn) {
+		this.retrievedOn = retrievedOn;
 	}
 
 	public void setGraph(List<String> graph) {

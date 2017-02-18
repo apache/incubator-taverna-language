@@ -31,7 +31,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder(value = { "uri", "mediatype", "createdOn", "createdBy",
-		"authoredOn", "authoredBy", "conformsTo", "bundledAs" })
+		"authoredOn", "authoredBy", "retrievedFrom", "retrievedOn",
+		"retrievedBy", "conformsTo", "bundledAs" })
 public class PathMetadata {
 
 	private static URI ROOT = URI.create("/");
@@ -45,6 +46,10 @@ public class PathMetadata {
 
 	private FileTime createdOn;
 	private Path file;
+
+	private URI retrievedFrom;
+	private Agent retrievedBy;
+	private FileTime retrievedOn;
 
 	private String mediatype;
 
@@ -80,6 +85,18 @@ public class PathMetadata {
 
 	public FileTime getCreatedOn() {
 		return createdOn;
+	}
+
+	public URI getRetrievedFrom() {
+		return retrievedFrom;
+	}
+
+	public Agent getRetrievedBy() {
+		return retrievedBy;
+	}
+
+	public FileTime getRetrievedOn() {
+		return retrievedOn;
 	}
 
 	@JsonIgnore
@@ -153,6 +170,18 @@ public class PathMetadata {
 
 	public void setCreatedOn(FileTime createdOn) {
 		this.createdOn = createdOn;
+	}
+
+	public void setRetrievedFrom(URI retrievedFrom) {
+		this.retrievedFrom = retrievedFrom;
+	}
+
+	public void setRetrievedBy(Agent retrievedBy) {
+		this.retrievedBy = retrievedBy;
+	}
+
+	public void setRetrievedOn(FileTime retrievedOn) {
+		this.retrievedOn = retrievedOn;
 	}
 
 	public void setFile(Path file) {
