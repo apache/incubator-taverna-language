@@ -382,9 +382,6 @@ public class RDFToManifest {
 		model.add(jsonLdAsJenaModel(manifestResourceAsStream,
 				manifestResourceBaseURI));
 
-		// model.write(System.out, "TURTLE");
-		// System.out.println();
-
 		URI root = manifestResourceBaseURI.resolve("/");
 		Individual ro = findRO(model, root);
 		if (ro == null)
@@ -425,7 +422,7 @@ public class RDFToManifest {
 			history.add(Bundles.uriToBundlePath(manifest.getBundle(), relativizeFromBase(histItem.getURI(), root)));
 		}
 		manifest.setHistory(history);
-		
+
 		// authoredBy
 		List<Agent> authors = getAgents(root, ro, authoredBy);
 		if (!authors.isEmpty()) {
