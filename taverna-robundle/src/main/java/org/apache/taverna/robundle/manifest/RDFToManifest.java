@@ -35,6 +35,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.jena.riot.Lang;
@@ -435,7 +436,12 @@ public class RDFToManifest {
 
 		// retrievedFrom
 		RDFNode retrievedNode = ro.getPropertyValue(retrievedFrom);
-		manifest.setRetrievedFrom(retrievedNode);
+		try {
+			manifest.setRetrievedFrom(new URI(retrievedNode.asResource().getURI()));
+		} catch (URISyntaxException ex) {
+			logger.log(Level.WARNING, "Error creating URI for retrievedFrom: " +
+					retrievedNode.asResource().getURI(), ex);
+		}
 
 		// retrievedBy
 		List<Agent> retrievers = getAgents(root, ro, retrievedBy);
@@ -498,7 +504,12 @@ public class RDFToManifest {
 
 			// retrievedFrom
 			RDFNode retrievedAggrNode = aggrResource.getPropertyValue(retrievedFrom);
-			meta.setRetrievedFrom(retrievedAggrNode);
+			try {
+				meta.setRetrievedFrom(new URI(retrievedAggrNode.asResource().getURI()));
+			} catch (URISyntaxException ex) {
+				logger.log(Level.WARNING, "Error creating URI for retrievedFrom: " +
+						retrievedAggrNode.asResource().getURI(), ex);
+			}
 
 			// retrievedBy
 			List<Agent> retrieversAggr = getAgents(root, aggrResource, retrievedBy);

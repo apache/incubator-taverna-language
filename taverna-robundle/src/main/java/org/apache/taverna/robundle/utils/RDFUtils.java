@@ -39,6 +39,7 @@ public class RDFUtils {
 		if (rdfNode == null)
 			return null;
 		if (!rdfNode.isLiteral()) {
+			new Exception().printStackTrace();
 			logger.warning("Expected literal. not " + rdfNode);
 			return null;
 		}
