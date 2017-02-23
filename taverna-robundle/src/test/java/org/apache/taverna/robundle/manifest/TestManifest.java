@@ -214,6 +214,16 @@ public class TestManifest {
 				manifest.getBaseURI().resolve("does/not/exist"));
 
 		Path r = bundle.getRoot();
+
+		assertEquals("http://example.com/retrieved", manifest.getRetrievedFrom().toString());
+		assertEquals("2013-03-05T17:29:03Z", manifest.getRetrievedOn().toString());
+		assertEquals("http://example.com/foaf#john", manifest.getRetrievedBy().getUri().toString());
+
+		PathMetadata soupAggregation = manifest.getAggregation(r.resolve("/folder/soup.jpeg"));
+		assertEquals("http://example.com/retrieved/soup.jpeg", soupAggregation.getRetrievedFrom().toString());
+		assertEquals("2013-03-05T17:29:04Z", soupAggregation.getRetrievedOn().toString());
+		assertEquals("http://example.com/foaf#peter", soupAggregation.getRetrievedBy().getUri().toString());
+
 		assertNotNull(manifest.getAggregation(r.resolve("/README.txt")));
 		PathMetadata readme = manifest.getAggregation(r.resolve("/README.txt"));
 		assertEquals("http://example.com/foaf#bob", readme.getCreatedBy()
