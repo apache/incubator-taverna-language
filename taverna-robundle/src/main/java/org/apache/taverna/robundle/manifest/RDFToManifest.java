@@ -35,6 +35,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.jena.riot.Lang;
@@ -130,6 +131,9 @@ public class RDFToManifest {
 	private ObjectProperty conformsTo;
 	private ObjectProperty createdBy;
 	private DatatypeProperty createdOn;
+	private ObjectProperty retrievedFrom;
+	private ObjectProperty retrievedBy;
+	private DatatypeProperty retrievedOn;
 	private OntModel dct;
 	private OntModel foaf;
 	private DatatypeProperty foafName;
@@ -336,7 +340,12 @@ public class RDFToManifest {
 		createdOn = ontModel.getDatatypeProperty(PAV + "createdOn");
 		authoredBy = ontModel.getObjectProperty(PAV + "authoredBy");
 		authoredOn = ontModel.getDatatypeProperty(PAV + "authoredOn");
-		checkNotNull(createdBy, createdOn, authoredBy, authoredOn);
+		retrievedFrom = ontModel.getObjectProperty(PAV + "retrievedFrom");
+		retrievedBy = ontModel.getObjectProperty(PAV + "retrievedBy");
+		retrievedOn = ontModel.getDatatypeProperty(PAV + "retrievedOn");
+
+		checkNotNull(createdBy, createdOn, authoredBy, authoredOn,
+				retrievedFrom, retrievedBy, retrievedOn);
 
 		pav = ontModel;
 	}
@@ -374,15 +383,13 @@ public class RDFToManifest {
 		model.add(jsonLdAsJenaModel(manifestResourceAsStream,
 				manifestResourceBaseURI));
 
-		// model.write(System.out, "TURTLE");
-		// System.out.println();
-
 		URI root = manifestResourceBaseURI.resolve("/");
 		Individual ro = findRO(model, root);
 		if (ro == null)
 			throw new IOException("root ResearchObject not found - "
 					+ "Not a valid RO Bundle manifest");
 
+		// isDescribedBy URI
 		for (Individual manifestResource : listObjectProperties(ro,
 				isDescribedBy)) {
 			String uriStr = manifestResource.getURI();
@@ -397,29 +404,61 @@ public class RDFToManifest {
 			manifest.getManifest().add(path);
 		}
 
+		// createdBy
 		List<Agent> creators = getAgents(root, ro, createdBy);
 		if (!creators.isEmpty()) {
 			manifest.setCreatedBy(creators.get(0));
-			if (creators.size() > 1)
+			if (creators.size() > 1) {
 				logger.warning("Ignoring additional createdBy agents");
+			}
 		}
 
+		// createdOn
 		RDFNode created = ro.getPropertyValue(createdOn);
 		manifest.setCreatedOn(literalAsFileTime(created));
 		
-		
+		// history
 		List<Path> history = new ArrayList<Path> ();
-		for (Individual histItem : listObjectProperties (ro, hasProvenance))
-			history.add (Bundles.uriToBundlePath (manifest.getBundle (), relativizeFromBase(histItem.getURI (), root)));
-		manifest.setHistory (history);
-		
+		for (Individual histItem : listObjectProperties (ro, hasProvenance)) {
+			history.add(Bundles.uriToBundlePath(manifest.getBundle(), relativizeFromBase(histItem.getURI(), root)));
+		}
+		manifest.setHistory(history);
 
+		// authoredBy
 		List<Agent> authors = getAgents(root, ro, authoredBy);
-		if (!authors.isEmpty())
+		if (!authors.isEmpty()) {
 			manifest.setAuthoredBy(authors);
+		}
+
+		// authoredOn
 		RDFNode authored = ro.getPropertyValue(authoredOn);
 		manifest.setAuthoredOn(literalAsFileTime(authored));
 
+		// retrievedFrom
+		RDFNode retrievedNode = ro.getPropertyValue(retrievedFrom);
+		if (retrievedNode != null) {
+    		try {
+    			manifest.setRetrievedFrom(new URI(retrievedNode.asResource().getURI()));
+    		} catch (URISyntaxException ex) {
+    			logger.log(Level.WARNING, "Error creating URI for retrievedFrom: " +
+    					retrievedNode.asResource().getURI(), ex);
+    		}
+		}
+
+		// retrievedBy
+		List<Agent> retrievers = getAgents(root, ro, retrievedBy);
+		if (!retrievers.isEmpty()) {
+			manifest.setRetrievedBy(retrievers.get(0));
+			if (retrievers.size() > 1) {
+				logger.warning("Ignoring additional retrievedBy agents");
+			}
+		}
+
+		// retrievedOn
+		RDFNode retrieved = ro.getPropertyValue(retrievedOn);
+		manifest.setRetrievedOn(literalAsFileTime(retrieved));
+
+		// Aggregates
 		for (Individual aggrResource : listObjectProperties(ro, aggregates)) {
 			String uriStr = aggrResource.getURI();
 			// PathMetadata meta = new PathMetadata();
@@ -432,6 +471,7 @@ public class RDFToManifest {
 			PathMetadata meta = manifest.getAggregation(relativizeFromBase(
 					uriStr, root));
 
+			// hasProxy
 			Set<Individual> proxies = listObjectProperties(aggrResource,
 					hasProxy);
 			if (!proxies.isEmpty()) {
@@ -439,33 +479,70 @@ public class RDFToManifest {
 				Individual proxy = proxies.iterator().next();
 
 				String proxyUri = null;
-				if (proxy.getURI() != null)
+				if (proxy.getURI() != null) {
 					proxyUri = proxy.getURI();
-				else if (proxy.getSameAs() != null)
+				} else if (proxy.getSameAs() != null) {
 					proxyUri = proxy.getSameAs().getURI();
-				if (proxyUri != null)
+				}
+
+				if (proxyUri != null) {
 					setPathProxy(meta, relativizeFromBase(proxyUri, root));
+				}
 			}
 
+			// createdBy
 			creators = getAgents(root, aggrResource, createdBy);
 			if (!creators.isEmpty()) {
 				meta.setCreatedBy(creators.get(0));
-				if (creators.size() > 1)
+				if (creators.size() > 1) {
 					logger.warning("Ignoring additional createdBy agents for "
 							+ meta);
+				}
 			}
+
+			// createdOn
 			meta.setCreatedOn(literalAsFileTime(aggrResource
 					.getPropertyValue(createdOn)));
 
+			// retrievedFrom
+			RDFNode retrievedAggrNode = aggrResource.getPropertyValue(retrievedFrom);
+			if (retrievedAggrNode != null) {
+    			try {
+    				meta.setRetrievedFrom(new URI(retrievedAggrNode.asResource().getURI()));
+    			} catch (URISyntaxException ex) {
+    				logger.log(Level.WARNING, "Error creating URI for retrievedFrom: " +
+    						retrievedAggrNode.asResource().getURI(), ex);
+    			}
+			}
+
+			// retrievedBy
+			List<Agent> retrieversAggr = getAgents(root, aggrResource, retrievedBy);
+			if (!retrieversAggr.isEmpty()) {
+				meta.setRetrievedBy(retrieversAggr.get(0));
+				if (retrieversAggr.size() > 1) {
+					logger.warning("Ignoring additional retrievedBy agents for "
+							+ meta);
+				}
+			}
+
+			// retrievedOn
+			RDFNode retrievedAggr = aggrResource.getPropertyValue(retrievedOn);
+			meta.setRetrievedOn(literalAsFileTime(retrievedAggr));
+
+			// conformsTo
 			for (Individual standard : listObjectProperties(aggrResource,
-					conformsTo))
-				if (standard.getURI() != null)
+					conformsTo)) {
+				if (standard.getURI() != null) {
 					meta.setConformsTo(relativizeFromBase(standard.getURI(),
 							root));
+				}
+			}
 
+			// format
 			RDFNode mediaType = aggrResource.getPropertyValue(format);
-			if (mediaType != null && mediaType.isLiteral())
+			if (mediaType != null && mediaType.isLiteral()) {
 				meta.setMediatype(mediaType.asLiteral().getLexicalForm());
+			}
 		}
 
 		for (Individual ann : listObjectProperties(ro, hasAnnotation)) {
