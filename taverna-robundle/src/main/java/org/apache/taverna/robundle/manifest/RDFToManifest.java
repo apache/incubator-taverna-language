@@ -436,11 +436,13 @@ public class RDFToManifest {
 
 		// retrievedFrom
 		RDFNode retrievedNode = ro.getPropertyValue(retrievedFrom);
-		try {
-			manifest.setRetrievedFrom(new URI(retrievedNode.asResource().getURI()));
-		} catch (URISyntaxException ex) {
-			logger.log(Level.WARNING, "Error creating URI for retrievedFrom: " +
-					retrievedNode.asResource().getURI(), ex);
+		if (retrievedNode != null) {
+    		try {
+    			manifest.setRetrievedFrom(new URI(retrievedNode.asResource().getURI()));
+    		} catch (URISyntaxException ex) {
+    			logger.log(Level.WARNING, "Error creating URI for retrievedFrom: " +
+    					retrievedNode.asResource().getURI(), ex);
+    		}
 		}
 
 		// retrievedBy
@@ -504,11 +506,13 @@ public class RDFToManifest {
 
 			// retrievedFrom
 			RDFNode retrievedAggrNode = aggrResource.getPropertyValue(retrievedFrom);
-			try {
-				meta.setRetrievedFrom(new URI(retrievedAggrNode.asResource().getURI()));
-			} catch (URISyntaxException ex) {
-				logger.log(Level.WARNING, "Error creating URI for retrievedFrom: " +
-						retrievedAggrNode.asResource().getURI(), ex);
+			if (retrievedAggrNode != null) {
+    			try {
+    				meta.setRetrievedFrom(new URI(retrievedAggrNode.asResource().getURI()));
+    			} catch (URISyntaxException ex) {
+    				logger.log(Level.WARNING, "Error creating URI for retrievedFrom: " +
+    						retrievedAggrNode.asResource().getURI(), ex);
+    			}
 			}
 
 			// retrievedBy
