@@ -38,7 +38,7 @@ public class TestRDFToManifest {
 		// RDFToManifest.makeBaseURI(); // trigger static{} block
 		@SuppressWarnings("unchecked")
 		Map<String, Object> context = (Map<String, Object>) new DocumentLoader()
-				.loadDocument(CONTEXT);
+				.loadDocument(CONTEXT).getDocument();
 		// FIXME: jsonld-java 0.3 and later uses DocumentLoader instead of
 		// JSONUtils
 		// Map<String, Object> context = (Map<String, Object>)
