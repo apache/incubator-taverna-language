@@ -22,7 +22,6 @@ package org.apache.taverna.robundle.manifest;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.net.URL;
 import java.util.Map;
 
 import org.junit.Test;
@@ -39,7 +38,7 @@ public class TestRDFToManifest {
 		// RDFToManifest.makeBaseURI(); // trigger static{} block
 		@SuppressWarnings("unchecked")
 		Map<String, Object> context = (Map<String, Object>) new DocumentLoader()
-				.fromURL(new URL(CONTEXT));
+				.loadDocument(CONTEXT);
 		// FIXME: jsonld-java 0.3 and later uses DocumentLoader instead of
 		// JSONUtils
 		// Map<String, Object> context = (Map<String, Object>)
