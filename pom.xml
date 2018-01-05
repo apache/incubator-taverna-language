@@ -38,9 +38,7 @@
 				<artifactId>apache-rat-plugin</artifactId>
 				<configuration>
 					<useDefaultExcludes>true</useDefaultExcludes>
-					<excludes>
-            <!--Just a META-INF file -->
-            <exclude>DEPENDENCIES</exclude>
+					<excludes combine.children="append">
 						<!-- Following excludes needed for taverna-scufl2-rdf,
 						taverna-scufl2-integration-tests and taverna-scufl2-validation-integration
 						subfolders that should be modules but are not. -->
@@ -48,14 +46,6 @@
 						<exclude>**/.project</exclude>
 						<exclude>**/.settings/</exclude>
 						<exclude>**/target/</exclude>
-						<!-- Text and Markdown files are typically used only for documentation 
-							purposes and license declarations are usually spurious in these files since 
-							often they will refer to the LICENSE/NOTICE for users to find the actual 
-							licenses -->
-						<exclude>**/*.md</exclude>
-						<!-- META-INF services files can include comments but a license header 
-							would be unecessarily clutter so we exclude these -->
-						<exclude>**/META-INF/services/*</exclude>
 						<!-- No headers in JSON which haven't got comments ... -->
 						<exclude>**/*.json</exclude>
 						<!-- Really a binary format, but must look like text -->
@@ -77,9 +67,6 @@
             <!-- Our own test documents - contains LICENSE -->
             <exclude>src/test/resources/document.odt</exclude>
             <exclude>src/test/resources/workflowrun.bundle.zip</exclude>
-
-           <!-- Created by Maven Shade plugin -->
-           <exclude>dependency-reduced-pom.xml</exclude>
 
             <!-- 
                  Below exclusions are for 
