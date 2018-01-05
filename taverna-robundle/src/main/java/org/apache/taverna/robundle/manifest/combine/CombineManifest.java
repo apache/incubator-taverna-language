@@ -237,9 +237,19 @@ public class CombineManifest {
 	private static Model parseRDF(Path metadata) throws IOException {
 		Model model = createDefaultModel();
 		try (InputStream in = newInputStream(metadata)) {
-			read(model, in, metadata.toUri().toASCIIString(), RDFXML);
+			// TAVERNA-1027: Avoid Jena error over non-IANA URI scheme app://
+			read(model, in, fakeFileURI(metadata), RDFXML);
 		}
 		return model;
+	}
+
+	private static String fakeFileURI(Path path) {
+		return fakeFileURI(path.toAbsolutePath().toUri());
+	}
+	
+	private static String fakeFileURI(URI uri) {
+		// Assume path starts with "/"
+		return "file://" + uri.getPath();
 	}
 
 	protected static void setPrefixMapper(Marshaller marshaller) {
@@ -330,6 +340,7 @@ public class CombineManifest {
 		Model metadata;
 		try {
 			metadata = parseRDF(metadataRdf);
+			metadata.write(System.out, "turtle");
 		} catch (IOException e) {
 			logger.log(WARNING, "Can't read " + metadataRdf, e);
 			return;
@@ -339,9 +350,11 @@ public class CombineManifest {
 		}
 
 		for (URI about : bundleSubjects()) {
-			Resource resource = metadata.getResource(about.toString());
-			if (!metadata.containsResource(resource))
+			Resource resource = metadata.getResource(fakeFileURI(about));
+			if (!metadata.containsResource(resource)) {
+				System.out.println("Nothing known about " + resource);
 				continue;
+			}
 
 			PathAnnotation ann = new PathAnnotation();
 			ann.setAbout(manifest.relativeToBundleRoot(about));
