@@ -27,10 +27,10 @@ under the License.
 
 	<xsd:annotation>
 		<xsd:appinfo>
-			<!-- See http://docs.rakeshv.org/java/jaxb/users-guide/jaxb-custom.html -->
+			<!-- -->
 
 			<jxb:schemaBindings>
-				<jxb:package name="uk.org.taverna.scufl2.xml.t2flow.jaxb" />
+				<jxb:package name="org.apache.taverna.scufl2.xml.t2flow.jaxb" />
 			</jxb:schemaBindings>
 		</xsd:appinfo>
 	</xsd:annotation>
