@@ -24,7 +24,7 @@
 
 	<xs:annotation>
 		<xs:appinfo>
-			<!-- See http://docs.rakeshv.org/java/jaxb/users-guide/jaxb-custom.html -->
+			<!-- -->
 			<jxb:globalBindings />
 			<jxb:schemaBindings>
 				<jxb:package name="org.apache.taverna.scufl2.xml" />
