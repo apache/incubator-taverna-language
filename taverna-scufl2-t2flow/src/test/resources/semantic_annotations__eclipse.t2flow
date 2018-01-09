@@ -18,7 +18,7 @@
  * under the License.
  -->
 <workflow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://taverna.sf.net/2008/xml/t2flow ../../main/resources/uk/org/taverna/scufl2/translator/t2flow/xsd/t2flow-extended.xsd "
+	xsi:schemaLocation="http://taverna.sf.net/2008/xml/t2flow ../../main/resources/org/apache/taverna/scufl2/translator/t2flow/xsd/t2flow-extended.xsd "
 	xmlns="http://taverna.sf.net/2008/xml/t2flow" version="1"
 	producedBy="taverna-2.4.0SNAPSHOT">
 	<dataflow id="2d726ace-4635-4bd1-89d5-703a50c96c1a" role="top">

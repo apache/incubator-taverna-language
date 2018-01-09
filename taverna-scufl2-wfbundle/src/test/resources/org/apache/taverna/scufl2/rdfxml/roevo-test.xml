@@ -27,7 +27,7 @@
 	xmlns:dcterms="http://purl.org/dc/terms/" xmlns:owl="http://www.w3.org/2002/07/owl#"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="RoEvoDocument"
 	xml:base="http://example.com/test/base"
-	xsi:schemaLocation="http://purl.org/wf4ever/roevo# ../../../../../../../main/resources/uk/org/taverna/scufl2/rdfxml/xsd/roevo.xsd">
+	xsi:schemaLocation="http://purl.org/wf4ever/roevo# ../../../../../../../main/resources/org/apache/taverna/scufl2/rdfxml/xsd/roevo.xsd">
 	<VersionableResource rdf:about="v3">
 		<wasChangedBy>
 			<ChangeSpecification>
