@@ -48,8 +48,8 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.jaxen</groupId>
-			<artifactId>com.springsource.org.jaxen</artifactId>
+			<groupId>jaxen</groupId>
+			<artifactId>jaxen</artifactId>
       <version>${jaxen.version}</version>
 			<scope>test</scope>
 		</dependency>
@@ -64,7 +64,7 @@
 		<license>
 			<name>Apache 2</name>
 			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-			<comments>The package uk.org.taverna.scul2.ucfpackage.impl.odfdom
+			<comments>The package org.apache.taverna.scufl2.ucfpackage.impl.odfdom
 				contains a patched subset of ODFDOM 0.8.6 -
 				http://odftoolkit.org/projects/odfdom/pages/Home
 				Copyright 2008, 2010 Oracle and/or its affiliates.

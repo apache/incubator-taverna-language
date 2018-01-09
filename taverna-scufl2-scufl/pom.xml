@@ -85,8 +85,8 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.jaxen</groupId>
-			<artifactId>com.springsource.org.jaxen</artifactId>
+			<groupId>jaxen</groupId>
+			<artifactId>jaxen</artifactId>
                         <version>${jaxen.version}</version>
 			<scope>test</scope>
 		</dependency>
