@@ -237,7 +237,10 @@ public class CombineManifest {
 	private static Model parseRDF(Path metadata) throws IOException {
 		Model model = createDefaultModel();
 		try (InputStream in = newInputStream(metadata)) {
-			// TAVERNA-1027: Avoid Jena error over non-IANA URI scheme app://
+			// TAVERNA-1027: Workaround for JENA-1462 - 
+			// RO Bundle URIs like 
+			// app://fad6e1b4-c0d1-45be-a978-7a570b62aa8d/manifest.xml
+			// can't be used as base URI when parsing RDF/XML
 			read(model, in, fakeFileURI(metadata), RDFXML);
 		}
 		return model;
