@@ -43,7 +43,7 @@ details about embedded third-party libraries and source code.
 # Contribute
 
 Please subscribe to and contact the
-[dev@taverna](http://taverna.incubator.apache.org/community/lists#dev mailing list)
+[dev@taverna](http://taverna.incubator.apache.org/community/lists#dev) mailing list
 for any questions, suggestions and discussions about
 Apache Taverna.
 
