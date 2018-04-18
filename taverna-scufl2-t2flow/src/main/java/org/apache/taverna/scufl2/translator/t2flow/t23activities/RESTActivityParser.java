@@ -135,17 +135,17 @@ public class RESTActivityParser extends AbstractActivityParser {
 					accept.put("header", fieldName);
 					accept.put("value", fieldValue);
 				}
-			if (restConfig.getShowActualUrlPort() != null)
-				json.put("showActualURLPort", restConfig.getShowActualUrlPort()
+			if (restConfig.isShowActualUrlPort() != null)
+				json.put("showActualURLPort", restConfig.isShowActualUrlPort()
 						.booleanValue());
-			if (restConfig.getShowResponseHeadersPort() != null)
+			if (restConfig.isShowResponseHeadersPort() != null)
 				json.put("showResponseHeadersPort", restConfig
-						.getShowResponseHeadersPort().booleanValue());
+						.isShowResponseHeadersPort().booleanValue());
 
 			if (restConfig.isShowRedirectionOutputPort())
 				json.put("showRedirectionOutputPort", true);
-			if (restConfig.getEscapeParameters() != null
-					&& !restConfig.getEscapeParameters())
+			if (restConfig.isEscapeParameters() != null
+					&& !restConfig.isEscapeParameters())
 				json.put("escapeParameters", false);
 			if (restConfig.getOutgoingDataFormat() != null)
 				json.put("outgoingDataFormat",

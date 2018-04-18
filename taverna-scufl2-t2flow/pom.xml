@@ -40,21 +40,26 @@
                  -->
             </plugin>
 
-      <plugin>
-          <groupId>org.jvnet.jaxb2.maven2</groupId>
-          <artifactId>maven-jaxb2-plugin</artifactId>
-          <executions>
-            <execution>
-                <goals>
-                    <goal>generate</goal>
-                </goals>
-            </execution>
-          </executions>
-          <configuration>
-            <generatePackage>org.apache.taverna.scufl2.xml.t2flow.jaxb</generatePackage>
-            <schemaDirectory>src/main/resources/org/apache/taverna/scufl2/translator/t2flow/xsd/</schemaDirectory>
-          </configuration>
-        </plugin>
+			<plugin>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-xjc-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>xsdtojava</goal>
+						</goals>
+					</execution>
+				</executions>          
+				<configuration> 
+					<xsdOptions combine.self="override">
+					<!-- We don't use src/main/xsd as in ../pom.xml, as our XSDs go into the final JAR -->
+						<xsdOption>
+							<xsdDir>${project.basedir}/src/main/resources/org/apache/taverna/scufl2/translator/t2flow/xsd/</xsdDir>
+							<packagename>org.apache.taverna.scufl2.xml.t2flow.jaxb</packagename>
+						</xsdOption>
+					</xsdOptions>
+				</configuration>
+			</plugin>	
 
 			<plugin>
 				<!-- So that Eclipse m2e (with the buildhelper m2e connector) can find

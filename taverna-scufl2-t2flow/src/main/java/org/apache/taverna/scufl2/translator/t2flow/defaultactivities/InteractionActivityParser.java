@@ -75,7 +75,7 @@ public class InteractionActivityParser extends AbstractActivityParser {
 		String interactionActivityType = interactionConfig.getInteractionActivityType();
 		json.put("interactionActivityType", interactionActivityType);
 		
-		boolean progressNotification = interactionConfig.getProgressNotification();
+		boolean progressNotification = interactionConfig.isProgressNotification();
 		json.put("progressNotification", progressNotification);
 		
 		Activity activity = parserState.getCurrentActivity();
