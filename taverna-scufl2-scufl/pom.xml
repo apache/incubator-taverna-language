@@ -70,13 +70,6 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-osgi</artifactId>
-      <version>${jaxb.version}</version>
-			<type>jar</type>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
                         <version>${commons.io.version}</version>

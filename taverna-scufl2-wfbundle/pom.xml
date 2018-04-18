@@ -73,25 +73,12 @@
 			<version>${sesame.version}</version>
 			<scope>test</scope>
 		</dependency>
-    <!--
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-impl</artifactId>
-                        <version>${jaxb.version}</version>
-			<optional>true</optional>
-		</dependency>
-    -->
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-osgi</artifactId>
-      <version>${jaxb.version}</version>
-			<optional>true</optional>
-		</dependency>
+
 		<dependency>
 			<groupId>jaxen</groupId>
 			<artifactId>jaxen</artifactId>
                         <version>${jaxen.version}</version>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+	</dependencies>	
 </project>
