@@ -40,21 +40,27 @@
                  -->
             </plugin>
 
-      <plugin>
-          <groupId>org.jvnet.jaxb2.maven2</groupId>
-          <artifactId>maven-jaxb2-plugin</artifactId>
+        <plugin>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-xjc-plugin</artifactId>
           <executions>
             <execution>
-                <goals>
-                    <goal>generate</goal>
-                </goals>
+              <goals>
+                <goal>xsdtojava</goal>
+              </goals>
             </execution>
-          </executions>
-          <configuration>
-            <generatePackage>org.apache.taverna.scufl2.xml.scufl.jaxb</generatePackage>
-            <schemaDirectory>src/main/resources/org/apache/taverna/scufl2/translator/scufl/xsd/</schemaDirectory>
+          </executions>          
+          <configuration> 
+            <xsdOptions combine.self="override">
+            <!-- We don't use src/main/xsd as in ../pom.xml, as our XSDs go into the final JAR -->
+              <xsdOption>
+                <xsdDir>${project.basedir}/src/main/resources/org/apache/taverna/scufl2/translator/scufl/xsd/</xsdDir>
+                <packagename>org.apache.taverna.scufl2.xml.scufl.jaxb</packagename>
+              </xsdOption>
+            </xsdOptions>
           </configuration>
         </plugin>
+
       </plugins>
   </build> 	
 
