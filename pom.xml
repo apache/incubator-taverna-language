@@ -133,14 +133,11 @@
 		<pluginManagement>
 			<plugins>
 				<plugin>
-					<groupId>org.jvnet.jaxb2.maven2</groupId>
-					<artifactId>maven-jaxb2-plugin</artifactId>
-					<configuration>
-						<enableIntrospection>true</enableIntrospection>
-						<specVersion>2.2</specVersion>
-						<schemaDirectory>src/main/xsd</schemaDirectory>
-					</configuration>
-				</plugin>
+				<!-- replaces maven-jaxb2-plugin -->
+					<groupId>org.apache.cxf</groupId>
+					<artifactId>cxf-xjc-plugin</artifactId>
+					<version>3.2.1</version>
+				</plugin>				
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -201,7 +198,6 @@
 				<artifactId>jaxb-impl</artifactId>
 				<version>${jaxb.version}</version>
 				<type>jar</type>
-				<optional>true</optional>
 			</dependency>
 			<dependency>
 				<groupId>jaxen</groupId>
@@ -243,6 +239,22 @@ additional dependencies to be a happy OSGi bundle -->
       <version>${dexx.collection.version}</version>
     </dependency>
 
+	<!-- Needed for Java 9+ -->
+    <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+      <version>${jaxb.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-osgi</artifactId>
+      <version>${jaxb.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.activation</groupId>
+      <artifactId>activation</artifactId>
+      <version>${activation.version}</version>
+    </dependency>
 </dependencies>
 <profiles>
 <profile>

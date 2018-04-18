@@ -31,35 +31,15 @@ under the License.
   <description>Support for reading and writing Baclava files</description>
   <build>
 		<plugins>
-    <!--
-      <plugin>
-          <groupId>org.jvnet.jaxb2.maven2</groupId>
-          <artifactId>maven-jaxb2-plugin</artifactId>
-          <executions>
-            <execution>
-                <goals>
-                    <goal>generate</goal>
-                </goals>
-            </execution>
-          </executions>
-          <configuration>
-            <schemaDirectory>src/main/resources/xsd/</schemaDirectory>
-					<generatePackage>org.apache.taverna.baclava</generatePackage>
-          </configuration>
-        </plugin>
-    -->
         <plugin>
           <groupId>org.apache.cxf</groupId>
           <artifactId>cxf-xjc-plugin</artifactId>
-          <version>3.2.1</version>
-          <configuration>
-          </configuration>
           <executions>
             <execution>
-                <goals>
-                    <goal>xsdtojava</goal>
-                </goals>
-                <configuration>
+              <goals>
+                <goal>xsdtojava</goal>
+              </goals>
+              <configuration>
                 <xsdOptions>
                   <xsdOption>
                     <xsd>src/main/resources/xsd/xscufl.xsd</xsd>
@@ -71,7 +51,7 @@ under the License.
                     <packagename>org.apache.taverna.baclava</packagename>
                   </xsdOption>
                 </xsdOptions>
-                </configuration>
+              </configuration>
             </execution>
           </executions>          
         </plugin>
