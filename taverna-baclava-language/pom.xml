@@ -42,8 +42,7 @@ under the License.
             </execution>
           </executions>          
           <configuration> 
-            <xsdOptions combine.self="override">
-            <!-- We don't use src/main/xsd as in ../pom.xml, as our XSDs go into the final JAR -->
+            <xsdOptions>
               <xsdOption>
                 <xsd>${project.basedir}/src/main/resources/xsd/baclava.xsd</xsd>
                 <packagename>org.apache.taverna.baclava</packagename>

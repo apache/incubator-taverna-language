@@ -139,12 +139,6 @@
 					<version>3.2.1</version>
 					<configuration>
 						<sourceRoot>${basedir}/target/generated-sources/cxf-xjc</sourceRoot>
-						<xsdOptions>
-						<xsdOption>
-							<xsdDir>${project.basedir}/src/main/xsd</xsdDir>
-							<bindingFile>${project.basedir}/src/main/xsd/binding.xjb</bindingFile>
-						</xsdOption>
-						</xsdOptions>
 					</configuration>
 				</plugin>	
 			</plugins>

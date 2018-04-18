@@ -51,8 +51,7 @@
 					</execution>
 				</executions>          
 				<configuration> 
-					<xsdOptions combine.self="override">
-					<!-- We don't use src/main/xsd as in ../pom.xml, as our XSDs go into the final JAR -->
+					<xsdOptions>
 						<xsdOption>
 							<xsdDir>${project.basedir}/src/main/resources/org/apache/taverna/scufl2/translator/t2flow/xsd/</xsdDir>
 							<packagename>org.apache.taverna.scufl2.xml.t2flow.jaxb</packagename>

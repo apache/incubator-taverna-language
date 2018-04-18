@@ -86,19 +86,27 @@
 	</dependencies>
 
   <build>
-	<plugins>
-        <plugin>
-          <groupId>org.apache.cxf</groupId>
-          <artifactId>cxf-xjc-plugin</artifactId>
-          <executions>
-            <execution>
-              <goals>
-                <goal>xsdtojava</goal>
-              </goals>
-            </execution>
-          </executions>          
-        </plugin>
-      </plugins>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.cxf</groupId>
+				<artifactId>cxf-xjc-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>xsdtojava</goal>
+						</goals>
+					</execution>
+				</executions>
+					<configuration>
+						<xsdOptions>
+							<xsdOption>
+								<xsdDir>${project.basedir}/src/main/xsd</xsdDir>
+								<bindingFile>${project.basedir}/src/main/xsd/binding.xjb</bindingFile>
+							</xsdOption>
+						</xsdOptions>
+					</configuration>
+			</plugin>
+	</plugins>
   </build>
 
 </project>

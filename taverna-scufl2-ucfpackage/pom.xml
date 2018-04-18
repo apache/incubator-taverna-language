@@ -72,8 +72,4 @@
 		</license>
 	</licenses>
 
-	<build>
-		<plugins>
-          </plugins>
-    </build>
 </project>
