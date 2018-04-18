@@ -85,19 +85,20 @@
 -->
 	</dependencies>
 
-	<build>
-		<plugins>
-      <plugin>
-          <groupId>org.jvnet.jaxb2.maven2</groupId>
-          <artifactId>maven-jaxb2-plugin</artifactId>
+  <build>
+	<plugins>
+        <plugin>
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-xjc-plugin</artifactId>
           <executions>
             <execution>
-                <goals>
-                    <goal>generate</goal>
-                </goals>
+              <goals>
+                <goal>xsdtojava</goal>
+              </goals>
             </execution>
-          </executions>
+          </executions>          
         </plugin>
-		</plugins>
-	</build>
+      </plugins>
+  </build>
+
 </project>

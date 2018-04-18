@@ -39,21 +39,21 @@ under the License.
               <goals>
                 <goal>xsdtojava</goal>
               </goals>
-              <configuration>
-                <xsdOptions>
-                  <xsdOption>
-                    <xsd>src/main/resources/xsd/xscufl.xsd</xsd>
-                    <packagename>org.apache.taverna.xscufl</packagename>
-                  </xsdOption>
-
-                  <xsdOption>
-                    <xsd>src/main/resources/xsd/baclava.xsd</xsd>
-                    <packagename>org.apache.taverna.baclava</packagename>
-                  </xsdOption>
-                </xsdOptions>
-              </configuration>
             </execution>
           </executions>          
+          <configuration> 
+            <xsdOptions combine.self="override">
+            <!-- We don't use src/main/xsd as in ../pom.xml, as our XSDs go into the final JAR -->
+              <xsdOption>
+                <xsd>src/main/resources/xsd/xscufl.xsd</xsd>
+                <packagename>org.apache.taverna.xscufl</packagename>
+              </xsdOption>
+              <xsdOption>
+                <xsd>src/main/resources/xsd/baclava.xsd</xsd>
+                <packagename>org.apache.taverna.baclava</packagename>
+              </xsdOption>
+            </xsdOptions>
+          </configuration>
         </plugin>
       </plugins>
   </build>

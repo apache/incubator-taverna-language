@@ -18,30 +18,27 @@
 <jaxb:bindings version="2.1" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	>
-	<jaxb:bindings scd="x-schema::xenc" xmlns:xenc="http://www.w3.org/2001/04/xmlenc#">
+	<jaxb:bindings schemaLocation="xenc-schema.xsd">
 		<jaxb:schemaBindings>
 			<jaxb:package name="org.apache.taverna.robundle.xml.xenc" />
 		</jaxb:schemaBindings>
 	</jaxb:bindings>
-	<jaxb:bindings scd="x-schema::dsig" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#">
+	<jaxb:bindings schemaLocation="xmldsig-core-schema.xsd">
 		<jaxb:schemaBindings>
 			<jaxb:package name="org.apache.taverna.robundle.xml.dsig" />
 		</jaxb:schemaBindings>
 	</jaxb:bindings>
-	<jaxb:bindings scd="x-schema::manifest"
-		xmlns:manifest="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0">
+	<jaxb:bindings schemaLocation="OpenDocument-v1.2-os-manifest-schema.xsd">
 		<jaxb:schemaBindings>
 			<jaxb:package name="org.apache.taverna.robundle.xml.odf.manifest" />
 		</jaxb:schemaBindings>
 	</jaxb:bindings>
-	<jaxb:bindings scd="x-schema::container"
-		xmlns:container="urn:oasis:names:tc:opendocument:xmlns:container">
+	<jaxb:bindings schemaLocation="container.xsd">
 		<jaxb:schemaBindings>
 			<jaxb:package name="org.apache.taverna.robundle.xml.odf.container" />
 		</jaxb:schemaBindings>
 	</jaxb:bindings>
-	<jaxb:bindings scd="x-schema::combine"
-		xmlns:combine="http://identifiers.org/combine.specifications/omex-manifest">
+	<jaxb:bindings schemaLocation="combine.xsd">
 		<jaxb:schemaBindings>
 			<jaxb:package name="org.apache.taverna.robundle.xml.combine" />
 		</jaxb:schemaBindings>
