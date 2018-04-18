@@ -46,6 +46,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestZipFS {
@@ -95,7 +96,10 @@ public class TestZipFS {
 	/**
 	 * Verifies http://stackoverflow.com/questions/16588321/ as both ZIP format
 	 * and Java 7 ZIPFS allows a folder and file to have the same name.
-	 * 
+	 * <p>
+	 * This JDK bug is fixed in JDK9, which throws
+	 * FileAlreadyExistsException as expected 
+	 * (this test returns early if that is the case). 
 	 */
 	@Test
 	public void directoryOrFile() throws Exception {
@@ -113,8 +117,10 @@ public class TestZipFS {
 			System.out.println(folder + " " + folderCreated);
 
 			// Disable for now, just to see where this leads
-			// fail("Should have thrown FileAlreadyExistsException");
+			//fail("Should have thrown FileAlreadyExistsException");
 		} catch (FileAlreadyExistsException ex) {
+			// Bug was fixed in JDK9, no need to test this anymore
+			return;
 		}
 
 		// For some reason the second createDirectory() fails correctly
