@@ -38,6 +38,7 @@ import java.nio.file.DirectoryNotEmptyException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,15 +47,13 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.taverna.robundle.Bundle;
-import org.apache.taverna.robundle.Bundles;
 import org.apache.taverna.robundle.fs.BundleFileSystem;
 import org.apache.taverna.robundle.fs.BundleFileSystemProvider;
 import org.apache.taverna.robundle.manifest.Manifest;
 import org.apache.taverna.robundle.manifest.PathMetadata;
 import org.apache.taverna.robundle.utils.TemporaryFiles;
-import org.junit.Test;
 import org.junit.Ignore;
+import org.junit.Test;
 
 public class TestBundles {
 
@@ -446,8 +445,15 @@ public class TestBundles {
 
 	@Test
 	public void openBundleURL() throws Exception {
-		URL url = getClass().getResource("/workflowrun.bundle.zip");
-		assertNotNull(url);
+		Path temp = Files.createTempFile("workflowrun", ".bundle.zip");
+		// Don't use URL from getResource(), copy to
+		// temporary file to make sure our classpath file is not
+		// overwritten on b.close()!
+		try (InputStream stream = getClass().getResourceAsStream(
+				"/workflowrun.bundle.zip")) {
+			Files.copy(stream, temp, StandardCopyOption.REPLACE_EXISTING);
+		}
+		URL url = temp.toUri().toURL();
 		try (Bundle b = Bundles.openBundle(url)) {
 			checkWorkflowrunBundle(b);
 		}
