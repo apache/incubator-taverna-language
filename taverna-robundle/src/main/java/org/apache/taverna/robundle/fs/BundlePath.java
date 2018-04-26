@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent.Kind;
@@ -41,7 +42,7 @@ public class BundlePath implements Path {
 	protected BundlePath(BundleFileSystem fs, Path zipPath) {
 		if (fs == null || zipPath == null) {
 			throw new NullPointerException();
-		}
+		}		
 		this.fs = fs;
 		this.zipPath = zipPath;
 	}
@@ -208,9 +209,14 @@ public class BundlePath implements Path {
 	@Override
 	public URI toUri() {
 		Path abs = zipPath.toAbsolutePath();
+		String absStr = abs.toString();
+		if (Files.isDirectory(abs) && ! absStr.endsWith("/")) {
+			absStr += "/";
+		}
+		
 		URI pathRel;
 		try {
-			pathRel = new URI(null, null, abs.toString(), null);
+			pathRel = new URI(null, null, absStr, null);
 		} catch (URISyntaxException e) {
 			throw new IllegalStateException("Can't create URL for " + zipPath,
 					e);

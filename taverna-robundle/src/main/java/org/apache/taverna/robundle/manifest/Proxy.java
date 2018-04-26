@@ -25,6 +25,8 @@ import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder(value = { "uri", "folder", "filename", "aggregatedBy",
@@ -49,10 +51,20 @@ public class Proxy {
 		return filename;
 	}
 
+	@JsonIgnore
 	public Path getFolder() {
 		return folder;
 	}
-
+	
+	@JsonProperty("folder")
+	public String getFolderName() {
+		String folderName = getFolder().toString();
+		if (! folderName.endsWith("/")) {
+			return folderName + "/";
+		}
+		return folderName;
+	}
+	
 	public URI getURI() {
 		return uri;
 	}

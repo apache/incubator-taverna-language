@@ -72,7 +72,7 @@ public class TestManifest {
 			uris.add(s.getFile().toString());
 			Path path = s.getFile();
 			assertNotNull(path.getParent());
-			assertEquals(Manifest.withSlash(path.getParent()), s.getFolder());
+			assertEquals(path.getParent(), s.getBundledAs().getFolder());
 			if (s.getFile().equals(URI.create("/f/nested/empty/"))) {
 				continue;
 				// Folder's don't need proxy and createdOn
@@ -90,7 +90,7 @@ public class TestManifest {
 		assertTrue(uris.remove("/f/file2.txt"));
 		assertTrue(uris.remove("/f/file3.txt"));
 		assertTrue(uris.remove("/f/nested/file1.txt"));
-		assertTrue(uris.remove("/f/nested/empty/"));
+		assertTrue(uris.remove("/f/nested/empty"));
 		assertTrue(uris.isEmpty());
 	}
 
@@ -104,12 +104,12 @@ public class TestManifest {
 		// Second populate should not add additional entries
 		manifest.populateFromBundle();
 
-		List<String> uris = new ArrayList<>();
+		List<String> paths = new ArrayList<>();
 		for (PathMetadata s : manifest.getAggregates()) {
-			uris.add(s.getFile().toString());
 			Path path = s.getFile();
+			paths.add(s.toString());
 			assertNotNull(path.getParent());
-			assertEquals(Manifest.withSlash(path.getParent()), s.getFolder());
+			assertEquals(path.getParent(), s.getBundledAs().getFolder());
 			if (s.getFile().equals(URI.create("/f/nested/empty/"))) {
 				continue;
 				// Folder's don't need proxy and createdOn
@@ -120,15 +120,15 @@ public class TestManifest {
 			assertEquals(s.getCreatedOn(), Files.getLastModifiedTime(path));
 		}
 		//System.out.println(uris);
-		assertFalse(uris.contains("/mimetype"));
-		assertFalse(uris.contains("/META-INF"));
-		assertTrue(uris.remove("/hello.txt"));
-		assertTrue(uris.remove("/f/file1.txt"));
-		assertTrue(uris.remove("/f/file2.txt"));
-		assertTrue(uris.remove("/f/file3.txt"));
-		assertTrue(uris.remove("/f/nested/file1.txt"));
-		assertTrue(uris.remove("/f/nested/empty/"));
-		assertTrue("Unexpected uri: " + uris, uris.isEmpty());
+		assertFalse(paths.contains("/mimetype"));
+		assertFalse(paths.contains("/META-INF"));
+		assertTrue(paths.remove("/hello.txt"));
+		assertTrue(paths.remove("/f/file1.txt"));
+		assertTrue(paths.remove("/f/file2.txt"));
+		assertTrue(paths.remove("/f/file3.txt"));
+		assertTrue(paths.remove("/f/nested/file1.txt"));
+		assertTrue(paths.remove("/f/nested/empty/"));
+		assertTrue("Unexpected path: " + paths, paths.isEmpty());
 	}
 
 	private Path uri2path(URI base, URI uri) {

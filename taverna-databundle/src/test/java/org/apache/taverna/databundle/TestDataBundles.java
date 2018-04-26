@@ -436,7 +436,7 @@ public class TestDataBundles {
 		Path sublist1 = DataBundles.newListItem(list);
 		DataBundles.createList(sublist1);
 		
-		assertEquals(Arrays.asList("0/", "1/"), ls(list));
+		assertEquals(Arrays.asList("0", "1"), ls(list));
 		
 		DataBundles.setStringValue(DataBundles.newListItem(sublist1), 
 				"Hello");

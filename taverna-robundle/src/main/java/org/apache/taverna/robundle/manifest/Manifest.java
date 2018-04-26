@@ -99,20 +99,6 @@ public class Manifest {
 		return fromMillis(new GregorianCalendar().getTimeInMillis());
 	}
 
-	protected static Path withSlash(Path dir) {
-		if (dir == null)
-			return null;
-		if (isDirectory(dir)) {
-			Path fname = dir.getFileName();
-			if (fname == null)
-				return dir;
-			String fnameStr = fname.toString();
-			if (fnameStr.endsWith("/"))
-				return dir;
-			return dir.resolveSibling(fnameStr + "/");
-		}
-		return dir;
-	}
 
 	private Map<URI, PathMetadata> aggregates = new LinkedHashMap<>();
 	private List<PathAnnotation> annotations = new ArrayList<>();
@@ -288,11 +274,11 @@ public class Manifest {
 						metadata = new PathMetadata();
 						aggregates.put(uri, metadata);
 					}
-					metadata.setFile(withSlash(dir));
-					metadata.setFolder(withSlash(dir.getParent()));
+					metadata.setFile(dir);
+					metadata.setFolder(dir.getParent());
 					metadata.setProxy();
 					metadata.setCreatedOn(getLastModifiedTime(dir));
-					potentiallyEmptyFolders.remove(withSlash(dir.getParent()));
+					potentiallyEmptyFolders.remove(dir.getParent());
 					return CONTINUE;
 				}
 				return CONTINUE;
@@ -303,8 +289,8 @@ public class Manifest {
 					BasicFileAttributes attrs) throws IOException {
 				if (dir.startsWith(RO) || dir.startsWith(META_INF))
 					return SKIP_SUBTREE;
-				potentiallyEmptyFolders.add(withSlash(dir));
-				potentiallyEmptyFolders.remove(withSlash(dir.getParent()));
+				potentiallyEmptyFolders.add(dir);
+				potentiallyEmptyFolders.remove(dir.getParent());
 				return CONTINUE;
 			}
 
@@ -312,7 +298,7 @@ public class Manifest {
 			@Override
 			public FileVisitResult visitFile(Path file,
 					BasicFileAttributes attrs) throws IOException {
-				potentiallyEmptyFolders.remove(withSlash(file.getParent()));
+				potentiallyEmptyFolders.remove(file.getParent());
 				if (file.startsWith(MIMETYPE))
 					return CONTINUE;
 				if (manifest.contains(file))
@@ -331,7 +317,7 @@ public class Manifest {
 				if (metadata.getMediatype() == null)
 					// Don't override if already set
 					metadata.setMediatype(guessMediaType(file));
-				metadata.setFolder(withSlash(file.getParent()));
+				metadata.setFolder(file.getParent());
 				metadata.setProxy();
 				metadata.setCreatedOn(getLastModifiedTime(file));
 				potentiallyEmptyFolders.remove(file.getParent());
@@ -447,13 +433,13 @@ public class Manifest {
 		// Files.createFile(jsonld);
 		if (!getManifest().contains(jsonld))
 			getManifest().add(0, jsonld);
-		ObjectMapper om = new ObjectMapper();
-		om.addMixInAnnotations(Path.class, PathMixin.class);
-		om.addMixInAnnotations(FileTime.class, FileTimeMixin.class);
-		om.enable(INDENT_OUTPUT);
-		om.disable(WRITE_EMPTY_JSON_ARRAYS);
-		om.disable(FAIL_ON_EMPTY_BEANS);
-		om.disable(WRITE_NULL_MAP_VALUES);
+		ObjectMapper om = new ObjectMapper()
+			.addMixIn(Path.class, PathMixin.class)
+			.addMixIn(FileTime.class, FileTimeMixin.class)
+			.enable(INDENT_OUTPUT)
+			.disable(WRITE_EMPTY_JSON_ARRAYS)
+			.disable(FAIL_ON_EMPTY_BEANS)
+			.disable(WRITE_NULL_MAP_VALUES);
 
 		om.setSerializationInclusion(Include.NON_NULL);
 		try (Writer w = newBufferedWriter(jsonld, Charset.forName("UTF-8"),

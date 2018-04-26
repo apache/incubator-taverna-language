@@ -189,6 +189,19 @@ public class BundleFileSystem extends FileSystem {
 		}
 		return ((BundlePath) bundlePath).getZipPath();
 	}
+	
+	protected static Path withoutSlash(Path dir) {
+		if (dir == null) {
+			return null;
+		}
+		Path fname = dir.getFileName();
+		if (fname == null) // Root directory?
+			return dir;
+		String fnameStr = fname.toString();
+		if (! fnameStr.endsWith("/") && ! fnameStr.equals("/"))
+			return dir;
+		return dir.resolveSibling(fnameStr.replace("/", ""));
+	}
 
 	protected BundlePath wrap(Path zipPath) {
 		if (zipPath == null) {
@@ -198,7 +211,8 @@ public class BundleFileSystem extends FileSystem {
 			throw new IllegalArgumentException("Did not expect BundlePath: "
 					+ zipPath);
 		}
-		return new BundlePath(this, zipPath);
+		
+		return new BundlePath(this, withoutSlash(zipPath));
 	}
 
 	protected Iterator<Path> wrapIterator(final Iterator<Path> iterator) {
