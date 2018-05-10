@@ -1,0 +1,621 @@
+{
+    "@context": [
+        "https://w3id.org/bundle/context"
+    ], 
+    "@id": "../", 
+    "aggregates": [
+        {
+            "bundledAs": {
+                "filename": "adrenal_gland.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b90h3c"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "blood_vessel.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9km3p"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "bone_element.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9b37v"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "brain.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b92m31"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "bronchus.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9t376"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "esophagus.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9jm3c"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "extraembryonic_structure.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9b387"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "eye.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9mx1b"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "gonad.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9wx0f"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "heart.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9nd6c"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "kidney.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9cw9v"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "large_intestine.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b94d5b"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "liver.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9vw96"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "lung.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9md5p"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "lymphatic_vessel.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9bw9j"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "lymphoblast.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b93d4n"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "mammary_gland.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9tw9w"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "mouth.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9kd5c"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "muscle_organ.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b99x05"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "pancreas.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b92d63"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "prostate_gland.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9t09x"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "skin.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b95d7d"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "spinal_cord.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9h67f"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "stomach.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9566z"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "thyroid_gland.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9wq1r"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "tongue.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9n67p"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "urinary_bladder.seed16.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9cq3v"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "adrenal_gland.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9cd6w"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "blood_vessel.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b97q3m"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "bone_element.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b93x22"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "brain.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9067s"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "bronchus.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9vh5w"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "esophagus.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9qq3z"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "extraembryonic_structure.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9m092"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "eye.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9g674"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "gonad.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9bh57"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "heart.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b96q39"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "kidney.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9310b"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "large_intestine.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9z67g"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "liver.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9th6z"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "lung.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9pq3n"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "lymphatic_vessel.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9k09r"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "lymphoblast.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9f686"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "mammary_gland.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b99h5x"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "mouth.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b95q4c"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "muscle_organ.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b92093"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "pancreas.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9x96t"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "prostate_gland.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9sh58"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "skin.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b91m5g"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "spinal_cord.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9j09f"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "stomach.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9d97j"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "thyroid_gland.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b98h47"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "tongue.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b94t2b"
+        }, 
+        {
+            "bundledAs": {
+                "filename": "urinary_bladder.seed20.tissue.bag.zip", 
+                "folder": "../data/"
+            }, 
+            "conformsTo": [
+                "https://tools.ietf.org/html/draft-kunze-bagit-14", 
+                "https://w3id.org/ro/bagit/profile"
+            ], 
+            "uri": "http://n2t.net/ark:/57799/b9109s"
+        }
+    ], 
+    "annotations": [
+        {
+            "about": "../", 
+            "oa:motivatedBy": {
+                "@id": "oa:describing"
+            }, 
+            "uri": "../data/README"
+        }
+    ], 
+    "authoredBy": {
+        "name": "Ravi Madduri", 
+        "orcid": "http://orcid.org/0000-0003-2130-2887"
+    }, 
+    "authoredOn": "2018-02-14T21:25:20+00:00", 
+    "createdBy": {
+        "name": "BDBag version: 1.1.5 (Bagit version: 1.6.3)", 
+        "uri": "https://github.com/ini-bdds/bdbag"
+    }, 
+    "createdOn": "2018-02-14T21:25:20+00:00"
+}
