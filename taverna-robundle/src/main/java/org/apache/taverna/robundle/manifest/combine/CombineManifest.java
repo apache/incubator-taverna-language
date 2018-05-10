@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
@@ -526,6 +527,25 @@ public class CombineManifest {
 				}
 			} else {
 				Path path = bundle.getRoot().resolve(c.getLocation());
+				if (Files.isSameFile(bundle.getRoot(), path)) {
+					// metadata about the archive itself
+					if (c.getFormat() != null && ! c.getFormat().isEmpty()) {
+						URI uri;
+						try {
+							uri = new URI(c.getFormat());
+						} catch (URISyntaxException e) {
+							logger.warning(MANIFEST_XML + " non-URI format for . expected http://identifiers.org/combine.specifications/omex");
+							continue;
+						}
+						if (! manifest.getConformsTo().contains(uri)) {
+							manifest.getConformsTo().add(uri);
+						}
+					}
+					// Don't add / to the list of aggregations in RO,
+					// as / is the RO itself!
+					continue;
+				}
+
 				if (!exists(path)) {
 					logger.warning(MANIFEST_XML + " listed relative path "
 							+ path + ", but it does not exist in bundle");
