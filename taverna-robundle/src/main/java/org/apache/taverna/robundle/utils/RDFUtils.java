@@ -1,5 +1,7 @@
 package org.apache.taverna.robundle.utils;
 
+import static java.nio.file.attribute.FileTime.fromMillis;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,29 +23,53 @@ package org.apache.taverna.robundle.utils;
 
 
 import static org.apache.jena.datatypes.xsd.XSDDatatype.XSDdateTime;
-import static java.nio.file.attribute.FileTime.fromMillis;
 
 import java.nio.file.attribute.FileTime;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.jena.datatypes.DatatypeFormatException;
 import org.apache.jena.datatypes.xsd.XSDDateTime;
 import org.apache.jena.rdf.model.Literal;
 import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.vocabulary.RDF;
 
 public class RDFUtils {
 	private static final Logger logger = Logger.getLogger(RDFUtils.class
 			.getCanonicalName());
 
 	public static FileTime literalAsFileTime(RDFNode rdfNode) {
-		if (rdfNode == null)
-			return null;
-		if (!rdfNode.isLiteral()) {
-			new Exception().printStackTrace();
-			logger.warning("Expected literal. not " + rdfNode);
+		if (rdfNode == null) {
 			return null;
 		}
-		Literal literal = rdfNode.asLiteral();
+		final Literal literal;
+		if (rdfNode.isLiteral()) {
+			literal = rdfNode.asLiteral();
+		} else { 
+			// TAVERNA-1044: not a literal, so assume a resource.
+			// Let's climb into rdf:value if it exists, in case we're in a
+			// <dct:W3CDTF> typed bnode.
+			Statement valueStmt = rdfNode.asResource().getProperty(RDF.value);
+			if (valueStmt == null) {
+				// Make our own exception so logger gets a stacktrace
+				Exception ex = new Exception("Can't find timestamp as literal");
+				logger.log(Level.WARNING, 
+				           "Expected literal or resource with rdf:value. not " + rdfNode, 
+				           ex);
+				return null;
+			}
+			if (valueStmt.getObject().isLiteral()) {
+				literal = valueStmt.getObject().asLiteral();
+			} else {	
+				Exception ex = new Exception("Invalid timestamp literal");
+				logger.log(Level.WARNING, 
+				           "Expected rdf:value statement with literal object, not" + valueStmt,
+				           ex);
+				return null;				
+			}
+		}
+
 		Object value = literal.getValue();
 		XSDDateTime dateTime;
 		if (value instanceof XSDDateTime) {
