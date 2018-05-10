@@ -79,7 +79,6 @@ public class TestRDFToManifest {
 					author.getUri());
 			assertEquals(URI.create("https://orcid.org/0000-0001-9842-9718"),
 					author.getOrcid());
-
 			
 			// FIXME: The BDBag got this wrong and used "uri" instead of "content", and so
 			// data/README accidentally became the ID of the annotation.
@@ -108,11 +107,11 @@ public class TestRDFToManifest {
 
 			
 			Proxy bundledAs = a1.getBundledAs();
-			// FIXME: Why is there no bundledAs?
-//			assertNotNull(bundledAs);
-//			assertEquals(ro.getPath("data"), 
-//					bundledAs.getFolder());			
-//			assertEquals("bag1.zip", a1.getBundledAs().getFilename());
+			assertNotNull(bundledAs);
+			// FIXME: Why is there no bundledAs data?
+			assertEquals(ro.getPath("data"), 
+					bundledAs.getFolder());			
+			assertEquals("bag1.zip", a1.getBundledAs().getFilename());
 
 			// TODO: Enable fetching based on bundledAs URI?
 			//ro.getRoot().resolve("data/bag1.zip")

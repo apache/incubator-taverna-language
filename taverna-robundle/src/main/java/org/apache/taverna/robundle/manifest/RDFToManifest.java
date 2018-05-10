@@ -29,7 +29,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -93,8 +95,9 @@ public class RDFToManifest {
 	private static final String PROV_AQ_RDF = "/ontologies/prov-aq.rdf";
 	private static final String PROV_O = "http://www.w3.org/ns/prov-o#";
 	private static final String PROV_O_RDF = "/ontologies/prov-o.rdf";
-	@SuppressWarnings("unused")
+
 	private static final String RO = "http://purl.org/wf4ever/ro#";
+	private static final String RO_OWL = "/ontologies/ro.owl";
 
 	private static <T> ClosableIterable<T> iterate(ExtendedIterator<T> iterator) {
 		return new ClosableIterable<T>(iterator);
@@ -166,6 +169,12 @@ public class RDFToManifest {
 	private OntModel roterms;
 
 	private ObjectProperty alternateOf;
+
+	private ObjectProperty bundledAs;
+
+	private DatatypeProperty entryName;
+
+	private OntModel ro;
 
 	public RDFToManifest() {
 		loadOntologies();
@@ -258,7 +267,8 @@ public class RDFToManifest {
 		hasProxy = ontModel.getObjectProperty(BUNDLE + "hasProxy");
 		hasAnnotation = ontModel.getObjectProperty(BUNDLE + "hasAnnotation");
 		inFolder = ontModel.getObjectProperty(BUNDLE + "inFolder");
-		checkNotNull(hasProxy, hasAnnotation, inFolder);
+		bundledAs = ontModel.getObjectProperty(BUNDLE + "bundledAs");
+		checkNotNull(hasProxy, hasAnnotation, inFolder, bundledAs);
 		bundle = ontModel;
 	}
 
@@ -315,6 +325,7 @@ public class RDFToManifest {
 		loadPAV();
 		loadPROVAQ();
 		loadOA();
+		loadRO();
 		loadBundle();
 	}
 
@@ -394,9 +405,13 @@ public class RDFToManifest {
 		prov = ontModel;
 	}
 
-	@SuppressWarnings("deprecation")
-	private static void setPathProxy(PathMetadata meta, URI proxy) {
-		meta.setProxy(proxy);
+	protected synchronized void loadRO() {
+		if (ro != null)
+			return;
+		OntModel ontModel = loadOntologyFromClasspath(RO_OWL, RO);
+		entryName = ontModel.getDatatypeProperty(RO + "entryName");
+		checkNotNull(ontModel, entryName);
+		ro = ontModel;
 	}
 
 	public void readTo(InputStream manifestResourceAsStream, Manifest manifest,
@@ -511,11 +526,14 @@ public class RDFToManifest {
 			PathMetadata meta = manifest.getAggregation(relativizeFromBase(
 					uriStr, root));
 
-			// hasProxy
 			Set<Individual> proxies = listObjectProperties(aggrResource,
 					hasProxy);
+			if (proxies.isEmpty()) {
+				// FIXME: Jena does not follow OWL properties paths from hasProxy
+				proxies = listObjectProperties(aggrResource, bundledAs);
+			}
 			if (!proxies.isEmpty()) {
-				// We can only deal with the first one
+				// Should really only be one anyway
 				Individual proxy = proxies.iterator().next();
 
 				String proxyUri = null;
@@ -525,9 +543,28 @@ public class RDFToManifest {
 					proxyUri = proxy.getSameAs().getURI();
 				}
 
+				Proxy proxyInManifest = meta.getOrCreateBundledAs();
 				if (proxyUri != null) {
-					setPathProxy(meta, relativizeFromBase(proxyUri, root));
+					proxyInManifest.setURI(relativizeFromBase(proxyUri, root));
 				}
+
+				RDFNode eName = proxy.getPropertyValue(entryName);
+				if (eName != null && eName.isLiteral()) {
+					proxyInManifest.setFilename(eName.asLiteral().getString());;
+				}
+				RDFNode folder = proxy.getPropertyValue(inFolder);
+				if (folder != null && folder.isURIResource()) {
+					URI folderUri = URI.create(folder.asResource().getURI());
+					if (! folderUri.resolve("/").equals(manifest.getBaseURI())) {
+						logger.warning("Invalid bundledAs folder, outside base URI of RO: " + folderUri);
+						continue;
+					}
+					Path folderPath = Paths.get(folderUri);
+					// Note: folder need NOT exist in zip file, so we don't need to do
+					// Files.createDirectories(folderPath);
+					proxyInManifest.setFolder(folderPath);
+				}
+
 			}
 
 			// createdBy
