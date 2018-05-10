@@ -1,5 +1,14 @@
 package org.apache.taverna.robundle.manifest.combine;
 
+import static java.nio.file.Files.createDirectories;
+import static java.nio.file.Files.exists;
+import static java.nio.file.Files.isRegularFile;
+import static java.nio.file.Files.newInputStream;
+import static java.nio.file.Files.newOutputStream;
+import static java.nio.file.Files.setLastModifiedTime;
+import static java.util.logging.Level.FINE;
+import static java.util.logging.Level.WARNING;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -8,9 +17,9 @@ package org.apache.taverna.robundle.manifest.combine;
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -21,16 +30,6 @@ package org.apache.taverna.robundle.manifest.combine;
 
 
 import static org.apache.jena.rdf.model.ModelFactory.createDefaultModel;
-import static java.nio.file.Files.createDirectories;
-import static java.nio.file.Files.exists;
-import static java.nio.file.Files.isRegularFile;
-import static java.nio.file.Files.newInputStream;
-import static java.nio.file.Files.newOutputStream;
-import static java.nio.file.Files.setLastModifiedTime;
-import static java.util.logging.Level.FINE;
-import static java.util.logging.Level.WARNING;
-import static org.apache.jena.riot.RDFDataMgr.read;
-import static org.apache.jena.riot.RDFLanguages.RDFXML;
 import static org.apache.taverna.robundle.utils.RDFUtils.literalAsFileTime;
 
 import java.io.IOException;
@@ -54,17 +53,6 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.Source;
 import javax.xml.transform.sax.SAXSource;
 
-import org.apache.jena.riot.RiotException;
-import org.apache.taverna.robundle.Bundle;
-import org.apache.taverna.robundle.manifest.Agent;
-import org.apache.taverna.robundle.manifest.PathAnnotation;
-import org.apache.taverna.robundle.manifest.PathMetadata;
-
-import org.apache.taverna.robundle.xml.combine.Content;
-import org.apache.taverna.robundle.xml.combine.ObjectFactory;
-import org.apache.taverna.robundle.xml.combine.OmexManifest;
-import org.xml.sax.InputSource;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
@@ -76,11 +64,23 @@ import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.RDFNode;
 import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFParser;
+import org.apache.jena.riot.RiotException;
+import org.apache.taverna.robundle.Bundle;
+import org.apache.taverna.robundle.manifest.Agent;
+import org.apache.taverna.robundle.manifest.PathAnnotation;
+import org.apache.taverna.robundle.manifest.PathMetadata;
+import org.apache.taverna.robundle.xml.combine.Content;
+import org.apache.taverna.robundle.xml.combine.ObjectFactory;
+import org.apache.taverna.robundle.xml.combine.OmexManifest;
+import org.xml.sax.InputSource;
+
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 
 /**
  * Parse and generate COMBINE Archive OMEX manifest
- * 
+ *
  * @author Stian Soiland-Reyes
  */
 public class CombineManifest {
@@ -238,19 +238,26 @@ public class CombineManifest {
 	private static Model parseRDF(Path metadata) throws IOException {
 		Model model = createDefaultModel();
 		try (InputStream in = newInputStream(metadata)) {
-			// TAVERNA-1027: Workaround for JENA-1462 - 
-			// RO Bundle URIs like 
-			// app://fad6e1b4-c0d1-45be-a978-7a570b62aa8d/manifest.xml
-			// can't be used as base URI when parsing RDF/XML
-			read(model, in, fakeFileURI(metadata), RDFXML);
+			RDFParser.create()
+					.base(fakeFileURI(metadata))
+					.lang(Lang.RDFXML)
+					.source(in)
+					.parse(model.getGraph());
 		}
 		return model;
 	}
 
+	/**
+	 * Convert Path's URI to a fake file:/// URI
+	 * <p>
+	 * TAVERNA-1027: Workaround for JENA-1462 - RO Bundle URIs like
+	 * app://fad6e1b4-c0d1-45be-a978-7a570b62aa8d/manifest.xml can't be used as base
+	 * URI when parsing RDF/XML in Jena 3.6.0 or earlier
+	 */
 	private static String fakeFileURI(Path path) {
 		return fakeFileURI(path.toAbsolutePath().toUri());
 	}
-	
+
 	private static String fakeFileURI(URI uri) {
 		// Assume path starts with "/"
 		return "file://" + uri.getPath();
@@ -404,14 +411,14 @@ public class CombineManifest {
 
 			// add the COMBINE "creators" as RO "authors"
 			List<Agent> authors = pathMetadata.getAuthoredBy ();
-			
+
 			for (RDFNode s : creatingAgentsFor(resource)) {
 				if (authors == null)
 				{
 					authors = new ArrayList<Agent> ();
 					pathMetadata.setAuthoredBy (authors);
 				}
-				
+
 				if (s.isLiteral()) {
 					authors.add (new Agent(s.asLiteral()
 							.getLexicalForm()));
@@ -436,7 +443,7 @@ public class CombineManifest {
 			// if there is a single COMBINE "creator" it is also the RO "creator"
 			if (authors != null && authors.size () == 1)
 				pathMetadata.setCreatedBy (authors.get (0));
-			
+
 			if (pathMetadata.getFile().equals(bundle.getRoot())
 					|| pathMetadata.getFile().equals(metadataRdf)) {
 				// Statements where about the RO itself
@@ -505,6 +512,7 @@ public class CombineManifest {
 		}
 		if (!manifest.getManifest().contains(manifestXml))
 			manifest.getManifest().add(manifestXml);
+
 		for (Content c : omexManifest.getContent()) {
 			PathMetadata metadata;
 			if (c.getLocation().contains(":")) {
