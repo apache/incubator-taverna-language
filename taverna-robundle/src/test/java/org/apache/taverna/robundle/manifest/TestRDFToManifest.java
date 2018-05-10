@@ -77,11 +77,14 @@ public class TestRDFToManifest {
 					author.getName());
 			assertEquals(URI.create("mbox:stain@apache.org"), 
 					author.getUri());
-			// FIXME: Why is ORCID not picked up?
-//			assertEquals(URI.create("https://orcid.org/0000-0001-9842-9718"),
-//					author.getOrcid());
+			assertEquals(URI.create("https://orcid.org/0000-0001-9842-9718"),
+					author.getOrcid());
 
-			// FIXME: Why are annotations not picked up?
+			
+			// FIXME: The BDBag got this wrong and used "uri" instead of "content", and so
+			// data/README accidentally became the ID of the annotation.
+			// That means that we can't find any annotations as we only pick up
+			// on those that have a "content"
 //			assertEquals(1, manifest.getAnnotations().size());
 //			PathAnnotation ann = manifest.getAnnotations().get(0);
 //			assertEquals(ro.getRoot().toUri(),
