@@ -65,6 +65,7 @@ import org.apache.taverna.robundle.xml.combine.ObjectFactory;
 import org.apache.taverna.robundle.xml.combine.OmexManifest;
 import org.xml.sax.InputSource;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
 import org.apache.jena.query.QueryFactory;
@@ -352,20 +353,26 @@ public class CombineManifest {
 			return;
 		}
 
-		for (URI about : bundleSubjects()) {
-			Resource resource = metadata.getResource(fakeFileURI(about));
+		Set<Pair<URI,URI>> foundAnnotations = new HashSet<>();
+		for (URI subject : bundleSubjects()) {
+			Resource resource = metadata.getResource(fakeFileURI(subject));
 			if (!metadata.containsResource(resource)) {
 				System.out.println("Nothing known about " + resource);
 				continue;
 			}
 
-			PathAnnotation ann = new PathAnnotation();
-			ann.setAbout(manifest.relativeToBundleRoot(about));
-			ann.setContent(manifest.relativeToBundleRoot(metadataRdf.toUri()));
-			manifest.getAnnotations().add(ann);
+			URI about = manifest.relativeToBundleRoot(subject);
+			URI content = manifest.relativeToBundleRoot(metadataRdf.toUri());
+			if (! foundAnnotations.add(Pair.of(about, content))) {
+				// Avoid duplication
+				PathAnnotation ann = new PathAnnotation();
+				ann.setAbout(subject);
+				ann.setContent(content);
+				manifest.getAnnotations().add(ann);
+			}
 
 			// Extract information that could be in our manifest
-			PathMetadata pathMetadata = manifest.getAggregation(about);
+			PathMetadata pathMetadata = manifest.getAggregation(subject);
 
 			// Created date. We'll prefer dcModified.
 			Property dcCreated = metadata
@@ -383,8 +390,9 @@ public class CombineManifest {
 							.getProperty("http://purl.org/dc/terms/W3CDTF");
 					Statement w3cSt = createdSt.getResource().getProperty(
 							dcW3CDTF);
-					if (w3cSt != null)
+					if (w3cSt != null) {
 						fileTime = literalAsFileTime(w3cSt.getObject());
+					}
 				}
 				if (fileTime != null) {
 					pathMetadata.setCreatedOn(fileTime);
