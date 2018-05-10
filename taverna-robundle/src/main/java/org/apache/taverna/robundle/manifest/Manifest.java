@@ -67,7 +67,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@JsonPropertyOrder(value = { "@context", "id", "manifest", "createdOn",
+@JsonPropertyOrder(value = { "@context", "id", "manifest", "conformsTo","createdOn",
 		"createdBy", "createdOn", "authoredOn", "authoredBy",
 		"retrievedFrom", "retrievedOn", "retrievedBy",
 		"history", "aggregates", "annotations", "@graph" })
@@ -114,6 +114,7 @@ public class Manifest {
 	private List<Path> history = new ArrayList<>();
 	private URI id = URI.create("/");
 	private List<Path> manifest = new ArrayList<>();
+	private List<URI> conformsTo = new ArrayList<>();
 
 	public Manifest(Bundle bundle) {
 		this.bundle = bundle;
@@ -166,6 +167,11 @@ public class Manifest {
 	public Bundle getBundle() {
 		return bundle;
 	}
+
+	public List<URI> getConformsTo() {
+		return conformsTo;
+	}
+
 
 	@JsonProperty(value = "@context")
 	public List<Object> getContext() {
@@ -377,6 +383,10 @@ public class Manifest {
 
 	public void setBundle(Bundle bundle) {
 		this.bundle = bundle;
+	}
+
+	public void setConformsTo(List<URI> conformsTo) {
+		this.conformsTo = conformsTo;
 	}
 
 	public void setCreatedBy(Agent createdBy) {
