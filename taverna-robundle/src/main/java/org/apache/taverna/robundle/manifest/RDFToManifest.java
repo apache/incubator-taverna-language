@@ -8,9 +8,9 @@ package org.apache.taverna.robundle.manifest;
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -103,16 +103,16 @@ public class RDFToManifest {
 	protected static Model jsonLdAsJenaModel(InputStream jsonIn, URI base)
 			throws IOException, RiotException {
 		Model model = ModelFactory.createDefaultModel();
-		
+
 		ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
-		try { 
+		try {
 			// TAVERNA-971: set context classloader so jarcache.json is consulted
 			// even through OSGi
 			Thread.currentThread().setContextClassLoader(RDFToManifest.class.getClassLoader());
-			
+
 			// Now we can parse the JSON-LD without network access
 			RDFDataMgr.read(model, jsonIn, base.toASCIIString(), Lang.JSONLD);
-		} finally { 
+		} finally {
 			// Restore old context class loader (if any)
 			Thread.currentThread().setContextClassLoader(oldCl);
 		}
@@ -416,7 +416,7 @@ public class RDFToManifest {
 		// createdOn
 		RDFNode created = ro.getPropertyValue(createdOn);
 		manifest.setCreatedOn(literalAsFileTime(created));
-		
+
 		// history
 		List<Path> history = new ArrayList<Path> ();
 		for (Individual histItem : listObjectProperties (ro, hasProvenance)) {
@@ -457,6 +457,24 @@ public class RDFToManifest {
 		// retrievedOn
 		RDFNode retrieved = ro.getPropertyValue(retrievedOn);
 		manifest.setRetrievedOn(literalAsFileTime(retrieved));
+
+		// conformsTo
+		for (Individual standard : listObjectProperties(ro,
+				conformsTo)) {
+			if (standard.isURIResource()) {
+				URI uri;
+				try {
+					uri = new URI(standard.getURI());
+				} catch (URISyntaxException ex) {
+					logger.log(Level.WARNING, "Invalid URI for conformsTo: " +
+					           standard, ex);
+					continue;
+				}
+				if (! manifest.getConformsTo().contains(uri)) {
+					manifest.getConformsTo().add(uri);
+				}
+			}
+		}
 
 		// Aggregates
 		for (Individual aggrResource : listObjectProperties(ro, aggregates)) {
