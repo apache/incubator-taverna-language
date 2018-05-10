@@ -88,7 +88,7 @@
         "@id": "foaf:name"
     },
     "orcid": {
-        "@id": "roterms:orcid",
+        "@id": "prov:alternateOf",
         "@type": "@id"
     },
 

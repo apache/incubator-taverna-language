@@ -163,6 +163,10 @@ public class RDFToManifest {
 
 	private OntClass standard;
 
+	private OntModel roterms;
+
+	private ObjectProperty alternateOf;
+
 	public RDFToManifest() {
 		loadOntologies();
 	}
@@ -193,8 +197,26 @@ public class RDFToManifest {
 		List<Agent> creators = new ArrayList<>();
 		for (Individual agent : listObjectProperties(in, property)) {
 			Agent a = new Agent();
-			if (agent.getURI() != null)
-				a.setUri(relativizeFromBase(agent.getURI(), base));
+
+			// Check for any ORCIDs, note that "orcid" is mapped as
+			// prov:alternateOf in our modified bundle.jsonld
+			for (Individual alternate : listObjectProperties(agent, alternateOf)) {
+				if (alternate.isURIResource() && (
+						alternate.getURI().startsWith("https://orcid.org/") ||
+						alternate.getURI().startsWith("http://orcid.org/"))) {
+					// TODO: Check against https://support.orcid.org/knowledgebase/articles/116780-structure-of-the-orcid-identifier
+					a.setOrcid(URI.create(alternate.getURI()));
+					break;
+				}
+			}
+			if (agent.isURIResource()) {
+				URI agentURI = relativizeFromBase(agent.getURI(), base);
+				if ("orcid.org".equals(agentURI.getHost()) && a.getOrcid() == null) {
+					a.setOrcid(agentURI);
+				} else {
+					a.setUri(agentURI);
+				}
+			}
 
 			RDFNode name = agent.getPropertyValue(foafName);
 			if (name != null && name.isLiteral())
@@ -366,8 +388,8 @@ public class RDFToManifest {
 		if (prov != null)
 			return;
 		OntModel ontModel = loadOntologyFromClasspath(PROV_O_RDF, PROV_O);
-
-		checkNotNull(ontModel);
+		alternateOf = ontModel.getObjectProperty(PROV + "alternateOf");
+		checkNotNull(ontModel, alternateOf);
 
 		prov = ontModel;
 	}
@@ -571,7 +593,7 @@ public class RDFToManifest {
 			 */
 			for (Individual body : listObjectProperties(
 					model.getOntResource(ann), hasBody)) {
-				if (body.getURI() == null) {
+				if (! body.isURIResource()) {
 					logger.warning("Can't find annotation body for anonymous "
 							+ body);
 					continue;
