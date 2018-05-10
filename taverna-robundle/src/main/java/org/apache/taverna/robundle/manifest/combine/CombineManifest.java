@@ -67,6 +67,7 @@ import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFParser;
 import org.apache.jena.riot.RiotException;
+import org.apache.jena.riot.system.ErrorHandlerFactory;
 import org.apache.taverna.robundle.Bundle;
 import org.apache.taverna.robundle.manifest.Agent;
 import org.apache.taverna.robundle.manifest.PathAnnotation;
@@ -242,8 +243,12 @@ public class CombineManifest {
 					.base(fakeFileURI(metadata))
 					.lang(Lang.RDFXML)
 					.source(in)
+					// TAVERNA-1044 avoid bailing out on broken XML
+					.errorHandler(ErrorHandlerFactory.errorHandlerWarn)
 					.parse(model.getGraph());
 		}
+		//System.out.println("Parsed:");
+		//model.write(System.out, "turtle");
 		return model;
 	}
 
@@ -351,7 +356,6 @@ public class CombineManifest {
 		Model metadata;
 		try {
 			metadata = parseRDF(metadataRdf);
-			metadata.write(System.out, "turtle");
 		} catch (IOException e) {
 			logger.log(WARNING, "Can't read " + metadataRdf, e);
 			return;
@@ -364,7 +368,9 @@ public class CombineManifest {
 		for (URI subject : bundleSubjects()) {
 			Resource resource = metadata.getResource(fakeFileURI(subject));
 			if (!metadata.containsResource(resource)) {
-				System.out.println("Nothing known about " + resource);
+				// No metadata about that resource, probably OK, but
+				// could be an absolute/relative path issue
+				logger.info("No metadata.rdf triples found about " + resource);
 				continue;
 			}
 
@@ -391,16 +397,6 @@ public class CombineManifest {
 				createdSt = resource.getProperty(dcCreated);
 			if (createdSt != null) {
 				FileTime fileTime = literalAsFileTime(createdSt.getObject());
-				if (fileTime == null && createdSt.getResource().isResource()) {
-					// perhaps one of those strange mixups of XML and RDF...
-					Property dcW3CDTF = metadata
-							.getProperty("http://purl.org/dc/terms/W3CDTF");
-					Statement w3cSt = createdSt.getResource().getProperty(
-							dcW3CDTF);
-					if (w3cSt != null) {
-						fileTime = literalAsFileTime(w3cSt.getObject());
-					}
-				}
 				if (fileTime != null) {
 					pathMetadata.setCreatedOn(fileTime);
 					if (pathMetadata.getFile() != null)
