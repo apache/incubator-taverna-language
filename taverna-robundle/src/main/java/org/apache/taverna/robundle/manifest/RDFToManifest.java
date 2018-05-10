@@ -96,7 +96,7 @@ public class RDFToManifest {
 	@SuppressWarnings("unused")
 	private static final String RO = "http://purl.org/wf4ever/ro#";
 
-	public static <T> ClosableIterable<T> iterate(ExtendedIterator<T> iterator) {
+	private static <T> ClosableIterable<T> iterate(ExtendedIterator<T> iterator) {
 		return new ClosableIterable<T>(iterator);
 	}
 
