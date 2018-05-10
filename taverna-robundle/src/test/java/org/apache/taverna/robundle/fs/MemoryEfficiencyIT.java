@@ -74,7 +74,7 @@ public class MemoryEfficiencyIT extends Helper {
 		try {
 			int numFiles = MANY_FILS;
 			System.out.println("Writing " + numFiles
-					+ " files in parallell over max " + MAX_WORKERS
+					+ " files in parallel over max " + MAX_WORKERS
 					+ " threads");
 			for (int i = 0; i < numFiles; i++) {
 				int folderNo = i % 100;
