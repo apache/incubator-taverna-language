@@ -8,9 +8,9 @@ package org.apache.taverna.robundle.manifest;
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -87,15 +88,26 @@ public class PathAnnotation {
 	}
 
 	private URI relativizePath(Path path) {
-		return URI.create("/.ro/").relativize(
+		return relativizeUri(
 				URI.create(path.toUri().getRawPath()));
+	}
+
+	private URI relativizeUri(URI relativeOrAbsolute) {
+		// NOTE: We can't fix absolute URIs within the RO bundle here, as
+		// we don't know the root. We can however get rid of "/.ro/"
+		// if it is present.
+		return URI.create("/.ro/").relativize(relativeOrAbsolute);
 	}
 
 	public void setAbout(List<URI> about) {
 		if (about == null) {
 			throw new NullPointerException("about list can't be null");
 		}
-		this.about = about;
+		// Relativize if needed.
+		// Note: This will also ensure we make a copy of the list.
+		this.about = about.stream()
+				.map(this::relativizeUri)
+				.collect(Collectors.toList());
 	}
 
 	public void setAbout(Path path) {
@@ -105,7 +117,7 @@ public class PathAnnotation {
 	public void setAbout(URI about) {
 		this.about.clear();
 		if (about != null) {
-			this.about.add(about);
+			this.about.add(relativizeUri(about));
 		}
 	}
 
@@ -119,15 +131,16 @@ public class PathAnnotation {
 	}
 
 	public void setContent(URI content) {
-		this.content = content;
+		this.content = relativizeUri(content);
 	}
 
 	public void setUri(URI uri) {
-		this.uri = uri;
+		// Normally absolute urn:uuid: URIs, but just in case..
+		this.uri = relativizeUri(uri);
 	}
 
 	@Override
 	public String toString() {
-		return "Annotation: " + getContent() + " about " + getAbout();
+		return "Annotation: " + getContent() + " about " + getAboutList();
 	}
 }
