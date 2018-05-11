@@ -80,7 +80,7 @@ public class ODFJaxb {
 	protected static synchronized JAXBContext getJaxbContext() throws JAXBException {
 		if (jaxbContext == null) {
 			jaxbContext = JAXBContext.newInstance(ObjectFactory.class,
-					org.apache.taverna.robundle.xml.odf.container.ObjectFactory.class,
+					org.apache.taverna.robundle.xml.odf.container.ObjectFactory.class,					
 					org.apache.taverna.robundle.xml.dsig.ObjectFactory.class,
 					org.apache.taverna.robundle.xml.xenc.ObjectFactory.class					
 			);

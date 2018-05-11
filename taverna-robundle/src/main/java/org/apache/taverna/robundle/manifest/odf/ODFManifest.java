@@ -37,6 +37,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.util.logging.Logger;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 
 import org.apache.taverna.robundle.Bundle;
@@ -201,7 +202,8 @@ public class ODFManifest extends ODFJaxb {
 		Path manifestXml = manifestXmlPath(bundle);
 		Manifest odfManifest;
 		try (InputStream inStream = newInputStream(manifestXml)) {
-			odfManifest = (Manifest) createUnMarshaller().unmarshal(inStream);
+			JAXBElement<Manifest> element = (JAXBElement<Manifest>) createUnMarshaller().unmarshal(inStream);
+			odfManifest = element.getValue();
 		} catch (JAXBException e) {
 			// logger.warning("Could not parse " + manifestXml);
 			throw new IOException("Could not parse " + manifestXml, e);
