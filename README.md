@@ -16,13 +16,16 @@
 -->
 # Apache Taverna Language
 
-Apache Taverna Language is a set of APIs for workflow definitions (SCUFL2)
-and workflow inputs/outputs/run (DataBundle), as consumed and produced
-by the [Apache Taverna](http://taverna.incubator.apache.org/) (incubating)
-workflow system.
+Apache Taverna Language is a set of APIs for workflow definitions (SCUFL2),
+Research Object Bundles and workflow inputs/outputs/run (DataBundle), 
+as consumed and produced by the 
+[Apache Taverna](http://taverna.incubator.apache.org/) (incubating) workflow system.
 
 The API includes support for the legacy formats from Taverna 2 and Taverna
-1, and therefore can be also used independently of Apache Taverna 3.
+1, and can be also used independently of Apache Taverna 3.
+
+The command line tool `tavlang` can be used for conversion and
+inspection of research objects and workflow bundles.
 
 ## License
 
@@ -113,8 +116,8 @@ For more details, see the READMEs of:
 
 ## Prerequisites
 
-* Java 1.8 or newer (tested with OpenJDK 1.8)
-* [Apache Maven](https://maven.apache.org/download.html) 3.2.5 or newer (older
+* Java JDK 8 or 9
+* [Apache Maven](https://maven.apache.org/download.html) 3.5.3 or newer (older
   versions probably also work)
 
 
@@ -125,7 +128,7 @@ To build Apache Taverna Language, use:
     mvn clean install
 
 This will build each module and run their tests, producing JARs like
-`taverna-scufl2-api/target/taverna-scufl2-api-0.15.1-incubating.jar`.
+`taverna-scufl2-api/target/taverna-scufl2-api-0.16.0-incubating.jar`.
 Some of the experimental modules are not built automatically, to build
 them separately, run the same command from within their folder.
 
@@ -136,8 +139,7 @@ If you are building on Windows, ensure you unpack this source code
 to a folder with a [short path name](http://stackoverflow.com/questions/1880321/why-does-the-260-character-path-length-limit-exist-in-windows) 
 lenght, e.g. `C:\src` - as 
 Windows has a [limitation on the total path length](https://msdn.microsoft.com/en-us/library/aa365247%28VS.85%29.aspx#maxpath) 
-which might otherwise
-prevent this code from building successfully.
+which might otherwise prevent this code from building successfully.
 
 ## Skipping tests
 
@@ -175,27 +177,27 @@ Typical users of this API will depend on these modules:
 		<dependency>
 			<groupId>org.apache.taverna.language</groupId>
 			<artifactId>taverna-robundle</artifactId>
-			<version>0.15.1-incubating</version>
+			<version>0.16.0-incubating</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.taverna.language</groupId>
 			<artifactId>taverna-databundle</artifactId>
-			<version>0.15.1-incubating</version>
+			<version>0.16.0-incubating</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.taverna.language</groupId>
 			<artifactId>taverna-scufl2-api</artifactId>
-			<version>0.15.1-incubating</version>
+			<version>0.16.0-incubating</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.taverna.language</groupId>
 			<artifactId>taverna-scufl2-wfbundle</artifactId>
-			<version>0.15.1-incubating</version>
+			<version>0.16.0-incubating</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.taverna.language</groupId>
 			<artifactId>taverna-scufl2-t2flow</artifactId>
-			<version>0.15.1-incubating</version>
+			<version>0.16.0-incubating</version>
 		</dependency>
 
 To find the latest `<version>` to use above (this README might
@@ -209,12 +211,12 @@ providing [OSGi services](taverna-scufl2-api#osgi-services).
 You can alternatively copy and add these JARs from the build to add
 to your classpath:
 
-* `taverna-robundle/target/taverna-scufl2-robundle-0.15.1-incubating.jar`
-* `taverna-databundle/target/taverna-scufl2-databundle-0.15.1-incubating.jar`
-* `taverna-scufl2-api/target/taverna-scufl2-api-0.15.1-incubating.jar`
-* `taverna-scufl2-wfbundle/target/taverna-scufl2-wfbundle-0.15.1-incubating.jar`
-* `taverna-scufl2-ucfpackage/target/taverna-scufl2-ucfpackage-0.15.1-incubating.jar`
-* `taverna-scufl2-t2flow/target/taverna-scufl2-t2flow-0.15.1-incubating.jar`
+* `taverna-robundle/target/taverna-scufl2-robundle-0.16.0-incubating.jar`
+* `taverna-databundle/target/taverna-scufl2-databundle-0.16.0-incubating.jar`
+* `taverna-scufl2-api/target/taverna-scufl2-api-0.16.0-incubating.jar`
+* `taverna-scufl2-wfbundle/target/taverna-scufl2-wfbundle-0.16.0-incubating.jar`
+* `taverna-scufl2-ucfpackage/target/taverna-scufl2-ucfpackage-0.16.0-incubating.jar`
+* `taverna-scufl2-t2flow/target/taverna-scufl2-t2flow-0.16.0-incubating.jar`
 
 ## Javadoc
 
@@ -222,9 +224,9 @@ See the [Taverna Language
 Javadoc](http://taverna.incubator.apache.org/javadoc/taverna-language/) for
 documentation of classes and methods of Taverna Language.  Good starting
 points:
- * [org.apache.taverna.scufl2.api](http://taverna.incubator.apache.org/javadoc/taverna-language/org/apache/taverna/scufl2/api/package-summary.html)
- * [org.apache.taverna.robundle](http://taverna.incubator.apache.org/javadoc/taverna-language/org/apache/taverna/robundle/package-summary.html)
- * [org.apache.taverna.databundle](http://taverna.incubator.apache.org/javadoc/taverna-language/org/apache/taverna/databundle/package-summary.html)
+ * [org.apache.taverna.scufl2.api](https://taverna.incubator.apache.org/javadoc/taverna-language/org/apache/taverna/scufl2/api/package-summary.html)
+ * [org.apache.taverna.robundle](https://taverna.incubator.apache.org/javadoc/taverna-language/org/apache/taverna/robundle/package-summary.html)
+ * [org.apache.taverna.databundle](https://taverna.incubator.apache.org/javadoc/taverna-language/org/apache/taverna/databundle/package-summary.html)
 
 
 # Export restrictions
