@@ -27,7 +27,7 @@
   <name>Apache Taverna Scufl 2 SCUFL parser</name>
   <description>Parse Taverna 1.x workflows (Status: Experimental)</description>
   <build>
-		<plugins>
+    <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -61,32 +61,32 @@
         </plugin>
 
       </plugins>
-  </build> 	
+  </build>   
 
   <dependencies>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>taverna-scufl2-api</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>taverna-scufl2-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
                         <version>${commons.io.version}</version>
-			<type>jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
+      <type>jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
                         <groupId>org.jdom</groupId>
                         <artifactId>com.springsource.org.jdom</artifactId>
                         <version>${jdom.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>jaxen</groupId>
-			<artifactId>jaxen</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>jaxen</groupId>
+      <artifactId>jaxen</artifactId>
                         <version>${jaxen.version}</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 </project>

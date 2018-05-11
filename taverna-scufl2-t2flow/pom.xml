@@ -16,18 +16,18 @@
    limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.apache.taverna.language</groupId>
-		<artifactId>apache-taverna-language</artifactId>
-		<version>0.16.0-incubating-SNAPSHOT</version>
-	</parent>
-	<artifactId>taverna-scufl2-t2flow</artifactId>
-	<packaging>bundle</packaging>
-	<name>Apache Taverna Scufl 2 t2flow parser</name>
-	<description>Parser for .t2flow file format (Taverna 2.x)</description>
-	<build>
-		<plugins>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.apache.taverna.language</groupId>
+    <artifactId>apache-taverna-language</artifactId>
+    <version>0.16.0-incubating-SNAPSHOT</version>
+  </parent>
+  <artifactId>taverna-scufl2-t2flow</artifactId>
+  <packaging>bundle</packaging>
+  <name>Apache Taverna Scufl 2 t2flow parser</name>
+  <description>Parser for .t2flow file format (Taverna 2.x)</description>
+  <build>
+    <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -40,116 +40,116 @@
                  -->
             </plugin>
 
-			<plugin>
-				<groupId>org.apache.cxf</groupId>
-				<artifactId>cxf-xjc-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>xsdtojava</goal>
-						</goals>
-					</execution>
-				</executions>          
-				<configuration> 
-					<xsdOptions>
-						<xsdOption>
-							<xsdDir>${project.basedir}/src/main/resources/org/apache/taverna/scufl2/translator/t2flow/xsd/</xsdDir>
-							<packagename>org.apache.taverna.scufl2.xml.t2flow.jaxb</packagename>
-						</xsdOption>
-					</xsdOptions>
-				</configuration>
-			</plugin>	
+      <plugin>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-xjc-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>xsdtojava</goal>
+            </goals>
+          </execution>
+        </executions>          
+        <configuration> 
+          <xsdOptions>
+            <xsdOption>
+              <xsdDir>${project.basedir}/src/main/resources/org/apache/taverna/scufl2/translator/t2flow/xsd/</xsdDir>
+              <packagename>org.apache.taverna.scufl2.xml.t2flow.jaxb</packagename>
+            </xsdOption>
+          </xsdOptions>
+        </configuration>
+      </plugin>  
 
-			<plugin>
-				<!-- So that Eclipse m2e (with the buildhelper m2e connector) can find
-					the generated sources -->
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>1.8</version>
-				<executions>
-					<execution>
-						<id>add-source</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>${project.build.directory}/generated-sources/jaxb/</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+      <plugin>
+        <!-- So that Eclipse m2e (with the buildhelper m2e connector) can find
+          the generated sources -->
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>1.8</version>
+        <executions>
+          <execution>
+            <id>add-source</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-sources/jaxb/</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
 
-		<pluginManagement>
-			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings
-					only. It has no influence on the Maven build itself. -->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
-											org.codehaus.mojo
-										</groupId>
-										<artifactId>
-											build-helper-maven-plugin
-										</artifactId>
-										<versionRange>
-											[1.8,)
-										</versionRange>
-										<goals>
-											<goal>add-source</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<execute />
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
-	<dependencies>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>taverna-scufl2-api</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>taverna-scufl2-wfbundle</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-		</dependency>
+    <pluginManagement>
+      <plugins>
+        <!--This plugin's configuration is used to store Eclipse m2e settings
+          only. It has no influence on the Maven build itself. -->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>
+                      org.codehaus.mojo
+                    </groupId>
+                    <artifactId>
+                      build-helper-maven-plugin
+                    </artifactId>
+                    <versionRange>
+                      [1.8,)
+                    </versionRange>
+                    <goals>
+                      <goal>add-source</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <execute />
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>taverna-scufl2-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>taverna-scufl2-wfbundle</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
       <version>${commons.io.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jdom</groupId>
-			<artifactId>com.springsource.org.jdom</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jdom</groupId>
+      <artifactId>com.springsource.org.jdom</artifactId>
       <version>${jdom.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>jaxen</groupId>
-			<artifactId>jaxen</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>jaxen</groupId>
+      <artifactId>jaxen</artifactId>
       <version>${jaxen.version}</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 </project>

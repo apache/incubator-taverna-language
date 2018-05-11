@@ -16,47 +16,47 @@
    limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.apache.taverna</groupId>
-		<artifactId>apache-taverna-parent</artifactId>
-		<version>3-incubating</version>
-	</parent>
-	<groupId>org.apache.taverna.language</groupId>
-	<artifactId>apache-taverna-language</artifactId>
-	<version>0.16.0-incubating-SNAPSHOT</version>
-	<packaging>pom</packaging>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.apache.taverna</groupId>
+    <artifactId>apache-taverna-parent</artifactId>
+    <version>3-incubating</version>
+  </parent>
+  <groupId>org.apache.taverna.language</groupId>
+  <artifactId>apache-taverna-language</artifactId>
+  <version>0.16.0-incubating-SNAPSHOT</version>
+  <packaging>pom</packaging>
 
-	<name>Apache Taverna Language APIs (Scufl2, Databundle)</name>
-	<description>Taverna Language API for workflow definitions (SCUFL2)
-		and workflow inputs/outputs/run (DataBundle).
-	</description>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.rat</groupId>
-				<artifactId>apache-rat-plugin</artifactId>
-				<configuration>
-					<useDefaultExcludes>true</useDefaultExcludes>
-					<excludes combine.children="append">
-						<!-- Following excludes needed for taverna-scufl2-rdf,
-						taverna-scufl2-integration-tests and taverna-scufl2-validation-integration
-						subfolders that should be modules but are not. -->
-						<exclude>**/.classpath</exclude>
-						<exclude>**/.project</exclude>
-						<exclude>**/.settings/</exclude>
-						<exclude>**/target/</exclude>
-						<!-- No headers in JSON which haven't got comments ... -->
-						<exclude>**/*.json</exclude>
-						<!-- Really a binary format, but must look like text -->
-						<exclude>**/mimetype</exclude>
-						<!-- Effectively a binary format -->
-						<exclude>**/*.url</exclude>
-						<!-- Cannot contain comments; content must match program output. -->
-						<exclude>/src/test/resources/org/apache/taverna/scufl2/api/io/HelloWorld.txt</exclude>
-						<exclude>/src/test/resources/as.txt</exclude>
-						<!-- Expanded data bundle. Generated. -->
-						<exclude>/src/test/resources/full-example/ebi-wfrun-2013-05-31/</exclude>
+  <name>Apache Taverna Language APIs (Scufl2, Databundle)</name>
+  <description>Taverna Language API for workflow definitions (SCUFL2)
+    and workflow inputs/outputs/run (DataBundle).
+  </description>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <configuration>
+          <useDefaultExcludes>true</useDefaultExcludes>
+          <excludes combine.children="append">
+            <!-- Following excludes needed for taverna-scufl2-rdf,
+            taverna-scufl2-integration-tests and taverna-scufl2-validation-integration
+            subfolders that should be modules but are not. -->
+            <exclude>**/.classpath</exclude>
+            <exclude>**/.project</exclude>
+            <exclude>**/.settings/</exclude>
+            <exclude>**/target/</exclude>
+            <!-- No headers in JSON which haven't got comments ... -->
+            <exclude>**/*.json</exclude>
+            <!-- Really a binary format, but must look like text -->
+            <exclude>**/mimetype</exclude>
+            <!-- Effectively a binary format -->
+            <exclude>**/*.url</exclude>
+            <!-- Cannot contain comments; content must match program output. -->
+            <exclude>/src/test/resources/org/apache/taverna/scufl2/api/io/HelloWorld.txt</exclude>
+            <exclude>/src/test/resources/as.txt</exclude>
+            <!-- Expanded data bundle. Generated. -->
+            <exclude>/src/test/resources/full-example/ebi-wfrun-2013-05-31/</exclude>
 
             <!-- Test COMBINE archives. Skeleton only (files empty) -->
             <exclude>/src/test/resources/combine/aslanidi_purkinje_model_skeleton.zip</exclude>
@@ -76,18 +76,18 @@
             -->
 
             <!-- W3C license -->
-						<exclude>**/xml.xsd</exclude>
-						<exclude>**/xenc-schema.xsd</exclude>
-						<exclude>**/xmldsig-core-schema.xsd</exclude>
+            <exclude>**/xml.xsd</exclude>
+            <exclude>**/xenc-schema.xsd</exclude>
+            <exclude>**/xmldsig-core-schema.xsd</exclude>
             <exclude>**/prov-o.rdf</exclude>
             <exclude>**/prov-o.ttl</exclude>
             <exclude>**/prov-aq.rdf</exclude>
             <!-- W3C Community license -->
             <!-- FOAF, Creative Commons Attribution 1.0 -->
             <exclude>**/oa.rdf</exclude>
-						<exclude>**/foaf.rdf</exclude>
+            <exclude>**/foaf.rdf</exclude>
             <!-- Research Object Model, Creative Commons Attribution 3.0 -->
-						<exclude>**/roterms.ttl</exclude>
+            <exclude>**/roterms.ttl</exclude>
             <exclude>**/wf4ever.ttl</exclude>
             <exclude>**/wfdesc.ttl</exclude>
             <exclude>**/wfprov.ttl</exclude>
@@ -96,67 +96,67 @@
             <exclude>**/dcam.owl</exclude>
             <exclude>**/dcterms_od.owl</exclude>
 
-					</excludes>
-				</configuration>
-			</plugin>
-		
-			<!--
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>license-maven-plugin</artifactId>
-				<version>1.7</version>
-				<executions>
-					<execution>
-						<id>add-licenses</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>aggregate-add-third-party</goal>
-						</goals>
-						<configuration>
-							<excludedGroups>.*(mygrid|taverna).*</excludedGroups>
-							<useMissingFile>true</useMissingFile>
-							<missingFile>src/license/THIRD-PARTY.properties</missingFile>
-							<licenseMerges>
-								<licenseMerge>The Apache Software License, Version 2.0|Apache 2|Apache License|Apache License, Version 2.0|Apache Public License 2.0|Apache License Version 2.0|Apache Software License 2.0|Apache Software License - Version 2.0</licenseMerge>
-								<licenseMerge>The BSD License|BSD|BSD License|BSD-style license|BSD style|Aduna BSD license|Aduna BSD-style license</licenseMerge>
-								<licenseMerge>MIT License|The MIT License|MIT license</licenseMerge>
-								<licenseMerge>GNU Lesser General Public License|GNU LESSER GENERAL PUBLIC LICENSE|GNU Library or Lesser General Public License|LGPL</licenseMerge>
-								<licenseMerge>Common Development and Distribution License (CDDL) v1.0|CDDL 1.1|COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0</licenseMerge>
-								<licenseMerge>Eclipse Public License, Version 1.0|Eclipse Public License</licenseMerge>
-							</licenseMerges>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			-->
-		</plugins>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-				<!-- replaces maven-jaxb2-plugin -->
-					<groupId>org.apache.cxf</groupId>
-					<artifactId>cxf-xjc-plugin</artifactId>
-					<version>3.2.1</version>
-					<configuration>
-						<sourceRoot>${basedir}/target/generated-sources/cxf-xjc</sourceRoot>
-					</configuration>
-					 <dependencies>
-					    <dependency>
-					      <groupId>javax.activation</groupId>
-					      <artifactId>activation</artifactId>
-					      <version>${activation.version}</version>
-					    </dependency>
-					 </dependencies>
-				</plugin>	
-			</plugins>
-		</pluginManagement>
-	</build>
-	<scm>
-		<connection>scm:git:https://git-wip-us.apache.org/repos/asf/incubator-taverna-language.git</connection>
-		<developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/incubator-taverna-language.git</developerConnection>
-		<url>https://github.com/apache/incubator-taverna-language</url>
-		<tag>HEAD</tag>
-	</scm>
+          </excludes>
+        </configuration>
+      </plugin>
+    
+      <!--
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>1.7</version>
+        <executions>
+          <execution>
+            <id>add-licenses</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>aggregate-add-third-party</goal>
+            </goals>
+            <configuration>
+              <excludedGroups>.*(mygrid|taverna).*</excludedGroups>
+              <useMissingFile>true</useMissingFile>
+              <missingFile>src/license/THIRD-PARTY.properties</missingFile>
+              <licenseMerges>
+                <licenseMerge>The Apache Software License, Version 2.0|Apache 2|Apache License|Apache License, Version 2.0|Apache Public License 2.0|Apache License Version 2.0|Apache Software License 2.0|Apache Software License - Version 2.0</licenseMerge>
+                <licenseMerge>The BSD License|BSD|BSD License|BSD-style license|BSD style|Aduna BSD license|Aduna BSD-style license</licenseMerge>
+                <licenseMerge>MIT License|The MIT License|MIT license</licenseMerge>
+                <licenseMerge>GNU Lesser General Public License|GNU LESSER GENERAL PUBLIC LICENSE|GNU Library or Lesser General Public License|LGPL</licenseMerge>
+                <licenseMerge>Common Development and Distribution License (CDDL) v1.0|CDDL 1.1|COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0</licenseMerge>
+                <licenseMerge>Eclipse Public License, Version 1.0|Eclipse Public License</licenseMerge>
+              </licenseMerges>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      -->
+    </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+        <!-- replaces maven-jaxb2-plugin -->
+          <groupId>org.apache.cxf</groupId>
+          <artifactId>cxf-xjc-plugin</artifactId>
+          <version>3.2.1</version>
+          <configuration>
+            <sourceRoot>${basedir}/target/generated-sources/cxf-xjc</sourceRoot>
+          </configuration>
+           <dependencies>
+              <dependency>
+                <groupId>javax.activation</groupId>
+                <artifactId>activation</artifactId>
+                <version>${activation.version}</version>
+              </dependency>
+           </dependencies>
+        </plugin>  
+      </plugins>
+    </pluginManagement>
+  </build>
+  <scm>
+    <connection>scm:git:https://git-wip-us.apache.org/repos/asf/incubator-taverna-language.git</connection>
+    <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/incubator-taverna-language.git</developerConnection>
+    <url>https://github.com/apache/incubator-taverna-language</url>
+    <tag>HEAD</tag>
+  </scm>
 
   <repositories>
     <repository>
@@ -167,81 +167,81 @@
         <enabled>false</enabled>
       </releases>
     </repository>
-	</repositories>
+  </repositories>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.fasterxml.jackson.core</groupId>
-				<artifactId>jackson-core</artifactId>
-				<version>${jackson.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.fasterxml.jackson.core</groupId>
-				<artifactId>jackson-databind</artifactId>
-				<version>${jackson.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.fasterxml.jackson.module</groupId>
-				<artifactId>jackson-module-jsonSchema</artifactId>
-				<version>${jackson.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>${junit.version}</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>commons-io</groupId>
-				<artifactId>commons-io</artifactId>
-				<version>${commons.io.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.jdom</groupId>
-				<artifactId>com.springsource.org.jdom</artifactId>
-				<version>${jdom.version}</version>
-				<type>jar</type>
-			</dependency>
-			<dependency>
-				<groupId>javax.xml.bind</groupId>
-				<artifactId>jaxb-api</artifactId>
-				<version>${jaxb.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sun.xml.bind</groupId>
-				<artifactId>jaxb-impl</artifactId>
-				<version>${jaxb.version}</version>
-				<type>jar</type>
-			</dependency>
-			<dependency>
-				<groupId>com.sun.xml.bind</groupId>
-				<artifactId>jaxb-osgi</artifactId>
-				<version>${jaxb.version}</version>
-				<type>jar</type>
-			</dependency>
-			<dependency>
-				<groupId>jaxen</groupId>
-				<artifactId>jaxen</artifactId>
-				<version>${jaxen.version}</version>
-				<type>jar</type>
-			</dependency>
-			<dependency>
-				<groupId>commons-beanutils</groupId>
-				<artifactId>commons-beanutils</artifactId>
-				<version>${commons.beanutils.version}</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.module</groupId>
+        <artifactId>jackson-module-jsonSchema</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${commons.io.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jdom</groupId>
+        <artifactId>com.springsource.org.jdom</artifactId>
+        <version>${jdom.version}</version>
+        <type>jar</type>
+      </dependency>
+      <dependency>
+        <groupId>javax.xml.bind</groupId>
+        <artifactId>jaxb-api</artifactId>
+        <version>${jaxb.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.sun.xml.bind</groupId>
+        <artifactId>jaxb-impl</artifactId>
+        <version>${jaxb.version}</version>
+        <type>jar</type>
+      </dependency>
+      <dependency>
+        <groupId>com.sun.xml.bind</groupId>
+        <artifactId>jaxb-osgi</artifactId>
+        <version>${jaxb.version}</version>
+        <type>jar</type>
+      </dependency>
+      <dependency>
+        <groupId>jaxen</groupId>
+        <artifactId>jaxen</artifactId>
+        <version>${jaxen.version}</version>
+        <type>jar</type>
+      </dependency>
+      <dependency>
+        <groupId>commons-beanutils</groupId>
+        <artifactId>commons-beanutils</artifactId>
+        <version>${commons.beanutils.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 <dependencies>
   <!-- Common dependencies on jena-osgi, which requires some
 additional dependencies to be a happy OSGi bundle -->
 
-	<dependency>
-		<groupId>org.apache.jena</groupId>
-		<artifactId>jena-osgi</artifactId>
-		<version>${jena.version}</version>
-	</dependency>
+  <dependency>
+    <groupId>org.apache.jena</groupId>
+    <artifactId>jena-osgi</artifactId>
+    <version>${jena.version}</version>
+  </dependency>
     <dependency>
       <groupId>org.apache.servicemix.bundles</groupId>
       <artifactId>org.apache.servicemix.bundles.xerces</artifactId>
@@ -260,7 +260,7 @@ additional dependencies to be a happy OSGi bundle -->
       <version>${dexx.collection.version}</version>
     </dependency>
 
-	<!-- Needed for Java 9+ -->
+  <!-- Needed for Java 9+ -->
     <dependency>
       <groupId>javax.xml.bind</groupId>
       <artifactId>jaxb-api</artifactId>
@@ -283,7 +283,7 @@ additional dependencies to be a happy OSGi bundle -->
     <activation>
       <activeByDefault>true</activeByDefault>
     </activation>
-	<modules>
+  <modules>
     <module>taverna-baclava-language</module>
     <module>taverna-databundle</module>
     <module>taverna-robundle</module>
@@ -298,7 +298,7 @@ additional dependencies to be a happy OSGi bundle -->
     <module>taverna-scufl2-wfbundle</module>
     <module>taverna-tavlang-tool</module>
     <module>taverna-scufl2-wfdesc</module>
-	</modules>
+  </modules>
 </profile>
   <profile>
     <id>android</id>
@@ -312,7 +312,7 @@ additional dependencies to be a happy OSGi bundle -->
 <maven.compiler.source>1.7</maven.compiler.source>
 <maven.compiler.target>1.7</maven.compiler.target>
 </properties>
-	<modules>
+  <modules>
     <module>taverna-baclava-language</module>
     <module>taverna-scufl2-annotation</module>
     <module>taverna-scufl2-api</module>
@@ -324,7 +324,7 @@ additional dependencies to be a happy OSGi bundle -->
     <module>taverna-scufl2-ucfpackage</module>
     <module>taverna-scufl2-wfbundle</module>
     <module>taverna-tavlang-tool</module>
-	</modules>
+  </modules>
   </profile>
 </profiles>
 

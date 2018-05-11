@@ -16,69 +16,69 @@
    limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.apache.taverna.language</groupId>
-		<artifactId>apache-taverna-language</artifactId>
-		<version>0.16.0-incubating-SNAPSHOT</version>
-	</parent>
-	<artifactId>taverna-scufl2-wfbundle</artifactId>
-	<packaging>bundle</packaging>
-	<name>Apache Taverna Scufl 2 wfbundle read/write</name>
-	<description>Read/write support for wfbundle with RDF/XML-compatible XML files</description>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.apache.taverna.language</groupId>
+    <artifactId>apache-taverna-language</artifactId>
+    <version>0.16.0-incubating-SNAPSHOT</version>
+  </parent>
+  <artifactId>taverna-scufl2-wfbundle</artifactId>
+  <packaging>bundle</packaging>
+  <name>Apache Taverna Scufl 2 wfbundle read/write</name>
+  <description>Read/write support for wfbundle with RDF/XML-compatible XML files</description>
   <dependencies>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>taverna-scufl2-api</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>taverna-scufl2-schemas</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>taverna-scufl2-api</artifactId>
-			<version>${project.version}</version>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>taverna-scufl2-ucfpackage</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>taverna-scufl2-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>taverna-scufl2-schemas</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>taverna-scufl2-api</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>taverna-scufl2-ucfpackage</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
                         <version>${commons.io.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
                         <groupId>org.jdom</groupId>
                         <artifactId>com.springsource.org.jdom</artifactId>
                         <version>${jdom.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.openrdf.sesame</groupId>
-			<artifactId>sesame-repository-sail</artifactId>
-			<version>${sesame.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.openrdf.sesame</groupId>
-			<artifactId>sesame-sail-memory</artifactId>
-			<version>${sesame.version}</version>
-			<scope>test</scope>
-		</dependency>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openrdf.sesame</groupId>
+      <artifactId>sesame-repository-sail</artifactId>
+      <version>${sesame.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openrdf.sesame</groupId>
+      <artifactId>sesame-sail-memory</artifactId>
+      <version>${sesame.version}</version>
+      <scope>test</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>jaxen</groupId>
-			<artifactId>jaxen</artifactId>
+    <dependency>
+      <groupId>jaxen</groupId>
+      <artifactId>jaxen</artifactId>
                         <version>${jaxen.version}</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>	
+      <scope>test</scope>
+    </dependency>
+  </dependencies>  
 </project>

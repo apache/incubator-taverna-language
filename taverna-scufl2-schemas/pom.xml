@@ -16,18 +16,18 @@
    limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.apache.taverna.language</groupId>
-		<artifactId>apache-taverna-language</artifactId>
-		<version>0.16.0-incubating-SNAPSHOT</version>
-	</parent>
-	<artifactId>taverna-scufl2-schemas</artifactId>
-	<packaging>bundle</packaging>
-	<name>Apache Taverna Scufl 2 Schemas</name>
-	<description>Schemas for SCUFL2</description>
-	<build>
-		<plugins>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.apache.taverna.language</groupId>
+    <artifactId>apache-taverna-language</artifactId>
+    <version>0.16.0-incubating-SNAPSHOT</version>
+  </parent>
+  <artifactId>taverna-scufl2-schemas</artifactId>
+  <packaging>bundle</packaging>
+  <name>Apache Taverna Scufl 2 Schemas</name>
+  <description>Schemas for SCUFL2</description>
+  <build>
+    <plugins>
       <plugin>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-xjc-plugin</artifactId>
@@ -47,5 +47,5 @@
         </configuration>
       </plugin>
    </plugins>
- </build>	
+ </build>  
 </project>

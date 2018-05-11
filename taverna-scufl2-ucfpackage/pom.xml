@@ -16,52 +16,52 @@
    limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.apache.taverna.language</groupId>
-		<artifactId>apache-taverna-language</artifactId>
-		<version>0.16.0-incubating-SNAPSHOT</version>
-	</parent>
-	<artifactId>taverna-scufl2-ucfpackage</artifactId>
-	<packaging>bundle</packaging>
-	<name>Apache Taverna Scufl 2 UCF Package</name>
-	<description>Adobe UCF compatible Package API, making a structured ZIP file with manifest</description>
-	<dependencies>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.apache.taverna.language</groupId>
+    <artifactId>apache-taverna-language</artifactId>
+    <version>0.16.0-incubating-SNAPSHOT</version>
+  </parent>
+  <artifactId>taverna-scufl2-ucfpackage</artifactId>
+  <packaging>bundle</packaging>
+  <name>Apache Taverna Scufl 2 UCF Package</name>
+  <description>Adobe UCF compatible Package API, making a structured ZIP file with manifest</description>
+  <dependencies>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
       <version>${commons.io.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.jdom</groupId>
       <artifactId>com.springsource.org.jdom</artifactId>
       <version>${jdom.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>jaxen</groupId>
-			<artifactId>jaxen</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>jaxen</groupId>
+      <artifactId>jaxen</artifactId>
       <version>${jaxen.version}</version>
-			<scope>test</scope>
-		</dependency>
+      <scope>test</scope>
+    </dependency>
 
-		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>taverna-robundle</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-	</dependencies>
-	<licenses>
-		<license>
-			<name>Apache 2</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-			<comments>The package org.apache.taverna.scufl2.ucfpackage.impl.odfdom
-				contains a patched subset of ODFDOM 0.8.6 -
-				http://odftoolkit.org/projects/odfdom/pages/Home
-				Copyright 2008, 2010 Oracle and/or its affiliates.
-				All rights reserved. Copyright 2009 IBM. All rights reserved.</comments>
-		</license>
-	</licenses>
+    <dependency>
+      <groupId>${project.parent.groupId}</groupId>
+      <artifactId>taverna-robundle</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+  </dependencies>
+  <licenses>
+    <license>
+      <name>Apache 2</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <comments>The package org.apache.taverna.scufl2.ucfpackage.impl.odfdom
+        contains a patched subset of ODFDOM 0.8.6 -
+        http://odftoolkit.org/projects/odfdom/pages/Home
+        Copyright 2008, 2010 Oracle and/or its affiliates.
+        All rights reserved. Copyright 2009 IBM. All rights reserved.</comments>
+    </license>
+  </licenses>
 
 </project>
