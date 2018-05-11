@@ -28,7 +28,7 @@
 			<jaxb:package name="org.apache.taverna.robundle.xml.dsig" />
 		</jaxb:schemaBindings>
 	</jaxb:bindings>
-	<jaxb:bindings schemaLocation="OpenDocument-v1.2-os-manifest-schema.xsd">
+	<jaxb:bindings schemaLocation="manifest.xsd">
 		<jaxb:schemaBindings>
 			<jaxb:package name="org.apache.taverna.robundle.xml.odf.manifest" />
 		</jaxb:schemaBindings>

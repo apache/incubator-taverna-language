@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<xsd:schema targetNamespace="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0"
+	elementFormDefault="qualified" attributeFormDefault="qualified"
+	version="1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:manifest="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0"	
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	jaxb:version="2.0"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd">
+	<xsd:annotation>
+		<xsd:documentation>
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+
+	This schema was created manually from 
+	http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#__RefHeading__752825_826425813
+	as an Open Source alternative to the more restrictively licensed 
+	http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-manifest-schema.rng
+	 	</xsd:documentation>
+	</xsd:annotation>
+	
+	<!--See  https://www.w3.org/TR/xmlenc-core1/ -->
+
+	<xsd:element name="manifest" type="manifest:Manifest"></xsd:element>
+
+
+
+	<xsd:complexType name="Manifest">
+        <xsd:annotation>
+        	<xsd:documentation>http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#element-manifest_manifest</xsd:documentation></xsd:annotation>
+        <xsd:sequence>
+			<xsd:element name="file-entry" type="manifest:FileEntry" maxOccurs="unbounded" minOccurs="0"></xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="version" type="xsd:string" fixed="1.2" use="required">
+			<xsd:annotation>
+				<xsd:documentation>http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#attribute-manifest_version_element-manifest_manifest</xsd:documentation></xsd:annotation></xsd:attribute>
+	</xsd:complexType>
+
+	<xsd:complexType name="FileEntry">
+		<xsd:annotation>
+			<xsd:documentation>
+				http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#element-manifest_file-entry
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="encryption-data"
+				type="manifest:EncryptionData" minOccurs="0" maxOccurs="1">
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="full-path" type="xsd:string" use="required">
+			<xsd:annotation>
+				<xsd:documentation>
+					Path within the archive. "/" denotes the archive
+					itself.
+					http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#attribute-manifest_full-path
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="media-type" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation>
+					IANA media type
+
+					http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#attribute-manifest_media-type
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="preferred-view-mode" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation>
+					http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#attribute-manifest_preferred-view-mode
+					Defined values: "edit" "presentation-slide-show"
+					"read-only" ..or a namespaced token value
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="size" type="xsd:nonNegativeInteger">
+			<xsd:annotation>
+				<xsd:documentation>
+					size in bytes
+					http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#attribute-manifest_size
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="version" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation>
+					format version (depends on media-type)
+					http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#attribute-manifest_version_element-manifest_file-entry
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+
+	<xsd:complexType name="EncryptionData">
+		<xsd:annotation>
+			<xsd:documentation>
+				http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#element-manifest_encryption-data
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="algorithm" type="manifest:Algorithm">
+				<xsd:annotation>
+					<xsd:documentation>http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#element-manifest_algorithm</xsd:documentation></xsd:annotation></xsd:element>
+			<xsd:element name="key-derivation"
+				type="manifest:KeyDerivation">
+				<xsd:annotation>
+					<xsd:documentation>
+						http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#element-manifest_key-derivation
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+			<xsd:element name="start-key-generation"
+				type="manifest:StartKeyGeneration">
+				<xsd:annotation>
+					<xsd:documentation>
+						http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#element-manifest_start-key-generation
+					</xsd:documentation>
+				</xsd:annotation>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="checksum" type="xsd:base64Binary">
+			<xsd:annotation>
+				<xsd:documentation>
+					http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#attribute-manifest_checksum
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="checksum-type" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation>
+					http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#attribute-manifest_checksum-type
+					Defined values: "SHA1/1K" "SHA1"
+					"urn:oasis:names:tc:opendocument:xmlns:manifest:1.0#sha1-1k"
+					"urn:oasis:names:tc:opendocument:xmlns:manifest:1.0#sha256-1k"
+					IRI as listed in xmlenc-core section 5.7 or
+					alternative as in section 5.1
+
+					Producers should use:
+					"urn:oasis:names:tc:opendocument:xmlns:manifest:1.0#sha256-1k"
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+
+	<xsd:complexType name="Algorithm" >
+	<!--  Same as in xenc:EncryptionMethodType, except attribute xenc:Algorithm -->
+    <xsd:sequence>
+    	<xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"></xsd:any>
+    </xsd:sequence>
+    <xsd:attribute name="algorithm-name" type="xsd:string" use="required"></xsd:attribute>
+    
+	</xsd:complexType>
+
+	<xsd:complexType name="StartKeyGeneration">
+		<xsd:annotation>
+			<xsd:documentation>
+				http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#attribute-manifest_key-size
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:attribute name="key-size" type="xsd:nonNegativeInteger"
+			default="20">
+			<xsd:annotation>
+				<xsd:documentation>
+					http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#attribute-manifest_key-size
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="start-key-generation-name" type="xsd:string" default="SHA1">
+			<xsd:annotation>
+				<xsd:documentation>http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#attribute-manifest_start-key-generation-name
+Defined values:
+"SHA1"
+IRI listed in xmlenc-core section 5.7
+IRI of alternative algorithm xmlenc-core section 5.1
+Producers should use "http://www.w3.org/2000/09/xmldsig#sha256"</xsd:documentation>
+			</xsd:annotation></xsd:attribute>
+	</xsd:complexType>
+
+	<xsd:complexType name="KeyDerivation">
+		<xsd:annotation>
+			<xsd:documentation>
+				http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#element-manifest_key-derivation
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:attribute name="iteration-count"
+			type="xsd:nonNegativeInteger">
+			<xsd:annotation>
+				<xsd:documentation>
+					http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#attribute-manifest_iteration-count
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="key-derivation-name" type="xsd:string">
+			<xsd:annotation>
+				<xsd:documentation>
+					http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#attribute-manifest_key-derivation-name
+					Defined values: "PBKDF2"
+					"urn:oasis:names:tc:opendocument:xmlns:manifest:1.0#pbkdf2"
+					IRI of an implementation-defined alternative
+					algorithm
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="key-size" type="xsd:nonNegativeInteger"
+			default="16">
+			<xsd:annotation>
+				<xsd:documentation>
+					http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#attribute-manifest_key-size
+				</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+		<xsd:attribute name="salt" type="xsd:base64Binary">
+			<xsd:annotation>
+				<xsd:documentation>http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#attribute-manifest_salt</xsd:documentation></xsd:annotation></xsd:attribute>
+	</xsd:complexType>
+</xsd:schema>
