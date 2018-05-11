@@ -8,9 +8,9 @@ package org.apache.taverna.robundle.manifest;
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -27,7 +27,6 @@ import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
 import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.getLastModifiedTime;
-import static java.nio.file.Files.isDirectory;
 import static java.nio.file.Files.newBufferedWriter;
 import static java.nio.file.Files.walkFileTree;
 import static java.nio.file.StandardOpenOption.CREATE;
@@ -53,8 +52,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.apache.taverna.robundle.Bundle;
 import org.apache.taverna.robundle.manifest.combine.CombineManifest;
@@ -150,6 +151,36 @@ public class Manifest {
 		return annotations;
 	}
 
+	@JsonIgnore
+	public Optional<PathAnnotation> getAnnotation(URI annotation) {
+		return getAnnotations().stream()
+				.filter(a -> annotation.equals(a.getUri()))
+				.findAny();
+	}
+
+	@JsonIgnore
+	public List<PathAnnotation> getAnnotations(final URI about) {
+		final URI aboutAbs;
+		URI manifestBase = getBaseURI().resolve(RO + "/" + MANIFEST_JSON);
+		if (about.isAbsolute()) {
+			aboutAbs = about;
+		} else {
+			aboutAbs = manifestBase.resolve(about);
+		}
+		// Compare absolute URIs against absolute URIs
+		return getAnnotations().stream()
+					.filter(a -> a.getAboutList().stream()
+							.map(manifestBase::resolve)
+							.filter(aboutAbs::equals)
+							.findAny().isPresent())
+					.collect(Collectors.toList());
+	}
+
+	@JsonIgnore
+	public List<PathAnnotation> getAnnotations(Path about) {
+		return getAnnotations(about.toUri());
+	}
+
 	public List<Agent> getAuthoredBy() {
 		return authoredBy;
 	}
@@ -221,9 +252,9 @@ public class Manifest {
 
 	/**
 	 * Guess media type based on extension
-	 * 
+	 *
 	 * @see http://wf4ever.github.io/ro/bundle/#media-types
-	 * 
+	 *
 	 * @param file
 	 *            A Path to a file
 	 * @return media-type, e.g. <code>application/xml</code> or
@@ -433,7 +464,7 @@ public class Manifest {
 
 	/**
 	 * Write as an RO Bundle JSON-LD manifest
-	 * 
+	 *
 	 * @return The path of the written manifest (e.g. ".ro/manifest.json")
 	 * @throws IOException
 	 */
@@ -461,7 +492,7 @@ public class Manifest {
 
 	/**
 	 * Write as a ODF manifest.xml
-	 * 
+	 *
 	 * @see http
 	 *      ://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.
 	 *      html#__RefHeading__752807_826425813
@@ -471,4 +502,5 @@ public class Manifest {
 	public Path writeAsODFManifest() throws IOException {
 		return new ODFManifest(this).createManifestXML();
 	}
+
 }
