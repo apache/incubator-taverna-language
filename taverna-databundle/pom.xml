@@ -16,64 +16,59 @@
    limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <packaging>bundle</packaging>
-    <parent>
-        <groupId>org.apache.taverna.language</groupId>
-        <artifactId>apache-taverna-language</artifactId>
-        <version>0.16.0-incubating-SNAPSHOT</version>
-    </parent>
-    <artifactId>taverna-databundle</artifactId>
-    <name>Apache Taverna Databundle API</name>
-    <description>API for dealing with Data Bundles</description>
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.jena</groupId>
-            <artifactId>jena-osgi</artifactId>
-            <version>${jena.version}</version>
-        </dependency>
-
-        <dependency>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>taverna-scufl2-wfbundle</artifactId>
-          <version>${project.version}</version>
-        </dependency>
-        <dependency>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>taverna-scufl2-t2flow</artifactId>
-          <version>${project.version}</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>taverna-scufl2-wfdesc</artifactId>
-          <version>${project.version}</version>
-        </dependency>
-        <dependency>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>taverna-robundle</artifactId>
-          <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${commons.io.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-
-        <dependency>
-            <groupId>commons-configuration</groupId>
-            <artifactId>commons-configuration</artifactId>
-            <version>${commons.configuration.version}</version>
-        </dependency>
-    </dependencies>
-
-
+  <modelVersion>4.0.0</modelVersion>
+  <packaging>bundle</packaging>
+  <parent>
+      <groupId>org.apache.taverna.language</groupId>
+      <artifactId>apache-taverna-language</artifactId>
+      <version>0.16.0-incubating-SNAPSHOT</version>
+  </parent>
+  <artifactId>taverna-databundle</artifactId>
+  <name>Apache Taverna Databundle API</name>
+  <description>API for dealing with Data Bundles</description>
+  <dependencies>
+      <dependency>
+        <groupId>org.apache.jena</groupId>
+        <artifactId>jena-osgi</artifactId>
+        <version>${jena.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>taverna-scufl2-wfbundle</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>taverna-scufl2-t2flow</artifactId>
+        <version>${project.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>taverna-scufl2-wfdesc</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>taverna-robundle</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${commons.io.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>commons-configuration</groupId>
+        <artifactId>commons-configuration</artifactId>
+        <version>${commons.configuration.version}</version>
+      </dependency>
+  </dependencies>
 </project>

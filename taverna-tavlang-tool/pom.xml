@@ -29,7 +29,7 @@
 
     <dependencies>
 
-      <dependency>
+    <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
     </dependency>
@@ -52,19 +52,21 @@
       <version>${project.version}</version>
     </dependency>
 
-<!--     <dependency> -->
-<!--       <groupId>org.shiwa.iwir</groupId> -->
-<!--       <artifactId>iwir</artifactId> -->
-<!--       <version>1.1.4</version> -->
-<!--       <scope>optional</scope> -->
-<!--       <systemPath>${project.build.directory}/taverna-language-commandline/lib/</systemPath> -->
-<!--     </dependency> -->
+<!--
+    <dependency>
+       <groupId>org.shiwa.iwir</groupId>
+       <artifactId>iwir</artifactId>
+       <version>1.1.4</version>
+       <scope>optional</scope>
+       <systemPath>${project.build.directory}/taverna-language-commandline/lib/</systemPath>
+     </dependency>
+-->
 
     <!-- Disabled due to LGPL depenency
       <dependency>
-    <groupId>no.s11.scufl2</groupId>
-    <artifactId>scufl2-iwir</artifactId>
-    <version>0.2-SNAPSHOT</version>
+        <groupId>no.s11.scufl2</groupId>
+        <artifactId>scufl2-iwir</artifactId>
+        <version>0.2-SNAPSHOT</version>
         <optional>true</optional>
     </dependency>
 -->

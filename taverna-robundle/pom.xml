@@ -60,7 +60,6 @@
       <artifactId>jena-osgi</artifactId>
       <version>${jena.version}</version>
     </dependency>
-
 <!-- for UUIDv5 SHA named
     <dependency>
       <groupId>com.fasterxml.uuid</groupId>
@@ -92,7 +91,7 @@
             </xsdOptions>
           </configuration>
       </plugin>
-  </plugins>
+    </plugins>
   </build>
 
 </project>

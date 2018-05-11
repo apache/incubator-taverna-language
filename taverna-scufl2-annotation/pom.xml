@@ -49,7 +49,5 @@
       <artifactId>jena-osgi</artifactId>
       <version>${jena.version}</version>
     </dependency>
-
-
   </dependencies>
 </project>

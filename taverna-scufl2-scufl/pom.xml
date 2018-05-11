@@ -28,19 +28,19 @@
   <description>Parse Taverna 1.x workflows (Status: Experimental)</description>
   <build>
     <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <!--
-                <configuration>
-                    <instructions>
-                        <Export-Package>org.apache.taverna.scufl2.api.io;provide:=true</Export-Package>
-                    </instructions>
-                </configuration>
-                 -->
-            </plugin>
+      <plugin>
+  <groupId>org.apache.felix</groupId>
+  <artifactId>maven-bundle-plugin</artifactId>
+  <!--
+  <configuration>
+      <instructions>
+    <Export-Package>org.apache.taverna.scufl2.api.io;provide:=true</Export-Package>
+      </instructions>
+  </configuration>
+   -->
+      </plugin>
 
-        <plugin>
+      <plugin>
           <groupId>org.apache.cxf</groupId>
           <artifactId>cxf-xjc-plugin</artifactId>
           <executions>
@@ -58,9 +58,8 @@
               </xsdOption>
             </xsdOptions>
           </configuration>
-        </plugin>
-
-      </plugins>
+      </plugin>
+    </plugins>
   </build>   
 
   <dependencies>
@@ -72,20 +71,20 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-                        <version>${commons.io.version}</version>
+      <version>${commons.io.version}</version>
       <type>jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
-                        <groupId>org.jdom</groupId>
-                        <artifactId>com.springsource.org.jdom</artifactId>
-                        <version>${jdom.version}</version>
+      <groupId>org.jdom</groupId>
+      <artifactId>com.springsource.org.jdom</artifactId>
+      <version>${jdom.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>jaxen</groupId>
       <artifactId>jaxen</artifactId>
-                        <version>${jaxen.version}</version>
+      <version>${jaxen.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -233,15 +233,15 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-<dependencies>
+  <dependencies>
   <!-- Common dependencies on jena-osgi, which requires some
 additional dependencies to be a happy OSGi bundle -->
 
-  <dependency>
-    <groupId>org.apache.jena</groupId>
-    <artifactId>jena-osgi</artifactId>
-    <version>${jena.version}</version>
-  </dependency>
+    <dependency>
+      <groupId>org.apache.jena</groupId>
+      <artifactId>jena-osgi</artifactId>
+      <version>${jena.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.servicemix.bundles</groupId>
       <artifactId>org.apache.servicemix.bundles.xerces</artifactId>
@@ -276,55 +276,56 @@ additional dependencies to be a happy OSGi bundle -->
       <artifactId>activation</artifactId>
       <version>${activation.version}</version>
     </dependency>
-</dependencies>
-<profiles>
-<profile>
-<id>all</id>
-    <activation>
-      <activeByDefault>true</activeByDefault>
-    </activation>
-  <modules>
-    <module>taverna-baclava-language</module>
-    <module>taverna-databundle</module>
-    <module>taverna-robundle</module>
-    <module>taverna-scufl2-annotation</module>
-    <module>taverna-scufl2-api</module>
-    <module>taverna-scufl2-examples</module>
-    <module>taverna-scufl2-integration-tests</module>
-    <module>taverna-scufl2-schemas</module>
-    <module>taverna-scufl2-scufl</module>
-    <module>taverna-scufl2-t2flow</module>
-    <module>taverna-scufl2-ucfpackage</module>
-    <module>taverna-scufl2-wfbundle</module>
-    <module>taverna-tavlang-tool</module>
-    <module>taverna-scufl2-wfdesc</module>
-  </modules>
-</profile>
+  </dependencies>
+  <profiles>
+    <profile>
+      <id>all</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+    <modules>
+      <module>taverna-baclava-language</module>
+      <module>taverna-databundle</module>
+      <module>taverna-robundle</module>
+      <module>taverna-scufl2-annotation</module>
+      <module>taverna-scufl2-api</module>
+      <module>taverna-scufl2-examples</module>
+      <module>taverna-scufl2-integration-tests</module>
+      <module>taverna-scufl2-schemas</module>
+      <module>taverna-scufl2-scufl</module>
+      <module>taverna-scufl2-t2flow</module>
+      <module>taverna-scufl2-ucfpackage</module>
+      <module>taverna-scufl2-wfbundle</module>
+      <module>taverna-tavlang-tool</module>
+      <module>taverna-scufl2-wfdesc</module>
+    </modules>
+  </profile>
   <profile>
     <id>android</id>
- <!--    <activation>
+    <!--<activation>
       <property>
         <name>environment</name>
         <value>android</value>
       </property>
-    </activation>-->
+    </activation>
+    -->
     <properties>
-<maven.compiler.source>1.7</maven.compiler.source>
-<maven.compiler.target>1.7</maven.compiler.target>
-</properties>
-  <modules>
-    <module>taverna-baclava-language</module>
-    <module>taverna-scufl2-annotation</module>
-    <module>taverna-scufl2-api</module>
-    <module>taverna-scufl2-examples</module>
-    <module>taverna-scufl2-integration-tests</module>
-    <module>taverna-scufl2-schemas</module>
-    <module>taverna-scufl2-scufl</module>
-    <module>taverna-scufl2-t2flow</module>
-    <module>taverna-scufl2-ucfpackage</module>
-    <module>taverna-scufl2-wfbundle</module>
-    <module>taverna-tavlang-tool</module>
-  </modules>
+      <maven.compiler.source>1.7</maven.compiler.source>
+      <maven.compiler.target>1.7</maven.compiler.target>
+    </properties>
+    <modules>
+      <module>taverna-baclava-language</module>
+      <module>taverna-scufl2-annotation</module>
+      <module>taverna-scufl2-api</module>
+      <module>taverna-scufl2-examples</module>
+      <module>taverna-scufl2-integration-tests</module>
+      <module>taverna-scufl2-schemas</module>
+      <module>taverna-scufl2-scufl</module>
+      <module>taverna-scufl2-t2flow</module>
+      <module>taverna-scufl2-ucfpackage</module>
+      <module>taverna-scufl2-wfbundle</module>
+      <module>taverna-tavlang-tool</module>
+    </modules>
   </profile>
 </profiles>
 
