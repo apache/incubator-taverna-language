@@ -25,7 +25,6 @@
       <plugin>
         <groupId>org.apache.jena</groupId>
         <artifactId>jena-maven-tools</artifactId>
-        <version>${jena.version}</version>
         <configuration>
           <includes>
             <include>src/main/resources/org/purl/wf4ever/wfdesc/*.ttl</include>

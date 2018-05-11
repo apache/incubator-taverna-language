@@ -147,7 +147,13 @@
                 <version>${activation.version}</version>
               </dependency>
            </dependencies>
-        </plugin>  
+        </plugin>
+        <plugin>
+        <!-- JENA-1474: jena-maven-tools was not included in 3.7.0; we'll downgrade -->
+          <groupId>org.apache.jena</groupId>
+          <artifactId>jena-maven-tools</artifactId>
+          <version>3.6.0</version>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
@@ -168,6 +174,16 @@
       </releases>
     </repository>
   </repositories>
+  
+  <!-- TODO: Remove from below when these versions have
+   been updated in taverna-parent 4 -->
+  <properties>
+    <!-- Fixes TAVERNA-1027 / JENA-1462 -->
+    <jena.version>3.7.0</jena.version>
+    <!-- Java 9 compatible jaxb -->
+    <jaxb.version>2.3.0</jaxb.version>
+  </properties>
+
 
   <dependencyManagement>
     <dependencies>
@@ -242,17 +258,12 @@ additional dependencies to be a happy OSGi bundle -->
       <artifactId>jena-osgi</artifactId>
       <version>${jena.version}</version>
     </dependency>
+    <!-- TODO: Remove for Jena 3.8.x which has inbuilt xerces -->
     <dependency>
       <groupId>org.apache.servicemix.bundles</groupId>
       <artifactId>org.apache.servicemix.bundles.xerces</artifactId>
       <version>${servicemix.xerces.version}</version>
     </dependency>
-        <!-- JENA-1178 workaround: Upgrade jsonlld-java -->
-    <dependency>
-      <groupId>com.github.jsonld-java</groupId>
-      <artifactId>jsonld-java</artifactId>
-      <version>${jsonldjava.version}</version>
-     </dependency>
     <!-- Needed by Jena -->
     <dependency>
       <groupId>com.github.andrewoma.dexx</groupId>
