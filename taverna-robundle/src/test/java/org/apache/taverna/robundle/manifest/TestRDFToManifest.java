@@ -103,7 +103,7 @@ public class TestRDFToManifest {
 			Set<URI> aggregatedUris = manifest.getAggregates().stream()
 				.map(PathMetadata::getUri)
 				.collect(Collectors.toSet());
-			System.out.println(aggregatedUris);
+			//System.out.println(aggregatedUris);
 			// Compare as Set as order is not necessarily preserved
 			assertTrue(aggregatedUris.contains(URI.create("/folder/soup.jpeg")));
 			assertTrue(aggregatedUris.contains(URI.create("http://example.com/blog/")));

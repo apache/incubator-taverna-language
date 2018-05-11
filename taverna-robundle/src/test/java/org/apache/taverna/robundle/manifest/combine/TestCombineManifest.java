@@ -48,7 +48,7 @@ public class TestCombineManifest {
 				"/combine/aslanidi_purkinje_model_skeleton.zip")) {
 			Files.copy(src, file, StandardCopyOption.REPLACE_EXISTING);
 		}
-		System.out.println(file);
+		//System.out.println(file);
 		try (Bundle bundle = Bundles.openBundle(file)) {
 			Manifest manifest = bundle.getManifest();
 			Path manifestXml = bundle.getRoot().resolve("manifest.xml");
@@ -163,7 +163,7 @@ public class TestCombineManifest {
 				"/combine/jwsonline-broken-date.sedx")) {
 			Files.copy(src, file, StandardCopyOption.REPLACE_EXISTING);
 		}
-		System.out.println(file);
+		//System.out.println(file);
 		try (Bundle bundle = Bundles.openBundle(file)) {
 			Manifest manifest = bundle.getManifest();
 
@@ -209,7 +209,7 @@ public class TestCombineManifest {
 				"/combine/jwsonline-fixed-date.sedx")) {
 			Files.copy(src, file, StandardCopyOption.REPLACE_EXISTING);
 		}
-		System.out.println(file);
+		//System.out.println(file);
 		try (Bundle bundle = Bundles.openBundle(file)) {
 			Manifest manifest = bundle.getManifest();
 			Path manifestXml = bundle.getRoot().resolve("manifest.xml");
