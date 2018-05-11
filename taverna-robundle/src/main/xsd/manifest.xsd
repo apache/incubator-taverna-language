@@ -84,7 +84,7 @@
 				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
-		<xsd:attribute name="media-type" type="xsd:string">
+		<xsd:attribute name="media-type" type="xsd:string" use="required">
 			<xsd:annotation>
 				<xsd:documentation>
 					IANA media type
@@ -139,7 +139,7 @@
 				</xsd:annotation>
 			</xsd:element>
 			<xsd:element name="start-key-generation"
-				type="manifest:StartKeyGeneration">
+				type="manifest:StartKeyGeneration" minOccurs="0">
 				<xsd:annotation>
 					<xsd:documentation>
 						http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#element-manifest_start-key-generation
@@ -147,14 +147,14 @@
 				</xsd:annotation>
 			</xsd:element>
 		</xsd:sequence>
-		<xsd:attribute name="checksum" type="xsd:base64Binary">
+		<xsd:attribute name="checksum" type="xsd:base64Binary" use="required">
 			<xsd:annotation>
 				<xsd:documentation>
 					http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#attribute-manifest_checksum
 				</xsd:documentation>
 			</xsd:annotation>
 		</xsd:attribute>
-		<xsd:attribute name="checksum-type" type="xsd:string">
+		<xsd:attribute name="checksum-type" type="xsd:string" use="required">
 			<xsd:annotation>
 				<xsd:documentation>
 					http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part3.html#attribute-manifest_checksum-type
