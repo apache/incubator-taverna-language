@@ -24,7 +24,7 @@
   </parent>
   <groupId>org.apache.taverna.language</groupId>
   <artifactId>apache-taverna-language</artifactId>
-  <version>0.16.0-incubating</version>
+  <version>0.16.0-incubating-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Apache Taverna Language APIs (Scufl2, Databundle)</name>
@@ -161,7 +161,7 @@
     <connection>scm:git:https://git-wip-us.apache.org/repos/asf/incubator-taverna-language.git</connection>
     <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/incubator-taverna-language.git</developerConnection>
     <url>https://github.com/apache/incubator-taverna-language</url>
-    <tag>0.16.0-incubating-RC1</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <repositories>
