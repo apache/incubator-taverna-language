@@ -20,7 +20,7 @@
     <parent>
         <groupId>org.apache.taverna.language</groupId>
         <artifactId>apache-taverna-language</artifactId>
-        <version>0.16.0-incubating-SNAPSHOT</version>
+        <version>0.16.0-incubating</version>
     </parent>
     <artifactId>taverna-tavlang-tool</artifactId>
     <name>Apache Taverna tavlang tool</name>
