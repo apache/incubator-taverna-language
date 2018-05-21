@@ -77,8 +77,100 @@ public class Parser {
         }
     }
 
+    public ArrayList<InputField> parseInputs() {
+        int startIndex = 0;
+        int endIndex = -1;
+        int depth = -1;
 
+        /**
+         * Search for start and end of inputs section
+         */
+        for(Map.Entry<Integer, String> entry: yamlFile.entrySet()) {
+            int index = entry.getKey();
+            String line = entry.getValue();
+            String key = getKeyFromLine(line);
+            if(key.equals("inputs")) {
+                startIndex = index;
+                endIndex = index;
+                depth = getDepth(line);
+            } else if(!line.equals("") && getDepth(line) <= depth) {
+                break;
+            } else {
+                endIndex++;
+            }
+        }
+        /**
+         * Parse each input
+         */
+        ArrayList<InputField> result = new ArrayList<>();
+        for(int i = startIndex+1; i <= endIndex; i++) {
+            int curDepth = getDepth(yamlFile.get(i));
+            // If current element is a child of inputs key
+            if(curDepth == depth + 1) {
+                result.add(parseInputField(i));
+            }
+        }
 
+        return result;
+    }
+
+    public InputField parseInputField(int startIndex) {
+        String line = yamlFile.get(startIndex);
+        int depth = getDepth(line);
+        String id = getKeyFromLine(line);
+        String value = getValueFromLine(line);
+
+        if(!value.equals("")) {
+            return new InputField(id, value);
+        }
+
+        InputField field = new InputField(id);
+        for(int i = startIndex+1; i < length; i++) {
+            String curLine = yamlFile.get(i);
+            if(curLine.equals("")) {
+                // Ignore empty lines
+                continue;
+            }
+            if(getDepth(curLine) <= depth) {
+                // Out of input section
+                break;
+            }
+            String key = getKeyFromLine(curLine);
+            value = getValueFromLine(curLine);
+
+            if(key.trim().equals("type")) {
+                field.type = value;
+            } else if(key.trim().equals("inputBinding")) {
+                
+                int curDepth = getDepth(curLine);
+                int nextIndex = getNextLineIndex(i);
+                String nextLine = yamlFile.get(nextIndex);
+                String nextKey = getKeyFromLine(nextLine);
+                String nextValue = getValueFromLine(nextLine);
+
+                if(nextKey.equals("position")){
+                    field.position = Integer.parseInt(nextValue);
+                } else if(nextKey.equals("prefix")){
+                    field.prefix = nextValue;
+                }
+
+                // Check if we have another inputBinding property
+                nextIndex = getNextLineIndex(nextIndex);
+                nextLine = yamlFile.get(nextIndex);
+                if(getDepth(nextLine) == curDepth + 1) {
+                    nextKey = getKeyFromLine(nextLine);
+                    nextValue = getValueFromLine(nextLine);
+                    if(nextKey.equals("position")){
+                        field.position = Integer.parseInt(nextValue);
+                    } else if(nextKey.equals("prefix")){
+                        field.prefix = nextValue.trim();
+                    }
+                }
+            }
+        }
+
+        return field;
+    }
 
     private int getNextLineIndex(int index) {
         index++;
