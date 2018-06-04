@@ -1,84 +1,53 @@
 package org.apache.taverna.scufl2.cwl;
 
-import java.io.*;
-import java.util.ArrayList;
+
+import java.util.*;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import org.apache.commons.io.FileUtils;
 
-import org.apache.taverna.scufl2.cwl.Parser;
-import org.apache.taverna.scufl2.cwl.InputField;
+import org.yaml.snakeyaml.Yaml;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+
+import org.apache.taverna.scufl2.api.port.InputWorkflowPort;
+import org.apache.taverna.scufl2.api.port.OutputWorkflowPort;
+
 
 public class TestParser {
-
     private static final String SIMPLE_STRING_INPUT = "/simple_string_input.cwl";
     private static final String INT_INPUT = "/int_input.cwl";
 
-    @Test
-    public void testGetDepth() throws Exception {
-
-        assert Parser.getDepth("  test") == 1;
-        assert Parser.getDepth("test") == 0;
-        assert Parser.getDepth("    test") == 2;
-    }
+    private static JsonNode cwlFile;
 
     @Test
-    public void testGetKey() throws Exception {
+    public void testStringInput() throws Exception {
 
-        assert Parser.getKeyFromLine("  test: test_value").equals("test");
-        assert Parser.getKeyFromLine("test: 1 ").equals("test");
-        assert Parser.getKeyFromLine("    test:").equals("test");
-    }
+        Yaml reader = new Yaml();
+        ObjectMapper mapper = new ObjectMapper();
+        cwlFile = mapper.valueToTree(reader.load(TestParser.class.getResourceAsStream(SIMPLE_STRING_INPUT)));
+        System.out.println(cwlFile);
+        Parser parser = new Parser(cwlFile);
 
-    @Test
-    public void testGetValue() throws Exception {
-
-        assert Parser.getValueFromLine("  test: test_value").equals("test_value");
-        assert Parser.getValueFromLine("test: 1 ").equals("1");
-        assert Parser.getValueFromLine("    test:").equals("");
-    }
-
-    @Test
-    public void testSimpleInput() throws Exception {
-        File yaml = FileUtils.getFile("src", "test", "resources", SIMPLE_STRING_INPUT);
-
-        Parser parser = new Parser(yaml);
-
-        ArrayList<InputField> inputs = parser.parseInputs();
-
-        assertEquals(1, inputs.size());
-        assertEquals("example_string", inputs.get(0).key);
-    }
-
-    @Test
-    public void testIntInput() throws Exception {
-        File yaml = FileUtils.getFile("src", "test", "resources", INT_INPUT);
-
-        Parser parser = new Parser(yaml);
-
-        ArrayList<InputField> inputs = parser.parseInputs();
-
-        assertEquals(1, inputs.size());
-        assertEquals("example_int", inputs.get(0).key);
-        assertEquals("int", inputs.get(0).type);
-        assertEquals(2, inputs.get(0).position);
-        assertEquals("-i", inputs.get(0).prefix);
-    }
-
-    void printFile(File yaml) throws Exception {
-        /**
-         * Print file
-         */
-        FileReader fdesc = new FileReader(yaml);
-        BufferedReader bufferedReader = new BufferedReader(fdesc);
-        String yamlLine;
-        while((yamlLine = bufferedReader.readLine()) != null) {
-            System.out.println(yamlLine);
+        Set<InputWorkflowPort> result = parser.parseInputs();
+        for(InputWorkflowPort port: result) {
+            System.out.println(port.getName());
         }
+        ArrayList<InputWorkflowPort> inputs = new ArrayList<>(result);
+        assertEquals(inputs.get(0).getName(), "example_string");
 
-        System.out.println("*************************");
-        bufferedReader.close();
-        /*****/
+        Set<OutputWorkflowPort> result2 = parser.parseOutputs();
+        for(OutputWorkflowPort port: result2) {
+            System.out.println(port.getName());
+        }
+        System.out.println("Showing steps:");
+
+        Set<Step> steps = parser.parseSteps();
+        for(Step step: steps) {
+            System.out.println(step);
+        }
     }
 }
