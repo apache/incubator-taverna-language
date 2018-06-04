@@ -27,6 +27,7 @@
   <name>Apache Taverna Scufl 2 CWL parser</name>
   <description>Parser for .cwl file format</description>
   <dependencies>
+
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>taverna-scufl2-api</artifactId>
@@ -39,5 +40,18 @@
       <version>${commons.io.version}</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>1.17</version>
+    </dependency>
+
   </dependencies>
 </project>
