@@ -1,212 +1,114 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.taverna.scufl2.cwl;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
+import org.apache.taverna.scufl2.api.core.Workflow;
+import org.apache.taverna.scufl2.api.core.Processor;
 
+import org.apache.taverna.scufl2.api.port.InputWorkflowPort;
+import org.apache.taverna.scufl2.api.port.OutputWorkflowPort;
+import org.apache.taverna.scufl2.api.port.InputProcessorPort;
+import org.apache.taverna.scufl2.api.port.OutputProcessorPort;
 
-class InputField {
-
-    public String key;
-    public String type;
-    public int position;
-    public String prefix;
-
-    public InputField(String _key) {
-        key = _key;
-        type = "";
-        position = -1;
-        prefix = "";
-    }
-
-    public InputField(String _key, String _type) {
-        key = _key;
-        type = _type;
-        position = -1;
-        prefix = "";
-    }
-
-    public InputField(String _key, String _type, int pos) {
-        key = _key;
-        type = _type;
-        position = pos;
-        prefix = "";
-    }
-
-    public InputField(String _key, String _type, int pos, String _prefix) {
-        key = _key;
-        type = _type;
-        position = pos;
-        prefix = _prefix;
-    }
-}
-
+import com.fasterxml.jackson.databind.JsonNode;
 
 public class Parser {
 
-    private String yamlLine;
-    private int fileLength;
+    private JsonNode cwlFile;
+    private YAMLHelper yamlHelper;
+    private Workflow workflow;
 
-    private Map<Integer, String> yamlFile = null;
-
-    public Parser(File file) {
-        int counter = 0;
-
-        yamlFile = new HashMap<>();
-
-        FileReader yamlFileDescriptor = null;
-
-
-        try {
-            yamlFileDescriptor = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(yamlFileDescriptor);
-            String parent = null;
-            int parentDepth = 0;
-            while((yamlLine = bufferedReader.readLine()) != null) {
-
-                yamlFile.put(counter, yamlLine);
-                counter = counter + 1;
-            }
-
-            bufferedReader.close();
-            fileLength = counter;
-        } catch (IOException e) {
-            System.err.println("Parser init error: " + e );
-        }
+    public Parser(JsonNode cwlFile) {
+        this.cwlFile = cwlFile;
+        this.yamlHelper = new YAMLHelper();
+        this.workflow = new Workflow();
+        this.workflow.setInputPorts(parseInputs());
+        this.workflow.setOutputPorts(parseOutputs());
     }
 
-    public ArrayList<InputField> parseInputs() {
-        int startIndex = 0;
-        int endIndex = -1;
-        int depth = -1;
+    public Workflow getWorkflow() {
+        return this.workflow;
+    }
 
-        /**
-         * Search for start and end of inputs section
-         */
-        for(Map.Entry<Integer, String> entry: yamlFile.entrySet()) {
-            int index = entry.getKey();
-            String line = entry.getValue();
-            String key = getKeyFromLine(line);
-            if(key.equals("inputs")) {
-                startIndex = index;
-                endIndex = index;
-                depth = getDepth(line);
-            } else if(!line.equals("") && getDepth(line) <= depth) {
-                break;
-            } else {
-                endIndex++;
-            }
+    public Set<Step> parseSteps() {
+        return yamlHelper.processSteps(cwlFile);
+    }
+
+    public Processor convertStepToProcessor(Step step) {
+        Processor processor = new Processor(null, step.getId());
+        // Convert input ports
+        Set<InputProcessorPort> processorInputs = new HashSet<>();
+        Set<StepInput> inputs = step.getInputs();
+        for(StepInput input: inputs) {
+            InputProcessorPort port = new InputProcessorPort(processor, input.getId());
+            processorInputs.add(port);
         }
-        /**
-         * Parse each input
-         */
-        ArrayList<InputField> result = new ArrayList<>();
-        for(int i = startIndex+1; i <= endIndex; i++) {
-            int curDepth = getDepth(yamlFile.get(i));
-            // If current element is a child of inputs key
-            if(curDepth == depth + 1) {
-                result.add(parseInputField(i));
-            }
+        processor.setInputPorts(processorInputs);
+        // Convert output ports
+        Set<OutputProcessorPort> processorOutputs = new HashSet<>();
+        Set<StepOutput> outputs = step.getOutputs();
+        for(StepOutput output: outputs) {
+            OutputProcessorPort port = new OutputProcessorPort(processor, output.getId());
+            processorOutputs.add(port);
+        }
+        processor.setOutputPorts(processorOutputs);
+
+        return processor;
+    }
+
+    public Set<InputWorkflowPort> parseInputs() {
+        Map<String, PortDetail> inputs = yamlHelper.processInputDetails(cwlFile);
+        Map<String, Integer> inputDepths = yamlHelper.processInputDepths(cwlFile);
+
+        if(inputs == null || inputDepths == null) {
+            return null;
+        }
+        Set<InputWorkflowPort> result = new HashSet<InputWorkflowPort>();
+        for(String id: inputs.keySet()) {
+            PortDetail detail = inputs.get(id);
+            int depth = inputDepths.get(id);
+            InputWorkflowPort port = new InputWorkflowPort();
+            port.setName(id);
+            port.setDepth(depth);
+            result.add(port);
         }
 
         return result;
     }
 
-    public InputField parseInputField(int startIndex) {
-        String line = yamlFile.get(startIndex);
-        int depth = getDepth(line);
-        String id = getKeyFromLine(line);
-        String value = getValueFromLine(line);
+    public Set<OutputWorkflowPort> parseOutputs() {
+        Map<String, PortDetail> inputs = yamlHelper.processOutputDetails(cwlFile);
 
-        if(!value.equals("")) {
-            return new InputField(id, value);
+        if(inputs == null) {
+            return null;
+        }
+        Set<OutputWorkflowPort> result = new HashSet<OutputWorkflowPort>();
+        for(String id: inputs.keySet()) {
+            PortDetail detail = inputs.get(id);
+            OutputWorkflowPort port = new OutputWorkflowPort();
+            port.setName(id);
+            result.add(port);
         }
 
-        InputField field = new InputField(id);
-        for(int i = startIndex+1; i < length; i++) {
-            String curLine = yamlFile.get(i);
-            if(curLine.equals("")) {
-                // Ignore empty lines
-                continue;
-            }
-            if(getDepth(curLine) <= depth) {
-                // Out of input section
-                break;
-            }
-            String key = getKeyFromLine(curLine);
-            value = getValueFromLine(curLine);
-
-            if(key.trim().equals("type")) {
-                field.type = value;
-            } else if(key.trim().equals("inputBinding")) {
-                
-                int curDepth = getDepth(curLine);
-                int nextIndex = getNextLineIndex(i);
-                String nextLine = yamlFile.get(nextIndex);
-                String nextKey = getKeyFromLine(nextLine);
-                String nextValue = getValueFromLine(nextLine);
-
-                if(nextKey.equals("position")){
-                    field.position = Integer.parseInt(nextValue);
-                } else if(nextKey.equals("prefix")){
-                    field.prefix = nextValue;
-                }
-
-                // Check if we have another inputBinding property
-                nextIndex = getNextLineIndex(nextIndex);
-                nextLine = yamlFile.get(nextIndex);
-                if(getDepth(nextLine) == curDepth + 1) {
-                    nextKey = getKeyFromLine(nextLine);
-                    nextValue = getValueFromLine(nextLine);
-                    if(nextKey.equals("position")){
-                        field.position = Integer.parseInt(nextValue);
-                    } else if(nextKey.equals("prefix")){
-                        field.prefix = nextValue.trim();
-                    }
-                }
-            }
-        }
-
-        return field;
+        return result;
     }
 
-    private int getNextLineIndex(int index) {
-        index++;
-
-        while(yamlFile.get(index).equals("")) {
-            index++;
-        }
-
-        return index;
-    }
-
-    public static int getDepth(String line) {
-        int count = 0;
-        int idx = 0;
-        while(idx < line.length()) {
-            if(line.charAt(idx) != ' ') {
-                break;
-            }
-            count++;
-            idx++;
-        }
-        assert count % 2 == 0;
-        return count / 2;
-    }
-
-    public static String getKeyFromLine(String line) {
-        int commaIndex = line.indexOf(':');
-        assert commaIndex != -1;
-
-        return line.substring(0, commaIndex).trim();
-    }
-
-    public static String getValueFromLine(String line) {
-        int commaIndex = line.indexOf(':');
-        assert commaIndex != -1;
-
-        return line.substring(commaIndex + 1).trim();
-    }
 }
