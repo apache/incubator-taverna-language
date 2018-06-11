@@ -1,7 +1,8 @@
 package org.apache.taverna.scufl2.cwl;
 
 
-import java.util.*;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.junit.Before;
 import org.junit.Test;

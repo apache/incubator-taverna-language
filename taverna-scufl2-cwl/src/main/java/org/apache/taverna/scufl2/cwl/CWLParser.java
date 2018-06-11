@@ -18,7 +18,9 @@
  */
 package org.apache.taverna.scufl2.cwl;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 
 import org.apache.taverna.scufl2.api.core.Workflow;
 import org.apache.taverna.scufl2.api.core.Processor;

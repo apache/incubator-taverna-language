@@ -18,8 +18,12 @@
  */
 package org.apache.taverna.scufl2.cwl;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
 
 import java.lang.NullPointerException;
 
