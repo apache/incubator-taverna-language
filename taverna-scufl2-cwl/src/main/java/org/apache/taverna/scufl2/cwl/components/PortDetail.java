@@ -25,11 +25,21 @@ import java.util.ArrayList;
 public class PortDetail {
 
 
-    private String label;
 
+    private String id;
+    private String label;
     private int depth;
     private String description;
     private ArrayList<String> format;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public int getDepth() {
         return depth;
     }
