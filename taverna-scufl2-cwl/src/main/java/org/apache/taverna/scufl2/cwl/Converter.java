@@ -30,26 +30,25 @@ import org.apache.taverna.scufl2.api.port.OutputProcessorPort;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class Parser {
+public class Converter {
 
-    private JsonNode cwlFile;
-    private YAMLHelper yamlHelper;
-    private Workflow workflow;
+    public Converter() {
 
-    public Parser(JsonNode cwlFile) {
-        this.cwlFile = cwlFile;
-        this.yamlHelper = new YAMLHelper();
-        this.workflow = new Workflow();
-        this.workflow.setInputPorts(parseInputs());
-        this.workflow.setOutputPorts(parseOutputs());
     }
 
-    public Workflow getWorkflow() {
-        return this.workflow;
+    public InputWorkflowPort convertInputWorkflowPort(PortDetail input) {
+        InputWorkflowPort port = new InputWorkflowPort();
+        port.setName(input.getId());
+        port.setDepth(input.getDepth());
+
+        return port;
     }
 
-    public Set<Step> parseSteps() {
-        return yamlHelper.processSteps(cwlFile);
+    public OutputWorkflowPort convertOutputWorkflowPort(PortDetail input) {
+        OutputWorkflowPort port = new OutputWorkflowPort();
+        port.setName(input.getId());
+
+        return port;
     }
 
     public Processor convertStepToProcessor(Step step) {
@@ -73,42 +72,4 @@ public class Parser {
 
         return processor;
     }
-
-    public Set<InputWorkflowPort> parseInputs() {
-        Map<String, PortDetail> inputs = yamlHelper.processInputDetails(cwlFile);
-        Map<String, Integer> inputDepths = yamlHelper.processInputDepths(cwlFile);
-
-        if(inputs == null || inputDepths == null) {
-            return null;
-        }
-        Set<InputWorkflowPort> result = new HashSet<InputWorkflowPort>();
-        for(String id: inputs.keySet()) {
-            PortDetail detail = inputs.get(id);
-            int depth = inputDepths.get(id);
-            InputWorkflowPort port = new InputWorkflowPort();
-            port.setName(id);
-            port.setDepth(depth);
-            result.add(port);
-        }
-
-        return result;
-    }
-
-    public Set<OutputWorkflowPort> parseOutputs() {
-        Map<String, PortDetail> inputs = yamlHelper.processOutputDetails(cwlFile);
-
-        if(inputs == null) {
-            return null;
-        }
-        Set<OutputWorkflowPort> result = new HashSet<OutputWorkflowPort>();
-        for(String id: inputs.keySet()) {
-            PortDetail detail = inputs.get(id);
-            OutputWorkflowPort port = new OutputWorkflowPort();
-            port.setName(id);
-            result.add(port);
-        }
-
-        return result;
-    }
-
 }
