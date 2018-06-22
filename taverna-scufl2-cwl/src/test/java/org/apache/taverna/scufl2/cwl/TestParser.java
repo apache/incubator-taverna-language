@@ -77,15 +77,6 @@ public class TestParser {
     }
 
     @Test
-    public void testParseOutputs() throws Exception {
-
-        NamedSet<OutputWorkflowPort> workflowOutputs = workflow.getOutputPorts();
-        NamedSet<OutputWorkflowPort> expectedOutputs = new NamedSet<>();
-
-        assertEquals(expectedOutputs, workflowOutputs);
-    }
-
-    @Test
     public void testParseProcessors() throws Exception {
 
         workflow.setParent(null);

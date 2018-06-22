@@ -28,7 +28,7 @@ public class Step {
 
 
     private String id;
-    private String run;
+    private Process run;
 
     private Set<StepInput> inputs;
     private Set<StepOutput> outputs;
@@ -46,11 +46,11 @@ public class Step {
         this.id = id;
     }
 
-    public String getRun() {
+    public Process getRun() {
         return run;
     }
 
-    public void setRun(String run) {
+    public void setRun(Process run) {
         this.run = run;
     }
 
