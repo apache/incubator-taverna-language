@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements. See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership. The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.taverna.scufl2.cwl;
 
 
@@ -48,9 +66,12 @@ public class TestParser {
     @Test
     public void testParseInputs() throws Exception {
 
+        workflow.setParent(null);
         NamedSet<InputWorkflowPort> workflowInputs = workflow.getInputPorts();
-        NamedSet<InputWorkflowPort> expectedInputs = new NamedSet<>();
-        expectedInputs.add(new InputWorkflowPort(workflow, "name"));
+
+        Workflow expectedWorkflow = new Workflow(workflow.getName());
+        NamedSet<InputWorkflowPort> expectedInputs = expectedWorkflow.getInputPorts();
+        expectedInputs.add(new InputWorkflowPort(expectedWorkflow, "name"));
 
         assertEquals(expectedInputs, workflowInputs);
     }
@@ -67,9 +88,12 @@ public class TestParser {
     @Test
     public void testParseProcessors() throws Exception {
 
+        workflow.setParent(null);
         NamedSet<Processor> workflowProcessors = workflow.getProcessors();
-        NamedSet<Processor> expectedProcessors = new NamedSet<>();
-        expectedProcessors.add(new Processor(workflow, "step1"));
+
+        Workflow expectedWorkflow = new Workflow(workflow.getName());
+        NamedSet<Processor> expectedProcessors = expectedWorkflow.getProcessors();
+        expectedProcessors.add(new Processor(expectedWorkflow, "step1"));
 
         assertEquals(expectedProcessors, workflowProcessors);
     }
@@ -79,10 +103,9 @@ public class TestParser {
 
         Set<DataLink> workflowDataLinks = workflow.getDataLinks();
         Set<DataLink> expectedDataLinks = new HashSet<>();
-        Set<Processor> processorSet = workflow.getProcessors();
+        NamedSet<Processor> processorSet = workflow.getProcessors();
         // processorSet has one processor
-        Processor processor = processorSet.iterator().next();
-
+        Processor processor = processorSet.getByName("step1");
         expectedDataLinks.add(
                 new DataLink(
                         workflow,
@@ -91,6 +114,7 @@ public class TestParser {
                 )
         );
 
+        assertEquals(1, workflowDataLinks.size());
         assertEquals(expectedDataLinks, workflowDataLinks);
     }
 }
