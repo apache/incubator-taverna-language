@@ -28,9 +28,6 @@ import org.apache.taverna.scufl2.api.port.ReceiverPort;
 
 public interface Process {
 
-    Set<ReceiverPort> receiverPorts;
-    Set<SenderPort> senderPorts;
-
     public void parse();
 
 }

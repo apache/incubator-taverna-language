@@ -68,8 +68,6 @@ public class WorkflowProcess implements Process {
         processorOutputs = new HashMap<>();
         dataLinks = new HashSet<>();
         this.parse();
-        this.receiverPorts = new HashSet(workflowInputs.values());
-        this.senderPorts = new HashSet(workflowOutputs.values());
     }
 
     public void parse() {

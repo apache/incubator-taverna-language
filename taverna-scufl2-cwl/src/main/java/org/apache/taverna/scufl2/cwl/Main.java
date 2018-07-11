@@ -22,6 +22,9 @@ import org.yaml.snakeyaml.Yaml;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class Main {
 
@@ -40,7 +43,16 @@ public class Main {
         workflow.parse();
         Converter converter = new Converter();
         JsonNode node = converter.convertWorkflowProcessToJsonNode((WorkflowProcess) workflow);
-        System.out.println("NODE");
-        System.out.println(node);
+        printAsYaml(node);
+    }
+
+    private static void printAsYaml(JsonNode node) {
+        try {
+            String yaml = new YAMLMapper().writeValueAsString(node);
+            System.out.println("YAML DATA");
+            System.out.println(yaml);
+        } catch (JsonProcessingException e) {
+            System.err.println("Error writing JsonNode to YAML");
+        }
     }
 }

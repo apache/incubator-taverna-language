@@ -48,8 +48,6 @@ public class CommandLineTool implements Process {
         this.processorInputs = new HashMap<>();
         this.processorOutputs = new HashMap<>();
         this.parse();
-        this.receiverPorts = new HashSet(processorInputs.values());
-        this.senderPorts = new HashSet(processorOutputs.values());
     }
 
     public void parse() {
