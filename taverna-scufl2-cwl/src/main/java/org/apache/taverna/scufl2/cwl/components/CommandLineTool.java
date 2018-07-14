@@ -39,14 +39,12 @@ public class CommandLineTool implements Process {
     private JsonNode node;
 
     private String baseCommand = null;
-    private Map<String, InputProcessorPort> processorInputs;
-    private Map<String, OutputProcessorPort> processorOutputs;
+    private Map<String, InputProcessorPort> processorInputs = new HashMap<>();
+    private Map<String, OutputProcessorPort> processorOutputs = new HashMap<>();
 
     public CommandLineTool(JsonNode node) {
         this.node = node;
         this.cwlParser = new CWLParser(node);
-        this.processorInputs = new HashMap<>();
-        this.processorOutputs = new HashMap<>();
         this.parse();
         this.receiverPorts = new HashSet(processorInputs.values());
         this.senderPorts = new HashSet(processorOutputs.values());

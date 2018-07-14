@@ -53,38 +53,24 @@ public class WorkflowParser {
 
     private static final String FILE_NAME = "/hello_world.cwl";
     private CWLParser cwlParser;
-    private Converter converter;
+    private Converter converter = new Converter();
 
-    private Map<String, InputWorkflowPort> workflowInputs;
-    private Map<String, OutputWorkflowPort> workflowOutputs;
-    private Map<String, Processor> workflowProcessors;
-    private Map<String, InputProcessorPort> processorInputs;
-    private Map<String, OutputProcessorPort> processorOutputs;
-    private Set<DataLink> dataLinks;
+    private Map<String, InputWorkflowPort> workflowInputs = new HashMap<>();
+    private Map<String, OutputWorkflowPort> workflowOutputs = new HashMap<>();
+    private Map<String, Processor> workflowProcessors = new HashMap<>();
+    private Map<String, InputProcessorPort> processorInputs = new HashMap<>();
+    private Map<String, OutputProcessorPort> processorOutputs = new HashMap<>();
+    private Set<DataLink> dataLinks = new HashSet<DataLink>();
 
     public WorkflowParser() {
         Yaml reader = new Yaml();
         ObjectMapper mapper = new ObjectMapper();
         JsonNode cwlFile = mapper.valueToTree(reader.load(WorkflowParser.class.getResourceAsStream(FILE_NAME)));
         this.cwlParser = new CWLParser(cwlFile);
-        this.converter = new Converter();
-        workflowInputs = new HashMap<>();
-        workflowOutputs = new HashMap<>();
-        workflowProcessors = new HashMap<>();
-        processorInputs = new HashMap<>();
-        processorOutputs = new HashMap<>();
-        dataLinks = new HashSet<DataLink>();
     }
 
     public WorkflowParser(JsonNode cwlFile) {
         this.cwlParser = new CWLParser(cwlFile);
-        this.converter = new Converter();
-        workflowInputs = new HashMap<>();
-        workflowOutputs = new HashMap<>();
-        workflowProcessors = new HashMap<>();
-        processorInputs = new HashMap<>();
-        processorOutputs = new HashMap<>();
-        dataLinks = new HashSet<DataLink>();
     }
 
     public Workflow buildWorkflow() {

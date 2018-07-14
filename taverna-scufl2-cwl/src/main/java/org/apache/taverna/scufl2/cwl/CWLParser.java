@@ -35,11 +35,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class CWLParser {
 
     private JsonNode cwlFile;
-    private YAMLHelper yamlHelper;
+    private YAMLHelper yamlHelper = new YAMLHelper();
 
     public CWLParser(JsonNode cwlFile) {
         this.cwlFile = cwlFile;
-        this.yamlHelper = new YAMLHelper();
+        this.yamlHelper;
     }
 
     public Set<Step> parseSteps() {
