@@ -46,8 +46,6 @@ public class CommandLineTool implements Process {
         this.node = node;
         this.cwlParser = new CWLParser(node);
         this.parse();
-        this.receiverPorts = new HashSet(processorInputs.values());
-        this.senderPorts = new HashSet(processorOutputs.values());
     }
 
     public void parse() {
@@ -57,6 +55,7 @@ public class CommandLineTool implements Process {
     }
 
     public void parseInputs() {
+        // TODO: Set the processor port depth from the CWL type
         Set<PortDetail> cwlInputs = cwlParser.parseInputs();
         for(PortDetail detail: cwlInputs) {
             String portId = detail.getId();

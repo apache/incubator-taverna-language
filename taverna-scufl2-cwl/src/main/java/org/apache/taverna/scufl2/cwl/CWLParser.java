@@ -39,7 +39,6 @@ public class CWLParser {
 
     public CWLParser(JsonNode cwlFile) {
         this.cwlFile = cwlFile;
-        this.yamlHelper;
     }
 
     public Set<Step> parseSteps() {

@@ -18,7 +18,8 @@
  */
 package org.apache.taverna.scufl2.cwl;
 
-
+import java.io.File;
+import java.io.IOException;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
@@ -44,6 +45,11 @@ import org.apache.taverna.scufl2.api.common.NamedSet;
 import org.apache.taverna.scufl2.api.port.InputWorkflowPort;
 import org.apache.taverna.scufl2.api.port.OutputWorkflowPort;
 import org.apache.taverna.scufl2.api.port.InputProcessorPort;
+
+import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
+import org.apache.taverna.scufl2.api.io.WriterException;
+
+import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 
 
 public class TestWorkflowProcess {
@@ -92,8 +98,26 @@ public class TestWorkflowProcess {
     @Test
     public void testWorkflowSteps() {
         cwlFile = loadYamlFile(WORKFLOW_WITH_COMMAND);
-        WorkflowProcess workflow = new WorkflowProcess(cwlFile);
+        Process workflow = ProcessFactory.createProcess(cwlFile);
 
+        assert(workflow instanceof WorkflowProcess);
+    }
+
+    public void writeWorkflowToFile(Workflow workflow) {
+        try {
+            WorkflowBundleIO io = new WorkflowBundleIO();
+            File scufl2File = new File("workflow.wfbundle");
+            WorkflowBundle bundle = io.createBundle();
+            Set<Workflow> workflowSet = new HashSet<>();
+            workflowSet.add(workflow);
+            bundle.setWorkflows(workflowSet);
+            bundle.setMainWorkflow(workflow);
+            io.writeBundle(bundle, scufl2File, "text/vnd.taverna.scufl2.structure");
+        } catch(WriterException e) {
+            System.out.println("Exception writing the workflow bundle");
+        } catch(IOException e) {
+            System.out.println("IOException");
+        }
     }
 
 }
