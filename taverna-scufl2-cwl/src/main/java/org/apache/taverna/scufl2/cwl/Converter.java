@@ -20,6 +20,8 @@ package org.apache.taverna.scufl2.cwl;
 
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.apache.taverna.scufl2.api.core.Workflow;
 import org.apache.taverna.scufl2.api.core.Processor;
@@ -30,11 +32,15 @@ import org.apache.taverna.scufl2.api.port.InputProcessorPort;
 import org.apache.taverna.scufl2.api.port.OutputProcessorPort;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 public class Converter {
 
+    private JsonNodeFactory jsonNodeFactory;
     public Converter() {
-
+        jsonNodeFactory = JsonNodeFactory.instance;
     }
 
     public InputWorkflowPort convertInputWorkflowPort(PortDetail input) {
@@ -72,5 +78,88 @@ public class Converter {
         processor.setOutputPorts(processorOutputs);
 
         return processor;
+    }
+
+    public JsonNode convertWorkflowProcessToJsonNode(WorkflowProcess workflow) {
+        Map<String, Processor> workflowProcessors = workflow.getWorkflowProcessors();
+        Map<String, InputProcessorPort> processorInputs = workflow.getProcessorInputs();
+        Map<String, OutputProcessorPort> processorOutputs = workflow.getProcessorOutputs();
+
+        ObjectNode result = jsonNodeFactory.objectNode();
+        ObjectNode inputs = convertInputWorkflows(workflow.getWorkflowInputs());
+        ObjectNode outputs = convertOutputWorkflows(workflow.getWorkflowOutputs());
+        ObjectNode steps = convertProcessors(workflow);
+        result.put("inputs", inputs);
+        result.put("outputs", outputs);
+        result.put("steps", steps);
+
+        return result;
+    }
+
+    private ObjectNode convertInputWorkflows(Map<String, InputWorkflowPort> workflowInputs) {
+        ObjectNode node = jsonNodeFactory.objectNode();
+        for(Map.Entry<String, InputWorkflowPort> entry: workflowInputs.entrySet()) {
+            String name = entry.getKey();
+            node.put(name, "string");  // TODO: Put the correct input type and not just string
+        }
+
+        return node;
+    }
+
+    private ObjectNode convertOutputWorkflows(Map<String, OutputWorkflowPort> workflowOutputs) {
+        ObjectNode node = jsonNodeFactory.objectNode();
+        for(Map.Entry<String, OutputWorkflowPort> entry: workflowOutputs.entrySet()) {
+            String name = entry.getKey();
+            node.put(name, "string");  // TODO: Put the correct input type and not just string
+        }
+
+        return node;
+    }
+
+    private ObjectNode convertProcessors(WorkflowProcess workflow) {
+        ObjectNode node = jsonNodeFactory.objectNode();
+        Map<String, Processor> processors = workflow.getWorkflowProcessors();
+
+        for(Map.Entry<String, Processor> entry: processors.entrySet()) {
+            Processor processor = entry.getValue();
+            ObjectNode step = jsonNodeFactory.objectNode();
+            ArrayNode inputs = jsonNodeFactory.arrayNode();
+            ArrayNode outputs = jsonNodeFactory.arrayNode();
+            for(InputProcessorPort port: processor.getInputPorts()) {
+                ObjectNode input = jsonNodeFactory.objectNode();
+                input.put(port.getName(), "string");
+                input.put("source", "");
+                inputs.add(input);
+            }
+            for(OutputProcessorPort port: processor.getOutputPorts()) {
+                ObjectNode output = jsonNodeFactory.objectNode();
+                output.put(port.getName(), "string");
+                outputs.add(output);
+            }
+            step.put("run", "NotImplemented");
+            step.put("inputs", inputs);
+            step.put("outputs", outputs);
+            node.put(processor.getName(), step);
+        }
+
+        return node;
+    }
+
+    public PortDetail convertToPortDetail(InputWorkflowPort inPort) {
+        int depth = inPort.getDepth();
+        String id = inPort.getName();
+        PortDetail port = new PortDetail();
+        port.setId(id);
+        port.setDepth(depth);
+
+        return port;
+    }
+
+    public PortDetail convertToPortDetail(OutputWorkflowPort outPort) {
+        String id = outPort.getName();
+        PortDetail port = new PortDetail();
+        port.setId(id);
+
+        return port;
     }
 }

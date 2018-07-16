@@ -23,12 +23,20 @@ class: Workflow
 inputs:
   name: string
 
-outputs:
-  output1: string
+outputs: []
 
 steps:
   step1:
-    run: example.cwl
+    run:
+      class: CommandLineTool
+      baseCommand: echo
+      inputs:
+       message:
+         type: string
+
+         inputBinding:
+           position: 1
+      outputs: []
 
     inputs:
       - id: text

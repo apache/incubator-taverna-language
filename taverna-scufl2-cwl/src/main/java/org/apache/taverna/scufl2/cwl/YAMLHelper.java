@@ -108,42 +108,44 @@ public class YAMLHelper {
     public Set<Step> processSteps(JsonNode file) {
         Set<Step> result = new HashSet<>();
 
-        if(file == null) {
+        if(file == null || !file.has(STEPS)) {
             return result;
         }
 
-        if(file.has(STEPS)) {
-            JsonNode steps = file.get(STEPS);
-            if(steps.isArray()) {
-                for (JsonNode stepNode : steps) {
-                    Step step = new Step();
-                    String id = stepNode.get(ID).asText();
+        JsonNode steps = file.get(STEPS);
+        if(steps.isArray()) {
+            for (JsonNode stepNode : steps) {
+                Step step = new Step();
+                String id = stepNode.get(ID).asText();
 
-                    String run = stepNode.get(RUN).asText();
-                    Set<StepInput> inputs = processStepInput(stepNode.get(INPUTS));
-                    step.setId(id);
+                JsonNode runNode = stepNode.get(RUN);
+                Process run = ProcessFactory.createProcess(runNode);
+                run.parse();  // Recursively parse nested process
+                Set<StepInput> inputs = processStepInput(stepNode.get(INPUTS));
+                step.setId(id);
+                step.setRun(run);
+                step.setInputs(inputs);
+                result.add(step);
+            }
+        } else if(steps.isObject()) {
+            Iterator<Entry<String, JsonNode>> iterator = steps.fields();
+            while(iterator.hasNext()) {
+                Entry<String, JsonNode> entry = iterator.next();
+                Step step = new Step();
+
+                String id = entry.getKey();
+                JsonNode value = entry.getValue();
+                if(value.has(RUN)) {
+                    JsonNode runNode = value.get(RUN);
+                    Process run = ProcessFactory.createProcess(runNode);
+                    run.parse();
                     step.setRun(run);
-                    step.setInputs(inputs);
-                    result.add(step);
                 }
-            } else if(steps.isObject()) {
-                Iterator<Entry<String, JsonNode>> iterator = steps.fields();
-                while(iterator.hasNext()) {
-                    Entry<String, JsonNode> entry = iterator.next();
-                    Step step = new Step();
+                Set<StepInput> inputs = processStepInput(value.get(INPUTS));
+                step.setId(id);
+                step.setInputs(inputs);
 
-                    String id = entry.getKey();
-                    JsonNode value = entry.getValue();
-                    if(value.has(RUN)) {
-                        String run = entry.getValue().get(RUN).asText();
-                        step.setRun(run);
-                    }
-                    Set<StepInput> inputs = processStepInput(value.get(INPUTS));
-                    step.setId(id);
-                    step.setInputs(inputs);
-
-                    result.add(step);
-                }
+                result.add(step);
             }
         }
 
@@ -156,7 +158,7 @@ public class YAMLHelper {
         if(inputs == null) {
             return result;
         }
-        if (inputs.getClass() == ArrayNode.class) {
+        if (inputs.isArray()) {
 
             for (JsonNode input : inputs) {
                 String id = input.get(ID).asText();
@@ -164,7 +166,7 @@ public class YAMLHelper {
 
                 result.add(new StepInput(id, source));
             }
-        } else if (inputs.getClass() == ObjectNode.class) {
+        } else if (inputs.isObject()) {
             Iterator<Entry<String, JsonNode>> iterator = inputs.fields();
             while (iterator.hasNext()) {
                 Entry<String, JsonNode> entry = iterator.next();

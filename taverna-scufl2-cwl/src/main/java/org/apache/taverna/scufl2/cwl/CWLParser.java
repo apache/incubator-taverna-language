@@ -51,7 +51,7 @@ public class CWLParser {
         Map<String, Integer> inputDepths = yamlHelper.processInputDepths(cwlFile);
 
         if(inputs == null || inputDepths == null) {
-            return null;
+            return new HashSet<PortDetail>();
         }
         Set<PortDetail> result = new HashSet<PortDetail>();
         for(String id: inputs.keySet()) {
@@ -66,14 +66,15 @@ public class CWLParser {
     }
 
     public Set<PortDetail> parseOutputs() {
-        Map<String, PortDetail> inputs = yamlHelper.processOutputDetails(cwlFile);
+        Map<String, PortDetail> outputs = yamlHelper.processOutputDetails(cwlFile);
 
-        if(inputs == null) {
-            return null;
+        if(outputs == null) {
+            return new HashSet<PortDetail>();
         }
         Set<PortDetail> result = new HashSet<PortDetail>();
-        for(String id: inputs.keySet()) {
-            PortDetail port = inputs.get(id);
+        for(String id: outputs.keySet()) {
+            PortDetail port = outputs.get(id);
+            port.setId(id);
             result.add(port);
         }
 
