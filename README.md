@@ -97,6 +97,7 @@ Official modules:
 
 Experimental modules:
 
+* [taverna-scufl2-cwl](taverna-scufl2-cwl/) Load/save [Common Workflow Language](https://www.commonwl.org/)
 * [taverna-scufl2-scufl](taverna-scufl2-scufl/) Load Taverna 1 `.xml` workflows (SCUFL 1)
 * [taverna-scufl2-annotation](taverna-scufl2-annotation/) Annotation utillity functions
 * [taverna-baclava-language](taverna-baclava-language) Load Taverna 2 data documents (workflow inputs/outputs)

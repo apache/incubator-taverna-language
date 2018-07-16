@@ -309,6 +309,7 @@ additional dependencies to be a happy OSGi bundle -->
       <module>taverna-scufl2-wfbundle</module>
       <module>taverna-tavlang-tool</module>
       <module>taverna-scufl2-wfdesc</module>
+      <module>taverna-scufl2-cwl</module>
     </modules>
   </profile>
   <profile>
