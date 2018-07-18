@@ -752,6 +752,24 @@ public class Scufl2Tools {
 		return activity;
 	}
 
+	public Configuration createNestedRelationship(Processor processor, Workflow childWorkflow, Profile profile) {
+		if(processor.getParent() == null) {
+			throw new IllegalStateException("Processor " + processor + " has no parent");
+		}
+		if(processor.getParent().getParent() != childWorkflow.getParent()) {
+			throw new IllegalStateException(
+					"Processor " + processor + " and workflow " + childWorkflow + " are not in the same Workflow bundle");
+		}
+		if(nestedWorkflowForProcessor(processor, profile) != null) {
+			throw new IllegalStateException("Processor " + processor + " already has a nested workflow");
+		}
+
+		Activity activity = createActivityFromProcessor(processor, profile);
+		activity.setType(NESTED_WORKFLOW);
+		Configuration configuration = createConfigurationFor(activity, NESTED_WORKFLOW);
+		return configuration;
+	}
+
 	public void removePortsBindingForUnknownPorts(ProcessorBinding binding) {
 		// First, remove ports no longer owned by processor
 		Iterator<ProcessorInputPortBinding> inputBindings = binding
