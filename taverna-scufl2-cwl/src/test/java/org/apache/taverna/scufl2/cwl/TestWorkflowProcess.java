@@ -18,46 +18,34 @@
  */
 package org.apache.taverna.scufl2.cwl;
 
-<<<<<<< HEAD
 
-=======
 import java.io.File;
 import java.io.IOException;
->>>>>>> 87fa1c18d2b7aa210db3d238905234bf4f52b491
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
 
-import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 import org.yaml.snakeyaml.Yaml;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.apache.taverna.scufl2.api.core.Workflow;
-import org.apache.taverna.scufl2.api.core.Processor;
-import org.apache.taverna.scufl2.api.core.DataLink;
-
-import org.apache.taverna.scufl2.api.common.NamedSet;
 
 import org.apache.taverna.scufl2.api.port.InputWorkflowPort;
 import org.apache.taverna.scufl2.api.port.OutputWorkflowPort;
-import org.apache.taverna.scufl2.api.port.InputProcessorPort;
 
-<<<<<<< HEAD
-=======
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 import org.apache.taverna.scufl2.api.io.WriterException;
 
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
-
->>>>>>> 87fa1c18d2b7aa210db3d238905234bf4f52b491
 
 public class TestWorkflowProcess {
     private static final String HELLO_WORLD_CWL = "/hello_world.cwl";
@@ -105,13 +93,30 @@ public class TestWorkflowProcess {
     @Test
     public void testWorkflowSteps() {
         cwlFile = loadYamlFile(WORKFLOW_WITH_COMMAND);
-<<<<<<< HEAD
-        WorkflowProcess workflow = new WorkflowProcess(cwlFile);
-
-=======
         Process workflow = ProcessFactory.createProcess(cwlFile);
 
         assert(workflow instanceof WorkflowProcess);
+    }
+
+    @Test
+    public void testConvertWorkflowProcess() {
+        cwlFile = loadYamlFile(WORKFLOW_WITH_COMMAND);
+
+        Process workflow = ProcessFactory.createProcess(cwlFile);
+        workflow.parse();
+        Converter converter = new Converter();
+        JsonNode node = converter.convertWorkflowProcessToJsonNode((WorkflowProcess) workflow);
+        printAsYaml(node);
+    }
+
+    private static void printAsYaml(JsonNode node) {
+        try {
+            String yaml = new YAMLMapper().writeValueAsString(node);
+            System.out.println("YAML DATA");
+            System.out.println(yaml);
+        } catch (JsonProcessingException e) {
+            System.err.println("Error writing JsonNode to YAML");
+        }
     }
 
     public void writeWorkflowToFile(Workflow workflow) {
@@ -129,7 +134,6 @@ public class TestWorkflowProcess {
         } catch(IOException e) {
             System.out.println("IOException");
         }
->>>>>>> 87fa1c18d2b7aa210db3d238905234bf4f52b491
     }
 
 }
