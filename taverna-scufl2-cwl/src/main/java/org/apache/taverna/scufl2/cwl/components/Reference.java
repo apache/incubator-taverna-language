@@ -40,4 +40,8 @@ public class Reference implements Process {
     public String toString() {
         return source;
     }
+
+    public String getSource() {
+        return source;
+    }
 }

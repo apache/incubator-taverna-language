@@ -25,6 +25,7 @@ import java.util.HashMap;
 
 import org.apache.taverna.scufl2.api.core.Workflow;
 import org.apache.taverna.scufl2.api.core.Processor;
+import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 
 import org.apache.taverna.scufl2.api.port.InputWorkflowPort;
 import org.apache.taverna.scufl2.api.port.OutputWorkflowPort;
@@ -157,5 +158,48 @@ public class Converter {
         port.setId(id);
 
         return port;
+    }
+
+    public WorkflowBundle buildWorkflowBundle(Process process) {
+        WorkflowBundle bundle = new WorkflowBundle();
+        if(!(process instanceof WorkflowProcess)) {
+            throw new UnsupportedOperationException("WorkflowBundle is not created without an initial workflow yet");
+        }
+        Workflow workflow = convertWorkflowProcess((WorkflowProcess) process, bundle);
+        workflow.setParent(bundle);
+
+        return bundle;
+    }
+
+    public Workflow convertWorkflowProcess(WorkflowProcess workflowProcess, WorkflowBundle bundle) {
+        Workflow workflow = new Workflow();
+        Set<InputWorkflowPort> inputs = new HashSet<>(workflowProcess.getWorkflowInputs().values());
+        Set<OutputWorkflowPort> outputs = new HashSet<>(workflowProcess.getWorkflowOutputs().values());
+        workflow.setInputPorts(inputs);
+        workflow.setOutputPorts(outputs);
+
+        for(Process process: workflowProcess.getProcesses()) {
+            if(process instanceof WorkflowProcess) {
+                Workflow childWorkflow = convertWorkflowProcess((WorkflowProcess) process, bundle); // TODO: Add nested relationship
+                bundle.getWorkflows().add(childWorkflow);
+            } else if(process instanceof CommandLineTool) {
+                Processor processor = convertCommandLineTool((CommandLineTool) process);
+                workflow.getProcessors().add(processor);
+            } else {
+                assert(process instanceof Reference);
+                Processor processor = convertReference((Reference) process);
+                workflow.getProcessors().add(processor);
+            }
+        }
+
+        return workflow;
+    }
+
+    public Processor convertCommandLineTool(CommandLineTool command) {
+        return new Processor(null, command.getBaseCommand());
+    }
+
+    public Processor convertReference(Reference reference) {
+        return new Processor(null, reference.getSource());
     }
 }
