@@ -81,10 +81,6 @@ public class Converter {
     }
 
     public JsonNode convertWorkflowProcessToJsonNode(WorkflowProcess workflow) {
-        Map<String, Processor> workflowProcessors = workflow.getWorkflowProcessors();
-        Map<String, InputProcessorPort> processorInputs = workflow.getProcessorInputs();
-        Map<String, OutputProcessorPort> processorOutputs = workflow.getProcessorOutputs();
-
         ObjectNode result = jsonNodeFactory.objectNode();
         ObjectNode inputs = convertInputWorkflows(workflow.getWorkflowInputs());
         ObjectNode outputs = convertOutputWorkflows(workflow.getWorkflowOutputs());

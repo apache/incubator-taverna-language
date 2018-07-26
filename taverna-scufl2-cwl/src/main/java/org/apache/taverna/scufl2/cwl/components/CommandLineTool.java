@@ -74,4 +74,8 @@ public class CommandLineTool implements Process {
             processorOutputs.put(portId, port);
         }
     }
+
+    public String getBaseCommand() {
+        return baseCommand;
+    }
 }

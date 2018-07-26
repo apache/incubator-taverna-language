@@ -19,8 +19,6 @@
 
 package org.apache.taverna.scufl2.cwl;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
@@ -31,16 +29,12 @@ import org.apache.taverna.scufl2.api.core.Processor;
 import org.apache.taverna.scufl2.api.core.DataLink;
 import org.apache.taverna.scufl2.api.core.Workflow;
 
-import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.port.InputWorkflowPort;
 import org.apache.taverna.scufl2.api.port.OutputWorkflowPort;
 import org.apache.taverna.scufl2.api.port.InputProcessorPort;
 import org.apache.taverna.scufl2.api.port.OutputProcessorPort;
 import org.apache.taverna.scufl2.api.port.SenderPort;
 import org.apache.taverna.scufl2.api.port.ReceiverPort;
-
-import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
-import org.apache.taverna.scufl2.api.io.WriterException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -55,6 +49,8 @@ public class WorkflowProcess implements Process {
     private Map<String, OutputProcessorPort> processorOutputs = new HashMap<>();
     private Set<DataLink> dataLinks = new HashSet<>();
 
+    private Set<Process> processes = new HashSet<>();
+
     private Converter converter = new Converter();
 
     public WorkflowProcess(JsonNode node) {
@@ -66,25 +62,9 @@ public class WorkflowProcess implements Process {
         parseInputs();
         parseOutputs();
         Set<Step> cwlSteps = cwlParser.parseSteps();
-        parseProcessors(cwlSteps);
-        parseDataLinks(cwlSteps);
-
-        Workflow workflow = new Workflow();
-        Set<InputWorkflowPort> inputs = new HashSet<>(workflowInputs.values());
-        Set<OutputWorkflowPort> outputs = new HashSet<>(workflowOutputs.values());
-        Set<Processor> processors = new HashSet<>(workflowProcessors.values());
-
-        workflow.setInputPorts(inputs);
-        workflow.setOutputPorts(outputs);
-        workflow.setProcessors(processors);
-
-
-//        System.out.println("DEBUG WORKFLOW");
-//        System.out.println(workflow.getInputPorts());
-//        System.out.println(workflow.getOutputPorts());
-//        System.out.println(workflow.getProcessors());
-
+        this.processes = parseProcessors(cwlSteps);
     }
+
     public void parseInputs() {
         Set<PortDetail> cwlInputs = cwlParser.parseInputs();
         for (PortDetail port: cwlInputs) {
@@ -103,23 +83,34 @@ public class WorkflowProcess implements Process {
         }
     }
 
-    public void parseProcessors(Set<Step> cwlSteps) {
+    public Set<Process> parseProcessors(Set<Step> cwlSteps) {
+        Set<Process> result = new HashSet<>();
+
         for(Step step: cwlSteps) {
-
-            Processor processor = converter.convertStepToProcessor(step);
-            workflowProcessors.put(step.getId(), processor);
-
-            // TODO: Add only receiver and sender ports from the Process interface
-            for(StepInput stepInput: step.getInputs()) {
-                InputProcessorPort processorPort = new InputProcessorPort(processor, stepInput.getId());
-                processorInputs.put(stepInput.getId(), processorPort);
-            }
-            for(StepOutput stepOutput: step.getOutputs()) {
-                OutputProcessorPort processorPort = new OutputProcessorPort(processor, stepOutput.getId());
-                processorOutputs.put(stepOutput.getId(), processorPort);
-            }
+            Process process = step.getRun();
+            result.add(process);
         }
+
+        return result;
     }
+
+//    public void parseProcessors(Set<Step> cwlSteps) {
+//        for(Step step: cwlSteps) {
+//
+//            Processor processor = converter.convertStepToProcessor(step);
+//            workflowProcessors.put(step.getId(), processor);
+//
+//            // TODO: Add only receiver and sender ports from the Process interface
+//            for(StepInput stepInput: step.getInputs()) {
+//                InputProcessorPort processorPort = new InputProcessorPort(processor, stepInput.getId());
+//                processorInputs.put(stepInput.getId(), processorPort);
+//            }
+//            for(StepOutput stepOutput: step.getOutputs()) {
+//                OutputProcessorPort processorPort = new OutputProcessorPort(processor, stepOutput.getId());
+//                processorOutputs.put(stepOutput.getId(), processorPort);
+//            }
+//        }
+//    }
 
     public void parseDataLinks(Set<Step> cwlSteps) {
         for(Step step: cwlSteps) {
@@ -197,5 +188,13 @@ public class WorkflowProcess implements Process {
 
     public void setDataLinks(Set<DataLink> dataLinks) {
         this.dataLinks = dataLinks;
+    }
+
+    public Set<Process> getProcesses() {
+        return processes;
+    }
+
+    public void setProcesses(Set<Process> processes) {
+        this.processes = processes;
     }
 }

@@ -91,7 +91,7 @@ public class TestWorkflowProcess {
     }
 
     @Test
-    public void testWorkflowSteps() {
+    public void testProcessType() {
         cwlFile = loadYamlFile(WORKFLOW_WITH_COMMAND);
         Process workflow = ProcessFactory.createProcess(cwlFile);
 
