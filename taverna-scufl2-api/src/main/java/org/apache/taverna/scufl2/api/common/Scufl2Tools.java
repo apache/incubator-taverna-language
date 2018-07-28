@@ -65,6 +65,7 @@ import org.apache.taverna.scufl2.api.profiles.Profile;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Utility methods for dealing with SCUFL2 models
@@ -767,6 +768,12 @@ public class Scufl2Tools {
 		Activity activity = createActivityFromProcessor(processor, profile);
 		activity.setType(NESTED_WORKFLOW);
 		Configuration configuration = createConfigurationFor(activity, NESTED_WORKFLOW);
+
+		ObjectNode json = configuration.getJsonAsObjectNode();
+		json.put("nestedWorkflow", childWorkflow.getName());
+
+		childWorkflow.setParent(processor.getParent().getParent());
+
 		return configuration;
 	}
 

@@ -41,6 +41,7 @@ import org.apache.taverna.scufl2.api.common.Visitor.VisitorWithPath;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.core.ControlLink;
 import org.apache.taverna.scufl2.api.core.Processor;
+import org.apache.taverna.scufl2.api.core.Workflow;
 import org.apache.taverna.scufl2.api.port.InputActivityPort;
 import org.apache.taverna.scufl2.api.port.InputProcessorPort;
 import org.apache.taverna.scufl2.api.port.OutputActivityPort;
@@ -62,6 +63,25 @@ public class TestScufl2Tools extends ExampleWorkflow {
 	public void makeBundle() {
 		makeWorkflowBundle();
 		assertNotNull(workflowBundle);
+	}
+
+	@Test
+	public void testNestedWorkflows() {
+		Workflow child = new Workflow();
+		child.setName("childWorkflow");
+		child.setParent(workflowBundle);
+
+		Workflow mainWorkflow = workflowBundle.getMainWorkflow();
+		Processor processor = new Processor();
+		processor.setParent(mainWorkflow);
+
+		Profile profile = workflowBundle.getMainProfile();
+
+		Scufl2Tools tools = new Scufl2Tools();
+		tools.createNestedRelationship(processor, child, profile);
+		Workflow nested = tools.nestedWorkflowForProcessor(processor, profile);
+
+		assertEquals(child, nested);
 	}
 	
 	@Test
