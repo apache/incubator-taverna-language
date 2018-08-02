@@ -23,7 +23,10 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
+import java.io.InputStream;
 
+import org.yaml.snakeyaml.Yaml;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.taverna.scufl2.api.core.Processor;
 import org.apache.taverna.scufl2.api.core.DataLink;
@@ -52,6 +55,16 @@ public class WorkflowProcess implements Process {
     private Set<Process> processes = new HashSet<>();
 
     private Converter converter = new Converter();
+
+    public WorkflowProcess(InputStream stream) {
+
+        Yaml reader = new Yaml();
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode node = mapper.valueToTree(reader.load(stream));
+
+        cwlParser = new CWLParser(node);
+        this.parse();
+    }
 
     public WorkflowProcess(JsonNode node) {
         cwlParser = new CWLParser(node);
