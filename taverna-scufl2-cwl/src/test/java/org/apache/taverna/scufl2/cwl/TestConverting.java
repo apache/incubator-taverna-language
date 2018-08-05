@@ -19,13 +19,7 @@
 package org.apache.taverna.scufl2.cwl;
 
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.HashMap;
-
+import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
@@ -35,17 +29,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
-import org.apache.taverna.scufl2.api.core.Workflow;
-
-import org.apache.taverna.scufl2.api.port.InputWorkflowPort;
-import org.apache.taverna.scufl2.api.port.OutputWorkflowPort;
-
-import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
-import org.apache.taverna.scufl2.api.io.WriterException;
-
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
+import org.apache.taverna.scufl2.api.core.Workflow;
+import org.apache.taverna.scufl2.api.core.Processor;
 
 public class TestConverting {
     private static final String HELLO_WORLD_CWL = "/hello_world.cwl";
@@ -65,7 +51,7 @@ public class TestConverting {
 
     @Test
     public void testWorkflowBundleWithOneWorkflow() {
-        JsonNode cwlFile = loadYamlFile(HELLO_WORLD_CWL);
+        this.cwlFile = loadYamlFile(HELLO_WORLD_CWL);
 
         WorkflowProcess workflow = (WorkflowProcess) ProcessFactory.createProcess(cwlFile);
         Converter converter = new Converter();
@@ -76,7 +62,7 @@ public class TestConverting {
 
     @Test
     public void testWorkflowBundleWithMultipleWorkflows() {
-        JsonNode cwlFile = loadYamlFile(WORKFLOW_WITH_WORKFLOW);
+        this.cwlFile = loadYamlFile(WORKFLOW_WITH_WORKFLOW);
 
         WorkflowProcess workflow = (WorkflowProcess) ProcessFactory.createProcess(cwlFile);
         Converter converter = new Converter();
@@ -85,4 +71,20 @@ public class TestConverting {
         assertEquals(workflowBundle.getWorkflows().size(), 2);
     }
 
+    @Test
+    public void testConvertWorkflowProcessToWorkflow() {
+        this.cwlFile = loadYamlFile(HELLO_WORLD_CWL);
+
+        WorkflowProcess workflowProcess = (WorkflowProcess) ProcessFactory.createProcess(cwlFile);
+        WorkflowBundle bundle = new WorkflowBundle();
+        Converter converter = new Converter();
+        Workflow workflow = converter.convertWorkflowProcess(workflowProcess, bundle);
+        assertEquals(1, workflow.getProcessors().size());
+        assertEquals(1, workflow.getInputPorts().size());
+        assertEquals(1, workflow.getOutputPorts().size());
+
+        Processor processor = workflow.getProcessors().iterator().next();
+        assertEquals(1, processor.getInputPorts().size());
+        assertEquals(0, processor.getOutputPorts().size());
+    }
 }

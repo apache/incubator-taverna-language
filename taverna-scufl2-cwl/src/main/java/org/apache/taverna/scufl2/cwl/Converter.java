@@ -196,10 +196,40 @@ public class Converter {
     }
 
     public Processor convertCommandLineTool(CommandLineTool command) {
-        return new Processor(null, command.getBaseCommand());
+        Processor processor = new Processor(null, command.getBaseCommand());
+
+        processor.setInputPorts(convertInputProcessPorts(command.getInputPorts()));
+        processor.setOutputPorts(convertOutputProcessPorts(command.getOutputPorts()));
+
+        return processor;
     }
 
     public Processor convertReference(Reference reference) {
-        return new Processor(null, reference.getSource());
+        Processor processor = new Processor(null, reference.getSource());
+
+        processor.setInputPorts(convertInputProcessPorts(reference.getInputPorts()));
+        processor.setOutputPorts(convertOutputProcessPorts(reference.getOutputPorts()));
+
+        return processor;
+    }
+
+    public Set<InputProcessorPort> convertInputProcessPorts(Set<InputPort> inputPorts) {
+        Set<InputProcessorPort> processorInputPorts = new HashSet<>();
+
+        for(InputPort port: inputPorts) {
+            processorInputPorts.add(new InputProcessorPort(null, port.getName()));
+        }
+
+        return processorInputPorts;
+    }
+
+    public Set<OutputProcessorPort> convertOutputProcessPorts(Set<OutputPort> outputPorts) {
+        Set<OutputProcessorPort> processorOutputPorts = new HashSet<>();
+
+        for(OutputPort port: outputPorts) {
+            processorOutputPorts.add(new OutputProcessorPort(null, port.getName()));
+        }
+
+        return processorOutputPorts;
     }
 }

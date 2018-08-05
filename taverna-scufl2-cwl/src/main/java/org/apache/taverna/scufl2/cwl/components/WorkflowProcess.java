@@ -101,6 +101,8 @@ public class WorkflowProcess extends Process {
 
         for(Step step: cwlSteps) {
             Process process = step.getRun();
+            process.setInputPorts(step.getInputs());
+            process.setOutputPorts(step.getOutputs());
             result.add(process);
         }
 
