@@ -19,36 +19,35 @@
 
 package org.apache.taverna.scufl2.cwl;
 
-import java.util.*;
+public class InputPort {
 
-public class StepInput {
+    private String name;
 
-    private String id;
     private String source;
 
-    public StepInput() {
-        this.id = null;
-        this.source = null;
+    public InputPort() {
+        this.name = "";
+        this.source = "";
     }
 
-    public StepInput(String id, String source) {
-        this.id = id;
+    public InputPort(String name, String source) {
+        this.name = name;
         this.source = source;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getName() {
+        return this.name;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getSource() {
         return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 }

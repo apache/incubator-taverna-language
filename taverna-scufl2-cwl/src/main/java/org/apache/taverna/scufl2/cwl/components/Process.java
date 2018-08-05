@@ -19,15 +19,31 @@
 
 package org.apache.taverna.scufl2.cwl;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
 import java.util.HashSet;
-import org.apache.taverna.scufl2.api.port.SenderPort;
-import org.apache.taverna.scufl2.api.port.ReceiverPort;
+import java.util.Set;
 
-public interface Process {
+public abstract class Process {
 
-    public void parse();
+    private Set<InputPort> inputPorts = new HashSet<>();
+    private Set<OutputPort> outputPorts = new HashSet<>();
+
+
+    public abstract void parse();
+
+    public Set<InputPort> getInputPorts() {
+        return this.inputPorts;
+    }
+
+    public void setInputPorts(Set<InputPort> inputs) {
+        this.inputPorts = inputs;
+    }
+
+    public Set<OutputPort> getOutputPorts() {
+        return this.outputPorts;
+    }
+
+    public void setOutputPorts(Set<OutputPort> outputs) {
+        this.outputPorts = outputs;
+    }
 
 }

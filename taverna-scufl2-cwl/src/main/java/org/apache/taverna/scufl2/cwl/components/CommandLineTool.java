@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.taverna.scufl2.api.port.InputProcessorPort;
 import org.apache.taverna.scufl2.api.port.OutputProcessorPort;
 
-public class CommandLineTool implements Process {
+public class CommandLineTool extends Process {
 
     private final static String BASE_COMMAND = "baseCommand";
     private final static String ID = "id";

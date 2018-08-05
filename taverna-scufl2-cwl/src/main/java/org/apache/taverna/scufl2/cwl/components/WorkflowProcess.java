@@ -41,7 +41,7 @@ import org.apache.taverna.scufl2.api.port.ReceiverPort;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class WorkflowProcess implements Process {
+public class WorkflowProcess extends Process {
 
     private CWLParser cwlParser;
 
@@ -127,7 +127,7 @@ public class WorkflowProcess implements Process {
 
     public void parseDataLinks(Set<Step> cwlSteps) {
         for(Step step: cwlSteps) {
-            for(StepInput stepInput: step.getInputs()) {
+            for(InputPort stepInput: step.getInputs()) {
                 String[] sourcePath = stepInput.getSource().split("/");
                 String source = sourcePath[sourcePath.length-1];
                 source = source.replace("#", "");
@@ -140,7 +140,7 @@ public class WorkflowProcess implements Process {
                 if(sender == null) {
                     throw new NullPointerException("Cannot find sender port with name: " + source);
                 }
-                String receiverId = stepInput.getId();
+                String receiverId = stepInput.getName();
                 ReceiverPort receiver = workflowOutputs.get(receiverId);
                 if(receiver == null) {
                     receiver = processorInputs.get(receiverId);

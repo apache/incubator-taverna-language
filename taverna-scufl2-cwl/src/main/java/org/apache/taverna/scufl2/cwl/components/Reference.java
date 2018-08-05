@@ -21,7 +21,7 @@ package org.apache.taverna.scufl2.cwl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class Reference implements Process {
+public class Reference extends Process {
 
     private String source;
 

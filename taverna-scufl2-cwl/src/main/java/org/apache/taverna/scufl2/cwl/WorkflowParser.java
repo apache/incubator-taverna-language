@@ -78,7 +78,7 @@ public class WorkflowParser {
         parseOutputs();
         Set<Step> cwlSteps = cwlParser.parseSteps();
         parseProcessors(cwlSteps);
-        parseDataLinks(cwlSteps);
+//        parseDataLinks(cwlSteps);
 
         Workflow workflow = new Workflow();
         Set<InputWorkflowPort> inputs = new HashSet<>(workflowInputs.values());
@@ -137,20 +137,20 @@ public class WorkflowParser {
             Processor processor = converter.convertStepToProcessor(step);
             workflowProcessors.put(step.getId(), processor);
 
-            for(StepInput stepInput: step.getInputs()) {
-                InputProcessorPort processorPort = new InputProcessorPort(processor, stepInput.getId());
-                processorInputs.put(stepInput.getId(), processorPort);
+            for(InputPort stepInput: step.getInputs()) {
+                InputProcessorPort processorPort = new InputProcessorPort(processor, stepInput.getName());
+                processorInputs.put(stepInput.getName(), processorPort);
             }
-            for(StepOutput stepOutput: step.getOutputs()) {
-                OutputProcessorPort processorPort = new OutputProcessorPort(processor, stepOutput.getId());
-                processorOutputs.put(stepOutput.getId(), processorPort);
+            for(OutputPort stepOutput: step.getOutputs()) {
+                OutputProcessorPort processorPort = new OutputProcessorPort(processor, stepOutput.getName());
+                processorOutputs.put(stepOutput.getName(), processorPort);
             }
         }
     }
 
     public void parseDataLinks(Set<Step> cwlSteps) {
         for(Step step: cwlSteps) {
-            for(StepInput stepInput: step.getInputs()) {
+            for(InputPort stepInput: step.getInputs()) {
                 String[] sourcePath = stepInput.getSource().split("/");
                 String source = sourcePath[sourcePath.length-1];
                 source = source.replace("#", "");
@@ -163,7 +163,7 @@ public class WorkflowParser {
                 if(sender == null) {
                     throw new NullPointerException("Cannot find sender port with name: " + source);
                 }
-                String receiverId = stepInput.getId();
+                String receiverId = stepInput.getName();
                 ReceiverPort receiver = workflowOutputs.get(receiverId);
                 if(receiver == null) {
                     receiver = processorInputs.get(receiverId);

@@ -19,23 +19,23 @@
 
 package org.apache.taverna.scufl2.cwl;
 
-public class StepOutput {
+public class OutputPort {
 
-    private String id;
+    private String name;
 
-    public StepOutput() {
-        this.id = null;
+    public OutputPort() {
+        this.name = "";
     }
 
-    public StepOutput(String id) {
-        this.id = id;
+    public OutputPort(String name) {
+        this.name = name;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getName() {
+        return this.name;
     }
 
-    public String getId() {
-        return id;
+    public void setName(String name) {
+        this.name = name;
     }
 }

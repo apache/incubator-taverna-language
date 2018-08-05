@@ -63,17 +63,17 @@ public class Converter {
         Processor processor = new Processor(null, step.getId());
         // Convert input ports
         Set<InputProcessorPort> processorInputs = new HashSet<>();
-        Set<StepInput> inputs = step.getInputs();
-        for(StepInput input: inputs) {
-            InputProcessorPort port = new InputProcessorPort(processor, input.getId());
+        Set<InputPort> inputs = step.getInputs();
+        for(InputPort input: inputs) {
+            InputProcessorPort port = new InputProcessorPort(processor, input.getName());
             processorInputs.add(port);
         }
         processor.setInputPorts(processorInputs);
         // Convert output ports
         Set<OutputProcessorPort> processorOutputs = new HashSet<>();
-        Set<StepOutput> outputs = step.getOutputs();
-        for(StepOutput output: outputs) {
-            OutputProcessorPort port = new OutputProcessorPort(processor, output.getId());
+        Set<OutputPort> outputs = step.getOutputs();
+        for(OutputPort output: outputs) {
+            OutputProcessorPort port = new OutputProcessorPort(processor, output.getName());
             processorOutputs.add(port);
         }
         processor.setOutputPorts(processorOutputs);
