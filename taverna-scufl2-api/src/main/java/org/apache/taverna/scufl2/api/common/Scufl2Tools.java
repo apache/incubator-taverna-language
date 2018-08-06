@@ -753,7 +753,7 @@ public class Scufl2Tools {
 		return activity;
 	}
 
-	public Configuration createNestedRelationship(Processor processor, Workflow childWorkflow, Profile profile) {
+	public Configuration setAsNestedWorkflow(Processor processor, Workflow childWorkflow, Profile profile) {
 		if(processor.getParent() == null) {
 			throw new IllegalStateException("Processor " + processor + " has no parent");
 		}
@@ -763,6 +763,12 @@ public class Scufl2Tools {
 		}
 		if(nestedWorkflowForProcessor(processor, profile) != null) {
 			throw new IllegalStateException("Processor " + processor + " already has a nested workflow");
+		}
+		try {
+			processor.getActivity(profile);
+			throw new IllegalStateException("Processor " + processor + " already has a bound activity");
+		} catch(IndexOutOfBoundsException e) {
+			// Processor should have no bound activity, which is the case here.
 		}
 
 		Activity activity = createActivityFromProcessor(processor, profile);

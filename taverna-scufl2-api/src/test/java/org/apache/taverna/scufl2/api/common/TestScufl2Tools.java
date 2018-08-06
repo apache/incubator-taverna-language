@@ -34,10 +34,8 @@ import java.util.Set;
 
 import org.apache.taverna.scufl2.api.ExampleWorkflow;
 import org.apache.taverna.scufl2.api.activity.Activity;
-import org.apache.taverna.scufl2.api.common.Child;
-import org.apache.taverna.scufl2.api.common.Scufl2Tools;
-import org.apache.taverna.scufl2.api.common.WorkflowBean;
 import org.apache.taverna.scufl2.api.common.Visitor.VisitorWithPath;
+import org.apache.taverna.scufl2.api.configurations.Configuration;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.core.ControlLink;
 import org.apache.taverna.scufl2.api.core.Processor;
@@ -78,10 +76,24 @@ public class TestScufl2Tools extends ExampleWorkflow {
 		Profile profile = workflowBundle.getMainProfile();
 
 		Scufl2Tools tools = new Scufl2Tools();
-		tools.createNestedRelationship(processor, child, profile);
+		tools.setAsNestedWorkflow(processor, child, profile);
 		Workflow nested = tools.nestedWorkflowForProcessor(processor, profile);
 
 		assertEquals(child, nested);
+
+		boolean found = false;
+
+		for(Activity activity: profile.getActivities()) {
+			if(activity.getType().equals(Scufl2Tools.NESTED_WORKFLOW)) {
+				for(Configuration config: tools.configurationsFor(activity, profile)) {
+					String nestedWorkflowName = config.getJson().get("nestedWorkflow").asText();
+					Workflow wf = workflowBundle.getWorkflows().getByName(nestedWorkflowName);
+					found |= (wf != null && nestedWorkflowName.equals(child.getName()));
+				}
+			}
+		}
+
+		assertTrue(found);
 	}
 	
 	@Test
