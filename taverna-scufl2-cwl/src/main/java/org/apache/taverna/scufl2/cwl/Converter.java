@@ -25,6 +25,7 @@ import java.util.HashMap;
 
 import org.apache.taverna.scufl2.api.core.Workflow;
 import org.apache.taverna.scufl2.api.core.Processor;
+import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 
 import org.apache.taverna.scufl2.api.port.InputWorkflowPort;
 import org.apache.taverna.scufl2.api.port.OutputWorkflowPort;
@@ -62,17 +63,17 @@ public class Converter {
         Processor processor = new Processor(null, step.getId());
         // Convert input ports
         Set<InputProcessorPort> processorInputs = new HashSet<>();
-        Set<StepInput> inputs = step.getInputs();
-        for(StepInput input: inputs) {
-            InputProcessorPort port = new InputProcessorPort(processor, input.getId());
+        Set<InputPort> inputs = step.getInputs();
+        for(InputPort input: inputs) {
+            InputProcessorPort port = new InputProcessorPort(processor, input.getName());
             processorInputs.add(port);
         }
         processor.setInputPorts(processorInputs);
         // Convert output ports
         Set<OutputProcessorPort> processorOutputs = new HashSet<>();
-        Set<StepOutput> outputs = step.getOutputs();
-        for(StepOutput output: outputs) {
-            OutputProcessorPort port = new OutputProcessorPort(processor, output.getId());
+        Set<OutputPort> outputs = step.getOutputs();
+        for(OutputPort output: outputs) {
+            OutputProcessorPort port = new OutputProcessorPort(processor, output.getName());
             processorOutputs.add(port);
         }
         processor.setOutputPorts(processorOutputs);
@@ -81,10 +82,6 @@ public class Converter {
     }
 
     public JsonNode convertWorkflowProcessToJsonNode(WorkflowProcess workflow) {
-        Map<String, Processor> workflowProcessors = workflow.getWorkflowProcessors();
-        Map<String, InputProcessorPort> processorInputs = workflow.getProcessorInputs();
-        Map<String, OutputProcessorPort> processorOutputs = workflow.getProcessorOutputs();
-
         ObjectNode result = jsonNodeFactory.objectNode();
         ObjectNode inputs = convertInputWorkflows(workflow.getWorkflowInputs());
         ObjectNode outputs = convertOutputWorkflows(workflow.getWorkflowOutputs());
@@ -161,5 +158,78 @@ public class Converter {
         port.setId(id);
 
         return port;
+    }
+
+    public WorkflowBundle buildWorkflowBundle(Process process) {
+        WorkflowBundle bundle = new WorkflowBundle();
+        if(!(process instanceof WorkflowProcess)) {
+            throw new UnsupportedOperationException("WorkflowBundle is not created without an initial workflow yet");
+        }
+        Workflow workflow = convertWorkflowProcess((WorkflowProcess) process, bundle);
+        workflow.setParent(bundle);
+
+        return bundle;
+    }
+
+    public Workflow convertWorkflowProcess(WorkflowProcess workflowProcess, WorkflowBundle bundle) {
+        Workflow workflow = new Workflow();
+        Set<InputWorkflowPort> inputs = new HashSet<>(workflowProcess.getWorkflowInputs().values());
+        Set<OutputWorkflowPort> outputs = new HashSet<>(workflowProcess.getWorkflowOutputs().values());
+        workflow.setInputPorts(inputs);
+        workflow.setOutputPorts(outputs);
+
+        for(Process process: workflowProcess.getProcesses()) {
+            if(process instanceof WorkflowProcess) {
+                Workflow childWorkflow = convertWorkflowProcess((WorkflowProcess) process, bundle); // TODO: Add nested relationship
+                bundle.getWorkflows().add(childWorkflow);
+            } else if(process instanceof CommandLineTool) {
+                Processor processor = convertCommandLineTool((CommandLineTool) process);
+                workflow.getProcessors().add(processor);
+            } else {
+                assert(process instanceof Reference);
+                Processor processor = convertReference((Reference) process);
+                workflow.getProcessors().add(processor);
+            }
+        }
+
+        return workflow;
+    }
+
+    public Processor convertCommandLineTool(CommandLineTool command) {
+        Processor processor = new Processor(null, command.getBaseCommand());
+
+        processor.setInputPorts(convertInputProcessPorts(command.getInputPorts()));
+        processor.setOutputPorts(convertOutputProcessPorts(command.getOutputPorts()));
+
+        return processor;
+    }
+
+    public Processor convertReference(Reference reference) {
+        Processor processor = new Processor(null, reference.getSource());
+
+        processor.setInputPorts(convertInputProcessPorts(reference.getInputPorts()));
+        processor.setOutputPorts(convertOutputProcessPorts(reference.getOutputPorts()));
+
+        return processor;
+    }
+
+    public Set<InputProcessorPort> convertInputProcessPorts(Set<InputPort> inputPorts) {
+        Set<InputProcessorPort> processorInputPorts = new HashSet<>();
+
+        for(InputPort port: inputPorts) {
+            processorInputPorts.add(new InputProcessorPort(null, port.getName()));
+        }
+
+        return processorInputPorts;
+    }
+
+    public Set<OutputProcessorPort> convertOutputProcessPorts(Set<OutputPort> outputPorts) {
+        Set<OutputProcessorPort> processorOutputPorts = new HashSet<>();
+
+        for(OutputPort port: outputPorts) {
+            processorOutputPorts.add(new OutputProcessorPort(null, port.getName()));
+        }
+
+        return processorOutputPorts;
     }
 }

@@ -121,7 +121,7 @@ public class YAMLHelper {
                 JsonNode runNode = stepNode.get(RUN);
                 Process run = ProcessFactory.createProcess(runNode);
                 run.parse();  // Recursively parse nested process
-                Set<StepInput> inputs = processStepInput(stepNode.get(INPUTS));
+                Set<InputPort> inputs = processStepInput(stepNode.get(INPUTS));
                 step.setId(id);
                 step.setRun(run);
                 step.setInputs(inputs);
@@ -141,7 +141,7 @@ public class YAMLHelper {
                     run.parse();
                     step.setRun(run);
                 }
-                Set<StepInput> inputs = processStepInput(value.get(INPUTS));
+                Set<InputPort> inputs = processStepInput(value.get(INPUTS));
                 step.setId(id);
                 step.setInputs(inputs);
 
@@ -152,9 +152,9 @@ public class YAMLHelper {
         return result;
     }
 
-    private Set<StepInput> processStepInput(JsonNode inputs) {
+    private Set<InputPort> processStepInput(JsonNode inputs) {
 
-        Set<StepInput> result = new HashSet<>();
+        Set<InputPort> result = new HashSet<>();
         if(inputs == null) {
             return result;
         }
@@ -164,7 +164,7 @@ public class YAMLHelper {
                 String id = input.get(ID).asText();
                 String source = input.get(SOURCE).asText();
 
-                result.add(new StepInput(id, source));
+                result.add(new InputPort(id, source));
             }
         } else if (inputs.isObject()) {
             Iterator<Entry<String, JsonNode>> iterator = inputs.fields();
@@ -174,7 +174,7 @@ public class YAMLHelper {
                 String id = entry.getKey();
                 String source = entry.getValue().get(SOURCE).asText();
 
-                result.add(new StepInput(id, source));
+                result.add(new InputPort(id, source));
             }
         }
         return result;

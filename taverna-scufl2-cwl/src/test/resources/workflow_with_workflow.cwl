@@ -30,14 +30,18 @@ outputs:
 steps:
   step1:
     run:
-      class: CommandLineTool
-      baseCommand: echo
+      class: Workflow
       inputs:
-        text:
-          type: string
-          inputBinding:
-            position: 1
-      outputs: []
+        name: string
+      outputs:
+        output1: string
+      steps:
+        step2:
+          run: example.cwl
+          inputs:
+            - id: text
+              source: "#x/name"
+          outputs: []
     in:
       text: message
 

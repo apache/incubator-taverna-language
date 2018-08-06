@@ -30,8 +30,8 @@ public class Step {
     private String id;
     private Process run;
 
-    private Set<StepInput> inputs;
-    private Set<StepOutput> outputs;
+    private Set<InputPort> inputs;
+    private Set<OutputPort> outputs;
 
     public Step() {
         inputs = new HashSet<>();
@@ -54,27 +54,27 @@ public class Step {
         this.run = run;
     }
 
-    public void addInput(String id, String source) {
-        inputs.add(new StepInput(id, source));
+    public void addInput(String name, String source) {
+        inputs.add(new InputPort(name, source));
     }
 
-    public void setInputs(Set<StepInput> inputs) {
+    public void setInputs(Set<InputPort> inputs) {
         this.inputs = inputs;
     }
 
-    public Set<StepInput> getInputs() {
+    public Set<InputPort> getInputs() {
         return inputs;
     }
 
-    public void addOutput(String id) {
-        outputs.add(new StepOutput(id));
+    public void addOutput(String name) {
+        outputs.add(new OutputPort(name));
     }
 
-    public void setOutputs(Set<StepOutput> outputs) {
+    public void setOutputs(Set<OutputPort> outputs) {
         this.outputs = outputs;
     }
 
-    public Set<StepOutput> getOutputs() {
+    public Set<OutputPort> getOutputs() {
         return outputs;
     }
 

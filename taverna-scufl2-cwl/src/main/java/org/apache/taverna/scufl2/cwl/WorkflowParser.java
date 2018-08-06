@@ -53,38 +53,24 @@ public class WorkflowParser {
 
     private static final String FILE_NAME = "/hello_world.cwl";
     private CWLParser cwlParser;
-    private Converter converter;
+    private Converter converter = new Converter();
 
-    private Map<String, InputWorkflowPort> workflowInputs;
-    private Map<String, OutputWorkflowPort> workflowOutputs;
-    private Map<String, Processor> workflowProcessors;
-    private Map<String, InputProcessorPort> processorInputs;
-    private Map<String, OutputProcessorPort> processorOutputs;
-    private Set<DataLink> dataLinks;
+    private Map<String, InputWorkflowPort> workflowInputs = new HashMap<>();
+    private Map<String, OutputWorkflowPort> workflowOutputs = new HashMap<>();
+    private Map<String, Processor> workflowProcessors = new HashMap<>();
+    private Map<String, InputProcessorPort> processorInputs = new HashMap<>();
+    private Map<String, OutputProcessorPort> processorOutputs = new HashMap<>();
+    private Set<DataLink> dataLinks = new HashSet<DataLink>();
 
     public WorkflowParser() {
         Yaml reader = new Yaml();
         ObjectMapper mapper = new ObjectMapper();
         JsonNode cwlFile = mapper.valueToTree(reader.load(WorkflowParser.class.getResourceAsStream(FILE_NAME)));
         this.cwlParser = new CWLParser(cwlFile);
-        this.converter = new Converter();
-        workflowInputs = new HashMap<>();
-        workflowOutputs = new HashMap<>();
-        workflowProcessors = new HashMap<>();
-        processorInputs = new HashMap<>();
-        processorOutputs = new HashMap<>();
-        dataLinks = new HashSet<DataLink>();
     }
 
     public WorkflowParser(JsonNode cwlFile) {
         this.cwlParser = new CWLParser(cwlFile);
-        this.converter = new Converter();
-        workflowInputs = new HashMap<>();
-        workflowOutputs = new HashMap<>();
-        workflowProcessors = new HashMap<>();
-        processorInputs = new HashMap<>();
-        processorOutputs = new HashMap<>();
-        dataLinks = new HashSet<DataLink>();
     }
 
     public Workflow buildWorkflow() {
@@ -92,7 +78,7 @@ public class WorkflowParser {
         parseOutputs();
         Set<Step> cwlSteps = cwlParser.parseSteps();
         parseProcessors(cwlSteps);
-        parseDataLinks(cwlSteps);
+//        parseDataLinks(cwlSteps);
 
         Workflow workflow = new Workflow();
         Set<InputWorkflowPort> inputs = new HashSet<>(workflowInputs.values());
@@ -151,20 +137,20 @@ public class WorkflowParser {
             Processor processor = converter.convertStepToProcessor(step);
             workflowProcessors.put(step.getId(), processor);
 
-            for(StepInput stepInput: step.getInputs()) {
-                InputProcessorPort processorPort = new InputProcessorPort(processor, stepInput.getId());
-                processorInputs.put(stepInput.getId(), processorPort);
+            for(InputPort stepInput: step.getInputs()) {
+                InputProcessorPort processorPort = new InputProcessorPort(processor, stepInput.getName());
+                processorInputs.put(stepInput.getName(), processorPort);
             }
-            for(StepOutput stepOutput: step.getOutputs()) {
-                OutputProcessorPort processorPort = new OutputProcessorPort(processor, stepOutput.getId());
-                processorOutputs.put(stepOutput.getId(), processorPort);
+            for(OutputPort stepOutput: step.getOutputs()) {
+                OutputProcessorPort processorPort = new OutputProcessorPort(processor, stepOutput.getName());
+                processorOutputs.put(stepOutput.getName(), processorPort);
             }
         }
     }
 
     public void parseDataLinks(Set<Step> cwlSteps) {
         for(Step step: cwlSteps) {
-            for(StepInput stepInput: step.getInputs()) {
+            for(InputPort stepInput: step.getInputs()) {
                 String[] sourcePath = stepInput.getSource().split("/");
                 String source = sourcePath[sourcePath.length-1];
                 source = source.replace("#", "");
@@ -177,7 +163,7 @@ public class WorkflowParser {
                 if(sender == null) {
                     throw new NullPointerException("Cannot find sender port with name: " + source);
                 }
-                String receiverId = stepInput.getId();
+                String receiverId = stepInput.getName();
                 ReceiverPort receiver = workflowOutputs.get(receiverId);
                 if(receiver == null) {
                     receiver = processorInputs.get(receiverId);

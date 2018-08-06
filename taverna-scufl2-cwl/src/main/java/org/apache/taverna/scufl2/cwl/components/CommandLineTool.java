@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.taverna.scufl2.api.port.InputProcessorPort;
 import org.apache.taverna.scufl2.api.port.OutputProcessorPort;
 
-public class CommandLineTool implements Process {
+public class CommandLineTool extends Process {
 
     private final static String BASE_COMMAND = "baseCommand";
     private final static String ID = "id";
@@ -39,14 +39,12 @@ public class CommandLineTool implements Process {
     private JsonNode node;
 
     private String baseCommand = null;
-    private Map<String, InputProcessorPort> processorInputs;
-    private Map<String, OutputProcessorPort> processorOutputs;
+    private Map<String, InputProcessorPort> processorInputs = new HashMap<>();
+    private Map<String, OutputProcessorPort> processorOutputs = new HashMap<>();
 
     public CommandLineTool(JsonNode node) {
         this.node = node;
         this.cwlParser = new CWLParser(node);
-        this.processorInputs = new HashMap<>();
-        this.processorOutputs = new HashMap<>();
         this.parse();
     }
 
@@ -57,6 +55,7 @@ public class CommandLineTool implements Process {
     }
 
     public void parseInputs() {
+        // TODO: Set the processor port depth from the CWL type
         Set<PortDetail> cwlInputs = cwlParser.parseInputs();
         for(PortDetail detail: cwlInputs) {
             String portId = detail.getId();
@@ -74,5 +73,9 @@ public class CommandLineTool implements Process {
             port.setName(portId);
             processorOutputs.put(portId, port);
         }
+    }
+
+    public String getBaseCommand() {
+        return baseCommand;
     }
 }
