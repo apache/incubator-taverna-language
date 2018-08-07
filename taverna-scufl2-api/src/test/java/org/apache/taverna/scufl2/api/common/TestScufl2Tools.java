@@ -51,6 +51,7 @@ import org.apache.taverna.scufl2.api.profiles.ProcessorPortBinding;
 import org.apache.taverna.scufl2.api.profiles.Profile;
 import org.junit.Before;
 import org.junit.Test;
+import sun.security.krb5.Config;
 
 
 public class TestScufl2Tools extends ExampleWorkflow {
@@ -81,19 +82,13 @@ public class TestScufl2Tools extends ExampleWorkflow {
 
 		assertEquals(child, nested);
 
-		boolean found = false;
+		ProcessorBinding binding = processor.getBinding(profile);
+		Activity activity = binding.getBoundActivity();
+        Configuration configuration = activity.getConfiguration();
 
-		for(Activity activity: profile.getActivities()) {
-			if(activity.getType().equals(Scufl2Tools.NESTED_WORKFLOW)) {
-				for(Configuration config: tools.configurationsFor(activity, profile)) {
-					String nestedWorkflowName = config.getJson().get("nestedWorkflow").asText();
-					Workflow wf = workflowBundle.getWorkflows().getByName(nestedWorkflowName);
-					found |= (wf != null && nestedWorkflowName.equals(child.getName()));
-				}
-			}
-		}
-
-		assertTrue(found);
+        assertEquals(activity.getType(), Scufl2Tools.NESTED_WORKFLOW);
+        String nestedWorkflowName = configuration.getJson().get("nestedWorkflow").asText();
+        assertEquals(nestedWorkflowName, child.getName());
 	}
 	
 	@Test

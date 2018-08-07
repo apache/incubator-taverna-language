@@ -764,12 +764,10 @@ public class Scufl2Tools {
 		if(nestedWorkflowForProcessor(processor, profile) != null) {
 			throw new IllegalStateException("Processor " + processor + " already has a nested workflow");
 		}
-		try {
-			processor.getActivity(profile);
-			throw new IllegalStateException("Processor " + processor + " already has a bound activity");
-		} catch(IndexOutOfBoundsException e) {
-			// Processor should have no bound activity, which is the case here.
-		}
+        List<ProcessorBinding> processorBindings = processorBindingsForProcessor(processor, profile);
+        if(processorBindings.size() != 0) {
+            throw new IllegalStateException("Processor " + processor + "already has a binding")
+        }
 
 		Activity activity = createActivityFromProcessor(processor, profile);
 		activity.setType(NESTED_WORKFLOW);
