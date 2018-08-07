@@ -17,10 +17,9 @@
  * under the License.
  */
 
-package org.apache.taverna.scufl2.cwl;
+package org.apache.taverna.scufl2.cwl.components;
 
 
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 

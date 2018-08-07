@@ -36,6 +36,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
+import org.apache.taverna.scufl2.cwl.components.Process;
+import org.apache.taverna.scufl2.cwl.components.*;
+
 public class YAMLHelper {
 
     public static final String ARRAY_SPLIT_BRACKETS = "\\[\\]";

@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.taverna.scufl2.cwl;
+package org.apache.taverna.scufl2.cwl.components;
 
 import java.util.Set;
 import java.util.HashSet;
@@ -30,7 +30,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.taverna.scufl2.api.core.Processor;
 import org.apache.taverna.scufl2.api.core.DataLink;
-import org.apache.taverna.scufl2.api.core.Workflow;
 
 import org.apache.taverna.scufl2.api.port.InputWorkflowPort;
 import org.apache.taverna.scufl2.api.port.OutputWorkflowPort;
@@ -40,6 +39,8 @@ import org.apache.taverna.scufl2.api.port.SenderPort;
 import org.apache.taverna.scufl2.api.port.ReceiverPort;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
+import org.apache.taverna.scufl2.cwl.*;
 
 public class WorkflowProcess extends Process {
 

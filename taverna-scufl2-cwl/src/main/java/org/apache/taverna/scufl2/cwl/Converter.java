@@ -21,7 +21,6 @@ package org.apache.taverna.scufl2.cwl;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.HashMap;
 
 import org.apache.taverna.scufl2.api.core.Workflow;
 import org.apache.taverna.scufl2.api.core.Processor;
@@ -36,6 +35,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+
+import org.apache.taverna.scufl2.cwl.components.Process;
+import org.apache.taverna.scufl2.cwl.components.*;
 
 public class Converter {
 

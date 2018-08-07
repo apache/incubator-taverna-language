@@ -19,7 +19,6 @@
 package org.apache.taverna.scufl2.cwl;
 
 
-import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
@@ -27,11 +26,12 @@ import org.yaml.snakeyaml.Yaml;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.core.Workflow;
 import org.apache.taverna.scufl2.api.core.Processor;
+
+import org.apache.taverna.scufl2.cwl.components.*;
 
 public class TestConverting {
     private static final String HELLO_WORLD_CWL = "/hello_world.cwl";

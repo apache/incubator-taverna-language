@@ -22,15 +22,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 
-import org.apache.taverna.scufl2.api.core.Workflow;
-import org.apache.taverna.scufl2.api.core.Processor;
-
-import org.apache.taverna.scufl2.api.port.InputWorkflowPort;
-import org.apache.taverna.scufl2.api.port.OutputWorkflowPort;
-import org.apache.taverna.scufl2.api.port.InputProcessorPort;
-import org.apache.taverna.scufl2.api.port.OutputProcessorPort;
-
 import com.fasterxml.jackson.databind.JsonNode;
+
+import org.apache.taverna.scufl2.cwl.components.*;
 
 public class CWLParser {
 

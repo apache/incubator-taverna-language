@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.taverna.scufl2.cwl;
+package org.apache.taverna.scufl2.cwl.components;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -49,6 +49,8 @@ import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 import org.apache.taverna.scufl2.api.io.WriterException;
 
+import org.apache.taverna.scufl2.cwl.components.*;
+
 public class WorkflowParser {
 
     private static final String FILE_NAME = "/hello_world.cwl";

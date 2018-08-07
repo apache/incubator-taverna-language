@@ -17,14 +17,12 @@
  * under the License.
  */
 
-package org.apache.taverna.scufl2.cwl;
+package org.apache.taverna.scufl2.cwl.components;
 
 
 import java.util.ArrayList;
 
 public class PortDetail {
-
-
 
     private String id;
     private String label;
