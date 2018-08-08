@@ -179,10 +179,14 @@ public class Converter {
         Set<OutputWorkflowPort> outputs = new HashSet<>(workflowProcess.getWorkflowOutputs().values());
         workflow.setInputPorts(inputs);
         workflow.setOutputPorts(outputs);
+        Set<InputPort> inputPorts = workflowProcess.getInputPorts();
+        Set<OutputPort> outputPorts = workflowProcess.getOutputPorts();
 
         for(Process process: workflowProcess.getProcesses()) {
             if(process instanceof WorkflowProcess) {
                 Workflow childWorkflow = convertWorkflowProcess((WorkflowProcess) process, bundle); // TODO: Add nested relationship
+                Processor processor = new Processor(workflow, childWorkflow.getName()); // TODO: Check if we want the processor to have the same name as the childworkflow
+                createProcessPortsFromWorkflow(processor, childWorkflow);
                 bundle.getWorkflows().add(childWorkflow);
             } else if(process instanceof CommandLineTool) {
                 Processor processor = convertCommandLineTool((CommandLineTool) process);
@@ -195,6 +199,15 @@ public class Converter {
         }
 
         return workflow;
+    }
+
+    public void createProcessPortsFromWorkflow(Processor processor, Workflow workflow) {
+        for(InputWorkflowPort inputWorkflowPort: workflow.getInputPorts()) {
+            processor.getInputPorts().add(new InputProcessorPort(processor, inputWorkflowPort.getName()));
+        }
+        for(OutputWorkflowPort outputWorkflowPort: workflow.getOutputPorts()) {
+            processor.getOutputPorts().add(new OutputProcessorPort(processor, outputWorkflowPort.getName()));
+        }
     }
 
     public Processor convertCommandLineTool(CommandLineTool command) {

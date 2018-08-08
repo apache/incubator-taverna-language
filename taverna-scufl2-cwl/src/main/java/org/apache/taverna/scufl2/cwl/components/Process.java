@@ -24,8 +24,8 @@ import java.util.Set;
 
 public abstract class Process {
 
-    private Set<InputPort> inputPorts = new HashSet<>();
-    private Set<OutputPort> outputPorts = new HashSet<>();
+    protected Set<InputPort> inputPorts = new HashSet<>();
+    protected Set<OutputPort> outputPorts = new HashSet<>();
 
 
     public abstract void parse();
