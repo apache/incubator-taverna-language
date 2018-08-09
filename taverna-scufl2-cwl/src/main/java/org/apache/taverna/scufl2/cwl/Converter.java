@@ -22,6 +22,8 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.apache.taverna.scufl2.api.common.NamedSet;
+import org.apache.taverna.scufl2.api.core.DataLink;
 import org.apache.taverna.scufl2.api.core.Workflow;
 import org.apache.taverna.scufl2.api.core.Processor;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
@@ -36,6 +38,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
+import org.apache.taverna.scufl2.api.port.ReceiverPort;
+import org.apache.taverna.scufl2.api.port.SenderPort;
 import org.apache.taverna.scufl2.cwl.components.Process;
 import org.apache.taverna.scufl2.cwl.components.*;
 
@@ -179,23 +183,44 @@ public class Converter {
         Set<OutputWorkflowPort> outputs = new HashSet<>(workflowProcess.getWorkflowOutputs().values());
         workflow.setInputPorts(inputs);
         workflow.setOutputPorts(outputs);
-        Set<InputPort> inputPorts = workflowProcess.getInputPorts();
-        Set<OutputPort> outputPorts = workflowProcess.getOutputPorts();
+        Set<InputPort> inputPorts = workflowProcess.getInsideInputPorts();
+        Set<OutputPort> outputPorts = workflowProcess.getInsideOutputPorts();
+
+        NamedSet<InputProcessorPort> inputProcessorPorts = new NamedSet<>();
+        NamedSet<OutputProcessorPort> outputProcessorPorts = new NamedSet<>();
 
         for(Process process: workflowProcess.getProcesses()) {
+            Processor processor;
             if(process instanceof WorkflowProcess) {
                 Workflow childWorkflow = convertWorkflowProcess((WorkflowProcess) process, bundle); // TODO: Add nested relationship
-                Processor processor = new Processor(workflow, childWorkflow.getName()); // TODO: Check if we want the processor to have the same name as the childworkflow
+                processor = new Processor(workflow, childWorkflow.getName()); // TODO: Check if we want the processor to have the same name as the childworkflow
                 createProcessPortsFromWorkflow(processor, childWorkflow);
                 bundle.getWorkflows().add(childWorkflow);
             } else if(process instanceof CommandLineTool) {
-                Processor processor = convertCommandLineTool((CommandLineTool) process);
+                processor = convertCommandLineTool((CommandLineTool) process);
                 workflow.getProcessors().add(processor);
             } else {
                 assert(process instanceof Reference);
-                Processor processor = convertReference((Reference) process);
+                processor = convertReference((Reference) process);
                 workflow.getProcessors().add(processor);
             }
+            inputProcessorPorts.addAll(processor.getInputPorts());
+            outputProcessorPorts.addAll(processor.getOutputPorts());
+        }
+
+        // DataLinks
+        for(InputPort port: inputPorts) {
+            String senderName = port.getSource();
+            String destName = port.getName();
+            SenderPort senderPort = outputProcessorPorts.getByName(senderName);
+            if(senderPort == null) { // Source is one of the Workflow inputs
+                senderPort = workflow.getInputPorts().getByName(senderName);
+            }
+            ReceiverPort receiverPort = inputProcessorPorts.getByName(destName);
+            if(receiverPort == null) { // Destination is one of the Workflow outputs
+                receiverPort = workflow.getOutputPorts().getByName(destName);
+            }
+            new DataLink(workflow, senderPort, receiverPort);
         }
 
         return workflow;

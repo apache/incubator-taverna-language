@@ -19,6 +19,7 @@
 package org.apache.taverna.scufl2.cwl;
 
 
+import org.apache.taverna.scufl2.api.core.DataLink;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
@@ -86,5 +87,10 @@ public class TestConverting {
         Processor processor = workflow.getProcessors().iterator().next();
         assertEquals(1, processor.getInputPorts().size());
         assertEquals(0, processor.getOutputPorts().size());
+
+        assertEquals(1, workflow.getDataLinks().size());
+        DataLink dataLink = workflow.getDataLinks().iterator().next();
+        assertEquals("name", dataLink.getReceivesFrom().getName());
+        assertEquals("text", dataLink.getSendsTo().getName());
     }
 }

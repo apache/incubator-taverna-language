@@ -104,6 +104,8 @@ public class WorkflowProcess extends Process {
             Process process = step.getRun();
             process.setInputPorts(step.getInputs());
             process.setOutputPorts(step.getOutputs());
+            insideInputPorts.addAll(step.getInputs());
+            insideOutputPorts.addAll(step.getOutputs());
             result.add(process);
         }
 
