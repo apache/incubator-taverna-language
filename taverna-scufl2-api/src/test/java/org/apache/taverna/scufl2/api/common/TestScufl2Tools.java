@@ -31,20 +31,24 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
 
+import java.util.stream.Collectors;
 import org.apache.taverna.scufl2.api.ExampleWorkflow;
 import org.apache.taverna.scufl2.api.activity.Activity;
-import org.apache.taverna.scufl2.api.common.Child;
-import org.apache.taverna.scufl2.api.common.Scufl2Tools;
-import org.apache.taverna.scufl2.api.common.WorkflowBean;
 import org.apache.taverna.scufl2.api.common.Visitor.VisitorWithPath;
+import org.apache.taverna.scufl2.api.configurations.Configuration;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.core.ControlLink;
 import org.apache.taverna.scufl2.api.core.Processor;
+import org.apache.taverna.scufl2.api.core.Workflow;
 import org.apache.taverna.scufl2.api.port.InputActivityPort;
 import org.apache.taverna.scufl2.api.port.InputProcessorPort;
+import org.apache.taverna.scufl2.api.port.InputWorkflowPort;
 import org.apache.taverna.scufl2.api.port.OutputActivityPort;
 import org.apache.taverna.scufl2.api.port.OutputProcessorPort;
+import org.apache.taverna.scufl2.api.port.OutputWorkflowPort;
 import org.apache.taverna.scufl2.api.profiles.ProcessorBinding;
 import org.apache.taverna.scufl2.api.profiles.ProcessorInputPortBinding;
 import org.apache.taverna.scufl2.api.profiles.ProcessorOutputPortBinding;
@@ -62,6 +66,59 @@ public class TestScufl2Tools extends ExampleWorkflow {
 	public void makeBundle() {
 		makeWorkflowBundle();
 		assertNotNull(workflowBundle);
+	}
+
+	@Test
+	public void testNestedWorkflows() {
+		Workflow child = new Workflow();
+		child.setName("childWorkflow");
+		child.setParent(workflowBundle);
+
+		Workflow mainWorkflow = workflowBundle.getMainWorkflow();
+		Processor processor = new Processor();
+		processor.setParent(mainWorkflow);
+
+		Profile profile = workflowBundle.getMainProfile();
+
+		Scufl2Tools tools = new Scufl2Tools();
+		tools.setAsNestedWorkflow(processor, child, profile);
+		Workflow nested = tools.nestedWorkflowForProcessor(processor, profile);
+
+		assertEquals(child, nested);
+
+		ProcessorBinding binding = processor.getBinding(profile);
+		Activity activity = binding.getBoundActivity();
+		Configuration configuration = activity.getConfiguration();
+
+		assertEquals(activity.getType(), Scufl2Tools.NESTED_WORKFLOW);
+		String nestedWorkflowName = configuration.getJson().get("nestedWorkflow").asText();
+		assertEquals(nestedWorkflowName, child.getName());
+	}
+
+	@Test
+	public void testNestedProcessHasCorrectStructure() {
+		Workflow child = new Workflow();
+		child.setName("childWorkflow");
+		child.setParent(workflowBundle);
+
+		Workflow mainWorkflow = workflowBundle.getMainWorkflow();
+		Processor processor = new Processor();
+		processor.setParent(mainWorkflow);
+
+		Profile profile = workflowBundle.getMainProfile();
+
+		Scufl2Tools tools = new Scufl2Tools();
+		tools.setAsNestedWorkflow(processor, child, profile);
+
+		Set<String> processorInputNames = processor.getInputPorts().stream().map(InputProcessorPort::getName).collect(Collectors.toSet());
+		Set<String> workflowInputNames = child.getInputPorts().stream().map(InputWorkflowPort::getName).collect(Collectors.toSet());
+
+		assertEquals(workflowInputNames, processorInputNames);
+
+		Set<String> processorOutputNames = processor.getOutputPorts().stream().map(OutputProcessorPort::getName).collect(Collectors.toSet());
+		Set<String> workflowOutputNames = child.getOutputPorts().stream().map(OutputWorkflowPort::getName).collect(Collectors.toSet());
+
+		assertEquals(workflowOutputNames, processorOutputNames);
 	}
 	
 	@Test

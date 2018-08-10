@@ -65,6 +65,7 @@ import org.apache.taverna.scufl2.api.profiles.Profile;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Utility methods for dealing with SCUFL2 models
@@ -750,6 +751,34 @@ public class Scufl2Tools {
 		createActivityPortsFromProcessor(activity, processor);
 		bindActivityToProcessorByMatchingPorts(activity, processor);
 		return activity;
+	}
+
+	public Configuration setAsNestedWorkflow(Processor processor, Workflow childWorkflow, Profile profile) {
+		if(processor.getParent() == null) {
+			throw new IllegalStateException("Processor " + processor + " has no parent");
+		}
+		if(processor.getParent().getParent() != childWorkflow.getParent()) {
+			throw new IllegalStateException(
+					"Processor " + processor + " and workflow " + childWorkflow + " are not in the same Workflow bundle");
+		}
+		if(nestedWorkflowForProcessor(processor, profile) != null) {
+			throw new IllegalStateException("Processor " + processor + " already has a nested workflow");
+		}
+		List<ProcessorBinding> processorBindings = processorBindingsForProcessor(processor, profile);
+		if(processorBindings.size() != 0) {
+				throw new IllegalStateException("Processor " + processor + "already has a binding");
+		}
+
+		Activity activity = createActivityFromProcessor(processor, profile);
+		activity.setType(NESTED_WORKFLOW);
+		Configuration configuration = createConfigurationFor(activity, NESTED_WORKFLOW);
+
+		ObjectNode json = configuration.getJsonAsObjectNode();
+		json.put("nestedWorkflow", childWorkflow.getName());
+
+		childWorkflow.setParent(processor.getParent().getParent());
+
+		return configuration;
 	}
 
 	public void removePortsBindingForUnknownPorts(ProcessorBinding binding) {
