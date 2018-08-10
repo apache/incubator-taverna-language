@@ -30,7 +30,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.taverna.scufl2.cwl.components.Process;
-import org.apache.taverna.scufl2.cwl.components.*;
+import org.apache.taverna.scufl2.cwl.components.ProcessFactory;
+import org.apache.taverna.scufl2.cwl.components.CommandLineTool;
+import org.apache.taverna.scufl2.cwl.components.WorkflowProcess;
+import org.apache.taverna.scufl2.cwl.components.Reference;
 
 
 public class TestWorkflowNesting {

@@ -37,7 +37,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
 import org.apache.taverna.scufl2.cwl.components.Process;
-import org.apache.taverna.scufl2.cwl.components.*;
+import org.apache.taverna.scufl2.cwl.components.Step;
+import org.apache.taverna.scufl2.cwl.components.PortDetail;
+import org.apache.taverna.scufl2.cwl.components.InputPort;
+import org.apache.taverna.scufl2.cwl.components.OutputPort;
+import org.apache.taverna.scufl2.cwl.components.ProcessFactory;
 
 public class YAMLHelper {
 

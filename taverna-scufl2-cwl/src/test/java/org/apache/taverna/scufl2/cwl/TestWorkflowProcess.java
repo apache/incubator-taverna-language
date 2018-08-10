@@ -48,7 +48,8 @@ import org.apache.taverna.scufl2.api.io.WriterException;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 
 import org.apache.taverna.scufl2.cwl.components.Process;
-import org.apache.taverna.scufl2.cwl.components.*;
+import org.apache.taverna.scufl2.cwl.components.ProcessFactory;
+import org.apache.taverna.scufl2.cwl.components.WorkflowProcess;
 
 
 public class TestWorkflowProcess {

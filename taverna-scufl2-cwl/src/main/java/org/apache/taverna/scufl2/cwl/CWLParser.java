@@ -24,7 +24,8 @@ import java.util.HashSet;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import org.apache.taverna.scufl2.cwl.components.*;
+import org.apache.taverna.scufl2.cwl.components.Step;
+import org.apache.taverna.scufl2.cwl.components.PortDetail;
 
 public class CWLParser {
 

@@ -41,7 +41,13 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import org.apache.taverna.scufl2.api.port.ReceiverPort;
 import org.apache.taverna.scufl2.api.port.SenderPort;
 import org.apache.taverna.scufl2.cwl.components.Process;
-import org.apache.taverna.scufl2.cwl.components.*;
+import org.apache.taverna.scufl2.cwl.components.PortDetail;
+import org.apache.taverna.scufl2.cwl.components.Step;
+import org.apache.taverna.scufl2.cwl.components.InputPort;
+import org.apache.taverna.scufl2.cwl.components.OutputPort;
+import org.apache.taverna.scufl2.cwl.components.WorkflowProcess;
+import org.apache.taverna.scufl2.cwl.components.CommandLineTool;
+import org.apache.taverna.scufl2.cwl.components.Reference;
 
 public class Converter {
 
