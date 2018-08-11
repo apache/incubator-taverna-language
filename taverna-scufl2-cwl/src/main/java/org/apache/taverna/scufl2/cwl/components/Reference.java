@@ -26,10 +26,12 @@ public class Reference extends Process {
 
     public Reference() {
         source = "";
+        name = "";
     }
 
     public Reference(String src) {
         this.source = src;
+        this.name = "";
     }
 
     public void parse() {

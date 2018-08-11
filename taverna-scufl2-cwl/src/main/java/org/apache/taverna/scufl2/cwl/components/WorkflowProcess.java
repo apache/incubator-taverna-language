@@ -57,8 +57,12 @@ public class WorkflowProcess extends Process {
 
     private Converter converter = new Converter();
 
-    public WorkflowProcess(InputStream stream) {
+    public WorkflowProcess() {
+        this.name = "";
+    }
 
+    public WorkflowProcess(InputStream stream) {
+        this();
         Yaml reader = new Yaml();
         ObjectMapper mapper = new ObjectMapper();
         JsonNode node = mapper.valueToTree(reader.load(stream));
@@ -68,6 +72,7 @@ public class WorkflowProcess extends Process {
     }
 
     public WorkflowProcess(JsonNode node) {
+        this();
         cwlParser = new CWLParser(node);
         this.parse();
     }

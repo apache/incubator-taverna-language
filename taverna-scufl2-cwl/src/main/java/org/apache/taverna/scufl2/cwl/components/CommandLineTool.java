@@ -46,6 +46,7 @@ public class CommandLineTool extends Process {
     private Map<String, OutputProcessorPort> processorOutputs = new HashMap<>();
 
     public CommandLineTool(JsonNode node) {
+        this.name = "";
         this.node = node;
         this.cwlParser = new CWLParser(node);
         this.parse();

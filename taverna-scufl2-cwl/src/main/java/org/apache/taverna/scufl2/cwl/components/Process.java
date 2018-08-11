@@ -30,7 +30,7 @@ public abstract class Process {
     protected Set<InputPort> insideInputPorts = new HashSet<>();
 
     protected Set<OutputPort> insideOutputPorts = new HashSet<>();
-
+    protected String name;
 
     public abstract void parse();
 
@@ -65,5 +65,14 @@ public abstract class Process {
     public void setInsideOutputPorts(Set<OutputPort> insideOutputPorts) {
       this.insideOutputPorts = insideOutputPorts;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
 
 }
