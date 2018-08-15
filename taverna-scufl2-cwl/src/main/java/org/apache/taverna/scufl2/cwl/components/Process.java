@@ -17,16 +17,20 @@
  * under the License.
  */
 
-package org.apache.taverna.scufl2.cwl;
+package org.apache.taverna.scufl2.cwl.components;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public abstract class Process {
 
-    private Set<InputPort> inputPorts = new HashSet<>();
-    private Set<OutputPort> outputPorts = new HashSet<>();
+    protected Set<InputPort> inputPorts = new HashSet<>();
+    protected Set<OutputPort> outputPorts = new HashSet<>();
 
+    protected Set<InputPort> insideInputPorts = new HashSet<>();
+
+    protected Set<OutputPort> insideOutputPorts = new HashSet<>();
+    protected String name;
 
     public abstract void parse();
 
@@ -45,5 +49,30 @@ public abstract class Process {
     public void setOutputPorts(Set<OutputPort> outputs) {
         this.outputPorts = outputs;
     }
+
+    public Set<InputPort> getInsideInputPorts() {
+      return insideInputPorts;
+    }
+
+    public void setInsideInputPorts(Set<InputPort> insideInputPorts) {
+      this.insideInputPorts = insideInputPorts;
+    }
+
+    public Set<OutputPort> getInsideOutputPorts() {
+      return insideOutputPorts;
+    }
+
+    public void setInsideOutputPorts(Set<OutputPort> insideOutputPorts) {
+      this.insideOutputPorts = insideOutputPorts;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
 
 }

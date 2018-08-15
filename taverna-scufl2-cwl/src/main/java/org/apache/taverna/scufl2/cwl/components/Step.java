@@ -17,10 +17,9 @@
  * under the License.
  */
 
-package org.apache.taverna.scufl2.cwl;
+package org.apache.taverna.scufl2.cwl.components;
 
 
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -36,6 +35,7 @@ public class Step {
     public Step() {
         inputs = new HashSet<>();
         outputs = new HashSet<>();
+        id = "";
     }
 
     public String getId() {
@@ -82,4 +82,18 @@ public class Step {
         return "Step " + id + ": run = " + run;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if(this == obj) return true;
+        if(obj == null) return false;
+        if(this.getClass() != obj.getClass()) return false;
+
+        Step other = (Step) obj;
+        return other.id.equals(id) && other.run.getName().equals(run.getName()); // && other.inputs == inputs && other.outputs == outputs;
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode() * 13 + run.getName().hashCode() * 17;
+    }
 }

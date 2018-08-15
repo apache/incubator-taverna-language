@@ -19,12 +19,7 @@
 package org.apache.taverna.scufl2.cwl;
 
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Set;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.HashMap;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
@@ -33,19 +28,13 @@ import org.yaml.snakeyaml.Yaml;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import org.apache.taverna.scufl2.cwl.components.Process;
+import org.apache.taverna.scufl2.cwl.components.ProcessFactory;
+import org.apache.taverna.scufl2.cwl.components.CommandLineTool;
+import org.apache.taverna.scufl2.cwl.components.WorkflowProcess;
+import org.apache.taverna.scufl2.cwl.components.Reference;
 
-import org.apache.taverna.scufl2.api.core.Workflow;
-
-import org.apache.taverna.scufl2.api.port.InputWorkflowPort;
-import org.apache.taverna.scufl2.api.port.OutputWorkflowPort;
-
-import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
-import org.apache.taverna.scufl2.api.io.WriterException;
-
-import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 
 public class TestWorkflowNesting {
     private static final String HELLO_WORLD_CWL = "/hello_world.cwl";

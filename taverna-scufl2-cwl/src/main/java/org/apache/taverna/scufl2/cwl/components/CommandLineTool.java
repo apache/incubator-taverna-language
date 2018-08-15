@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.taverna.scufl2.cwl;
+package org.apache.taverna.scufl2.cwl.components;
 
 import java.util.Set;
 import java.util.Map;
@@ -27,6 +27,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import org.apache.taverna.scufl2.api.port.InputProcessorPort;
 import org.apache.taverna.scufl2.api.port.OutputProcessorPort;
+
+
+import org.apache.taverna.scufl2.cwl.*;
 
 public class CommandLineTool extends Process {
 
@@ -43,6 +46,7 @@ public class CommandLineTool extends Process {
     private Map<String, OutputProcessorPort> processorOutputs = new HashMap<>();
 
     public CommandLineTool(JsonNode node) {
+        this.name = "";
         this.node = node;
         this.cwlParser = new CWLParser(node);
         this.parse();

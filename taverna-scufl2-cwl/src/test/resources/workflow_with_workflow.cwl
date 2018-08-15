@@ -25,7 +25,7 @@ inputs:
 outputs:
   download:
     type: File
-    outputSource:  "#step1/curl"
+    outputSource:  "curl"
 
 steps:
   step1:
@@ -40,7 +40,7 @@ steps:
           run: example.cwl
           inputs:
             - id: text
-              source: "#x/name"
+              source: "name"
           outputs: []
     in:
       text: message
