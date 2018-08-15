@@ -28,10 +28,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.yaml.snakeyaml.Yaml;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import org.apache.taverna.scufl2.api.core.Workflow;
 import org.apache.taverna.scufl2.api.core.Processor;
@@ -40,7 +38,6 @@ import org.apache.taverna.scufl2.api.core.DataLink;
 import org.apache.taverna.scufl2.api.common.NamedSet;
 
 import org.apache.taverna.scufl2.api.port.InputWorkflowPort;
-import org.apache.taverna.scufl2.api.port.OutputWorkflowPort;
 import org.apache.taverna.scufl2.api.port.InputProcessorPort;
 
 

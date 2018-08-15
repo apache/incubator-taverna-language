@@ -36,6 +36,13 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
+import org.apache.taverna.scufl2.cwl.components.Process;
+import org.apache.taverna.scufl2.cwl.components.Step;
+import org.apache.taverna.scufl2.cwl.components.PortDetail;
+import org.apache.taverna.scufl2.cwl.components.InputPort;
+import org.apache.taverna.scufl2.cwl.components.OutputPort;
+import org.apache.taverna.scufl2.cwl.components.ProcessFactory;
+
 public class YAMLHelper {
 
     public static final String ARRAY_SPLIT_BRACKETS = "\\[\\]";
@@ -122,9 +129,12 @@ public class YAMLHelper {
                 Process run = ProcessFactory.createProcess(runNode);
                 run.parse();  // Recursively parse nested process
                 Set<InputPort> inputs = processStepInput(stepNode.get(INPUTS));
+                Set<OutputPort> outputs = processStepOutput(stepNode.get(OUTPUTS));
                 step.setId(id);
                 step.setRun(run);
                 step.setInputs(inputs);
+                step.setOutputs(outputs);
+
                 result.add(step);
             }
         } else if(steps.isObject()) {
@@ -142,8 +152,10 @@ public class YAMLHelper {
                     step.setRun(run);
                 }
                 Set<InputPort> inputs = processStepInput(value.get(INPUTS));
+                Set<OutputPort> outputs = processStepOutput(value.get(OUTPUTS));
                 step.setId(id);
                 step.setInputs(inputs);
+                step.setOutputs(outputs);
 
                 result.add(step);
             }
@@ -177,6 +189,32 @@ public class YAMLHelper {
                 result.add(new InputPort(id, source));
             }
         }
+        return result;
+    }
+
+    private Set<OutputPort> processStepOutput(JsonNode outputs) {
+        Set<OutputPort> result = new HashSet<>();
+        if(outputs == null) {
+            return result;
+        }
+        if (outputs.isArray()) {
+
+            for (JsonNode output : outputs) {
+                String id = output.get(ID).asText();
+
+                result.add(new OutputPort(id));
+            }
+        } else if (outputs.isObject()) {
+            Iterator<Entry<String, JsonNode>> iterator = outputs.fields();
+            while (iterator.hasNext()) {
+                Entry<String, JsonNode> entry = iterator.next();
+
+                String id = entry.getKey();
+
+                result.add(new OutputPort(id));
+            }
+        }
+
         return result;
     }
 

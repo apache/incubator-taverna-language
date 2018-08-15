@@ -19,7 +19,7 @@
 package org.apache.taverna.scufl2.cwl;
 
 
-import org.junit.Before;
+import org.apache.taverna.scufl2.api.core.DataLink;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
@@ -27,11 +27,13 @@ import org.yaml.snakeyaml.Yaml;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.core.Workflow;
 import org.apache.taverna.scufl2.api.core.Processor;
+
+import org.apache.taverna.scufl2.cwl.components.WorkflowProcess;
+import org.apache.taverna.scufl2.cwl.components.ProcessFactory;
 
 public class TestConverting {
     private static final String HELLO_WORLD_CWL = "/hello_world.cwl";
@@ -86,5 +88,13 @@ public class TestConverting {
         Processor processor = workflow.getProcessors().iterator().next();
         assertEquals(1, processor.getInputPorts().size());
         assertEquals(0, processor.getOutputPorts().size());
+
+        String processorPortName = processor.getInputPorts().iterator().next().getName();
+        assertEquals("text", processorPortName);
+
+        assertEquals(1, workflow.getDataLinks().size());
+        DataLink dataLink = workflow.getDataLinks().iterator().next();
+        assertEquals("name", dataLink.getReceivesFrom().getName());
+        assertEquals("text", dataLink.getSendsTo().getName());
     }
 }

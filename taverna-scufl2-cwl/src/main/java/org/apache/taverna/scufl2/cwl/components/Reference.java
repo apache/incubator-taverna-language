@@ -17,9 +17,8 @@
  * under the License.
  */
 
-package org.apache.taverna.scufl2.cwl;
+package org.apache.taverna.scufl2.cwl.components;
 
-import com.fasterxml.jackson.databind.JsonNode;
 
 public class Reference extends Process {
 
@@ -27,10 +26,12 @@ public class Reference extends Process {
 
     public Reference() {
         source = "";
+        name = "";
     }
 
     public Reference(String src) {
         this.source = src;
+        this.name = "";
     }
 
     public void parse() {

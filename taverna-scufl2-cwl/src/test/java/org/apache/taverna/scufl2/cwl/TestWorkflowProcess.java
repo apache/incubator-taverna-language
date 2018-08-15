@@ -47,6 +47,11 @@ import org.apache.taverna.scufl2.api.io.WriterException;
 
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 
+import org.apache.taverna.scufl2.cwl.components.Process;
+import org.apache.taverna.scufl2.cwl.components.ProcessFactory;
+import org.apache.taverna.scufl2.cwl.components.WorkflowProcess;
+
+
 public class TestWorkflowProcess {
     private static final String HELLO_WORLD_CWL = "/hello_world.cwl";
     private static final String WORKFLOW_WITH_COMMAND = "/workflow_with_command.cwl";

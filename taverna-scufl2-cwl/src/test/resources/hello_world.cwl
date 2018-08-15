@@ -32,6 +32,6 @@ steps:
 
     inputs:
       - id: text
-        source: "#x/name"
+        source: "name"
 
     outputs: []

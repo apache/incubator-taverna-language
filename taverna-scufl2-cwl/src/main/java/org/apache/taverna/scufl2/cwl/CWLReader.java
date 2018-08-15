@@ -27,6 +27,7 @@ import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleReader;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 
+import org.apache.taverna.scufl2.cwl.components.WorkflowProcess;
 
 public class CWLReader implements WorkflowBundleReader {
 
