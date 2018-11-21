@@ -325,40 +325,6 @@ available.
 http://www.w3.org/community/about/agreements/cla/
 
 ---------------------------------------------------------
-./taverna-robundle/src/main/resources/ontologies/ro.owl
-./taverna-scufl2-wfdesc/src/main/resources/org/purl/wf4ever/wfdesc/wfdesc.ttl
-./taverna-scufl2-wfdesc/src/main/resources/org/purl/wf4ever/wfdesc/wfprov.ttl
-./taverna-scufl2-wfdesc/src/main/resources/org/purl/wf4ever/wfdesc/roterms.ttl
-./taverna-scufl2-wfdesc/src/main/resources/org/purl/wf4ever/wfdesc/wf4ever.ttl
-
-Wf4Ever Research Object Model 1.0
-https://w3id.org/ro/
-
-wfdesc ontology
-https://w3id.org/ro/wfdesc
-
-wfprov ontology
-https://w3id.org/ro/wfprov
-
-roterms ontology
-http://purl.org/wf4ever/roterms
-
-wf4ever ontology
-https://w3id.org/ro/wf4ever
-
-Copyright (c) 2011-2014
-  Stian Soiland-Reyes, University of Manchester
-  Sean Bechhofer, University of Manchester
-  Khalid Belhajjame, University of Manchester
-  Graham Klyne, University of Oxford
-  Daniel Garijo, UPM
-  Oscar Corcho, UPM
-  Esteban Garcia Cuesta, iSOCO
-  Raul Palma, PSNC
-
-Licensed under a Creative Commons Attribution 3.0 License.
-http://creativecommons.org/licenses/by/3.0/
-
 
 ------------------------------------------------------
 ./taverna-scufl2-schemas/src/main/resources/org/apache/taverna/scufl2/rdfxml/xsd/xml.xsd
