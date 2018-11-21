@@ -15,28 +15,7 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- *
- * This work (Java class) is a derivative from an original OWL ontology:
  * 
- *	  wfprov ontology
- *	  https://w3id.org/ro/wfprov
- *	  Wf4Ever Research Object Model 1.0 
- *	  https://w3id.org/ro/
- *	  
- *	  (c) 2011-2014 
- *	    Stian Soiland-Reyes, University of Manchester
- *	    Sean Bechhofer, University of Manchester
- *	    Khalid Belhajjame, University of Manchester
- *	    Graham Klyne, University of Oxford
- *	    Daniel Garijo, UPM
- *	    Oscar Corcho, UPM
- *	    Esteban García Cuesta, iSOCO
- *	    Raul Palma, PSNC
- *	 
- *	  Original work used according to 
- *	  Creative Commons Attribution 3.0 License.
- *	  http://creativecommons.org/licenses/by/3.0/
- *	  
  */
 package org.apache.taverna.scufl2.wfdesc.ontologies; 
 import org.apache.jena.rdf.model.*;

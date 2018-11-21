@@ -15,8 +15,8 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- *
-*/
+ *  
+ */
 package org.apache.taverna.scufl2.wfdesc.ontologies; 
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.ontology.*;
