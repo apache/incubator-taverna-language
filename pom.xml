@@ -302,6 +302,7 @@ additional dependencies to be a happy OSGi bundle -->
       <module>taverna-scufl2-api</module>
       <module>taverna-scufl2-examples</module>
       <module>taverna-scufl2-integration-tests</module>
+      <module>taverna-scufl2-ro-vocabs</module>
       <module>taverna-scufl2-schemas</module>
       <module>taverna-scufl2-scufl</module>
       <module>taverna-scufl2-t2flow</module>
@@ -331,6 +332,7 @@ additional dependencies to be a happy OSGi bundle -->
       <module>taverna-scufl2-api</module>
       <module>taverna-scufl2-examples</module>
       <module>taverna-scufl2-integration-tests</module>
+      <module>taverna-scufl2-ro-vocabs</module>
       <module>taverna-scufl2-schemas</module>
       <module>taverna-scufl2-scufl</module>
       <module>taverna-scufl2-t2flow</module>
