@@ -31,10 +31,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.taverna.ro.vocabs.Prov_o;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
-import org.apache.taverna.scufl2.wfdesc.ontologies.Prov_o;
 import org.junit.Before;
 import org.junit.Test;
 

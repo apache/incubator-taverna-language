@@ -17,7 +17,7 @@
  * under the License.
  * 
  */
-package org.apache.taverna.scufl2.wfdesc.ontologies; 
+package org.apache.taverna.ro.vocabs; 
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.ontology.*;
  

@@ -25,10 +25,10 @@ package org.apache.taverna.scufl2.wfdesc;
 
 import java.io.OutputStream;
 
+import org.apache.taverna.ro.vocabs.Prov_o;
 import org.apache.taverna.scufl2.api.annotation.Revision;
 import org.apache.taverna.scufl2.api.core.Workflow;
 import org.apache.taverna.scufl2.api.io.WriterException;
-import org.apache.taverna.scufl2.wfdesc.ontologies.Prov_o;
 import org.apache.jena.ontology.Individual;
 import org.apache.jena.ontology.OntClass;
 import org.apache.jena.ontology.OntModel;

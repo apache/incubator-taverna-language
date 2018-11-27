@@ -39,6 +39,10 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RiotException;
 import org.apache.jena.vocabulary.OWL;
+import org.apache.taverna.ro.vocabs.Prov_o;
+import org.apache.taverna.ro.vocabs.Roterms;
+import org.apache.taverna.ro.vocabs.Wf4ever;
+import org.apache.taverna.ro.vocabs.Wfdesc;
 import org.apache.taverna.scufl2.api.activity.Activity;
 import org.apache.taverna.scufl2.api.annotation.Annotation;
 import org.apache.taverna.scufl2.api.common.Child;
@@ -59,10 +63,6 @@ import org.apache.taverna.scufl2.api.port.WorkflowPort;
 import org.apache.taverna.scufl2.api.profiles.ProcessorBinding;
 import org.apache.taverna.scufl2.api.profiles.ProcessorPortBinding;
 import org.apache.taverna.scufl2.api.profiles.Profile;
-import org.apache.taverna.scufl2.wfdesc.ontologies.Prov_o;
-import org.apache.taverna.scufl2.wfdesc.ontologies.Roterms;
-import org.apache.taverna.scufl2.wfdesc.ontologies.Wf4ever;
-import org.apache.taverna.scufl2.wfdesc.ontologies.Wfdesc;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

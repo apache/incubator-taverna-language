@@ -79,22 +79,6 @@
             <exclude>**/xml.xsd</exclude>
             <exclude>**/xenc-schema.xsd</exclude>
             <exclude>**/xmldsig-core-schema.xsd</exclude>
-            <exclude>**/prov-o.rdf</exclude>
-            <exclude>**/prov-o.ttl</exclude>
-            <exclude>**/prov-aq.rdf</exclude>
-            <!-- W3C Community license -->
-            <!-- FOAF, Creative Commons Attribution 1.0 -->
-            <exclude>**/oa.rdf</exclude>
-            <exclude>**/foaf.rdf</exclude>
-            <!-- Research Object Model, Creative Commons Attribution 3.0 -->
-            <exclude>**/roterms.ttl</exclude>
-            <exclude>**/wf4ever.ttl</exclude>
-            <exclude>**/wfdesc.ttl</exclude>
-            <exclude>**/wfprov.ttl</exclude>
-
-            <!-- Dublin Core, Creative Commons Attribution 3.0 -->
-            <exclude>**/dcam.owl</exclude>
-            <exclude>**/dcterms_od.owl</exclude>
 
           </excludes>
         </configuration>
@@ -297,12 +281,12 @@ additional dependencies to be a happy OSGi bundle -->
     <modules>
       <module>taverna-baclava-language</module>
       <module>taverna-databundle</module>
+      <module>taverna-ro-vocabs</module>
       <module>taverna-robundle</module>
       <module>taverna-scufl2-annotation</module>
       <module>taverna-scufl2-api</module>
       <module>taverna-scufl2-examples</module>
       <module>taverna-scufl2-integration-tests</module>
-      <module>taverna-scufl2-ro-vocabs</module>
       <module>taverna-scufl2-schemas</module>
       <module>taverna-scufl2-scufl</module>
       <module>taverna-scufl2-t2flow</module>
@@ -327,12 +311,12 @@ additional dependencies to be a happy OSGi bundle -->
       <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
     <modules>
+      <module>taverna-ro-vocabs</module>
       <module>taverna-baclava-language</module>
       <module>taverna-scufl2-annotation</module>
       <module>taverna-scufl2-api</module>
       <module>taverna-scufl2-examples</module>
       <module>taverna-scufl2-integration-tests</module>
-      <module>taverna-scufl2-ro-vocabs</module>
       <module>taverna-scufl2-schemas</module>
       <module>taverna-scufl2-scufl</module>
       <module>taverna-scufl2-t2flow</module>
