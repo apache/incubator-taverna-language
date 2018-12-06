@@ -231,4 +231,23 @@ public class Prov_o {
     
     public static final OntClass Usage = M_MODEL.createClass(NS + "Usage");
     
+	/**
+	 * Constants from the W3C PROV-AQ extension to PROV vocabulary
+	 * 
+	 * @see https://www.w3.org/TR/prov-aq/
+	 */    	    
+    public static class AQ { 
+	    public static final ObjectProperty describesService = M_MODEL.createObjectProperty(NS + "describesService");
+	    public static final ObjectProperty has_anchor = M_MODEL.createObjectProperty(NS + "has_anchor");
+	    public static final ObjectProperty has_provenance = M_MODEL.createObjectProperty(NS + "has_provenance");
+	    public static final ObjectProperty has_provenance_service = M_MODEL.createObjectProperty(NS + "has_provenance_service");
+	    public static final ObjectProperty has_query_service = M_MODEL.createObjectProperty(NS + "has_query_service");
+	    public static final ObjectProperty pingback = M_MODEL.createObjectProperty(NS + "pingback");
+	        
+	    public static final DatatypeProperty provenanceUriTemplate = M_MODEL.createDatatypeProperty(NS + "provenanceUriTemplate");
+	        
+	    public static final OntClass ServiceDescription = M_MODEL.createClass(NS + "ServiceDescription");
+	    public static final OntClass DirectQueryService = M_MODEL.createClass(NS + "DirectQueryService");
+    }
+    
 }
