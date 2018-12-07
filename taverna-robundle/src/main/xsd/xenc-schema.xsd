@@ -12,6 +12,9 @@
 # PURPOSE. 
 # [1] http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
 #
+# 2018-12-07 This file has been modified for Apache Taverna to 
+#  use a relative import of ./xmldsig-core-schema.xsd
+#
 -->
 
 <!DOCTYPE schema  PUBLIC "-//W3C//DTD XMLSchema 200102//EN"
@@ -32,7 +35,7 @@
         elementFormDefault='qualified'>
 
   <import namespace='http://www.w3.org/2000/09/xmldsig#'
-          schemaLocation='http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd'/>
+	  schemaLocation='./xmldsig-core-schema.xsd'/>
 
   <complexType name='EncryptedType' abstract='true'>
     <sequence>
