@@ -40,51 +40,30 @@ public class Wf4ever {
     
     /** <p>The namespace of the vocabulary as a resource</p> */
     public static final Resource NAMESPACE = M_MODEL.createResource( NS );
-    
+
     public static final DatatypeProperty command = M_MODEL.createDatatypeProperty(NS + "command");
-
     public static final DatatypeProperty filePath = M_MODEL.createDatatypeProperty(NS + "filePath");
-
     public static final DatatypeProperty parameterFilePath = M_MODEL.createDatatypeProperty(NS + "parameterFilePath");
-    
     public static final DatatypeProperty rootURI = M_MODEL.createDatatypeProperty(NS + "rootURI");
-    
     public static final DatatypeProperty script = M_MODEL.createDatatypeProperty(NS + "script");
-    
     public static final DatatypeProperty serviceURI = M_MODEL.createDatatypeProperty(NS + "serviceURI");
-    
     public static final DatatypeProperty wsdlOperationName = M_MODEL.createDatatypeProperty(NS + "wsdlOperationName");
-    
     public static final DatatypeProperty wsdlPortName = M_MODEL.createDatatypeProperty(NS + "wsdlPortName");
-    
     public static final DatatypeProperty wsdlURI = M_MODEL.createDatatypeProperty(NS + "wsdlURI");
-    
+
     public static final OntClass BeanshellScript = M_MODEL.createClass(NS + "BeanshellScript");
-    
     public static final OntClass CommandLineTool = M_MODEL.createClass(NS + "CommandLineTool");
-    
     public static final OntClass Dataset = M_MODEL.createClass(NS + "Dataset");
-    
     public static final OntClass Document = M_MODEL.createClass(NS + "Document");
-    
     public static final OntClass File = M_MODEL.createClass(NS + "File");
-
     public static final OntClass FileParameter = M_MODEL.createClass(NS + "FileParameter");
-    
     public static final OntClass Image = M_MODEL.createClass(NS + "Image");
-
     public static final OntClass PythonScript = M_MODEL.createClass(NS + "PythonScript");
-
     public static final OntClass RScript = M_MODEL.createClass(NS + "RScript");
-
     public static final OntClass RESTService = M_MODEL.createClass(NS + "RESTService");
-         
     public static final OntClass Script = M_MODEL.createClass(NS + "Script");
-
     public static final OntClass SOAPService = M_MODEL.createClass(NS + "SOAPService");
-
     public static final OntClass WebService = M_MODEL.createClass(NS + "WebService");
-    
     public static final OntClass WorkflowResearchObject = M_MODEL.createClass(NS + "WorkflowResearchObject");
-    
+
 }

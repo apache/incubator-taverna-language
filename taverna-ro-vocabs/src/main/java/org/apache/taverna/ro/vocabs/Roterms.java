@@ -66,6 +66,5 @@ public class Roterms {
     public static final ObjectProperty technicalContact = M_MODEL.createObjectProperty(NS + "technicalContact");
 
     public static final DatatypeProperty sampleSize = M_MODEL.createDatatypeProperty(NS + "sampleSize");
-        
 }
 

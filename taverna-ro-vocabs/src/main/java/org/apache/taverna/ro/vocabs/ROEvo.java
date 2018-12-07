@@ -52,7 +52,6 @@ public class ROEvo {
     public static final OntClass Removal = M_MODEL.createClass( NS + "Removal" );
     public static final OntClass SnapshotRO = M_MODEL.createClass( NS + "SnapshotRO" );
     public static final OntClass VersionableResource = M_MODEL.createClass( NS + "VersionableResource" );
-    
 
     public static final ObjectProperty fromVersion = M_MODEL.createObjectProperty( NS + "fromVersion" );
     public static final ObjectProperty hasArchive = M_MODEL.createObjectProperty( NS + "hasArchive" );

@@ -40,32 +40,20 @@ public class Wfprov {
     
     /** <p>The namespace of the vocabulary as a resource</p> */
     public static final Resource NAMESPACE = M_MODEL.createResource( NS );
-    
+
     public static final ObjectProperty describedByParameter = M_MODEL.createObjectProperty(NS + "describedByParameter");
-    
     public static final ObjectProperty describedByProcess = M_MODEL.createObjectProperty(NS + "describedByProcess");
-    
     public static final ObjectProperty describedByWorkflow = M_MODEL.createObjectProperty(NS + "describedByWorkflow");
-    
     public static final ObjectProperty interactedWith = M_MODEL.createObjectProperty(NS + "interactedWith");
-        
     public static final ObjectProperty usedInput = M_MODEL.createObjectProperty(NS + "usedInput");
-    
     public static final ObjectProperty wasEnactedBy = M_MODEL.createObjectProperty(NS + "wasEnactedBy");
-    
     public static final ObjectProperty wasInitiatedBy = M_MODEL.createObjectProperty(NS + "wasInitiatedBy");    
-    
     public static final ObjectProperty wasOutputFrom = M_MODEL.createObjectProperty(NS + "wasOutputFrom");
-    
     public static final ObjectProperty wasPartOfWorkflowRun = M_MODEL.createObjectProperty(NS + "wasPartOfWorkflowRun");
-    
-    
+
     public static final OntClass Artifact = M_MODEL.createClass(NS + "Artifact");
-    
     public static final OntClass ProcessRun = M_MODEL.createClass(NS + "ProcessRun");
-    
     public static final OntClass WorkflowEngine = M_MODEL.createClass(NS + "WorkflowEngine");
-    
     public static final OntClass WorkflowRun = M_MODEL.createClass(NS + "WorkflowRun");
-    
+
 }

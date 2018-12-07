@@ -649,7 +649,8 @@ The Specifier&apos;s description MAY be conveyed as an external or embedded reso
         <rdfs:isDefinedBy rdf:resource="http://www.w3.org/ns/oa#"/>
     </owl:Class>
     
-
+    <owl:Class rdf:about="&skos;ConceptScheme">
+    </owl:Class>
 
     <!-- http://www.w3.org/ns/oa#SvgSelector -->
 

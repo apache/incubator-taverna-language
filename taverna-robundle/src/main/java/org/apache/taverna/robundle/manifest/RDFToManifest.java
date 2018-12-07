@@ -19,7 +19,6 @@ package org.apache.taverna.robundle.manifest;
  * under the License.
  */
 
-
 import static org.apache.jena.ontology.OntModelSpec.OWL_DL_MEM_RULE_INF;
 import static org.apache.jena.rdf.model.ModelFactory.createOntologyModel;
 import static org.apache.taverna.robundle.utils.PathHelper.relativizeFromBase;
@@ -44,6 +43,15 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RiotException;
 import org.apache.taverna.robundle.Bundles;
+
+import org.apache.taverna.ro.vocabs.Foaf;
+import org.apache.taverna.ro.vocabs.Prov_o;
+import org.apache.taverna.ro.vocabs.RO;
+import org.apache.taverna.ro.vocabs.ROEvo;
+import org.apache.taverna.ro.vocabs.Roterms;
+import org.apache.taverna.ro.vocabs.Wf4ever;
+import org.apache.taverna.ro.vocabs.Wfdesc;
+import org.apache.taverna.ro.vocabs.Wfprov;
 
 import org.apache.jena.ontology.DatatypeProperty;
 import org.apache.jena.ontology.Individual;
@@ -77,27 +85,8 @@ public class RDFToManifest {
 		}
 	}
 
-	private static final String BUNDLE = "http://purl.org/wf4ever/bundle#";
-
-	private static final String BUNDLE_RDF = "/ontologies/bundle.owl";
-	private static final String DCT = "http://purl.org/dc/terms/";
-	private static final String FOAF_0_1 = "http://xmlns.com/foaf/0.1/";
-	private static final String FOAF_RDF = "/ontologies/foaf.rdf";
-
 	private static Logger logger = Logger.getLogger(RDFToManifest.class
 			.getCanonicalName());
-	private static final String OA = "http://www.w3.org/ns/oa#";
-	private static final String OA_RDF = "/ontologies/oa.rdf";
-	private static final String ORE = "http://www.openarchives.org/ore/terms/";
-	private static final String PAV = "http://purl.org/pav/";
-	private static final String PAV_RDF = "/ontologies/pav.rdf";
-	private static final String PROV = "http://www.w3.org/ns/prov#";
-	private static final String PROV_AQ_RDF = "/ontologies/prov-aq.rdf";
-	private static final String PROV_O = "http://www.w3.org/ns/prov-o#";
-	private static final String PROV_O_RDF = "/ontologies/prov-o.rdf";
-
-	private static final String RO = "http://purl.org/wf4ever/ro#";
-	private static final String RO_OWL = "/ontologies/ro.owl";
 
 	private static <T> ClosableIterable<T> iterate(ExtendedIterator<T> iterator) {
 		return new ClosableIterable<T>(iterator);
@@ -124,69 +113,6 @@ public class RDFToManifest {
 
 	protected static URI makeBaseURI() throws URISyntaxException {
 		return new URI("app", UUID.randomUUID().toString(), "/", (String) null);
-	}
-
-	private ObjectProperty aggregates;
-	private OntClass aggregation;
-	private ObjectProperty authoredBy;
-	private DatatypeProperty authoredOn;
-	private OntModel bundle;
-	private ObjectProperty conformsTo;
-	private ObjectProperty createdBy;
-	private DatatypeProperty createdOn;
-	private ObjectProperty retrievedFrom;
-	private ObjectProperty retrievedBy;
-	private DatatypeProperty retrievedOn;
-	private OntModel dct;
-	private OntModel foaf;
-	private DatatypeProperty foafName;
-	private DatatypeProperty format;
-	private ObjectProperty hasAnnotation;
-
-	private ObjectProperty hasBody;
-
-	private ObjectProperty hasProvenance;
-
-	private ObjectProperty hasProxy;
-
-	private ObjectProperty hasTarget;
-	private ObjectProperty inFolder;
-	private ObjectProperty isDescribedBy;
-	private OntModel oa;
-	private OntModel ore;
-	private OntModel pav;
-
-	private OntModel prov;
-
-	private OntModel provaq;
-
-	private ObjectProperty proxyFor;
-
-	private ObjectProperty proxyIn;
-
-	private OntClass standard;
-
-	private OntModel roterms;
-
-	private ObjectProperty alternateOf;
-
-	private ObjectProperty bundledAs;
-
-	private DatatypeProperty entryName;
-
-	private OntModel ro;
-
-	public RDFToManifest() {
-		loadOntologies();
-	}
-
-	private void checkNotNull(Object... possiblyNulls) {
-		int i = 0;
-		for (Object check : possiblyNulls) {
-			if (check == null)
-				throw new IllegalStateException("Could not load item #" + i);
-			i++;
-		}
 	}
 
 	private Individual findRO(OntModel model, URI base) {
@@ -237,7 +163,7 @@ public class RDFToManifest {
 
 	protected OntModel getOntModel() {
 		OntModel ontModel = createOntologyModel(OWL_DL_MEM_RULE_INF);
-		ontModel.setNsPrefix("foaf", FOAF_0_1);
+		ontModel.setNsPrefix("foaf", Foaf.);
 		ontModel.setNsPrefix("prov", PROV);
 		ontModel.setNsPrefix("ore", ORE);
 		ontModel.setNsPrefix("pav", PAV);
@@ -258,160 +184,6 @@ public class RDFToManifest {
 			}
 		}
 		return results;
-	}
-
-	protected synchronized void loadBundle() {
-		if (bundle != null)
-			return;
-		OntModel ontModel = loadOntologyFromClasspath(BUNDLE_RDF, BUNDLE);
-		hasProxy = ontModel.getObjectProperty(BUNDLE + "hasProxy");
-		hasAnnotation = ontModel.getObjectProperty(BUNDLE + "hasAnnotation");
-		inFolder = ontModel.getObjectProperty(BUNDLE + "inFolder");
-		bundledAs = ontModel.getObjectProperty(BUNDLE + "bundledAs");
-		checkNotNull(hasProxy, hasAnnotation, inFolder, bundledAs);
-		bundle = ontModel;
-	}
-
-	protected synchronized void loadDCT() {
-		if (dct != null)
-			return;
-
-		OntModel ontModel = loadOntologyFromClasspath(
-				"/ontologies/dcterms_od.owl",
-				"http://purl.org/wf4ever/dcterms_od");
-
-		// properties from dct
-		standard = ontModel.getOntClass(DCT + "Standard");
-		conformsTo = ontModel.getObjectProperty(DCT + "conformsTo");
-
-		// We'll cheat dc:format in
-		format = ontModel
-				.createDatatypeProperty("http://purl.org/dc/elements/1.1/"
-						+ "format");
-		checkNotNull(standard, conformsTo, format);
-
-		dct = ontModel;
-	}
-
-	//
-	protected synchronized void loadFOAF() {
-		if (foaf != null)
-			return;
-
-		OntModel ontModel = loadOntologyFromClasspath(FOAF_RDF, FOAF_0_1);
-
-		// properties from foaf
-		foafName = ontModel.getDatatypeProperty(FOAF_0_1 + "name");
-		checkNotNull(foafName);
-
-		foaf = ontModel;
-	}
-
-	protected synchronized void loadOA() {
-		if (oa != null)
-			return;
-		OntModel ontModel = loadOntologyFromClasspath(OA_RDF, OA);
-		hasTarget = ontModel.getObjectProperty(OA + "hasTarget");
-		hasBody = ontModel.getObjectProperty(OA + "hasBody");
-		checkNotNull(hasTarget, hasBody);
-		oa = ontModel;
-	}
-
-	protected void loadOntologies() {
-		loadDCT();
-		loadORE();
-		loadFOAF();
-		loadPROVO();
-		loadPAV();
-		loadPROVAQ();
-		loadOA();
-		loadRO();
-		loadBundle();
-	}
-
-	protected OntModel loadOntologyFromClasspath(String classPathUri, String uri) {
-		OntModel ontModel = createOntologyModel();
-
-		// Load from classpath
-		InputStream inStream = getClass().getResourceAsStream(classPathUri);
-		if (inStream == null)
-			throw new IllegalArgumentException("Can't load " + classPathUri);
-		// Ontology ontology = ontModel.createOntology(uri);
-		ontModel.read(inStream, uri);
-		try {
-			inStream.close();
-		} catch (IOException e) {
-			// Shouldn't happen
-		}
-		return ontModel;
-	}
-
-	protected synchronized void loadORE() {
-		if (ore != null)
-			return;
-		OntModel ontModel = loadOntologyFromClasspath(
-				"/ontologies/ore-owl.owl", "http://purl.org/wf4ever/ore-owl");
-		aggregation = ontModel.getOntClass(ORE + "Aggregation");
-
-		aggregates = ontModel.getObjectProperty(ORE + "aggregates");
-		proxyFor = ontModel.getObjectProperty(ORE + "proxyFor");
-		proxyIn = ontModel.getObjectProperty(ORE + "proxyIn");
-		isDescribedBy = ontModel.getObjectProperty(ORE + "isDescribedBy");
-
-		checkNotNull(aggregation, aggregates, proxyFor, proxyIn, isDescribedBy);
-
-		ore = ontModel;
-	}
-
-	protected synchronized void loadPAV() {
-		if (pav != null)
-			return;
-
-		OntModel ontModel = loadOntologyFromClasspath(PAV_RDF, PAV);
-		// properties from foaf
-		createdBy = ontModel.getObjectProperty(PAV + "createdBy");
-		createdOn = ontModel.getDatatypeProperty(PAV + "createdOn");
-		authoredBy = ontModel.getObjectProperty(PAV + "authoredBy");
-		authoredOn = ontModel.getDatatypeProperty(PAV + "authoredOn");
-		retrievedFrom = ontModel.getObjectProperty(PAV + "retrievedFrom");
-		retrievedBy = ontModel.getObjectProperty(PAV + "retrievedBy");
-		retrievedOn = ontModel.getDatatypeProperty(PAV + "retrievedOn");
-
-		checkNotNull(createdBy, createdOn, authoredBy, authoredOn,
-				retrievedFrom, retrievedBy, retrievedOn);
-
-		pav = ontModel;
-	}
-
-	protected synchronized void loadPROVAQ() {
-		if (provaq != null)
-			return;
-		OntModel ontModel = loadOntologyFromClasspath(PROV_AQ_RDF, PAV);
-
-		// properties from foaf
-		hasProvenance = ontModel.getObjectProperty(PROV + "has_provenance");
-		checkNotNull(hasProvenance);
-
-		provaq = ontModel;
-	}
-
-	protected synchronized void loadPROVO() {
-		if (prov != null)
-			return;
-		OntModel ontModel = loadOntologyFromClasspath(PROV_O_RDF, PROV_O);
-		alternateOf = ontModel.getObjectProperty(PROV + "alternateOf");
-		checkNotNull(ontModel, alternateOf);
-
-		prov = ontModel;
-	}
-
-	protected synchronized void loadRO() {
-		if (ro != null)
-			return;
-		OntModel ontModel = loadOntologyFromClasspath(RO_OWL, RO);
-		entryName = ontModel.getDatatypeProperty(RO + "entryName");
-		checkNotNull(ontModel, entryName);
-		ro = ontModel;
 	}
 
 	public void readTo(InputStream manifestResourceAsStream, Manifest manifest,
