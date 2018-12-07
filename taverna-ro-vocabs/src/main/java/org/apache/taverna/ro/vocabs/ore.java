@@ -28,7 +28,7 @@ import org.apache.jena.ontology.*;
  * @see http://www.openarchives.org/ore/terms/
  * @see http://www.openarchives.org/ore/toc"
  */
-public class Ore_owl {
+public class ore {
     /** <p>The ontology model that holds the vocabulary terms</p> */
     private static final OntModel M_MODEL = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM, null );
     

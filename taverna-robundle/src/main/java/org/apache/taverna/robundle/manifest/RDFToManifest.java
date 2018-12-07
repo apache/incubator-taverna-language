@@ -163,11 +163,11 @@ public class RDFToManifest {
 
 	protected OntModel getOntModel() {
 		OntModel ontModel = createOntologyModel(OWL_DL_MEM_RULE_INF);
-		ontModel.setNsPrefix("foaf", Foaf.);
-		ontModel.setNsPrefix("prov", PROV);
-		ontModel.setNsPrefix("ore", ORE);
-		ontModel.setNsPrefix("pav", PAV);
-		ontModel.setNsPrefix("dct", DCT);
+		ontModel.setNsPrefix("foaf", Foaf.NS);
+		ontModel.setNsPrefix("prov", PROV.NS);
+		ontModel.setNsPrefix("ore", ORE.NS);
+		ontModel.setNsPrefix("pav", PAV.NS);
+		ontModel.setNsPrefix("dct", DCT.NS);
 		// ontModel.getDocumentManager().loadImports(foaf.getOntModel());
 		return ontModel;
 	}

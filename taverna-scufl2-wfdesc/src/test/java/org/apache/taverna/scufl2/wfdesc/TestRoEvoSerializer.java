@@ -31,7 +31,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.taverna.ro.vocabs.Prov_o;
+import org.apache.taverna.ro.vocabs.Prov;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
@@ -75,9 +75,9 @@ public class TestRoEvoSerializer {
 		OntModel m = ModelFactory.createOntologyModel();
 		m.read(new ByteArrayInputStream(os.toByteArray()), "http://example.com/", "Turtle");
 		Resource mainWf = m.getResource(helloWorld.getMainWorkflow().getIdentifier().toASCIIString());		
-		Resource older = mainWf.getProperty(Prov_o.wasRevisionOf).getResource();
-		Resource oldest = older.getProperty(Prov_o.wasRevisionOf).getResource();
-		assertNull(oldest.getProperty(Prov_o.wasRevisionOf));
+		Resource older = mainWf.getProperty(Prov.wasRevisionOf).getResource();
+		Resource oldest = older.getProperty(Prov.wasRevisionOf).getResource();
+		assertNull(oldest.getProperty(Prov.wasRevisionOf));
 		
 	}
 	

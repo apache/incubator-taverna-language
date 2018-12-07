@@ -15,23 +15,25 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.
- * 
+ *
  */
 package org.apache.taverna.ro.vocabs; 
+
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.ontology.*;
  
+
 /**
- * Constants for the Research Object ro vocabulary
+ * Constants for the Research Object bundle vocabulary
  * 
- * @see https://w3id.org/ro/2016-01-28/ro
+ * @see https://w3id.org/bundle/owl
  */
-public class RO {
+public class bundle {
     /** <p>The ontology model that holds the vocabulary terms</p> */
     private static final OntModel M_MODEL = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM, null );
     
     /** <p>The namespace of the vocabulary as a string</p> */
-    public static final String NS = "http://purl.org/wf4ever/ro#";
+    public static final String NS = "http://purl.org/wf4ever/bundle";
     
     /** <p>The namespace of the vocabulary as a string</p>
      * @return namespace as String
@@ -41,15 +43,8 @@ public class RO {
     /** <p>The namespace of the vocabulary as a resource</p> */
     public static final Resource NAMESPACE = M_MODEL.createResource( NS );
     
-    public static final OntClass AggregatedAnnotation = M_MODEL.createClass( NS + "AggregatedAnnotation" );
-    public static final OntClass Folder = M_MODEL.createClass( NS + "Folder" );
-    public static final OntClass FolderEntry = M_MODEL.createClass( NS + "FolderEntry" );
-    public static final OntClass Manifest = M_MODEL.createClass( NS + "Manifest" );
-    public static final OntClass ResearchObject = M_MODEL.createClass( NS + "ResearchObject" );
-    public static final OntClass Resource = M_MODEL.createClass( NS + "Resource" );
-
-    public static final ObjectProperty annotatesAggregatedResource = M_MODEL.createObjectProperty( NS + "annotatesAggregatedResource" );
-    public static final ObjectProperty rootFolder = M_MODEL.createObjectProperty( NS + "rootFolder" );
-    
-    public static final DatatypeProperty entryName = M_MODEL.createDatatypeProperty( NS + "entryName" );
+    public static final ObjectProperty bundledAs = M_MODEL.createObjectProperty( "http://purl.org/wf4ever/bundle#bundledAs" );
+    public static final ObjectProperty hasAnnotation = M_MODEL.createObjectProperty( "http://purl.org/wf4ever/bundle#hasAnnotation" );
+    public static final ObjectProperty hasProxy = M_MODEL.createObjectProperty( "http://purl.org/wf4ever/bundle#hasProxy" );
+    public static final ObjectProperty inFolder = M_MODEL.createObjectProperty( "http://purl.org/wf4ever/bundle#inFolder" );
 }

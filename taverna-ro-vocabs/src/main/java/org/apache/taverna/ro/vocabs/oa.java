@@ -28,7 +28,7 @@ import org.apache.jena.ontology.*;
  * @see https://www.w3.org/ns/oa
  * @see https://www.w3.org/TR/2017/REC-annotation-vocab-20170223/
  */
-public class Oa {
+public class oa {
     /** <p>The ontology model that holds the vocabulary terms</p> */
     private static final OntModel M_MODEL = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM, null);
     
@@ -39,7 +39,7 @@ public class Oa {
      * @return namespace as String
      * @see #NS */
     public static String getURI() {return NS;}
-    0
+    
     /** <p>The namespace of the vocabulary as a resource</p> */
     public static final Resource NAMESPACE = M_MODEL.createResource( NS);
   
@@ -96,7 +96,10 @@ public class Oa {
     public static final OntClass TimeState = M_MODEL.createClass(NS + "TimeState");
     public static final OntClass XPathSelector = M_MODEL.createClass(NS + "XPathSelector");
 
-    public static final Individual motivationScheme = M_MODEL.createIndividual(NS + "motivationScheme", M_MODEL.createClass( "http://www.w3.org/2004/02/skos/core#ConceptScheme"));
+    private static final OntClass ConceptScheme = M_MODEL.createClass( "http://www.w3.org/2004/02/skos/core#ConceptScheme");
+    private static final OntClass Concept = M_MODEL.createClass( "http://www.w3.org/2004/02/skos/core#Concept") ;
+    
+    public static final Individual motivationScheme = M_MODEL.createIndividual(NS + "motivationScheme", ConceptScheme);
     public static final Individual assessing = M_MODEL.createIndividual(NS + "assessing", Motivation);    
     public static final Individual bookmarking = M_MODEL.createIndividual(NS + "bookmarking", Motivation);
     public static final Individual classifying = M_MODEL.createIndividual(NS + "classifying", Motivation);
@@ -113,10 +116,8 @@ public class Oa {
 
     public static final Individual ltrDirection = M_MODEL.createIndividual(NS + "ltrDirection", Direction);
     public static final Individual rtlDirection = M_MODEL.createIndividual(NS + "rtlDirection", Direction);
-
-    // TODO: type M_MODEL.createClass( "http://www.w3.org/2004/02/skos/core#Concept") ? 
-    public static final Individual PreferContainedDescriptions = M_MODEL.createIndividual(NS + "PreferContainedDescriptions");
-    public static final Individual PreferContainedIRIs = M_MODEL.createIndividual(NS + "PreferContainedIRIs");
+    public static final Individual PreferContainedDescriptions = M_MODEL.createIndividual(NS + "PreferContainedDescriptions", Concept);
+    public static final Individual PreferContainedIRIs = M_MODEL.createIndividual(NS + "PreferContainedIRIs", Concept);
 
 }
 

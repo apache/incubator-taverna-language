@@ -39,10 +39,10 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RiotException;
 import org.apache.jena.vocabulary.OWL;
-import org.apache.taverna.ro.vocabs.Prov_o;
-import org.apache.taverna.ro.vocabs.Roterms;
+import org.apache.taverna.ro.vocabs.Prov;
+import org.apache.taverna.ro.vocabs.roterms;
 import org.apache.taverna.ro.vocabs.Wf4ever;
-import org.apache.taverna.ro.vocabs.Wfdesc;
+import org.apache.taverna.ro.vocabs.wfdesc;
 import org.apache.taverna.scufl2.api.activity.Activity;
 import org.apache.taverna.scufl2.api.annotation.Annotation;
 import org.apache.taverna.scufl2.api.common.Child;
@@ -107,35 +107,35 @@ public class WfdescSerialiser {
 				// @SuppressWarnings("rawtypes")
 
 				if (node instanceof org.apache.taverna.scufl2.api.core.Workflow) {
-					entityForBean(node, Wfdesc.Workflow);
+					entityForBean(node, wfdesc.Workflow);
 				} else if (node instanceof Processor) {
 					Processor processor = (Processor) node;
-					Individual process = entityForBean(processor, Wfdesc.Process);
-					Individual wf = entityForBean(processor.getParent(), Wfdesc.Workflow);
-					wf.addProperty(Wfdesc.hasSubProcess, process);
+					Individual process = entityForBean(processor, wfdesc.Process);
+					Individual wf = entityForBean(processor.getParent(), wfdesc.Workflow);
+					wf.addProperty(wfdesc.hasSubProcess, process);
 				} else if (node instanceof InputPort) {
 					WorkflowBean parent = ((Child) node).getParent();
-					Individual input = entityForBean(node, Wfdesc.Input);
-					Individual process = entityForBean(parent, Wfdesc.Process);
-					process.addProperty(Wfdesc.hasInput, input);
+					Individual input = entityForBean(node, wfdesc.Input);
+					Individual process = entityForBean(parent, wfdesc.Process);
+					process.addProperty(wfdesc.hasInput, input);
 
 				} else if (node instanceof OutputPort) {
 					WorkflowBean parent = ((Child) node).getParent();
-					Individual output = entityForBean(node, Wfdesc.Output);
-					Individual process = entityForBean(parent, Wfdesc.Process);
-					process.addProperty(Wfdesc.hasOutput, output);
+					Individual output = entityForBean(node, wfdesc.Output);
+					Individual process = entityForBean(parent, wfdesc.Process);
+					process.addProperty(wfdesc.hasOutput, output);
 				} else if (node instanceof DataLink) {
 					WorkflowBean parent = ((Child) node).getParent();
 					DataLink link = (DataLink) node;
-					Individual dl = entityForBean(link, Wfdesc.DataLink);
+					Individual dl = entityForBean(link, wfdesc.DataLink);
 
-					Individual source = entityForBean(link.getReceivesFrom(), Wfdesc.Output);
-					dl.addProperty(Wfdesc.hasSource, source);
+					Individual source = entityForBean(link.getReceivesFrom(), wfdesc.Output);
+					dl.addProperty(wfdesc.hasSource, source);
 
-					Individual sink = entityForBean(link.getSendsTo(), Wfdesc.Input);
-					dl.addProperty(Wfdesc.hasSink, sink);
-					Individual wf = entityForBean(parent, Wfdesc.Workflow);
-					wf.addProperty(Wfdesc.hasDataLink, dl);
+					Individual sink = entityForBean(link.getSendsTo(), wfdesc.Input);
+					dl.addProperty(wfdesc.hasSink, sink);
+					Individual wf = entityForBean(parent, wfdesc.Workflow);
+					wf.addProperty(wfdesc.hasDataLink, dl);
 				} else if (node instanceof Profile) {
 					// So that we can get at the ProcessorBinding - buy only if
 					// it is the main Profile
@@ -144,7 +144,7 @@ public class WfdescSerialiser {
 					ProcessorBinding b = (ProcessorBinding) node;
 					Activity a = b.getBoundActivity();
 					Processor boundProcessor = b.getBoundProcessor();
-					Individual process = entityForBean(boundProcessor, Wfdesc.Process);
+					Individual process = entityForBean(boundProcessor, wfdesc.Process);
 
 					// Note: We don't describe the activity and processor
 					// binding in wfdesc. Instead we
@@ -167,7 +167,7 @@ public class WfdescSerialiser {
 									Individual dep = model.createIndividual(OWL.Thing);
 									dep.addLabel(depStr, null);
 									dep.addComment("JAR dependency", "en");
-									process.addProperty(Roterms.requiresSoftware, dep);
+									process.addProperty(roterms.requiresSoftware, dep);
 									// Somehow this gets the whole thing to fall
 									// out of the graph!
 									// QName depQ = new
@@ -225,7 +225,7 @@ public class WfdescSerialiser {
 							// (because the nested workflow could exist as
 							// several processors)
 							specializationOf(boundProcessor, nestedWf);
-							process.addRDFType(Wfdesc.Workflow);
+							process.addRDFType(wfdesc.Workflow);
 
 							// Just like the Processor specializes the nested
 							// workflow, the
@@ -283,9 +283,9 @@ public class WfdescSerialiser {
 			}
 
 			private void specializationOf(WorkflowBean special, WorkflowBean general) {
-				Individual specialEnt = entityForBean(special, Prov_o.Entity);
-				Individual generalEnt = entityForBean(general, Prov_o.Entity);
-				specialEnt.addProperty(Prov_o.specializationOf, generalEnt);
+				Individual specialEnt = entityForBean(special, Prov.Entity);
+				Individual generalEnt = entityForBean(general, Prov.Entity);
+				specialEnt.addProperty(Prov.specializationOf, generalEnt);
 			}
 
 			private Individual entityForBean(WorkflowBean bean, Resource thing) {

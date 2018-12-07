@@ -17,16 +17,21 @@
  * under the License.
  * 
  */
-package org.apache.taverna.ro.vocabs; 
-import org.apache.jena.rdf.model.*;
-import org.apache.jena.ontology.*;
+package org.apache.taverna.ro.vocabs;
+
+import org.apache.jena.ontology.ObjectProperty;
+import org.apache.jena.ontology.OntClass;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
  
 /**
  * Constants for the Research Object wfprov vocabulary
  * 
  * @see https://w3id.org/ro/2016-01-28/wfprov
  */
-public class Wfprov {
+public class wfprov {
     /** <p>The ontology model that holds the vocabulary terms</p> */
     private static final OntModel M_MODEL = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM, null );
     

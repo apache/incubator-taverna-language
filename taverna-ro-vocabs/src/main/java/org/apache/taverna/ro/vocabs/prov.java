@@ -17,16 +17,23 @@
  * under the License.
  *
 */
-package org.apache.taverna.ro.vocabs; 
-import org.apache.jena.rdf.model.*;
-import org.apache.jena.ontology.*;
+package org.apache.taverna.ro.vocabs;
+
+import org.apache.jena.ontology.AnnotationProperty;
+import org.apache.jena.ontology.DatatypeProperty;
+import org.apache.jena.ontology.ObjectProperty;
+import org.apache.jena.ontology.OntClass;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
  
 /**
- * Constants from the W3C PROV-O vocabulary
+ * Constants from the W3C Prov-O vocabulary
  * 
  * @see https://www.w3.org/TR/prov-o/
  */
-public class Prov_o {
+public class prov {
     /** <p>The ontology model that holds the vocabulary terms</p> */
     private static final OntModel M_MODEL = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM, null );
     
@@ -143,7 +150,7 @@ public class Prov_o {
     public static final OntClass Usage = M_MODEL.createClass(NS + "Usage");
     
 	/**
-	 * Constants from the W3C PROV-AQ extension to PROV vocabulary
+	 * Constants from the W3C Prov-AQ extension to Prov vocabulary
 	 * 
 	 * @see https://www.w3.org/TR/prov-aq/
 	 */    	    

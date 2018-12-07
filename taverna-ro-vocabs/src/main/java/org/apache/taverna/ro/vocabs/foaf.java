@@ -19,17 +19,25 @@
  */
 package org.apache.taverna.ro.vocabs; 
 
-import org.apache.jena.rdf.model.*;
+import org.apache.jena.ontology.AnnotationProperty;
+import org.apache.jena.ontology.DatatypeProperty;
+import org.apache.jena.ontology.ObjectProperty;
+import org.apache.jena.ontology.OntClass;
+import org.apache.jena.ontology.OntModel;
+import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.ontology.OntProperty;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.sparql.vocabulary.FOAF;
-import org.apache.jena.ontology.*;
  
 /**
  * Constants from the Friend of a Friend (FOAF) namespace
  * 
  * @see http://xmlns.com/foaf/0.1/
+ * @see FOAF
  *
  */
-public class Foaf extends FOAF {
+public class foaf {
     /** <p>The ontology model that holds the vocabulary terms</p> */
     private static final OntModel M_MODEL = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM, null );
     
