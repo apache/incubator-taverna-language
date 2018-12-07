@@ -38,6 +38,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>taverna-ro-vocabs</artifactId>
+      <version>${project.version}</version>
+    </dependency>    
+    <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
     </dependency>

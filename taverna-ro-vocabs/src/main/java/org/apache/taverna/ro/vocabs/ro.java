@@ -26,6 +26,7 @@ import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntModelSpec;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.vocabulary.DCTerms;
  
 /**
  * Constants for the Research Object ro vocabulary
@@ -56,6 +57,9 @@ public class ro {
 
     public static final ObjectProperty annotatesAggregatedResource = M_MODEL.createObjectProperty( NS + "annotatesAggregatedResource" );
     public static final ObjectProperty rootFolder = M_MODEL.createObjectProperty( NS + "rootFolder" );
+    
+    public static final ObjectProperty conformsTo = M_MODEL.createObjectProperty(DCTerms.conformsTo.getURI());
+    
     
     public static final DatatypeProperty entryName = M_MODEL.createDatatypeProperty( NS + "entryName" );
 }

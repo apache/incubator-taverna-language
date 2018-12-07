@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -39,30 +38,26 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.jena.riot.Lang;
-import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.riot.RiotException;
-import org.apache.taverna.robundle.Bundles;
-
-import org.apache.taverna.ro.vocabs.Foaf;
-import org.apache.taverna.ro.vocabs.Prov_o;
-import org.apache.taverna.ro.vocabs.RO;
-import org.apache.taverna.ro.vocabs.ROEvo;
-import org.apache.taverna.ro.vocabs.Roterms;
-import org.apache.taverna.ro.vocabs.Wf4ever;
-import org.apache.taverna.ro.vocabs.Wfdesc;
-import org.apache.taverna.ro.vocabs.Wfprov;
-
-import org.apache.jena.ontology.DatatypeProperty;
 import org.apache.jena.ontology.Individual;
 import org.apache.jena.ontology.ObjectProperty;
-import org.apache.jena.ontology.OntClass;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntResource;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.riot.Lang;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.riot.RiotException;
 import org.apache.jena.util.iterator.ExtendedIterator;
+import org.apache.jena.vocabulary.DCTerms;
+import org.apache.taverna.ro.vocabs.bundle;
+import org.apache.taverna.ro.vocabs.foaf;
+import org.apache.taverna.ro.vocabs.oa;
+import org.apache.taverna.ro.vocabs.ore;
+import org.apache.taverna.ro.vocabs.pav;
+import org.apache.taverna.ro.vocabs.prov;
+import org.apache.taverna.ro.vocabs.ro;
+import org.apache.taverna.robundle.Bundles;
 
 public class RDFToManifest {
 	public static class ClosableIterable<T> implements AutoCloseable,
@@ -116,7 +111,7 @@ public class RDFToManifest {
 	}
 
 	private Individual findRO(OntModel model, URI base) {
-		try (ClosableIterable<? extends OntResource> instances = iterate(aggregation
+		try (ClosableIterable<? extends OntResource> instances = iterate(ore.Aggregation
 				.listInstances())) {
 			for (OntResource o : instances)
 				// System.out.println("Woo " + o);
@@ -135,7 +130,7 @@ public class RDFToManifest {
 
 			// Check for any ORCIDs, note that "orcid" is mapped as
 			// prov:alternateOf in our modified bundle.jsonld
-			for (Individual alternate : listObjectProperties(agent, alternateOf)) {
+			for (Individual alternate : listObjectProperties(agent, prov.alternateOf)) {
 				if (alternate.isURIResource() && (
 						alternate.getURI().startsWith("https://orcid.org/") ||
 						alternate.getURI().startsWith("http://orcid.org/"))) {
@@ -153,7 +148,7 @@ public class RDFToManifest {
 				}
 			}
 
-			RDFNode name = agent.getPropertyValue(foafName);
+			RDFNode name = agent.getPropertyValue(foaf.name);
 			if (name != null && name.isLiteral())
 				a.setName(name.asLiteral().getLexicalForm());
 			creators.add(a);
@@ -163,11 +158,11 @@ public class RDFToManifest {
 
 	protected OntModel getOntModel() {
 		OntModel ontModel = createOntologyModel(OWL_DL_MEM_RULE_INF);
-		ontModel.setNsPrefix("foaf", Foaf.NS);
-		ontModel.setNsPrefix("prov", PROV.NS);
-		ontModel.setNsPrefix("ore", ORE.NS);
-		ontModel.setNsPrefix("pav", PAV.NS);
-		ontModel.setNsPrefix("dct", DCT.NS);
+		ontModel.setNsPrefix("foaf", foaf.NS);
+		ontModel.setNsPrefix("prov", prov.NS);
+		ontModel.setNsPrefix("ore", ore.NS);
+		ontModel.setNsPrefix("pav", pav.NS);
+		ontModel.setNsPrefix("dct", DCTerms.NS);
 		// ontModel.getDocumentManager().loadImports(foaf.getOntModel());
 		return ontModel;
 	}
@@ -193,14 +188,14 @@ public class RDFToManifest {
 				manifestResourceBaseURI));
 
 		URI root = manifestResourceBaseURI.resolve("/");
-		Individual ro = findRO(model, root);
-		if (ro == null)
+		Individual researchObj = findRO(model, root);
+		if (researchObj == null)
 			throw new IOException("root ResearchObject not found - "
 					+ "Not a valid RO Bundle manifest");
 
 		// isDescribedBy URI
-		for (Individual manifestResource : listObjectProperties(ro,
-				isDescribedBy)) {
+		for (Individual manifestResource : listObjectProperties(researchObj,
+				ore.isDescribedBy)) {
 			String uriStr = manifestResource.getURI();
 			if (uriStr == null) {
 				logger.warning("Skipping manifest without URI: "
@@ -214,7 +209,7 @@ public class RDFToManifest {
 		}
 
 		// createdBy
-		List<Agent> creators = getAgents(root, ro, createdBy);
+		List<Agent> creators = getAgents(root, researchObj, pav.createdBy);
 		if (!creators.isEmpty()) {
 			manifest.setCreatedBy(creators.get(0));
 			if (creators.size() > 1) {
@@ -223,28 +218,28 @@ public class RDFToManifest {
 		}
 
 		// createdOn
-		RDFNode created = ro.getPropertyValue(createdOn);
+		RDFNode created = researchObj.getPropertyValue(pav.createdOn);
 		manifest.setCreatedOn(literalAsFileTime(created));
 
 		// history
 		List<Path> history = new ArrayList<Path> ();
-		for (Individual histItem : listObjectProperties (ro, hasProvenance)) {
+		for (Individual histItem : listObjectProperties (researchObj, prov.AQ.has_provenance)) {
 			history.add(Bundles.uriToBundlePath(manifest.getBundle(), relativizeFromBase(histItem.getURI(), root)));
 		}
 		manifest.setHistory(history);
 
 		// authoredBy
-		List<Agent> authors = getAgents(root, ro, authoredBy);
+		List<Agent> authors = getAgents(root, researchObj, pav.authoredBy);
 		if (!authors.isEmpty()) {
 			manifest.setAuthoredBy(authors);
 		}
 
 		// authoredOn
-		RDFNode authored = ro.getPropertyValue(authoredOn);
+		RDFNode authored = researchObj.getPropertyValue(pav.authoredOn);
 		manifest.setAuthoredOn(literalAsFileTime(authored));
 
 		// retrievedFrom
-		RDFNode retrievedNode = ro.getPropertyValue(retrievedFrom);
+		RDFNode retrievedNode = researchObj.getPropertyValue(pav.retrievedFrom);
 		if (retrievedNode != null) {
     		try {
     			manifest.setRetrievedFrom(new URI(retrievedNode.asResource().getURI()));
@@ -255,7 +250,7 @@ public class RDFToManifest {
 		}
 
 		// retrievedBy
-		List<Agent> retrievers = getAgents(root, ro, retrievedBy);
+		List<Agent> retrievers = getAgents(root, researchObj, pav.retrievedBy);
 		if (!retrievers.isEmpty()) {
 			manifest.setRetrievedBy(retrievers.get(0));
 			if (retrievers.size() > 1) {
@@ -264,12 +259,12 @@ public class RDFToManifest {
 		}
 
 		// retrievedOn
-		RDFNode retrieved = ro.getPropertyValue(retrievedOn);
+		RDFNode retrieved = researchObj.getPropertyValue(pav.retrievedOn);
 		manifest.setRetrievedOn(literalAsFileTime(retrieved));
 
 		// conformsTo
-		for (Individual standard : listObjectProperties(ro,
-				conformsTo)) {
+		for (Individual standard : listObjectProperties(researchObj,
+			 	ro.conformsTo)) {
 			if (standard.isURIResource()) {
 				URI uri;
 				try {
@@ -286,7 +281,7 @@ public class RDFToManifest {
 		}
 
 		// Aggregates
-		for (Individual aggrResource : listObjectProperties(ro, aggregates)) {
+		for (Individual aggrResource : listObjectProperties(researchObj, ore.aggregates)) {
 			String uriStr = aggrResource.getURI();
 			// PathMetadata meta = new PathMetadata();
 			if (uriStr == null) {
@@ -299,10 +294,10 @@ public class RDFToManifest {
 					uriStr, root));
 
 			Set<Individual> proxies = listObjectProperties(aggrResource,
-					hasProxy);
+					bundle.hasProxy);
 			if (proxies.isEmpty()) {
 				// FIXME: Jena does not follow OWL properties paths from hasProxy
-				proxies = listObjectProperties(aggrResource, bundledAs);
+				proxies = listObjectProperties(aggrResource, bundle.bundledAs);
 			}
 			if (!proxies.isEmpty()) {
 				// Should really only be one anyway
@@ -320,11 +315,11 @@ public class RDFToManifest {
 					proxyInManifest.setURI(relativizeFromBase(proxyUri, root));
 				}
 
-				RDFNode eName = proxy.getPropertyValue(entryName);
+				RDFNode eName = proxy.getPropertyValue(ro.entryName);
 				if (eName != null && eName.isLiteral()) {
 					proxyInManifest.setFilename(eName.asLiteral().getString());;
 				}
-				RDFNode folder = proxy.getPropertyValue(inFolder);
+				RDFNode folder = proxy.getPropertyValue(bundle.inFolder);
 				if (folder != null && folder.isURIResource()) {
 					URI folderUri = URI.create(folder.asResource().getURI());
 					if (! folderUri.resolve("/").equals(manifest.getBaseURI())) {
@@ -340,7 +335,7 @@ public class RDFToManifest {
 			}
 
 			// createdBy
-			creators = getAgents(root, aggrResource, createdBy);
+			creators = getAgents(root, aggrResource, pav.createdBy);
 			if (!creators.isEmpty()) {
 				meta.setCreatedBy(creators.get(0));
 				if (creators.size() > 1) {
@@ -351,10 +346,10 @@ public class RDFToManifest {
 
 			// createdOn
 			meta.setCreatedOn(literalAsFileTime(aggrResource
-					.getPropertyValue(createdOn)));
+					.getPropertyValue(pav.createdOn)));
 
 			// retrievedFrom
-			RDFNode retrievedAggrNode = aggrResource.getPropertyValue(retrievedFrom);
+			RDFNode retrievedAggrNode = aggrResource.getPropertyValue(pav.retrievedFrom);
 			if (retrievedAggrNode != null) {
     			try {
     				meta.setRetrievedFrom(new URI(retrievedAggrNode.asResource().getURI()));
@@ -365,7 +360,7 @@ public class RDFToManifest {
 			}
 
 			// retrievedBy
-			List<Agent> retrieversAggr = getAgents(root, aggrResource, retrievedBy);
+			List<Agent> retrieversAggr = getAgents(root, aggrResource, pav.retrievedBy);
 			if (!retrieversAggr.isEmpty()) {
 				meta.setRetrievedBy(retrieversAggr.get(0));
 				if (retrieversAggr.size() > 1) {
@@ -375,12 +370,12 @@ public class RDFToManifest {
 			}
 
 			// retrievedOn
-			RDFNode retrievedAggr = aggrResource.getPropertyValue(retrievedOn);
+			RDFNode retrievedAggr = aggrResource.getPropertyValue(pav.retrievedOn);
 			meta.setRetrievedOn(literalAsFileTime(retrievedAggr));
 
 			// conformsTo
 			for (Individual standard : listObjectProperties(aggrResource,
-					conformsTo)) {
+					ro.conformsTo)) {
 				if (standard.getURI() != null) {
 					meta.setConformsTo(relativizeFromBase(standard.getURI(),
 							root));
@@ -388,20 +383,20 @@ public class RDFToManifest {
 			}
 
 			// format
-			RDFNode mediaType = aggrResource.getPropertyValue(format);
+			RDFNode mediaType = aggrResource.getPropertyValue(DCTerms.format);
 			if (mediaType != null && mediaType.isLiteral()) {
 				meta.setMediatype(mediaType.asLiteral().getLexicalForm());
 			}
 		}
 
-		for (Individual ann : listObjectProperties(ro, hasAnnotation)) {
+		for (Individual ann : listObjectProperties(researchObj, bundle.hasAnnotation)) {
 			/*
 			 * Normally just one body per annotation, but just in case we'll
 			 * iterate and split them out (as our PathAnnotation can only keep a
 			 * single setContent() at a time)
 			 */
 			for (Individual body : listObjectProperties(
-					model.getOntResource(ann), hasBody)) {
+					model.getOntResource(ann), oa.hasBody)) {
 				if (! body.isURIResource()) {
 					logger.warning("Can't find annotation body for anonymous "
 							+ body);
@@ -418,7 +413,7 @@ public class RDFToManifest {
 							root));
 
 				// Handle multiple about/hasTarget
-				for (Individual target : listObjectProperties(ann, hasTarget))
+				for (Individual target : listObjectProperties(ann, oa.hasTarget))
 					if (target.getURI() != null)
 						pathAnn.getAboutList().add(
 								relativizeFromBase(target.getURI(), root));
