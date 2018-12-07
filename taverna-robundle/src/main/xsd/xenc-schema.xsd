@@ -1,24 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!--
-XML Encryption Syntax and Processing
-W3C Recommendation 10 December 2002
-http://www.w3.org/TR/xmlenc-core/xenc-schema.xsd
-http://www.w3.org/TR/xmlenc-core/
+#
+# Copyright ©[2011] World Wide Web Consortium 
+# (Massachusetts Institute of Technology,  
+#  European Research Consortium for Informatics and Mathematics, 
+#  Keio University). All Rights Reserved.  
+# This work is distributed under the W3C® Software License [1] in the
+# hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+# the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+# PURPOSE. 
+# [1] http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231
+#
+-->
 
-Copyright © 2002 World Wide Web Consortium, (Massachusetts
-Institute of Technology, Institut National de Recherche en Informatique et en
-Automatique, Keio University). All Rights Reserved.
-http://www.w3.org/Consortium/Legal/
+<!DOCTYPE schema  PUBLIC "-//W3C//DTD XMLSchema 200102//EN"
+ "http://www.w3.org/2001/XMLSchema.dtd"
+ [
+   <!ATTLIST schema
+     xmlns:xenc CDATA #FIXED 'http://www.w3.org/2001/04/xmlenc#'
+     xmlns:ds CDATA #FIXED 'http://www.w3.org/2000/09/xmldsig#'>
+   <!ENTITY xenc 'http://www.w3.org/2001/04/xmlenc#'>
+   <!ENTITY % p ''>
+   <!ENTITY % s ''>
+  ]>
 
-     -->
 <schema xmlns='http://www.w3.org/2001/XMLSchema' version='1.0'
         xmlns:xenc='http://www.w3.org/2001/04/xmlenc#'
         xmlns:ds='http://www.w3.org/2000/09/xmldsig#'
         targetNamespace='http://www.w3.org/2001/04/xmlenc#'
         elementFormDefault='qualified'>
 
-  <import namespace="http://www.w3.org/2000/09/xmldsig#"
-          schemaLocation="xmldsig-core-schema.xsd"/>
+  <import namespace='http://www.w3.org/2000/09/xmldsig#'
+          schemaLocation='http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd'/>
 
   <complexType name='EncryptedType' abstract='true'>
     <sequence>
@@ -38,6 +52,8 @@ http://www.w3.org/Consortium/Legal/
     <sequence>
       <element name='KeySize' minOccurs='0' type='xenc:KeySizeType'/>
       <element name='OAEPparams' minOccurs='0' type='base64Binary'/>
+      <!-- note that optional xenc11:MGF element may be used here for
+           RSA-OAEP, when appropriate -->
       <any namespace='##other' minOccurs='0' maxOccurs='unbounded'/>
     </sequence>
     <attribute name='Algorithm' type='anyURI' use='required'/>
@@ -133,15 +149,35 @@ http://www.w3.org/Consortium/Legal/
     <attribute name='Id' type='ID' use='optional'/>
   </complexType>
 
-    <element name='EncryptionProperty' type='xenc:EncryptionPropertyType'/>
-    <complexType name='EncryptionPropertyType' mixed='true'>
-      <choice maxOccurs='unbounded'>
-        <any namespace='##other' processContents='lax'/>
-      </choice>
-      <attribute name='Target' type='anyURI' use='optional'/>
-      <attribute name='Id' type='ID' use='optional'/>
-      <anyAttribute namespace="http://www.w3.org/XML/1998/namespace"/>
-    </complexType>
+  <element name='EncryptionProperty' type='xenc:EncryptionPropertyType'/>
+  <complexType name='EncryptionPropertyType' mixed='true'>
+    <choice maxOccurs='unbounded'>
+      <any namespace='##other' processContents='lax'/>
+    </choice>
+    <attribute name='Target' type='anyURI' use='optional'/>
+    <attribute name='Id' type='ID' use='optional'/>
+    <anyAttribute namespace="http://www.w3.org/XML/1998/namespace"/>
+  </complexType>
 
+  <!-- Children of ds:KeyValue -->
+
+  <element name="DHKeyValue" type="xenc:DHKeyValueType"/>
+  <complexType name="DHKeyValueType">
+    <sequence>
+      <sequence minOccurs="0">
+        <element name="P" type="ds:CryptoBinary"/>
+        <element name="Q" type="ds:CryptoBinary"/>
+        <element name="Generator" type="ds:CryptoBinary"/>
+      </sequence>
+      <element name="Public" type="ds:CryptoBinary"/>
+      <sequence minOccurs="0">
+        <element name="seed" type="ds:CryptoBinary"/>
+        <element name="pgenCounter" type="ds:CryptoBinary"/>
+      </sequence>
+    </sequence>
+  </complexType>
+
+  <!-- End Children of ds:KeyValue -->
+  
 </schema>
 
