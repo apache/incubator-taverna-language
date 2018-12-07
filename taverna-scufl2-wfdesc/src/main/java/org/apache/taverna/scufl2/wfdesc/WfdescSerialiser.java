@@ -39,9 +39,9 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RiotException;
 import org.apache.jena.vocabulary.OWL;
-import org.apache.taverna.ro.vocabs.Prov;
+import org.apache.taverna.ro.vocabs.prov;
 import org.apache.taverna.ro.vocabs.roterms;
-import org.apache.taverna.ro.vocabs.Wf4ever;
+import org.apache.taverna.ro.vocabs.wf4ever;
 import org.apache.taverna.ro.vocabs.wfdesc;
 import org.apache.taverna.scufl2.api.activity.Activity;
 import org.apache.taverna.scufl2.api.annotation.Annotation;
@@ -156,9 +156,9 @@ public class WfdescSerialiser {
 						Configuration c = scufl2Tools.configurationFor(a, b.getParent());
 						JsonNode json = c.getJson();
 						if (type.equals(BEANSHELL)) {
-							process.addRDFType(Wf4ever.BeanshellScript);
+							process.addRDFType(wf4ever.BeanshellScript);
 							String s = json.get("script").asText();
-							process.addProperty(Wf4ever.script, s);
+							process.addProperty(wf4ever.script, s);
 							JsonNode localDep = json.get("localDependency");
 							if (localDep != null && localDep.isArray()) {
 								for (int i = 0; i < localDep.size(); i++) {
@@ -179,20 +179,20 @@ public class WfdescSerialiser {
 							}
 						}
 						if (type.equals(RSHELL)) {
-							process.addRDFType(Wf4ever.RScript);
+							process.addRDFType(wf4ever.RScript);
 							String s = json.get("script").asText();
-							process.addProperty(Wf4ever.script, s);
+							process.addProperty(wf4ever.script, s);
 						}
 						if (type.equals(WSDL)) {
-							process.addRDFType(Wf4ever.SOAPService);
+							process.addRDFType(wf4ever.SOAPService);
 							JsonNode operation = json.get("operation");
 							URI wsdl = URI.create(operation.get("wsdl").asText());
-							process.addProperty(Wf4ever.wsdlURI, wsdl.toASCIIString());
-							process.addProperty(Wf4ever.wsdlOperationName, operation.get("name").asText());
-							process.addProperty(Wf4ever.rootURI, wsdl.resolve("/").toASCIIString());
+							process.addProperty(wf4ever.wsdlURI, wsdl.toASCIIString());
+							process.addProperty(wf4ever.wsdlOperationName, operation.get("name").asText());
+							process.addProperty(wf4ever.rootURI, wsdl.resolve("/").toASCIIString());
 						}
 						if (type.equals(REST)) {
-							process.addRDFType(Wf4ever.RESTService);
+							process.addRDFType(wf4ever.RESTService);
 							// System.out.println(json);
 							JsonNode request = json.get("request");
 							String absoluteURITemplate = request.get("absoluteURITemplate").asText();
@@ -201,7 +201,7 @@ public class WfdescSerialiser {
 							// TODO: Detect {}
 							try {
 								URI root = new URI(uriTemplate).resolve("/");
-								process.addProperty(Wf4ever.rootURI, root.toASCIIString());
+								process.addProperty(wf4ever.rootURI, root.toASCIIString());
 							} catch (URISyntaxException e) {
 								logger.warning("Potentially invalid URI template: " + absoluteURITemplate);
 								// Uncomment to temporarily break
@@ -210,12 +210,12 @@ public class WfdescSerialiser {
 							}
 						}
 						if (type.equals(TOOL)) {
-							process.addRDFType(Wf4ever.CommandLineTool);
+							process.addRDFType(wf4ever.CommandLineTool);
 							JsonNode desc = json.get("toolDescription");
 							// System.out.println(json);
 							JsonNode command = desc.get("command");
 							if (command != null) {
-								process.addProperty(Wf4ever.command, command.asText());
+								process.addProperty(wf4ever.command, command.asText());
 							}
 						}
 						if (type.equals(NESTED_WORKFLOW)) {
@@ -283,9 +283,9 @@ public class WfdescSerialiser {
 			}
 
 			private void specializationOf(WorkflowBean special, WorkflowBean general) {
-				Individual specialEnt = entityForBean(special, Prov.Entity);
-				Individual generalEnt = entityForBean(general, Prov.Entity);
-				specialEnt.addProperty(Prov.specializationOf, generalEnt);
+				Individual specialEnt = entityForBean(special, prov.Entity);
+				Individual generalEnt = entityForBean(general, prov.Entity);
+				specialEnt.addProperty(prov.specializationOf, generalEnt);
 			}
 
 			private Individual entityForBean(WorkflowBean bean, Resource thing) {

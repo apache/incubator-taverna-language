@@ -25,7 +25,7 @@ package org.apache.taverna.scufl2.wfdesc;
 
 import java.io.OutputStream;
 
-import org.apache.taverna.ro.vocabs.Prov;
+import org.apache.taverna.ro.vocabs.prov;
 import org.apache.taverna.scufl2.api.annotation.Revision;
 import org.apache.taverna.scufl2.api.core.Workflow;
 import org.apache.taverna.scufl2.api.io.WriterException;
@@ -66,22 +66,22 @@ public class ROEvoSerializer {
 	private void addRevision(OntModel model,
 			Revision revision) {
 		OntClass VersionableResource = model.createClass("http://purl.org/wf4ever/roevo#VersionableResource");
-		VersionableResource.addSuperClass(Prov.Entity);
+		VersionableResource.addSuperClass(prov.Entity);
 		Individual revisionResource = model.createIndividual(revision.getIdentifier().toASCIIString(), 
 				VersionableResource);
-		revisionResource.addRDFType(Prov.Entity);
+		revisionResource.addRDFType(prov.Entity);
 	}
 
 	private void addPrevious(OntModel model,
 			Revision revision, Revision previous) {
 		OntClass VersionableResource = model.createClass("http://purl.org/wf4ever/roevo#VersionableResource");
-		VersionableResource.addSuperClass(Prov.Entity);
+		VersionableResource.addSuperClass(prov.Entity);
 		
 		Individual revisionResource = model.createIndividual(revision.getIdentifier().toASCIIString(), 
 				VersionableResource);
 		Individual previousResource = model.createIndividual(previous.getIdentifier().toASCIIString(), 
 				VersionableResource);
-		revisionResource.addProperty(Prov.wasRevisionOf, previousResource);
+		revisionResource.addProperty(prov.wasRevisionOf, previousResource);
 	}
 	
 }
