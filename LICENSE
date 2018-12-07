@@ -238,9 +238,8 @@ This document is governed by the W3C Software License [1] as described
 in the FAQ [2].
 
 [1] http://www.w3.org/Consortium/Legal/copyright-software-19980720
-    ./LICENSE.w3c.19980720
-[2] http://www.w3.org/Consortium/Legal/IPR-FAQ-20000620.html#DTD
     ./taverna-robundle/src/main/resources/META-INF/LICENSE.w3c.19980720
+[2] http://www.w3.org/Consortium/Legal/IPR-FAQ-20000620.html#DTD
 
 
 
@@ -258,5 +257,5 @@ document includes material copied from or derived from:
 
 W3C liability, trademark and document use rules apply.
 http://www.w3.org/Consortium/Legal/2015/doc-license
-
+./taverna-scufl2-schemas/src/main/resources/META-INF/LICENSE.w3c.document
 
