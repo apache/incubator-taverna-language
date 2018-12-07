@@ -15,23 +15,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
-
-This XML schema is derivative work from the Original Work, 
-Research Object Evolution Ontology (roevo)
-http://w3id.org/ro/roevo
-used under the terms of 
-Creative Commons Attribution 3.0 License 
-http://creativecommons.org/licenses/by/3.0
-
-Attribution for the original work:
-
-  (c) 2011-2014
-    Raul Palma, PSNC
-    Jun Zhao, University of Oxford
-    Khalid Belhajjame, University of Manchester
-    Stian Soiland-Reyes, University of Manchester
-    Oscar Corcho, UPM
-
 -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="qualified"
 	elementFormDefault="qualified" targetNamespace="http://purl.org/wf4ever/roevo#" 
@@ -100,19 +83,6 @@ Attribution for the original work:
 				<xs:element ref="rdf:type" minOccurs="0"/>
 				<xs:element name="fromVersion" type="rdf:Resource" minOccurs="0" />
 				<xs:element name="hasChange" minOccurs="0" maxOccurs="3">
-					<xs:annotation>
-						<xs:documentation>
-							<p xmlns='http://www.w3.org/1999/xhtml'>
-							A ChangeSpecification can have up to 3 changes, 
-							one of Addition, one of Modificaton and one of Removal. 
-							Ironically, to 	avoid an 'non ambigious' XML Schema, this schema 
-							has to allow also say Addition, Addition, Removal. Clients MAY
-							parse additional changes of the same type, but SHOULD merge them 
-							to a single change per type when saving, ie. add the resources
-							from the second Addition to the resources of the first.							
-							</p>
-						</xs:documentation>
-					</xs:annotation>
 					<xs:complexType>
 						<xs:choice>
 							<xs:element name="Addition" type="roevo:Change" />
