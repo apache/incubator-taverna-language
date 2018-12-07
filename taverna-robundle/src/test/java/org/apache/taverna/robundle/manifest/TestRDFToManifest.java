@@ -136,7 +136,7 @@ public class TestRDFToManifest {
 			assertNull(blog.getBundledAs());
 
 			PathMetadata readme = manifest.getAggregation(ro.getPath("/README.txt"));
-			assertEquals("text/plain", readme.getMediatype());
+			assertEquals("text/plain; charset=\"utf-8\"", readme.getMediatype());
 			assertEquals("Bob Builder", readme.getCreatedBy().getName());
 			assertEquals(URI.create("http://example.com/foaf#bob"), readme.getCreatedBy().getUri());
 

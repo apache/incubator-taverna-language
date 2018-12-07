@@ -231,7 +231,7 @@ public class TestManifest {
 		assertEquals("Bob Builder",
 				manifest.getAggregation(r.resolve("/README.txt"))
 						.getCreatedBy().getName());
-		assertEquals("text/plain",
+		assertEquals("text/plain; charset=\"utf-8\"",
 				manifest.getAggregation(r.resolve("/README.txt"))
 						.getMediatype());
 

@@ -144,7 +144,7 @@ public class TestManifestJSON {
 			Files.createFile(readme);
 			PathMetadata readmeMeta = bundle.getManifest().getAggregation(
 					readme);
-			readmeMeta.setMediatype("text/plain");
+			readmeMeta.setMediatype("text/plain; charset=\"utf-8\"");
 			Agent readmeCreatedby = new Agent("Bob Builder");
 			readmeCreatedby.setUri(URI.create("http://example.com/foaf#bob"));
 			readmeMeta.setCreatedBy(readmeCreatedby);
@@ -273,7 +273,7 @@ public class TestManifestJSON {
 
 		JsonNode readme = aggregates.get(2);
 		assertEquals("/README.txt", readme.get("uri").asText());
-		assertEquals("text/plain", readme.get("mediatype").asText());
+		assertEquals("text/plain; charset=\"utf-8\"", readme.get("mediatype").asText());
 		assertEquals("2013-02-12T19:37:32.939Z", readme.get("createdOn")
 				.asText());
 		JsonNode readmeCreatedBy = readme.get("createdBy");
