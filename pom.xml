@@ -158,9 +158,9 @@
     </pluginManagement>
   </build>
   <scm>
-    <connection>scm:git:https://git-wip-us.apache.org/repos/asf/incubator-taverna-language.git</connection>
-    <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/incubator-taverna-language.git</developerConnection>
-    <url>https://github.com/apache/incubator-taverna-language</url>
+      <connection>scm:git:https://gitbox.apache.org/repos/asf/incubator-taverna-language.git</connection>
+      <developerConnection>scm:git:git@github.com:apache/incubator-taverna-language.git</developerConnection>
+      <url>https://github.com/apache/incubator-taverna-language</url>
     <tag>HEAD</tag>
   </scm>
 
