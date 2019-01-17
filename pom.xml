@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.apache.taverna</groupId>
     <artifactId>apache-taverna-parent</artifactId>
-    <version>3-incubating</version>
+    <version>4-incubating-SNAPSHOT</version>
   </parent>
   <groupId>org.apache.taverna.language</groupId>
   <artifactId>apache-taverna-language</artifactId>
