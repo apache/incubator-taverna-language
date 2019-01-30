@@ -33,7 +33,7 @@ public class oa {
     private static final OntModel M_MODEL = ModelFactory.createOntologyModel( OntModelSpec.OWL_MEM, null);
     
     /** <p>The namespace of the vocabulary as a string</p> */
-    public static final String NS = "http://www.w3.org/ns/oa";
+    public static final String NS = "http://www.w3.org/ns/oa#";
     
     /** <p>The namespace of the vocabulary as a string</p>
      * @return namespace as String
