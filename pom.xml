@@ -198,15 +198,9 @@
         <version>${commons.io.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.jdom</groupId>
-        <artifactId>com.springsource.org.jdom</artifactId>
-        <version>${jdom.version}</version>
-        <type>jar</type>
-      </dependency>
-      <dependency>
-        <groupId>javax.xml.bind</groupId>
-        <artifactId>jaxb-api</artifactId>
-        <version>${jaxb.version}</version>
+        <groupId>org.apache.servicemix.bundles</groupId>
+        <artifactId>org.apache.servicemix.bundles.jdom</artifactId>
+        <version>${jdom2.version}</version>
       </dependency>
       <dependency>
         <groupId>com.sun.xml.bind</groupId>
