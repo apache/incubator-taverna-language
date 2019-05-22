@@ -188,13 +188,13 @@
       <snapshots />
       <id>mygrid-repository</id>
       <name>myGrid Repository</name>
-      <url>http://www.mygrid.org.uk/maven/repository</url>
+      <url>https://www.mygrid.org.uk/maven/repository</url>
     </repository>
 
     <repository>
       <id>mygrid-snapshot-repository</id>
       <name>myGrid Snapshot Repository</name>
-      <url>http://www.mygrid.org.uk/maven/snapshot-repository</url>
+      <url>https://www.mygrid.org.uk/maven/snapshot-repository</url>
       <releases>
         <enabled>false</enabled>
       </releases>
@@ -205,7 +205,7 @@
     <repository>
       <id>apache.snapshots</id>
       <name>Apache Snapshot Repository</name>
-      <url>http://repository.apache.org/snapshots</url>
+      <url>https://repository.apache.org/snapshots</url>
       <releases>
         <enabled>false</enabled>
       </releases>
