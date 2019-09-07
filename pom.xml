@@ -120,7 +120,7 @@
         <!-- replaces maven-jaxb2-plugin -->
           <groupId>org.apache.cxf</groupId>
           <artifactId>cxf-xjc-plugin</artifactId>
-          <version>3.2.1</version>
+          <version>3.3.0</version>
           <configuration>
             <sourceRoot>${basedir}/target/generated-sources/cxf-xjc</sourceRoot>
           </configuration>
