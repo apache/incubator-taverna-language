@@ -14,15 +14,59 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-# Apache Taverna Language
 
-Apache Taverna Language is a set of APIs for workflow definitions (SCUFL2),
+
+## Taverna Project Retired
+
+> tl;dr: The Taverna code base is **no longer maintained** 
+> and is provided here for archival purposes.
+
+From 2014 till 2020 this code base was maintained by the 
+[Apache Incubator](https://incubator.apache.org/) project _Apache Taverna (incubating)_
+(see [web archive](https://web.archive.org/web/20200312133332/https://taverna.incubator.apache.org/)
+and [podling status](https://incubator.apache.org/projects/taverna.html)).
+
+In 2020 the Taverna community 
+[voted](https://lists.apache.org/thread.html/r559e0dd047103414fbf48a6ce1bac2e17e67504c546300f2751c067c%40%3Cdev.taverna.apache.org%3E)
+to **retire** Taverna as a project and withdraw the code base from the Apache Software Foundation. 
+
+This code base remains available under the Apache License 2.0 
+(see _License_ below), but is now simply called 
+_Taverna_ rather than ~~Apache Taverna (incubating)~~.
+
+While the code base is no longer actively maintained, 
+Pull Requests are welcome to the 
+[GitHub organization taverna](http://github.com/taverna/), 
+which may infrequently be considered by remaining 
+volunteer caretakers.
+
+
+### Previous releases
+
+Releases 2015-2018 during incubation at Apache Software Foundation
+are available from the ASF Download Archive <http://archive.apache.org/dist/incubator/taverna/>
+
+Releases 2014 from the University of Manchester are on BitBucket <https://bitbucket.org/taverna/>
+
+Releases 2009-2013 from myGrid are on LaunchPad <https://launchpad.net/taverna/>
+
+Releases 2003-2009 are on SourceForge <https://sourceforge.net/projects/taverna/files/taverna/>
+
+Binary JARs for Taverna are available from 
+Maven Central <https://repo.maven.apache.org/maven2/org/apache/taverna/>
+or the myGrid Maven repository <https://repository.mygrid.org.uk/>
+
+
+
+# Taverna Language
+
+Taverna Language is a set of APIs for workflow definitions (SCUFL2),
 Research Object Bundles and workflow inputs/outputs/run (DataBundle), 
 as consumed and produced by the 
-[Apache Taverna](http://taverna.incubator.apache.org/) (incubating) workflow system.
+[Taverna](https://web.archive.org/web/*/https://taverna.incubator.apache.org/) workflow system.
 
 The API includes support for the legacy formats from Taverna 2 and Taverna
-1, and can be also used independently of Apache Taverna 3.
+1, and can be also used independently of Taverna 3.
 
 The command line tool `tavlang` can be used for conversion and
 inspection of research objects and workflow bundles.
@@ -30,7 +74,7 @@ inspection of research objects and workflow bundles.
 ## License
 
 * (c) 2010-2014 University of Manchester
-* (c) 2014-2018 Apache Software Foundation
+* (c) 2014-2020 Apache Software Foundation
 
 This product includes software developed at The [Apache Software
 Foundation](http://www.apache.org/).
@@ -45,39 +89,10 @@ details about embedded third-party libraries and source code.
 
 # Contribute
 
-Please subscribe to and contact the
-[dev@taverna](http://taverna.incubator.apache.org/community/lists#dev) mailing list
-for any questions, suggestions and discussions about
-Apache Taverna.
-
-Bugs and feature plannings are tracked in the Jira
-[Issue tracker](https://issues.apache.org/jira/browse/TAVERNA/component/12326808)
-under the `TAVERNA` component _Taverna Language._ Feel free
-to [add an issue](http://taverna.incubator.apache.org/community/issue-tracker)!
-
-To suggest changes to this source code, feel free to raise a
-[GitHub pull request](https://github.com/apache/incubator-taverna-language/pulls).
 Any contributions received are assumed to be covered by the [Apache License
-2.0](https://www.apache.org/licenses/LICENSE-2.0). We might ask you
-to sign a [Contributor License Agreement](https://www.apache.org/licenses/#clas)
-before accepting a larger contribution.
+2.0](https://www.apache.org/licenses/LICENSE-2.0). 
 
 
-
-## Disclaimer
-
-Apache Taverna is an effort undergoing incubation at the
-[Apache Software Foundation (ASF)](http://www.apache.org/),
-sponsored by the [Apache Incubator PMC](http://incubator.apache.org/).
-
-[Incubation](http://incubator.apache.org/incubation/Process_Description.html)
-is required of all newly accepted projects until a further review
-indicates that the infrastructure, communications, and decision making process
-have stabilized in a manner consistent with other successful ASF projects.
-
-While incubation status is not necessarily a reflection of the completeness
-or stability of the code, it does indicate that the project has yet to be
-fully endorsed by the ASF.
 
 ## Modules
 
@@ -88,7 +103,7 @@ Official modules:
   inputs/outputs/workflow run provenance
 * [taverna-scufl2-api](taverna-scufl2-api/) Inspect and build SCUFL2 workflow
   definitions
-* [taverna-scufl2-wfbundle](taverna-scufl2-wfbundle/) load/save Apache Taverna 3 `.wfbundle` workflows
+* [taverna-scufl2-wfbundle](taverna-scufl2-wfbundle/) load/save Taverna 3 `.wfbundle` workflows
 * [taverna-scufl2-t2flow](taverna-scufl2-t2flow/) load Taverna 2 `.t2flow` workflows
 * [taverna-scufl2-schemas](taverna-scufl2-schemas) SCUFL2 XML Schemas and OWL ontologies
 * [taverna-scufl2-wfdesc](taverna-scufl2-wfdesc/) save [wfdesc](https://w3id.org/ro#wfdesc) workflow structure as RDF Turtle
@@ -124,7 +139,7 @@ For more details, see the READMEs of:
 
 # Building
 
-To build Apache Taverna Language, use:
+To build Taverna Language, use:
 
     mvn clean install
 
@@ -150,7 +165,7 @@ To skip the tests (these can be timeconsuming), use:
 
 
 If you are modifying this source code independent of the
-Apache Taverna project, you may not want to run the
+Taverna project, you may not want to run the
 [Rat Maven plugin](https://creadur.apache.org/rat/apache-rat-plugin/)
 that enforces Apache headers in every source file - to disable it, try:
 
@@ -167,10 +182,10 @@ modules which use Java 8 features (Java 7 source is ok for Android API 19 and ab
 Usage
 -----
 
-Apache Taverna Language is a Maven project, and the easiest way to use it is
+Taverna Language is a Maven project, and the easiest way to use it is
 from other Maven projects.
 
-Released binaries of Apache Taverna Language are published in [Maven
+Released binaries of Taverna Language are published in [Maven
 Central](http://search.maven.org/).
 
 Typical users of this API will depend on these modules:
@@ -202,8 +217,8 @@ Typical users of this API will depend on these modules:
 		</dependency>
 
 To find the latest `<version>` to use above (this README might
-not have been updated), see the [Apache Taverna Language downloads]
-(http://taverna.incubator.apache.org/download/language/).
+not have been updated), see the [Taverna Language downloads]
+(https://web.archive.org/web/*/https://taverna.incubator.apache.org/download/language/).
 
 All Scufl2 modules are also valid [OSGi](http://www.osgi.org/) bundles,
 providing [OSGi services](taverna-scufl2-api#osgi-services).
@@ -222,12 +237,12 @@ to your classpath:
 ## Javadoc
 
 See the [Taverna Language
-Javadoc](http://taverna.incubator.apache.org/javadoc/taverna-language/) for
+Javadoc](https://web.archive.org/web/*/https://taverna.incubator.apache.org/javadoc/taverna-language/) for
 documentation of classes and methods of Taverna Language.  Good starting
 points:
- * [org.apache.taverna.scufl2.api](https://taverna.incubator.apache.org/javadoc/taverna-language/org/apache/taverna/scufl2/api/package-summary.html)
- * [org.apache.taverna.robundle](https://taverna.incubator.apache.org/javadoc/taverna-language/org/apache/taverna/robundle/package-summary.html)
- * [org.apache.taverna.databundle](https://taverna.incubator.apache.org/javadoc/taverna-language/org/apache/taverna/databundle/package-summary.html)
+ * [org.apache.taverna.scufl2.api](https://web.archive.org/web/*/https://taverna.incubator.apache.org/javadoc/taverna-language/org/apache/taverna/scufl2/api/package-summary.html)
+ * [org.apache.taverna.robundle](https://web.archive.org/web/*/https://taverna.incubator.apache.org/javadoc/taverna-language/org/apache/taverna/robundle/package-summary.html)
+ * [org.apache.taverna.databundle](https://web.archive.org/web/*/https://taverna.incubator.apache.org/javadoc/taverna-language/org/apache/taverna/databundle/package-summary.html)
 
 
 # Export restrictions
