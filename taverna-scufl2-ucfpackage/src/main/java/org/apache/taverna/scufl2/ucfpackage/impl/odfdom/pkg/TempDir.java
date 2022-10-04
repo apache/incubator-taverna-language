@@ -28,6 +28,7 @@ package org.apache.taverna.scufl2.ucfpackage.impl.odfdom.pkg;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 class TempDir {
     /**
@@ -40,11 +41,7 @@ class TempDir {
      */
     static File newTempOdfDirectory(String prefix, File parentDir)
             throws IOException {
-        File tempFile = File.createTempFile(prefix, "", parentDir);
-        if (!tempFile.delete())
-            throw new IOException();
-        if (!tempFile.mkdir())
-            throw new IOException();
+        File tempFile = Files.createTempDirectory(parentDir.toPath(),prefix).toFile();
         TempDirDeleter.getInstance().add(tempFile);
         return tempFile;
     }
