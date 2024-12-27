@@ -8,9 +8,9 @@ package org.apache.taverna.robundle.fs;
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,7 +18,6 @@ package org.apache.taverna.robundle.fs;
  * specific language governing permissions and limitations
  * under the License.
  */
-
 
 import java.io.File;
 import java.io.IOException;
@@ -36,13 +35,12 @@ import java.util.Iterator;
 public class BundlePath implements Path {
 
 	private final BundleFileSystem fs;
-
 	private final Path zipPath;
 
 	protected BundlePath(BundleFileSystem fs, Path zipPath) {
 		if (fs == null || zipPath == null) {
-			throw new NullPointerException();
-		}		
+			throw new NullPointerException("FileSystem and Path must not be null");
+		}
 		this.fs = fs;
 		this.zipPath = zipPath;
 	}
@@ -133,7 +131,7 @@ public class BundlePath implements Path {
 
 	@Override
 	public WatchKey register(WatchService watcher, Kind<?>[] events,
-			Modifier... modifiers) throws IOException {
+							 Modifier... modifiers) throws IOException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -184,7 +182,7 @@ public class BundlePath implements Path {
 
 	@Override
 	public File toFile() {
-		throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException("Conversion to File is unsupported");
 	}
 
 	@Override
@@ -210,16 +208,15 @@ public class BundlePath implements Path {
 	public URI toUri() {
 		Path abs = zipPath.toAbsolutePath();
 		String absStr = abs.toString();
-		if (Files.isDirectory(abs) && ! absStr.endsWith("/")) {
+		if (Files.isDirectory(abs) && !absStr.endsWith("/")) {
 			absStr += "/";
 		}
-		
+
 		URI pathRel;
 		try {
 			pathRel = new URI(null, null, absStr, null);
 		} catch (URISyntaxException e) {
-			throw new IllegalStateException("Can't create URL for " + zipPath,
-					e);
+			throw new IllegalStateException("Can't create URL for " + zipPath, e);
 		}
 		return fs.getBaseURI().resolve(pathRel);
 	}

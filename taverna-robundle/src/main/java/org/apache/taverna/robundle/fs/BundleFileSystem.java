@@ -8,9 +8,9 @@ package org.apache.taverna.robundle.fs;
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -18,7 +18,6 @@ package org.apache.taverna.robundle.fs;
  * specific language governing permissions and limitations
  * under the License.
  */
-
 
 import java.io.IOException;
 import java.net.URI;
@@ -49,7 +48,6 @@ public class BundleFileSystem extends FileSystem {
 		this.baseURI = baseURI;
 		this.separator = origFS.getSeparator();
 		this.source = findSource();
-
 	}
 
 	@Override
@@ -58,26 +56,26 @@ public class BundleFileSystem extends FileSystem {
 			return;
 		}
 		origFS.close();
-		// De-reference the original ZIP file system so it can be
-		// garbage collected
 		origFS = null;
 	}
 
 	protected Path findSource() {
+		URI uri = this.baseURI;
+
+		if (uri.getScheme().equals("arcp")) {
+			// Handle arcp:// URI scheme separately
+			return Paths.get(uri.getPath());
+		}
+
+		// Default handling for zip URIs
 		Path zipRoot = getRootDirectory().getZipPath();
-		URI uri = zipRoot.toUri();
-		String schemeSpecific;
-		if (provider().getJarDoubleEscaping()) {
-			schemeSpecific = uri.getSchemeSpecificPart();
-		} else {
-			// http://dev.mygrid.org.uk/issues/browse/T3-954
-			schemeSpecific = uri.getRawSchemeSpecificPart();
+		String schemeSpecific = uri.getRawSchemeSpecificPart();
+
+		if (!schemeSpecific.endsWith("!/")) {
+			throw new IllegalStateException("Can't parse URI: " + uri);
 		}
-		if (!schemeSpecific.endsWith("!/")) { // sanity check
-			throw new IllegalStateException("Can't parse JAR URI: " + uri);
-		}
-		URI zip = URI.create(schemeSpecific.substring(0,
-				schemeSpecific.length() - 2));
+
+		URI zip = URI.create(schemeSpecific.substring(0, schemeSpecific.length() - 2));
 		return Paths.get(zip); // Look up our path
 	}
 
@@ -86,21 +84,14 @@ public class BundleFileSystem extends FileSystem {
 	}
 
 	protected BundleFileStore getFileStore() {
-		// We assume there's only one file store, as is true for ZipProvider
-		return new BundleFileStore(this, getOrigFS().getFileStores().iterator()
-				.next());
+		return new BundleFileStore(this, getOrigFS().getFileStores().iterator().next());
 	}
 
 	@Override
 	public Iterable<FileStore> getFileStores() {
-		return Collections.<FileStore> singleton(getFileStore());
+		return Collections.singleton(getFileStore());
 	}
 
-	/**
-	 * Thread-safe ClosedFileSystemException test
-	 * 
-	 * @return
-	 */
 	protected FileSystem getOrigFS() {
 		FileSystem orig = origFS;
 		if (orig == null || !orig.isOpen()) {
@@ -117,8 +108,7 @@ public class BundleFileSystem extends FileSystem {
 
 	@Override
 	public PathMatcher getPathMatcher(String syntaxAndPattern) {
-		final PathMatcher zipMatcher = getOrigFS().getPathMatcher(
-				syntaxAndPattern);
+		final PathMatcher zipMatcher = getOrigFS().getPathMatcher(syntaxAndPattern);
 		return new PathMatcher() {
 			@Override
 			public boolean matches(Path path) {
@@ -129,7 +119,7 @@ public class BundleFileSystem extends FileSystem {
 
 	@Override
 	public Iterable<Path> getRootDirectories() {
-		return Collections.<Path> singleton(getRootDirectory());
+		return Collections.singleton(getRootDirectory());
 	}
 
 	public BundlePath getRootDirectory() {
@@ -152,10 +142,7 @@ public class BundleFileSystem extends FileSystem {
 
 	@Override
 	public boolean isOpen() {
-		if (origFS == null) {
-			return false;
-		}
-		return origFS.isOpen();
+		return origFS != null && origFS.isOpen();
 	}
 
 	@Override
@@ -183,13 +170,11 @@ public class BundleFileSystem extends FileSystem {
 
 	protected Path unwrap(Path bundlePath) {
 		if (!(bundlePath instanceof BundlePath)) {
-			// assume it's already unwrapped for some reason (for instance being
-			// null)
 			return bundlePath;
 		}
 		return ((BundlePath) bundlePath).getZipPath();
 	}
-	
+
 	protected static Path withoutSlash(Path dir) {
 		if (dir == null) {
 			return null;
@@ -198,7 +183,7 @@ public class BundleFileSystem extends FileSystem {
 		if (fname == null) // Root directory?
 			return dir;
 		String fnameStr = fname.toString();
-		if (! fnameStr.endsWith("/") && ! fnameStr.equals("/"))
+		if (!fnameStr.endsWith("/") && !fnameStr.equals("/"))
 			return dir;
 		return dir.resolveSibling(fnameStr.replace("/", ""));
 	}
@@ -208,10 +193,9 @@ public class BundleFileSystem extends FileSystem {
 			return null;
 		}
 		if (zipPath instanceof BundlePath) {
-			throw new IllegalArgumentException("Did not expect BundlePath: "
-					+ zipPath);
+			throw new IllegalArgumentException("Did not expect BundlePath: " + zipPath);
 		}
-		
+
 		return new BundlePath(this, withoutSlash(zipPath));
 	}
 
@@ -233,5 +217,4 @@ public class BundleFileSystem extends FileSystem {
 			}
 		};
 	}
-
 }

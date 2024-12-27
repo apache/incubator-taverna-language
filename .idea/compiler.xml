@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="taverna-scufl2-cwl" />
+        <module name="taverna-scufl2-wfbundle" />
+        <module name="taverna-scufl2-scufl" />
+        <module name="taverna-databundle" />
+        <module name="taverna-scufl2-schemas" />
+        <module name="taverna-scufl2-api" />
+        <module name="taverna-scufl2-examples" />
+        <module name="taverna-ro-vocabs" />
+        <module name="taverna-baclava-language" />
+        <module name="taverna-scufl2-integration-tests" />
+        <module name="taverna-scufl2-ucfpackage" />
+        <module name="taverna-scufl2-wfdesc" />
+        <module name="taverna-tavlang-tool" />
+        <module name="taverna-scufl2-t2flow" />
+        <module name="taverna-robundle" />
+        <module name="taverna-scufl2-annotation" />
+      </profile>
+    </annotationProcessing>
+  </component>
+</project>
